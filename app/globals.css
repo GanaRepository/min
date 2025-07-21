@@ -1,0 +1,368 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 240 33% 99%;
+    --foreground: 222.2 84% 4.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+
+    --primary: 267 66% 60%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 187 71% 56%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --accent: 267 66% 95%;
+    --accent-foreground: 267 66% 40%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+
+    --radius: 0.75rem;
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 267 66% 60%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 187 71% 56%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 267 66% 25%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings:
+      'rlig' 1,
+      'calt' 1;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-medium tracking-tight;
+  }
+
+  .glass {
+    @apply bg-white/70 backdrop-blur-md border border-white/20 shadow-lg;
+  }
+
+  .glass-dark {
+    @apply bg-gray-900/70 backdrop-blur-md border border-white/10 shadow-lg;
+  }
+}
+
+@layer components {
+  .input-field {
+    @apply w-full p-3 rounded-lg bg-white/80 backdrop-blur-sm text-gray-800 placeholder:text-gray-500 
+           border border-gray-200 transition-colors duration-300
+           focus:outline-none;
+  }
+
+  .gradient-text {
+    @apply bg-gradient-to-r from-[#7E69AB] to-[#33C3F0] bg-clip-text text-transparent;
+  }
+
+  .gradient-button {
+    @apply bg-gradient-to-r from-[#7E69AB] to-[#33C3F0] hover:from-[#7E69AB]/90 hover:to-[#33C3F0]/90
+           text-white rounded-full px-6 py-3 transition-all duration-200 font-medium shadow-md
+           hover:shadow-lg focus:outline-none focus:ring-2 
+           focus:ring-offset-2;
+  }
+
+  .card-hover {
+    @apply hover:shadow-xl hover:-translate-y-1 transition-all duration-300;
+  }
+
+  .feature-icon {
+    @apply w-12 h-12 rounded-2xl flex items-center justify-center bg-gradient-to-br from-[#9b87f5] to-[#7E69AB]
+           text-white shadow-md mb-5 group-hover:scale-110 transition-transform duration-300;
+  }
+
+  .pattern-bg {
+    background-color: #f6f9fc;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.06'%3E%3Cpath opacity='.5' d='M96 95h4v1h-4v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9zm-1 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9z'/%3E%3Cpath d='M6 5V0H5v5H0v1h5v94h1V6h94V5H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+
+  /* Blue grid pattern for the backgrounds */
+  /* Purple to blue gradient pattern for the backgrounds */
+  .blue-grid-pattern {
+    background: linear-gradient(
+      90deg,
+      #6b21a8,
+      #2563eb
+    ); /* Purple to Blue Gradient */
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+
+  /* Purple to blue gradient dot pattern for backgrounds */
+  .blue-dot-pattern {
+    background: linear-gradient(
+      90deg,
+      #6b21a8,
+      #3b82f6
+    ); /* Purple to Blue Gradient */
+    background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.05' fill-rule='evenodd'%3E%3Ccircle cx='3' cy='3' r='3'/%3E%3Ccircle cx='13' cy='13' r='3'/%3E%3C/g%3E%3C/svg%3E");
+  }
+
+  .blog-content h2 {
+    font-size: 1.875rem;
+    font-weight: 600;
+    margin-top: 2rem;
+    margin-bottom: 1.25rem;
+    color: #333;
+  }
+
+  .blog-content h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-top: 1.75rem;
+    margin-bottom: 1rem;
+    color: #444;
+  }
+
+  .blog-content p {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    line-height: 1.7;
+  }
+
+  .blog-content ul,
+  .blog-content ol {
+    margin-top: 1rem;
+    margin-bottom: 1.5rem;
+    padding-left: 1.5rem;
+  }
+
+  .blog-content li {
+    margin-bottom: 0.5rem;
+    line-height: 1.6;
+  }
+
+  .blog-content blockquote {
+    border-left: 4px solid #6366f1;
+    padding-left: 1rem;
+    margin: 1.5rem 0;
+    color: #4a5568;
+    font-style: italic;
+  }
+
+  /* Additional spacing between major sections */
+  .blog-content h2 + p,
+  .blog-content h3 + p {
+    margin-top: 0.75rem;
+  }
+
+  /* Add some spacing after lists */
+  .blog-content ul + h2,
+  .blog-content ul + h3,
+  .blog-content ol + h2,
+  .blog-content ol + h3 {
+    margin-top: 1.5rem;
+  }
+}
+
+/* Define the contact-purple utility classes explicitly */
+@layer utilities {
+  .from-contact-purple {
+    --tw-gradient-from: #7e69ab var(--tw-gradient-from-position);
+    --tw-gradient-to: rgb(126 105 171 / 0) var(--tw-gradient-to-position);
+    --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+  }
+
+  .to-contact-teal {
+    --tw-gradient-to: #33c3f0 var(--tw-gradient-to-position);
+  }
+
+  /* Contact purple color utilities */
+  .border-contact-purple {
+    border-color: #7e69ab;
+  }
+
+  .hover\:border-contact-purple:hover {
+    border-color: #7e69ab;
+  }
+
+  .ring-contact-purple\/30 {
+    --tw-ring-color: rgba(126, 105, 171, 0.3);
+  }
+
+  .focus\:ring-contact-purple\/30:focus {
+    --tw-ring-color: rgba(126, 105, 171, 0.3);
+  }
+
+  .focus\:border-contact-purple:focus {
+    border-color: #7e69ab;
+  }
+
+  .shadow-contact-purple\/20 {
+    --tw-shadow-color: rgba(126, 105, 171, 0.2);
+    box-shadow:
+      var(--tw-ring-offset-shadow, 0 0 transparent),
+      var(--tw-ring-shadow, 0 0 transparent), var(--tw-shadow);
+  }
+
+  .hover\:shadow-contact-purple\/20:hover {
+    --tw-shadow-color: rgba(126, 105, 171, 0.2);
+    box-shadow:
+      var(--tw-ring-offset-shadow, 0 0 transparent),
+      var(--tw-ring-shadow, 0 0 transparent), var(--tw-shadow);
+  }
+
+  .focus\:ring-contact-purple\/50:focus {
+    --tw-ring-color: rgba(126, 105, 171, 0.5);
+  }
+
+  .hover\:shadow-contact-purple\/10:hover {
+    --tw-shadow-color: rgba(126, 105, 171, 0.1);
+    box-shadow:
+      var(--tw-ring-offset-shadow, 0 0 transparent),
+      var(--tw-ring-shadow, 0 0 transparent), var(--tw-shadow);
+  }
+
+  /* Contact teal color utilities */
+  .border-contact-teal {
+    border-color: #33c3f0;
+  }
+
+  .hover\:border-contact-teal:hover {
+    border-color: #33c3f0;
+  }
+
+  /* Section utilities */
+  .section-padding {
+    @apply py-12 px-4 md:py-16 md:px-6 lg:py-24 lg:px-8;
+  }
+
+  .section-margin {
+    @apply my-12 md:my-16 lg:my-24;
+  }
+
+  .content-spacing {
+    @apply space-y-8 md:space-y-12;
+  }
+
+  .card-padding {
+    @apply p-4 md:p-6 lg:p-8;
+  }
+
+  /* Add these animations to your global CSS file */
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-20px);
+    }
+  }
+
+  @keyframes gradient-radial {
+    0% {
+      background: radial-gradient(
+        circle,
+        rgba(34, 197, 94, 0.1) 0%,
+        rgba(59, 130, 246, 0.05) 50%,
+        transparent 100%
+      );
+    }
+    50% {
+      background: radial-gradient(
+        circle,
+        rgba(59, 130, 246, 0.1) 0%,
+        rgba(147, 51, 234, 0.05) 50%,
+        transparent 100%
+      );
+    }
+    100% {
+      background: radial-gradient(
+        circle,
+        rgba(34, 197, 94, 0.1) 0%,
+        rgba(59, 130, 246, 0.05) 50%,
+        transparent 100%
+      );
+    }
+  }
+
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .animate-spin-slow {
+    animation: spin 60s linear infinite;
+  }
+
+  .bg-gradient-radial {
+    background: radial-gradient(circle, var(--tw-gradient-stops));
+  }
+}
