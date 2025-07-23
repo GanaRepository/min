@@ -2,6 +2,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { getToken } from 'next-auth/jwt';
+import { checkRateLimit } from '@/lib/rate-limiter'; // ADDED: Import your existing rate limiter
 
 // Define paths that are publicly accessible
 const publicPaths = [
@@ -37,6 +38,8 @@ function isPublicApiPath(path: string): boolean {
     path.startsWith('/api/contact') ||
     path.startsWith('/api/files') ||
     path.startsWith('/api/stories/create-session') || // Allow story creation for guests
+    path.startsWith('/api/stories/store-pending-elements') || // Allow storing elements for unauthenticated users
+    path.startsWith('/api/stories/pending-elements') || // Allow retrieving pending elements
     path.includes('favicon') ||
     path.startsWith('/_next/') ||
     path.startsWith('/api/_next/')
@@ -49,7 +52,10 @@ function requiresAuth(path: string): boolean {
     path.startsWith('/children-dashboard') ||
     path.startsWith('/mentor-dashboard') ||
     path.startsWith('/admin-dashboard') ||
-    path.startsWith('/api/stories/') && !path.includes('create-session') ||
+    (path.startsWith('/api/stories/') && 
+     !path.includes('create-session') && 
+     !path.includes('store-pending-elements') && 
+     !path.includes('pending-elements')) ||
     path.startsWith('/api/user/') ||
     path.startsWith('/api/admin/') ||
     path.startsWith('/api/mentor/')
@@ -82,6 +88,48 @@ export async function middleware(request: NextRequest) {
     const userId = token?.id || 'none';
     
     console.log(`🔐 PATH: ${path}, ROLE: ${userRole}, USER_ID: ${userId}`);
+
+    // ===== RATE LIMITING FOR AUTHENTICATED USERS =====
+    if (token?.id) {
+      // ADDED: Rate limiting for story creation
+      if (path.startsWith('/children-dashboard/story/') && request.method === 'GET') {
+        const rateLimitCheck = checkRateLimit(token.id, 'story-create');
+        if (!rateLimitCheck.allowed) {
+          console.log(`🚫 Rate limit exceeded for user ${token.id}: ${rateLimitCheck.message}`);
+          return NextResponse.redirect(new URL('/children-dashboard?error=rate-limit', request.url));
+        }
+      }
+
+      // ADDED: Rate limiting for API story submissions
+      if (path.startsWith('/api/stories/ai-respond')) {
+        const rateLimitCheck = checkRateLimit(token.id, 'story-submit');
+        if (!rateLimitCheck.allowed) {
+          console.log(`🚫 Story submission rate limit exceeded for user ${token.id}`);
+          return NextResponse.json(
+            { 
+              error: rateLimitCheck.message,
+              retryAfter: rateLimitCheck.retryAfter 
+            },
+            { status: 429 }
+          );
+        }
+      }
+
+      // ADDED: Rate limiting for assessments
+      if (path.startsWith('/api/stories/assess/')) {
+        const rateLimitCheck = checkRateLimit(token.id, 'assessment');
+        if (!rateLimitCheck.allowed) {
+          console.log(`🚫 Assessment rate limit exceeded for user ${token.id}`);
+          return NextResponse.json(
+            { 
+              error: rateLimitCheck.message,
+              retryAfter: rateLimitCheck.retryAfter 
+            },
+            { status: 429 }
+          );
+        }
+      }
+    }
 
     // ===== ADMIN ROUTES =====
     if (path.startsWith('/admin-dashboard') || path.startsWith('/api/admin/')) {
@@ -140,7 +188,10 @@ export async function middleware(request: NextRequest) {
     }
 
     // ===== STORY API ROUTES (Protected) =====
-    if (path.startsWith('/api/stories/') && !path.includes('create-session')) {
+    if (path.startsWith('/api/stories/') && 
+        !path.includes('create-session') && 
+        !path.includes('store-pending-elements') && 
+        !path.includes('pending-elements')) {
       if (!token) {
         console.log(`❌ Unauthenticated API access: ${path}`);
         return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
@@ -255,23 +306,13 @@ export function hasStoryAccess(userRole: string, userId: string, storyOwnerId: s
 }
 
 /**
- * Rate limiting helper (can be expanded)
- */
-export function checkRateLimit(userId: string, action: string): boolean {
-  // Implement rate limiting logic here
-  // For now, always return true
-  return true;
-}
-
-/**
- * Subscription limit checker
+ * UPDATED: Subscription limit checker with new tier structure
  */
 export function checkSubscriptionLimits(tier: string, currentUsage: number): boolean {
   const limits = {
-    FREE: 50,
-    BASIC: 100,
-    PREMIUM: 200,
-    PRO: 300
+    FREE: 10,
+    BASIC: 20,
+    PREMIUM: 100,
   };
   
   return currentUsage < (limits[tier as keyof typeof limits] || limits.FREE);

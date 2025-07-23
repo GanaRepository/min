@@ -1,95 +1,19 @@
-
-// // app/api/stories/create-session/route.ts (SAVE AI OPENING TO DATABASE)
-// import { NextResponse } from 'next/server';
-// import { getServerSession } from 'next-auth';
-// import { authOptions } from '@/utils/authOptions';
-// import { connectToDatabase } from '@/utils/db';
-// import StorySession from '@/models/StorySession';
-// import { collaborationEngine } from '@/lib/ai/collaboration';
-// import { StoryCreationRequest } from '@/types/story';
-
-// export async function POST(request: Request) {
-//   try {
-//     const session = await getServerSession(authOptions);
-    
-//     if (!session || session.user.role !== 'child') {
-//       return NextResponse.json(
-//         { error: 'Access denied. Children only.' },
-//         { status: 403 }
-//       );
-//     }
-
-//     const body: StoryCreationRequest = await request.json();
-//     const { elements } = body;
-
-//     // Validate all required elements are present
-//     const requiredElements = ['genre', 'character', 'setting', 'theme', 'mood', 'tone'];
-//     for (const element of requiredElements) {
-//       if (!elements[element as keyof typeof elements]) {
-//         return NextResponse.json(
-//           { error: `Missing required element: ${element}` },
-//           { status: 400 }
-//         );
-//       }
-//     }
-
-//     await connectToDatabase();
-
-//     // Generate story title based on elements
-//     const title = `${elements.character} and the ${elements.setting}`;
-
-//     // ✅ GENERATE AI OPENING ONCE AND SAVE IT
-//     console.log('Generating AI opening prompt with elements:', elements);
-//     const aiOpening = await collaborationEngine.generateOpeningPrompt(elements);
-//     console.log('AI Opening generated:', aiOpening);
-
-//     // ✅ Create new story session WITH AI OPENING SAVED
-//     const newSession = await StorySession.create({
-//       childId: session.user.id,
-//       title,
-//       elements,
-//       aiOpening, // ✅ Save AI opening so it never changes
-//       currentTurn: 1,
-//       totalWords: 0,
-//       apiCallsUsed: 1, // Used 1 for the opening
-//       maxApiCalls: 7,
-//       status: 'active'
-//     });
-
-//     console.log('Story session created successfully:', newSession._id);
-
-//     return NextResponse.json({
-//       success: true,
-//       session: {
-//         id: newSession._id,
-//         title: newSession.title,
-//         elements: newSession.elements,
-//         currentTurn: newSession.currentTurn,
-//         totalWords: newSession.totalWords,
-//         apiCallsUsed: newSession.apiCallsUsed,
-//         maxApiCalls: newSession.maxApiCalls,
-//         status: newSession.status
-//       },
-//       aiOpening // Return the saved opening
-//     });
-
-//   } catch (error) {
-//     console.error('Error creating story session:', error);
-//     return NextResponse.json(
-//       { error: 'Failed to create story session' },
-//       { status: 500 }
-//     );
-//   }
-// }
-
-// app/api/stories/create-session/route.ts (SAVE AI OPENING TO DATABASE)
+// app/api/stories/create-session/route.ts
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/utils/authOptions';
 import { connectToDatabase } from '@/utils/db';
+import { SUBSCRIPTION_TIERS } from '@/config/tiers';
+import { DEFAULT_TIER } from '@/config/tiers';
 import StorySession from '@/models/StorySession';
+import User from '@/models/User';
 import { collaborationEngine } from '@/lib/ai/collaboration';
-import { StoryCreationRequest } from '@/types/story';
+import { checkRateLimit } from '@/lib/rate-limiter';
+import type { StoryElements } from '@/config/story-elements';
+
+interface StoryCreationRequest {
+  elements: StoryElements;
+}
 
 export async function POST(request: Request) {
   try {
@@ -102,13 +26,25 @@ export async function POST(request: Request) {
       );
     }
 
+    // Rate limiting check
+    const rateCheck = checkRateLimit(session.user.id, 'story-create');
+    if (!rateCheck.allowed) {
+      return NextResponse.json(
+        { 
+          error: rateCheck.message,
+          retryAfter: rateCheck.retryAfter
+        },
+        { status: 429 }
+      );
+    }
+
     const body: StoryCreationRequest = await request.json();
     const { elements } = body;
 
-    // Validate all required elements are present
+    // Validate required elements
     const requiredElements = ['genre', 'character', 'setting', 'theme', 'mood', 'tone'];
     for (const element of requiredElements) {
-      if (!elements[element as keyof typeof elements]) {
+      if (!elements[element as keyof StoryElements]) {
         return NextResponse.json(
           { error: `Missing required element: ${element}` },
           { status: 400 }
@@ -118,28 +54,86 @@ export async function POST(request: Request) {
 
     await connectToDatabase();
 
-    // Generate story title based on elements
+    // Check story limits
+    const user = await User.findById(session.user.id);
+    if (!user) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    }
+
+
+    // Centralized limit check using config and user's subscription tier
+    // Use DEFAULT_TIER as fallback if user's subscription tier is missing or invalid
+    const tierKey = user.subscriptionTier?.toUpperCase() || 'FREE';
+    const tierObj = SUBSCRIPTION_TIERS[tierKey] || DEFAULT_TIER;
+    const limit = tierObj.storyLimit;
+    const userStoryCount = await StorySession.countDocuments({ 
+      childId: user._id,
+      createdAt: { $gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) }
+    });
+    if (userStoryCount >= limit) {
+      return NextResponse.json(
+        { error: `Monthly story limit reached (${limit} stories allowed, you have created ${userStoryCount}).` },
+        { status: 402 }
+      );
+    }
+
+    // Prevent duplicate active stories for same child and elements
+    const existingSession = await StorySession.findOne({
+      childId: user._id,
+      'elements.genre': elements.genre,
+      'elements.character': elements.character,
+      'elements.setting': elements.setting,
+      'elements.theme': elements.theme,
+      'elements.mood': elements.mood,
+      'elements.tone': elements.tone,
+      status: 'active'
+    });
+    if (existingSession) {
+      return NextResponse.json({
+        success: true,
+        session: {
+          id: existingSession._id,
+          title: existingSession.title,
+          elements: existingSession.elements,
+          currentTurn: existingSession.currentTurn,
+          totalWords: existingSession.totalWords,
+          childWords: existingSession.childWords,
+          apiCallsUsed: existingSession.apiCallsUsed,
+          maxApiCalls: existingSession.maxApiCalls,
+          status: existingSession.status
+        },
+        aiOpening: existingSession.aiOpening
+      });
+    }
+
+    // Generate story title
     const title = `${elements.character} and the ${elements.setting}`;
 
-    // ✅ GENERATE AI OPENING ONCE AND SAVE IT
-    console.log('Generating AI opening prompt with elements:', elements);
+    // Generate AI opening
     const aiOpening = await collaborationEngine.generateOpeningPrompt(elements);
-    console.log('AI Opening generated:', aiOpening);
 
-    // ✅ Create new story session WITH AI OPENING SAVED
+    // Create new story session
     const newSession = await StorySession.create({
       childId: session.user.id,
       title,
       elements,
-      aiOpening, // ✅ Save AI opening so it never changes
+      aiOpening,
       currentTurn: 1,
       totalWords: 0,
-      apiCallsUsed: 1, // ✅ IMPORTANT: Start with 1 for the opening
+      childWords: 0,
+      apiCallsUsed: 1, // Opening generation
       maxApiCalls: 7,
       status: 'active'
     });
 
-    console.log('✅ Story session created with API calls:', newSession.apiCallsUsed);
+    // Update user statistics
+    await User.findByIdAndUpdate(session.user.id, {
+      $inc: { 
+        totalStoriesCreated: 1,
+        storiesCreatedThisMonth: 1
+      },
+      $set: { lastActiveDate: new Date() }
+    });
 
     return NextResponse.json({
       success: true,
@@ -149,11 +143,12 @@ export async function POST(request: Request) {
         elements: newSession.elements,
         currentTurn: newSession.currentTurn,
         totalWords: newSession.totalWords,
+        childWords: newSession.childWords,
         apiCallsUsed: newSession.apiCallsUsed,
         maxApiCalls: newSession.maxApiCalls,
         status: newSession.status
       },
-      aiOpening // Return the saved opening
+      aiOpening
     });
 
   } catch (error) {

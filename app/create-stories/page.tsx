@@ -1,9 +1,8 @@
-// app/create-stories/page.tsx (Enhanced version)
 'use client';
 
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import {
@@ -66,7 +65,7 @@ interface SelectedElements {
   theme: string;
   mood: string;
   tone: string;
-  [key: string]: string; // Allow string indexing
+  [key: string]: string;
 }
 
 const steps = [
@@ -105,6 +104,7 @@ const steps = [
 export default function CreateStoriesPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { toast } = useToast();
 
   const [currentStep, setCurrentStep] = useState(0);
@@ -117,29 +117,60 @@ export default function CreateStoriesPage() {
     tone: '',
   });
   const [isCreating, setIsCreating] = useState(false);
+  const [hasLoadedFromStorage, setHasLoadedFromStorage] = useState(false);
+  const [isProcessingPendingToken, setIsProcessingPendingToken] = useState(false);
+  const [turns, setTurns] = useState<{ content: string }[]>([
+    { content: 'Welcome to your magical adventure!' },
+    { content: 'What happens next in your story?' },
+  ]);
+  const [currentTurn, setCurrentTurn] = useState<number>(0);
 
-  useEffect(() => {
-    if (status === 'loading') return;
+ 
 
-    if (!session) {
-      router.push('/login/child');
-      return;
+  // FIXED: Handle pending token processing
+useEffect(() => {
+  const pendingToken = searchParams?.get('pendingToken');
+  
+  // FIXED: Only process when user is authenticated and we haven't processed yet
+  if (pendingToken && session?.user?.role === 'child' && !hasLoadedFromStorage && !isProcessingPendingToken) {
+    console.log('🔄 Found pending token after authentication, auto-creating story...');
+    loadPendingElementsAndCreateStory(pendingToken);
+  } else if (!pendingToken && typeof window !== 'undefined' && !hasLoadedFromStorage && status !== 'loading') {
+    // Fallback: load from localStorage if no backend token
+    const pendingElements = localStorage.getItem('pendingStoryElements');
+    if (pendingElements) {
+      try {
+        const parsed = JSON.parse(pendingElements);
+        setSelectedElements(parsed);
+        
+        const completedSteps = Object.values(parsed).filter(v => v !== '').length;
+        if (completedSteps > 0) {
+          setCurrentStep(Math.min(completedSteps, steps.length - 1));
+        }
+        
+        localStorage.removeItem('pendingStoryElements');
+        
+        toast({
+          title: "✨ Welcome back!",
+          description: "Your story elements have been restored.",
+        });
+      } catch (error) {
+        console.error('Error loading pending elements:', error);
+        localStorage.removeItem('pendingStoryElements');
+      }
     }
-
-    if (session.user.role !== 'child') {
-      router.push('/');
-      return;
-    }
-  }, [session, status, router]);
+    setHasLoadedFromStorage(true);
+  }
+}, [searchParams, session, status, hasLoadedFromStorage, isProcessingPendingToken, toast, router]);
 
   const currentStepData = steps[currentStep];
   const elementType = currentStepData.id as keyof typeof STORY_ELEMENTS;
   const currentElements = STORY_ELEMENTS[elementType] || [];
 
-  const handleElementSelect = (elementId: string) => {
+  const handleElementSelect = (elementName: string) => {
     setSelectedElements((prev) => ({
       ...prev,
-      [elementType]: elementId,
+      [elementType]: elementName,
     }));
   };
 
@@ -157,24 +188,110 @@ export default function CreateStoriesPage() {
     }
   };
 
+   // In the handleCreateStory function, replace the existing logic:
+
+    // FIXED: Handle authentication flow properly
   const handleCreateStory = async () => {
+    console.log('🚀 Creating story with status:', status);
+    
     setIsCreating(true);
 
     try {
+      // Validate that all elements are selected
+      const incompleteElements = Object.entries(selectedElements).filter(([_, value]) => !value);
+      if (incompleteElements.length > 0) {
+        toast({
+          title: "⚠️ Incomplete Selection",
+          description: `Please select all story elements first!`,
+          variant: 'destructive',
+        });
+        setIsCreating(false);
+        return;
+      }
+
+      // Show progress toast
+      toast({
+        title: "✨ Preparing Your Story",
+        description: "Getting everything ready for your creative adventure...",
+      });
+
+      // UNAUTHENTICATED USER FLOW
+      if (status === 'unauthenticated' || !session) {
+        console.log('❌ User not authenticated, storing elements and redirecting to login');
+        
+        try {
+          // Store selected elements in backend for later retrieval
+          const storeResponse = await fetch('/api/stories/store-pending-elements', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ elements: selectedElements })
+          });
+          
+          const storeData = await storeResponse.json();
+          
+          if (!storeResponse.ok) {
+            throw new Error(storeData.error || 'Failed to store elements');
+          }
+          
+          toast({
+            title: "🔐 Login Required",
+            description: "Please log in to create your story. We'll save your progress!",
+          });
+
+          // Redirect to login with backend token for seamless flow
+          const callbackUrl = `/create-stories?pendingToken=${storeData.token}`;
+          router.push(`/login/child?callbackUrl=${encodeURIComponent(callbackUrl)}`);
+          
+        } catch (backendError) {
+          console.error('Backend storage failed:', backendError);
+          toast({
+            title: "❌ Error",
+            description: "Please try again or login first.",
+            variant: 'destructive',
+          });
+        }
+        
+        setIsCreating(false);
+        return;
+      }
+
+      // AUTHENTICATED USER FLOW
+      if (session.user.role !== 'child') {
+        toast({
+          title: "❌ Access Denied",
+          description: "Only children can create stories.",
+          variant: 'destructive',
+        });
+        setIsCreating(false);
+        return;
+      }
+
+      // Check subscription limits
+      const limitsResponse = await fetch('/api/user/subscription-limits');
+      if (limitsResponse.ok) {
+        const limitsData = await limitsResponse.json();
+        if (!limitsData.canCreateStory) {
+          toast({
+            title: "📚 Story Limit Reached",
+            description: limitsData.message || "You've reached your monthly story limit.",
+            variant: 'destructive',
+          });
+          setIsCreating(false);
+          return;
+        }
+      }
+
+      // Create the story session
       const response = await fetch('/api/stories/create-session', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          elements: selectedElements,
-        }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ elements: selectedElements }),
       });
 
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to create story');
+        throw new Error(data.error || 'Failed to create story session');
       }
 
       toast({
@@ -182,16 +299,19 @@ export default function CreateStoriesPage() {
         description: 'Your magical adventure begins now!',
       });
 
-      // Redirect to the writing interface
-      router.push(`/children-dashboard/story/${data.session.id}`);
+      // Clear any pending elements
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('pendingStoryElements');
+      }
+
+      // Navigate to story writing page with story number instead of session ID
+      router.push(`/children-dashboard/story/${data.session.storyNumber || data.session.id}`);
+
     } catch (error) {
-      console.error('Error creating story:', error);
+      console.error('❌ Error creating story:', error);
       toast({
-        title: '❌ Error',
-        description:
-          error instanceof Error
-            ? error.message
-            : 'Failed to create story. Please try again.',
+        title: '❌ Creation Failed',
+        description: error instanceof Error ? error.message : 'Please try again.',
         variant: 'destructive',
       });
     } finally {
@@ -199,7 +319,82 @@ export default function CreateStoriesPage() {
     }
   };
 
-  // Scroll to story elements section
+  // FIXED: Handle pending token processing after authentication
+  useEffect(() => {
+    const pendingToken = searchParams?.get('pendingToken');
+    
+    if (pendingToken && session?.user?.role === 'child' && !hasLoadedFromStorage) {
+      loadPendingElementsAndCreateStory(pendingToken);
+    }
+  }, [searchParams, session, hasLoadedFromStorage]);
+
+  const loadPendingElementsAndCreateStory = async (token: string) => {
+    try {
+      setIsProcessingPendingToken(true);
+      
+      toast({
+        title: "🔄 Restoring Your Progress",
+        description: "Loading your selected story elements...",
+      });
+      
+      const response = await fetch(`/api/stories/pending-elements?token=${token}`);
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to load elements');
+      }
+
+      // Validate elements
+      const incompleteElements = Object.entries(data.elements).filter(([_, value]) => !value);
+      if (incompleteElements.length > 0) {
+        toast({
+          title: "⚠️ Incomplete Elements",
+          description: "Some elements were missing. Please select them again.",
+          variant: 'destructive',
+        });
+        return;
+      }
+
+      toast({
+        title: "✅ Elements Restored!",
+        description: "Creating your story now...",
+      });
+
+      // Create story session immediately
+      const createResponse = await fetch('/api/stories/create-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ elements: data.elements }),
+      });
+
+      const createData = await createResponse.json();
+
+      if (!createResponse.ok) {
+        throw new Error(createData.error || 'Failed to create story');
+      }
+
+      toast({
+        title: '🎉 Story Created!',
+        description: 'Your magical adventure begins now!',
+      });
+
+      // Navigate to story writing page
+      router.replace(`/children-dashboard/story/${createData.session.storyNumber || createData.session.id}`);
+        
+    } catch (error) {
+      console.error('❌ Error processing pending elements:', error);
+      toast({
+        title: "❌ Error",
+        description: "Please select your story elements again.",
+        variant: 'destructive',
+      });
+    } finally {
+      setIsProcessingPendingToken(false);
+      setHasLoadedFromStorage(true);
+    }
+  };
+
+
   const scrollToStoryElements = () => {
     const storyElementsSection = document.getElementById('story-elements');
     if (storyElementsSection) {
@@ -210,25 +405,23 @@ export default function CreateStoriesPage() {
     }
   };
 
-  const isCurrentStepComplete =
-    selectedElements[elementType as keyof SelectedElements] !== '';
-  const isAllComplete = Object.values(selectedElements).every(
-    (value) => value !== ''
-  );
+  const isCurrentStepComplete = selectedElements[elementType] !== '';
+  const allStepsComplete = Object.values(selectedElements).every(value => value !== '');
 
-  if (status === 'loading') {
+  // Prevent UI from rendering selection if pendingToken is present and being processed
+  const pendingToken = searchParams?.get('pendingToken');
+  if ((status as string) === 'loading' || isProcessingPendingToken || (pendingToken && !hasLoadedFromStorage)) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 flex items-center justify-center">
         <div className="text-white text-center">
           <div className="w-8 h-8 border-4 border-white/30 border-t-white rounded-full animate-spin mx-auto mb-4"></div>
-          <p>Loading story creation...</p>
+          <p>{isProcessingPendingToken || (pendingToken && !hasLoadedFromStorage) ? 'Creating your magical story...' : 'Loading story creation...'}</p>
+          {(isProcessingPendingToken || (pendingToken && !hasLoadedFromStorage)) && (
+            <p className="text-sm text-gray-400 mt-2">This may take a moment while we prepare everything!</p>
+          )}
         </div>
       </div>
     );
-  }
-
-  if (!session || session.user.role !== 'child') {
-    return null;
   }
 
   return (
@@ -427,7 +620,6 @@ export default function CreateStoriesPage() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 1, delay: 0.8 }}
             >
-              {/* Central Floating Book/Story Card */}
               <motion.div
                 className="relative z-20"
                 animate={{
@@ -451,7 +643,6 @@ export default function CreateStoriesPage() {
                     transformStyle: 'preserve-3d',
                   }}
                 >
-                  {/* Background Image */}
                   <div className="absolute inset-0">
                     <Image
                       src="/kid7.jpg"
@@ -460,11 +651,9 @@ export default function CreateStoriesPage() {
                       className="object-cover"
                       sizes="32rem"
                     />
-                    {/* Dark Overlay */}
                     <div className="absolute inset-0 bg-gray-900/70" />
                   </div>
 
-                  {/* Animated Background Effects (on top of image) */}
                   <div className="absolute inset-0">
                     <motion.div
                       className="absolute inset-0 bg-gradient-to-br from-purple-500/20 to-cyan-500/20"
@@ -482,9 +671,8 @@ export default function CreateStoriesPage() {
                       }}
                     />
                   </div>
-                  {/* Content */}
+                  
                   <div className="relative z-10 p-8 h-full flex flex-col justify-between">
-                    {/* Header */}
                     <div className="text-center">
                       <motion.div
                         className="w-16 h-16 bg-gradient-to-r from-cyan-400 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg"
@@ -519,7 +707,6 @@ export default function CreateStoriesPage() {
                       </p>
                     </div>
 
-                    {/* Animated Writing Lines */}
                     <div className="space-y-3">
                       {[...Array(6)].map((_, i) => (
                         <motion.div
@@ -540,7 +727,6 @@ export default function CreateStoriesPage() {
                       ))}
                     </div>
 
-                    {/* Bottom Icons */}
                     <div className="flex justify-center space-x-8">
                       {[Feather, Palette, Sparkles, BookOpen].map((Icon, i) => (
                         <motion.div
@@ -562,7 +748,6 @@ export default function CreateStoriesPage() {
                     </div>
                   </div>
 
-                  {/* Glowing Border Effect */}
                   <motion.div
                     className="absolute inset-0 rounded-3xl border-2 border-transparent"
                     animate={{
@@ -581,14 +766,12 @@ export default function CreateStoriesPage() {
                 </motion.div>
               </motion.div>
 
-              {/* Orbiting Elements */}
               <motion.div
                 className="absolute w-full h-full"
                 animate={{ rotate: [0, 360] }}
-                transition={{ duration: 30, repeat: Infinity, ease: 'linear' }}
+              transition={{ duration: 30, repeat: Infinity, ease: 'linear' }}
               >
-                {/* Story Element Orbs */}
-                {[
+               {[
                   {
                     icon: Target,
                     color: 'from-purple-500 to-indigo-600',
@@ -633,7 +816,6 @@ export default function CreateStoriesPage() {
                 ))}
               </motion.div>
 
-              {/* Floating Text Elements */}
               <motion.div
                 className="absolute -top-20 -left-20 bg-white/10 backdrop-blur-sm rounded-lg px-4 py-2 text-sm text-white border border-white/20"
                 animate={{
@@ -791,7 +973,6 @@ export default function CreateStoriesPage() {
               stories with AI assistance
             </p>
 
-            {/* Fixed: Start Creating Now button scrolls to story elements */}
             <motion.button
               onClick={scrollToStoryElements}
               className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-cyan-500 to-purple-500 rounded-xl text-white font-semibold text-lg shadow-lg shadow-cyan-500/25 hover:shadow-xl hover:shadow-cyan-500/40 transition-all duration-300"
@@ -931,92 +1112,188 @@ export default function CreateStoriesPage() {
         </div>
       </div>
 
-      <div className="relative z-10 min-h-screen flex flex-col">
-        {/* Main Content */}
-        <main className="flex-1 p-4 sm:p-6 mt-8 mb-8">
-          <div className="mb-8 mt-8">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-            >
-              <div className="flex flex-col items-center justify-center mb-8">
-                <div className="inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-purple-500/20 to-indigo-500/20 border border-purple-400/30 backdrop-blur-xl mb-4">
-                  <Sparkles className="w-4 h-4 text-purple-400 mr-2" />
-                  <span className="text-purple-200 font-medium text-sm">
-                    AI-Powered Story Creation
-                  </span>
-                </div>
+      {/* STORY ELEMENTS SELECTION SECTION */}
+      <div className="relative z-10 min-h-screen flex flex-col" id="story-elements">
+        <div className="sticky top-0 z-30 bg-gray-900/80 backdrop-blur-xl border-b border-gray-700/50">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-2xl font-bold text-white">
+                Step {currentStep + 1} of {steps.length}
+              </h2>
+            </div>
+            
+            <div className="mb-4">
+              <h3 className="text-xl text-cyan-400 font-semibold mb-2">
+                {currentStepData.title}
+              </h3>
+              <p className="text-gray-300">{currentStepData.description}</p>
+            </div>
 
-                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-4 text-white text-center">
-                  Create Your{' '}
-                  <span className="bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
-                    Amazing Story
-                  </span>
-                </h1>
+            <div className="w-full bg-gray-700/50 rounded-full h-2">
+              <motion.div
+                className="h-2 bg-gradient-to-r from-cyan-500 to-purple-500 rounded-full"
+                initial={{ width: 0 }}
+                animate={{ 
+                  width: `${((currentStep + (isCurrentStepComplete ? 1 : 0)) / steps.length) * 100}%` 
+                }}
+                transition={{ duration: 0.5, ease: 'easeInOut' }}
+              />
+            </div>
 
-                <p className="text-xl text-gray-300 max-w-4xl text-center mb-12">
-                  Choose your story elements and let AI help you create an
-                  incredible adventure. Select from hundreds of combinations to
-                  make your story unique!
-                </p>
-              </div>
-            </motion.div>
-          </div>
-          <div className="max-w-6xl mx-auto">
-            {/* Element Selection Grid */}
-            <motion.div
-              key={currentStep}
-              initial={{ opacity: 0, y: 40 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8"
-            >
-              {currentElements.map((element, index) => {
-                const isSelected = selectedElements[elementType] === element.id;
-
+            <div className="flex justify-between mt-4 text-xs">
+              {steps.map((step, index) => {
+                const isCompleted = selectedElements[step.id as keyof SelectedElements] !== '';
+                const isCurrent = index === currentStep;
+                
                 return (
-                  <motion.button
-                    key={element.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.3 + index * 0.1 }}
-                    whileHover={{ y: -4, transition: { duration: 0.2 } }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={() => handleElementSelect(element.id)}
-                    className={`relative p-6 rounded-xl border-2 transition-all duration-300 ${
-                      isSelected
-                        ? `bg-gradient-to-br ${element.color} border-white/40 text-white`
-                        : 'bg-gray-800/60 border-gray-600/40 text-gray-300 hover:border-gray-500/60 hover:bg-gray-700/60'
+                  <div
+                    key={step.id}
+                    className={`flex flex-col items-center space-y-1 ${
+                      isCurrent
+                        ? 'text-cyan-400'
+                        : isCompleted
+                        ? 'text-green-400'
+                        : 'text-gray-500'
                     }`}
                   >
-                    {/* Selection indicator */}
-                    {isSelected && (
-                      <motion.div
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        className="absolute top-3 right-3 w-6 h-6 bg-white/20 rounded-full flex items-center justify-center"
-                      >
-                        <Check className="w-4 h-4 text-white" />
-                      </motion.div>
-                    )}
-
-                    <div className="text-3xl mb-3">{element.emoji}</div>
-                    <h3 className="font-semibold text-lg mb-2">
-                      {element.name}
-                    </h3>
-                    <p className="text-sm opacity-80">{element.description}</p>
-                  </motion.button>
+                    <div
+                      className={`w-3 h-3 rounded-full ${
+                        isCurrent
+                          ? 'bg-cyan-400 animate-pulse'
+                          : isCompleted
+                          ? 'bg-green-400'
+                          : 'bg-gray-600'
+                      }`}
+                    />
+                    <span className="hidden sm:block text-center max-w-16">
+                      {step.title.split(' ')[0]}
+                    </span>
+                  </div>
                 );
               })}
-            </motion.div>
+            </div>
+          </div>
+        </div>
 
-            {/* Navigation */}
+        <main className="flex-1 p-4 sm:p-6 mt-8 mb-8">
+          <div className="max-w-7xl mx-auto">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={currentStep}
+                initial={{ opacity: 0, y: 40 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -40 }}
+                transition={{ duration: 0.4 }}
+                className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 mb-8"
+              >
+                {currentElements.map((element, index) => {
+                  const isSelected = selectedElements[elementType] === element.name;
+                  const IconComponent = element.icon;
+
+                  return (
+                    <motion.button
+                      key={`${elementType}-${element.name}-${index}`}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.1 + index * 0.05 }}
+                      whileHover={{ 
+                        y: -8, 
+                        scale: 1.02,
+                        transition: { duration: 0.2 }
+                      }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={() => handleElementSelect(element.name)}
+                      className={`relative p-6 rounded-2xl border-2 transition-all duration-300 group overflow-hidden ${
+                        isSelected
+                          ? `bg-gradient-to-br ${element.color} border-white/30 text-white shadow-2xl shadow-black/20`
+                          : 'bg-gray-800/60 border-gray-600/40 text-gray-300 hover:border-gray-500/60 hover:bg-gray-700/60'
+                      }`}
+                    >
+                      <div className="absolute inset-0 opacity-10">
+                        <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent" />
+                      </div>
+
+                      {isSelected && (
+                        <motion.div
+                          initial={{ scale: 0, rotate: -180 }}
+                          animate={{ scale: 1, rotate: 0 }}
+                          transition={{ type: "spring", duration: 0.6 }}
+                          className="absolute top-4 right-4 w-8 h-8 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center border border-white/30"
+                        >
+                          <Check className="w-4 h-4 text-white" />
+                        </motion.div>
+                      )}
+
+                      <div className="relative z-10 flex items-center justify-between mb-4">
+                        <div className="text-4xl">{element.emoji}</div>
+                        <motion.div
+                          className={`p-3 rounded-xl ${isSelected ? 'bg-white/20' : 'bg-gray-700/50 group-hover:bg-gray-600/50'} transition-colors`}
+                          whileHover={{ rotate: 15, scale: 1.1 }}
+                          transition={{ type: "spring", duration: 0.3 }}
+                        >
+                          <IconComponent className={`w-6 h-6 ${isSelected ? 'text-white' : 'text-gray-400 group-hover:text-white'} transition-colors`} />
+                        </motion.div>
+                      </div>
+
+                      <h3 className={`font-bold text-lg mb-3 relative z-10 ${
+                        isSelected ? 'text-white' : 'text-white group-hover:text-white'
+                      } transition-colors`}>
+                        {element.name}
+                      </h3>
+
+                      <div className="relative z-10">
+                        <div className={`w-full h-1 rounded-full overflow-hidden ${
+                          isSelected ? 'bg-white/30' : 'bg-gray-600 group-hover:bg-gray-500'
+                        } transition-colors`}>
+                          <motion.div
+                            className={`h-full ${
+                              isSelected 
+                                ? 'bg-white' 
+                                : 'bg-gradient-to-r from-blue-500 to-green-500 opacity-0 group-hover:opacity-100'
+                            } transition-opacity`}
+                            initial={{ width: '0%' }}
+                            animate={{ width: isSelected ? '100%' : '0%' }}
+                            whileHover={{ width: '100%' }}
+                            transition={{ duration: 0.3 }}
+                          />
+                        </div>
+                      </div>
+
+                      {isSelected && (
+                        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                          {[...Array(6)].map((_, i) => (
+                            <motion.div
+                              key={i}
+                              className="absolute w-1 h-1 bg-white rounded-full"
+                              animate={{
+                                y: [20, -20, 20],
+                                x: [0, Math.random() * 10 - 5, 0],
+                                opacity: [0, 1, 0],
+                              }}
+                              transition={{
+                                duration: 2 + Math.random() * 2,
+                                repeat: Infinity,
+                                delay: Math.random() * 2,
+                              }}
+                              style={{
+                                left: `${20 + Math.random() * 60}%`,
+                                top: `${50 + Math.random() * 30}%`,
+                              }}
+                            />
+                          ))}
+                        </div>
+                      )}
+                    </motion.button>
+                  );
+                })}
+              </motion.div>
+            </AnimatePresence>
+
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5 }}
-              className="flex items-center justify-between"
+              className="flex items-center justify-between mb-8"
             >
               <motion.button
                 whileHover={{ x: -2 }}
@@ -1025,25 +1302,41 @@ export default function CreateStoriesPage() {
                 disabled={currentStep === 0}
                 className={`flex items-center space-x-2 px-6 py-3 rounded-xl font-medium transition-all ${
                   currentStep === 0
-                    ? 'text-gray-500 cursor-not-allowed'
-                    : 'text-gray-300 hover:text-white hover:bg-gray-700/50'
+                    ? 'text-gray-500 cursor-not-allowed bg-gray-800'
+                    : 'text-gray-300 hover:text-white hover:bg-gray-700/50 bg-gray-800/50'
                 }`}
               >
                 <ArrowLeft className="w-4 h-4" />
                 <span>Back</span>
               </motion.button>
 
+              <div className="text-center">
+                <div className={`text-sm mb-1 ${
+                  isCurrentStepComplete 
+                    ? 'text-green-400' 
+                    : 'text-yellow-400'
+                }`}>
+                  {isCurrentStepComplete ? '✅ Step complete!' : '⏳ Please select an option'}
+                </div>
+
+              {(status === 'loading') && (
+                  <div className="text-xs text-gray-400">
+                    Checking authentication...
+                  </div>
+                )}
+              </div>
+
               <motion.button
-                whileHover={{ x: 2 }}
-                whileTap={{ scale: 0.98 }}
+                whileHover={!isCreating && isCurrentStepComplete ? { x: 2 } : {}}
+                whileTap={!isCreating && isCurrentStepComplete ? { scale: 0.98 } : {}}
                 onClick={handleNext}
                 disabled={!isCurrentStepComplete || isCreating}
                 className={`flex items-center space-x-2 px-6 py-3 rounded-xl font-medium transition-all ${
                   !isCurrentStepComplete || isCreating
                     ? 'bg-gray-600/50 text-gray-400 cursor-not-allowed'
                     : currentStep === steps.length - 1
-                      ? 'bg-gradient-to-r from-purple-500 to-pink-600 text-white hover:from-purple-600 hover:to-pink-700'
-                      : 'bg-gradient-to-r from-green-500 to-blue-600 text-white hover:from-green-600 hover:to-blue-700'
+                      ? 'bg-gradient-to-r from-purple-500 to-pink-600 text-white hover:from-purple-600 hover:to-pink-700 shadow-lg shadow-purple-500/25'
+                      : 'bg-gradient-to-r from-green-500 to-blue-600 text-white hover:from-green-600 hover:to-blue-700 shadow-lg shadow-green-500/25'
                 }`}
               >
                 {isCreating ? (
@@ -1065,40 +1358,52 @@ export default function CreateStoriesPage() {
               </motion.button>
             </motion.div>
 
-            {/* Selected Elements Preview */}
             {Object.values(selectedElements).some((value) => value !== '') && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="mt-8 p-6 bg-gray-800/40 backdrop-blur-xl border border-gray-600/40 rounded-xl"
+                className="p-6 bg-gray-800/40 backdrop-blur-xl border border-gray-600/40 rounded-xl"
               >
                 <h3 className="text-white font-semibold mb-4 flex items-center">
                   <Sparkles className="w-5 h-5 mr-2 text-yellow-400" />
                   Your Story Elements
                 </h3>
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-                  {Object.entries(selectedElements).map(([type, elementId]) => {
-                    if (!elementId) return null;
+                  {Object.entries(selectedElements).map(([type, elementName]) => {
+                    if (!elementName) return null;
 
-                    const element = STORY_ELEMENTS[
-                      type as keyof typeof STORY_ELEMENTS
-                    ]?.find((e) => e.id === elementId);
-
-                    if (!element) return null;
+                    const elementTypeKey = type as keyof typeof STORY_ELEMENTS;
+                    const element = STORY_ELEMENTS[elementTypeKey]?.find((e: any) => e.name === elementName);
 
                     return (
                       <div key={type} className="text-center">
-                        <div className="text-2xl mb-1">{element.emoji}</div>
+                        <div className="text-2xl mb-1">{element?.emoji || '✨'}</div>
                         <div className="text-xs text-gray-400 uppercase mb-1">
                           {type}
                         </div>
                         <div className="text-sm text-white font-medium">
-                          {element.name}
+                          {elementName}
                         </div>
+                        <div className="w-full h-1 bg-gradient-to-r from-blue-500 to-green-500 rounded-full mt-2" />
                       </div>
                     );
                   })}
                 </div>
+                
+                {allStepsComplete && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="mt-8 p-4 bg-green-500/20 border border-green-500/30 rounded-xl text-center"
+                  >
+                    <div className="text-green-400 font-semibold text-lg mb-2">
+                      🎉 All elements selected! Ready to create your story!
+                    </div>
+                    <div className="text-green-300 text-sm">
+                      Your unique story will be: <strong>{selectedElements.genre}</strong> adventure with <strong>{selectedElements.character}</strong> in <strong>{selectedElements.setting}</strong>
+                    </div>
+                  </motion.div>
+                )}
               </motion.div>
             )}
           </div>

@@ -192,7 +192,7 @@ const Navbar = () => {
                 )}
               </div>
             ) : (
-              <Button className="bg-gradient-to-r from-contact-purple to-contact-teal text-white hover:opacity-90 flex items-center gap-1">
+              <Button className="bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 text-white hover:opacity-90 flex items-center gap-1">
                 <Link href="/login" className="flex items-center">
                   <FiLogIn className="w-4 h-4 mr-3" />
                   Login Portal
@@ -326,7 +326,7 @@ const Navbar = () => {
             {/* Login button (if not logged in) */}
             {status !== 'authenticated' && (
               <div className="pt-3 mt-2 border-t border-gray-200">
-                <Button className="bg-gradient-to-r from-contact-purple to-contact-teal text-white hover:opacity-90 w-full flex items-center justify-center gap-1 mt-2">
+                <Button className="bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 text-white hover:opacity-90 w-full flex items-center justify-center gap-1 mt-2">
                   <Link
                     href="/login"
                     className="flex items-center justify-center w-full"

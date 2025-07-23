@@ -39,7 +39,7 @@ const ChildLoginContent: React.FC = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
   // Get the callback URL from search params
-  const callbackUrl = searchParams.get('callbackUrl') || '/children-dashboard';
+  const callbackUrl = searchParams.get('callbackUrl') || '/create-stories';
 
   console.log('Child login page callbackUrl:', callbackUrl);
 

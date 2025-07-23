@@ -133,76 +133,79 @@ const RegisterChildContent: React.FC = () => {
     setShowConfirmPassword(!showConfirmPassword);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
+  // In the handleSubmit function, replace the post-registration logic:
 
-    try {
-      // Password validation on the client side too
-      const passwordRegex =
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-      if (!passwordRegex.test(formData.password)) {
-        setToastMessage(
-          'Password must be at least 8 characters and include uppercase, lowercase, number, and special character'
-        );
-        setIsLoading(false);
-        return;
-      }
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setIsLoading(true);
 
-      if (formData.password !== formData.confirmPassword) {
-        setToastMessage('Passwords do not match');
-        setIsLoading(false);
-        return;
-      }
-
-      console.log('Sending registration request...');
-      const response = await fetch('/api/auth/register/child', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await response.json();
-      console.log('Registration response:', response.status, data);
-
-      if (!response.ok) {
-        console.log('Registration failed:', data.error);
-        setToastMessage(data.error || 'Registration failed');
-        setIsLoading(false);
-        return;
-      }
-
+  try {
+    // Password validation on the client side
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!passwordRegex.test(formData.password)) {
       setToastMessage(
-        'Welcome to Mintoons! Your creative journey begins now...'
-      );
-
-      // Auto-login immediately after successful registration
-      const signInResult = await signIn('credentials', {
-        redirect: false,
-        email: formData.email,
-        password: formData.password,
-      });
-
-      if (signInResult?.error) {
-        console.error('Auto login failed:', signInResult.error);
-        // If auto-login fails, redirect to login page
-        window.location.href = '/login/child';
-      } else {
-        // If successful, redirect to home page
-        window.location.href = '/';
-      }
-    } catch (error) {
-      console.error('Registration error:', error);
-      setToastMessage(
-        error instanceof Error
-          ? error.message
-          : 'Registration failed. Please try again.'
+        'Password must be at least 8 characters and include uppercase, lowercase, number, and special character'
       );
       setIsLoading(false);
+      return;
     }
-  };
+
+    if (formData.password !== formData.confirmPassword) {
+      setToastMessage('Passwords do not match');
+      setIsLoading(false);
+      return;
+    }
+
+    console.log('Sending registration request...');
+    const response = await fetch('/api/auth/register/child', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(formData),
+    });
+
+    const data = await response.json();
+    console.log('Registration response:', response.status, data);
+
+    if (!response.ok) {
+      console.log('Registration failed:', data.error);
+      setToastMessage(data.error || 'Registration failed');
+      setIsLoading(false);
+      return;
+    }
+
+    setToastMessage('Welcome to Mintoons! Your creative journey begins now...');
+
+    // Auto-login immediately after successful registration
+    const signInResult = await signIn('credentials', {
+      redirect: false,
+      email: formData.email,
+      password: formData.password,
+    });
+
+    if (signInResult?.error) {
+      console.error('Auto login failed:', signInResult.error);
+      // If auto-login fails, redirect to login page
+      setTimeout(() => {
+        router.push('/login/child');
+      }, 2000);
+    } else {
+      // If successful, redirect to create-stories page (not dashboard)
+      setTimeout(() => {
+        router.push('/create-stories');
+      }, 2000);
+    }
+  } catch (error) {
+    console.error('Registration error:', error);
+    setToastMessage(
+      error instanceof Error
+        ? error.message
+        : 'Registration failed. Please try again.'
+    );
+    setIsLoading(false);
+  }
+};
 
   // Prevent hydration issues by only rendering dynamic content after mount
   if (!mounted) {

@@ -1,4 +1,5 @@
 import { Document, Types } from 'mongoose';
+import { DefaultSession } from 'next-auth';
 
 export type UserRole = 'admin' | 'mentor' | 'child';
 
@@ -51,8 +52,6 @@ export interface IRegisterChild {
   agreeToTerms: boolean;
 }
 
-
-
 export interface ICreateMentor {
   firstName: string;
   lastName: string;
@@ -90,4 +89,43 @@ export interface IMentorProfile {
     email: string;
   };
   createdAt: Date;
+}
+
+// Extend NextAuth types to fix TypeScript errors
+declare module 'next-auth' {
+  interface Session {
+    user: {
+      id: string;
+      email: string;
+      role: UserRole;
+      firstName: string;
+      lastName: string;
+      age?: number;
+      school?: string;
+      isActive: boolean;
+      assignedMentor?: string;
+      createdBy?: string;
+    } & DefaultSession['user'];
+  }
+
+  interface User {
+    id: string;
+    email: string;
+    role: UserRole;
+    firstName: string;
+    lastName: string;
+    age?: number;
+    school?: string;
+    isActive: boolean;
+    assignedMentor?: string;
+    createdBy?: string;
+  }
+}
+
+declare module 'next-auth/jwt' {
+  interface JWT {
+    role: UserRole;
+    firstName: string;
+    lastName: string;
+  }
 }

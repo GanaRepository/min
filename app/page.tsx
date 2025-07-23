@@ -1,37 +1,3 @@
-// import React from 'react';
-// import QuoteSection from '@/components/contact/QuoteSection';
-// import { IndustriesSection } from '@/components/home/IndustriesSection';
-// import TestimonialsSection from '@/components/home/TestimonialsSection';
-// import Hero from '@/components/home/Hero';
-// import { CoreServicesSection } from '@/components/home/CoreServicesSection';
-// import { AboutSection } from '@/components/home/AboutSection';
-
-// export default function Home() {
-//   return (
-//     <div className="min-h-screen ">
-//       <div className="fixed top-20 left-10 w-64 h-64 bg-contact-purple/10 rounded-full filter blur-3xl animate-float -z-10"></div>
-//       <div
-//         className="fixed bottom-20 right-10 w-64 h-64 bg-contact-teal/10 rounded-full filter blur-3xl animate-float -z-10"
-//         style={{ animationDelay: '2s' }}
-//       ></div>
-//       <main>
-//         <Hero />
-//         <AboutSection />
-//         <CoreServicesSection />
-//         <IndustriesSection />
-//         <TestimonialsSection />
-//         <QuoteSection
-//           quote="Pioneer IT Systems delivers exceptional IT staffing solutions, connecting mentors with the right talent to drive innovation and growth."
-//           author="Pioneer IT Systems"
-//           role="Your Technology Staffing Partner"
-//           bgColor="bg-[#EAF6F6]"
-//           textColor="text-gray-800"
-//         />
-//       </main>
-//     </div>
-//   );
-// }
-
 // File: app/page.tsx
 import React from 'react';
 import { Metadata, Viewport } from 'next';

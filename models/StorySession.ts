@@ -1,128 +1,4 @@
-// // // models/StorySession.ts
-// // import mongoose, { Schema } from 'mongoose';
-// // import { IStorySession } from '@/types/story';
-
-// // const StorySessionSchema = new Schema<IStorySession>(
-// //   {
-// //     childId: {
-// //       type: Schema.Types.ObjectId,
-// //       ref: 'User',
-// //       required: true,
-// //     },
-// //     title: {
-// //       type: String,
-// //       required: true,
-// //       trim: true,
-// //     },
-// //     elements: {
-// //       genre: { type: String, required: true },
-// //       character: { type: String, required: true },
-// //       setting: { type: String, required: true },
-// //       theme: { type: String, required: true },
-// //       mood: { type: String, required: true },
-// //       tone: { type: String, required: true },
-// //     },
-// //     currentTurn: {
-// //       type: Number,
-// //       default: 1,
-// //       min: 1,
-// //       max: 7,
-// //     },
-// //     totalWords: {
-// //       type: Number,
-// //       default: 0,
-// //       min: 0,
-// //     },
-// //     apiCallsUsed: {
-// //       type: Number,
-// //       default: 0,
-// //       min: 0,
-// //     },
-// //     maxApiCalls: {
-// //       type: Number,
-// //       default: 7,
-// //     },
-// //     status: {
-// //       type: String,
-// //       enum: ['active', 'completed', 'paused'],
-// //       default: 'active',
-// //     },
-// //   },
-// //   {
-// //     timestamps: true,
-// //   }
-// // );
-
-// // // Indexes for better query performance
-// // StorySessionSchema.index({ childId: 1, status: 1 });
-// // StorySessionSchema.index({ createdAt: -1 });
-
-// // export default mongoose.models.StorySession ||
-// //   mongoose.model<IStorySession>('StorySession', StorySessionSchema);
-
-// // models/StorySession.ts
-// import mongoose, { Schema, Document } from 'mongoose';
-// import { StoryElements } from '@/types/story';
-
-// export interface IStorySession extends Document {
-//   _id: mongoose.Types.ObjectId;
-//   childId: mongoose.Types.ObjectId;
-//   title: string;
-//   elements: StoryElements;
-//   currentTurn: number;
-//   totalWords: number;
-//   status: 'active' | 'completed' | 'draft';
-//   createdAt: Date;
-//   updatedAt: Date;
-// }
-
-// const StorySessionSchema = new Schema<IStorySession>({
-//   childId: {
-//     type: Schema.Types.ObjectId,
-//     ref: 'User',
-//     required: true
-//   },
-//   title: {
-//     type: String,
-//     required: true,
-//     trim: true,
-//     maxlength: 100
-//   },
-//   elements: {
-//     genre: { type: String, required: true },
-//     character: { type: String, required: true },
-//     setting: { type: String, required: true },
-//     theme: { type: String },
-//     mood: { type: String },
-//     tone: { type: String }
-//   },
-//   currentTurn: {
-//     type: Number,
-//     default: 1,
-//     min: 1,
-//     max: 7
-//   },
-//   totalWords: {
-//     type: Number,
-//     default: 0,
-//     min: 0
-//   },
-//   status: {
-//     type: String,
-//     enum: ['active', 'completed', 'draft'],
-//     default: 'active'
-//   }
-// }, {
-//   timestamps: true
-// });
-
-// // Index for efficient queries
-// StorySessionSchema.index({ childId: 1, status: 1 });
-// StorySessionSchema.index({ childId: 1, updatedAt: -1 });
-
-// export default mongoose.models.StorySession || mongoose.model<IStorySession>('StorySession', StorySessionSchema);
-
-// models/StorySession.ts (ADD AI OPENING FIELD)
+// models/StorySession.ts (COMPLETE REPLACEMENT)
 import mongoose, { Schema, Document } from 'mongoose';
 
 export interface StoryElements {
@@ -139,12 +15,31 @@ export interface IStorySession extends Document {
   childId: mongoose.Types.ObjectId;
   title: string;
   elements: StoryElements;
-  aiOpening?: string; // ✅ Add AI opening field
+  aiOpening?: string;
   currentTurn: number;
   totalWords: number;
+  childWords: number;
   apiCallsUsed: number;
   maxApiCalls: number;
   status: 'active' | 'completed' | 'paused';
+  
+  // Assessment fields
+  assessment?: {
+    grammarScore: number;
+    creativityScore: number;
+    overallScore: number;
+    feedback: string;
+  };
+  overallScore?: number;
+  grammarScore?: number;
+  creativityScore?: number;
+  feedback?: string;
+  completedAt?: Date;
+  pausedAt?: Date;
+  
+  // Draft storage
+  draft?: Record<string, any>;
+  
   createdAt: Date;
   updatedAt: Date;
 }
@@ -163,41 +58,17 @@ const StorySessionSchema = new Schema<IStorySession>({
     maxlength: 100
   },
   elements: {
-    genre: {
-      type: String,
-      required: true,
-      trim: true
-    },
-    character: {
-      type: String,
-      required: true,
-      trim: true
-    },
-    setting: {
-      type: String,
-      required: true,
-      trim: true
-    },
-    theme: {
-      type: String,
-      required: true,
-      trim: true
-    },
-    mood: {
-      type: String,
-      required: true,
-      trim: true
-    },
-    tone: {
-      type: String,
-      required: true,
-      trim: true
-    }
+    genre: { type: String, required: true, trim: true },
+    character: { type: String, required: true, trim: true },
+    setting: { type: String, required: true, trim: true },
+    theme: { type: String, required: true, trim: true },
+    mood: { type: String, required: true, trim: true },
+    tone: { type: String, required: true, trim: true }
   },
   aiOpening: {
     type: String,
     trim: true
-  }, // ✅ AI opening saved once, never changes
+  },
   currentTurn: {
     type: Number,
     required: true,
@@ -206,6 +77,12 @@ const StorySessionSchema = new Schema<IStorySession>({
     default: 1
   },
   totalWords: {
+    type: Number,
+    required: true,
+    min: 0,
+    default: 0
+  },
+  childWords: {
     type: Number,
     required: true,
     min: 0,
@@ -228,6 +105,26 @@ const StorySessionSchema = new Schema<IStorySession>({
     enum: ['active', 'completed', 'paused'],
     default: 'active',
     required: true
+  },
+  
+  // Assessment fields
+  assessment: {
+    grammarScore: { type: Number, min: 0, max: 100 },
+    creativityScore: { type: Number, min: 0, max: 100 },
+    overallScore: { type: Number, min: 0, max: 100 },
+    feedback: { type: String, trim: true }
+  },
+  overallScore: { type: Number, min: 0, max: 100 },
+  grammarScore: { type: Number, min: 0, max: 100 },
+  creativityScore: { type: Number, min: 0, max: 100 },
+  feedback: { type: String, trim: true },
+  completedAt: { type: Date },
+  pausedAt: { type: Date },
+  
+  // Draft storage
+  draft: {
+    type: Schema.Types.Mixed,
+    default: {}
   }
 }, {
   timestamps: true

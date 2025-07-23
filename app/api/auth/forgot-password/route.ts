@@ -1,3 +1,4 @@
+//api/auth/forgot-password/route.ts
 import { NextResponse } from 'next/server';
 import crypto from 'crypto';
 import User from '@/models/User';

@@ -1,12 +1,14 @@
-// models/Turn.ts (KEEP AS IS - min: 1)
+// models/Turn.ts (UPDATED with word count fields)
 import mongoose, { Schema, Document } from 'mongoose';
 
 export interface ITurn extends Document {
+  _id: mongoose.Types.ObjectId;
   sessionId: mongoose.Types.ObjectId;
   turnNumber: number;
   childInput: string;
   aiResponse: string;
-  wordCount: number;
+  childWordCount: number; // ✅ ADD THIS
+  aiWordCount: number;    // ✅ ADD THIS
   createdAt: Date;
   updatedAt: Date;
 }
@@ -20,7 +22,7 @@ const TurnSchema = new Schema<ITurn>({
   turnNumber: {
     type: Number,
     required: true,
-    min: 1, // ✅ Keep as 1 - no Turn 0
+    min: 1,
     max: 7
   },
   childInput: {
@@ -33,7 +35,13 @@ const TurnSchema = new Schema<ITurn>({
     required: true,
     trim: true
   },
-  wordCount: {
+  childWordCount: { // ✅ ADD THIS FIELD
+    type: Number,
+    required: true,
+    min: 0,
+    default: 0
+  },
+  aiWordCount: { // ✅ ADD THIS FIELD
     type: Number,
     required: true,
     min: 0,

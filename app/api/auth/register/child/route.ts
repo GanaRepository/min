@@ -1,3 +1,4 @@
+// app/api/auth/register/child/route.ts
 import { NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import { connectToDatabase } from '@/utils/db';

@@ -1,86 +1,3 @@
-// import mongoose, { Schema } from 'mongoose';
-// import { IUser } from '@/types/auth';
-
-// const UserSchema = new Schema<IUser>(
-//   {
-//     email: {
-//       type: String,
-//       required: true,
-//       lowercase: true,
-//       trim: true,
-//     },
-//     password: {
-//       type: String,
-//       required: true,
-//     },
-//     firstName: {
-//       type: String,
-//       required: true,
-//       trim: true,
-//     },
-//     lastName: {
-//       type: String,
-//       required: true,
-//       trim: true,
-//     },
-//     age: {
-//       type: Number,
-//       required: function (this: IUser) {
-//         return this.role === 'child';
-//       },
-//       min: 2,
-//       max: 18,
-//     },
-//     school: {
-//       type: String,
-//       required: function (this: IUser) {
-//         return this.role === 'child';
-//       },
-//       trim: true,
-//     },
-//     role: {
-//       type: String,
-//       enum: ['admin', 'mentor', 'child'],
-//       required: true,
-//     },
-//     isActive: {
-//       type: Boolean,
-//       default: true,
-//     },
-//     createdBy: {
-//       type: Schema.Types.ObjectId,
-//       ref: 'User',
-//       required: function (this: IUser) {
-//         return this.role === 'mentor';
-//       },
-//     },
-//     assignedMentor: {
-//       type: Schema.Types.ObjectId,
-//       ref: 'User',
-//       default: null,
-//     },
-//     resetPasswordToken: {
-//       type: String,
-//       default: null,
-//     },
-//     resetPasswordExpires: {
-//       type: Date,
-//       default: null,
-//     },
-//   },
-//   {
-//     timestamps: true,
-//   }
-// );
-
-// // Index for better query performance
-// UserSchema.index({ email: 1 }, { unique: true });
-
-// export default mongoose.models.User ||
-//   mongoose.model<IUser>('User', UserSchema);
-
-
-// models/User.ts
 import mongoose, { Schema, Document } from 'mongoose';
 
 export interface IUser extends Document {
@@ -91,26 +8,37 @@ export interface IUser extends Document {
   password: string;
   role: 'child' | 'mentor' | 'admin';
   age?: number;
+  dateOfBirth?: Date;
+  grade?: string;
   school?: string;
+  avatar?: string;
   isActive: boolean;
+  
+  // ADDED: Subscription fields
+  subscriptionTier: 'FREE' | 'BASIC' | 'PREMIUM';
+  subscriptionStatus: 'active' | 'inactive' | 'cancelled';
+  billingPeriodStart?: Date;
+  billingPeriodEnd?: Date;
+  
+  // Writing Statistics
+  totalStoriesCreated: number;
+  storiesCreatedThisMonth: number;
+  totalWordsWritten: number;
+  writingStreak: number;
+  lastActiveDate?: Date;
+  totalTimeWriting: number;
+  
+  // User Preferences
+  preferences: {
+    theme: 'light' | 'dark' | 'auto';
+    language: string;
+    emailNotifications: boolean;
+    soundEffects: boolean;
+    autoSave: boolean;
+  };
+  
   createdAt: Date;
   updatedAt: Date;
-}
-
-// Lean type for queries
-export interface IUserLean {
-  _id: mongoose.Types.ObjectId;
-  firstName: string;
-  lastName: string;
-  email: string;
-  password: string;
-  role: 'child' | 'mentor' | 'admin';
-  age?: number;
-  school?: string;
-  isActive: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-  __v: number;
 }
 
 const UserSchema = new Schema<IUser>({
@@ -148,20 +76,117 @@ const UserSchema = new Schema<IUser>({
     min: 2,
     max: 18
   },
+  dateOfBirth: {
+    type: Date
+  },
+  grade: {
+    type: String,
+    trim: true
+  },
   school: {
     type: String,
     trim: true,
     maxlength: 100
   },
+  avatar: {
+    type: String,
+    trim: true
+  },
   isActive: {
     type: Boolean,
     default: true
+  },
+  
+  // ADDED: Subscription fields with defaults
+  subscriptionTier: {
+    type: String,
+    enum: ['FREE', 'BASIC', 'PREMIUM'],
+    required: true,
+    default: 'FREE'
+  },
+  subscriptionStatus: {
+    type: String,
+    enum: ['active', 'inactive', 'cancelled'],
+    required: true,
+    default: 'active'
+  },
+  billingPeriodStart: {
+    type: Date
+  },
+  billingPeriodEnd: {
+    type: Date
+  },
+  
+  // Writing Statistics - ALL REQUIRED with defaults
+  totalStoriesCreated: {
+    type: Number,
+    required: true,
+    default: 0,
+    min: 0
+  },
+  storiesCreatedThisMonth: {
+    type: Number,
+    required: true,
+    default: 0,
+    min: 0
+  },
+  totalWordsWritten: {
+    type: Number,
+    required: true,
+    default: 0,
+    min: 0
+  },
+  writingStreak: {
+    type: Number,
+    required: true,
+    default: 0,
+    min: 0
+  },
+  lastActiveDate: {
+    type: Date
+  },
+  totalTimeWriting: {
+    type: Number,
+    required: true,
+    default: 0,
+    min: 0
+  },
+  
+  // User Preferences - ALL REQUIRED with defaults
+  preferences: {
+    theme: {
+      type: String,
+      enum: ['light', 'dark', 'auto'],
+      required: true,
+      default: 'dark'
+    },
+    language: {
+      type: String,
+      required: true,
+      default: 'en'
+    },
+    emailNotifications: {
+      type: Boolean,
+      required: true,
+      default: true
+    },
+    soundEffects: {
+      type: Boolean,
+      required: true,
+      default: true
+    },
+    autoSave: {
+      type: Boolean,
+      required: true,
+      default: true
+    }
   }
 }, {
   timestamps: true
 });
 
-UserSchema.index({ email: 1 });
+
 UserSchema.index({ role: 1, isActive: 1 });
+UserSchema.index({ subscriptionTier: 1, subscriptionStatus: 1 }); 
 
 export default mongoose.models.User || mongoose.model<IUser>('User', UserSchema);
