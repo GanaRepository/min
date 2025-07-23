@@ -17,7 +17,7 @@ interface TurnRequest {
 export async function POST(request: Request) {
   try {
     const session = await getServerSession(authOptions);
-    
+
     if (!session || session.user.role !== 'child') {
       return NextResponse.json(
         { error: 'Access denied. Children only.' },
@@ -29,9 +29,9 @@ export async function POST(request: Request) {
     const rateCheck = checkRateLimit(session.user.id, 'story-submit');
     if (!rateCheck.allowed) {
       return NextResponse.json(
-        { 
+        {
           error: rateCheck.message,
-          retryAfter: rateCheck.retryAfter
+          retryAfter: rateCheck.retryAfter,
         },
         { status: 429 }
       );
@@ -49,13 +49,13 @@ export async function POST(request: Request) {
 
     // Validate word count
     const wordCount = childInput.trim().split(/\s+/).filter(Boolean).length;
-    
+
     if (wordCount < 60) {
       return NextResponse.json(
-        { 
+        {
           error: 'Minimum 60 words required',
           currentWords: wordCount,
-          minimumWords: 60
+          minimumWords: 60,
         },
         { status: 400 }
       );
@@ -63,10 +63,10 @@ export async function POST(request: Request) {
 
     if (wordCount > 100) {
       return NextResponse.json(
-        { 
+        {
           error: 'Maximum 100 words allowed',
           currentWords: wordCount,
-          maximumWords: 100
+          maximumWords: 100,
         },
         { status: 400 }
       );
@@ -78,7 +78,7 @@ export async function POST(request: Request) {
     const storySession = await StorySession.findOne({
       _id: sessionId,
       childId: session.user.id,
-      status: 'active'
+      status: 'active',
     });
 
     if (!storySession) {
@@ -106,7 +106,7 @@ export async function POST(request: Request) {
       storySession.elements,
       previousTurns.map((turn: any) => ({
         childInput: turn.childInput,
-        aiResponse: turn.aiResponse
+        aiResponse: turn.aiResponse,
       })),
       childInput,
       turnNumber
@@ -121,7 +121,7 @@ export async function POST(request: Request) {
       childInput,
       aiResponse,
       childWordCount: wordCount,
-      aiWordCount: aiWordCount
+      aiWordCount: aiWordCount,
     });
 
     // Update session
@@ -132,12 +132,12 @@ export async function POST(request: Request) {
         $inc: {
           totalWords: wordCount + aiWordCount,
           childWords: wordCount,
-          apiCallsUsed: 1
+          apiCallsUsed: 1,
         },
         $set: {
           currentTurn: turnNumber + 1,
-          status: isStoryComplete ? 'completed' : 'active'
-        }
+          status: isStoryComplete ? 'completed' : 'active',
+        },
       },
       { new: true }
     );
@@ -150,7 +150,7 @@ export async function POST(request: Request) {
         childInput: turn.childInput,
         aiResponse: turn.aiResponse,
         childWordCount: turn.childWordCount,
-        aiWordCount: turn.aiWordCount
+        aiWordCount: turn.aiWordCount,
       },
       session: {
         currentTurn: updatedSession?.currentTurn,
@@ -159,10 +159,9 @@ export async function POST(request: Request) {
         apiCallsUsed: updatedSession?.apiCallsUsed,
         maxApiCalls: updatedSession?.maxApiCalls,
         status: updatedSession?.status,
-        completed: isStoryComplete
-      }
+        completed: isStoryComplete,
+      },
     });
-
   } catch (error) {
     console.error('Error generating AI response:', error);
     return NextResponse.json(

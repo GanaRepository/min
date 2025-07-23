@@ -6,13 +6,13 @@ export class OpenAIProvider implements AIProviderConfig {
   name = 'OpenAI';
   model = 'gpt-4o-mini'; // Cheapest OpenAI model from your screenshot
   estimatedCost = 0.375; // Average of input and output costs
-  
+
   private client: OpenAI | null = null;
 
   constructor() {
     if (this.isAvailable()) {
       this.client = new OpenAI({
-        apiKey: process.env.OPENAI_API_KEY
+        apiKey: process.env.OPENAI_API_KEY,
       });
     }
   }
@@ -32,12 +32,13 @@ export class OpenAIProvider implements AIProviderConfig {
         messages: [
           {
             role: 'system',
-            content: 'You are a creative writing assistant for children. Keep responses engaging, age-appropriate, and around 50-80 words. Encourage creativity while maintaining a fun, supportive tone.'
+            content:
+              'You are a creative writing assistant for children. Keep responses engaging, age-appropriate, and around 50-80 words. Encourage creativity while maintaining a fun, supportive tone.',
           },
           {
             role: 'user',
-            content: prompt
-          }
+            content: prompt,
+          },
         ],
         max_tokens: 150,
         temperature: 0.8,
@@ -47,11 +48,13 @@ export class OpenAIProvider implements AIProviderConfig {
         content: response.choices[0]?.message?.content || '',
         provider: this.name,
         model: this.model,
-        tokensUsed: response.usage?.total_tokens
+        tokensUsed: response.usage?.total_tokens,
       };
     } catch (error) {
       console.error('OpenAI API error:', error);
-      throw new Error(`OpenAI API failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `OpenAI API failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 }

@@ -9,7 +9,7 @@ import mongoose from 'mongoose';
 export async function GET() {
   try {
     const session = await getServerSession(authOptions);
-    
+
     if (!session || session.user.role !== 'child') {
       return NextResponse.json(
         { error: 'Access denied. Children only.' },
@@ -27,8 +27,9 @@ export async function GET() {
       .lean();
 
     // Transform the data for frontend
-    const stories = storySessions.map(session => ({
+    const stories = storySessions.map((session) => ({
       _id: session._id,
+      storyNumber: session.storyNumber,
       title: session.title,
       elements: session.elements,
       status: session.status,
@@ -44,8 +45,8 @@ export async function GET() {
         overallScore: Math.floor(Math.random() * 20) + 80, // 80-100
         grammarScore: Math.floor(Math.random() * 15) + 80, // 80-95
         creativityScore: Math.floor(Math.random() * 15) + 85, // 85-100
-        publishedAt: session.updatedAt
-      })
+        publishedAt: session.updatedAt,
+      }),
     }));
 
     return NextResponse.json({
@@ -53,13 +54,12 @@ export async function GET() {
       stories,
       stats: {
         total: stories.length,
-        completed: stories.filter(s => s.status === 'completed').length,
-        active: stories.filter(s => s.status === 'active').length,
-        paused: stories.filter(s => s.status === 'paused').length,
-        totalWords: stories.reduce((sum, s) => sum + (s.childWords || 0), 0)
-      }
+        completed: stories.filter((s) => s.status === 'completed').length,
+        active: stories.filter((s) => s.status === 'active').length,
+        paused: stories.filter((s) => s.status === 'paused').length,
+        totalWords: stories.reduce((sum, s) => sum + (s.childWords || 0), 0),
+      },
     });
-
   } catch (error) {
     console.error('Error fetching user stories:', error);
     return NextResponse.json(

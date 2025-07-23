@@ -12,7 +12,7 @@ export async function GET(
 ) {
   try {
     const session = await getServerSession(authOptions);
-    
+
     if (!session || session.user.role !== 'child') {
       return NextResponse.json(
         { error: 'Access denied. Children only.' },
@@ -21,33 +21,33 @@ export async function GET(
     }
 
     const { sessionId } = params;
-
-    if (!mongoose.Types.ObjectId.isValid(sessionId)) {
-      return NextResponse.json(
-        { error: 'Invalid session ID' },
-        { status: 400 }
-      );
-    }
-
     await connectToDatabase();
 
-    const storySession = await StorySession.findOne({
-      _id: sessionId,
-      childId: session.user.id
-    }).lean();
-
+    let storySession = null;
+    // Try to find by ObjectId first
+    if (mongoose.Types.ObjectId.isValid(sessionId)) {
+      storySession = await StorySession.findOne({
+        _id: sessionId,
+        childId: session.user.id,
+      }).lean();
+    }
+    // If not found, try to find by storyNumber
+    if (!storySession && !isNaN(Number(sessionId))) {
+      storySession = await StorySession.findOne({
+        storyNumber: Number(sessionId),
+        childId: session.user.id,
+      }).lean();
+    }
     if (!storySession) {
       return NextResponse.json(
         { error: 'Story session not found' },
         { status: 404 }
       );
     }
-
     return NextResponse.json({
       success: true,
-      session: storySession
+      session: storySession,
     });
-
   } catch (error) {
     console.error('Error fetching story session:', error);
     return NextResponse.json(

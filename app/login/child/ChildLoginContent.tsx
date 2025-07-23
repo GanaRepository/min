@@ -70,7 +70,7 @@ const ChildLoginContent: React.FC = () => {
 
     try {
       console.log('Attempting sign in with callbackUrl:', callbackUrl);
-      
+
       const result = await signIn('credentials', {
         email,
         password,
@@ -83,9 +83,11 @@ const ChildLoginContent: React.FC = () => {
       // NextAuth will handle the redirect automatically if redirect: true
       // If for some reason it doesn't redirect, we can handle it manually
       if (result?.ok && !result?.error) {
-        setToastMessage('Welcome back, young storyteller! Loading your creative space...');
+        setToastMessage(
+          'Welcome back, young storyteller! Loading your creative space...'
+        );
         console.log('Login successful, redirecting to:', callbackUrl);
-        
+
         // Give a short delay to show the success message, then redirect
         setTimeout(() => {
           window.location.href = callbackUrl;

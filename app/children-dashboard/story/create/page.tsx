@@ -12,37 +12,36 @@ export default function CreateStoryFromTokenPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { toast } = useToast();
-  
+
   const [isCreating, setIsCreating] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (status === 'loading') return;
-    
+
     if (!session || session.user.role !== 'child') {
       router.push('/login/child');
       return;
     }
 
     const pendingToken = searchParams?.get('pendingToken');
-    
+
     if (!pendingToken) {
       toast({
-        title: "❌ Error",
-        description: "Missing story creation token. Please start over.",
-        variant: "destructive",
+        title: '❌ Error',
+        description: 'Missing story creation token. Please start over.',
+        variant: 'destructive',
       });
       router.push('/create-stories');
       return;
     }
 
-    // Automatically create story from token
-    createStoryFromToken(pendingToken);
+    // Do NOT automatically create story from token. Only create when user clicks a button or triggers explicitly.
   }, [session, status, searchParams, router, toast]);
 
   const createStoryFromToken = async (token: string) => {
     setIsCreating(true);
-    
+
     try {
       const response = await fetch('/api/stories/create-from-token', {
         method: 'POST',
@@ -65,11 +64,11 @@ export default function CreateStoryFromTokenPage() {
 
       // Navigate to the story writing page
       router.push(`/children-dashboard/story/${data.session.id}`);
-
     } catch (error) {
       console.error('Error creating story from token:', error);
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
-      
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error occurred';
+
       setError(errorMessage);
       toast({
         title: '❌ Creation Failed',
@@ -92,7 +91,7 @@ export default function CreateStoryFromTokenPage() {
         <motion.div
           className="mb-8"
           animate={{ rotate: 360 }}
-          transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+          transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
         >
           <Sparkles className="w-16 h-16 mx-auto text-green-400" />
         </motion.div>
@@ -103,25 +102,34 @@ export default function CreateStoryFromTokenPage() {
           className="space-y-4"
         >
           <h1 className="text-2xl font-bold">
-            {isCreating ? 'Creating Your Magical Story...' : error ? 'Oops! Something went wrong' : 'Loading...'}
+            {isCreating
+              ? 'Creating Your Magical Story...'
+              : error
+                ? 'Oops! Something went wrong'
+                : 'Loading...'}
           </h1>
-          
+
           {isCreating && (
             <p className="text-gray-300">
-              We're preparing your adventure with the story elements you selected. This may take a moment!
+              We're preparing your adventure with the story elements you
+              selected. This may take a moment!
             </p>
           )}
 
           {error && (
             <div className="space-y-4">
               <p className="text-red-300">{error}</p>
-              <p className="text-gray-400">Redirecting you back to story creation...</p>
+              <p className="text-gray-400">
+                Redirecting you back to story creation...
+              </p>
             </div>
           )}
 
           <div className="flex items-center justify-center space-x-2 mt-6">
             <BookOpen className="w-5 h-5 text-blue-400" />
-            <span className="text-sm text-gray-400">Mintoons Creative Writing Platform</span>
+            <span className="text-sm text-gray-400">
+              Mintoons Creative Writing Platform
+            </span>
           </div>
         </motion.div>
       </div>

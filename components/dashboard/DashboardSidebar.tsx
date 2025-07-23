@@ -4,15 +4,15 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { 
-  Home, 
-  Sparkles, 
-  BookOpen, 
-  TrendingUp, 
-  User, 
+import {
+  Home,
+  Sparkles,
+  BookOpen,
+  TrendingUp,
+  User,
   PenTool,
   Trophy,
-  Clock
+  Clock,
 } from 'lucide-react';
 
 interface User {
@@ -32,35 +32,39 @@ const navigationItems = [
     name: 'Dashboard',
     href: '/children-dashboard',
     icon: Home,
-    description: 'Your creative home'
+    description: 'Your creative home',
   },
   {
     name: 'Create Stories',
     href: '/create-stories',
     icon: Sparkles,
-    description: 'Start new adventure'
+    description: 'Start new adventure',
   },
   {
     name: 'My Stories',
     href: '/children-dashboard/my-stories',
     icon: BookOpen,
-    description: 'View your stories'
+    description: 'View your stories',
   },
   {
     name: 'Progress',
     href: '/children-dashboard/progress',
     icon: TrendingUp,
-    description: 'Track your growth'
+    description: 'Track your growth',
   },
   {
     name: 'Profile',
     href: '/children-dashboard/profile',
     icon: User,
-    description: 'Manage your account'
-  }
+    description: 'Manage your account',
+  },
 ];
 
-export default function DashboardSidebar({ isOpen, onClose, user }: DashboardSidebarProps) {
+export default function DashboardSidebar({
+  isOpen,
+  onClose,
+  user,
+}: DashboardSidebarProps) {
   const pathname = usePathname();
 
   return (
@@ -163,12 +167,8 @@ export default function DashboardSidebar({ isOpen, onClose, user }: DashboardSid
                 <Clock className="w-4 h-4 mr-2 text-purple-400" />
                 Continue Writing
               </h3>
-              <p className="text-gray-300 text-sm mb-3">
-                "Magic Forest Quest"
-              </p>
-              <p className="text-xs text-gray-400 mb-3">
-                Turn 3/6 • 245 words
-              </p>
+              <p className="text-gray-300 text-sm mb-3">"Magic Forest Quest"</p>
+              <p className="text-xs text-gray-400 mb-3">Turn 3/6 • 245 words</p>
               <Link href="/children-dashboard/story/current">
                 <motion.button
                   whileHover={{ scale: 1.02 }}

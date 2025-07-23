@@ -12,40 +12,44 @@ export interface IAchievement extends Document {
   updatedAt: Date;
 }
 
-const AchievementSchema = new Schema<IAchievement>({
-  userId: {
-    type: Schema.Types.ObjectId,
-    ref: 'User',
-    required: true,
-    index: true
+const AchievementSchema = new Schema<IAchievement>(
+  {
+    userId: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+      index: true,
+    },
+    title: {
+      type: String,
+      required: true,
+      trim: true,
+      maxlength: 100,
+    },
+    description: {
+      type: String,
+      required: true,
+      trim: true,
+      maxlength: 500,
+    },
+    category: {
+      type: String,
+      enum: ['writing', 'creativity', 'consistency', 'quality'],
+      required: true,
+    },
+    earnedAt: {
+      type: Date,
+      required: true,
+      default: Date.now,
+    },
   },
-  title: {
-    type: String,
-    required: true,
-    trim: true,
-    maxlength: 100
-  },
-  description: {
-    type: String,
-    required: true,
-    trim: true,
-    maxlength: 500
-  },
-  category: {
-    type: String,
-    enum: ['writing', 'creativity', 'consistency', 'quality'],
-    required: true
-  },
-  earnedAt: {
-    type: Date,
-    required: true,
-    default: Date.now
+  {
+    timestamps: true,
   }
-}, {
-  timestamps: true
-});
+);
 
 AchievementSchema.index({ userId: 1, earnedAt: -1 });
 AchievementSchema.index({ category: 1 });
 
-export default mongoose.models.Achievement || mongoose.model<IAchievement>('Achievement', AchievementSchema);
+export default mongoose.models.Achievement ||
+  mongoose.model<IAchievement>('Achievement', AchievementSchema);

@@ -221,20 +221,19 @@ const NotFound = () => {
                 />
               ))}
             </div>
-
           </div>
-            {/* Quote */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 1 }}
-              className="text-center mt-6"
-            >
-              <p className="text-white/80 text-sm italic">
-                "Not all who wander are lost, but this page certainly is!"
-              </p>
-              <p className="text-white/60 text-xs mt-2">- Mintoons Navigator</p>
-            </motion.div>
+          {/* Quote */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 1 }}
+            className="text-center mt-6"
+          >
+            <p className="text-white/80 text-sm italic">
+              "Not all who wander are lost, but this page certainly is!"
+            </p>
+            <p className="text-white/60 text-xs mt-2">- Mintoons Navigator</p>
+          </motion.div>
         </motion.div>
       </motion.div>
 

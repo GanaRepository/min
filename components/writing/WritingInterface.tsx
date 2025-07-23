@@ -27,21 +27,24 @@ export default function WritingInterface({
   onSubmit,
   isSubmitting,
   session,
-  turnNumber
+  turnNumber,
 }: WritingInterfaceProps) {
   const [wordCount, setWordCount] = useState(0);
   const [validation, setValidation] = useState({ isValid: false, message: '' });
-  
+
   const turnRequirement = getTurnRequirement(turnNumber);
 
   useEffect(() => {
-    const words = currentInput.trim().split(/\s+/).filter(word => word.length > 0).length;
+    const words = currentInput
+      .trim()
+      .split(/\s+/)
+      .filter((word) => word.length > 0).length;
     setWordCount(words);
-    
+
     const validationResult = validateTurnInput(currentInput, turnNumber);
     setValidation({
       isValid: validationResult.isValid,
-      message: validationResult.message || ''
+      message: validationResult.message || '',
     });
   }, [currentInput, turnNumber]);
 
@@ -60,9 +63,7 @@ export default function WritingInterface({
         <h3 className="text-white font-semibold text-lg mb-2 flex items-center">
           ✍️ Your Turn to Write
         </h3>
-        <p className="text-gray-400 text-sm">
-          {turnRequirement.guidance}
-        </p>
+        <p className="text-gray-400 text-sm">{turnRequirement.guidance}</p>
       </div>
 
       {/* Writing Area */}
@@ -103,7 +104,7 @@ export default function WritingInterface({
       )}
 
       {/* Writing Tips */}
-      <WritingTips 
+      <WritingTips
         turnNumber={turnNumber}
         elements={session}
         className="mb-4"
@@ -114,7 +115,9 @@ export default function WritingInterface({
         whileHover={{ scale: validation.isValid ? 1.02 : 1 }}
         whileTap={{ scale: validation.isValid ? 0.98 : 1 }}
         onClick={onSubmit}
-        disabled={!validation.isValid || isSubmitting || session.status === 'completed'}
+        disabled={
+          !validation.isValid || isSubmitting || session.status === 'completed'
+        }
         className={`w-full flex items-center justify-center space-x-2 py-3 px-6 rounded-lg font-medium transition-all ${
           validation.isValid && !isSubmitting && session.status !== 'completed'
             ? 'bg-gradient-to-r from-green-500 to-blue-600 text-white hover:from-green-600 hover:to-blue-700'
@@ -145,4 +148,3 @@ export default function WritingInterface({
     </div>
   );
 }
-

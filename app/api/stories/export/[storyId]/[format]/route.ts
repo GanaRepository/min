@@ -24,7 +24,7 @@ export async function GET(
 ) {
   try {
     const session = await getServerSession(authOptions);
-    
+
     if (!session || session.user.role !== 'child') {
       return NextResponse.json(
         { error: 'Access denied. Children only.' },
@@ -44,16 +44,13 @@ export async function GET(
     await connectToDatabase();
 
     // Get the story with proper typing
-    const story = await PublishedStory.findOne({
+    const story = (await PublishedStory.findOne({
       _id: storyId,
-      childId: session.user.id
-    }).lean() as PublishedStoryType | null;
+      childId: session.user.id,
+    }).lean()) as PublishedStoryType | null;
 
     if (!story) {
-      return NextResponse.json(
-        { error: 'Story not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Story not found' }, { status: 404 });
     }
 
     // Prepare story data
@@ -69,13 +66,13 @@ export async function GET(
         setting: 'Forest',
         theme: 'Adventure',
         mood: 'Exciting',
-        tone: 'Brave'
+        tone: 'Brave',
       },
       scores: {
         grammar: story.grammarScore,
         creativity: story.creativityScore,
-        overall: story.overallScore
-      }
+        overall: story.overallScore,
+      },
     };
 
     let fileBlob: Blob;
@@ -91,7 +88,8 @@ export async function GET(
       const wordGenerator = new WordGenerator();
       fileBlob = await wordGenerator.generateStoryDocument(storyData);
       filename = `${story.title}.docx`;
-      contentType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+      contentType =
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
     }
 
     // Convert blob to buffer for NextJS response
@@ -104,7 +102,6 @@ export async function GET(
         'Content-Length': buffer.length.toString(),
       },
     });
-
   } catch (error) {
     console.error('Error exporting story:', error);
     return NextResponse.json(

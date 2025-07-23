@@ -3,7 +3,6 @@ import React from 'react';
 import { Metadata, Viewport } from 'next';
 import Hero from '@/components/home/Hero';
 
-
 export const viewport: Viewport = {
   themeColor: '#0a192f',
 };

@@ -33,7 +33,7 @@ export default function StoryFilters({
   activeFilter,
   onFilterChange,
   sortBy,
-  onSortChange
+  onSortChange,
 }: StoryFiltersProps) {
   const [showSortMenu, setShowSortMenu] = useState(false);
 
@@ -68,7 +68,7 @@ export default function StoryFilters({
         >
           <Filter className="w-4 h-4" />
           <span className="text-sm">
-            {sortOptions.find(opt => opt.value === sortBy)?.label}
+            {sortOptions.find((opt) => opt.value === sortBy)?.label}
           </span>
           <ChevronDown className="w-4 h-4" />
         </motion.button>

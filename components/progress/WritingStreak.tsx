@@ -9,26 +9,29 @@ interface WritingStreakProps {
   className?: string;
 }
 
-export default function WritingStreak({ currentStreak, className }: WritingStreakProps) {
+export default function WritingStreak({
+  currentStreak,
+  className,
+}: WritingStreakProps) {
   // Generate streak calendar for the last 30 days
   const generateStreakData = () => {
     const days = [];
     const today = new Date();
-    
+
     for (let i = 29; i >= 0; i--) {
       const date = new Date(today);
       date.setDate(date.getDate() - i);
-      
+
       // Simulate streak data - in real app this would come from API
       const hasWritten = i < currentStreak;
-      
+
       days.push({
         date: date.getDate(),
         hasWritten,
-        isToday: i === 0
+        isToday: i === 0,
       });
     }
-    
+
     return days;
   };
 
@@ -89,9 +92,7 @@ export default function WritingStreak({ currentStreak, className }: WritingStrea
           >
             <span className="text-2xl">🎯</span>
           </motion.div>
-          <div className="text-3xl font-bold text-green-400 mb-1">
-            30
-          </div>
+          <div className="text-3xl font-bold text-green-400 mb-1">30</div>
           <div className="text-gray-400 text-sm">Next Goal</div>
         </div>
       </div>
@@ -113,8 +114,8 @@ export default function WritingStreak({ currentStreak, className }: WritingStrea
                 day.hasWritten
                   ? 'bg-green-500 text-white'
                   : day.isToday
-                  ? 'bg-yellow-500 text-gray-900'
-                  : 'bg-gray-700 text-gray-400'
+                    ? 'bg-yellow-500 text-gray-900'
+                    : 'bg-gray-700 text-gray-400'
               }`}
               title={day.hasWritten ? 'Wrote this day' : 'No writing'}
             >
@@ -136,14 +137,13 @@ export default function WritingStreak({ currentStreak, className }: WritingStrea
         className="mt-6 p-4 bg-gradient-to-r from-orange-500/20 to-red-500/20 border border-orange-500/30 rounded-lg"
       >
         <p className="text-orange-300 text-sm text-center">
-          {currentStreak === 0 
-            ? "Start your writing streak today! Every great writer begins with a single word." 
-            : currentStreak < 7 
-            ? `Amazing start! Keep going to reach a 7-day streak! 🌟`
-            : currentStreak < 30
-            ? `Incredible ${currentStreak}-day streak! You're on fire! 🔥`
-            : `Legendary ${currentStreak}-day streak! You're a writing champion! 👑`
-          }
+          {currentStreak === 0
+            ? 'Start your writing streak today! Every great writer begins with a single word.'
+            : currentStreak < 7
+              ? `Amazing start! Keep going to reach a 7-day streak! 🌟`
+              : currentStreak < 30
+                ? `Incredible ${currentStreak}-day streak! You're on fire! 🔥`
+                : `Legendary ${currentStreak}-day streak! You're a writing champion! 👑`}
         </p>
       </motion.div>
     </motion.div>

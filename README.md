@@ -30,7 +30,6 @@ Mintoons is an AI-powered, child-friendly story creation platform. It empowers c
    ```
 
 3. Set up environment variables:
-
    - Copy `.env.example` to `.env.local` and fill in the required values (MongoDB URI, NextAuth secrets, etc).
 
 4. Start the development server:

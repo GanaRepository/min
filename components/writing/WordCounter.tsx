@@ -23,7 +23,7 @@
 //   const progress = Math.min((currentWords / minWords) * 100, 100);
 //   const overallProgress = Math.min((totalStoryWords / 600) * 100, 100);
 //   const status = getWordCountStatus(totalStoryWords, turnNumber);
-  
+
 //   const isComplete = currentWords >= minWords;
 //   const isOverTarget = currentWords > maxWords;
 
@@ -120,9 +120,9 @@ interface WordCounterProps {
   turnNumber?: number;
 }
 
-export default function WordCounter({ 
-  current, 
-  min, 
+export default function WordCounter({
+  current,
+  min,
   max = 150,
   className = '',
   // Legacy props
@@ -130,7 +130,7 @@ export default function WordCounter({
   minWords,
   maxWords,
   totalStoryWords,
-  turnNumber
+  turnNumber,
 }: WordCounterProps) {
   // Use new props if available, fallback to legacy props
   const wordCount = current ?? currentWords ?? 0;
@@ -194,11 +194,11 @@ export default function WordCounter({
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       className={`p-3 rounded-lg border backdrop-blur-sm ${
-        status === 'insufficient' 
-          ? 'bg-yellow-500/10 border-yellow-500/30' 
+        status === 'insufficient'
+          ? 'bg-yellow-500/10 border-yellow-500/30'
           : status === 'good'
-          ? 'bg-green-500/10 border-green-500/30'
-          : 'bg-orange-500/10 border-orange-500/30'
+            ? 'bg-green-500/10 border-green-500/30'
+            : 'bg-orange-500/10 border-orange-500/30'
       } ${className}`}
     >
       <div className="flex items-center justify-between mb-2">
@@ -220,19 +220,17 @@ export default function WordCounter({
           animate={{ width: `${Math.min(percentage, 100)}%` }}
           transition={{ duration: 0.3 }}
           className={`h-2 rounded-full ${
-            status === 'insufficient' 
-              ? 'bg-yellow-400' 
+            status === 'insufficient'
+              ? 'bg-yellow-400'
               : status === 'good'
-              ? 'bg-green-400'
-              : 'bg-orange-400'
+                ? 'bg-green-400'
+                : 'bg-orange-400'
           }`}
         />
       </div>
 
       {/* Status Message */}
-      <p className={`text-xs ${getStatusColor()}`}>
-        {getStatusMessage()}
-      </p>
+      <p className={`text-xs ${getStatusColor()}`}>{getStatusMessage()}</p>
 
       {/* Additional info for legacy usage */}
       {totalStoryWords !== undefined && (

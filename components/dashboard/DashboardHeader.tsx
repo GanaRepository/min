@@ -4,15 +4,15 @@
 import { useState } from 'react';
 import { signOut } from 'next-auth/react';
 import { motion } from 'framer-motion';
-import { 
-  Menu, 
-  Bell, 
-  Search, 
-  User, 
-  LogOut, 
+import {
+  Menu,
+  Bell,
+  Search,
+  User,
+  LogOut,
   Settings,
   Trophy,
-  Sparkles
+  Sparkles,
 } from 'lucide-react';
 
 interface User {
@@ -26,7 +26,10 @@ interface DashboardHeaderProps {
   onMenuClick: () => void;
 }
 
-export default function DashboardHeader({ user, onMenuClick }: DashboardHeaderProps) {
+export default function DashboardHeader({
+  user,
+  onMenuClick,
+}: DashboardHeaderProps) {
   const [showProfileMenu, setShowProfileMenu] = useState(false);
 
   const handleSignOut = async () => {

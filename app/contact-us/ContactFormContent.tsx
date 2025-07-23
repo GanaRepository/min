@@ -1,5 +1,3 @@
-
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -188,18 +186,18 @@ export default function MintoonsContactPage() {
       <div className="relative z-10 min-h-screen flex mt-16">
         <div className="w-full lg:w-1/2 flex items-center justify-center p-8 lg:p-16">
           <div className="max-w-xl">
-                 {/* Floating badge */}
-                              <motion.div
-                                className="mt-12 mb-12 inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-green-500/20 to-teal-500/20 border border-green-400/30 backdrop-blur-xl"
-                                initial={{ opacity: 0, x: -50 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                transition={{ delay: 0.2, duration: 0.8 }}
-                              >
-                                <Sparkles className="w-4 h-4 text-green-400 mr-2" />
-                                <span className="text-green-200 font-medium text-sm">
-                                  Creative Writing Education Platform
-                                </span>
-                              </motion.div>
+            {/* Floating badge */}
+            <motion.div
+              className="mt-12 mb-12 inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-green-500/20 to-teal-500/20 border border-green-400/30 backdrop-blur-xl"
+              initial={{ opacity: 0, x: -50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.2, duration: 0.8 }}
+            >
+              <Sparkles className="w-4 h-4 text-green-400 mr-2" />
+              <span className="text-green-200 font-medium text-sm">
+                Creative Writing Education Platform
+              </span>
+            </motion.div>
 
             <h1 className="text-5xl lg:text-7xl font-black text-slate-100 mb-6 leading-none">
               How can we help you

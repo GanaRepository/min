@@ -7,7 +7,7 @@ import { Sparkles, Sun, Moon, Coffee } from 'lucide-react';
 
 export default function WelcomeSection() {
   const { data: session } = useSession();
-  
+
   const getGreeting = () => {
     const hour = new Date().getHours();
     if (hour < 12) return { text: 'Good morning', icon: Sun };
@@ -37,7 +37,7 @@ export default function WelcomeSection() {
               <GreetingIcon className="w-5 h-5" />
               <span className="text-sm font-medium">{greeting.text}</span>
             </motion.div>
-            
+
             <motion.h1
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
@@ -46,7 +46,7 @@ export default function WelcomeSection() {
             >
               🌟 Welcome back, {session?.user?.firstName || 'Writer'}!
             </motion.h1>
-            
+
             <motion.p
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
@@ -56,16 +56,16 @@ export default function WelcomeSection() {
               Ready for another amazing adventure?
             </motion.p>
           </div>
-          
+
           <motion.div
-            animate={{ 
+            animate={{
               rotate: [0, 10, -10, 0],
-              scale: [1, 1.1, 1]
+              scale: [1, 1.1, 1],
             }}
-            transition={{ 
+            transition={{
               duration: 2,
               repeat: Infinity,
-              repeatDelay: 3
+              repeatDelay: 3,
             }}
             className="text-4xl"
           >

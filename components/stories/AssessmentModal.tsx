@@ -4,15 +4,15 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
-import { 
-  X, 
-  Star, 
-  Award, 
-  Download, 
-  Share2, 
+import {
+  X,
+  Star,
+  Award,
+  Download,
+  Share2,
   BookOpen,
   TrendingUp,
-  Sparkles
+  Sparkles,
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
@@ -37,15 +37,15 @@ interface AssessmentData {
   feedback: string;
 }
 
-export default function AssessmentModal({ 
-  isOpen, 
-  onClose, 
-  storySession, 
-  turns 
+export default function AssessmentModal({
+  isOpen,
+  onClose,
+  storySession,
+  turns,
 }: AssessmentModalProps) {
   const router = useRouter();
   const { toast } = useToast();
-  
+
   const [assessment, setAssessment] = useState<AssessmentData | null>(null);
   const [isAssessing, setIsAssessing] = useState(false);
   const [isPublishing, setIsPublishing] = useState(false);
@@ -58,13 +58,13 @@ export default function AssessmentModal({
 
   const generateAssessment = async () => {
     if (!storySession) return;
-    
+
     setIsAssessing(true);
-    
+
     try {
       // Combine all story content
-      const fullStory = turns.map(turn => turn.childInput).join('\n\n');
-      
+      const fullStory = turns.map((turn) => turn.childInput).join('\n\n');
+
       const response = await fetch('/api/stories/ai-assess', {
         method: 'POST',
         headers: {
@@ -83,7 +83,6 @@ export default function AssessmentModal({
       }
 
       setAssessment(data.assessment);
-
     } catch (error) {
       console.error('Error generating assessment:', error);
       // Fallback assessment
@@ -91,7 +90,8 @@ export default function AssessmentModal({
         grammarScore: 85,
         creativityScore: 92,
         overallScore: 88,
-        feedback: "Great job on your creative story! You showed wonderful imagination and your writing has improved. Keep practicing and let your creativity shine!"
+        feedback:
+          'Great job on your creative story! You showed wonderful imagination and your writing has improved. Keep practicing and let your creativity shine!',
       });
     } finally {
       setIsAssessing(false);
@@ -100,9 +100,9 @@ export default function AssessmentModal({
 
   const handlePublishStory = async () => {
     if (!storySession || !assessment) return;
-    
+
     setIsPublishing(true);
-    
+
     try {
       const response = await fetch('/api/stories/publish', {
         method: 'POST',
@@ -122,18 +122,17 @@ export default function AssessmentModal({
       }
 
       toast({
-        title: "🎉 Story Published!",
-        description: "Your amazing story is now in your library!",
+        title: '🎉 Story Published!',
+        description: 'Your amazing story is now in your library!',
       });
 
       router.push('/children-dashboard/my-stories');
-
     } catch (error) {
       console.error('Error publishing story:', error);
       toast({
-        title: "❌ Error",
-        description: "Failed to publish story. Please try again.",
-        variant: "destructive",
+        title: '❌ Error',
+        description: 'Failed to publish story. Please try again.',
+        variant: 'destructive',
       });
     } finally {
       setIsPublishing(false);
@@ -196,17 +195,33 @@ export default function AssessmentModal({
                 transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
                 className="w-12 h-12 border-4 border-purple-500/30 border-t-purple-500 rounded-full mx-auto mb-4"
               />
-              <p className="text-white font-medium">Analyzing your amazing story...</p>
-              <p className="text-gray-400 text-sm mt-2">This will just take a moment!</p>
+              <p className="text-white font-medium">
+                Analyzing your amazing story...
+              </p>
+              <p className="text-gray-400 text-sm mt-2">
+                This will just take a moment!
+              </p>
             </div>
           ) : assessment ? (
             <div className="space-y-6">
               {/* Scores */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 {[
-                  { label: 'Grammar', score: assessment.grammarScore, icon: BookOpen },
-                  { label: 'Creativity', score: assessment.creativityScore, icon: Sparkles },
-                  { label: 'Overall', score: assessment.overallScore, icon: Award },
+                  {
+                    label: 'Grammar',
+                    score: assessment.grammarScore,
+                    icon: BookOpen,
+                  },
+                  {
+                    label: 'Creativity',
+                    score: assessment.creativityScore,
+                    icon: Sparkles,
+                  },
+                  {
+                    label: 'Overall',
+                    score: assessment.overallScore,
+                    icon: Award,
+                  },
                 ].map((item, index) => (
                   <motion.div
                     key={item.label}
@@ -216,10 +231,14 @@ export default function AssessmentModal({
                     className="bg-gray-700/50 rounded-xl p-4 text-center"
                   >
                     <item.icon className="w-6 h-6 text-gray-400 mx-auto mb-2" />
-                    <div className={`text-2xl font-bold mb-1 ${getScoreColor(item.score)}`}>
+                    <div
+                      className={`text-2xl font-bold mb-1 ${getScoreColor(item.score)}`}
+                    >
                       {item.score}%
                     </div>
-                    <div className="text-gray-300 text-sm mb-3">{item.label}</div>
+                    <div className="text-gray-300 text-sm mb-3">
+                      {item.label}
+                    </div>
                     <div className="w-full bg-gray-600 rounded-full h-2">
                       <motion.div
                         initial={{ width: 0 }}
@@ -259,19 +278,27 @@ export default function AssessmentModal({
                 </h3>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
                   <div>
-                    <div className="text-green-400 font-bold text-lg">{storySession.totalWords}</div>
+                    <div className="text-green-400 font-bold text-lg">
+                      {storySession.totalWords}
+                    </div>
                     <div className="text-gray-400 text-xs">Words</div>
                   </div>
                   <div>
-                    <div className="text-blue-400 font-bold text-lg">{turns.length}</div>
+                    <div className="text-blue-400 font-bold text-lg">
+                      {turns.length}
+                    </div>
                     <div className="text-gray-400 text-xs">Turns</div>
                   </div>
                   <div>
-                    <div className="text-purple-400 font-bold text-lg">Grade 3-4</div>
+                    <div className="text-purple-400 font-bold text-lg">
+                      Grade 3-4
+                    </div>
                     <div className="text-gray-400 text-xs">Reading Level</div>
                   </div>
                   <div>
-                    <div className="text-orange-400 font-bold text-lg">42 min</div>
+                    <div className="text-orange-400 font-bold text-lg">
+                      42 min
+                    </div>
                     <div className="text-gray-400 text-xs">Writing Time</div>
                   </div>
                 </div>

@@ -18,7 +18,7 @@ interface StoryCreationRequest {
 export async function POST(request: Request) {
   try {
     const session = await getServerSession(authOptions);
-    
+
     if (!session || session.user.role !== 'child') {
       return NextResponse.json(
         { error: 'Access denied. Children only.' },
@@ -30,9 +30,9 @@ export async function POST(request: Request) {
     const rateCheck = checkRateLimit(session.user.id, 'story-create');
     if (!rateCheck.allowed) {
       return NextResponse.json(
-        { 
+        {
           error: rateCheck.message,
-          retryAfter: rateCheck.retryAfter
+          retryAfter: rateCheck.retryAfter,
         },
         { status: 429 }
       );
@@ -42,7 +42,14 @@ export async function POST(request: Request) {
     const { elements } = body;
 
     // Validate required elements
-    const requiredElements = ['genre', 'character', 'setting', 'theme', 'mood', 'tone'];
+    const requiredElements = [
+      'genre',
+      'character',
+      'setting',
+      'theme',
+      'mood',
+      'tone',
+    ];
     for (const element of requiredElements) {
       if (!elements[element as keyof StoryElements]) {
         return NextResponse.json(
@@ -60,19 +67,20 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-
     // Centralized limit check using config and user's subscription tier
     // Use DEFAULT_TIER as fallback if user's subscription tier is missing or invalid
     const tierKey = user.subscriptionTier?.toUpperCase() || 'FREE';
     const tierObj = SUBSCRIPTION_TIERS[tierKey] || DEFAULT_TIER;
     const limit = tierObj.storyLimit;
-    const userStoryCount = await StorySession.countDocuments({ 
+    const userStoryCount = await StorySession.countDocuments({
       childId: user._id,
-      createdAt: { $gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) }
+      createdAt: { $gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) },
     });
     if (userStoryCount >= limit) {
       return NextResponse.json(
-        { error: `Monthly story limit reached (${limit} stories allowed, you have created ${userStoryCount}).` },
+        {
+          error: `Monthly story limit reached (${limit} stories allowed, you have created ${userStoryCount}).`,
+        },
         { status: 402 }
       );
     }
@@ -86,13 +94,14 @@ export async function POST(request: Request) {
       'elements.theme': elements.theme,
       'elements.mood': elements.mood,
       'elements.tone': elements.tone,
-      status: 'active'
+      status: 'active',
     });
     if (existingSession) {
       return NextResponse.json({
         success: true,
         session: {
           id: existingSession._id,
+          storyNumber: existingSession.storyNumber,
           title: existingSession.title,
           elements: existingSession.elements,
           currentTurn: existingSession.currentTurn,
@@ -100,9 +109,9 @@ export async function POST(request: Request) {
           childWords: existingSession.childWords,
           apiCallsUsed: existingSession.apiCallsUsed,
           maxApiCalls: existingSession.maxApiCalls,
-          status: existingSession.status
+          status: existingSession.status,
         },
-        aiOpening: existingSession.aiOpening
+        aiOpening: existingSession.aiOpening,
       });
     }
 
@@ -112,9 +121,18 @@ export async function POST(request: Request) {
     // Generate AI opening
     const aiOpening = await collaborationEngine.generateOpeningPrompt(elements);
 
+    // Find next available storyNumber for this child
+    const lastSession = await StorySession.findOne({ childId: user._id })
+      .sort({ storyNumber: -1 })
+      .select('storyNumber');
+    const nextStoryNumber = lastSession?.storyNumber
+      ? lastSession.storyNumber + 1
+      : 1;
+
     // Create new story session
     const newSession = await StorySession.create({
       childId: session.user.id,
+      storyNumber: nextStoryNumber,
       title,
       elements,
       aiOpening,
@@ -123,22 +141,23 @@ export async function POST(request: Request) {
       childWords: 0,
       apiCallsUsed: 1, // Opening generation
       maxApiCalls: 7,
-      status: 'active'
+      status: 'active',
     });
 
     // Update user statistics
     await User.findByIdAndUpdate(session.user.id, {
-      $inc: { 
+      $inc: {
         totalStoriesCreated: 1,
-        storiesCreatedThisMonth: 1
+        storiesCreatedThisMonth: 1,
       },
-      $set: { lastActiveDate: new Date() }
+      $set: { lastActiveDate: new Date() },
     });
 
     return NextResponse.json({
       success: true,
       session: {
         id: newSession._id,
+        storyNumber: newSession.storyNumber,
         title: newSession.title,
         elements: newSession.elements,
         currentTurn: newSession.currentTurn,
@@ -146,11 +165,10 @@ export async function POST(request: Request) {
         childWords: newSession.childWords,
         apiCallsUsed: newSession.apiCallsUsed,
         maxApiCalls: newSession.maxApiCalls,
-        status: newSession.status
+        status: newSession.status,
       },
-      aiOpening
+      aiOpening,
     });
-
   } catch (error) {
     console.error('Error creating story session:', error);
     return NextResponse.json(

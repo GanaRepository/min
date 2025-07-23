@@ -23,7 +23,7 @@ export default function EmptyState({
   actionHref,
   onAction,
   icon: Icon,
-  className = ''
+  className = '',
 }: EmptyStateProps) {
   const ActionComponent = actionHref ? Link : 'button';
 
@@ -60,7 +60,7 @@ export default function EmptyState({
         {description}
       </motion.p>
 
-      {(actionText && (actionHref || onAction)) && (
+      {actionText && (actionHref || onAction) && (
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -86,49 +86,49 @@ export function NoStoriesEmpty() {
       title="No stories yet"
       description="Start creating your first amazing story and let your imagination run wild!"
       // components/shared/EmptyStates.tsx (continued)
-     actionText="Create Your First Story"
-     actionHref="/create-stories"
-     icon={BookOpen}
-   />
- );
+      actionText="Create Your First Story"
+      actionHref="/create-stories"
+      icon={BookOpen}
+    />
+  );
 }
 
 export function NoSearchResultsEmpty({ query }: { query: string }) {
- return (
-   <EmptyState
-     title="No stories found"
-     description={`We couldn't find any stories matching "${query}". Try adjusting your search or filters.`}
-     icon={Search}
-   />
- );
+  return (
+    <EmptyState
+      title="No stories found"
+      description={`We couldn't find any stories matching "${query}". Try adjusting your search or filters.`}
+      icon={Search}
+    />
+  );
 }
 
 export function NoAchievementsEmpty() {
- return (
-   <EmptyState
-     title="No achievements yet"
-     description="Keep writing amazing stories to unlock your first achievement badge!"
-     icon={Trophy}
-   />
- );
+  return (
+    <EmptyState
+      title="No achievements yet"
+      description="Keep writing amazing stories to unlock your first achievement badge!"
+      icon={Trophy}
+    />
+  );
 }
 
-export function ErrorState({ 
- title = "Something went wrong", 
- description = "We encountered an error. Please try again.",
- onRetry 
+export function ErrorState({
+  title = 'Something went wrong',
+  description = 'We encountered an error. Please try again.',
+  onRetry,
 }: {
- title?: string;
- description?: string;
- onRetry?: () => void;
+  title?: string;
+  description?: string;
+  onRetry?: () => void;
 }) {
- return (
-   <EmptyState
-     title={title}
-     description={description}
-     actionText="Try Again"
-     onAction={onRetry}
-     icon={AlertCircle}
-   />
- );
+  return (
+    <EmptyState
+      title={title}
+      description={description}
+      actionText="Try Again"
+      onAction={onRetry}
+      icon={AlertCircle}
+    />
+  );
 }

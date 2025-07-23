@@ -12,14 +12,11 @@ export async function GET(request: Request) {
     const token = searchParams.get('token');
 
     if (!token) {
-      return NextResponse.json(
-        { error: 'Token required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Token required' }, { status: 400 });
     }
 
     const stored = pendingElements.get(token);
-    
+
     if (!stored) {
       return NextResponse.json(
         { error: 'Token not found or expired' },
@@ -30,22 +27,20 @@ export async function GET(request: Request) {
     // Check if expired
     if (Date.now() > stored.timestamp) {
       pendingElements.delete(token);
-      return NextResponse.json(
-        { error: 'Token expired' },
-        { status: 410 }
-      );
+      return NextResponse.json({ error: 'Token expired' }, { status: 410 });
     }
 
-    console.log(`📦 Retrieved pending elements with token: ${token.substring(0, 8)}...`);
+    console.log(
+      `📦 Retrieved pending elements with token: ${token.substring(0, 8)}...`
+    );
 
     // Clean up after use
     pendingElements.delete(token);
 
     return NextResponse.json({
       success: true,
-      elements: stored.elements
+      elements: stored.elements,
     });
-
   } catch (error) {
     console.error('Error retrieving pending elements:', error);
     return NextResponse.json(

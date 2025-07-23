@@ -16,7 +16,7 @@ interface WordCountValidatorProps {
 const WORD_REQUIREMENTS = {
   min: 60,
   max: 100,
-  optimal: 80
+  optimal: 80,
 };
 
 export default function WordCountValidator({
@@ -24,21 +24,25 @@ export default function WordCountValidator({
   onChange,
   turnNumber,
   onValidationChange,
-  disabled = false
+  disabled = false,
 }: WordCountValidatorProps) {
   const [wordCount, setWordCount] = useState(0);
   const [isValid, setIsValid] = useState(false);
 
   // FIXED: Simple word counting function
   const countWords = (text: string): number => {
-    return text.trim().split(/\s+/).filter(word => word.length > 0).length;
+    return text
+      .trim()
+      .split(/\s+/)
+      .filter((word) => word.length > 0).length;
   };
 
   useEffect(() => {
     const count = countWords(value);
     setWordCount(count);
-    
-    const valid = count >= WORD_REQUIREMENTS.min && count <= WORD_REQUIREMENTS.max;
+
+    const valid =
+      count >= WORD_REQUIREMENTS.min && count <= WORD_REQUIREMENTS.max;
     setIsValid(valid);
     onValidationChange(valid, count);
   }, [value, onValidationChange]);
@@ -52,19 +56,27 @@ export default function WordCountValidator({
 
   const getStatusColor = () => {
     switch (getValidationStatus()) {
-      case 'too-short': return 'text-yellow-400 border-yellow-500/50 bg-yellow-500/10';
-      case 'too-long': return 'text-red-400 border-red-500/50 bg-red-500/10';
-      case 'valid': return 'text-green-400 border-green-500/50 bg-green-500/10';
-      default: return 'text-gray-400 border-gray-600/50 bg-gray-800/50';
+      case 'too-short':
+        return 'text-yellow-400 border-yellow-500/50 bg-yellow-500/10';
+      case 'too-long':
+        return 'text-red-400 border-red-500/50 bg-red-500/10';
+      case 'valid':
+        return 'text-green-400 border-green-500/50 bg-green-500/10';
+      default:
+        return 'text-gray-400 border-gray-600/50 bg-gray-800/50';
     }
   };
 
   const getStatusIcon = () => {
     switch (getValidationStatus()) {
-      case 'too-short': return <AlertCircle className="w-5 h-5 text-yellow-400" />;
-      case 'too-long': return <AlertCircle className="w-5 h-5 text-red-400" />;
-      case 'valid': return <CheckCircle className="w-5 h-5 text-green-400" />;
-      default: return <Target className="w-5 h-5 text-gray-400" />;
+      case 'too-short':
+        return <AlertCircle className="w-5 h-5 text-yellow-400" />;
+      case 'too-long':
+        return <AlertCircle className="w-5 h-5 text-red-400" />;
+      case 'valid':
+        return <CheckCircle className="w-5 h-5 text-green-400" />;
+      default:
+        return <Target className="w-5 h-5 text-gray-400" />;
     }
   };
 
@@ -89,21 +101,21 @@ export default function WordCountValidator({
 
   const getTurnGuidance = () => {
     const guidance: Record<number, string> = {
-      1: "Start your adventure! Introduce your character and setting.",
-      2: "What happens next? Add some action or dialogue.",
-      3: "Develop the story! What challenges does your character face?",
-      4: "Build excitement! How does the tension grow?",
+      1: 'Start your adventure! Introduce your character and setting.',
+      2: 'What happens next? Add some action or dialogue.',
+      3: 'Develop the story! What challenges does your character face?',
+      4: 'Build excitement! How does the tension grow?',
       5: "Climax time! What's the biggest moment in your story?",
-      6: "Bring it home! How does your amazing story end?"
+      6: 'Bring it home! How does your amazing story end?',
     };
-    
+
     return guidance[turnNumber] || guidance[6];
   };
 
   return (
     <div className="space-y-4">
       {/* Turn Guidance */}
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         className="bg-blue-500/20 border border-blue-500/30 rounded-xl p-4"
@@ -124,7 +136,8 @@ export default function WordCountValidator({
           <div className="flex items-center space-x-2">
             {getStatusIcon()}
             <span className="font-semibold">
-              Word Count: {wordCount} / {WORD_REQUIREMENTS.min}-{WORD_REQUIREMENTS.max}
+              Word Count: {wordCount} / {WORD_REQUIREMENTS.min}-
+              {WORD_REQUIREMENTS.max}
             </span>
           </div>
         </div>
@@ -133,11 +146,11 @@ export default function WordCountValidator({
         <div className="w-full bg-gray-700/50 rounded-full h-2 mb-3 overflow-hidden">
           <motion.div
             className={`h-full transition-all duration-500 ${
-              getValidationStatus() === 'valid' 
-                ? 'bg-green-500' 
+              getValidationStatus() === 'valid'
+                ? 'bg-green-500'
                 : getValidationStatus() === 'too-long'
-                ? 'bg-red-500'
-                : 'bg-yellow-500'
+                  ? 'bg-red-500'
+                  : 'bg-yellow-500'
             }`}
             initial={{ width: 0 }}
             animate={{ width: `${Math.min(getProgressPercentage(), 100)}%` }}
@@ -156,30 +169,32 @@ export default function WordCountValidator({
           disabled={disabled}
           placeholder={`Turn ${turnNumber}: ${getTurnGuidance()}\n\nStart writing here... (${WORD_REQUIREMENTS.min}-${WORD_REQUIREMENTS.max} words)`}
           className={`w-full h-48 p-6 bg-gray-800/60 border rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 transition-all resize-none ${
-            disabled 
-              ? 'cursor-not-allowed opacity-50' 
+            disabled
+              ? 'cursor-not-allowed opacity-50'
               : getValidationStatus() === 'valid'
-              ? 'border-green-500/50 focus:ring-green-500/25'
-              : getValidationStatus() === 'too-long'
-              ? 'border-red-500/50 focus:ring-red-500/25'
-              : 'border-gray-600/50 focus:ring-blue-500/25'
+                ? 'border-green-500/50 focus:ring-green-500/25'
+                : getValidationStatus() === 'too-long'
+                  ? 'border-red-500/50 focus:ring-red-500/25'
+                  : 'border-gray-600/50 focus:ring-blue-500/25'
           }`}
         />
 
         {/* Character indicator in corner */}
-        <div className={`absolute bottom-4 right-4 px-3 py-1 rounded-lg text-xs font-mono ${
-          getValidationStatus() === 'valid'
-            ? 'bg-green-500/20 text-green-300'
-            : getValidationStatus() === 'too-long'
-            ? 'bg-red-500/20 text-red-300'
-            : 'bg-gray-700/50 text-gray-400'
-        }`}>
+        <div
+          className={`absolute bottom-4 right-4 px-3 py-1 rounded-lg text-xs font-mono ${
+            getValidationStatus() === 'valid'
+              ? 'bg-green-500/20 text-green-300'
+              : getValidationStatus() === 'too-long'
+                ? 'bg-red-500/20 text-red-300'
+                : 'bg-gray-700/50 text-gray-400'
+          }`}
+        >
           {wordCount} words
         </div>
       </div>
 
       {/* Writing Tips */}
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.3 }}

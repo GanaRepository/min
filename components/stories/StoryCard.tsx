@@ -3,14 +3,14 @@
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { 
-  Clock, 
-  Star, 
-  Download, 
-  Eye, 
+import {
+  Clock,
+  Star,
+  Download,
+  Eye,
   Edit,
   MoreVertical,
-  Play
+  Play,
 } from 'lucide-react';
 
 interface Story {
@@ -66,7 +66,7 @@ export default function StoryCard({ story, viewMode }: StoryCardProps) {
     return new Date(dateString).toLocaleDateString('en-US', {
       month: 'short',
       day: 'numeric',
-      year: 'numeric'
+      year: 'numeric',
     });
   };
 
@@ -81,9 +81,13 @@ export default function StoryCard({ story, viewMode }: StoryCardProps) {
             {/* Story Icon */}
             <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-600 rounded-xl flex items-center justify-center flex-shrink-0">
               <span className="text-2xl">
-                {story.elements.genre === 'fantasy' ? '🧙‍♀️' : 
-                 story.elements.genre === 'space' ? '🚀' :
-                 story.elements.genre === 'animals' ? '🐾' : '📖'}
+                {story.elements.genre === 'fantasy'
+                  ? '🧙‍♀️'
+                  : story.elements.genre === 'space'
+                    ? '🚀'
+                    : story.elements.genre === 'animals'
+                      ? '🐾'
+                      : '📖'}
               </span>
             </div>
 
@@ -97,26 +101,37 @@ export default function StoryCard({ story, viewMode }: StoryCardProps) {
                   {getStatusIcon(story.status)}
                 </span>
               </div>
-              
+
               <div className="flex items-center space-x-4 text-sm text-gray-400 mb-2">
                 <span>{story.totalWords} words</span>
                 <span>•</span>
                 <span>{formatDate(story.publishedAt)}</span>
                 <span>•</span>
-                <span className="capitalize">{story.status.replace('_', ' ')}</span>
+                <span className="capitalize">
+                  {story.status.replace('_', ' ')}
+                </span>
               </div>
 
               <div className="flex items-center space-x-4">
                 {story.status === 'published' && (
                   <>
                     <div className="text-xs text-gray-400">
-                      Grammar: <span className="text-green-400 font-medium">{story.grammarScore}%</span>
+                      Grammar:{' '}
+                      <span className="text-green-400 font-medium">
+                        {story.grammarScore}%
+                      </span>
                     </div>
                     <div className="text-xs text-gray-400">
-                      Creativity: <span className="text-blue-400 font-medium">{story.creativityScore}%</span>
+                      Creativity:{' '}
+                      <span className="text-blue-400 font-medium">
+                        {story.creativityScore}%
+                      </span>
                     </div>
                     <div className="text-xs text-gray-400">
-                      Overall: <span className="text-purple-400 font-medium">{story.overallScore}%</span>
+                      Overall:{' '}
+                      <span className="text-purple-400 font-medium">
+                        {story.overallScore}%
+                      </span>
                     </div>
                   </>
                 )}
@@ -161,11 +176,13 @@ export default function StoryCard({ story, viewMode }: StoryCardProps) {
       whileHover={{ y: -4, transition: { duration: 0.2 } }}
       className="group relative"
     >
-      <Link href={
-        story.status === 'in_progress' 
-          ? `/children-dashboard/story/${story._id}`
-          : `/children-dashboard/my-stories/${story._id}`
-      }>
+      <Link
+        href={
+          story.status === 'in_progress'
+            ? `/children-dashboard/story/${story._id}`
+            : `/children-dashboard/my-stories/${story._id}`
+        }
+      >
         <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl overflow-hidden shadow-xl cursor-pointer">
           {/* Header */}
           <div className="relative h-32 bg-gradient-to-br from-purple-500 via-pink-600 to-orange-600 overflow-hidden">
@@ -175,7 +192,9 @@ export default function StoryCard({ story, viewMode }: StoryCardProps) {
             </div>
 
             {/* Status indicator */}
-            <div className={`absolute top-3 right-3 text-lg ${getStatusColor(story.status)}`}>
+            <div
+              className={`absolute top-3 right-3 text-lg ${getStatusColor(story.status)}`}
+            >
               {getStatusIcon(story.status)}
             </div>
 
@@ -186,10 +205,15 @@ export default function StoryCard({ story, viewMode }: StoryCardProps) {
                 transition={{ duration: 0.3 }}
                 className="text-6xl opacity-80"
               >
-                {story.elements.genre === 'fantasy' ? '🧙‍♀️' : 
-                 story.elements.genre === 'space' ? '🚀' :
-                 story.elements.genre === 'animals' ? '🐾' : 
-                 story.elements.genre === 'adventure' ? '🗺️' : '📖'}
+                {story.elements.genre === 'fantasy'
+                  ? '🧙‍♀️'
+                  : story.elements.genre === 'space'
+                    ? '🚀'
+                    : story.elements.genre === 'animals'
+                      ? '🐾'
+                      : story.elements.genre === 'adventure'
+                        ? '🗺️'
+                        : '📖'}
               </motion.div>
             </div>
           </div>
@@ -202,14 +226,16 @@ export default function StoryCard({ story, viewMode }: StoryCardProps) {
 
             {/* Story elements */}
             <div className="flex flex-wrap gap-2 mb-4">
-              {Object.values(story.elements).slice(0, 3).map((element, index) => (
-                <span
-                  key={index}
-                  className="px-2 py-1 bg-gray-700/50 rounded-full text-xs text-gray-300"
-                >
-                  {element}
-                </span>
-              ))}
+              {Object.values(story.elements)
+                .slice(0, 3)
+                .map((element, index) => (
+                  <span
+                    key={index}
+                    className="px-2 py-1 bg-gray-700/50 rounded-full text-xs text-gray-300"
+                  >
+                    {element}
+                  </span>
+                ))}
             </div>
 
             {/* Stats */}
@@ -253,7 +279,9 @@ export default function StoryCard({ story, viewMode }: StoryCardProps) {
                   : 'bg-blue-500 hover:bg-blue-600 text-white'
               }`}
             >
-              {story.status === 'in_progress' ? 'Continue Writing' : 'View Story'}
+              {story.status === 'in_progress'
+                ? 'Continue Writing'
+                : 'View Story'}
             </motion.button>
           </div>
 

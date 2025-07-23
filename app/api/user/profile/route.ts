@@ -11,7 +11,7 @@ import mongoose from 'mongoose';
 export async function GET() {
   try {
     const session = await getServerSession(authOptions);
-    
+
     if (!session || session.user.role !== 'child') {
       return NextResponse.json(
         { error: 'Access denied. Children only.' },
@@ -24,21 +24,30 @@ export async function GET() {
     const userId = new mongoose.Types.ObjectId(session.user.id);
 
     // Get user data with proper casting
-    const user = await User.findById(userId).lean() as unknown as any;
+    const user = (await User.findById(userId).lean()) as unknown as any;
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
     // Get story statistics with proper casting
-    const completedSessions = await StorySession.find({ 
-      childId: userId, 
-      status: 'completed' 
-    }).lean() as unknown as any[];
+    const completedSessions = (await StorySession.find({
+      childId: userId,
+      status: 'completed',
+    }).lean()) as unknown as any[];
 
-    const totalWords = completedSessions.reduce((sum: number, session: any) => sum + (session.childWords || 0), 0);
-    const averageScore = completedSessions.length > 0 
-      ? Math.round(completedSessions.reduce((sum: number, session: any) => sum + (session.overallScore || 0), 0) / completedSessions.length)
-      : 0;
+    const totalWords = completedSessions.reduce(
+      (sum: number, session: any) => sum + (session.childWords || 0),
+      0
+    );
+    const averageScore =
+      completedSessions.length > 0
+        ? Math.round(
+            completedSessions.reduce(
+              (sum: number, session: any) => sum + (session.overallScore || 0),
+              0
+            ) / completedSessions.length
+          )
+        : 0;
 
     // Calculate favorite genre
     const genreCounts: Record<string, number> = {};
@@ -48,14 +57,17 @@ export async function GET() {
         genreCounts[genre] = (genreCounts[genre] || 0) + 1;
       }
     });
-    const favoriteGenre = Object.keys(genreCounts).length > 0 
-      ? Object.keys(genreCounts).reduce((a, b) => genreCounts[a] > genreCounts[b] ? a : b)
-      : 'Adventure';
+    const favoriteGenre =
+      Object.keys(genreCounts).length > 0
+        ? Object.keys(genreCounts).reduce((a, b) =>
+            genreCounts[a] > genreCounts[b] ? a : b
+          )
+        : 'Adventure';
 
     // Get achievements with proper casting
-    const achievements = await Achievement.find({ userId })
+    const achievements = (await Achievement.find({ userId })
       .sort({ earnedAt: -1 })
-      .lean() as unknown as any[];
+      .lean()) as unknown as any[];
 
     return NextResponse.json({
       success: true,
@@ -70,7 +82,7 @@ export async function GET() {
           school: user.school,
           avatar: user.avatar,
           joinedAt: user.createdAt,
-          lastActiveDate: user.lastActiveDate
+          lastActiveDate: user.lastActiveDate,
         },
         stats: {
           totalStoriesCreated: completedSessions.length,
@@ -78,23 +90,22 @@ export async function GET() {
           averageScore,
           writingStreak: user.writingStreak || 0,
           favoriteGenre,
-          totalTimeWriting: user.totalTimeWriting || 0
+          totalTimeWriting: user.totalTimeWriting || 0,
         },
         preferences: {
           theme: user.preferences?.theme || 'dark',
           language: user.preferences?.language || 'en',
           emailNotifications: user.preferences?.emailNotifications ?? true,
           soundEffects: user.preferences?.soundEffects ?? true,
-          autoSave: user.preferences?.autoSave ?? true
+          autoSave: user.preferences?.autoSave ?? true,
         },
         achievements: achievements.map((achievement: any) => ({
           id: achievement._id,
           title: achievement.title,
-          earnedAt: achievement.earnedAt
-        }))
-      }
+          earnedAt: achievement.earnedAt,
+        })),
+      },
     });
-
   } catch (error) {
     console.error('Error fetching profile data:', error);
     return NextResponse.json(
@@ -107,7 +118,7 @@ export async function GET() {
 export async function PATCH(request: Request) {
   try {
     const session = await getServerSession(authOptions);
-    
+
     if (!session || session.user.role !== 'child') {
       return NextResponse.json(
         { error: 'Access denied. Children only.' },
@@ -135,7 +146,7 @@ export async function PATCH(request: Request) {
         firstName: firstName.trim(),
         lastName: lastName.trim(),
         ...(grade && { grade }),
-        ...(school && { school: school.trim() })
+        ...(school && { school: school.trim() }),
       },
       { new: true }
     );
@@ -146,9 +157,8 @@ export async function PATCH(request: Request) {
 
     return NextResponse.json({
       success: true,
-      message: 'Profile updated successfully'
+      message: 'Profile updated successfully',
     });
-
   } catch (error) {
     console.error('Error updating profile:', error);
     return NextResponse.json(

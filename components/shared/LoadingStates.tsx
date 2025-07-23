@@ -9,7 +9,10 @@ interface LoadingStateProps {
   className?: string;
 }
 
-export function BasicLoading({ message = "Loading...", className }: LoadingStateProps) {
+export function BasicLoading({
+  message = 'Loading...',
+  className,
+}: LoadingStateProps) {
   return (
     <div className={`flex items-center justify-center p-8 ${className}`}>
       <div className="text-center">
@@ -33,20 +36,20 @@ export function StoryLoadingState() {
         className="text-center text-white"
       >
         <motion.div
-          animate={{ 
+          animate={{
             scale: [1, 1.2, 1],
-            rotateY: [0, 180, 360]
+            rotateY: [0, 180, 360],
           }}
-          transition={{ 
-            duration: 2, 
-            repeat: Infinity, 
-            ease: 'easeInOut' 
+          transition={{
+            duration: 2,
+            repeat: Infinity,
+            ease: 'easeInOut',
           }}
           className="text-6xl mb-6"
         >
           📚
         </motion.div>
-        
+
         <motion.h2
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -55,7 +58,7 @@ export function StoryLoadingState() {
         >
           Loading your creative space...
         </motion.h2>
-        
+
         <motion.div
           initial={{ width: 0 }}
           animate={{ width: '100%' }}
@@ -75,34 +78,34 @@ export function AIThinkingState() {
       className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-6 text-center"
     >
       <motion.div
-        animate={{ 
+        animate={{
           scale: [1, 1.1, 1],
-          opacity: [0.7, 1, 0.7]
+          opacity: [0.7, 1, 0.7],
         }}
-        transition={{ 
-          duration: 1.5, 
-          repeat: Infinity, 
-          ease: 'easeInOut' 
+        transition={{
+          duration: 1.5,
+          repeat: Infinity,
+          ease: 'easeInOut',
         }}
         className="text-4xl mb-4"
       >
         🤖
       </motion.div>
-      
+
       <h3 className="text-white font-medium mb-2">AI is thinking...</h3>
       <p className="text-gray-400 text-sm mb-4">
         Creating the perfect response to continue your story
       </p>
-      
+
       <div className="flex justify-center space-x-1">
         {[0, 1, 2].map((i) => (
           <motion.div
             key={i}
             animate={{ y: [0, -10, 0] }}
-            transition={{ 
-              duration: 0.6, 
-              repeat: Infinity, 
-              delay: i * 0.2 
+            transition={{
+              duration: 0.6,
+              repeat: Infinity,
+              delay: i * 0.2,
             }}
             className="w-2 h-2 bg-green-400 rounded-full"
           />
@@ -114,9 +117,9 @@ export function AIThinkingState() {
 
 export function CreatingStoryState() {
   const steps = [
-    { icon: Sparkles, text: "Selecting elements", delay: 0 },
-    { icon: BookOpen, text: "Building story world", delay: 0.5 },
-    { icon: PenTool, text: "Preparing AI assistant", delay: 1 },
+    { icon: Sparkles, text: 'Selecting elements', delay: 0 },
+    { icon: BookOpen, text: 'Building story world', delay: 0.5 },
+    { icon: PenTool, text: 'Preparing AI assistant', delay: 1 },
   ];
 
   return (
@@ -133,9 +136,11 @@ export function CreatingStoryState() {
         >
           ✨
         </motion.div>
-        
-        <h2 className="text-2xl font-bold mb-6">Creating Your Magical Story...</h2>
-        
+
+        <h2 className="text-2xl font-bold mb-6">
+          Creating Your Magical Story...
+        </h2>
+
         <div className="space-y-4">
           {steps.map((step, index) => (
             <motion.div
@@ -146,14 +151,14 @@ export function CreatingStoryState() {
               className="flex items-center space-x-3"
             >
               <motion.div
-                animate={{ 
+                animate={{
                   scale: [1, 1.2, 1],
-                  opacity: [0.7, 1, 0.7]
+                  opacity: [0.7, 1, 0.7],
                 }}
-                transition={{ 
-                  duration: 1, 
-                  repeat: Infinity, 
-                  delay: step.delay + 0.5 
+                transition={{
+                  duration: 1,
+                  repeat: Infinity,
+                  delay: step.delay + 0.5,
                 }}
                 className="w-8 h-8 bg-green-500/20 rounded-full flex items-center justify-center"
               >
@@ -171,7 +176,7 @@ export function CreatingStoryState() {
             </motion.div>
           ))}
         </div>
-        
+
         <motion.div
           initial={{ width: 0 }}
           animate={{ width: '100%' }}

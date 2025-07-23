@@ -8,7 +8,14 @@ interface GenreAnalysisProps {
   genreBreakdown: Array<{ genre: string; count: number; percentage: number }>;
 }
 
-const COLORS = ['#10B981', '#3B82F6', '#8B5CF6', '#F59E0B', '#EF4444', '#06B6D4'];
+const COLORS = [
+  '#10B981',
+  '#3B82F6',
+  '#8B5CF6',
+  '#F59E0B',
+  '#EF4444',
+  '#06B6D4',
+];
 
 export default function GenreAnalysis({ genreBreakdown }: GenreAnalysisProps) {
   return (
@@ -36,7 +43,10 @@ export default function GenreAnalysis({ genreBreakdown }: GenreAnalysisProps) {
                 label={({ percentage }) => `${percentage}%`}
               >
                 {genreBreakdown.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={COLORS[index % COLORS.length]}
+                  />
                 ))}
               </Pie>
               <Tooltip
@@ -44,9 +54,12 @@ export default function GenreAnalysis({ genreBreakdown }: GenreAnalysisProps) {
                   backgroundColor: '#1F2937',
                   border: '1px solid #374151',
                   borderRadius: '8px',
-                  color: '#F9FAFB'
+                  color: '#F9FAFB',
                 }}
-                formatter={(value: number, name) => [`${value} stories`, 'Count']}
+                formatter={(value: number, name) => [
+                  `${value} stories`,
+                  'Count',
+                ]}
               />
             </PieChart>
           </ResponsiveContainer>

@@ -7,7 +7,6 @@ interface TurnContext {
 }
 
 export class AICollaborationEngine {
-  
   async generateOpeningPrompt(elements: StoryElements): Promise<string> {
     const prompt = `You are a supportive AI writing teacher for children. Create an engaging story opening that:
 
@@ -33,7 +32,10 @@ Example structure: "Meet [character] in [setting]. Something interesting happens
       const response = await smartAIProvider.generateResponse(prompt);
       return response;
     } catch (error) {
-      console.error('AI opening generation failed, using educational fallback:', error);
+      console.error(
+        'AI opening generation failed, using educational fallback:',
+        error
+      );
       return this.getEducationalFallbackOpening(elements);
     }
   }
@@ -45,11 +47,14 @@ Example structure: "Meet [character] in [setting]. Something interesting happens
     turnNumber: number
   ): Promise<string> {
     const storyContext = previousTurns
-      .map((turn, index) => `Turn ${index + 1}:\nChild: ${turn.childInput}\nAI: ${turn.aiResponse}`)
+      .map(
+        (turn, index) =>
+          `Turn ${index + 1}:\nChild: ${turn.childInput}\nAI: ${turn.aiResponse}`
+      )
       .join('\n\n');
 
     const educationalGuidance = this.getEducationalGuidanceForTurn(turnNumber);
-    
+
     const prompt = `You are a supportive AI writing teacher helping a child write a ${elements.genre} story. 
 
 Current Story Context:
@@ -75,13 +80,16 @@ Respond as a supportive teacher who celebrates creativity while guiding learning
       const response = await smartAIProvider.generateResponse(prompt);
       return response;
     } catch (error) {
-      console.error(`AI response generation failed for turn ${turnNumber}, using educational fallback:`, error);
+      console.error(
+        `AI response generation failed for turn ${turnNumber}, using educational fallback:`,
+        error
+      );
       return this.getEducationalFallbackResponse(turnNumber, childInput);
     }
   }
 
   async generateAssessment(
-    storyContent: string, 
+    storyContent: string,
     totalWords: number,
     childAge?: number
   ): Promise<{
@@ -117,58 +125,64 @@ Feedback: [detailed encouraging feedback with specific examples]`;
     try {
       const response = await smartAIProvider.generateResponse(prompt);
       return this.parseAssessmentResponse(response, totalWords);
-      } catch (error) {
-      console.error('AI assessment generation failed, using educational fallback:', error);
+    } catch (error) {
+      console.error(
+        'AI assessment generation failed, using educational fallback:',
+        error
+      );
       return this.getEducationalFallbackAssessment(totalWords);
     }
   }
 
   private getEducationalGuidanceForTurn(turnNumber: number): string {
     const guidanceMap: Record<number, string> = {
-      1: "Help them develop their opening with vivid descriptions and character introduction",
-      2: "Encourage conflict or challenge introduction while building on their ideas", 
+      1: 'Help them develop their opening with vivid descriptions and character introduction',
+      2: 'Encourage conflict or challenge introduction while building on their ideas',
       3: "Guide them to develop the story's main problem or adventure",
-      4: "Help them build tension and excitement in the story",
-      5: "Support them in creating a climactic moment or turning point",
-      6: "Assist them in crafting a satisfying conclusion that ties everything together"
+      4: 'Help them build tension and excitement in the story',
+      5: 'Support them in creating a climactic moment or turning point',
+      6: 'Assist them in crafting a satisfying conclusion that ties everything together',
     };
-    
+
     return guidanceMap[turnNumber] || guidanceMap[6];
   }
 
   private getEducationalFallbackOpening(elements: StoryElements): string {
     const openings = [
       `Meet a brave ${elements.character.toLowerCase()} in the amazing ${elements.setting.toLowerCase()}! Something ${elements.mood.toLowerCase()} is about to happen in this ${elements.genre.toLowerCase()} adventure. What do you think your ${elements.character.toLowerCase()} discovers first?`,
-      
+
       `Welcome to ${elements.setting.toLowerCase()}, where a ${elements.character.toLowerCase()} begins an incredible ${elements.genre.toLowerCase()} journey! The atmosphere feels ${elements.mood.toLowerCase()} and full of possibilities. How does your story begin?`,
-      
-      `In a ${elements.mood.toLowerCase()} ${elements.setting.toLowerCase()}, our ${elements.character.toLowerCase()} hero starts a ${elements.genre.toLowerCase()} tale about ${elements.theme.toLowerCase()}. What exciting thing happens first in your adventure?`
+
+      `In a ${elements.mood.toLowerCase()} ${elements.setting.toLowerCase()}, our ${elements.character.toLowerCase()} hero starts a ${elements.genre.toLowerCase()} tale about ${elements.theme.toLowerCase()}. What exciting thing happens first in your adventure?`,
     ];
-    
+
     return openings[Math.floor(Math.random() * openings.length)];
   }
 
-  private getEducationalFallbackResponse(turnNumber: number, childInput: string): string {
+  private getEducationalFallbackResponse(
+    turnNumber: number,
+    childInput: string
+  ): string {
     const responses = [
       `Wonderful writing! I love how you're developing this story. Your creativity really shows in how you described that scene. What exciting challenge does your character face next?`,
-      
+
       `Excellent work! You're building such an engaging adventure. I can picture everything you've written so clearly. What happens when your character tries to solve this problem?`,
-      
+
       `Amazing storytelling! You've created such vivid details that make me want to know more. How does your brave character handle this new situation?`,
-      
+
       `Fantastic imagination! Your story is taking such interesting turns. I'm excited to see where you take us next. What does your character do now?`,
-      
+
       `Outstanding creativity! You're weaving together all the story elements beautifully. What final challenge awaits your character in this adventure?`,
-      
-      `Incredible conclusion building! You're bringing all the pieces together so well. How does your amazing story end?`
+
+      `Incredible conclusion building! You're bringing all the pieces together so well. How does your amazing story end?`,
     ];
-    
+
     const responseIndex = Math.min(turnNumber - 1, responses.length - 1);
     return responses[responseIndex];
   }
 
   private parseAssessmentResponse(
-    aiResponse: string, 
+    aiResponse: string,
     totalWords: number
   ): {
     grammarScore: number;
@@ -181,7 +195,8 @@ Feedback: [detailed encouraging feedback with specific examples]`;
       let grammarScore = 85;
       let creativityScore = 88;
       let overallScore = 86;
-      let feedback = "Great job on your creative story! Your imagination really shines through.";
+      let feedback =
+        'Great job on your creative story! Your imagination really shines through.';
 
       // Parse AI response
       for (const line of lines) {
@@ -202,15 +217,17 @@ Feedback: [detailed encouraging feedback with specific examples]`;
       // Ensure scores are within valid range
       grammarScore = Math.max(70, Math.min(100, grammarScore));
       creativityScore = Math.max(70, Math.min(100, creativityScore));
-      overallScore = Math.max(70, Math.min(100, Math.round((grammarScore + creativityScore) / 2)));
+      overallScore = Math.max(
+        70,
+        Math.min(100, Math.round((grammarScore + creativityScore) / 2))
+      );
 
       return {
         grammarScore,
         creativityScore,
         overallScore,
-        feedback
+        feedback,
       };
-
     } catch (error) {
       console.error('Error parsing assessment response:', error);
       return this.getEducationalFallbackAssessment(totalWords);
@@ -230,19 +247,20 @@ Feedback: [detailed encouraging feedback with specific examples]`;
 
     const feedbackOptions = [
       `Excellent work on your ${totalWords}-word story! Your imagination really shines through, and your writing skills are developing wonderfully. Try adding even more descriptive words to make your scenes come alive!`,
-      
+
       `What a creative and engaging story! You've written ${totalWords} words of pure imagination. Your storytelling abilities are impressive. Consider adding more dialogue to make your characters even more realistic!`,
-      
+
       `Outstanding storytelling! Your ${totalWords}-word adventure is filled with creativity and excitement. Your writing skills are truly developing nicely. Keep experimenting with different sentence lengths for variety!`,
-      
-      `Wonderful imagination at work! I love how you developed your story across ${totalWords} words. Your creative voice is getting stronger with each story. Try using more sensory details to help readers feel like they're right there with your characters!`
+
+      `Wonderful imagination at work! I love how you developed your story across ${totalWords} words. Your creative voice is getting stronger with each story. Try using more sensory details to help readers feel like they're right there with your characters!`,
     ];
 
     return {
       grammarScore,
       creativityScore,
       overallScore,
-      feedback: feedbackOptions[Math.floor(Math.random() * feedbackOptions.length)]
+      feedback:
+        feedbackOptions[Math.floor(Math.random() * feedbackOptions.length)],
     };
   }
 }

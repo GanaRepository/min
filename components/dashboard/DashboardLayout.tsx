@@ -25,7 +25,7 @@
 
 //   useEffect(() => {
 //     if (status === 'loading') return;
-    
+
 //     if (!session) {
 //       router.push('/login/child');
 //       return;
@@ -152,7 +152,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
   useEffect(() => {
     if (status === 'loading') return;
-    
+
     if (!session) {
       router.push('/login/child');
       return;
@@ -222,17 +222,21 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                   </motion.button>
                 </Link>
                 <div className="border-l border-gray-600 pl-4">
-                  <h1 className="text-white font-semibold text-lg">✍️ Story Writing</h1>
+                  <h1 className="text-white font-semibold text-lg">
+                    ✍️ Story Writing
+                  </h1>
                 </div>
               </div>
-              
+
               <div className="flex items-center space-x-3">
                 <div className="w-8 h-8 bg-gradient-to-r from-purple-400 to-pink-500 rounded-full flex items-center justify-center">
                   <span className="text-white font-semibold text-sm">
                     {session.user.firstName.charAt(0)}
                   </span>
                 </div>
-                <span className="text-white text-sm">{session.user.firstName}</span>
+                <span className="text-white text-sm">
+                  {session.user.firstName}
+                </span>
               </div>
             </div>
           </div>

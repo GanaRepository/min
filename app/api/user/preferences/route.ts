@@ -8,7 +8,7 @@ import User from '@/models/User';
 export async function PATCH(request: Request) {
   try {
     const session = await getServerSession(authOptions);
-    
+
     if (!session || session.user.role !== 'child') {
       return NextResponse.json(
         { error: 'Access denied. Children only.' },
@@ -17,11 +17,17 @@ export async function PATCH(request: Request) {
     }
 
     const body = await request.json();
-    const allowedPreferences = ['theme', 'language', 'emailNotifications', 'soundEffects', 'autoSave'];
-    
+    const allowedPreferences = [
+      'theme',
+      'language',
+      'emailNotifications',
+      'soundEffects',
+      'autoSave',
+    ];
+
     // Validate that only allowed preferences are being updated
     const updateData: Record<string, any> = {};
-    Object.keys(body).forEach(key => {
+    Object.keys(body).forEach((key) => {
       if (allowedPreferences.includes(key)) {
         updateData[`preferences.${key}`] = body[key];
       }
@@ -49,9 +55,8 @@ export async function PATCH(request: Request) {
 
     return NextResponse.json({
       success: true,
-      message: 'Preferences updated successfully'
+      message: 'Preferences updated successfully',
     });
-
   } catch (error) {
     console.error('Error updating preferences:', error);
     return NextResponse.json(

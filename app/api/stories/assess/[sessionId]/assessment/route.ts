@@ -11,7 +11,7 @@ export async function GET(
 ) {
   try {
     const session = await getServerSession(authOptions);
-    
+
     if (!session || session.user.role !== 'child') {
       return NextResponse.json(
         { error: 'Access denied. Children only.' },
@@ -23,11 +23,11 @@ export async function GET(
 
     await connectToDatabase();
 
-    const storySession = await StorySession.findOne({
+    const storySession = (await StorySession.findOne({
       _id: sessionId,
       childId: session.user.id,
-      status: 'completed'
-    }).lean() as IStorySession | null;
+      status: 'completed',
+    }).lean()) as IStorySession | null;
 
     if (!storySession) {
       return NextResponse.json(
@@ -45,9 +45,8 @@ export async function GET(
 
     return NextResponse.json({
       success: true,
-      assessment: storySession.assessment
+      assessment: storySession.assessment,
     });
-
   } catch (error) {
     console.error('Error fetching assessment:', error);
     return NextResponse.json(

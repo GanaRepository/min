@@ -21,7 +21,9 @@ export default function MobileNavigation({ className }: MobileNavigationProps) {
   const pathname = usePathname();
 
   return (
-    <nav className={`fixed bottom-0 left-0 right-0 bg-gray-800/95 backdrop-blur-xl border-t border-gray-600/40 ${className}`}>
+    <nav
+      className={`fixed bottom-0 left-0 right-0 bg-gray-800/95 backdrop-blur-xl border-t border-gray-600/40 ${className}`}
+    >
       <div className="flex items-center justify-around py-2">
         {mobileNavItems.map((item) => {
           const isActive = pathname === item.href;

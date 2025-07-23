@@ -118,7 +118,7 @@ export const authOptions: NextAuthOptions = {
       },
     }),
   ],
-  
+
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
@@ -140,7 +140,7 @@ export const authOptions: NextAuthOptions = {
     },
     async redirect({ url, baseUrl }) {
       // Handle redirects after authentication
-      
+
       // If there's a callbackUrl in the URL, use it
       if (url.includes('callbackUrl=')) {
         const urlParams = new URLSearchParams(url.split('?')[1]);
@@ -149,23 +149,23 @@ export const authOptions: NextAuthOptions = {
           return decodeURIComponent(callbackUrl);
         }
       }
-      
+
       // If URL is relative, prepend baseUrl
       if (url.startsWith('/')) {
         return `${baseUrl}${url}`;
       }
-      
+
       // If URL is on the same origin, allow it
       if (new URL(url).origin === baseUrl) {
         return url;
       }
-      
+
       // Default redirect for different roles
       // For direct logins without callbackUrl, redirect to create-stories
       return `${baseUrl}/create-stories`;
     },
   },
-  
+
   pages: {
     signIn: '/login/child',
     error: '/auth/error',

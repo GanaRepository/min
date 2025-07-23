@@ -19,18 +19,18 @@
 // //   storyElements?: any; // ✅ Add story elements prop
 // // }
 
-// // export default function StoryTimeline({ 
-// //   turns, 
-// //   currentTurn, 
-// //   aiOpening, 
-// //   storyElements 
+// // export default function StoryTimeline({
+// //   turns,
+// //   currentTurn,
+// //   aiOpening,
+// //   storyElements
 // // }: StoryTimelineProps) {
 // //   return (
 // //     <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-6">
 // //       <h3 className="text-white font-semibold text-lg mb-4 flex items-center">
 // //         📖 Story So Far
 // //       </h3>
-      
+
 // //       <div className="space-y-4 max-h-96 overflow-y-auto pr-2">
 // //         {/* ✅ Show AI Opening First (if exists) */}
 // //         {aiOpening && (
@@ -139,7 +139,7 @@
 // //             </motion.div>
 // //           ))
 // //         )}
-        
+
 // //         {/* Current turn indicator */}
 // //         {currentTurn <= 6 && (
 // //           <motion.div
@@ -189,21 +189,21 @@
 //   </div>
 // );
 
-// export default function StoryTimeline({ 
-//   turns, 
-//   currentTurn, 
-//   aiOpening, 
+// export default function StoryTimeline({
+//   turns,
+//   currentTurn,
+//   aiOpening,
 //   storyElements,
-//   isAiTyping = false 
+//   isAiTyping = false
 // }: StoryTimelineProps) {
 //   return (
 //     <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-6">
 //       <h3 className="text-white font-semibold text-lg mb-4 flex items-center">
 //         💬 Story Chat
 //       </h3>
-      
+
 //       <div className="space-y-4 max-h-96 overflow-y-auto pr-2">
-        
+
 //         {/* ✅ 1. CHILD: Selected Story Elements (LEFT SIDE) */}
 //         {storyElements && (
 //           <motion.div
@@ -257,7 +257,7 @@
 //         {/* ✅ 3. STORY TURNS - Alternating Chat Format */}
 //         {turns.map((turn, index) => (
 //           <div key={`turn-${turn.turnNumber}`} className="space-y-3">
-            
+
 //             {/* Child's Input (LEFT SIDE) */}
 //             <motion.div
 //               initial={{ opacity: 0, y: 20 }}
@@ -325,7 +325,7 @@
 //             </div>
 //           </motion.div>
 //         )}
-        
+
 //         {/* Current turn indicator */}
 //         {currentTurn <= 6 && !isAiTyping && (
 //           <motion.div
@@ -352,7 +352,6 @@
 //   );
 // }
 
-
 // components/writing/StoryTimeline.tsx (FIXED HEIGHT & AI OPENING)
 'use client';
 
@@ -378,28 +377,33 @@ interface StoryTimelineProps {
 const TypingIndicator = () => (
   <div className="flex items-center space-x-1">
     <div className="w-2 h-2 bg-green-400 rounded-full animate-bounce"></div>
-    <div className="w-2 h-2 bg-green-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-    <div className="w-2 h-2 bg-green-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+    <div
+      className="w-2 h-2 bg-green-400 rounded-full animate-bounce"
+      style={{ animationDelay: '0.1s' }}
+    ></div>
+    <div
+      className="w-2 h-2 bg-green-400 rounded-full animate-bounce"
+      style={{ animationDelay: '0.2s' }}
+    ></div>
     <span className="text-green-300 text-sm ml-2">AI is writing...</span>
   </div>
 );
 
-export default function StoryTimeline({ 
-  turns, 
-  currentTurn, 
-  aiOpening, 
+export default function StoryTimeline({
+  turns,
+  currentTurn,
+  aiOpening,
   storyElements,
-  isAiTyping = false 
+  isAiTyping = false,
 }: StoryTimelineProps) {
   return (
     <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-6">
       <h3 className="text-white font-semibold text-lg mb-4 flex items-center">
         💬 Story Chat
       </h3>
-      
+
       {/* ✅ FIXED: Normal order (top to bottom) + proper height */}
       <div className="space-y-4 overflow-y-auto pr-2 h-[500px]">
-        
         {/* ✅ 1. CHILD: Selected Story Elements (LEFT SIDE) */}
         {storyElements && (
           <motion.div
@@ -412,7 +416,9 @@ export default function StoryTimeline({
                 <User className="w-4 h-4 text-white" />
               </div>
               <div className="bg-purple-500/20 border border-purple-500/30 rounded-lg p-4 rounded-bl-none">
-                <div className="text-purple-300 font-medium text-sm mb-2">Selected Story Elements:</div>
+                <div className="text-purple-300 font-medium text-sm mb-2">
+                  Selected Story Elements:
+                </div>
                 <div className="flex flex-wrap gap-2">
                   {Object.entries(storyElements).map(([type, value]) => (
                     <span
@@ -438,7 +444,9 @@ export default function StoryTimeline({
           >
             <div className="flex items-start space-x-3 max-w-[85%]">
               <div className="bg-green-500/20 border border-green-500/30 rounded-lg p-4 rounded-br-none">
-                <div className="text-green-300 font-medium text-sm mb-2">🎭 Teacher's Opening:</div>
+                <div className="text-green-300 font-medium text-sm mb-2">
+                  🎭 Teacher's Opening:
+                </div>
                 <p className="text-gray-200 text-sm leading-relaxed">
                   {aiOpening}
                 </p>
@@ -453,7 +461,6 @@ export default function StoryTimeline({
         {/* ✅ 3. STORY TURNS - Chronological Order (First to Last) */}
         {turns.map((turn, index) => (
           <div key={`turn-${turn.turnNumber}`} className="space-y-4">
-            
             {/* Child's Input (LEFT SIDE) */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -467,8 +474,12 @@ export default function StoryTimeline({
                 </div>
                 <div className="bg-purple-500/20 border border-purple-500/30 rounded-lg p-4 rounded-bl-none">
                   <div className="flex items-center space-x-2 mb-2">
-                    <span className="text-purple-300 font-medium text-sm">You wrote:</span>
-                    <span className="text-xs text-gray-400">Turn {turn.turnNumber}</span>
+                    <span className="text-purple-300 font-medium text-sm">
+                      You wrote:
+                    </span>
+                    <span className="text-xs text-gray-400">
+                      Turn {turn.turnNumber}
+                    </span>
                   </div>
                   <p className="text-gray-200 text-sm leading-relaxed mb-2">
                     {turn.childInput}
@@ -490,7 +501,9 @@ export default function StoryTimeline({
               >
                 <div className="flex items-start space-x-3 max-w-[85%]">
                   <div className="bg-green-500/20 border border-green-500/30 rounded-lg p-4 rounded-br-none">
-                    <div className="text-green-300 font-medium text-sm mb-2">AI responded:</div>
+                    <div className="text-green-300 font-medium text-sm mb-2">
+                      AI responded:
+                    </div>
                     <p className="text-gray-200 text-sm leading-relaxed">
                       {turn.aiResponse}
                     </p>
@@ -521,7 +534,7 @@ export default function StoryTimeline({
             </div>
           </motion.div>
         )}
-        
+
         {/* Current turn indicator */}
         {currentTurn <= 6 && !isAiTyping && (
           <motion.div

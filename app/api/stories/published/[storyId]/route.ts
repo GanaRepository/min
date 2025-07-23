@@ -11,7 +11,7 @@ export async function GET(
 ) {
   try {
     const session = await getServerSession(authOptions);
-    
+
     if (!session || session.user.role !== 'child') {
       return NextResponse.json(
         { error: 'Access denied. Children only.' },
@@ -25,14 +25,11 @@ export async function GET(
 
     const story = await PublishedStory.findOne({
       _id: storyId,
-      childId: session.user.id
+      childId: session.user.id,
     }).lean();
 
     if (!story) {
-      return NextResponse.json(
-        { error: 'Story not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Story not found' }, { status: 404 });
     }
 
     // Add mock elements (in real app, store these with the story)
@@ -44,15 +41,14 @@ export async function GET(
         setting: 'Magical Forest',
         theme: 'Friendship',
         mood: 'Exciting',
-        tone: 'Brave'
-      }
+        tone: 'Brave',
+      },
     };
 
     return NextResponse.json({
       success: true,
-      story: storyWithElements
+      story: storyWithElements,
     });
-
   } catch (error) {
     console.error('Error fetching story:', error);
     return NextResponse.json(

@@ -10,7 +10,7 @@ import mongoose from 'mongoose';
 export async function GET() {
   try {
     const session = await getServerSession(authOptions);
-    
+
     if (!session || session.user.role !== 'child') {
       return NextResponse.json(
         { error: 'Access denied. Children only.' },
@@ -32,19 +32,20 @@ export async function GET() {
     }
 
     // Get story statistics
-    const [totalSessions, completedSessions, activeSessions] = await Promise.all([
-      StorySession.countDocuments({ childId: userId }),
-      StorySession.countDocuments({ childId: userId, status: 'completed' }),
-      StorySession.countDocuments({ childId: userId, status: 'active' })
-    ]);
+    const [totalSessions, completedSessions, activeSessions] =
+      await Promise.all([
+        StorySession.countDocuments({ childId: userId }),
+        StorySession.countDocuments({ childId: userId, status: 'completed' }),
+        StorySession.countDocuments({ childId: userId, status: 'active' }),
+      ]);
 
     // Get monthly stats
     const monthlyStats = await StorySession.aggregate([
       {
         $match: {
           childId: userId,
-          createdAt: { $gte: monthStart }
-        }
+          createdAt: { $gte: monthStart },
+        },
       },
       {
         $group: {
@@ -53,10 +54,10 @@ export async function GET() {
           totalWords: { $sum: '$childWords' },
           totalApiCalls: { $sum: '$apiCallsUsed' },
           completedThisMonth: {
-            $sum: { $cond: [{ $eq: ['$status', 'completed'] }, 1, 0] }
-          }
-        }
-      }
+            $sum: { $cond: [{ $eq: ['$status', 'completed'] }, 1, 0] },
+          },
+        },
+      },
     ]);
 
     // Get weekly progress
@@ -64,24 +65,24 @@ export async function GET() {
       {
         $match: {
           childId: userId,
-          createdAt: { $gte: weekStart }
-        }
+          createdAt: { $gte: weekStart },
+        },
       },
       {
         $group: {
           _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' } },
           storiesCreated: { $sum: 1 },
-          wordsWritten: { $sum: '$childWords' }
-        }
+          wordsWritten: { $sum: '$childWords' },
+        },
       },
-      { $sort: { _id: 1 } }
+      { $sort: { _id: 1 } },
     ]);
 
     const monthlyData = monthlyStats[0] || {
       totalSessions: 0,
       totalWords: 0,
       totalApiCalls: 0,
-      completedThisMonth: 0
+      completedThisMonth: 0,
     };
 
     // Calculate achievements
@@ -98,17 +99,18 @@ export async function GET() {
     if (writingStreak >= 7) achievements.push('Week Streak');
 
     // Calculate completion rate
-    const completionRate = totalSessions > 0 ? (completedSessions / totalSessions) * 100 : 0;
+    const completionRate =
+      totalSessions > 0 ? (completedSessions / totalSessions) * 100 : 0;
 
     // Weekly progress for chart
     const weeklyProgress = Array.from({ length: 7 }, (_, i) => {
       const date = new Date(now.getTime() - (6 - i) * 24 * 60 * 60 * 1000);
       const dateStr = date.toISOString().split('T')[0];
-      const dayData = weeklyStats.find(stat => stat._id === dateStr);
+      const dayData = weeklyStats.find((stat) => stat._id === dateStr);
       return {
         date: dateStr,
         stories: dayData?.storiesCreated || 0,
-        words: dayData?.wordsWritten || 0
+        words: dayData?.wordsWritten || 0,
       };
     });
 
@@ -118,29 +120,29 @@ export async function GET() {
         overview: {
           totalStoriesCreated: totalStories,
           totalWordsWritten: totalWords,
-          averageWordsPerStory: totalStories > 0 ? Math.round(totalWords / totalStories) : 0,
+          averageWordsPerStory:
+            totalStories > 0 ? Math.round(totalWords / totalStories) : 0,
           writingStreak: writingStreak,
           completionRate: Math.round(completionRate),
-          isActiveToday: true // Implement based on last activity
+          isActiveToday: true, // Implement based on last activity
         },
         monthly: {
           storiesCreated: monthlyData.completedThisMonth,
           wordsWritten: monthlyData.totalWords,
-          apiCallsUsed: monthlyData.totalApiCalls
+          apiCallsUsed: monthlyData.totalApiCalls,
         },
         sessions: {
           total: totalSessions,
           completed: completedSessions,
           active: activeSessions,
-          completionRate: Math.round(completionRate)
+          completionRate: Math.round(completionRate),
         },
         achievements,
         weeklyProgress,
         recentStories: [], // Implement as needed
-        recentActivity: [] // Implement as needed
-      }
+        recentActivity: [], // Implement as needed
+      },
     });
-
   } catch (error) {
     console.error('Error fetching user analytics:', error);
     return NextResponse.json(

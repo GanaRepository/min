@@ -17,7 +17,7 @@ import {
   Clock,
   Star,
   BarChart3,
-  LineChart
+  LineChart,
 } from 'lucide-react';
 
 interface ProgressData {
@@ -69,11 +69,13 @@ export default function ProgressPage() {
   const router = useRouter();
   const [progressData, setProgressData] = useState<ProgressData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [selectedTimeframe, setSelectedTimeframe] = useState<'week' | 'month' | 'year'>('month');
+  const [selectedTimeframe, setSelectedTimeframe] = useState<
+    'week' | 'month' | 'year'
+  >('month');
 
   useEffect(() => {
     if (status === 'loading') return;
-    
+
     if (!session || session.user.role !== 'child') {
       router.push('/login/child');
       return;
@@ -114,11 +116,11 @@ export default function ProgressPage() {
     return null;
   }
 
-  const { overview, monthly, weekly, achievements, skills, goals } = progressData;
+  const { overview, monthly, weekly, achievements, skills, goals } =
+    progressData;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 text-white">
-      
       {/* Header with proper spacing */}
       <div className="bg-gray-800/50 backdrop-blur-xl border-b border-gray-600/40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -133,17 +135,18 @@ export default function ProgressPage() {
                 Your Writing Progress
               </h1>
               <p className="text-gray-300 mt-2 text-lg">
-                Track your amazing writing journey and see how much you've grown! 🚀
+                Track your amazing writing journey and see how much you've
+                grown! 🚀
               </p>
             </div>
-            
+
             {/* Timeframe Selector */}
             <div className="flex bg-gray-800/50 border border-gray-600/50 rounded-xl overflow-hidden">
               {[
                 { key: 'week', label: 'This Week' },
                 { key: 'month', label: 'This Month' },
-                { key: 'year', label: 'This Year' }
-              ].map(timeframe => (
+                { key: 'year', label: 'This Year' },
+              ].map((timeframe) => (
                 <button
                   key={timeframe.key}
                   onClick={() => setSelectedTimeframe(timeframe.key as any)}
@@ -163,10 +166,8 @@ export default function ProgressPage() {
 
       {/* Main Content with proper container and spacing */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        
         {/* Overview Stats with proper spacing */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-          
           {/* Total Stories */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -177,7 +178,9 @@ export default function ProgressPage() {
             <div className="flex items-center justify-between mb-4">
               <BookOpen className="w-12 h-12 text-blue-400" />
               <div className="text-right">
-                <div className="text-2xl font-bold text-white">{overview.totalStoriesCreated}</div>
+                <div className="text-2xl font-bold text-white">
+                  {overview.totalStoriesCreated}
+                </div>
                 <div className="text-blue-300 text-sm">Stories Written</div>
               </div>
             </div>
@@ -217,12 +220,16 @@ export default function ProgressPage() {
             <div className="flex items-center justify-between mb-4">
               <Zap className="w-12 h-12 text-orange-400" />
               <div className="text-right">
-                <div className="text-2xl font-bold text-white">{overview.writingStreak}</div>
+                <div className="text-2xl font-bold text-white">
+                  {overview.writingStreak}
+                </div>
                 <div className="text-orange-300 text-sm">Day Streak</div>
               </div>
             </div>
             <div className="text-orange-300 text-sm">
-              {overview.writingStreak === 1 ? 'Keep it going!' : 'Amazing consistency!'}
+              {overview.writingStreak === 1
+                ? 'Keep it going!'
+                : 'Amazing consistency!'}
             </div>
           </motion.div>
 
@@ -236,7 +243,9 @@ export default function ProgressPage() {
             <div className="flex items-center justify-between mb-4">
               <Trophy className="w-12 h-12 text-purple-400" />
               <div className="text-right">
-                <div className="text-2xl font-bold text-white">{overview.bestScore}%</div>
+                <div className="text-2xl font-bold text-white">
+                  {overview.bestScore}%
+                </div>
                 <div className="text-purple-300 text-sm">Best Score</div>
               </div>
             </div>
@@ -247,10 +256,8 @@ export default function ProgressPage() {
         </div>
 
         <div className="grid grid-cols-1 xl:grid-cols-12 gap-8">
-          
           {/* Left Column - Charts and Analytics */}
           <div className="xl:col-span-8 space-y-8">
-            
             {/* Writing Progress Chart */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -262,13 +269,14 @@ export default function ProgressPage() {
                 <BarChart3 className="w-6 h-6 mr-3 text-blue-400" />
                 Weekly Writing Activity
               </h3>
-              
+
               <div className="grid grid-cols-7 gap-4 mb-6">
                 {weekly.map((day, index) => {
-                  const maxWords = Math.max(...weekly.map(d => d.words));
-                  const wordsHeight = maxWords > 0 ? (day.words / maxWords) * 100 : 0;
+                  const maxWords = Math.max(...weekly.map((d) => d.words));
+                  const wordsHeight =
+                    maxWords > 0 ? (day.words / maxWords) * 100 : 0;
                   const storiesHeight = Math.max(day.stories * 20, 8); // Minimum height for visibility
-                  
+
                   return (
                     <div key={day.date} className="text-center">
                       <div className="h-32 flex flex-col items-center justify-end mb-3 space-y-1">
@@ -290,7 +298,9 @@ export default function ProgressPage() {
                         />
                       </div>
                       <div className="text-xs text-gray-400 mb-1">
-                        {new Date(day.date).toLocaleDateString('en', { weekday: 'short' })}
+                        {new Date(day.date).toLocaleDateString('en', {
+                          weekday: 'short',
+                        })}
                       </div>
                       <div className="text-xs">
                         <div className="text-blue-300">{day.words}w</div>
@@ -300,7 +310,7 @@ export default function ProgressPage() {
                   );
                 })}
               </div>
-              
+
               <div className="flex items-center justify-center space-x-6 text-sm">
                 <div className="flex items-center">
                   <div className="w-4 h-4 bg-gradient-to-t from-blue-500 to-blue-400 rounded mr-2"></div>
@@ -324,12 +334,14 @@ export default function ProgressPage() {
                 <Target className="w-6 h-6 mr-3 text-green-400" />
                 Skill Development
               </h3>
-              
+
               <div className="space-y-6">
                 {Object.entries(skills).map(([skill, data]) => (
                   <div key={skill}>
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-white font-medium capitalize">{skill}</span>
+                      <span className="text-white font-medium capitalize">
+                        {skill}
+                      </span>
                       <div className="flex items-center space-x-2">
                         <span className="text-sm text-gray-400">
                           {data.current}%
@@ -358,7 +370,6 @@ export default function ProgressPage() {
 
           {/* Right Column - Goals and Achievements */}
           <div className="xl:col-span-4 space-y-8">
-            
             {/* Current Goals */}
             <motion.div
               initial={{ opacity: 0, x: 20 }}
@@ -370,11 +381,11 @@ export default function ProgressPage() {
                 <Target className="w-6 h-6 mr-3 text-yellow-400" />
                 Current Goals
               </h3>
-              
+
               <div className="space-y-6">
                 {goals.map((goal, index) => {
                   const progress = (goal.current / goal.target) * 100;
-                  
+
                   return (
                     <motion.div
                       key={goal.id}
@@ -412,100 +423,108 @@ export default function ProgressPage() {
 
             {/* Recent Achievements */}
             <motion.div
-             initial={{ opacity: 0, x: 20 }}
-             animate={{ opacity: 1, x: 0 }}
-             transition={{ delay: 0.4 }}
-             className="bg-gray-800/50 border border-gray-600/50 rounded-2xl p-8"
-           >
-             <h3 className="text-xl font-semibold mb-6 flex items-center">
-               <Award className="w-6 h-6 mr-3 text-purple-400" />
-               Recent Achievements
-             </h3>
-             
-             <div className="space-y-4">
-               {achievements.slice(0, 6).map((achievement, index) => (
-                 <motion.div
-                   key={achievement.id}
-                   initial={{ opacity: 0, x: 10 }}
-                   animate={{ opacity: 1, x: 0 }}
-                   transition={{ delay: 0.1 * index }}
-                   className="flex items-center space-x-3 p-4 bg-purple-500/20 border border-purple-500/30 rounded-xl"
-                 >
-                   <Trophy className="w-8 h-8 text-purple-400 flex-shrink-0" />
-                   <div>
-                     <div className="text-purple-200 font-medium text-sm">
-                       {achievement.title}
-                     </div>
-                     <div className="text-purple-300 text-xs mt-1">
-                       {achievement.description}
-                     </div>
-                     <div className="text-purple-400 text-xs mt-1">
-                       {new Date(achievement.earnedAt).toLocaleDateString()}
-                     </div>
-                   </div>
-                 </motion.div>
-               ))}
-               
-               {achievements.length === 0 && (
-                 <div className="text-center py-8 text-gray-400">
-                   <Award className="w-12 h-12 mx-auto mb-3 opacity-50" />
-                   <p>Complete stories to earn achievements!</p>
-                 </div>
-               )}
-             </div>
-           </motion.div>
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.4 }}
+              className="bg-gray-800/50 border border-gray-600/50 rounded-2xl p-8"
+            >
+              <h3 className="text-xl font-semibold mb-6 flex items-center">
+                <Award className="w-6 h-6 mr-3 text-purple-400" />
+                Recent Achievements
+              </h3>
 
-           {/* Monthly Summary */}
-           <motion.div
-             initial={{ opacity: 0, x: 20 }}
-             animate={{ opacity: 1, x: 0 }}
-             transition={{ delay: 0.5 }}
-             className="bg-gray-800/50 border border-gray-600/50 rounded-2xl p-8"
-           >
-             <h3 className="text-xl font-semibold mb-6 flex items-center">
-               <Calendar className="w-6 h-6 mr-3 text-blue-400" />
-               This Month's Summary
-             </h3>
-             
-             <div className="space-y-4">
-               <div className="flex items-center justify-between p-3 bg-blue-500/20 rounded-xl">
-                 <div className="flex items-center">
-                   <BookOpen className="w-5 h-5 text-blue-400 mr-2" />
-                   <span className="text-white text-sm">Stories Completed</span>
-                 </div>
-                 <span className="text-blue-400 font-semibold">{monthly.storiesCreated}</span>
-               </div>
-               
-               <div className="flex items-center justify-between p-3 bg-green-500/20 rounded-xl">
-                 <div className="flex items-center">
-                   <PenTool className="w-5 h-5 text-green-400 mr-2" />
-                   <span className="text-white text-sm">Words Written</span>
-                 </div>
-                 <span className="text-green-400 font-semibold">
-                   {monthly.wordsWritten.toLocaleString()}
-                 </span>
-               </div>
-               
-               <div className="flex items-center justify-between p-3 bg-purple-500/20 rounded-xl">
-                 <div className="flex items-center">
-                   <Star className="w-5 h-5 text-purple-400 mr-2" />
-                   <span className="text-white text-sm">Average Score</span>
-                 </div>
-                 <span className="text-purple-400 font-semibold">{monthly.averageScore}%</span>
-               </div>
-               
-               <div className="flex items-center justify-between p-3 bg-orange-500/20 rounded-xl">
-                 <div className="flex items-center">
-                   <Clock className="w-5 h-5 text-orange-400 mr-2" />
-                   <span className="text-white text-sm">Days Active</span>
-                 </div>
-                 <span className="text-orange-400 font-semibold">{monthly.daysActive}</span>
-               </div>
-             </div>
-           </motion.div>
-         </div>
-       </div>
-     </div>
-   </div>
- );
+              <div className="space-y-4">
+                {achievements.slice(0, 6).map((achievement, index) => (
+                  <motion.div
+                    key={achievement.id}
+                    initial={{ opacity: 0, x: 10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.1 * index }}
+                    className="flex items-center space-x-3 p-4 bg-purple-500/20 border border-purple-500/30 rounded-xl"
+                  >
+                    <Trophy className="w-8 h-8 text-purple-400 flex-shrink-0" />
+                    <div>
+                      <div className="text-purple-200 font-medium text-sm">
+                        {achievement.title}
+                      </div>
+                      <div className="text-purple-300 text-xs mt-1">
+                        {achievement.description}
+                      </div>
+                      <div className="text-purple-400 text-xs mt-1">
+                        {new Date(achievement.earnedAt).toLocaleDateString()}
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+
+                {achievements.length === 0 && (
+                  <div className="text-center py-8 text-gray-400">
+                    <Award className="w-12 h-12 mx-auto mb-3 opacity-50" />
+                    <p>Complete stories to earn achievements!</p>
+                  </div>
+                )}
+              </div>
+            </motion.div>
+
+            {/* Monthly Summary */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.5 }}
+              className="bg-gray-800/50 border border-gray-600/50 rounded-2xl p-8"
+            >
+              <h3 className="text-xl font-semibold mb-6 flex items-center">
+                <Calendar className="w-6 h-6 mr-3 text-blue-400" />
+                This Month's Summary
+              </h3>
+
+              <div className="space-y-4">
+                <div className="flex items-center justify-between p-3 bg-blue-500/20 rounded-xl">
+                  <div className="flex items-center">
+                    <BookOpen className="w-5 h-5 text-blue-400 mr-2" />
+                    <span className="text-white text-sm">
+                      Stories Completed
+                    </span>
+                  </div>
+                  <span className="text-blue-400 font-semibold">
+                    {monthly.storiesCreated}
+                  </span>
+                </div>
+
+                <div className="flex items-center justify-between p-3 bg-green-500/20 rounded-xl">
+                  <div className="flex items-center">
+                    <PenTool className="w-5 h-5 text-green-400 mr-2" />
+                    <span className="text-white text-sm">Words Written</span>
+                  </div>
+                  <span className="text-green-400 font-semibold">
+                    {monthly.wordsWritten.toLocaleString()}
+                  </span>
+                </div>
+
+                <div className="flex items-center justify-between p-3 bg-purple-500/20 rounded-xl">
+                  <div className="flex items-center">
+                    <Star className="w-5 h-5 text-purple-400 mr-2" />
+                    <span className="text-white text-sm">Average Score</span>
+                  </div>
+                  <span className="text-purple-400 font-semibold">
+                    {monthly.averageScore}%
+                  </span>
+                </div>
+
+                <div className="flex items-center justify-between p-3 bg-orange-500/20 rounded-xl">
+                  <div className="flex items-center">
+                    <Clock className="w-5 h-5 text-orange-400 mr-2" />
+                    <span className="text-white text-sm">Days Active</span>
+                  </div>
+                  <span className="text-orange-400 font-semibold">
+                    {monthly.daysActive}
+                  </span>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }

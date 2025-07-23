@@ -12,7 +12,7 @@ export async function POST(
 ) {
   try {
     const session = await getServerSession(authOptions);
-    
+
     if (!session || session.user.role !== 'child') {
       return NextResponse.json(
         { error: 'Access denied. Children only.' },
@@ -38,13 +38,13 @@ export async function POST(
       {
         _id: sessionId,
         childId: session.user.id,
-        status: 'active'
+        status: 'active',
       },
       {
         $set: {
           [`draft.turn${turnNumber}`]: draftContent,
-          'draft.lastSaved': new Date()
-        }
+          'draft.lastSaved': new Date(),
+        },
       },
       { new: true }
     );
@@ -58,9 +58,8 @@ export async function POST(
 
     return NextResponse.json({
       success: true,
-      message: 'Draft saved successfully'
+      message: 'Draft saved successfully',
     });
-
   } catch (error) {
     console.error('Error saving draft:', error);
     return NextResponse.json(

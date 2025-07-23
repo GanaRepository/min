@@ -28,7 +28,9 @@ const publicPaths = [
 
 // Helper function to check file extensions
 function isStaticFile(path: string): boolean {
-  return /\.(jpg|jpeg|png|gif|svg|ico|css|js|woff|woff2|ttf|eot|webp|mp4|webm|pdf)$/.test(path);
+  return /\.(jpg|jpeg|png|gif|svg|ico|css|js|woff|woff2|ttf|eot|webp|mp4|webm|pdf)$/.test(
+    path
+  );
 }
 
 // Helper for public API paths
@@ -52,10 +54,10 @@ function requiresAuth(path: string): boolean {
     path.startsWith('/children-dashboard') ||
     path.startsWith('/mentor-dashboard') ||
     path.startsWith('/admin-dashboard') ||
-    (path.startsWith('/api/stories/') && 
-     !path.includes('create-session') && 
-     !path.includes('store-pending-elements') && 
-     !path.includes('pending-elements')) ||
+    (path.startsWith('/api/stories/') &&
+      !path.includes('create-session') &&
+      !path.includes('store-pending-elements') &&
+      !path.includes('pending-elements')) ||
     path.startsWith('/api/user/') ||
     path.startsWith('/api/admin/') ||
     path.startsWith('/api/mentor/')
@@ -86,17 +88,24 @@ export async function middleware(request: NextRequest) {
 
     const userRole = token?.role || 'none';
     const userId = token?.id || 'none';
-    
+
     console.log(`🔐 PATH: ${path}, ROLE: ${userRole}, USER_ID: ${userId}`);
 
     // ===== RATE LIMITING FOR AUTHENTICATED USERS =====
     if (token?.id) {
       // ADDED: Rate limiting for story creation
-      if (path.startsWith('/children-dashboard/story/') && request.method === 'GET') {
+      if (
+        path.startsWith('/children-dashboard/story/') &&
+        request.method === 'GET'
+      ) {
         const rateLimitCheck = checkRateLimit(token.id, 'story-create');
         if (!rateLimitCheck.allowed) {
-          console.log(`🚫 Rate limit exceeded for user ${token.id}: ${rateLimitCheck.message}`);
-          return NextResponse.redirect(new URL('/children-dashboard?error=rate-limit', request.url));
+          console.log(
+            `🚫 Rate limit exceeded for user ${token.id}: ${rateLimitCheck.message}`
+          );
+          return NextResponse.redirect(
+            new URL('/children-dashboard?error=rate-limit', request.url)
+          );
         }
       }
 
@@ -104,11 +113,13 @@ export async function middleware(request: NextRequest) {
       if (path.startsWith('/api/stories/ai-respond')) {
         const rateLimitCheck = checkRateLimit(token.id, 'story-submit');
         if (!rateLimitCheck.allowed) {
-          console.log(`🚫 Story submission rate limit exceeded for user ${token.id}`);
+          console.log(
+            `🚫 Story submission rate limit exceeded for user ${token.id}`
+          );
           return NextResponse.json(
-            { 
+            {
               error: rateLimitCheck.message,
-              retryAfter: rateLimitCheck.retryAfter 
+              retryAfter: rateLimitCheck.retryAfter,
             },
             { status: 429 }
           );
@@ -121,9 +132,9 @@ export async function middleware(request: NextRequest) {
         if (!rateLimitCheck.allowed) {
           console.log(`🚫 Assessment rate limit exceeded for user ${token.id}`);
           return NextResponse.json(
-            { 
+            {
               error: rateLimitCheck.message,
-              retryAfter: rateLimitCheck.retryAfter 
+              retryAfter: rateLimitCheck.retryAfter,
             },
             { status: 429 }
           );
@@ -148,7 +159,10 @@ export async function middleware(request: NextRequest) {
     }
 
     // ===== MENTOR ROUTES =====
-    if (path.startsWith('/mentor-dashboard') || path.startsWith('/api/mentor/')) {
+    if (
+      path.startsWith('/mentor-dashboard') ||
+      path.startsWith('/api/mentor/')
+    ) {
       if (!token) {
         console.log(`❌ Unauthenticated mentor access attempt: ${path}`);
         return NextResponse.redirect(new URL('/login/mentor', request.url));
@@ -169,11 +183,15 @@ export async function middleware(request: NextRequest) {
         console.log(`❌ Unauthenticated child dashboard access: ${path}`);
         // Store the intended destination for redirect after login
         const callbackUrl = encodeURIComponent(path);
-        return NextResponse.redirect(new URL(`/login/child?callbackUrl=${callbackUrl}`, request.url));
+        return NextResponse.redirect(
+          new URL(`/login/child?callbackUrl=${callbackUrl}`, request.url)
+        );
       }
 
       if (token.role !== 'child' && token.role !== 'admin') {
-        console.log(`❌ NON-CHILD (${token.role}) tried to access children dashboard: ${path}`);
+        console.log(
+          `❌ NON-CHILD (${token.role}) tried to access children dashboard: ${path}`
+        );
         return NextResponse.redirect(new URL('/unauthorized', request.url));
       }
 
@@ -188,19 +206,29 @@ export async function middleware(request: NextRequest) {
     }
 
     // ===== STORY API ROUTES (Protected) =====
-    if (path.startsWith('/api/stories/') && 
-        !path.includes('create-session') && 
-        !path.includes('store-pending-elements') && 
-        !path.includes('pending-elements')) {
+    if (
+      path.startsWith('/api/stories/') &&
+      !path.includes('create-session') &&
+      !path.includes('store-pending-elements') &&
+      !path.includes('pending-elements')
+    ) {
       if (!token) {
         console.log(`❌ Unauthenticated API access: ${path}`);
-        return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
+        return NextResponse.json(
+          { error: 'Authentication required' },
+          { status: 401 }
+        );
       }
 
       // Most story APIs are for children, but allow admins too
       if (token.role !== 'child' && token.role !== 'admin') {
-        console.log(`❌ Invalid role for story API: ${token.role} trying to access ${path}`);
-        return NextResponse.json({ error: 'Insufficient permissions' }, { status: 403 });
+        console.log(
+          `❌ Invalid role for story API: ${token.role} trying to access ${path}`
+        );
+        return NextResponse.json(
+          { error: 'Insufficient permissions' },
+          { status: 403 }
+        );
       }
 
       console.log(`✅ Story API access granted: ${path}`);
@@ -211,7 +239,10 @@ export async function middleware(request: NextRequest) {
     if (path.startsWith('/api/user/')) {
       if (!token) {
         console.log(`❌ Unauthenticated user API access: ${path}`);
-        return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
+        return NextResponse.json(
+          { error: 'Authentication required' },
+          { status: 401 }
+        );
       }
 
       console.log(`✅ User API access granted: ${path}`);
@@ -219,33 +250,47 @@ export async function middleware(request: NextRequest) {
     }
 
     // ===== REDIRECT AUTHENTICATED USERS FROM AUTH PAGES =====
-    if (token && (
-      path.startsWith('/login/') || 
-      path.startsWith('/register/') ||
-      path === '/login' ||
-      path === '/register'
-    )) {
-      console.log(`🔄 Authenticated user (${token.role}) accessing auth page, redirecting to dashboard`);
-      
+    if (
+      token &&
+      (path.startsWith('/login/') ||
+        path.startsWith('/register/') ||
+        path === '/login' ||
+        path === '/register')
+    ) {
+      console.log(
+        `🔄 Authenticated user (${token.role}) accessing auth page, redirecting to dashboard`
+      );
+
       // Redirect to appropriate dashboard based on role
       switch (token.role) {
         case 'child':
-          return NextResponse.redirect(new URL('/children-dashboard', request.url));
+          return NextResponse.redirect(
+            new URL('/children-dashboard', request.url)
+          );
         case 'mentor':
-          return NextResponse.redirect(new URL('/mentor-dashboard', request.url));
+          return NextResponse.redirect(
+            new URL('/mentor-dashboard', request.url)
+          );
         case 'admin':
-          return NextResponse.redirect(new URL('/admin-dashboard', request.url));
+          return NextResponse.redirect(
+            new URL('/admin-dashboard', request.url)
+          );
         default:
           return NextResponse.redirect(new URL('/', request.url));
       }
     }
 
     // ===== SUBSCRIPTION ENFORCEMENT =====
-    if (path.startsWith('/children-dashboard/story/') && token?.role === 'child') {
+    if (
+      path.startsWith('/children-dashboard/story/') &&
+      token?.role === 'child'
+    ) {
       // Check if user has exceeded their story limit
       // This would require a database call, so we'll handle it in the page component
       // But we can add rate limiting here if needed
-      console.log(`📊 Story access for user: ${userId}, tier: ${token.subscriptionTier || 'FREE'}`);
+      console.log(
+        `📊 Story access for user: ${userId}, tier: ${token.subscriptionTier || 'FREE'}`
+      );
     }
 
     // ===== DEFAULT BEHAVIOR =====
@@ -253,21 +298,25 @@ export async function middleware(request: NextRequest) {
     if (requiresAuth(path) && !token) {
       console.log(`❌ Authentication required for: ${path}`);
       const callbackUrl = encodeURIComponent(path);
-      return NextResponse.redirect(new URL(`/login/child?callbackUrl=${callbackUrl}`, request.url));
+      return NextResponse.redirect(
+        new URL(`/login/child?callbackUrl=${callbackUrl}`, request.url)
+      );
     }
 
     // If path is not specifically handled, allow access
     console.log(`✅ Default access granted: ${path}`);
     return NextResponse.next();
-
   } catch (error) {
     console.error('❌ Middleware error:', error);
-    
+
     // If it's an API route, return JSON error
     if (path.startsWith('/api/')) {
-      return NextResponse.json({ error: 'Authentication service unavailable' }, { status: 500 });
+      return NextResponse.json(
+        { error: 'Authentication service unavailable' },
+        { status: 500 }
+      );
     }
-    
+
     // For page routes, redirect to login
     return NextResponse.redirect(new URL('/login', request.url));
   }
@@ -292,28 +341,35 @@ export const config = {
  * Check if user has permission to access a specific story
  * This would be called from API routes for additional security
  */
-export function hasStoryAccess(userRole: string, userId: string, storyOwnerId: string): boolean {
+export function hasStoryAccess(
+  userRole: string,
+  userId: string,
+  storyOwnerId: string
+): boolean {
   // Admins can access all stories
   if (userRole === 'admin') return true;
-  
+
   // Users can only access their own stories
   if (userRole === 'child' && userId === storyOwnerId) return true;
-  
+
   // Mentors can access stories of their assigned children
   // This would require checking the mentor-child relationship in the database
-  
+
   return false;
 }
 
 /**
  * UPDATED: Subscription limit checker with new tier structure
  */
-export function checkSubscriptionLimits(tier: string, currentUsage: number): boolean {
+export function checkSubscriptionLimits(
+  tier: string,
+  currentUsage: number
+): boolean {
   const limits = {
     FREE: 10,
     BASIC: 20,
     PREMIUM: 100,
   };
-  
+
   return currentUsage < (limits[tier as keyof typeof limits] || limits.FREE);
 }

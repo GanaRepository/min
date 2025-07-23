@@ -20,11 +20,12 @@ import {
   Plus,
   Clock,
   TrendingUp,
-  Award
+  Award,
 } from 'lucide-react';
 
 interface Story {
   _id: string;
+  storyNumber: number;
   title: string;
   elements: {
     genre: string;
@@ -53,13 +54,17 @@ export default function MyStoriesPage() {
   const [stories, setStories] = useState<Story[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeFilter, setActiveFilter] = useState(searchParams?.get('filter') || 'all');
+  const [activeFilter, setActiveFilter] = useState(
+    searchParams?.get('filter') || 'all'
+  );
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  const [sortBy, setSortBy] = useState<'newest' | 'oldest' | 'score' | 'words'>('newest');
+  const [sortBy, setSortBy] = useState<'newest' | 'oldest' | 'score' | 'words'>(
+    'newest'
+  );
 
   useEffect(() => {
     if (status === 'loading') return;
-    
+
     if (!session || session.user.role !== 'child') {
       router.push('/login/child');
       return;
@@ -86,16 +91,26 @@ export default function MyStoriesPage() {
   };
 
   const handleContinueStory = (storyId: string) => {
-    router.push(`/children-dashboard/story/${storyId}`);
+    // Use storyNumber for navigation if available
+    const story = stories.find((s) => s._id === storyId);
+    if (story && story.storyNumber) {
+      router.push(`/children-dashboard/story/${story.storyNumber}`);
+    } else {
+      router.push(`/children-dashboard/story/${storyId}`);
+    }
   };
 
-  const filteredStories = stories.filter(story => {
-    if (searchQuery && !story.title.toLowerCase().includes(searchQuery.toLowerCase()) &&
-        !story.elements.genre.toLowerCase().includes(searchQuery.toLowerCase())) {
+  const filteredStories = stories.filter((story) => {
+    if (
+      searchQuery &&
+      !story.title.toLowerCase().includes(searchQuery.toLowerCase()) &&
+      !story.elements.genre.toLowerCase().includes(searchQuery.toLowerCase())
+    ) {
       return false;
     }
 
-    if (activeFilter === 'completed' && story.status !== 'completed') return false;
+    if (activeFilter === 'completed' && story.status !== 'completed')
+      return false;
     if (activeFilter === 'active' && story.status !== 'active') return false;
     if (activeFilter === 'paused' && story.status !== 'paused') return false;
 
@@ -105,9 +120,13 @@ export default function MyStoriesPage() {
   const sortedStories = [...filteredStories].sort((a, b) => {
     switch (sortBy) {
       case 'newest':
-        return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
+        return (
+          new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+        );
       case 'oldest':
-        return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+        return (
+          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+        );
       case 'score':
         return (b.overallScore || 0) - (a.overallScore || 0);
       case 'words':
@@ -174,10 +193,9 @@ export default function MyStoriesPage() {
                 My Amazing Stories
               </h1>
               <p className="text-gray-300 mt-2 text-lg">
-                {stories.length === 0 
-                  ? "Ready to write your first story?" 
-                  : `You've written ${stories.length} amazing ${stories.length === 1 ? 'story' : 'stories'}!`
-                }
+                {stories.length === 0
+                  ? 'Ready to write your first story?'
+                  : `You've written ${stories.length} amazing ${stories.length === 1 ? 'story' : 'stories'}!`}
               </p>
             </div>
 
@@ -198,7 +216,6 @@ export default function MyStoriesPage() {
 
       {/* FIXED: Main Content with proper container and spacing */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        
         {/* Search and Filters with proper spacing */}
         <div className="mb-8 space-y-6">
           {/* Search Bar */}
@@ -215,15 +232,26 @@ export default function MyStoriesPage() {
 
           {/* Filters and View Controls */}
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-            
             {/* Filter Buttons */}
             <div className="flex flex-wrap gap-3">
               {[
                 { key: 'all', label: 'All Stories', count: stories.length },
-                { key: 'completed', label: 'Completed', count: stories.filter(s => s.status === 'completed').length },
-                { key: 'active', label: 'In Progress', count: stories.filter(s => s.status === 'active').length },
-                { key: 'paused', label: 'Paused', count: stories.filter(s => s.status === 'paused').length }
-              ].map(filter => (
+                {
+                  key: 'completed',
+                  label: 'Completed',
+                  count: stories.filter((s) => s.status === 'completed').length,
+                },
+                {
+                  key: 'active',
+                  label: 'In Progress',
+                  count: stories.filter((s) => s.status === 'active').length,
+                },
+                {
+                  key: 'paused',
+                  label: 'Paused',
+                  count: stories.filter((s) => s.status === 'paused').length,
+                },
+              ].map((filter) => (
                 <button
                   key={filter.key}
                   onClick={() => setActiveFilter(filter.key as any)}
@@ -235,11 +263,13 @@ export default function MyStoriesPage() {
                 >
                   {filter.label}
                   {filter.count > 0 && (
-                    <span className={`ml-2 px-2 py-0.5 text-xs rounded-full ${
-                      activeFilter === filter.key
-                        ? 'bg-white/20'
-                        : 'bg-gray-600/50'
-                    }`}>
+                    <span
+                      className={`ml-2 px-2 py-0.5 text-xs rounded-full ${
+                        activeFilter === filter.key
+                          ? 'bg-white/20'
+                          : 'bg-gray-600/50'
+                      }`}
+                    >
                       {filter.count}
                     </span>
                   )}
@@ -249,7 +279,6 @@ export default function MyStoriesPage() {
 
             {/* Sort and View Controls */}
             <div className="flex items-center space-x-4">
-              
               {/* Sort Dropdown */}
               <select
                 value={sortBy}
@@ -299,20 +328,18 @@ export default function MyStoriesPage() {
           <div className="text-center py-20">
             <BookOpen className="w-20 h-20 text-gray-600 mx-auto mb-6" />
             <h3 className="text-2xl font-semibold text-white mb-4">
-              {searchQuery 
-                ? 'No stories found' 
+              {searchQuery
+                ? 'No stories found'
                 : activeFilter === 'all'
-                ? 'No stories yet'
-                : `No ${activeFilter} stories`
-              }
+                  ? 'No stories yet'
+                  : `No ${activeFilter} stories`}
             </h3>
             <p className="text-gray-400 mb-8 max-w-md mx-auto">
               {searchQuery
                 ? 'Try adjusting your search or filters'
                 : activeFilter === 'all'
-                ? "You haven't written any stories yet. Ready to create your first magical adventure?"
-                : `You don't have any ${activeFilter} stories yet.`
-              }
+                  ? "You haven't written any stories yet. Ready to create your first magical adventure?"
+                  : `You don't have any ${activeFilter} stories yet.`}
             </p>
             {activeFilter === 'all' && !searchQuery && (
               <button
@@ -345,42 +372,55 @@ export default function MyStoriesPage() {
                     ? 'bg-gray-800/50 border border-gray-600/50 rounded-2xl p-6 hover:bg-gray-800/70 transition-all hover:border-blue-500/50'
                     : 'bg-gray-800/50 border border-gray-600/50 rounded-xl p-6 hover:bg-gray-800/70 transition-all'
                 }`}
-                onClick={() => story.status === 'completed' 
-                  ? router.push(`/children-dashboard/my-stories/${story._id}`)
-                  : handleContinueStory(story._id)
+                onClick={() =>
+                  story.status === 'completed'
+                    ? router.push(`/children-dashboard/my-stories/${story._id}`)
+                    : handleContinueStory(story._id)
                 }
               >
-                
                 {/* Story Header */}
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex-1">
                     <h3 className="text-xl font-semibold text-white mb-2 group-hover:text-blue-300 transition-colors line-clamp-2">
                       {story.title}
+                      <span className="text-xs text-gray-400 ml-2">
+                        Story #{story.storyNumber ?? story._id.slice(-6)}
+                      </span>
                     </h3>
-                    <div className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(story.status)}`}>
+                    <div
+                      className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(story.status)}`}
+                    >
                       {getStatusIcon(story.status)}
-                      <span className="ml-2 capitalize">{story.status === 'active' ? 'In Progress' : story.status}</span>
+                      <span className="ml-2 capitalize">
+                        {story.status === 'active'
+                          ? 'In Progress'
+                          : story.status}
+                      </span>
                     </div>
                   </div>
-                  
+
                   {story.overallScore && (
                     <div className="flex items-center ml-4">
                       <Star className="w-4 h-4 mr-1 text-yellow-400" />
-                      <span className="text-yellow-400 font-semibold">{story.overallScore}%</span>
+                      <span className="text-yellow-400 font-semibold">
+                        {story.overallScore}%
+                      </span>
                     </div>
                   )}
                 </div>
 
                 {/* Story Elements */}
                 <div className="flex flex-wrap gap-2 mb-4">
-                  {Object.entries(story.elements).slice(0, 3).map(([type, value]) => (
-                    <span
-                      key={type}
-                      className="px-2 py-1 bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-500/30 rounded-lg text-xs text-purple-200"
-                    >
-                      {value}
-                    </span>
-                  ))}
+                  {Object.entries(story.elements)
+                    .slice(0, 3)
+                    .map(([type, value]) => (
+                      <span
+                        key={type}
+                        className="px-2 py-1 bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-500/30 rounded-lg text-xs text-purple-200"
+                      >
+                        {value}
+                      </span>
+                    ))}
                   {Object.keys(story.elements).length > 3 && (
                     <span className="px-2 py-1 bg-gray-700/50 border border-gray-600/30 rounded-lg text-xs text-gray-400">
                       +{Object.keys(story.elements).length - 3} more
@@ -408,13 +448,16 @@ export default function MyStoriesPage() {
                 {story.status === 'active' && story.currentTurn && (
                   <div className="mb-4">
                     <div className="w-full bg-gray-700/50 rounded-full h-2">
-                      <div 
+                      <div
                         className="bg-gradient-to-r from-blue-500 to-green-500 h-2 rounded-full transition-all duration-500"
-                        style={{ width: `${((story.currentTurn - 1) / 6) * 100}%` }}
+                        style={{
+                          width: `${((story.currentTurn - 1) / 6) * 100}%`,
+                        }}
                       />
                     </div>
                     <div className="text-xs text-gray-400 mt-1">
-                      {Math.round(((story.currentTurn - 1) / 6) * 100)}% complete
+                      {Math.round(((story.currentTurn - 1) / 6) * 100)}%
+                      complete
                     </div>
                   </div>
                 )}
@@ -424,8 +467,7 @@ export default function MyStoriesPage() {
                   <div className="text-xs text-gray-500">
                     {story.status === 'completed' && story.publishedAt
                       ? `Published ${new Date(story.publishedAt).toLocaleDateString()}`
-                      : `Updated ${new Date(story.updatedAt).toLocaleDateString()}`
-                    }
+                      : `Updated ${new Date(story.updatedAt).toLocaleDateString()}`}
                   </div>
                   <div className="flex items-center space-x-2">
                     {story.status === 'active' ? (
@@ -465,27 +507,38 @@ export default function MyStoriesPage() {
             </h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div className="text-center">
-                <div className="text-2xl font-bold text-white">{stories.length}</div>
+                <div className="text-2xl font-bold text-white">
+                  {stories.length}
+                </div>
                 <div className="text-purple-300 text-sm">Total Stories</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold text-white">
-                  {stories.reduce((sum, story) => sum + (story.childWords || story.totalWords), 0)}
+                  {stories.reduce(
+                    (sum, story) =>
+                      sum + (story.childWords || story.totalWords),
+                    0
+                  )}
                 </div>
                 <div className="text-purple-300 text-sm">Words Written</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold text-white">
-                  {stories.filter(s => s.status === 'completed').length}
+                  {stories.filter((s) => s.status === 'completed').length}
                 </div>
                 <div className="text-purple-300 text-sm">Completed</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold text-white">
-                  {stories.filter(s => s.overallScore).length > 0 
-                  ? Math.round(stories.filter(s => s.overallScore).reduce((sum, s) => sum + (s.overallScore || 0), 0) / stories.filter(s => s.overallScore).length)
-                    : 0
-                  }%
+                  {stories.filter((s) => s.overallScore).length > 0
+                    ? Math.round(
+                        stories
+                          .filter((s) => s.overallScore)
+                          .reduce((sum, s) => sum + (s.overallScore || 0), 0) /
+                          stories.filter((s) => s.overallScore).length
+                      )
+                    : 0}
+                  %
                 </div>
                 <div className="text-purple-300 text-sm">Avg Score</div>
               </div>

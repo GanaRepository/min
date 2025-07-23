@@ -20,7 +20,7 @@ import {
   Camera,
   Award,
   BookOpen,
-  TrendingUp
+  TrendingUp,
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
@@ -63,7 +63,7 @@ export default function ProfilePage() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const { toast } = useToast();
-  
+
   const [profileData, setProfileData] = useState<ProfileData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
@@ -72,12 +72,12 @@ export default function ProfilePage() {
     firstName: '',
     lastName: '',
     grade: '',
-    school: ''
+    school: '',
   });
 
   useEffect(() => {
     if (status === 'loading') return;
-    
+
     if (!session || session.user.role !== 'child') {
       router.push('/login/child');
       return;
@@ -97,7 +97,7 @@ export default function ProfilePage() {
           firstName: data.profile.user.firstName,
           lastName: data.profile.user.lastName,
           grade: data.profile.user.grade || '',
-          school: data.profile.user.school || ''
+          school: data.profile.user.school || '',
         });
       } else {
         throw new Error(data.error);
@@ -105,9 +105,9 @@ export default function ProfilePage() {
     } catch (error) {
       console.error('Error fetching profile data:', error);
       toast({
-        title: "❌ Error",
-        description: "Failed to load profile. Please try again.",
-        variant: "destructive",
+        title: '❌ Error',
+        description: 'Failed to load profile. Please try again.',
+        variant: 'destructive',
       });
     } finally {
       setIsLoading(false);
@@ -116,14 +116,14 @@ export default function ProfilePage() {
 
   const handleSaveProfile = async () => {
     setIsSaving(true);
-    
+
     try {
       const response = await fetch('/api/user/profile', {
         method: 'PATCH',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify(editForm)
+        body: JSON.stringify(editForm),
       });
 
       const data = await response.json();
@@ -132,26 +132,31 @@ export default function ProfilePage() {
         throw new Error(data.error || 'Failed to update profile');
       }
 
-      setProfileData(prev => prev ? {
-        ...prev,
-        user: {
-          ...prev.user,
-          ...editForm
-        }
-      } : null);
+      setProfileData((prev) =>
+        prev
+          ? {
+              ...prev,
+              user: {
+                ...prev.user,
+                ...editForm,
+              },
+            }
+          : null
+      );
 
       setIsEditing(false);
-      
+
       toast({
-        title: "✅ Profile Updated!",
-        description: "Your profile has been successfully updated.",
+        title: '✅ Profile Updated!',
+        description: 'Your profile has been successfully updated.',
       });
     } catch (error) {
       console.error('Error updating profile:', error);
       toast({
-        title: "❌ Error",
-        description: error instanceof Error ? error.message : "Failed to update profile.",
-        variant: "destructive",
+        title: '❌ Error',
+        description:
+          error instanceof Error ? error.message : 'Failed to update profile.',
+        variant: 'destructive',
       });
     } finally {
       setIsSaving(false);
@@ -163,41 +168,56 @@ export default function ProfilePage() {
       const response = await fetch('/api/user/preferences', {
         method: 'PATCH',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ [preference]: value })
+        body: JSON.stringify({ [preference]: value }),
       });
 
       if (!response.ok) {
         throw new Error('Failed to update preference');
       }
 
-      setProfileData(prev => prev ? {
-        ...prev,
-        preferences: {
-          ...prev.preferences,
-          [preference]: value
-        }
-      } : null);
+      setProfileData((prev) =>
+        prev
+          ? {
+              ...prev,
+              preferences: {
+                ...prev.preferences,
+                [preference]: value,
+              },
+            }
+          : null
+      );
 
       toast({
-        title: "✅ Settings Updated!",
-        description: "Your preference has been saved.",
+        title: '✅ Settings Updated!',
+        description: 'Your preference has been saved.',
       });
     } catch (error) {
       console.error('Error updating preference:', error);
       toast({
-        title: "❌ Error",
-        description: "Failed to update setting.",
-        variant: "destructive",
+        title: '❌ Error',
+        description: 'Failed to update setting.',
+        variant: 'destructive',
       });
     }
   };
 
   const getGradeOptions = () => [
-    'Pre-K', 'Kindergarten', '1st Grade', '2nd Grade', '3rd Grade',
-    '4th Grade', '5th Grade', '6th Grade', '7th Grade', '8th Grade',
-    '9th Grade', '10th Grade', '11th Grade', '12th Grade'
+    'Pre-K',
+    'Kindergarten',
+    '1st Grade',
+    '2nd Grade',
+    '3rd Grade',
+    '4th Grade',
+    '5th Grade',
+    '6th Grade',
+    '7th Grade',
+    '8th Grade',
+    '9th Grade',
+    '10th Grade',
+    '11th Grade',
+    '12th Grade',
   ];
 
   if (status === 'loading' || isLoading) {
@@ -219,7 +239,6 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 text-white">
-      
       {/* Header with proper spacing */}
       <div className="bg-gray-800/50 backdrop-blur-xl border-b border-gray-600/40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -237,7 +256,7 @@ export default function ProfilePage() {
                 Manage your account and see your writing journey
               </p>
             </div>
-            
+
             {!isEditing && (
               <button
                 onClick={() => setIsEditing(true)}
@@ -253,12 +272,9 @@ export default function ProfilePage() {
 
       {/* Main Content with proper container and spacing */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          
           {/* Left Column - Profile Info */}
           <div className="lg:col-span-2 space-y-8">
-            
             {/* Basic Information */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -294,7 +310,8 @@ export default function ProfilePage() {
                 {/* Avatar */}
                 <div className="relative">
                   <div className="w-24 h-24 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-2xl font-bold">
-                    {user.firstName.charAt(0).toUpperCase()}{user.lastName.charAt(0).toUpperCase()}
+                    {user.firstName.charAt(0).toUpperCase()}
+                    {user.lastName.charAt(0).toUpperCase()}
                   </div>
                   <button className="absolute bottom-0 right-0 bg-blue-500 hover:bg-blue-600 p-2 rounded-full transition-colors">
                     <Camera className="w-4 h-4" />
@@ -312,11 +329,18 @@ export default function ProfilePage() {
                         <input
                           type="text"
                           value={editForm.firstName}
-                          onChange={(e) => setEditForm(prev => ({ ...prev, firstName: e.target.value }))}
+                          onChange={(e) =>
+                            setEditForm((prev) => ({
+                              ...prev,
+                              firstName: e.target.value,
+                            }))
+                          }
                           className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
                         />
                       ) : (
-                        <div className="text-white font-medium text-lg">{user.firstName}</div>
+                        <div className="text-white font-medium text-lg">
+                          {user.firstName}
+                        </div>
                       )}
                     </div>
 
@@ -328,11 +352,18 @@ export default function ProfilePage() {
                         <input
                           type="text"
                           value={editForm.lastName}
-                          onChange={(e) => setEditForm(prev => ({ ...prev, lastName: e.target.value }))}
+                          onChange={(e) =>
+                            setEditForm((prev) => ({
+                              ...prev,
+                              lastName: e.target.value,
+                            }))
+                          }
                           className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
                         />
                       ) : (
-                        <div className="text-white font-medium text-lg">{user.lastName}</div>
+                        <div className="text-white font-medium text-lg">
+                          {user.lastName}
+                        </div>
                       )}
                     </div>
 
@@ -343,16 +374,25 @@ export default function ProfilePage() {
                       {isEditing ? (
                         <select
                           value={editForm.grade}
-                          onChange={(e) => setEditForm(prev => ({ ...prev, grade: e.target.value }))}
+                          onChange={(e) =>
+                            setEditForm((prev) => ({
+                              ...prev,
+                              grade: e.target.value,
+                            }))
+                          }
                           className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
                         >
                           <option value="">Select Grade</option>
-                          {getGradeOptions().map(grade => (
-                            <option key={grade} value={grade}>{grade}</option>
+                          {getGradeOptions().map((grade) => (
+                            <option key={grade} value={grade}>
+                              {grade}
+                            </option>
                           ))}
                         </select>
                       ) : (
-                        <div className="text-white font-medium text-lg">{user.grade || 'Not specified'}</div>
+                        <div className="text-white font-medium text-lg">
+                          {user.grade || 'Not specified'}
+                        </div>
                       )}
                     </div>
 
@@ -364,12 +404,19 @@ export default function ProfilePage() {
                         <input
                           type="text"
                           value={editForm.school}
-                          onChange={(e) => setEditForm(prev => ({ ...prev, school: e.target.value }))}
+                          onChange={(e) =>
+                            setEditForm((prev) => ({
+                              ...prev,
+                              school: e.target.value,
+                            }))
+                          }
                           placeholder="Enter your school name"
                           className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
                         />
                       ) : (
-                        <div className="text-white font-medium text-lg">{user.school || 'Not specified'}</div>
+                        <div className="text-white font-medium text-lg">
+                          {user.school || 'Not specified'}
+                        </div>
                       )}
                     </div>
                   </div>
@@ -381,7 +428,9 @@ export default function ProfilePage() {
                     </div>
                     <div className="flex items-center space-x-2 text-gray-400">
                       <Calendar className="w-4 h-4" />
-                      <span>Joined {new Date(user.joinedAt).toLocaleDateString()}</span>
+                      <span>
+                        Joined {new Date(user.joinedAt).toLocaleDateString()}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -404,9 +453,13 @@ export default function ProfilePage() {
                 <div className="bg-blue-500/20 border border-blue-500/30 rounded-xl p-4">
                   <div className="flex items-center justify-between mb-2">
                     <BookOpen className="w-8 h-8 text-blue-400" />
-                    <span className="text-2xl font-bold text-white">{stats.totalStoriesCreated}</span>
+                    <span className="text-2xl font-bold text-white">
+                      {stats.totalStoriesCreated}
+                    </span>
                   </div>
-                  <div className="text-blue-300 font-medium">Stories Written</div>
+                  <div className="text-blue-300 font-medium">
+                    Stories Written
+                  </div>
                 </div>
 
                 <div className="bg-green-500/20 border border-green-500/30 rounded-xl p-4">
@@ -416,21 +469,29 @@ export default function ProfilePage() {
                       {stats.totalWordsWritten.toLocaleString()}
                     </span>
                   </div>
-                  <div className="text-green-300 font-medium">Words Written</div>
+                  <div className="text-green-300 font-medium">
+                    Words Written
+                  </div>
                 </div>
 
                 <div className="bg-purple-500/20 border border-purple-500/30 rounded-xl p-4">
                   <div className="flex items-center justify-between mb-2">
                     <Award className="w-8 h-8 text-purple-400" />
-                    <span className="text-2xl font-bold text-white">{stats.averageScore}%</span>
+                    <span className="text-2xl font-bold text-white">
+                      {stats.averageScore}%
+                    </span>
                   </div>
-                  <div className="text-purple-300 font-medium">Average Score</div>
+                  <div className="text-purple-300 font-medium">
+                    Average Score
+                  </div>
                 </div>
 
                 <div className="bg-orange-500/20 border border-orange-500/30 rounded-xl p-4">
                   <div className="flex items-center justify-between mb-2">
                     <Calendar className="w-8 h-8 text-orange-400" />
-                    <span className="text-2xl font-bold text-white">{stats.writingStreak}</span>
+                    <span className="text-2xl font-bold text-white">
+                      {stats.writingStreak}
+                    </span>
                   </div>
                   <div className="text-orange-300 font-medium">Day Streak</div>
                 </div>
@@ -438,9 +499,13 @@ export default function ProfilePage() {
                 <div className="bg-pink-500/20 border border-pink-500/30 rounded-xl p-4">
                   <div className="flex items-center justify-between mb-2">
                     <Palette className="w-8 h-8 text-pink-400" />
-                    <span className="text-lg font-bold text-white">{stats.favoriteGenre}</span>
+                    <span className="text-lg font-bold text-white">
+                      {stats.favoriteGenre}
+                    </span>
                   </div>
-                  <div className="text-pink-300 font-medium">Favorite Genre</div>
+                  <div className="text-pink-300 font-medium">
+                    Favorite Genre
+                  </div>
                 </div>
 
                 <div className="bg-cyan-500/20 border border-cyan-500/30 rounded-xl p-4">
@@ -489,7 +554,7 @@ export default function ProfilePage() {
                     </div>
                   </motion.div>
                 ))}
-                
+
                 {achievements.length === 0 && (
                   <div className="text-center py-8 text-gray-400">
                     <Award className="w-12 h-12 mx-auto mb-3 opacity-50" />

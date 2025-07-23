@@ -11,7 +11,7 @@ export async function POST(
 ) {
   try {
     const session = await getServerSession(authOptions);
-    
+
     if (!session || session.user.role !== 'child') {
       return NextResponse.json(
         { error: 'Access denied. Children only.' },
@@ -27,11 +27,11 @@ export async function POST(
       {
         _id: sessionId,
         childId: session.user.id,
-        status: 'active'
+        status: 'active',
       },
       {
         status: 'paused',
-        pausedAt: new Date()
+        pausedAt: new Date(),
       },
       { new: true }
     );
@@ -45,9 +45,8 @@ export async function POST(
 
     return NextResponse.json({
       success: true,
-      message: 'Story paused successfully'
+      message: 'Story paused successfully',
     });
-
   } catch (error) {
     console.error('Error pausing story:', error);
     return NextResponse.json(

@@ -18,7 +18,7 @@ const pendingElements = new Map<string, { elements: any; timestamp: number }>();
 export async function POST(request: Request) {
   try {
     const session = await getServerSession(authOptions);
-    
+
     if (!session || session.user.role !== 'child') {
       return NextResponse.json(
         { error: 'Access denied. Children only.' },
@@ -38,7 +38,7 @@ export async function POST(request: Request) {
 
     // Retrieve pending elements
     const stored = pendingElements.get(pendingToken);
-    
+
     if (!stored) {
       return NextResponse.json(
         { error: 'Token not found or expired' },
@@ -49,16 +49,20 @@ export async function POST(request: Request) {
     // Check if expired
     if (Date.now() > stored.timestamp) {
       pendingElements.delete(pendingToken);
-      return NextResponse.json(
-        { error: 'Token expired' },
-        { status: 410 }
-      );
+      return NextResponse.json({ error: 'Token expired' }, { status: 410 });
     }
 
     const elements = stored.elements;
 
     // Validate required elements
-    const requiredElements = ['genre', 'character', 'setting', 'theme', 'mood', 'tone'];
+    const requiredElements = [
+      'genre',
+      'character',
+      'setting',
+      'theme',
+      'mood',
+      'tone',
+    ];
     for (const element of requiredElements) {
       if (!elements[element]) {
         return NextResponse.json(
@@ -72,9 +76,9 @@ export async function POST(request: Request) {
     const rateCheck = checkRateLimit(session.user.id, 'story-create');
     if (!rateCheck.allowed) {
       return NextResponse.json(
-        { 
+        {
           error: rateCheck.message,
-          retryAfter: rateCheck.retryAfter
+          retryAfter: rateCheck.retryAfter,
         },
         { status: 429 }
       );
@@ -92,15 +96,17 @@ export async function POST(request: Request) {
     const tierKey = user.subscriptionTier?.toUpperCase() || 'FREE';
     const tierObj = SUBSCRIPTION_TIERS[tierKey] || SUBSCRIPTION_TIERS.FREE;
     const limit = tierObj.storyLimit;
-    
-    const userStoryCount = await StorySession.countDocuments({ 
+
+    const userStoryCount = await StorySession.countDocuments({
       childId: user._id,
-      createdAt: { $gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) }
+      createdAt: { $gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) },
     });
-    
+
     if (userStoryCount >= limit) {
       return NextResponse.json(
-        { error: `Monthly story limit reached (${limit} stories allowed, you have created ${userStoryCount}).` },
+        {
+          error: `Monthly story limit reached (${limit} stories allowed, you have created ${userStoryCount}).`,
+        },
         { status: 402 }
       );
     }
@@ -122,16 +128,16 @@ export async function POST(request: Request) {
       childWords: 0,
       apiCallsUsed: 1, // Opening generation
       maxApiCalls: 7,
-      status: 'active'
+      status: 'active',
     });
 
     // Update user statistics
     await User.findByIdAndUpdate(session.user.id, {
-      $inc: { 
+      $inc: {
         totalStoriesCreated: 1,
-        storiesCreatedThisMonth: 1
+        storiesCreatedThisMonth: 1,
       },
-      $set: { lastActiveDate: new Date() }
+      $set: { lastActiveDate: new Date() },
     });
 
     // Clean up the token
@@ -148,11 +154,10 @@ export async function POST(request: Request) {
         childWords: newSession.childWords,
         apiCallsUsed: newSession.apiCallsUsed,
         maxApiCalls: newSession.maxApiCalls,
-        status: newSession.status
+        status: newSession.status,
       },
-      aiOpening
+      aiOpening,
     });
-
   } catch (error) {
     console.error('Error creating story from token:', error);
     return NextResponse.json(

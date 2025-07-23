@@ -112,7 +112,7 @@
 // //         className="mt-4 p-3 bg-gradient-to-r from-green-500/20 to-blue-500/20 border border-green-500/30 rounded-lg"
 // //       >
 // //         <p className="text-green-300 text-sm">
-// //           {session.status === 'completed' 
+// //           {session.status === 'completed'
 // //             ? "🎉 Your story is complete! Great job writing an amazing adventure!"
 // //             : `✨ Keep going! You're doing great. Turn ${session.currentTurn} is ready for your creativity.`
 // //           }
@@ -121,7 +121,6 @@
 // //     </motion.div>
 // //   );
 // // }
-
 
 // // components/writing/ProgressTracker.tsx (FIXED AI CALLS)
 // 'use client';
@@ -181,7 +180,7 @@
 //         </h2>
 //         <div className="flex items-center space-x-2">
 //           <div className={`w-3 h-3 rounded-full ${
-//             session.status === 'active' ? 'bg-green-400 animate-pulse' : 
+//             session.status === 'active' ? 'bg-green-400 animate-pulse' :
 //             session.status === 'completed' ? 'bg-blue-400' : 'bg-yellow-400'
 //           }`} />
 //           <span className="text-gray-300 text-sm capitalize">{session.status}</span>
@@ -297,18 +296,21 @@ interface ProgressTrackerProps {
   className?: string;
 }
 
-export default function ProgressTracker({ session, className = '' }: ProgressTrackerProps) {
+export default function ProgressTracker({
+  session,
+  className = '',
+}: ProgressTrackerProps) {
   // ✅ ADD DEBUG LOGGING
   console.log('🔧 ProgressTracker session data:', {
     apiCallsUsed: session.apiCallsUsed,
     maxApiCalls: session.maxApiCalls,
     type_apiCallsUsed: typeof session.apiCallsUsed,
-    type_maxApiCalls: typeof session.maxApiCalls
+    type_maxApiCalls: typeof session.maxApiCalls,
   });
 
   const turnsProgress = ((session.currentTurn - 1) / 6) * 100;
   const wordsProgress = Math.min((session.totalWords / 600) * 100, 100);
-  
+
   // ✅ FIXED: Handle null/undefined values properly
   const apiCallsUsed = Number(session.apiCallsUsed) || 0;
   const maxApiCalls = Number(session.maxApiCalls) || 7;
@@ -318,16 +320,16 @@ export default function ProgressTracker({ session, className = '' }: ProgressTra
     apiCallsUsed,
     maxApiCalls,
     apiProgress,
-    percentage: Math.round(apiProgress)
+    percentage: Math.round(apiProgress),
   });
 
   const getEncouragementMessage = () => {
     if (session.currentTurn <= 2) {
       return "🌟 Great start! You're building an amazing story.";
     } else if (session.currentTurn <= 4) {
-      return "🚀 Keep going! Your creativity is shining through.";
+      return '🚀 Keep going! Your creativity is shining through.';
     } else if (session.currentTurn <= 6) {
-      return "🎯 Almost there! Time to bring your story to an epic conclusion.";
+      return '🎯 Almost there! Time to bring your story to an epic conclusion.';
     } else {
       return "🎉 Story complete! What an amazing adventure you've created.";
     }
@@ -335,11 +337,11 @@ export default function ProgressTracker({ session, className = '' }: ProgressTra
 
   const getWordTarget = () => {
     if (session.totalWords < 100) {
-      return "Try writing 100 more words this turn.";
+      return 'Try writing 100 more words this turn.';
     } else if (session.totalWords < 300) {
       return "You're building great momentum! Keep describing the adventure.";
     } else if (session.totalWords < 500) {
-      return "Excellent progress! Your story is really taking shape.";
+      return 'Excellent progress! Your story is really taking shape.';
     } else {
       return "Fantastic word count! You're telling a rich, detailed story.";
     }
@@ -356,11 +358,18 @@ export default function ProgressTracker({ session, className = '' }: ProgressTra
           📊 Story Progress
         </h2>
         <div className="flex items-center space-x-2">
-          <div className={`w-3 h-3 rounded-full ${
-            session.status === 'active' ? 'bg-green-400 animate-pulse' : 
-            session.status === 'completed' ? 'bg-blue-400' : 'bg-yellow-400'
-          }`} />
-          <span className="text-gray-300 text-sm capitalize">{session.status}</span>
+          <div
+            className={`w-3 h-3 rounded-full ${
+              session.status === 'active'
+                ? 'bg-green-400 animate-pulse'
+                : session.status === 'completed'
+                  ? 'bg-blue-400'
+                  : 'bg-yellow-400'
+            }`}
+          />
+          <span className="text-gray-300 text-sm capitalize">
+            {session.status}
+          </span>
         </div>
       </div>
 
@@ -380,13 +389,11 @@ export default function ProgressTracker({ session, className = '' }: ProgressTra
             <motion.div
               initial={{ width: 0 }}
               animate={{ width: `${turnsProgress}%` }}
-              transition={{ duration: 0.8, ease: "easeOut" }}
+              transition={{ duration: 0.8, ease: 'easeOut' }}
               className="bg-gradient-to-r from-blue-400 to-blue-600 h-3 rounded-full"
             />
           </div>
-          <p className="text-blue-300 text-sm">
-            {Math.round(turnsProgress)}%
-          </p>
+          <p className="text-blue-300 text-sm">{Math.round(turnsProgress)}%</p>
         </div>
 
         {/* Words Progress */}
@@ -404,13 +411,11 @@ export default function ProgressTracker({ session, className = '' }: ProgressTra
             <motion.div
               initial={{ width: 0 }}
               animate={{ width: `${wordsProgress}%` }}
-              transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
+              transition={{ duration: 0.8, ease: 'easeOut', delay: 0.2 }}
               className="bg-gradient-to-r from-green-400 to-green-600 h-3 rounded-full"
             />
           </div>
-          <p className="text-green-300 text-sm">
-            {Math.round(wordsProgress)}%
-          </p>
+          <p className="text-green-300 text-sm">{Math.round(wordsProgress)}%</p>
         </div>
 
         {/* API Calls Progress - FIXED */}
@@ -428,13 +433,11 @@ export default function ProgressTracker({ session, className = '' }: ProgressTra
             <motion.div
               initial={{ width: 0 }}
               animate={{ width: `${Math.min(apiProgress, 100)}%` }}
-              transition={{ duration: 0.8, ease: "easeOut", delay: 0.4 }}
+              transition={{ duration: 0.8, ease: 'easeOut', delay: 0.4 }}
               className="bg-gradient-to-r from-purple-400 to-purple-600 h-3 rounded-full"
             />
           </div>
-          <p className="text-purple-300 text-sm">
-            {Math.round(apiProgress)}%
-          </p>
+          <p className="text-purple-300 text-sm">{Math.round(apiProgress)}%</p>
           {/* ✅ DEBUG INFO */}
           <p className="text-xs text-gray-500">
             Debug: {apiCallsUsed} calls used
@@ -449,12 +452,8 @@ export default function ProgressTracker({ session, className = '' }: ProgressTra
         transition={{ delay: 0.6 }}
         className="mt-6 p-4 bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-500/20 rounded-lg"
       >
-        <p className="text-blue-300 font-medium">
-          {getEncouragementMessage()}
-        </p>
-        <p className="text-gray-400 text-sm mt-1">
-          {getWordTarget()}
-        </p>
+        <p className="text-blue-300 font-medium">{getEncouragementMessage()}</p>
+        <p className="text-gray-400 text-sm mt-1">{getWordTarget()}</p>
       </motion.div>
     </motion.div>
   );

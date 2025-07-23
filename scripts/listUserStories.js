@@ -14,7 +14,9 @@ async function main() {
 
   await mongoose.connect(MONGO_URI);
 
-  const stories = await StorySession.find({ childId: userId }).sort({ createdAt: -1 });
+  const stories = await StorySession.find({ childId: userId }).sort({
+    createdAt: -1,
+  });
   console.log(`Found ${stories.length} stories for user ${userId}`);
   stories.forEach((story, idx) => {
     console.log(`\n#${idx + 1}`);
@@ -27,7 +29,7 @@ async function main() {
   await mongoose.disconnect();
 }
 
-main().catch(err => {
+main().catch((err) => {
   console.error('Error:', err);
   process.exit(1);
 });

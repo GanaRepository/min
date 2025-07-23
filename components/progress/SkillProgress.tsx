@@ -9,7 +9,10 @@ interface SkillProgressProps {
   creativityScore: number;
 }
 
-export default function SkillProgress({ grammarScore, creativityScore }: SkillProgressProps) {
+export default function SkillProgress({
+  grammarScore,
+  creativityScore,
+}: SkillProgressProps) {
   const skills = [
     {
       name: 'Grammar Improvement',
@@ -21,8 +24,8 @@ export default function SkillProgress({ grammarScore, creativityScore }: SkillPr
       focus: [
         { item: 'Punctuation', status: 'completed' },
         { item: 'Sentence structure', status: 'improving' },
-        { item: 'Spelling accuracy', status: 'completed' }
-      ]
+        { item: 'Spelling accuracy', status: 'completed' },
+      ],
     },
     {
       name: 'Creativity Growth',
@@ -34,9 +37,9 @@ export default function SkillProgress({ grammarScore, creativityScore }: SkillPr
       focus: [
         { item: 'Character dialogue', status: 'excellent' },
         { item: 'Plot twists', status: 'excellent' },
-        { item: 'Descriptive language', status: 'improving' }
-      ]
-    }
+        { item: 'Descriptive language', status: 'improving' },
+      ],
+    },
   ];
 
   return (
@@ -61,16 +64,22 @@ export default function SkillProgress({ grammarScore, creativityScore }: SkillPr
           >
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center space-x-3">
-                <div className={`w-10 h-10 bg-gradient-to-r ${skill.color} rounded-lg flex items-center justify-center`}>
+                <div
+                  className={`w-10 h-10 bg-gradient-to-r ${skill.color} rounded-lg flex items-center justify-center`}
+                >
                   <skill.icon className="w-5 h-5 text-white" />
                 </div>
                 <div>
                   <h4 className="text-white font-medium">{skill.name}</h4>
-                  <span className="text-green-400 text-sm">{skill.improvement} this month</span>
+                  <span className="text-green-400 text-sm">
+                    {skill.improvement} this month
+                  </span>
                 </div>
               </div>
               <div className="text-right">
-                <div className="text-2xl font-bold text-white">{skill.score}%</div>
+                <div className="text-2xl font-bold text-white">
+                  {skill.score}%
+                </div>
               </div>
             </div>
 
@@ -88,19 +97,34 @@ export default function SkillProgress({ grammarScore, creativityScore }: SkillPr
 
             {/* Focus areas */}
             <div>
-              <h5 className="text-gray-300 text-sm font-medium mb-2">Recent Focus:</h5>
+              <h5 className="text-gray-300 text-sm font-medium mb-2">
+                Recent Focus:
+              </h5>
               <div className="space-y-1">
                 {skill.focus.map((item, itemIndex) => (
-                  <div key={itemIndex} className="flex items-center justify-between text-sm">
+                  <div
+                    key={itemIndex}
+                    className="flex items-center justify-between text-sm"
+                  >
                     <span className="text-gray-300">• {item.item}</span>
-                    <span className={`text-xs font-medium ${
-                      item.status === 'completed' ? 'text-green-400' :
-                      item.status === 'excellent' ? 'text-purple-400' :
-                      item.status === 'improving' ? 'text-yellow-400' : 'text-gray-400'
-                    }`}>
-                      {item.status === 'completed' ? '✅' :
-                       item.status === 'excellent' ? '⭐' :
-                       item.status === 'improving' ? '📈' : '📝'}
+                    <span
+                      className={`text-xs font-medium ${
+                        item.status === 'completed'
+                          ? 'text-green-400'
+                          : item.status === 'excellent'
+                            ? 'text-purple-400'
+                            : item.status === 'improving'
+                              ? 'text-yellow-400'
+                              : 'text-gray-400'
+                      }`}
+                    >
+                      {item.status === 'completed'
+                        ? '✅'
+                        : item.status === 'excellent'
+                          ? '⭐'
+                          : item.status === 'improving'
+                            ? '📈'
+                            : '📝'}
                     </span>
                   </div>
                 ))}

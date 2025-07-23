@@ -19,10 +19,14 @@ interface GoalsTrackerProps {
 export default function GoalsTracker({ goals }: GoalsTrackerProps) {
   const getGoalIcon = (type: string) => {
     switch (type) {
-      case 'stories': return '📚';
-      case 'skill': return '📈';
-      case 'streak': return '🔥';
-      default: return '🎯';
+      case 'stories':
+        return '📚';
+      case 'skill':
+        return '📈';
+      case 'streak':
+        return '🔥';
+      default:
+        return '🎯';
     }
   };
 
@@ -36,7 +40,12 @@ export default function GoalsTracker({ goals }: GoalsTrackerProps) {
 
   const challenges = [
     { name: 'Use 10 new adjectives', progress: 7, target: 10, reward: '🌟' },
-    { name: 'Add dialogue to every story', progress: 2, target: 3, reward: '💬' },
+    {
+      name: 'Add dialogue to every story',
+      progress: 2,
+      target: 3,
+      reward: '💬',
+    },
     { name: 'Try a new genre', progress: 1, target: 1, reward: '📚' },
   ];
 
@@ -80,16 +89,18 @@ export default function GoalsTracker({ goals }: GoalsTrackerProps) {
                     </span>
                   </div>
                 </div>
-                
+
                 <div className="w-full bg-gray-600 rounded-full h-3">
                   <motion.div
                     initial={{ width: 0 }}
-                    animate={{ width: `${Math.min((goal.progress / goal.target) * 100, 100)}%` }}
+                    animate={{
+                      width: `${Math.min((goal.progress / goal.target) * 100, 100)}%`,
+                    }}
                     transition={{ duration: 1, delay: 1.0 + index * 0.1 }}
                     className={`bg-gradient-to-r ${getProgressColor(goal.progress, goal.target)} h-3 rounded-full`}
                   />
                 </div>
-                
+
                 <div className="mt-2 text-xs text-gray-400">
                   {Math.round((goal.progress / goal.target) * 100)}% complete
                 </div>
@@ -100,7 +111,9 @@ export default function GoalsTracker({ goals }: GoalsTrackerProps) {
 
         {/* Weekly Challenges */}
         <div>
-          <h4 className="text-purple-400 font-medium mb-4">Weekly Challenges:</h4>
+          <h4 className="text-purple-400 font-medium mb-4">
+            Weekly Challenges:
+          </h4>
           <div className="space-y-3">
             {challenges.map((challenge, index) => (
               <motion.div
@@ -112,7 +125,9 @@ export default function GoalsTracker({ goals }: GoalsTrackerProps) {
               >
                 <div className="flex items-center space-x-3">
                   <span className="text-lg">{challenge.reward}</span>
-                  <span className="text-gray-300 text-sm">{challenge.name}</span>
+                  <span className="text-gray-300 text-sm">
+                    {challenge.name}
+                  </span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <span className="text-purple-400 text-sm font-medium">

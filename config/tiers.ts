@@ -22,8 +22,8 @@ export const SUBSCRIPTION_TIERS: Record<string, SubscriptionTier> = {
       'AI assessment and feedback',
       'Export to PDF and Word',
       'Basic progress tracking',
-      'Minimum 60 words per turn requirement'
-    ]
+      'Minimum 60 words per turn requirement',
+    ],
   },
   BASIC: {
     id: 'basic',
@@ -39,12 +39,12 @@ export const SUBSCRIPTION_TIERS: Record<string, SubscriptionTier> = {
       'Mentor review and comments',
       'Export to PDF and Word',
       'Advanced progress tracking',
-      'Minimum 60 words per turn requirement'
-    ]
+      'Minimum 60 words per turn requirement',
+    ],
   },
   PREMIUM: {
     id: 'premium',
-    name: 'Premium', 
+    name: 'Premium',
     storyLimit: 200, // per month
     price: 39.99,
     aiCalls: 7,
@@ -57,9 +57,9 @@ export const SUBSCRIPTION_TIERS: Record<string, SubscriptionTier> = {
       'Export to PDF and Word',
       'Advanced analytics and insights',
       'Custom story elements',
-      'Minimum 60 words per turn requirement'
-    ]
-  }
+      'Minimum 60 words per turn requirement',
+    ],
+  },
 };
 
 export const DEFAULT_TIER = SUBSCRIPTION_TIERS.FREE;

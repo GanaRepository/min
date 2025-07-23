@@ -13,7 +13,7 @@ export async function GET(
 ) {
   try {
     const session = await getServerSession(authOptions);
-    
+
     if (!session || session.user.role !== 'child') {
       return NextResponse.json(
         { error: 'Access denied. Children only.' },
@@ -35,7 +35,7 @@ export async function GET(
     // Verify session belongs to user
     const storySession = await StorySession.findOne({
       _id: sessionId,
-      childId: session.user.id
+      childId: session.user.id,
     });
 
     if (!storySession) {
@@ -46,15 +46,12 @@ export async function GET(
     }
 
     // Get all turns for this session
-    const turns = await Turn.find({ sessionId })
-      .sort({ turnNumber: 1 })
-      .lean();
+    const turns = await Turn.find({ sessionId }).sort({ turnNumber: 1 }).lean();
 
     return NextResponse.json({
       success: true,
-      turns
+      turns,
     });
-
   } catch (error) {
     console.error('Error fetching story turns:', error);
     return NextResponse.json(
