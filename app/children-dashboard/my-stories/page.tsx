@@ -90,13 +90,41 @@ export default function MyStoriesPage() {
     }
   };
 
-  const handleContinueStory = (storyId: string) => {
-    // Use storyNumber for navigation if available
+  // Fixed: Handle both continuing and viewing stories
+  const handleStoryAction = async (storyId: string) => {
     const story = stories.find((s) => s._id === storyId);
-    if (story && story.storyNumber) {
-      router.push(`/children-dashboard/story/${story.storyNumber}`);
+    
+    if (!story) return;
+
+    if (story.status === 'completed') {
+      // For completed stories, redirect to view page
+      router.push(`/children-dashboard/my-stories/${storyId}`);
     } else {
-      router.push(`/children-dashboard/story/${storyId}`);
+      // For active/paused stories, handle resume if needed then redirect to story editor
+      if (story.status === 'paused') {
+        try {
+          const response = await fetch(`/api/stories/session/${storyId}/resume`, {
+            method: 'POST',
+          });
+          
+          if (response.ok) {
+            console.log('Story resumed successfully');
+            // Update local state
+            setStories(prev => prev.map(s => 
+              s._id === storyId ? { ...s, status: 'active' as const } : s
+            ));
+          }
+        } catch (error) {
+          console.error('Error resuming story:', error);
+        }
+      }
+      
+      // Navigate to story editor using storyNumber if available, otherwise use _id
+      if (story.storyNumber) {
+        router.push(`/children-dashboard/story/${story.storyNumber}`);
+      } else {
+        router.push(`/children-dashboard/story/${storyId}`);
+      }
     }
   };
 
@@ -162,6 +190,19 @@ export default function MyStoriesPage() {
     }
   };
 
+  const getActionText = (status: string) => {
+    switch (status) {
+      case 'active':
+        return { text: 'Continue', icon: Edit };
+      case 'completed':
+        return { text: 'View', icon: Eye };
+      case 'paused':
+        return { text: 'Resume', icon: PlayCircle };
+      default:
+        return { text: 'Open', icon: Eye };
+    }
+  };
+
   if (status === 'loading' || isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 flex items-center justify-center">
@@ -179,7 +220,7 @@ export default function MyStoriesPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 text-white">
-      {/* FIXED: Header with proper spacing and responsive container */}
+      {/* Header */}
       <div className="bg-gray-800/50 backdrop-blur-xl border-b border-gray-600/40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <motion.div
@@ -214,9 +255,9 @@ export default function MyStoriesPage() {
         </div>
       </div>
 
-      {/* FIXED: Main Content with proper container and spacing */}
+      {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Search and Filters with proper spacing */}
+        {/* Search and Filters */}
         <div className="mb-8 space-y-6">
           {/* Search Bar */}
           <div className="relative">
@@ -279,7 +320,6 @@ export default function MyStoriesPage() {
 
             {/* Sort and View Controls */}
             <div className="flex items-center space-x-4">
-              {/* Sort Dropdown */}
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as any)}
@@ -291,7 +331,6 @@ export default function MyStoriesPage() {
                 <option value="words">Most Words</option>
               </select>
 
-              {/* View Mode Toggle */}
               <div className="flex bg-gray-800/50 border border-gray-600/50 rounded-xl overflow-hidden">
                 <button
                   onClick={() => setViewMode('grid')}
@@ -318,7 +357,7 @@ export default function MyStoriesPage() {
           </div>
         </div>
 
-        {/* FIXED: Stories Grid/List with proper responsive layout */}
+        {/* Stories Grid/List */}
         {isLoading ? (
           <div className="text-center py-20">
             <div className="w-8 h-8 border-4 border-white/30 border-t-white rounded-full animate-spin mx-auto mb-4"></div>
@@ -361,139 +400,132 @@ export default function MyStoriesPage() {
                 : 'space-y-6'
             }
           >
-            {sortedStories.map((story, index) => (
-              <motion.div
-                key={story._id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-                className={`group cursor-pointer ${
-                  viewMode === 'grid'
-                    ? 'bg-gray-800/50 border border-gray-600/50 rounded-2xl p-6 hover:bg-gray-800/70 transition-all hover:border-blue-500/50'
-                    : 'bg-gray-800/50 border border-gray-600/50 rounded-xl p-6 hover:bg-gray-800/70 transition-all'
-                }`}
-                onClick={() =>
-                  story.status === 'completed'
-                    ? router.push(`/children-dashboard/my-stories/${story._id}`)
-                    : handleContinueStory(story._id)
-                }
-              >
-                {/* Story Header */}
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex-1">
-                    <h3 className="text-xl font-semibold text-white mb-2 group-hover:text-blue-300 transition-colors line-clamp-2">
-                      {story.title}
-                      <span className="text-xs text-gray-400 ml-2">
-                        Story #{story.storyNumber ?? story._id.slice(-6)}
-                      </span>
-                    </h3>
-                    <div
-                      className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(story.status)}`}
-                    >
-                      {getStatusIcon(story.status)}
-                      <span className="ml-2 capitalize">
-                        {story.status === 'active'
-                          ? 'In Progress'
-                          : story.status}
-                      </span>
-                    </div>
-                  </div>
-
-                  {story.overallScore && (
-                    <div className="flex items-center ml-4">
-                      <Star className="w-4 h-4 mr-1 text-yellow-400" />
-                      <span className="text-yellow-400 font-semibold">
-                        {story.overallScore}%
-                      </span>
-                    </div>
-                  )}
-                </div>
-
-                {/* Story Elements */}
-                <div className="flex flex-wrap gap-2 mb-4">
-                  {Object.entries(story.elements)
-                    .slice(0, 3)
-                    .map(([type, value]) => (
-                      <span
-                        key={type}
-                        className="px-2 py-1 bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-500/30 rounded-lg text-xs text-purple-200"
+            {sortedStories.map((story, index) => {
+              const actionInfo = getActionText(story.status);
+              const ActionIcon = actionInfo.icon;
+              
+              return (
+                <motion.div
+                  key={story._id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                  className={`group cursor-pointer ${
+                    viewMode === 'grid'
+                      ? 'bg-gray-800/50 border border-gray-600/50 rounded-2xl p-6 hover:bg-gray-800/70 transition-all hover:border-blue-500/50'
+                      : 'bg-gray-800/50 border border-gray-600/50 rounded-xl p-6 hover:bg-gray-800/70 transition-all'
+                  }`}
+                  onClick={() => handleStoryAction(story._id)}
+                >
+                  {/* Story Header */}
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex-1">
+                      <h3 className="text-xl font-semibold text-white mb-2 group-hover:text-blue-300 transition-colors line-clamp-2">
+                        {story.title}
+                        <span className="text-xs text-gray-400 ml-2">
+                          Story #{story.storyNumber ?? story._id.slice(-6)}
+                        </span>
+                      </h3>
+                      <div
+                        className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(story.status)}`}
                       >
-                        {value}
-                      </span>
-                    ))}
-                  {Object.keys(story.elements).length > 3 && (
-                    <span className="px-2 py-1 bg-gray-700/50 border border-gray-600/30 rounded-lg text-xs text-gray-400">
-                      +{Object.keys(story.elements).length - 3} more
-                    </span>
-                  )}
-                </div>
-
-                {/* Stats */}
-                <div className="flex items-center justify-between text-sm text-gray-400 mb-4">
-                  <div className="flex items-center space-x-4">
-                    <div className="flex items-center">
-                      <BookOpen className="w-4 h-4 mr-1" />
-                      <span>{story.childWords || story.totalWords} words</span>
+                        {getStatusIcon(story.status)}
+                        <span className="ml-2 capitalize">
+                          {story.status === 'active'
+                            ? 'In Progress'
+                            : story.status}
+                        </span>
+                      </div>
                     </div>
-                    {story.currentTurn && story.status !== 'completed' && (
-                      <div className="flex items-center">
-                        <Clock className="w-4 h-4 mr-1" />
-                        <span>Turn {story.currentTurn}/6</span>
+
+                    {story.overallScore && (
+                      <div className="flex items-center ml-4">
+                        <Star className="w-4 h-4 mr-1 text-yellow-400" />
+                        <span className="text-yellow-400 font-semibold">
+                          {story.overallScore}%
+                        </span>
                       </div>
                     )}
                   </div>
-                </div>
 
-                {/* Progress bar for active stories */}
-                {story.status === 'active' && story.currentTurn && (
-                  <div className="mb-4">
-                    <div className="w-full bg-gray-700/50 rounded-full h-2">
-                      <div
-                        className="bg-gradient-to-r from-blue-500 to-green-500 h-2 rounded-full transition-all duration-500"
-                        style={{
-                          width: `${((story.currentTurn - 1) / 6) * 100}%`,
-                        }}
-                      />
-                    </div>
-                    <div className="text-xs text-gray-400 mt-1">
-                      {Math.round(((story.currentTurn - 1) / 6) * 100)}%
-                      complete
-                    </div>
-                  </div>
-                )}
-
-                {/* Action Buttons */}
-                <div className="flex items-center justify-between">
-                  <div className="text-xs text-gray-500">
-                    {story.status === 'completed' && story.publishedAt
-                      ? `Published ${new Date(story.publishedAt).toLocaleDateString()}`
-                      : `Updated ${new Date(story.updatedAt).toLocaleDateString()}`}
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    {story.status === 'active' ? (
-                      <span className="text-blue-400 text-sm font-medium flex items-center">
-                        <Edit className="w-4 h-4 mr-1" />
-                        Continue
-                      </span>
-                    ) : story.status === 'completed' ? (
-                      <span className="text-green-400 text-sm font-medium flex items-center">
-                        <Eye className="w-4 h-4 mr-1" />
-                        View
-                      </span>
-                    ) : (
-                      <span className="text-yellow-400 text-sm font-medium flex items-center">
-                        <PlayCircle className="w-4 h-4 mr-1" />
-                        Resume
+                  {/* Story Elements */}
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {Object.entries(story.elements)
+                      .slice(0, 3)
+                      .map(([type, value]) => (
+                        <span
+                          key={type}
+                          className="px-2 py-1 bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-500/30 rounded-lg text-xs text-purple-200"
+                        >
+                          {value}
+                        </span>
+                      ))}
+                    {Object.keys(story.elements).length > 3 && (
+                      <span className="px-2 py-1 bg-gray-700/50 border border-gray-600/30 rounded-lg text-xs text-gray-400">
+                        +{Object.keys(story.elements).length - 3} more
                       </span>
                     )}
                   </div>
-                </div>
-              </motion.div>
-            ))}
+
+                  {/* Stats */}
+                  <div className="flex items-center justify-between text-sm text-gray-400 mb-4">
+                    <div className="flex items-center space-x-4">
+                      <div className="flex items-center">
+                        <BookOpen className="w-4 h-4 mr-1" />
+                        <span>{story.childWords || story.totalWords} words</span>
+                      </div>
+                      {story.currentTurn && story.status !== 'completed' && (
+                        <div className="flex items-center">
+                          <Clock className="w-4 h-4 mr-1" />
+                          <span>Turn {story.currentTurn}/6</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Progress bar for active stories */}
+                  {story.status === 'active' && story.currentTurn && (
+                    <div className="mb-4">
+                      <div className="w-full bg-gray-700/50 rounded-full h-2">
+                        <div
+                          className="bg-gradient-to-r from-blue-500 to-green-500 h-2 rounded-full transition-all duration-500"
+                          style={{
+                            width: `${((story.currentTurn - 1) / 6) * 100}%`,
+                          }}
+                        />
+                      </div>
+                      <div className="text-xs text-gray-400 mt-1">
+                        {Math.round(((story.currentTurn - 1) / 6) * 100)}%
+                        complete
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Action Buttons */}
+                  <div className="flex items-center justify-between">
+                    <div className="text-xs text-gray-500">
+                      {story.status === 'completed' && story.publishedAt
+                        ? `Published ${new Date(story.publishedAt).toLocaleDateString()}`
+                        : `Updated ${new Date(story.updatedAt).toLocaleDateString()}`}
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <span className={`text-sm font-medium flex items-center ${
+                        story.status === 'active' ? 'text-blue-400' :
+                        story.status === 'completed' ? 'text-green-400' :
+                        'text-yellow-400'
+                      }`}>
+                        <ActionIcon className="w-4 h-4 mr-1" />
+                        {actionInfo.text}
+                      </span>
+                    </div>
+                  </div>
+                </motion.div>
+              );
+            })}
           </motion.div>
         )}
 
-        {/* FIXED: Story Statistics Summary */}
+        {/* Story Statistics Summary */}
         {stories.length > 0 && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}

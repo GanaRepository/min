@@ -124,8 +124,10 @@ export async function POST(request: Request) {
       aiWordCount: aiWordCount,
     });
 
-    // Update session
+    // Check if story is complete
     const isStoryComplete = turnNumber >= 6;
+
+    // Update session with completion status
     const updatedSession = await StorySession.findByIdAndUpdate(
       sessionId,
       {
@@ -137,6 +139,7 @@ export async function POST(request: Request) {
         $set: {
           currentTurn: turnNumber + 1,
           status: isStoryComplete ? 'completed' : 'active',
+          ...(isStoryComplete && { completedAt: new Date() }),
         },
       },
       { new: true }

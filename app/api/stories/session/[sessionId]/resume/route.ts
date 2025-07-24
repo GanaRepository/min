@@ -1,4 +1,4 @@
-// app/api/stories/session/[sessionId]/pause/route.ts
+// app/api/stories/session/[sessionId]/resume/route.ts
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/utils/authOptions';
@@ -23,15 +23,15 @@ export async function POST(
     const { sessionId } = params;
     await connectToDatabase();
 
-    console.log('Pausing story with ID:', sessionId);
+    console.log('Resuming story with ID:', sessionId);
 
     let query = {};
 
     // Build query based on ID type
     if (mongoose.Types.ObjectId.isValid(sessionId)) {
-      query = { _id: sessionId, childId: session.user.id, status: 'active' };
+      query = { _id: sessionId, childId: session.user.id, status: 'paused' };
     } else if (!isNaN(Number(sessionId))) {
-      query = { storyNumber: Number(sessionId), childId: session.user.id, status: 'active' };
+      query = { storyNumber: Number(sessionId), childId: session.user.id, status: 'paused' };
     } else {
       return NextResponse.json(
         { error: 'Invalid session ID format' },
@@ -42,29 +42,30 @@ export async function POST(
     const updatedSession = await StorySession.findOneAndUpdate(
       query,
       {
-        status: 'paused',
-        pausedAt: new Date(),
+        status: 'active',
+        resumedAt: new Date(),
       },
       { new: true }
     );
 
     if (!updatedSession) {
       return NextResponse.json(
-        { error: 'Story session not found or cannot be paused' },
+        { error: 'Story session not found or cannot be resumed' },
         { status: 404 }
       );
     }
 
-    console.log('Story paused successfully:', updatedSession._id);
+    console.log('Story resumed successfully:', updatedSession._id);
 
     return NextResponse.json({
       success: true,
-      message: 'Story paused successfully',
+      message: 'Story resumed successfully',
+      session: updatedSession,
     });
   } catch (error) {
-    console.error('Error pausing story:', error);
+    console.error('Error resuming story:', error);
     return NextResponse.json(
-      { error: 'Failed to pause story' },
+      { error: 'Failed to resume story' },
       { status: 500 }
     );
   }

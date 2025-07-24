@@ -22,31 +22,48 @@ export async function GET(
     }
 
     const { sessionId } = params;
-
-    if (!mongoose.Types.ObjectId.isValid(sessionId)) {
-      return NextResponse.json(
-        { error: 'Invalid session ID' },
-        { status: 400 }
-      );
-    }
-
     await connectToDatabase();
 
-    // Verify session belongs to user
-    const storySession = await StorySession.findOne({
-      _id: sessionId,
-      childId: session.user.id,
-    });
+    console.log('Fetching turns for sessionId:', sessionId);
 
-    if (!storySession) {
+    // First, find the actual story session to get the real _id
+    let storySession = null;
+    let actualSessionId = null;
+
+    // Try to find by MongoDB ObjectId first
+    if (mongoose.Types.ObjectId.isValid(sessionId)) {
+      storySession = await StorySession.findOne({
+        _id: sessionId,
+        childId: session.user.id,
+      });
+      actualSessionId = sessionId;
+    }
+
+    // If not found by ObjectId, try by storyNumber
+    if (!storySession && !isNaN(Number(sessionId))) {
+      storySession = await StorySession.findOne({
+        storyNumber: Number(sessionId),
+        childId: session.user.id,
+      });
+      actualSessionId = storySession?._id?.toString();
+    }
+
+    if (!storySession || !actualSessionId) {
+      console.log('Story session not found for:', sessionId);
       return NextResponse.json(
         { error: 'Story session not found' },
         { status: 404 }
       );
     }
 
-    // Get all turns for this session
-    const turns = await Turn.find({ sessionId }).sort({ turnNumber: 1 }).lean();
+    console.log('Found story session, fetching turns for:', actualSessionId);
+
+    // Get all turns for this session using the actual MongoDB _id
+    const turns = await Turn.find({ sessionId: actualSessionId })
+      .sort({ turnNumber: 1 })
+      .lean();
+
+    console.log('Found turns:', turns.length);
 
     return NextResponse.json({
       success: true,
