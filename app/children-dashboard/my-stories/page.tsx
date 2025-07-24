@@ -90,40 +90,17 @@ export default function MyStoriesPage() {
     }
   };
 
-  // Fixed: Handle both continuing and viewing stories
-  const handleStoryAction = async (storyId: string) => {
-    const story = stories.find((s) => s._id === storyId);
-    
-    if (!story) return;
-
+  // FIXED: Handle both continuing and viewing stories
+  const handleStoryAction = (story: Story) => {
     if (story.status === 'completed') {
-      // For completed stories, redirect to view page
-      router.push(`/children-dashboard/my-stories/${storyId}`);
+      // Use StorySession._id (which is what we have in the stories list)
+      router.push(`/children-dashboard/my-stories/${story._id}`);
     } else {
-      // For active/paused stories, handle resume if needed then redirect to story editor
-      if (story.status === 'paused') {
-        try {
-          const response = await fetch(`/api/stories/session/${storyId}/resume`, {
-            method: 'POST',
-          });
-          
-          if (response.ok) {
-            console.log('Story resumed successfully');
-            // Update local state
-            setStories(prev => prev.map(s => 
-              s._id === storyId ? { ...s, status: 'active' as const } : s
-            ));
-          }
-        } catch (error) {
-          console.error('Error resuming story:', error);
-        }
-      }
-      
-      // Navigate to story editor using storyNumber if available, otherwise use _id
+      // For active/paused stories, continue using storyNumber for editor
       if (story.storyNumber) {
         router.push(`/children-dashboard/story/${story.storyNumber}`);
       } else {
-        router.push(`/children-dashboard/story/${storyId}`);
+        router.push(`/children-dashboard/story/${story._id}`);
       }
     }
   };
@@ -415,7 +392,7 @@ export default function MyStoriesPage() {
                       ? 'bg-gray-800/50 border border-gray-600/50 rounded-2xl p-6 hover:bg-gray-800/70 transition-all hover:border-blue-500/50'
                       : 'bg-gray-800/50 border border-gray-600/50 rounded-xl p-6 hover:bg-gray-800/70 transition-all'
                   }`}
-                  onClick={() => handleStoryAction(story._id)}
+                  onClick={() => handleStoryAction(story)} 
                 >
                   {/* Story Header */}
                   <div className="flex items-start justify-between mb-4">
