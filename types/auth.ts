@@ -4,6 +4,7 @@ import { DefaultSession } from 'next-auth';
 export type UserRole = 'admin' | 'mentor' | 'child';
 
 export interface IUser extends Document {
+  _id: Types.ObjectId;
   email: string;
   password: string;
   firstName: string;
@@ -12,6 +13,30 @@ export interface IUser extends Document {
   school?: string; // For children only
   role: UserRole;
   isActive: boolean;
+
+  // Subscription fields - ADDED to match your User model
+  subscriptionTier: 'FREE' | 'BASIC' | 'PREMIUM';
+  subscriptionStatus: 'active' | 'inactive' | 'cancelled';
+  billingPeriodStart?: Date;
+  billingPeriodEnd?: Date;
+
+  // Writing Statistics - ADDED to match your User model
+  totalStoriesCreated: number;
+  storiesCreatedThisMonth: number;
+  totalWordsWritten: number;
+  writingStreak: number;
+  lastActiveDate?: Date;
+  totalTimeWriting: number;
+
+  // User Preferences - ADDED to match your User model
+  preferences: {
+    theme: 'light' | 'dark' | 'auto';
+    language: string;
+    emailNotifications: boolean;
+    soundEffects: boolean;
+    autoSave: boolean;
+  };
+
   createdBy?: Types.ObjectId; // For mentors (created by admin)
   assignedMentor?: Types.ObjectId; // For children (assigned mentor)
   resetPasswordToken?: string;
@@ -30,8 +55,10 @@ export interface ISession {
     age?: number;
     school?: string;
     isActive: boolean;
+    subscriptionTier: string;
+    subscriptionStatus: string;
     assignedMentor?: string;
-    createdBy?: string; // Add this
+    createdBy?: string;
   };
   expires: string;
 }
@@ -91,7 +118,7 @@ export interface IMentorProfile {
   createdAt: Date;
 }
 
-// Extend NextAuth types to fix TypeScript errors
+// Extend NextAuth types to fix TypeScript errors - UPDATED to match your User model
 declare module 'next-auth' {
   interface Session {
     user: {
@@ -103,6 +130,8 @@ declare module 'next-auth' {
       age?: number;
       school?: string;
       isActive: boolean;
+      subscriptionTier: string;
+      subscriptionStatus: string;
       assignedMentor?: string;
       createdBy?: string;
     } & DefaultSession['user'];
@@ -117,6 +146,8 @@ declare module 'next-auth' {
     age?: number;
     school?: string;
     isActive: boolean;
+    subscriptionTier?: string;
+    subscriptionStatus?: string;
     assignedMentor?: string;
     createdBy?: string;
   }
@@ -124,8 +155,16 @@ declare module 'next-auth' {
 
 declare module 'next-auth/jwt' {
   interface JWT {
+    id: string;
     role: UserRole;
     firstName: string;
     lastName: string;
+    age?: number;
+    school?: string;
+    isActive: boolean;
+    subscriptionTier?: string;
+    subscriptionStatus?: string;
+    assignedMentor?: string;
+    createdBy?: string;
   }
 }

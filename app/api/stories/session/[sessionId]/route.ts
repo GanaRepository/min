@@ -24,26 +24,30 @@ export async function GET(
     await connectToDatabase();
 
     let storySession = null;
-    // Try to find by ObjectId first
+
+    // FIXED: Try to find by ObjectId first, then by storyNumber
     if (mongoose.Types.ObjectId.isValid(sessionId)) {
       storySession = await StorySession.findOne({
         _id: sessionId,
         childId: session.user.id,
       }).lean();
     }
-    // If not found, try to find by storyNumber
+
+    // If not found by ObjectId and sessionId is a number, try storyNumber
     if (!storySession && !isNaN(Number(sessionId))) {
       storySession = await StorySession.findOne({
         storyNumber: Number(sessionId),
         childId: session.user.id,
       }).lean();
     }
+
     if (!storySession) {
       return NextResponse.json(
         { error: 'Story session not found' },
         { status: 404 }
       );
     }
+
     return NextResponse.json({
       success: true,
       session: storySession,

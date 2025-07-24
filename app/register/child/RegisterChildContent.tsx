@@ -1,3 +1,4 @@
+// app/register/child/RegisterChildContent.tsx
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
@@ -29,6 +30,11 @@ import { useToast } from '@/hooks/use-toast';
 
 const RegisterChildContent: React.FC = () => {
   const router = useRouter();
+  const searchParams =
+    typeof window !== 'undefined'
+      ? new URLSearchParams(window.location.search)
+      : undefined;
+  const callbackUrl = searchParams?.get('callbackUrl') || '/create-stories';
   const containerRef = useRef<HTMLDivElement>(null);
   const planetRef = useRef<HTMLDivElement>(null);
   const starsRef = useRef<HTMLDivElement>(null);
@@ -185,18 +191,21 @@ const RegisterChildContent: React.FC = () => {
         redirect: false,
         email: formData.email,
         password: formData.password,
+        callbackUrl,
       });
 
       if (signInResult?.error) {
         console.error('Auto login failed:', signInResult.error);
-        // If auto-login fails, redirect to login page
+        // If auto-login fails, redirect to login page with callbackUrl
         setTimeout(() => {
-          router.push('/login/child');
+          router.push(
+            `/login/child?callbackUrl=${encodeURIComponent(callbackUrl)}`
+          );
         }, 2000);
       } else {
-        // If successful, redirect to create-stories page (not dashboard)
+        // If successful, redirect to callbackUrl
         setTimeout(() => {
-          router.push('/create-stories');
+          router.push(callbackUrl);
         }, 2000);
       }
     } catch (error) {

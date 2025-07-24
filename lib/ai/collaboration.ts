@@ -1,3 +1,4 @@
+// lib/ai/collaboration.ts
 import { smartAIProvider } from './smart-provider-manager';
 import type { StoryElements } from '@/config/story-elements';
 

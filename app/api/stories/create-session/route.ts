@@ -15,6 +15,7 @@ interface StoryCreationRequest {
   elements: StoryElements;
 }
 
+// Add better duplicate prevention and logging:
 export async function POST(request: Request) {
   try {
     const session = await getServerSession(authOptions);
@@ -59,6 +60,9 @@ export async function POST(request: Request) {
       }
     }
 
+    console.log(`📝 Creating story session for user: ${session.user.id}`);
+    console.log(`📋 Story elements:`, elements);
+
     await connectToDatabase();
 
     // Check story limits
@@ -67,15 +71,20 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    // Centralized limit check using config and user's subscription tier
-    // Use DEFAULT_TIER as fallback if user's subscription tier is missing or invalid
+    // Centralized limit check using config
     const tierKey = user.subscriptionTier?.toUpperCase() || 'FREE';
     const tierObj = SUBSCRIPTION_TIERS[tierKey] || DEFAULT_TIER;
     const limit = tierObj.storyLimit;
+
     const userStoryCount = await StorySession.countDocuments({
       childId: user._id,
       createdAt: { $gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) },
     });
+
+    console.log(
+      `📊 User ${session.user.id} has ${userStoryCount}/${limit} stories this month`
+    );
+
     if (userStoryCount >= limit) {
       return NextResponse.json(
         {
@@ -85,7 +94,7 @@ export async function POST(request: Request) {
       );
     }
 
-    // Prevent duplicate active stories for same child and elements
+    // FIXED: Prevent duplicate active stories with same elements
     const existingSession = await StorySession.findOne({
       childId: user._id,
       'elements.genre': elements.genre,
@@ -94,9 +103,14 @@ export async function POST(request: Request) {
       'elements.theme': elements.theme,
       'elements.mood': elements.mood,
       'elements.tone': elements.tone,
-      status: 'active',
+      status: { $in: ['active', 'paused'] }, // Include paused stories
     });
+
     if (existingSession) {
+      console.log(
+        `♻️ Returning existing session for user ${session.user.id}:`,
+        existingSession._id
+      );
       return NextResponse.json({
         success: true,
         session: {
@@ -119,6 +133,7 @@ export async function POST(request: Request) {
     const title = `${elements.character} and the ${elements.setting}`;
 
     // Generate AI opening
+    console.log(`🤖 Generating AI opening for story: ${title}`);
     const aiOpening = await collaborationEngine.generateOpeningPrompt(elements);
 
     // Find next available storyNumber for this child
@@ -143,6 +158,8 @@ export async function POST(request: Request) {
       maxApiCalls: 7,
       status: 'active',
     });
+
+    console.log(`✅ Created new story session:`, newSession._id);
 
     // Update user statistics
     await User.findByIdAndUpdate(session.user.id, {
@@ -170,7 +187,7 @@ export async function POST(request: Request) {
       aiOpening,
     });
   } catch (error) {
-    console.error('Error creating story session:', error);
+    console.error('❌ Error creating story session:', error);
     return NextResponse.json(
       { error: 'Failed to create story session' },
       { status: 500 }

@@ -62,36 +62,45 @@ export default function AssessmentModal({
     setIsAssessing(true);
 
     try {
-      // Combine all story content
-      const fullStory = turns.map((turn) => turn.childInput).join('\n\n');
-
-      const response = await fetch('/api/stories/ai-assess', {
+      // Call backend to generate and save assessment
+      const response = await fetch(`/api/stories/assess/${storySession._id}`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          sessionId: storySession._id,
-          finalStory: fullStory,
-        }),
       });
-
       const data = await response.json();
 
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to assess story');
+      if (!response.ok || !data.assessment) {
+        console.error('Assessment API error:', data.error);
+        toast({
+          title: '❌ Assessment Error',
+          description:
+            data.error || 'Failed to assess story. Please try again later.',
+          variant: 'destructive',
+        });
+        setAssessment({
+          grammarScore: 0,
+          creativityScore: 0,
+          overallScore: 0,
+          feedback: 'Assessment could not be generated.',
+        });
+        return;
       }
 
       setAssessment(data.assessment);
     } catch (error) {
       console.error('Error generating assessment:', error);
-      // Fallback assessment
+      toast({
+        title: '❌ Assessment Error',
+        description:
+          error instanceof Error
+            ? error.message
+            : 'Could not generate assessment. Please try again later.',
+        variant: 'destructive',
+      });
       setAssessment({
-        grammarScore: 85,
-        creativityScore: 92,
-        overallScore: 88,
-        feedback:
-          'Great job on your creative story! You showed wonderful imagination and your writing has improved. Keep practicing and let your creativity shine!',
+        grammarScore: 0,
+        creativityScore: 0,
+        overallScore: 0,
+        feedback: 'Assessment could not be generated.',
       });
     } finally {
       setIsAssessing(false);

@@ -1,3 +1,4 @@
+// config/tiers.ts
 export interface SubscriptionTier {
   id: string;
   name: string;

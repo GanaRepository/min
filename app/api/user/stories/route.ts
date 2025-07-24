@@ -40,11 +40,15 @@ export async function GET() {
       maxApiCalls: session.maxApiCalls,
       createdAt: session.createdAt,
       updatedAt: session.updatedAt,
-      // Add mock scores for completed stories (implement real scoring later)
+      // Use real assessment scores if available
       ...(session.status === 'completed' && {
-        overallScore: Math.floor(Math.random() * 20) + 80, // 80-100
-        grammarScore: Math.floor(Math.random() * 15) + 80, // 80-95
-        creativityScore: Math.floor(Math.random() * 15) + 85, // 85-100
+        overallScore:
+          session.assessment?.overallScore ?? session.overallScore ?? 0,
+        grammarScore:
+          session.assessment?.grammarScore ?? session.grammarScore ?? 0,
+        creativityScore:
+          session.assessment?.creativityScore ?? session.creativityScore ?? 0,
+        feedback: session.assessment?.feedback ?? session.feedback ?? '',
         publishedAt: session.updatedAt,
       }),
     }));

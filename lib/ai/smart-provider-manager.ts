@@ -1,3 +1,4 @@
+// lib/ai/smart-provider-manager.ts
 import { OpenAIProvider } from './providers/openai-provider';
 import { GoogleProvider } from './providers/google-provider';
 import { AnthropicProvider } from './providers/anthropic-provider';
@@ -84,21 +85,29 @@ export class SmartProviderManager {
     };
   }
 
-  // FIXED: Enhanced error handling and fallback logic
+  // In the generateResponse method, add better logging:
   async generateResponse(prompt: string): Promise<string> {
     if (!this.activeProvider) {
-      // Fallback response when no AI provider is available
+      console.warn(
+        '⚠️ No AI provider available, using fallback template response'
+      );
       return this.getFallbackResponse(prompt);
     }
 
     try {
+      console.log(
+        `🤖 Using AI Provider: ${this.activeProvider.name} (${this.activeProvider.model})`
+      );
+
       const response = await this.activeProvider.generateResponse(prompt);
 
       // Reset fallback attempts on success
       this.fallbackAttempts = 0;
 
       // Log usage for cost tracking
-      console.log(`📝 AI Response: ${response.provider} (${response.model})`);
+      console.log(
+        `✅ AI Response successful: ${response.provider} (${response.model})`
+      );
       if (response.tokensUsed && this.activeProvider.estimatedCost > 0) {
         const estimatedCost =
           (response.tokensUsed / 1000000) * this.activeProvider.estimatedCost;
@@ -107,12 +116,9 @@ export class SmartProviderManager {
         console.log(`🆓 Tokens used: ${response.tokensUsed} (FREE tier)`);
       }
 
-      // FIXED: Return the content string, not the AIResponse object
       return response.content;
     } catch (error) {
       console.error(`❌ ${this.activeProvider.name} failed:`, error);
-
-      // Try fallback to next provider if available
       return await this.tryFallbackProvider(prompt);
     }
   }
@@ -146,10 +152,11 @@ export class SmartProviderManager {
     return this.getFallbackResponse(prompt);
   }
 
-  // FIXED: Enhanced educational fallback responses
+  // Update getFallbackResponse to be more educational:
   private getFallbackResponse(prompt: string): string {
     let fallbackType = 'general';
     let response = '';
+
     if (prompt.includes('opening') || prompt.includes('Story Elements:')) {
       fallbackType = 'opening';
       const openingFallbacks = [
@@ -171,7 +178,7 @@ export class SmartProviderManager {
           Math.floor(Math.random() * assessmentFallbacks.length)
         ];
     } else {
-      // General turn responses
+      // General turn responses - more educational
       const turnFallbacks = [
         "What an exciting turn in your story! I love how creative you're being with your characters and plot. What happens next in this amazing adventure?",
         "Fantastic writing! You're developing the story so well. I can really picture what you're describing. Where do you want to take your character next?",
@@ -182,10 +189,10 @@ export class SmartProviderManager {
       response =
         turnFallbacks[Math.floor(Math.random() * turnFallbacks.length)];
     }
+
     console.warn(
-      `⚠️ Using fallback/template response [${fallbackType}]. No live AI provider available.`
+      `⚠️ Using fallback/template response [${fallbackType}]. Live AI provider unavailable.`
     );
-    // Optionally: trigger a toast notification here if you want to inform the user in the UI
     return response;
   }
 

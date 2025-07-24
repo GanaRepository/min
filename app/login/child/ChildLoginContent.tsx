@@ -1,3 +1,4 @@
+// app/login/child/ChildLoginContent.tsx
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
@@ -25,6 +26,7 @@ import {
 const ChildLoginContent: React.FC = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get('callbackUrl') || '/create-stories';
   const containerRef = useRef<HTMLDivElement>(null);
   const starsRef = useRef<HTMLDivElement>(null);
   const [mounted, setMounted] = useState(false);
@@ -38,9 +40,7 @@ const ChildLoginContent: React.FC = () => {
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
-  // Get the callback URL from search params
-  const callbackUrl = searchParams.get('callbackUrl') || '/create-stories';
-
+  // Always use callbackUrl for all redirects
   console.log('Child login page callbackUrl:', callbackUrl);
 
   useEffect(() => {
@@ -95,11 +95,18 @@ const ChildLoginContent: React.FC = () => {
       } else if (result?.error) {
         setError(result.error);
         setToastMessage(`Login Failed: ${result.error}`);
+        // On error, stay on page but keep callbackUrl in search params for retry
+        router.replace(
+          `/login/child?callbackUrl=${encodeURIComponent(callbackUrl)}`
+        );
       }
     } catch (error) {
       console.error('Login error:', error);
       setError('An unexpected error occurred. Please try again.');
       setToastMessage('Login Failed: An unexpected error occurred');
+      router.replace(
+        `/login/child?callbackUrl=${encodeURIComponent(callbackUrl)}`
+      );
     } finally {
       setIsLoading(false);
     }

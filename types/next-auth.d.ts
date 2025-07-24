@@ -1,7 +1,56 @@
-// types/next-auth.d.ts
+// // types/next-auth.d.ts
+
+// import 'next-auth';
+// import { UserRole } from './auth';
+
+// declare module 'next-auth' {
+//   interface Session {
+//     user: {
+//       id: string;
+//       email: string;
+//       role: UserRole;
+//       firstName: string;
+//       lastName: string;
+//       age?: number;
+//       school?: string;
+//       isActive: boolean;
+//       assignedMentor?: string;
+//       createdBy?: string; // Add this for mentors
+//     };
+//   }
+
+//   interface User {
+//     id: string;
+//     email: string;
+//     role: UserRole;
+//     firstName: string;
+//     lastName: string;
+//     age?: number;
+//     school?: string;
+//     isActive: boolean;
+//     assignedMentor?: string;
+//     createdBy?: string; // Add this for mentors
+//   }
+// }
+
+// declare module 'next-auth/jwt' {
+//   interface JWT {
+//     id: string;
+//     email: string;
+//     role: UserRole;
+//     firstName: string;
+//     lastName: string;
+//     age?: number;
+//     school?: string;
+//     isActive: boolean;
+//     assignedMentor?: string;
+//     createdBy?: string; // Add this for mentors
+//   }
+// }
 
 import 'next-auth';
-import { UserRole } from './auth';
+
+export type UserRole = 'child' | 'mentor' | 'admin';
 
 declare module 'next-auth' {
   interface Session {
@@ -14,8 +63,10 @@ declare module 'next-auth' {
       age?: number;
       school?: string;
       isActive: boolean;
+      subscriptionTier: string;
+      subscriptionStatus: string;
       assignedMentor?: string;
-      createdBy?: string; // Add this for mentors
+      createdBy?: string;
     };
   }
 
@@ -28,8 +79,10 @@ declare module 'next-auth' {
     age?: number;
     school?: string;
     isActive: boolean;
+    subscriptionTier?: string;
+    subscriptionStatus?: string;
     assignedMentor?: string;
-    createdBy?: string; // Add this for mentors
+    createdBy?: string;
   }
 }
 
@@ -43,7 +96,9 @@ declare module 'next-auth/jwt' {
     age?: number;
     school?: string;
     isActive: boolean;
+    subscriptionTier?: string;
+    subscriptionStatus?: string;
     assignedMentor?: string;
-    createdBy?: string; // Add this for mentors
+    createdBy?: string;
   }
 }

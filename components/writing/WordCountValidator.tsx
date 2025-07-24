@@ -1,3 +1,4 @@
+// components/writing/WordCountValidator.tsx
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -12,7 +13,7 @@ interface WordCountValidatorProps {
   disabled?: boolean;
 }
 
-// FIXED: Consistent 60-100 word requirement for all turns
+// Update the WORD_REQUIREMENTS to be consistent:
 const WORD_REQUIREMENTS = {
   min: 60,
   max: 100,
@@ -80,16 +81,17 @@ export default function WordCountValidator({
     }
   };
 
+  // Update the validation messages:
   const getStatusMessage = () => {
     switch (getValidationStatus()) {
       case 'empty':
         return `Ready to write Turn ${turnNumber}? Write ${WORD_REQUIREMENTS.min}-${WORD_REQUIREMENTS.max} words to continue your story!`;
       case 'too-short':
-        return `Keep writing! You need ${WORD_REQUIREMENTS.min - wordCount} more words to reach the minimum.`;
+        return `Keep writing! You need ${WORD_REQUIREMENTS.min - wordCount} more words to reach the minimum of ${WORD_REQUIREMENTS.min}.`;
       case 'too-long':
-        return `Great writing! Please trim ${wordCount - WORD_REQUIREMENTS.max} words to stay within the limit.`;
+        return `Great writing! Please trim ${wordCount - WORD_REQUIREMENTS.max} words to stay within the ${WORD_REQUIREMENTS.max} word limit.`;
       case 'valid':
-        return `Perfect! Your writing is within the ideal range. Ready to submit!`;
+        return `Perfect! Your ${wordCount} words are within the ideal range (${WORD_REQUIREMENTS.min}-${WORD_REQUIREMENTS.max}). Ready to submit!`;
     }
   };
 
