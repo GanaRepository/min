@@ -7,189 +7,239 @@ import { SUBSCRIPTION_TIERS } from '@/config/tiers';
 import { DEFAULT_TIER } from '@/config/tiers';
 import StorySession from '@/models/StorySession';
 import User from '@/models/User';
+import PendingStoryElements from '@/models/PendingStoryElements';
 import { collaborationEngine } from '@/lib/ai/collaboration';
 import { checkRateLimit } from '@/lib/rate-limiter';
 import type { StoryElements } from '@/config/story-elements';
+import crypto from 'crypto';
 
 interface StoryCreationRequest {
-  elements: StoryElements;
+  elements?: StoryElements;
+  pendingToken?: string;
 }
 
-// Add better duplicate prevention and logging:
+// Helper function to validate elements
+function validateElements(elements: any): boolean {
+  const requiredElements = ['genre', 'character', 'setting', 'theme', 'mood', 'tone'];
+  return requiredElements.every(element => elements[element]);
+}
+
+// Background AI generation function
+async function generateAIOpeningInBackground(sessionId: string, elements: StoryElements) {
+  try {
+    console.log(`🤖 Starting AI opening generation for session: ${sessionId}`);
+    
+    const aiOpening = await collaborationEngine.generateOpeningPrompt(elements);
+    
+    await StorySession.findByIdAndUpdate(sessionId, {
+      aiOpening,
+      apiCallsUsed: 1,
+    });
+    
+    console.log(`✅ AI opening generated and saved for session: ${sessionId}`);
+  } catch (error) {
+    console.error(`❌ Failed to generate AI opening for ${sessionId}:`, error);
+    
+    const fallbackOpening = `Welcome to your ${elements.genre} adventure! Your character ${elements.character} is ready to explore ${elements.setting}. What happens first in this ${elements.mood} story?`;
+    
+    await StorySession.findByIdAndUpdate(sessionId, {
+      aiOpening: fallbackOpening,
+      apiCallsUsed: 1,
+    });
+    
+    console.log(`✅ Fallback opening saved for session: ${sessionId}`);
+  }
+}
+
+// Helper function to create story session
+async function createStorySession(userId: string, elements: StoryElements) {
+  await connectToDatabase();
+
+  // Rate limiting check
+  const rateCheck = checkRateLimit(userId, 'story-create');
+  if (!rateCheck.allowed) {
+    return NextResponse.json(
+      { error: rateCheck.message, retryAfter: rateCheck.retryAfter },
+      { status: 429 }
+    );
+  }
+
+  // Check story limits
+  const user = await User.findById(userId);
+  if (!user) {
+    return NextResponse.json({ error: 'User not found' }, { status: 404 });
+  }
+
+  // Get tier and check limits
+  const userTier = user.subscriptionTier || 'FREE';
+  const tierConfig = SUBSCRIPTION_TIERS[userTier] || DEFAULT_TIER;
+  
+  const currentMonth = new Date();
+  currentMonth.setDate(1);
+  currentMonth.setHours(0, 0, 0, 0);
+
+  const monthlyStoryCount = await StorySession.countDocuments({
+    childId: userId,
+    createdAt: { $gte: currentMonth },
+  });
+
+  if (monthlyStoryCount >= tierConfig.storyLimit) {
+    return NextResponse.json(
+      { error: `Monthly story limit reached (${tierConfig.storyLimit} stories for ${userTier} tier)` },
+      { status: 429 }
+    );
+  }
+
+  // Get next story number
+  const lastSession = await StorySession.findOne({ childId: userId })
+    .sort({ storyNumber: -1 })
+    .select('storyNumber')
+    .lean() as { storyNumber: number } | null;
+
+  const nextStoryNumber = lastSession ? lastSession.storyNumber + 1 : 1;
+
+  // Generate title
+  const title = `${elements.character}'s ${elements.genre} Adventure`;
+
+  // Create new story session IMMEDIATELY
+  const newSession = await StorySession.create({
+    childId: userId,
+    storyNumber: nextStoryNumber,
+    title,
+    elements,
+    aiOpening: null,
+    currentTurn: 1,
+    totalWords: 0,
+    childWords: 0,
+    apiCallsUsed: 0,
+    maxApiCalls: tierConfig.aiCalls,
+    status: 'active',
+  });
+
+  console.log(`✅ Created new story session: ${newSession._id}`);
+
+  // Update user statistics
+  await User.findByIdAndUpdate(userId, {
+    $inc: {
+      totalStoriesCreated: 1,
+      storiesCreatedThisMonth: 1,
+    },
+    $set: { lastActiveDate: new Date() },
+  });
+
+  // Generate AI opening in background
+  generateAIOpeningInBackground(newSession._id, elements);
+
+  return NextResponse.json({
+    success: true,
+    session: {
+      id: newSession._id,
+      storyNumber: newSession.storyNumber,
+      title: newSession.title,
+      elements: newSession.elements,
+      currentTurn: newSession.currentTurn,
+      totalWords: newSession.totalWords,
+      childWords: newSession.childWords,
+      apiCallsUsed: newSession.apiCallsUsed,
+      maxApiCalls: newSession.maxApiCalls,
+      status: newSession.status,
+    },
+    aiOpening: null,
+  });
+}
+
 export async function POST(request: Request) {
   try {
     const session = await getServerSession(authOptions);
-
-    if (!session || session.user.role !== 'child') {
-      return NextResponse.json(
-        { error: 'Access denied. Children only.' },
-        { status: 403 }
-      );
-    }
-
-    // Rate limiting check
-    const rateCheck = checkRateLimit(session.user.id, 'story-create');
-    if (!rateCheck.allowed) {
-      return NextResponse.json(
-        {
-          error: rateCheck.message,
-          retryAfter: rateCheck.retryAfter,
-        },
-        { status: 429 }
-      );
-    }
-
     const body: StoryCreationRequest = await request.json();
-    const { elements } = body;
 
-    // Validate required elements
-    const requiredElements = [
-      'genre',
-      'character',
-      'setting',
-      'theme',
-      'mood',
-      'tone',
-    ];
-    for (const element of requiredElements) {
-      if (!elements[element as keyof StoryElements]) {
-        return NextResponse.json(
-          { error: `Missing required element: ${element}` },
-          { status: 400 }
-        );
-      }
-    }
-
-    console.log(`📝 Creating story session for user: ${session.user.id}`);
-    console.log(`📋 Story elements:`, elements);
+    console.log(`📝 Create-session API called:`, {
+      hasSession: !!session,
+      userRole: session?.user?.role,
+      hasElements: !!body.elements,
+      hasPendingToken: !!body.pendingToken,
+    });
 
     await connectToDatabase();
 
-    // Check story limits
-    const user = await User.findById(session.user.id);
-    if (!user) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    // ===== CASE 1: User has pendingToken (returning from login) =====
+    if (body.pendingToken) {
+      if (!session || session.user.role !== 'child') {
+        return NextResponse.json(
+          { error: 'Access denied. Children only.' },
+          { status: 403 }
+        );
+      }
+
+      console.log(`🔍 Processing pending token: ${body.pendingToken.substring(0, 8)}...`);
+
+      // Retrieve elements from database
+      const pendingElements = await PendingStoryElements.findOne({
+        sessionToken: body.pendingToken,
+        expiresAt: { $gt: new Date() }, // Not expired
+      });
+
+      if (!pendingElements) {
+        console.log(`❌ Token not found or expired: ${body.pendingToken.substring(0, 8)}...`);
+        return NextResponse.json(
+          { error: 'Token not found or expired. Please start over.' },
+          { status: 404 }
+        );
+      }
+
+      // Clean up token and create story
+      console.log(`✅ Token found, creating story from stored elements`);
+      await PendingStoryElements.findByIdAndDelete(pendingElements._id);
+      return await createStorySession(session.user.id, pendingElements.elements);
     }
 
-    // Centralized limit check using config
-    const tierKey = user.subscriptionTier?.toUpperCase() || 'FREE';
-    const tierObj = SUBSCRIPTION_TIERS[tierKey] || DEFAULT_TIER;
-    const limit = tierObj.storyLimit;
+    // ===== CASE 2: User provides elements directly =====
+    if (body.elements) {
+      // Validate elements first
+      if (!validateElements(body.elements)) {
+        return NextResponse.json(
+          { error: 'Missing required story elements' },
+          { status: 400 }
+        );
+      }
 
-    const userStoryCount = await StorySession.countDocuments({
-      childId: user._id,
-      createdAt: { $gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) },
-    });
+      // CASE 2A: Not authenticated - store elements in database
+      if (!session || session.user.role !== 'child') {
+        console.log(`🔒 User not authenticated, storing elements in database`);
+        
+        const token = crypto.randomBytes(32).toString('hex');
+        const expiresAt = new Date(Date.now() + 30 * 60 * 1000); // 30 minutes
 
-    console.log(
-      `📊 User ${session.user.id} has ${userStoryCount}/${limit} stories this month`
+        await PendingStoryElements.create({
+          sessionToken: token,
+          elements: body.elements,
+          expiresAt,
+        });
+
+        console.log(`📦 Stored elements in database with token: ${token.substring(0, 8)}...`);
+
+        return NextResponse.json({
+          requiresAuth: true,
+          token,
+          message: 'Please log in to create your story. Your progress will be saved!'
+        });
+      }
+
+      // CASE 2B: Authenticated - create story immediately
+      console.log(`✅ User authenticated, creating story immediately`);
+      return await createStorySession(session.user.id, body.elements);
+    }
+
+    // Invalid request
+    return NextResponse.json(
+      { error: 'Invalid request. Provide either elements or pendingToken.' },
+      { status: 400 }
     );
 
-    if (userStoryCount >= limit) {
-      return NextResponse.json(
-        {
-          error: `Monthly story limit reached (${limit} stories allowed, you have created ${userStoryCount}).`,
-        },
-        { status: 402 }
-      );
-    }
-
-    // FIXED: Prevent duplicate active stories with same elements
-    const existingSession = await StorySession.findOne({
-      childId: user._id,
-      'elements.genre': elements.genre,
-      'elements.character': elements.character,
-      'elements.setting': elements.setting,
-      'elements.theme': elements.theme,
-      'elements.mood': elements.mood,
-      'elements.tone': elements.tone,
-      status: { $in: ['active', 'paused'] }, // Include paused stories
-    });
-
-    if (existingSession) {
-      console.log(
-        `♻️ Returning existing session for user ${session.user.id}:`,
-        existingSession._id
-      );
-      return NextResponse.json({
-        success: true,
-        session: {
-          id: existingSession._id,
-          storyNumber: existingSession.storyNumber,
-          title: existingSession.title,
-          elements: existingSession.elements,
-          currentTurn: existingSession.currentTurn,
-          totalWords: existingSession.totalWords,
-          childWords: existingSession.childWords,
-          apiCallsUsed: existingSession.apiCallsUsed,
-          maxApiCalls: existingSession.maxApiCalls,
-          status: existingSession.status,
-        },
-        aiOpening: existingSession.aiOpening,
-      });
-    }
-
-    // Generate story title
-    const title = `${elements.character} and the ${elements.setting}`;
-
-    // Generate AI opening
-    console.log(`🤖 Generating AI opening for story: ${title}`);
-    const aiOpening = await collaborationEngine.generateOpeningPrompt(elements);
-
-    // Find next available storyNumber for this child
-    const lastSession = await StorySession.findOne({ childId: user._id })
-      .sort({ storyNumber: -1 })
-      .select('storyNumber');
-    const nextStoryNumber = lastSession?.storyNumber
-      ? lastSession.storyNumber + 1
-      : 1;
-
-    // Create new story session
-    const newSession = await StorySession.create({
-      childId: session.user.id,
-      storyNumber: nextStoryNumber,
-      title,
-      elements,
-      aiOpening,
-      currentTurn: 1,
-      totalWords: 0,
-      childWords: 0,
-      apiCallsUsed: 1, // Opening generation
-      maxApiCalls: 7,
-      status: 'active',
-    });
-
-    console.log(`✅ Created new story session:`, newSession._id);
-
-    // Update user statistics
-    await User.findByIdAndUpdate(session.user.id, {
-      $inc: {
-        totalStoriesCreated: 1,
-        storiesCreatedThisMonth: 1,
-      },
-      $set: { lastActiveDate: new Date() },
-    });
-
-    return NextResponse.json({
-      success: true,
-      session: {
-        id: newSession._id,
-        storyNumber: newSession.storyNumber,
-        title: newSession.title,
-        elements: newSession.elements,
-        currentTurn: newSession.currentTurn,
-        totalWords: newSession.totalWords,
-        childWords: newSession.childWords,
-        apiCallsUsed: newSession.apiCallsUsed,
-        maxApiCalls: newSession.maxApiCalls,
-        status: newSession.status,
-      },
-      aiOpening,
-    });
   } catch (error) {
-    console.error('❌ Error creating story session:', error);
+    console.error('❌ Error in create-session API:', error);
     return NextResponse.json(
-      { error: 'Failed to create story session' },
+      { error: 'Failed to process story creation request' },
       { status: 500 }
     );
   }
