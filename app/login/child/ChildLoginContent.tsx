@@ -465,12 +465,7 @@ const ChildLoginContent: React.FC = () => {
               </p>
             </motion.div>
 
-            {/* Debug info - remove in production */}
-            {process.env.NODE_ENV === 'development' && (
-              <div className="mt-4 p-2 bg-gray-800/50 rounded text-xs text-gray-400">
-                Debug: callbackUrl = {callbackUrl}
-              </div>
-            )}
+        
           </motion.div>
         </motion.div>
 

@@ -1556,6 +1556,8 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { STORY_ELEMENTS } from '@/config/story-elements';
 import Link from 'next/link';
+import { DiamondSeparator } from '@/components/seperators/DiamondSeparator';
+
 
 interface SelectedElements {
   genre: string;
@@ -1977,8 +1979,8 @@ export default function CreateStoriesPage() {
     (value) => value !== ''
   );
 
-  return (
-    <div className="text-white min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 relative overflow-hidden">
+  return ( 
+    <div className=" py-10 text-white min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 relative overflow-hidden">
       {/* Animated background */}
       <div className="absolute inset-0 opacity-5">
         <svg width="100%" height="100%" className="absolute inset-0">
@@ -2066,9 +2068,9 @@ export default function CreateStoriesPage() {
       </div>
 
       {/* Enhanced Hero Section - Same as before */}
-      <div className="relative min-h-screen flex items-center px-4 sm:px-6 lg:px-8 py-16">
+      <div className="relative  flex items-center px-4 sm:px-6 lg:px-8 py-20">
         <div className="max-w-7xl mx-auto w-full">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center pt-20">
             {/* Left Content */}
             <motion.div
               className="space-y-8"
@@ -2171,7 +2173,7 @@ export default function CreateStoriesPage() {
 
             {/* Right Side - Enhanced 3D Animated Scene */}
             <motion.div
-              className="relative flex justify-center items-center h-[600px]"
+              className="relative flex justify-center items-center "
               initial={{ opacity: 0, x: 100 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 1, delay: 0.8 }}
@@ -2429,8 +2431,10 @@ export default function CreateStoriesPage() {
         </div>
       </div>
 
+      <DiamondSeparator/>
+
       {/* How It Works Section */}
-      <div className="relative px-4 sm:px-6 lg:px-8 py-20 bg-gray-900/50">
+      <div className="relative px-4 sm:px-6 lg:px-8 py-20 ">
         <div className="max-w-6xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -2516,55 +2520,8 @@ export default function CreateStoriesPage() {
         </div>
       </div>
 
-      {/* CTA Section */}
-      <div className="relative px-4 sm:px-6 lg:px-8 py-20 bg-gradient-to-r from-purple-900/50 to-cyan-900/50">
-        <div className="max-w-4xl mx-auto text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-          >
-            <h2 className="text-4xl font-bold mb-6">
-              Ready to Start Your
-              <span className="bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
-                {' '}
-                Story Adventure?
-              </span>
-            </h2>
-            <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
-              Join thousands of young writers who are already creating amazing
-              stories with AI assistance
-            </p>
-
-            <motion.button
-              onClick={scrollToStoryElements}
-              className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-cyan-500 to-purple-500 rounded-xl text-white font-semibold text-lg shadow-lg shadow-cyan-500/25 hover:shadow-xl hover:shadow-cyan-500/40 transition-all duration-300"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <Play className="w-5 h-5 mr-2" />
-              Start Creating Now
-              <ArrowRight className="w-5 h-5 ml-2" />
-            </motion.button>
-
-            <div className="mt-8 flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-8 text-sm text-gray-400">
-              <div className="flex items-center">
-                <Check className="w-4 h-4 text-green-400 mr-2" />
-                <span>Free to start</span>
-              </div>
-              <div className="flex items-center">
-                <Check className="w-4 h-4 text-green-400 mr-2" />
-                <span>No credit card required</span>
-              </div>
-              <div className="flex items-center">
-                <Check className="w-4 h-4 text-green-400 mr-2" />
-                <span>Safe for children</span>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      </div>
+    
+      <DiamondSeparator />
 
       {/* Features Section */}
       <div className="relative px-4 sm:px-6 lg:px-8 py-20">
@@ -2676,12 +2633,16 @@ export default function CreateStoriesPage() {
         </div>
       </div>
 
+      <DiamondSeparator />
+
+      {/* Call to Action Section */}
+
       {/* STORY ELEMENTS SELECTION SECTION */}
       <div
         className="relative z-10 min-h-screen flex flex-col"
         id="story-elements"
       >
-        <div className="sticky top-0 z-30 bg-gray-900/80 backdrop-blur-xl border-b border-gray-700/50">
+        <div className="sticky top-0 z-30 bg-gray-900/80 backdrop-blur-xl border-b border-gray-700/50 p-8">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-2xl font-bold text-white">
