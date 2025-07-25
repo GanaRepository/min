@@ -170,7 +170,10 @@ export default function WordCountValidator({
           onChange={(e) => onChange(e.target.value)}
           disabled={disabled}
           placeholder={`Turn ${turnNumber}: ${getTurnGuidance()}\n\nStart writing here... (${WORD_REQUIREMENTS.min}-${WORD_REQUIREMENTS.max} words)`}
-          className={`w-full h-48 p-6 bg-gray-800/60 border rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 transition-all resize-none ${
+          className={`w-full h-48 p-6 bg-gray-800/60 border rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 transition-all resize-none
+            scrollbar-thin scrollbar-track-gray-700/30 scrollbar-thumb-emerald-500
+             hover:scrollbar-thumb-emerald-400 scrollbar-thumb-rounded-full scrollbar-track-rounded-full
+             scrollbar-corner-transparent ${
             disabled
               ? 'cursor-not-allowed opacity-50'
               : getValidationStatus() === 'valid'

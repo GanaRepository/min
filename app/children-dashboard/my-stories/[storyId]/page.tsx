@@ -218,7 +218,7 @@ export default function StoryViewPage({
           <Link href="/children-dashboard/my-stories">
             <motion.button
               whileHover={{ x: -2 }}
-              className="flex items-center space-x-2 text-gray-300 hover:text-white transition-colors mb-6"
+              className="flex items-center space-x-2 text-gray-700 hover:text-white transition-colors mt-20 mb-10 bg-white p-3 rounded-lg"
             >
               <ArrowLeft className="w-5 h-5" />
               <span>Back to My Stories</span>
@@ -294,14 +294,7 @@ export default function StoryViewPage({
                 <span>Download Word</span>
               </motion.button>
 
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="flex items-center justify-center space-x-2 bg-green-500 hover:bg-green-600 text-white py-3 px-6 rounded-xl font-medium transition-all"
-              >
-                <Share2 className="w-4 h-4" />
-                <span>Share Story</span>
-              </motion.button>
+             
             </div>
           </div>
         </motion.div>

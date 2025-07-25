@@ -1513,14 +1513,14 @@ export default function StoryWritingPage({
   const progressPercentage = ((storySession.currentTurn - 1) / 6) * 100;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 text-white pt-32">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 text-white ">
       {/* Header with proper spacing and responsive container */}
       <div className="bg-gray-800/50 backdrop-blur-xl border-b border-gray-600/40 sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between pt-20">
             <button
               onClick={() => router.push('/children-dashboard/my-stories')}
-              className="flex items-center space-x-2 text-gray-300 hover:text-white transition-colors"
+              className="flex items-center space-x-2 text-gray-300 hover:text-white transition-colors "
             >
               <ArrowLeft className="w-5 h-5" />
               <span>Back to Stories</span>
@@ -1701,7 +1701,7 @@ export default function StoryWritingPage({
                   className="space-y-4"
                 >
                   {/* Child's Input */}
-                  <div className="bg-gradient-to-r from-green-500/20 to-emerald-500/20 border border-green-500/30 rounded-xl p-6">
+                  <div className="bg-gradient-to-r from-green-500/20 to-emerald-500/20 border border-green-500/30 rounded-xl p-6 ">
                     <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center">
                         <Target className="w-5 h-5 text-green-400 mr-2" />
@@ -1713,7 +1713,7 @@ export default function StoryWritingPage({
                         {turn.childWordCount} words
                       </span>
                     </div>
-                    <p className="text-gray-100 leading-relaxed">
+                    <p className="text-gray-100 leading-relaxed  ">
                       {turn.childInput}
                     </p>
                   </div>
