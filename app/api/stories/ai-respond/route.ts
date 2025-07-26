@@ -1,4 +1,3 @@
-
 // app/api/stories/ai-respond/route.ts - FIXED WITH AUTO-ASSESSMENT
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
@@ -79,14 +78,19 @@ export async function POST(request: Request) {
     // FIXED: More robust session lookup
     let storySession = null;
 
-    console.log('Looking for story session with ID:', sessionId, 'for user:', session.user.id);
+    console.log(
+      'Looking for story session with ID:',
+      sessionId,
+      'for user:',
+      session.user.id
+    );
 
     // Try to find by MongoDB ObjectId first
     if (mongoose.Types.ObjectId.isValid(sessionId)) {
       storySession = await StorySession.findOne({
         _id: sessionId,
         childId: session.user.id,
-        status: { $in: ['active', 'paused'] } // Allow both active and paused
+        status: { $in: ['active', 'paused'] }, // Allow both active and paused
       });
       console.log('Found by ObjectId:', !!storySession, storySession?.status);
     }
@@ -96,9 +100,13 @@ export async function POST(request: Request) {
       storySession = await StorySession.findOne({
         storyNumber: Number(sessionId),
         childId: session.user.id,
-        status: { $in: ['active', 'paused'] } // Allow both active and paused
+        status: { $in: ['active', 'paused'] }, // Allow both active and paused
       });
-      console.log('Found by storyNumber:', !!storySession, storySession?.status);
+      console.log(
+        'Found by storyNumber:',
+        !!storySession,
+        storySession?.status
+      );
     }
 
     if (!storySession) {
@@ -119,7 +127,7 @@ export async function POST(request: Request) {
         },
         { new: true }
       );
-      
+
       console.log('Auto-resumed paused story session:', storySession._id);
     }
 
@@ -185,26 +193,37 @@ export async function POST(request: Request) {
       { new: true }
     );
 
-    console.log('Updated session:', updatedSession?._id, 'status:', updatedSession?.status);
+    console.log(
+      'Updated session:',
+      updatedSession?._id,
+      'status:',
+      updatedSession?.status
+    );
 
     // 🔥 NEW: Auto-generate assessment when story completes
     let assessment = null;
     if (isStoryComplete && updatedSession) {
       try {
-        console.log('🎯 Story completed! Auto-generating detailed assessment...');
-        
+        console.log(
+          '🎯 Story completed! Auto-generating detailed assessment...'
+        );
+
         // Get ALL turns including the one we just created
         const allTurns = await Turn.find({ sessionId: actualSessionId })
           .sort({ turnNumber: 1 })
           .lean();
-        
+
         // Build complete story content from child inputs
         const storyContent = allTurns
-          .filter(turn => turn.childInput)
-          .map(turn => turn.childInput)
+          .filter((turn) => turn.childInput)
+          .map((turn) => turn.childInput)
           .join(' ');
 
-        console.log('📖 Story content for assessment:', storyContent.length, 'characters');
+        console.log(
+          '📖 Story content for assessment:',
+          storyContent.length,
+          'characters'
+        );
 
         // Generate detailed assessment
         assessment = await collaborationEngine.generateAssessment(
@@ -214,7 +233,7 @@ export async function POST(request: Request) {
             totalWords: updatedSession.childWords,
             turnCount: allTurns.length,
             storyTheme: storySession.elements?.theme || 'Adventure',
-            storyGenre: storySession.elements?.genre || 'Fantasy'
+            storyGenre: storySession.elements?.genre || 'Fantasy',
           }
         );
 
@@ -222,7 +241,7 @@ export async function POST(request: Request) {
           grammarScore: assessment.grammarScore,
           creativityScore: assessment.creativityScore,
           overallScore: assessment.overallScore,
-          readingLevel: assessment.readingLevel
+          readingLevel: assessment.readingLevel,
         });
 
         // Save detailed assessment to database
@@ -243,20 +262,22 @@ export async function POST(request: Request) {
               improvements: assessment.improvements,
               vocabularyUsed: assessment.vocabularyUsed,
               suggestedWords: assessment.suggestedWords,
-              educationalInsights: assessment.educationalInsights
+              educationalInsights: assessment.educationalInsights,
             },
             // Also save direct fields for backward compatibility
             overallScore: assessment.overallScore,
             grammarScore: assessment.grammarScore,
             creativityScore: assessment.creativityScore,
-            feedback: assessment.feedback
-          }
+            feedback: assessment.feedback,
+          },
         });
 
         console.log('✅ Assessment saved to database successfully!');
-
       } catch (assessmentError) {
-        console.error('❌ Failed to auto-generate assessment:', assessmentError);
+        console.error(
+          '❌ Failed to auto-generate assessment:',
+          assessmentError
+        );
         // Don't fail the whole request - story completion is more important
         // Assessment can be generated later if needed
       }
@@ -282,14 +303,14 @@ export async function POST(request: Request) {
         completed: isStoryComplete,
       },
       // Include assessment in response if generated
-      ...(assessment && { 
+      ...(assessment && {
         assessment: {
           grammarScore: assessment.grammarScore,
           creativityScore: assessment.creativityScore,
           overallScore: assessment.overallScore,
-          feedback: assessment.feedback
-        }
-      })
+          feedback: assessment.feedback,
+        },
+      }),
     });
   } catch (error) {
     console.error('Error generating AI response:', error);

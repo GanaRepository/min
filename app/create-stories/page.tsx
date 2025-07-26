@@ -1558,7 +1558,6 @@ import { STORY_ELEMENTS } from '@/config/story-elements';
 import Link from 'next/link';
 import { DiamondSeparator } from '@/components/seperators/DiamondSeparator';
 
-
 interface SelectedElements {
   genre: string;
   character: string;
@@ -1979,7 +1978,7 @@ export default function CreateStoriesPage() {
     (value) => value !== ''
   );
 
-  return ( 
+  return (
     <div className=" py-10 text-white min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 relative overflow-hidden">
       {/* Animated background */}
       <div className="absolute inset-0 opacity-5">
@@ -2261,7 +2260,7 @@ export default function CreateStoriesPage() {
                       </motion.h3>
 
                       <p className="text-cyan-300 text-sm font-medium">
-                        "How to Create Amazing Stories"
+                        &quot;How to Create Amazing Stories&quot;
                       </p>
                     </div>
 
@@ -2431,7 +2430,7 @@ export default function CreateStoriesPage() {
         </div>
       </div>
 
-      <DiamondSeparator/>
+      <DiamondSeparator />
 
       {/* How It Works Section */}
       <div className="relative px-4 sm:px-6 lg:px-8 py-20 ">
@@ -2520,7 +2519,6 @@ export default function CreateStoriesPage() {
         </div>
       </div>
 
-    
       <DiamondSeparator />
 
       {/* Features Section */}

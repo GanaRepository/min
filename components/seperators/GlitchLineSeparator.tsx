@@ -2,8 +2,8 @@ interface GlitchLineSeparatorProps {
   className?: string;
 }
 
-export const GlitchLineSeparator: React.FC<GlitchLineSeparatorProps> = ({ 
-  className = "" 
+export const GlitchLineSeparator: React.FC<GlitchLineSeparatorProps> = ({
+  className = '',
 }) => {
   return (
     <div className={`py-10 ${className}`}>

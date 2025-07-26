@@ -63,7 +63,9 @@ export async function POST(
     }
 
     // Get all turns for the session using actual MongoDB _id
-    const turns = await Turn.find({ sessionId: actualSessionId }).sort({ turnNumber: 1 });
+    const turns = await Turn.find({ sessionId: actualSessionId }).sort({
+      turnNumber: 1,
+    });
 
     // Aggregate story content from child inputs only
     const storyContent = turns
@@ -84,13 +86,13 @@ export async function POST(
         setting: 'Forest',
         theme: 'Friendship',
         mood: 'Exciting',
-        tone: 'Brave'
+        tone: 'Brave',
       },
       {
         totalWords,
         turnCount: turns.length,
         storyTheme: storySession.elements?.theme || 'Adventure',
-        storyGenre: storySession.elements?.genre || 'Fantasy'
+        storyGenre: storySession.elements?.genre || 'Fantasy',
       }
     );
 

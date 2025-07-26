@@ -313,9 +313,9 @@ function ResetPasswordContent() {
               className="text-white/90 mb-4"
             >
               <p className="text-sm leading-relaxed mb-3">
-                "Creating a strong password is like building a magical shield
-                around your stories. Let's make sure your creative work stays
-                safe!"
+                &quot;Creating a strong password is like building a magical shield
+                around your stories. Let&apos;s make sure your creative work stays
+                safe!&quot;
               </p>
               <p className="text-xs text-white/60">- Mintoons Security Team</p>
             </motion.div>
@@ -520,7 +520,7 @@ function ResetPasswordContent() {
                 <span className="text-white/70 text-sm">Security Tip</span>
               </div>
               <p className="text-xs text-white/50 leading-relaxed">
-                Choose a unique password that you haven't used elsewhere. This
+                Choose a unique password that you haven&apos;t used elsewhere. This
                 keeps your creative stories extra safe!
               </p>
             </div>

@@ -43,4 +43,7 @@ const PendingStoryElementsSchema = new Schema<IPendingStoryElements>(
 );
 
 export default mongoose.models.PendingStoryElements ||
-  mongoose.model<IPendingStoryElements>('PendingStoryElements', PendingStoryElementsSchema);
+  mongoose.model<IPendingStoryElements>(
+    'PendingStoryElements',
+    PendingStoryElementsSchema
+  );

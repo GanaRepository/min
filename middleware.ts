@@ -412,7 +412,9 @@ const publicPaths = [
 
 // Helper function to check file extensions
 function isStaticFile(path: string): boolean {
-  return /\.(jpg|jpeg|png|gif|svg|ico|css|js|woff|woff2|ttf|eot|webp|mp4|webm|pdf)$/.test(path);
+  return /\.(jpg|jpeg|png|gif|svg|ico|css|js|woff|woff2|ttf|eot|webp|mp4|webm|pdf)$/.test(
+    path
+  );
 }
 
 // Helper for public API paths
@@ -448,10 +450,17 @@ function requiresAuth(path: string): boolean {
 }
 
 // Helper for cleaner logging
-function logMiddleware(level: 'info' | 'warn' | 'error', message: string, extra?: any) {
+function logMiddleware(
+  level: 'info' | 'warn' | 'error',
+  message: string,
+  extra?: any
+) {
   const emoji = level === 'info' ? '🔍' : level === 'warn' ? '⚠️' : '❌';
   if (process.env.NODE_ENV === 'development') {
-    console.log(`${emoji} [MW] ${message}`, extra ? JSON.stringify(extra, null, 2) : '');
+    console.log(
+      `${emoji} [MW] ${message}`,
+      extra ? JSON.stringify(extra, null, 2) : ''
+    );
   }
 }
 
@@ -491,11 +500,19 @@ export async function middleware(request: NextRequest) {
     // ===== RATE LIMITING FOR AUTHENTICATED USERS =====
     if (token?.id) {
       // Rate limiting for story creation access
-      if (path.startsWith('/children-dashboard/story/') && request.method === 'GET') {
+      if (
+        path.startsWith('/children-dashboard/story/') &&
+        request.method === 'GET'
+      ) {
         const rateLimitCheck = checkRateLimit(token.id, 'story-create');
         if (!rateLimitCheck.allowed) {
-          logMiddleware('warn', `Rate limit exceeded: story-create for user ${token.id.substring(0, 8)}...`);
-          return NextResponse.redirect(new URL('/children-dashboard?error=rate-limit', request.url));
+          logMiddleware(
+            'warn',
+            `Rate limit exceeded: story-create for user ${token.id.substring(0, 8)}...`
+          );
+          return NextResponse.redirect(
+            new URL('/children-dashboard?error=rate-limit', request.url)
+          );
         }
       }
 
@@ -503,9 +520,15 @@ export async function middleware(request: NextRequest) {
       if (path.startsWith('/api/stories/ai-respond')) {
         const rateLimitCheck = checkRateLimit(token.id, 'story-submit');
         if (!rateLimitCheck.allowed) {
-          logMiddleware('warn', `Rate limit exceeded: story-submit for user ${token.id.substring(0, 8)}...`);
+          logMiddleware(
+            'warn',
+            `Rate limit exceeded: story-submit for user ${token.id.substring(0, 8)}...`
+          );
           return NextResponse.json(
-            { error: rateLimitCheck.message, retryAfter: rateLimitCheck.retryAfter },
+            {
+              error: rateLimitCheck.message,
+              retryAfter: rateLimitCheck.retryAfter,
+            },
             { status: 429 }
           );
         }
@@ -515,9 +538,15 @@ export async function middleware(request: NextRequest) {
       if (path.startsWith('/api/stories/assess/')) {
         const rateLimitCheck = checkRateLimit(token.id, 'assessment');
         if (!rateLimitCheck.allowed) {
-          logMiddleware('warn', `Rate limit exceeded: assessment for user ${token.id.substring(0, 8)}...`);
+          logMiddleware(
+            'warn',
+            `Rate limit exceeded: assessment for user ${token.id.substring(0, 8)}...`
+          );
           return NextResponse.json(
-            { error: rateLimitCheck.message, retryAfter: rateLimitCheck.retryAfter },
+            {
+              error: rateLimitCheck.message,
+              retryAfter: rateLimitCheck.retryAfter,
+            },
             { status: 429 }
           );
         }
@@ -525,14 +554,21 @@ export async function middleware(request: NextRequest) {
     }
 
     // ===== ADMIN ROUTES (Updated for new structure) =====
-    if (path.startsWith('/admin-dashboard') || path.startsWith('/admin') || path.startsWith('/api/admin/')) {
+    if (
+      path.startsWith('/admin-dashboard') ||
+      path.startsWith('/admin') ||
+      path.startsWith('/api/admin/')
+    ) {
       if (!token) {
         logMiddleware('warn', `Unauthenticated admin access attempt: ${path}`);
         return NextResponse.redirect(new URL('/login/admin', request.url));
       }
 
       if (token.role !== 'admin') {
-        logMiddleware('error', `Non-admin (${token.role}) tried to access admin route: ${path}`);
+        logMiddleware(
+          'error',
+          `Non-admin (${token.role}) tried to access admin route: ${path}`
+        );
         return NextResponse.redirect(new URL('/unauthorized', request.url));
       }
 
@@ -541,14 +577,20 @@ export async function middleware(request: NextRequest) {
     }
 
     // ===== MENTOR ROUTES =====
-    if (path.startsWith('/mentor-dashboard') || path.startsWith('/api/mentor/')) {
+    if (
+      path.startsWith('/mentor-dashboard') ||
+      path.startsWith('/api/mentor/')
+    ) {
       if (!token) {
         logMiddleware('warn', `Unauthenticated mentor access attempt: ${path}`);
         return NextResponse.redirect(new URL('/login/mentor', request.url));
       }
 
       if (token.role !== 'mentor' && token.role !== 'admin') {
-        logMiddleware('error', `Non-mentor (${token.role}) tried to access mentor route: ${path}`);
+        logMiddleware(
+          'error',
+          `Non-mentor (${token.role}) tried to access mentor route: ${path}`
+        );
         return NextResponse.redirect(new URL('/unauthorized', request.url));
       }
 
@@ -559,19 +601,30 @@ export async function middleware(request: NextRequest) {
     // ===== CHILDREN DASHBOARD ROUTES =====
     if (path.startsWith('/children-dashboard')) {
       if (!token) {
-        logMiddleware('warn', `Unauthenticated child dashboard access: ${path}`);
+        logMiddleware(
+          'warn',
+          `Unauthenticated child dashboard access: ${path}`
+        );
         const callbackUrl = encodeURIComponent(path);
-        return NextResponse.redirect(new URL(`/login/child?callbackUrl=${callbackUrl}`, request.url));
+        return NextResponse.redirect(
+          new URL(`/login/child?callbackUrl=${callbackUrl}`, request.url)
+        );
       }
 
       if (token.role !== 'child' && token.role !== 'admin') {
-        logMiddleware('error', `Non-child (${token.role}) tried to access children dashboard: ${path}`);
+        logMiddleware(
+          'error',
+          `Non-child (${token.role}) tried to access children dashboard: ${path}`
+        );
         return NextResponse.redirect(new URL('/unauthorized', request.url));
       }
 
       // Check if user account is active
       if (token.isActive === false) {
-        logMiddleware('error', `Inactive child account tried to access: ${path}`);
+        logMiddleware(
+          'error',
+          `Inactive child account tried to access: ${path}`
+        );
         return NextResponse.redirect(new URL('/unauthorized', request.url));
       }
 
@@ -588,13 +641,22 @@ export async function middleware(request: NextRequest) {
     ) {
       if (!token) {
         logMiddleware('warn', `Unauthenticated story API access: ${path}`);
-        return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
+        return NextResponse.json(
+          { error: 'Authentication required' },
+          { status: 401 }
+        );
       }
 
       // Most story APIs are for children, but allow admins too
       if (token.role !== 'child' && token.role !== 'admin') {
-        logMiddleware('error', `Invalid role (${token.role}) for story API: ${path}`);
-        return NextResponse.json({ error: 'Insufficient permissions' }, { status: 403 });
+        logMiddleware(
+          'error',
+          `Invalid role (${token.role}) for story API: ${path}`
+        );
+        return NextResponse.json(
+          { error: 'Insufficient permissions' },
+          { status: 403 }
+        );
       }
 
       logMiddleware('info', `✅ Story API access granted: ${path}`);
@@ -605,7 +667,10 @@ export async function middleware(request: NextRequest) {
     if (path.startsWith('/api/user/')) {
       if (!token) {
         logMiddleware('warn', `Unauthenticated user API access: ${path}`);
-        return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
+        return NextResponse.json(
+          { error: 'Authentication required' },
+          { status: 401 }
+        );
       }
 
       logMiddleware('info', `✅ User API access granted: ${path}`);
@@ -613,7 +678,10 @@ export async function middleware(request: NextRequest) {
     }
 
     // ===== SUBSCRIPTION ENFORCEMENT =====
-    if (path.startsWith('/children-dashboard/story/') && token?.role === 'child') {
+    if (
+      path.startsWith('/children-dashboard/story/') &&
+      token?.role === 'child'
+    ) {
       logMiddleware('info', `Story access check`, {
         userId: userId ? `${userId.substring(0, 8)}...` : 'unknown',
         tier: token.subscriptionTier || 'FREE',
@@ -625,19 +693,23 @@ export async function middleware(request: NextRequest) {
     if (requiresAuth(path) && !token) {
       logMiddleware('warn', `Authentication required for: ${path}`);
       const callbackUrl = encodeURIComponent(path);
-      return NextResponse.redirect(new URL(`/login/child?callbackUrl=${callbackUrl}`, request.url));
+      return NextResponse.redirect(
+        new URL(`/login/child?callbackUrl=${callbackUrl}`, request.url)
+      );
     }
 
     // If path is not specifically handled, allow access
     logMiddleware('info', `✅ Default access granted: ${path}`);
     return NextResponse.next();
-
   } catch (error) {
     logMiddleware('error', 'Middleware error:', error);
 
     // If it's an API route, return JSON error
     if (path.startsWith('/api/')) {
-      return NextResponse.json({ error: 'Authentication service unavailable' }, { status: 500 });
+      return NextResponse.json(
+        { error: 'Authentication service unavailable' },
+        { status: 500 }
+      );
     }
 
     // For page routes, redirect to login
@@ -654,7 +726,10 @@ export const config = {
 /**
  * Subscription limit checker with updated tier structure
  */
-export function checkSubscriptionLimits(tier: string, currentUsage: number): boolean {
+export function checkSubscriptionLimits(
+  tier: string,
+  currentUsage: number
+): boolean {
   const limits = {
     FREE: 50, // Updated to match your config
     BASIC: 100,

@@ -270,8 +270,8 @@ const ChildLoginContent: React.FC = () => {
                 className="text-white/90 mb-4"
               >
                 <p className="text-sm leading-relaxed mb-3">
-                  "Mintoons helps me write the most amazing stories! The AI is
-                  like having a magical writing friend who gives me cool ideas."
+                  &quot;Mintoons helps me write the most amazing stories! The AI is
+                  like having a magical writing friend who gives me cool ideas.&quot;
                 </p>
                 <p className="text-xs text-white/60">
                   - Emma, Age 10 | Young Storyteller
@@ -464,8 +464,6 @@ const ChildLoginContent: React.FC = () => {
                 </Link>
               </p>
             </motion.div>
-
-        
           </motion.div>
         </motion.div>
 

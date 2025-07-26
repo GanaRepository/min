@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/utils/authOptions';
 import { connectToDatabase } from '@/utils/db';
-import  StorySession  from '@/models/StorySession';
+import StorySession from '@/models/StorySession';
 import mongoose from 'mongoose';
 
 export async function GET(
@@ -59,9 +59,13 @@ export async function GET(
     }
 
     // If no detailed assessment but has basic scores, create a compatible assessment
-    if (storySession.grammarScore && storySession.creativityScore && storySession.overallScore) {
+    if (
+      storySession.grammarScore &&
+      storySession.creativityScore &&
+      storySession.overallScore
+    ) {
       console.log('Creating compatible assessment from basic scores');
-      
+
       const compatibleAssessment = {
         grammarScore: storySession.grammarScore,
         creativityScore: storySession.creativityScore,
@@ -72,11 +76,34 @@ export async function GET(
         characterDevelopmentScore: storySession.overallScore,
         plotDevelopmentScore: storySession.creativityScore,
         feedback: storySession.feedback || 'Great work on your creative story!',
-        strengths: ['Creative imagination', 'Good story flow', 'Engaging characters', 'Descriptive writing', 'Story structure'],
-        improvements: ['Add more dialogue', 'Use more descriptive words', 'Vary sentence length'],
-        vocabularyUsed: ['adventure', 'mysterious', 'brave', 'discovered', 'amazing'],
-        suggestedWords: ['magnificent', 'extraordinary', 'perilous', 'astonishing', 'triumphant'],
-        educationalInsights: 'Keep developing your creative writing skills! Your storytelling abilities are improving.'
+        strengths: [
+          'Creative imagination',
+          'Good story flow',
+          'Engaging characters',
+          'Descriptive writing',
+          'Story structure',
+        ],
+        improvements: [
+          'Add more dialogue',
+          'Use more descriptive words',
+          'Vary sentence length',
+        ],
+        vocabularyUsed: [
+          'adventure',
+          'mysterious',
+          'brave',
+          'discovered',
+          'amazing',
+        ],
+        suggestedWords: [
+          'magnificent',
+          'extraordinary',
+          'perilous',
+          'astonishing',
+          'triumphant',
+        ],
+        educationalInsights:
+          'Keep developing your creative writing skills! Your storytelling abilities are improving.',
       };
 
       return NextResponse.json({ assessment: compatibleAssessment });
@@ -84,8 +111,10 @@ export async function GET(
 
     // No assessment found
     console.log('No assessment found for session:', sessionId);
-    return NextResponse.json({ error: 'Assessment not found' }, { status: 404 });
-
+    return NextResponse.json(
+      { error: 'Assessment not found' },
+      { status: 404 }
+    );
   } catch (error) {
     console.error('Error fetching assessment:', error);
     return NextResponse.json(

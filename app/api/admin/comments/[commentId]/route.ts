@@ -36,7 +36,7 @@
 //     // Children can only see comments on their own stories
 //     // Admins and mentors can see comments on any story
 //     if (
-//       session.user.role === 'child' && 
+//       session.user.role === 'child' &&
 //       story.childId.toString() !== session.user.id
 //     ) {
 //       return NextResponse.json(
@@ -108,27 +108,27 @@ export async function GET(request: Request) {
     const stories = await StorySession.aggregate([
       // Match stories first
       { $match: matchQuery },
-      
+
       // Lookup user information
       {
         $lookup: {
           from: 'users',
           localField: 'childId',
           foreignField: '_id',
-          as: 'child'
-        }
+          as: 'child',
+        },
       },
-      
+
       // Lookup comments for each story
       {
         $lookup: {
           from: 'storycomments',
           localField: '_id',
           foreignField: 'storyId',
-          as: 'comments'
-        }
+          as: 'comments',
+        },
       },
-      
+
       // Add computed fields
       {
         $addFields: {
@@ -138,9 +138,9 @@ export async function GET(request: Request) {
             $size: {
               $filter: {
                 input: '$comments',
-                cond: { $eq: ['$$this.isResolved', false] }
-              }
-            }
+                cond: { $eq: ['$$this.isResolved', false] },
+              },
+            },
           },
           hasAdminComments: {
             $gt: [
@@ -148,12 +148,12 @@ export async function GET(request: Request) {
                 $size: {
                   $filter: {
                     input: '$comments',
-                    cond: { $eq: ['$$this.authorRole', 'admin'] }
-                  }
-                }
+                    cond: { $eq: ['$$this.authorRole', 'admin'] },
+                  },
+                },
               },
-              0
-            ]
+              0,
+            ],
           },
           hasMentorComments: {
             $gt: [
@@ -161,43 +161,43 @@ export async function GET(request: Request) {
                 $size: {
                   $filter: {
                     input: '$comments',
-                    cond: { $eq: ['$$this.authorRole', 'mentor'] }
-                  }
-                }
+                    cond: { $eq: ['$$this.authorRole', 'mentor'] },
+                  },
+                },
               },
-              0
-            ]
+              0,
+            ],
           },
           recentCommentDate: {
-            $max: '$comments.createdAt'
-          }
-        }
+            $max: '$comments.createdAt',
+          },
+        },
       },
-      
+
       // Filter by user role if specified
       ...(role ? [{ $match: { 'child.role': role } }] : []),
-      
+
       // Remove sensitive data
       {
         $project: {
           'child.password': 0,
           'comments.comment': 0, // Don't include full comment text in list view
-          'comments._id': 0
-        }
+          'comments._id': 0,
+        },
       },
-      
+
       // Sort based on parameters
-      { 
-        $sort: { 
+      {
+        $sort: {
           [sortBy === 'childName' ? 'child.firstName' : sortBy]: sortOrder,
           // Secondary sort by creation date for consistency
-          createdAt: -1
-        } 
+          createdAt: -1,
+        },
       },
-      
+
       // Pagination
       { $skip: (page - 1) * limit },
-      { $limit: limit }
+      { $limit: limit },
     ]);
 
     // Get total count for pagination (separate aggregation)
@@ -208,16 +208,16 @@ export async function GET(request: Request) {
           from: 'users',
           localField: 'childId',
           foreignField: '_id',
-          as: 'child'
-        }
+          as: 'child',
+        },
       },
       {
         $addFields: {
-          child: { $arrayElemAt: ['$child', 0] }
-        }
+          child: { $arrayElemAt: ['$child', 0] },
+        },
       },
       ...(role ? [{ $match: { 'child.role': role } }] : []),
-      { $count: 'total' }
+      { $count: 'total' },
     ];
 
     const totalCountResult = await StorySession.aggregate(totalCountPipeline);
@@ -231,16 +231,16 @@ export async function GET(request: Request) {
           from: 'users',
           localField: 'childId',
           foreignField: '_id',
-          as: 'child'
-        }
+          as: 'child',
+        },
       },
       {
         $lookup: {
           from: 'storycomments',
           localField: '_id',
           foreignField: 'storyId',
-          as: 'comments'
-        }
+          as: 'comments',
+        },
       },
       {
         $addFields: {
@@ -249,11 +249,11 @@ export async function GET(request: Request) {
             $size: {
               $filter: {
                 input: '$comments',
-                cond: { $eq: ['$$this.isResolved', false] }
-              }
-            }
-          }
-        }
+                cond: { $eq: ['$$this.isResolved', false] },
+              },
+            },
+          },
+        },
       },
       ...(role ? [{ $match: { 'child.role': role } }] : []),
       {
@@ -261,24 +261,24 @@ export async function GET(request: Request) {
           _id: null,
           totalStories: { $sum: 1 },
           completedStories: {
-            $sum: { $cond: [{ $eq: ['$status', 'completed'] }, 1, 0] }
+            $sum: { $cond: [{ $eq: ['$status', 'completed'] }, 1, 0] },
           },
           activeStories: {
-            $sum: { $cond: [{ $eq: ['$status', 'active'] }, 1, 0] }
+            $sum: { $cond: [{ $eq: ['$status', 'active'] }, 1, 0] },
           },
           pausedStories: {
-            $sum: { $cond: [{ $eq: ['$status', 'paused'] }, 1, 0] }
+            $sum: { $cond: [{ $eq: ['$status', 'paused'] }, 1, 0] },
           },
           storiesWithComments: {
-            $sum: { $cond: [{ $gt: [{ $size: '$comments' }, 0] }, 1, 0] }
+            $sum: { $cond: [{ $gt: [{ $size: '$comments' }, 0] }, 1, 0] },
           },
           storiesWithUnresolvedComments: {
-            $sum: { $cond: [{ $gt: ['$unresolvedComments', 0] }, 1, 0] }
+            $sum: { $cond: [{ $gt: ['$unresolvedComments', 0] }, 1, 0] },
           },
           totalComments: { $sum: { $size: '$comments' } },
-          totalUnresolvedComments: { $sum: '$unresolvedComments' }
-        }
-      }
+          totalUnresolvedComments: { $sum: '$unresolvedComments' },
+        },
+      },
     ]);
 
     const stats = summaryStats[0] || {
@@ -289,7 +289,7 @@ export async function GET(request: Request) {
       storiesWithComments: 0,
       storiesWithUnresolvedComments: 0,
       totalComments: 0,
-      totalUnresolvedComments: 0
+      totalUnresolvedComments: 0,
     };
 
     return NextResponse.json({
@@ -299,7 +299,7 @@ export async function GET(request: Request) {
         page,
         limit,
         total: totalCount,
-        pages: Math.ceil(totalCount / limit)
+        pages: Math.ceil(totalCount / limit),
       },
       stats,
       filters: {
@@ -307,10 +307,9 @@ export async function GET(request: Request) {
         userId,
         role,
         sortBy,
-        sortOrder: sortOrder === 1 ? 'asc' : 'desc'
-      }
+        sortOrder: sortOrder === 1 ? 'asc' : 'desc',
+      },
     });
-
   } catch (error) {
     console.error('Error fetching admin stories:', error);
     return NextResponse.json(
@@ -333,13 +332,7 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    const { 
-      childId, 
-      title, 
-      elements, 
-      maxApiCalls = 7,
-      notes 
-    } = body;
+    const { childId, title, elements, maxApiCalls = 7, notes } = body;
 
     if (!childId || !title || !elements) {
       return NextResponse.json(
@@ -353,17 +346,14 @@ export async function POST(request: Request) {
     // Verify the child exists
     const child = await User.findById(childId);
     if (!child || child.role !== 'child') {
-      return NextResponse.json(
-        { error: 'Child not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Child not found' }, { status: 404 });
     }
 
     // Get the next story number for this child
     const lastStory = await StorySession.findOne({ childId })
       .sort({ storyNumber: -1 })
       .select('storyNumber');
-    
+
     const storyNumber = (lastStory?.storyNumber || 0) + 1;
 
     // Create the story session
@@ -379,7 +369,7 @@ export async function POST(request: Request) {
       maxApiCalls,
       status: 'active',
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     });
 
     // Add admin note as initial comment if provided
@@ -390,20 +380,21 @@ export async function POST(request: Request) {
         authorRole: 'admin',
         comment: notes,
         commentType: 'general',
-        isResolved: false
+        isResolved: false,
       });
     }
 
     // Populate the response
-    const populatedStory = await StorySession.findById(newStory._id)
-      .populate('childId', 'firstName lastName email subscriptionTier');
+    const populatedStory = await StorySession.findById(newStory._id).populate(
+      'childId',
+      'firstName lastName email subscriptionTier'
+    );
 
     return NextResponse.json({
       success: true,
       story: populatedStory,
-      message: 'Story created successfully'
+      message: 'Story created successfully',
     });
-
   } catch (error) {
     console.error('Error creating story:', error);
     return NextResponse.json(

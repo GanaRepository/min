@@ -3,9 +3,9 @@ interface PixelTextSeparatorProps {
   text?: string;
 }
 
-export const PixelTextSeparator: React.FC<PixelTextSeparatorProps> = ({ 
-  className = "",
-  text = "◆ ◆ ◆" 
+export const PixelTextSeparator: React.FC<PixelTextSeparatorProps> = ({
+  className = '',
+  text = '◆ ◆ ◆',
 }) => {
   return (
     <div className={`relative py-8 ${className}`}>

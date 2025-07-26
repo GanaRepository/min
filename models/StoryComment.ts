@@ -5,7 +5,12 @@ export interface IStoryComment extends Document {
   authorId: mongoose.Types.ObjectId; // Admin or Mentor
   authorRole: 'admin' | 'mentor';
   comment: string;
-  commentType: 'general' | 'grammar' | 'creativity' | 'structure' | 'suggestion';
+  commentType:
+    | 'general'
+    | 'grammar'
+    | 'creativity'
+    | 'structure'
+    | 'suggestion';
   isResolved: boolean;
   resolvedAt?: Date;
   resolvedBy?: mongoose.Types.ObjectId;
@@ -24,51 +29,51 @@ const StoryCommentSchema = new Schema<IStoryComment>(
       type: Schema.Types.ObjectId,
       ref: 'StorySession',
       required: true,
-      index: true
+      index: true,
     },
     authorId: {
       type: Schema.Types.ObjectId,
       ref: 'User',
-      required: true
+      required: true,
     },
     authorRole: {
       type: String,
       enum: ['admin', 'mentor'],
-      required: true
+      required: true,
     },
     comment: {
       type: String,
       required: true,
-      maxlength: 1000
+      maxlength: 1000,
     },
     commentType: {
       type: String,
       enum: ['general', 'grammar', 'creativity', 'structure', 'suggestion'],
-      default: 'general'
+      default: 'general',
     },
     isResolved: {
       type: Boolean,
       default: false,
-      index: true
+      index: true,
     },
     resolvedAt: {
-      type: Date
+      type: Date,
     },
     resolvedBy: {
       type: Schema.Types.ObjectId,
-      ref: 'User'
+      ref: 'User',
     },
     parentCommentId: {
       type: Schema.Types.ObjectId,
-      ref: 'StoryComment'
+      ref: 'StoryComment',
     },
     position: {
       paragraph: { type: Number },
-      sentence: { type: Number }
-    }
+      sentence: { type: Number },
+    },
   },
   {
-    timestamps: true
+    timestamps: true,
   }
 );
 

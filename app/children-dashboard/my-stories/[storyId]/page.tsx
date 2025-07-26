@@ -294,7 +294,6 @@
 //                 <span>Download Word</span>
 //               </motion.button>
 
-             
 //             </div>
 //           </div>
 //         </motion.div>
@@ -585,7 +584,6 @@
 //   );
 // }
 
-
 // app/children-dashboard/my-stories/[storyId]/page.tsx - FIXED with detailed assessment display
 
 'use client';
@@ -785,11 +783,34 @@ export default function StoryViewPage({
     characterDevelopmentScore: story.overallScore || 86,
     plotDevelopmentScore: story.creativityScore || 87,
     feedback: story.aifeedback || 'Great work on your creative story!',
-    strengths: ['Creative imagination', 'Good story flow', 'Engaging characters', 'Descriptive writing', 'Story structure'],
-    improvements: ['Add more dialogue', 'Use more descriptive words', 'Vary sentence length'],
-    vocabularyUsed: ['adventure', 'mysterious', 'brave', 'discovered', 'amazing'],
-    suggestedWords: ['magnificent', 'extraordinary', 'perilous', 'astonishing', 'triumphant'],
-    educationalInsights: 'Keep developing your creative writing skills! Your storytelling abilities are improving.'
+    strengths: [
+      'Creative imagination',
+      'Good story flow',
+      'Engaging characters',
+      'Descriptive writing',
+      'Story structure',
+    ],
+    improvements: [
+      'Add more dialogue',
+      'Use more descriptive words',
+      'Vary sentence length',
+    ],
+    vocabularyUsed: [
+      'adventure',
+      'mysterious',
+      'brave',
+      'discovered',
+      'amazing',
+    ],
+    suggestedWords: [
+      'magnificent',
+      'extraordinary',
+      'perilous',
+      'astonishing',
+      'triumphant',
+    ],
+    educationalInsights:
+      'Keep developing your creative writing skills! Your storytelling abilities are improving.',
   };
 
   return (
@@ -949,7 +970,9 @@ export default function StoryViewPage({
                             {item.label}
                           </span>
                         </div>
-                        <span className={`font-bold ${getScoreColor(item.score)}`}>
+                        <span
+                          className={`font-bold ${getScoreColor(item.score)}`}
+                        >
                           {item.score}%
                         </span>
                       </div>
@@ -975,10 +998,26 @@ export default function StoryViewPage({
               </h3>
               <div className="grid grid-cols-2 gap-3 text-sm">
                 {[
-                  { label: 'Vocabulary', score: assessment.vocabularyScore, color: 'orange' },
-                  { label: 'Structure', score: assessment.structureScore, color: 'cyan' },
-                  { label: 'Character Dev.', score: assessment.characterDevelopmentScore, color: 'pink' },
-                  { label: 'Plot Dev.', score: assessment.plotDevelopmentScore, color: 'indigo' },
+                  {
+                    label: 'Vocabulary',
+                    score: assessment.vocabularyScore,
+                    color: 'orange',
+                  },
+                  {
+                    label: 'Structure',
+                    score: assessment.structureScore,
+                    color: 'cyan',
+                  },
+                  {
+                    label: 'Character Dev.',
+                    score: assessment.characterDevelopmentScore,
+                    color: 'pink',
+                  },
+                  {
+                    label: 'Plot Dev.',
+                    score: assessment.plotDevelopmentScore,
+                    color: 'indigo',
+                  },
                 ].map((item) => (
                   <div key={item.label} className="text-center">
                     <div className={`text-lg font-bold text-${item.color}-400`}>
@@ -1010,7 +1049,10 @@ export default function StoryViewPage({
                 </h3>
                 <div className="space-y-2">
                   {assessment.strengths.slice(0, 3).map((strength, index) => (
-                    <div key={index} className="flex items-center text-green-300 text-sm">
+                    <div
+                      key={index}
+                      className="flex items-center text-green-300 text-sm"
+                    >
                       <span className="w-2 h-2 bg-green-400 rounded-full mr-3"></span>
                       {strength}
                     </div>
@@ -1028,7 +1070,10 @@ export default function StoryViewPage({
                 </h3>
                 <div className="space-y-2">
                   {assessment.improvements.map((improvement, index) => (
-                    <div key={index} className="flex items-center text-yellow-300 text-sm">
+                    <div
+                      key={index}
+                      className="flex items-center text-yellow-300 text-sm"
+                    >
                       <span className="w-2 h-2 bg-yellow-400 rounded-full mr-3"></span>
                       {improvement}
                     </div>
@@ -1079,44 +1124,46 @@ export default function StoryViewPage({
           className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6"
         >
           {/* Great Words Used */}
-          {assessment.vocabularyUsed && assessment.vocabularyUsed.length > 0 && (
-            <div className="bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-500/30 rounded-xl p-6">
-              <h3 className="text-white font-semibold mb-4 flex items-center">
-                <Sparkles className="w-5 h-5 mr-2 text-purple-400" />
-                Great Words You Used
-              </h3>
-              <div className="flex flex-wrap gap-2">
-                {assessment.vocabularyUsed.map((word, index) => (
-                  <span
-                    key={index}
-                    className="bg-purple-600/30 text-purple-300 px-3 py-1 rounded-lg text-sm font-medium"
-                  >
-                    {word}
-                  </span>
-                ))}
+          {assessment.vocabularyUsed &&
+            assessment.vocabularyUsed.length > 0 && (
+              <div className="bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-500/30 rounded-xl p-6">
+                <h3 className="text-white font-semibold mb-4 flex items-center">
+                  <Sparkles className="w-5 h-5 mr-2 text-purple-400" />
+                  Great Words You Used
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {assessment.vocabularyUsed.map((word, index) => (
+                    <span
+                      key={index}
+                      className="bg-purple-600/30 text-purple-300 px-3 py-1 rounded-lg text-sm font-medium"
+                    >
+                      {word}
+                    </span>
+                  ))}
+                </div>
               </div>
-            </div>
-          )}
+            )}
 
           {/* New Words to Learn */}
-          {assessment.suggestedWords && assessment.suggestedWords.length > 0 && (
-            <div className="bg-gradient-to-r from-indigo-500/20 to-blue-500/20 border border-indigo-500/30 rounded-xl p-6">
-              <h3 className="text-white font-semibold mb-4 flex items-center">
-                <BookMarked className="w-5 h-5 mr-2 text-indigo-400" />
-                New Words to Learn
-              </h3>
-              <div className="flex flex-wrap gap-2">
-                {assessment.suggestedWords.map((word, index) => (
-                  <span
-                    key={index}
-                    className="bg-indigo-600/30 text-indigo-300 px-3 py-1 rounded-lg text-sm font-medium"
-                  >
-                    {word}
-                  </span>
-                ))}
+          {assessment.suggestedWords &&
+            assessment.suggestedWords.length > 0 && (
+              <div className="bg-gradient-to-r from-indigo-500/20 to-blue-500/20 border border-indigo-500/30 rounded-xl p-6">
+                <h3 className="text-white font-semibold mb-4 flex items-center">
+                  <BookMarked className="w-5 h-5 mr-2 text-indigo-400" />
+                  New Words to Learn
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {assessment.suggestedWords.map((word, index) => (
+                    <span
+                      key={index}
+                      className="bg-indigo-600/30 text-indigo-300 px-3 py-1 rounded-lg text-sm font-medium"
+                    >
+                      {word}
+                    </span>
+                  ))}
+                </div>
               </div>
-            </div>
-          )}
+            )}
         </motion.div>
 
         {/* Educational Insights */}

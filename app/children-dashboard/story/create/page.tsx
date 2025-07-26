@@ -112,7 +112,7 @@ export default function CreateStoryFromTokenPage() {
 
           {isCreating && (
             <p className="text-gray-300">
-              We're preparing your adventure with the story elements you
+              We&apos;re preparing your adventure with the story elements you
               selected. This may take a moment!
             </p>
           )}

@@ -53,44 +53,44 @@
 //   }
 // }
 
-import 'next-auth'
-import 'next-auth/jwt'
+import 'next-auth';
+import 'next-auth/jwt';
 
 declare module 'next-auth' {
   interface User {
-    id: string
-    email: string
-    firstName: string
-    lastName: string
-    role: 'child' | 'mentor' | 'admin'
-    age?: number
-    school?: string
-    isActive: boolean
-    subscriptionTier: string
-    subscriptionStatus: string
-    isVerified: boolean
-    assignedMentor?: string
-    createdBy?: string
+    id: string;
+    email: string;
+    firstName: string;
+    lastName: string;
+    role: 'child' | 'mentor' | 'admin';
+    age?: number;
+    school?: string;
+    isActive: boolean;
+    subscriptionTier: string;
+    subscriptionStatus: string;
+    isVerified: boolean;
+    assignedMentor?: string;
+    createdBy?: string;
   }
 
   interface Session {
-    user: User
+    user: User;
   }
 }
 
 declare module 'next-auth/jwt' {
   interface JWT {
-    id?: string
-    role?: 'child' | 'mentor' | 'admin'
-    firstName?: string
-    lastName?: string
-    age?: number
-    school?: string
-    isActive?: boolean
-    subscriptionTier?: string
-    subscriptionStatus?: string
-    isVerified?: boolean
-    assignedMentor?: string
-    createdBy?: string
+    id?: string;
+    role?: 'child' | 'mentor' | 'admin';
+    firstName?: string;
+    lastName?: string;
+    age?: number;
+    school?: string;
+    isActive?: boolean;
+    subscriptionTier?: string;
+    subscriptionStatus?: string;
+    isVerified?: boolean;
+    assignedMentor?: string;
+    createdBy?: string;
   }
 }

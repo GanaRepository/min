@@ -2,8 +2,8 @@ interface NeonGlowSeparatorProps {
   className?: string;
 }
 
-export const NeonGlowSeparator: React.FC<NeonGlowSeparatorProps> = ({ 
-  className = "" 
+export const NeonGlowSeparator: React.FC<NeonGlowSeparatorProps> = ({
+  className = '',
 }) => {
   return (
     <div className={`relative py-16 ${className}`}>

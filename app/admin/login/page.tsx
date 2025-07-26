@@ -60,9 +60,9 @@ export default function AdminLogin() {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
     if (error) setError('');
   };
@@ -79,7 +79,7 @@ export default function AdminLogin() {
           transition={{
             duration: 20,
             repeat: Infinity,
-            ease: "linear"
+            ease: 'linear',
           }}
           className="absolute top-1/4 left-1/4 w-64 h-64 bg-red-500/10 rounded-full blur-xl"
         />
@@ -91,7 +91,7 @@ export default function AdminLogin() {
           transition={{
             duration: 15,
             repeat: Infinity,
-            ease: "linear"
+            ease: 'linear',
           }}
           className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-gray-500/10 rounded-full blur-xl"
         />
@@ -127,7 +127,7 @@ export default function AdminLogin() {
       <motion.div
         initial={{ opacity: 0, y: 50, scale: 0.9 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
+        transition={{ duration: 0.8, ease: 'easeOut' }}
         className="bg-gray-800/90 backdrop-blur-xl border border-gray-600/50 rounded-2xl p-8 w-full max-w-md mx-4 shadow-2xl relative z-10"
       >
         {/* Header */}
@@ -139,23 +139,21 @@ export default function AdminLogin() {
         >
           <div className="mb-4">
             <motion.div
-              animate={{ 
+              animate={{
                 rotate: [0, 10, -10, 0],
-                scale: [1, 1.1, 1]
+                scale: [1, 1.1, 1],
               }}
-              transition={{ 
+              transition={{
                 duration: 2,
                 repeat: Infinity,
-                repeatDelay: 3
+                repeatDelay: 3,
               }}
               className="w-16 h-16 bg-gradient-to-br from-red-500 to-red-600 rounded-full flex items-center justify-center mx-auto text-white text-2xl shadow-lg"
             >
               👑
             </motion.div>
           </div>
-          <h1 className="text-3xl font-bold text-white mb-2">
-            Admin Portal
-          </h1>
+          <h1 className="text-3xl font-bold text-white mb-2">Admin Portal</h1>
           <p className="text-gray-300 text-sm">
             Secure access to platform management
           </p>
@@ -166,7 +164,7 @@ export default function AdminLogin() {
           {error && (
             <motion.div
               initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
+              animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
               className="bg-red-500/20 border border-red-500/50 rounded-lg p-3 mb-6"
             >
@@ -220,7 +218,7 @@ export default function AdminLogin() {
             </label>
             <div className="relative">
               <input
-                type={showPassword ? "text" : "password"}
+                type={showPassword ? 'text' : 'password'}
                 name="password"
                 value={formData.password}
                 onChange={handleInputChange}
@@ -262,7 +260,11 @@ export default function AdminLogin() {
                 >
                   <motion.div
                     animate={{ rotate: 360 }}
-                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                    transition={{
+                      duration: 1,
+                      repeat: Infinity,
+                      ease: 'linear',
+                    }}
                     className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full mr-2"
                   />
                   Authenticating...
@@ -293,7 +295,10 @@ export default function AdminLogin() {
             <span className="text-yellow-400 mr-2 mt-0.5">🛡️</span>
             <div className="text-yellow-300 text-xs">
               <p className="font-medium mb-1">Security Notice</p>
-              <p>This is a restricted access portal. All admin activities are logged and monitored.</p>
+              <p>
+                This is a restricted access portal. All admin activities are
+                logged and monitored.
+              </p>
             </div>
           </div>
         </motion.div>

@@ -25,43 +25,48 @@ export async function GET(
 
     let storySession = null;
 
-    console.log('Looking for story with ID:', sessionId, 'for user:', session.user.id);
+    console.log(
+      'Looking for story with ID:',
+      sessionId,
+      'for user:',
+      session.user.id
+    );
 
     // Try to find by MongoDB ObjectId first
-   if (mongoose.Types.ObjectId.isValid(sessionId)) {
-    storySession = await StorySession.findOne({
-      _id: sessionId,
-      childId: session.user.id,
-    }).lean();
-    console.log('Found by ObjectId:', !!storySession);
-  }
+    if (mongoose.Types.ObjectId.isValid(sessionId)) {
+      storySession = await StorySession.findOne({
+        _id: sessionId,
+        childId: session.user.id,
+      }).lean();
+      console.log('Found by ObjectId:', !!storySession);
+    }
 
-  // If not found by ObjectId, try by storyNumber
-  if (!storySession && !isNaN(Number(sessionId))) {
-    storySession = await StorySession.findOne({
-      storyNumber: Number(sessionId),
-      childId: session.user.id,
-    }).lean();
-    console.log('Found by storyNumber:', !!storySession);
-  }
+    // If not found by ObjectId, try by storyNumber
+    if (!storySession && !isNaN(Number(sessionId))) {
+      storySession = await StorySession.findOne({
+        storyNumber: Number(sessionId),
+        childId: session.user.id,
+      }).lean();
+      console.log('Found by storyNumber:', !!storySession);
+    }
 
-  if (!storySession) {
-    console.log('No story session found for:', sessionId);
+    if (!storySession) {
+      console.log('No story session found for:', sessionId);
+      return NextResponse.json(
+        { error: 'Story session not found' },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({
+      success: true,
+      session: storySession,
+    });
+  } catch (error) {
+    console.error('Error fetching story session:', error);
     return NextResponse.json(
-      { error: 'Story session not found' },
-      { status: 404 }
+      { error: 'Failed to fetch story session' },
+      { status: 500 }
     );
   }
-
-  return NextResponse.json({
-    success: true,
-    session: storySession,
-  });
-} catch (error) {
-  console.error('Error fetching story session:', error);
-  return NextResponse.json(
-    { error: 'Failed to fetch story session' },
-    { status: 500 }
-  );
-}
 }

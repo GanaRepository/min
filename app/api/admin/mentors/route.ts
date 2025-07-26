@@ -43,7 +43,7 @@ export async function POST(request: Request) {
       password: hashedPassword,
       role: 'mentor',
       isVerified: true,
-      createdAt: new Date()
+      createdAt: new Date(),
     });
 
     // Assign students to mentor
@@ -52,7 +52,7 @@ export async function POST(request: Request) {
         mentorId: mentor._id,
         childId: studentId,
         assignedAt: new Date(),
-        assignedBy: session.user.id
+        assignedBy: session.user.id,
       }));
 
       await MentorAssignment.insertMany(assignments);
@@ -65,10 +65,9 @@ export async function POST(request: Request) {
         email: mentor.email,
         firstName: mentor.firstName,
         lastName: mentor.lastName,
-        assignedStudents: assignedStudents?.length || 0
-      }
+        assignedStudents: assignedStudents?.length || 0,
+      },
     });
-
   } catch (error) {
     console.error('Error creating mentor:', error);
     return NextResponse.json(

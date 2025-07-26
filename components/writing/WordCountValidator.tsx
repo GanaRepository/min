@@ -174,14 +174,14 @@ export default function WordCountValidator({
             scrollbar-thin scrollbar-track-gray-700/30 scrollbar-thumb-emerald-500
              hover:scrollbar-thumb-emerald-400 scrollbar-thumb-rounded-full scrollbar-track-rounded-full
              scrollbar-corner-transparent ${
-            disabled
-              ? 'cursor-not-allowed opacity-50'
-              : getValidationStatus() === 'valid'
-                ? 'border-green-500/50 focus:ring-green-500/25'
-                : getValidationStatus() === 'too-long'
-                  ? 'border-red-500/50 focus:ring-red-500/25'
-                  : 'border-gray-600/50 focus:ring-blue-500/25'
-          }`}
+               disabled
+                 ? 'cursor-not-allowed opacity-50'
+                 : getValidationStatus() === 'valid'
+                   ? 'border-green-500/50 focus:ring-green-500/25'
+                   : getValidationStatus() === 'too-long'
+                     ? 'border-red-500/50 focus:ring-red-500/25'
+                     : 'border-gray-600/50 focus:ring-blue-500/25'
+             }`}
         />
 
         {/* Character indicator in corner */}

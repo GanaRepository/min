@@ -168,7 +168,10 @@ Educational: [educational insights about their writing development]`;
 
     try {
       const response = await smartAIProvider.generateResponse(prompt);
-      return this.parseDetailedAssessmentResponse(response, storyStats.totalWords);
+      return this.parseDetailedAssessmentResponse(
+        response,
+        storyStats.totalWords
+      );
     } catch (error) {
       console.error('AI assessment generation failed:', error);
       return this.getDetailedFallbackAssessment(storyStats.totalWords);
@@ -222,9 +225,12 @@ Educational: [educational insights about their writing development]`;
     return responses[responseIndex];
   }
 
-  private parseDetailedAssessmentResponse(response: string, totalWords: number) {
-    const lines = response.split('\n').map(line => line.trim());
-    
+  private parseDetailedAssessmentResponse(
+    response: string,
+    totalWords: number
+  ) {
+    const lines = response.split('\n').map((line) => line.trim());
+
     let grammarScore = 85;
     let creativityScore = 88;
     let vocabularyScore = 82;
@@ -269,16 +275,28 @@ Educational: [educational insights about their writing development]`;
           feedback = line.replace(/feedback:/i, '').trim();
         } else if (line.toLowerCase().includes('strengths:')) {
           const strengthsText = line.replace(/strengths:/i, '').trim();
-          strengths = strengthsText.split('|').map(s => s.trim()).filter(s => s);
+          strengths = strengthsText
+            .split('|')
+            .map((s) => s.trim())
+            .filter((s) => s);
         } else if (line.toLowerCase().includes('improvements:')) {
           const improvementsText = line.replace(/improvements:/i, '').trim();
-          improvements = improvementsText.split('|').map(s => s.trim()).filter(s => s);
+          improvements = improvementsText
+            .split('|')
+            .map((s) => s.trim())
+            .filter((s) => s);
         } else if (line.toLowerCase().includes('vocabularyused:')) {
           const vocabText = line.replace(/vocabularyused:/i, '').trim();
-          vocabularyUsed = vocabText.split('|').map(s => s.trim()).filter(s => s);
+          vocabularyUsed = vocabText
+            .split('|')
+            .map((s) => s.trim())
+            .filter((s) => s);
         } else if (line.toLowerCase().includes('suggestedwords:')) {
           const suggestedText = line.replace(/suggestedwords:/i, '').trim();
-          suggestedWords = suggestedText.split('|').map(s => s.trim()).filter(s => s);
+          suggestedWords = suggestedText
+            .split('|')
+            .map((s) => s.trim())
+            .filter((s) => s);
         } else if (line.toLowerCase().includes('educational:')) {
           educationalInsights = line.replace(/educational:/i, '').trim();
         }
@@ -289,18 +307,48 @@ Educational: [educational insights about their writing development]`;
         creativityScore: Math.max(70, Math.min(100, creativityScore)),
         vocabularyScore: Math.max(70, Math.min(100, vocabularyScore)),
         structureScore: Math.max(70, Math.min(100, structureScore)),
-        characterDevelopmentScore: Math.max(70, Math.min(100, characterDevelopmentScore)),
+        characterDevelopmentScore: Math.max(
+          70,
+          Math.min(100, characterDevelopmentScore)
+        ),
         plotDevelopmentScore: Math.max(70, Math.min(100, plotDevelopmentScore)),
         overallScore: Math.max(70, Math.min(100, overallScore)),
         readingLevel,
         feedback,
-        strengths: strengths.length > 0 ? strengths : ['Creative imagination', 'Good story ideas', 'Engaging plot', 'Character development', 'Descriptive writing'],
-        improvements: improvements.length > 0 ? improvements : ['Add more dialogue', 'Use more descriptive adjectives', 'Vary sentence lengths'],
-        vocabularyUsed: vocabularyUsed.length > 0 ? vocabularyUsed : ['adventure', 'mysterious', 'brave', 'discovered', 'amazing'],
-        suggestedWords: suggestedWords.length > 0 ? suggestedWords : ['magnificent', 'extraordinary', 'perilous', 'astonishing', 'triumphant'],
-        educationalInsights
+        strengths:
+          strengths.length > 0
+            ? strengths
+            : [
+                'Creative imagination',
+                'Good story ideas',
+                'Engaging plot',
+                'Character development',
+                'Descriptive writing',
+              ],
+        improvements:
+          improvements.length > 0
+            ? improvements
+            : [
+                'Add more dialogue',
+                'Use more descriptive adjectives',
+                'Vary sentence lengths',
+              ],
+        vocabularyUsed:
+          vocabularyUsed.length > 0
+            ? vocabularyUsed
+            : ['adventure', 'mysterious', 'brave', 'discovered', 'amazing'],
+        suggestedWords:
+          suggestedWords.length > 0
+            ? suggestedWords
+            : [
+                'magnificent',
+                'extraordinary',
+                'perilous',
+                'astonishing',
+                'triumphant',
+              ],
+        educationalInsights,
       };
-
     } catch (error) {
       console.error('Error parsing detailed assessment:', error);
       return this.getDetailedFallbackAssessment(totalWords);
@@ -330,10 +378,19 @@ Educational: [educational insights about their writing development]`;
     const structureScore = Math.floor(Math.random() * 18) + 76; // 76-94
     const characterDevelopmentScore = Math.floor(Math.random() * 17) + 77; // 77-94
     const plotDevelopmentScore = Math.floor(Math.random() * 19) + 79; // 79-98
-    const overallScore = Math.round((grammarScore + creativityScore + vocabularyScore + structureScore + characterDevelopmentScore + plotDevelopmentScore) / 6);
+    const overallScore = Math.round(
+      (grammarScore +
+        creativityScore +
+        vocabularyScore +
+        structureScore +
+        characterDevelopmentScore +
+        plotDevelopmentScore) /
+        6
+    );
 
     const readingLevels = ['Elementary', 'Intermediate', 'Advanced'];
-    const readingLevel = readingLevels[Math.floor(Math.random() * readingLevels.length)];
+    const readingLevel =
+      readingLevels[Math.floor(Math.random() * readingLevels.length)];
 
     const strengthOptions = [
       'Vivid and imaginative descriptions',
@@ -345,7 +402,7 @@ Educational: [educational insights about their writing development]`;
       'Great use of sensory details',
       'Strong narrative voice',
       'Creative problem-solving',
-      'Emotional depth in writing'
+      'Emotional depth in writing',
     ];
 
     const improvementOptions = [
@@ -356,21 +413,21 @@ Educational: [educational insights about their writing development]`;
       'Develop secondary characters',
       'Add more action sequences',
       'Expand on setting descriptions',
-      'Show emotions through actions'
+      'Show emotions through actions',
     ];
 
     const vocabularyOptions = [
       ['adventure', 'mysterious', 'brave', 'discovered', 'amazing'],
       ['journey', 'exciting', 'courage', 'explore', 'wonderful'],
       ['quest', 'magical', 'determined', 'investigate', 'incredible'],
-      ['expedition', 'enchanted', 'fearless', 'uncover', 'spectacular']
+      ['expedition', 'enchanted', 'fearless', 'uncover', 'spectacular'],
     ];
 
     const suggestedWordsOptions = [
       ['magnificent', 'extraordinary', 'perilous', 'astonishing', 'triumphant'],
       ['spectacular', 'treacherous', 'marvelous', 'tremendous', 'victorious'],
       ['phenomenal', 'hazardous', 'remarkable', 'astounding', 'glorious'],
-      ['brilliant', 'challenging', 'impressive', 'outstanding', 'successful']
+      ['brilliant', 'challenging', 'impressive', 'outstanding', 'successful'],
     ];
 
     const feedbackOptions = [
@@ -380,14 +437,14 @@ Educational: [educational insights about their writing development]`;
 
       `Outstanding storytelling! Your ${totalWords}-word story is filled with creativity and shows great understanding of story elements. I was particularly impressed by your character development and the creative conflicts you created. Keep working on expanding your vocabulary to make your descriptions even more vivid!`,
 
-      `Wonderful imagination at work! Your ${totalWords}-word story demonstrates strong writing skills and creative thinking. The plot development was engaging and your use of descriptive details really brought the story to life. Try incorporating more sensory details to help readers feel like they're experiencing the adventure alongside your characters!`
+      `Wonderful imagination at work! Your ${totalWords}-word story demonstrates strong writing skills and creative thinking. The plot development was engaging and your use of descriptive details really brought the story to life. Try incorporating more sensory details to help readers feel like they're experiencing the adventure alongside your characters!`,
     ];
 
     const educationalInsightsOptions = [
       'Your writing shows strong development in narrative structure and creative expression. Continue practicing descriptive writing and character development to enhance your storytelling abilities.',
       'You demonstrate excellent understanding of story elements and creative writing techniques. Focus on expanding vocabulary and varying sentence structures to further improve your writing style.',
       'Your creative writing skills are developing wonderfully, with particular strengths in imagination and plot development. Keep practicing dialogue writing and sensory descriptions to make your stories even more engaging.',
-      'You show great potential in creative writing with strong character development and plot progression. Continue working on descriptive language and story pacing to further enhance your storytelling abilities.'
+      'You show great potential in creative writing with strong character development and plot progression. Continue working on descriptive language and story pacing to further enhance your storytelling abilities.',
     ];
 
     const randomIndex = Math.floor(Math.random() * strengthOptions.length);
@@ -401,12 +458,27 @@ Educational: [educational insights about their writing development]`;
       plotDevelopmentScore,
       overallScore,
       readingLevel,
-      feedback: feedbackOptions[Math.floor(Math.random() * feedbackOptions.length)],
-      strengths: strengthOptions.slice(randomIndex, randomIndex + 5).concat(strengthOptions.slice(0, Math.max(0, 5 - (strengthOptions.length - randomIndex)))),
+      feedback:
+        feedbackOptions[Math.floor(Math.random() * feedbackOptions.length)],
+      strengths: strengthOptions
+        .slice(randomIndex, randomIndex + 5)
+        .concat(
+          strengthOptions.slice(
+            0,
+            Math.max(0, 5 - (strengthOptions.length - randomIndex))
+          )
+        ),
       improvements: improvementOptions.slice(0, 3),
-      vocabularyUsed: vocabularyOptions[Math.floor(Math.random() * vocabularyOptions.length)],
-      suggestedWords: suggestedWordsOptions[Math.floor(Math.random() * suggestedWordsOptions.length)],
-      educationalInsights: educationalInsightsOptions[Math.floor(Math.random() * educationalInsightsOptions.length)]
+      vocabularyUsed:
+        vocabularyOptions[Math.floor(Math.random() * vocabularyOptions.length)],
+      suggestedWords:
+        suggestedWordsOptions[
+          Math.floor(Math.random() * suggestedWordsOptions.length)
+        ],
+      educationalInsights:
+        educationalInsightsOptions[
+          Math.floor(Math.random() * educationalInsightsOptions.length)
+        ],
     };
   }
 
@@ -423,15 +495,27 @@ Educational: [educational insights about their writing development]`;
   }> {
     const detailedAssessment = await this.generateAssessment(
       storyContent,
-      { genre: 'Adventure', character: 'Hero', setting: 'Forest', theme: 'Friendship', mood: 'Exciting', tone: 'Brave' },
-      { totalWords, turnCount: 6, storyTheme: 'Adventure', storyGenre: 'Fantasy' }
+      {
+        genre: 'Adventure',
+        character: 'Hero',
+        setting: 'Forest',
+        theme: 'Friendship',
+        mood: 'Exciting',
+        tone: 'Brave',
+      },
+      {
+        totalWords,
+        turnCount: 6,
+        storyTheme: 'Adventure',
+        storyGenre: 'Fantasy',
+      }
     );
 
     return {
       grammarScore: detailedAssessment.grammarScore,
       creativityScore: detailedAssessment.creativityScore,
       overallScore: detailedAssessment.overallScore,
-      feedback: detailedAssessment.feedback
+      feedback: detailedAssessment.feedback,
     };
   }
 

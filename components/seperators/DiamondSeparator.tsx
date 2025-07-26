@@ -2,8 +2,8 @@ interface DiamondSeparatorProps {
   className?: string;
 }
 
-export const DiamondSeparator: React.FC<DiamondSeparatorProps> = ({ 
-  className = "" 
+export const DiamondSeparator: React.FC<DiamondSeparatorProps> = ({
+  className = '',
 }) => {
   return (
     <div className={`py-10 flex justify-center ${className}`}>

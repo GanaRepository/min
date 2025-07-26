@@ -91,15 +91,15 @@ export default function MyStoriesPage() {
   };
 
   // FIXED: Handle both continuing and viewing stories
-const handleStoryAction = (story: Story) => {
-  if (story.status === 'completed') {
-    // Use MongoDB _id for completed stories
-    router.push(`/children-dashboard/my-stories/${story._id}`);
-  } else {
-    // FIXED: Use MongoDB _id consistently for active/paused stories
-    router.push(`/children-dashboard/story/${story._id}`);
-  }
-};
+  const handleStoryAction = (story: Story) => {
+    if (story.status === 'completed') {
+      // Use MongoDB _id for completed stories
+      router.push(`/children-dashboard/my-stories/${story._id}`);
+    } else {
+      // FIXED: Use MongoDB _id consistently for active/paused stories
+      router.push(`/children-dashboard/story/${story._id}`);
+    }
+  };
 
   const filteredStories = stories.filter((story) => {
     if (
@@ -376,7 +376,7 @@ const handleStoryAction = (story: Story) => {
             {sortedStories.map((story, index) => {
               const actionInfo = getActionText(story.status);
               const ActionIcon = actionInfo.icon;
-              
+
               return (
                 <motion.div
                   key={story._id}
@@ -388,7 +388,7 @@ const handleStoryAction = (story: Story) => {
                       ? 'bg-gray-800/50 border border-gray-600/50 rounded-2xl p-6 hover:bg-gray-800/70 transition-all hover:border-blue-500/50'
                       : 'bg-gray-800/50 border border-gray-600/50 rounded-xl p-6 hover:bg-gray-800/70 transition-all'
                   }`}
-                  onClick={() => handleStoryAction(story)} 
+                  onClick={() => handleStoryAction(story)}
                 >
                   {/* Story Header */}
                   <div className="flex items-start justify-between mb-4">
@@ -445,7 +445,9 @@ const handleStoryAction = (story: Story) => {
                     <div className="flex items-center space-x-4">
                       <div className="flex items-center">
                         <BookOpen className="w-4 h-4 mr-1" />
-                        <span>{story.childWords || story.totalWords} words</span>
+                        <span>
+                          {story.childWords || story.totalWords} words
+                        </span>
                       </div>
                       {story.currentTurn && story.status !== 'completed' && (
                         <div className="flex items-center">
@@ -482,11 +484,15 @@ const handleStoryAction = (story: Story) => {
                         : `Updated ${new Date(story.updatedAt).toLocaleDateString()}`}
                     </div>
                     <div className="flex items-center space-x-2">
-                      <span className={`text-sm font-medium flex items-center ${
-                        story.status === 'active' ? 'text-blue-400' :
-                        story.status === 'completed' ? 'text-green-400' :
-                        'text-yellow-400'
-                      }`}>
+                      <span
+                        className={`text-sm font-medium flex items-center ${
+                          story.status === 'active'
+                            ? 'text-blue-400'
+                            : story.status === 'completed'
+                              ? 'text-green-400'
+                              : 'text-yellow-400'
+                        }`}
+                      >
                         <ActionIcon className="w-4 h-4 mr-1" />
                         {actionInfo.text}
                       </span>

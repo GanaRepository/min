@@ -4,18 +4,18 @@ import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { 
-  Users, 
-  FileText, 
-  MessageSquare, 
-  BarChart3, 
-  Settings, 
+import {
+  Users,
+  FileText,
+  MessageSquare,
+  BarChart3,
+  Settings,
   LogOut,
   Menu,
   X,
   Crown,
   UserCheck,
-  BookOpen
+  BookOpen,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -31,7 +31,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
   useEffect(() => {
     if (status === 'loading') return;
-    
+
     if (!session || session.user.role !== 'admin') {
       router.push('/login/admin');
       return;
@@ -42,7 +42,11 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     { name: 'Dashboard', href: '/admin', icon: BarChart3 },
     { name: 'All Users', href: '/admin/users', icon: Users },
     { name: 'All Stories', href: '/admin/stories', icon: BookOpen },
-    { name: 'Comments & Reviews', href: '/admin/comments', icon: MessageSquare },
+    {
+      name: 'Comments & Reviews',
+      href: '/admin/comments',
+      icon: MessageSquare,
+    },
     { name: 'Mentors', href: '/admin/mentors', icon: UserCheck },
     { name: 'Analytics', href: '/admin/analytics', icon: BarChart3 },
     { name: 'Settings', href: '/admin/settings', icon: Settings },
@@ -75,7 +79,11 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           onClick={() => setSidebarOpen(!sidebarOpen)}
           className="bg-gray-800 p-2 rounded-lg text-white hover:bg-gray-700 transition-colors"
         >
-          {sidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          {sidebarOpen ? (
+            <X className="w-6 h-6" />
+          ) : (
+            <Menu className="w-6 h-6" />
+          )}
         </button>
       </div>
 
@@ -97,7 +105,9 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                 </div>
                 <div>
                   <h1 className="text-xl font-bold text-white">Admin Portal</h1>
-                  <p className="text-sm text-gray-400">Mintoons Control Center</p>
+                  <p className="text-sm text-gray-400">
+                    Mintoons Control Center
+                  </p>
                 </div>
               </div>
             </div>
@@ -107,7 +117,8 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
               <div className="flex items-center space-x-3">
                 <div className="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center">
                   <span className="text-sm font-medium">
-                    {session.user.firstName?.[0]}{session.user.lastName?.[0]}
+                    {session.user.firstName?.[0]}
+                    {session.user.lastName?.[0]}
                   </span>
                 </div>
                 <div>
@@ -171,7 +182,8 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
             <div className="lg:hidden" /> {/* Spacer for mobile menu button */}
             <div className="flex-1 lg:flex-none lg:ml-0 ml-12">
               <h2 className="text-xl font-semibold text-white">
-                {navigation.find(item => isActive(item.href))?.name || 'Admin Dashboard'}
+                {navigation.find((item) => isActive(item.href))?.name ||
+                  'Admin Dashboard'}
               </h2>
             </div>
             <div className="flex items-center space-x-4">
@@ -183,9 +195,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         </div>
 
         {/* Page content */}
-        <main className="p-4 lg:p-6">
-          {children}
-        </main>
+        <main className="p-4 lg:p-6">{children}</main>
       </div>
     </div>
   );

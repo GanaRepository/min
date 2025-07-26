@@ -58,12 +58,12 @@ export async function GET(
 
     // Build complete story content
     const storyParts = [];
-    
+
     if (storySession.aiOpening) {
       storyParts.push(storySession.aiOpening);
     }
 
-    turns.forEach(turn => {
+    turns.forEach((turn) => {
       if (turn.childInput) {
         storyParts.push(turn.childInput);
       }
@@ -79,13 +79,21 @@ export async function GET(
       elements: storySession.elements,
       totalWords: storySession.totalWords,
       childWords: storySession.childWords,
-      
+
       // Assessment scores (from either new assessment field or legacy fields)
-      grammarScore: storySession.assessment?.grammarScore || storySession.grammarScore || 0,
-      creativityScore: storySession.assessment?.creativityScore || storySession.creativityScore || 0,
-      overallScore: storySession.assessment?.overallScore || storySession.overallScore || 0,
-      aifeedback: storySession.assessment?.feedback || storySession.feedback || 'No feedback available',
-      
+      grammarScore:
+        storySession.assessment?.grammarScore || storySession.grammarScore || 0,
+      creativityScore:
+        storySession.assessment?.creativityScore ||
+        storySession.creativityScore ||
+        0,
+      overallScore:
+        storySession.assessment?.overallScore || storySession.overallScore || 0,
+      aifeedback:
+        storySession.assessment?.feedback ||
+        storySession.feedback ||
+        'No feedback available',
+
       publishedAt: storySession.updatedAt,
     };
 
@@ -93,7 +101,6 @@ export async function GET(
       success: true,
       story: completeStory,
     });
-
   } catch (error) {
     console.error('Error fetching completed story:', error);
     return NextResponse.json(

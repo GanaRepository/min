@@ -30,7 +30,7 @@ export async function GET() {
       activeStories,
       completedStories,
       monthlyNewUsers,
-      monthlyStories
+      monthlyStories,
     ] = await Promise.all([
       User.countDocuments(),
       User.countDocuments({ role: 'child' }),
@@ -39,7 +39,7 @@ export async function GET() {
       StorySession.countDocuments({ status: 'active' }),
       StorySession.countDocuments({ status: 'completed' }),
       User.countDocuments({ createdAt: { $gte: monthStart } }),
-      StorySession.countDocuments({ createdAt: { $gte: monthStart } })
+      StorySession.countDocuments({ createdAt: { $gte: monthStart } }),
     ]);
 
     const stats = {
@@ -52,15 +52,14 @@ export async function GET() {
       monthlyStats: {
         newUsers: monthlyNewUsers,
         storiesCreated: monthlyStories,
-        assessmentsCompleted: completedStories
-      }
+        assessmentsCompleted: completedStories,
+      },
     };
 
     return NextResponse.json({
       success: true,
-      stats
+      stats,
     });
-
   } catch (error) {
     console.error('Error fetching dashboard stats:', error);
     return NextResponse.json(

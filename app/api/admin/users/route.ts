@@ -26,8 +26,8 @@ export async function GET() {
           from: 'storysessions',
           localField: '_id',
           foreignField: 'childId',
-          as: 'stories'
-        }
+          as: 'stories',
+        },
       },
       {
         $addFields: {
@@ -36,36 +36,35 @@ export async function GET() {
             $size: {
               $filter: {
                 input: '$stories',
-                cond: { $eq: ['$$this.status', 'completed'] }
-              }
-            }
+                cond: { $eq: ['$$this.status', 'completed'] },
+              },
+            },
           },
           activeStories: {
             $size: {
               $filter: {
                 input: '$stories',
-                cond: { $eq: ['$$this.status', 'active'] }
-              }
-            }
-          }
-        }
+                cond: { $eq: ['$$this.status', 'active'] },
+              },
+            },
+          },
+        },
       },
       {
         $project: {
           password: 0,
-          stories: 0
-        }
+          stories: 0,
+        },
       },
       {
-        $sort: { createdAt: -1 }
-      }
+        $sort: { createdAt: -1 },
+      },
     ]);
 
     return NextResponse.json({
       success: true,
-      users
+      users,
     });
-
   } catch (error) {
     console.error('Error fetching users:', error);
     return NextResponse.json(

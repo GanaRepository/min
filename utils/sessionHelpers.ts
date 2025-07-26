@@ -35,7 +35,7 @@ export async function getActiveStorySession(sessionId: string, userId: string) {
       },
       { new: true }
     );
-    
+
     console.log('Auto-resumed story session:', storySession._id);
   }
 

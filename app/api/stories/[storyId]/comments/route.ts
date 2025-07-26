@@ -29,10 +29,7 @@ export async function POST(
     // Verify story exists
     const story = await StorySession.findById(storyId);
     if (!story) {
-      return NextResponse.json(
-        { error: 'Story not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Story not found' }, { status: 404 });
     }
 
     // If mentor, verify they can access this child's story
@@ -40,7 +37,7 @@ export async function POST(
       const assignment = await MentorAssignment.findOne({
         mentorId: session.user.id,
         childId: story.childId,
-        isActive: true
+        isActive: true,
       });
 
       if (!assignment) {
@@ -59,7 +56,7 @@ export async function POST(
       comment,
       commentType: commentType || 'general',
       position,
-      parentCommentId
+      parentCommentId,
     });
 
     // Populate author info for response
@@ -67,9 +64,8 @@ export async function POST(
 
     return NextResponse.json({
       success: true,
-      comment: newComment
+      comment: newComment,
     });
-
   } catch (error) {
     console.error('Error adding comment:', error);
     return NextResponse.json(
@@ -100,10 +96,7 @@ export async function GET(
     // Get story to verify access
     const story = await StorySession.findById(storyId);
     if (!story) {
-      return NextResponse.json(
-        { error: 'Story not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Story not found' }, { status: 404 });
     }
 
     // Check access permissions
@@ -115,7 +108,7 @@ export async function GET(
       const assignment = await MentorAssignment.findOne({
         mentorId: session.user.id,
         childId: story.childId,
-        isActive: true
+        isActive: true,
       });
       hasAccess = !!assignment;
     } else if (session.user.role === 'child') {
@@ -123,10 +116,7 @@ export async function GET(
     }
 
     if (!hasAccess) {
-      return NextResponse.json(
-        { error: 'Access denied' },
-        { status: 403 }
-      );
+      return NextResponse.json({ error: 'Access denied' }, { status: 403 });
     }
 
     // Get comments
@@ -136,9 +126,8 @@ export async function GET(
 
     return NextResponse.json({
       success: true,
-      comments
+      comments,
     });
-
   } catch (error) {
     console.error('Error fetching comments:', error);
     return NextResponse.json(

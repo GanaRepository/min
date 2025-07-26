@@ -245,9 +245,9 @@ const MentorLoginContent: React.FC = () => {
                 className="text-white/90 mb-4"
               >
                 <p className="text-sm leading-relaxed mb-3">
-                  "Being a Mintoons mentor allows me to guide young minds and
+                  &quot;Being a Mintoons mentor allows me to guide young minds and
                   watch their creativity flourish. Every story is a new
-                  adventure!"
+                  adventure!&quot;
                 </p>
                 <p className="text-xs text-white/60">
                   - Michael | Creative Writing Mentor

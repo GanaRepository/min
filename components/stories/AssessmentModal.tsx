@@ -88,7 +88,7 @@
 //     try {
 //       // Try to get existing assessment first
 //       const response = await fetch(`/api/stories/session/${storySession._id}/assessment`);
-      
+
 //       if (response.ok) {
 //         const data = await response.json();
 //         if (data.assessment && mountedRef.current) {
@@ -101,7 +101,7 @@
 //       // If no existing assessment, generate new one
 //       console.log('No existing assessment found, generating...');
 //       await generateNewAssessment();
-      
+
 //     } catch (error) {
 //       console.error('Error fetching assessment:', error);
 //       await generateNewAssessment(); // Fallback to generation
@@ -115,12 +115,12 @@
 //       const response = await fetch(`/api/stories/assess/${storySession._id}`, {
 //         method: 'POST',
 //       });
-      
+
 //       const data = await response.json();
 
 //       if (!response.ok || !data.assessment) {
 //         console.error('Assessment API error:', data.error);
-        
+
 //         // Provide fallback assessment
 //         if (mountedRef.current) {
 //           setAssessment({
@@ -139,7 +139,7 @@
 //             suggestedWords: ['magnificent', 'extraordinary', 'perilous', 'astonishing', 'triumphant'],
 //             educationalInsights: 'Keep developing your creative writing skills! Your storytelling abilities are improving.'
 //           });
-          
+
 //           toast({
 //             title: '⚠️ Assessment Generated',
 //             description: 'Using default assessment scores.',
@@ -150,16 +150,16 @@
 
 //       if (mountedRef.current) {
 //         setAssessment(data.assessment);
-        
+
 //         toast({
 //           title: '📊 Assessment Complete!',
 //           description: 'Your story has been evaluated.',
 //         });
 //       }
-      
+
 //     } catch (error) {
 //       console.error('Error generating assessment:', error);
-      
+
 //       // Provide fallback assessment on error
 //       if (mountedRef.current) {
 //         setAssessment({
@@ -178,7 +178,7 @@
 //           suggestedWords: ['magnificent', 'extraordinary', 'perilous', 'astonishing', 'triumphant'],
 //           educationalInsights: 'Keep developing your creative writing skills!'
 //         });
-        
+
 //         toast({
 //           title: '⚠️ Assessment Error',
 //           description: 'Using fallback scores.',
@@ -507,7 +507,7 @@
 //               )}
 
 //               {/* Action Buttons */}
-//               <motion.div 
+//               <motion.div
 //                 className="flex flex-col sm:flex-row gap-3"
 //                 initial={{ opacity: 0, y: 20 }}
 //                 animate={{ opacity: 1, y: 0 }}
@@ -633,7 +633,9 @@ export default function AssessmentModal({
   const router = useRouter();
   const { toast } = useToast();
 
-  const [assessment, setAssessment] = useState<DetailedAssessment | null>(propAssessment || null);
+  const [assessment, setAssessment] = useState<DetailedAssessment | null>(
+    propAssessment || null
+  );
   const [isAssessing, setIsAssessing] = useState(false);
   const [isPublishing, setIsPublishing] = useState(false);
 
@@ -658,7 +660,13 @@ export default function AssessmentModal({
 
   // When modal opens, try to get existing assessment first ONLY if no prop assessment
   useEffect(() => {
-    if (isOpen && storySession && !propAssessment && !assessment && mountedRef.current) {
+    if (
+      isOpen &&
+      storySession &&
+      !propAssessment &&
+      !assessment &&
+      mountedRef.current
+    ) {
       console.log('🔍 No assessment prop, fetching from API...');
       fetchExistingAssessment();
     }
@@ -671,8 +679,10 @@ export default function AssessmentModal({
 
     try {
       // Try to get existing assessment first
-      const response = await fetch(`/api/stories/session/${storySession._id}/assessment`);
-      
+      const response = await fetch(
+        `/api/stories/session/${storySession._id}/assessment`
+      );
+
       if (response.ok) {
         const data = await response.json();
         if (data.assessment && mountedRef.current) {
@@ -685,7 +695,6 @@ export default function AssessmentModal({
       // If no existing assessment, generate new one
       console.log('No existing assessment found, generating...');
       await generateNewAssessment();
-      
     } catch (error) {
       console.error('Error fetching assessment:', error);
       await generateNewAssessment(); // Fallback to generation
@@ -699,12 +708,12 @@ export default function AssessmentModal({
       const response = await fetch(`/api/stories/assess/${storySession._id}`, {
         method: 'POST',
       });
-      
+
       const data = await response.json();
 
       if (!response.ok || !data.assessment) {
         console.error('Assessment API error:', data.error);
-        
+
         // Provide fallback assessment
         if (mountedRef.current) {
           setAssessment({
@@ -716,14 +725,38 @@ export default function AssessmentModal({
             structureScore: 84,
             characterDevelopmentScore: 86,
             plotDevelopmentScore: 87,
-            feedback: 'Great work on your creative story! Your writing shows imagination and effort.',
-            strengths: ['Creative imagination', 'Good story flow', 'Engaging characters', 'Descriptive writing', 'Story structure'],
-            improvements: ['Add more dialogue', 'Use more descriptive words', 'Vary sentence length'],
-            vocabularyUsed: ['adventure', 'mysterious', 'brave', 'discovered', 'amazing'],
-            suggestedWords: ['magnificent', 'extraordinary', 'perilous', 'astonishing', 'triumphant'],
-            educationalInsights: 'Keep developing your creative writing skills! Your storytelling abilities are improving.'
+            feedback:
+              'Great work on your creative story! Your writing shows imagination and effort.',
+            strengths: [
+              'Creative imagination',
+              'Good story flow',
+              'Engaging characters',
+              'Descriptive writing',
+              'Story structure',
+            ],
+            improvements: [
+              'Add more dialogue',
+              'Use more descriptive words',
+              'Vary sentence length',
+            ],
+            vocabularyUsed: [
+              'adventure',
+              'mysterious',
+              'brave',
+              'discovered',
+              'amazing',
+            ],
+            suggestedWords: [
+              'magnificent',
+              'extraordinary',
+              'perilous',
+              'astonishing',
+              'triumphant',
+            ],
+            educationalInsights:
+              'Keep developing your creative writing skills! Your storytelling abilities are improving.',
           });
-          
+
           toast({
             title: '⚠️ Assessment Generated',
             description: 'Using default assessment scores.',
@@ -734,16 +767,15 @@ export default function AssessmentModal({
 
       if (mountedRef.current) {
         setAssessment(data.assessment);
-        
+
         toast({
           title: '📊 Assessment Complete!',
           description: 'Your story has been evaluated.',
         });
       }
-      
     } catch (error) {
       console.error('Error generating assessment:', error);
-      
+
       // Provide fallback assessment on error
       if (mountedRef.current) {
         setAssessment({
@@ -755,14 +787,35 @@ export default function AssessmentModal({
           structureScore: 84,
           characterDevelopmentScore: 86,
           plotDevelopmentScore: 87,
-          feedback: 'Great work on your creative story! Assessment could not be fully generated, but your effort is commendable.',
-          strengths: ['Creative imagination', 'Good story flow', 'Engaging characters'],
-          improvements: ['Add more dialogue', 'Use more descriptive words', 'Vary sentence length'],
-          vocabularyUsed: ['adventure', 'mysterious', 'brave', 'discovered', 'amazing'],
-          suggestedWords: ['magnificent', 'extraordinary', 'perilous', 'astonishing', 'triumphant'],
-          educationalInsights: 'Keep developing your creative writing skills!'
+          feedback:
+            'Great work on your creative story! Assessment could not be fully generated, but your effort is commendable.',
+          strengths: [
+            'Creative imagination',
+            'Good story flow',
+            'Engaging characters',
+          ],
+          improvements: [
+            'Add more dialogue',
+            'Use more descriptive words',
+            'Vary sentence length',
+          ],
+          vocabularyUsed: [
+            'adventure',
+            'mysterious',
+            'brave',
+            'discovered',
+            'amazing',
+          ],
+          suggestedWords: [
+            'magnificent',
+            'extraordinary',
+            'perilous',
+            'astonishing',
+            'triumphant',
+          ],
+          educationalInsights: 'Keep developing your creative writing skills!',
         });
-        
+
         toast({
           title: '⚠️ Assessment Error',
           description: 'Using fallback scores.',
@@ -864,7 +917,7 @@ export default function AssessmentModal({
           {/* Header */}
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-bold text-white flex items-center">
-              🎉 Story Complete! "{storySession.title}"
+              🎉 Story Complete! &quot;{storySession.title}&quot;
             </h2>
             <button
               onClick={onClose}
@@ -896,7 +949,9 @@ export default function AssessmentModal({
                 {/* Grammar Score */}
                 <div className="bg-gradient-to-br from-blue-500/20 to-blue-600/20 border border-blue-500/30 rounded-xl p-6 text-center">
                   <TrendingUp className="w-8 h-8 text-blue-400 mx-auto mb-3" />
-                  <div className={`text-3xl font-bold mb-2 ${getScoreColor(assessment.grammarScore)}`}>
+                  <div
+                    className={`text-3xl font-bold mb-2 ${getScoreColor(assessment.grammarScore)}`}
+                  >
                     {assessment.grammarScore}%
                   </div>
                   <div className="text-gray-300 text-sm font-medium">
@@ -915,7 +970,9 @@ export default function AssessmentModal({
                 {/* Creativity Score */}
                 <div className="bg-gradient-to-br from-purple-500/20 to-purple-600/20 border border-purple-500/30 rounded-xl p-6 text-center">
                   <Sparkles className="w-8 h-8 text-purple-400 mx-auto mb-3" />
-                  <div className={`text-3xl font-bold mb-2 ${getScoreColor(assessment.creativityScore)}`}>
+                  <div
+                    className={`text-3xl font-bold mb-2 ${getScoreColor(assessment.creativityScore)}`}
+                  >
                     {assessment.creativityScore}%
                   </div>
                   <div className="text-gray-300 text-sm font-medium">
@@ -934,7 +991,9 @@ export default function AssessmentModal({
                 {/* Overall Score */}
                 <div className="bg-gradient-to-br from-green-500/20 to-green-600/20 border border-green-500/30 rounded-xl p-6 text-center">
                   <Award className="w-8 h-8 text-green-400 mx-auto mb-3" />
-                  <div className={`text-3xl font-bold mb-2 ${getScoreColor(assessment.overallScore)}`}>
+                  <div
+                    className={`text-3xl font-bold mb-2 ${getScoreColor(assessment.overallScore)}`}
+                  >
                     {assessment.overallScore}%
                   </div>
                   <div className="text-gray-300 text-sm font-medium">
@@ -952,16 +1011,40 @@ export default function AssessmentModal({
               </div>
 
               {/* Detailed Assessment Scores */}
-              {(assessment.vocabularyScore || assessment.structureScore || assessment.characterDevelopmentScore || assessment.plotDevelopmentScore) && (
+              {(assessment.vocabularyScore ||
+                assessment.structureScore ||
+                assessment.characterDevelopmentScore ||
+                assessment.plotDevelopmentScore) && (
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
                   {[
-                    { label: 'Vocabulary', score: assessment.vocabularyScore || 0, color: 'orange' },
-                    { label: 'Structure', score: assessment.structureScore || 0, color: 'cyan' },
-                    { label: 'Character Dev.', score: assessment.characterDevelopmentScore || 0, color: 'pink' },
-                    { label: 'Plot Dev.', score: assessment.plotDevelopmentScore || 0, color: 'indigo' },
+                    {
+                      label: 'Vocabulary',
+                      score: assessment.vocabularyScore || 0,
+                      color: 'orange',
+                    },
+                    {
+                      label: 'Structure',
+                      score: assessment.structureScore || 0,
+                      color: 'cyan',
+                    },
+                    {
+                      label: 'Character Dev.',
+                      score: assessment.characterDevelopmentScore || 0,
+                      color: 'pink',
+                    },
+                    {
+                      label: 'Plot Dev.',
+                      score: assessment.plotDevelopmentScore || 0,
+                      color: 'indigo',
+                    },
                   ].map((item) => (
-                    <div key={item.label} className="bg-gray-700/30 rounded-lg p-3 text-center">
-                      <div className={`text-lg font-bold text-${item.color}-400`}>
+                    <div
+                      key={item.label}
+                      className="bg-gray-700/30 rounded-lg p-3 text-center"
+                    >
+                      <div
+                        className={`text-lg font-bold text-${item.color}-400`}
+                      >
                         {item.score}%
                       </div>
                       <div className="text-gray-300 text-xs">{item.label}</div>
@@ -1002,12 +1085,17 @@ export default function AssessmentModal({
                         Your Strengths
                       </h3>
                       <div className="space-y-2">
-                        {(assessment.strengths || []).slice(0, 5).map((strength, index) => (
-                          <div key={index} className="flex items-center text-green-300 text-sm">
-                            <span className="w-2 h-2 bg-green-400 rounded-full mr-3"></span>
-                            {strength}
-                          </div>
-                        ))}
+                        {(assessment.strengths || [])
+                          .slice(0, 5)
+                          .map((strength, index) => (
+                            <div
+                              key={index}
+                              className="flex items-center text-green-300 text-sm"
+                            >
+                              <span className="w-2 h-2 bg-green-400 rounded-full mr-3"></span>
+                              {strength}
+                            </div>
+                          ))}
                       </div>
                     </div>
                   )}
@@ -1020,12 +1108,17 @@ export default function AssessmentModal({
                         Areas to Improve
                       </h3>
                       <div className="space-y-2">
-                        {(assessment.improvements || []).map((improvement, index) => (
-                          <div key={index} className="flex items-center text-yellow-300 text-sm">
-                            <span className="w-2 h-2 bg-yellow-400 rounded-full mr-3"></span>
-                            {improvement}
-                          </div>
-                        ))}
+                        {(assessment.improvements || []).map(
+                          (improvement, index) => (
+                            <div
+                              key={index}
+                              className="flex items-center text-yellow-300 text-sm"
+                            >
+                              <span className="w-2 h-2 bg-yellow-400 rounded-full mr-3"></span>
+                              {improvement}
+                            </div>
+                          )
+                        )}
                       </div>
                     </div>
                   )}
@@ -1043,14 +1136,16 @@ export default function AssessmentModal({
                         Great Words You Used
                       </h3>
                       <div className="flex flex-wrap gap-2">
-                        {(assessment.vocabularyUsed || []).map((word, index) => (
-                          <span
-                            key={index}
-                            className="bg-purple-600/30 text-purple-300 px-3 py-1 rounded-lg text-sm font-medium"
-                          >
-                            {word}
-                          </span>
-                        ))}
+                        {(assessment.vocabularyUsed || []).map(
+                          (word, index) => (
+                            <span
+                              key={index}
+                              className="bg-purple-600/30 text-purple-300 px-3 py-1 rounded-lg text-sm font-medium"
+                            >
+                              {word}
+                            </span>
+                          )
+                        )}
                       </div>
                     </div>
                   )}
@@ -1063,14 +1158,16 @@ export default function AssessmentModal({
                         New Words to Learn
                       </h3>
                       <div className="flex flex-wrap gap-2">
-                        {(assessment.suggestedWords || []).map((word, index) => (
-                          <span
-                            key={index}
-                            className="bg-indigo-600/30 text-indigo-300 px-3 py-1 rounded-lg text-sm font-medium"
-                          >
-                            {word}
-                          </span>
-                        ))}
+                        {(assessment.suggestedWords || []).map(
+                          (word, index) => (
+                            <span
+                              key={index}
+                              className="bg-indigo-600/30 text-indigo-300 px-3 py-1 rounded-lg text-sm font-medium"
+                            >
+                              {word}
+                            </span>
+                          )
+                        )}
                       </div>
                     </div>
                   )}
@@ -1091,7 +1188,7 @@ export default function AssessmentModal({
               )}
 
               {/* Action Buttons */}
-              <motion.div 
+              <motion.div
                 className="flex flex-col sm:flex-row gap-3"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}

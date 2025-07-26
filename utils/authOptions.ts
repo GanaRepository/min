@@ -147,7 +147,6 @@
 //   debug: process.env.NODE_ENV === 'development',
 // };
 
-
 import { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import bcrypt from 'bcryptjs';
@@ -254,8 +253,10 @@ export const authOptions: NextAuthOptions = {
         (session.user as any).age = token.age;
         (session.user as any).school = token.school;
         (session.user as any).isActive = token.isActive ?? true;
-        (session.user as any).subscriptionTier = token.subscriptionTier || 'FREE';
-        (session.user as any).subscriptionStatus = token.subscriptionStatus || 'active';
+        (session.user as any).subscriptionTier =
+          token.subscriptionTier || 'FREE';
+        (session.user as any).subscriptionStatus =
+          token.subscriptionStatus || 'active';
         (session.user as any).isVerified = token.isVerified ?? false; // THIS IS THE IMPORTANT ONE
         (session.user as any).assignedMentor = token.assignedMentor;
         (session.user as any).createdBy = token.createdBy;

@@ -20,33 +20,43 @@ interface StoryCreationRequest {
 
 // Helper function to validate elements
 function validateElements(elements: any): boolean {
-  const requiredElements = ['genre', 'character', 'setting', 'theme', 'mood', 'tone'];
-  return requiredElements.every(element => elements[element]);
+  const requiredElements = [
+    'genre',
+    'character',
+    'setting',
+    'theme',
+    'mood',
+    'tone',
+  ];
+  return requiredElements.every((element) => elements[element]);
 }
 
 // Background AI generation function
-async function generateAIOpeningInBackground(sessionId: string, elements: StoryElements) {
+async function generateAIOpeningInBackground(
+  sessionId: string,
+  elements: StoryElements
+) {
   try {
     console.log(`🤖 Starting AI opening generation for session: ${sessionId}`);
-    
+
     const aiOpening = await collaborationEngine.generateOpeningPrompt(elements);
-    
+
     await StorySession.findByIdAndUpdate(sessionId, {
       aiOpening,
       apiCallsUsed: 1,
     });
-    
+
     console.log(`✅ AI opening generated and saved for session: ${sessionId}`);
   } catch (error) {
     console.error(`❌ Failed to generate AI opening for ${sessionId}:`, error);
-    
+
     const fallbackOpening = `Welcome to your ${elements.genre} adventure! Your character ${elements.character} is ready to explore ${elements.setting}. What happens first in this ${elements.mood} story?`;
-    
+
     await StorySession.findByIdAndUpdate(sessionId, {
       aiOpening: fallbackOpening,
       apiCallsUsed: 1,
     });
-    
+
     console.log(`✅ Fallback opening saved for session: ${sessionId}`);
   }
 }
@@ -73,7 +83,7 @@ async function createStorySession(userId: string, elements: StoryElements) {
   // Get tier and check limits
   const userTier = user.subscriptionTier || 'FREE';
   const tierConfig = SUBSCRIPTION_TIERS[userTier] || DEFAULT_TIER;
-  
+
   const currentMonth = new Date();
   currentMonth.setDate(1);
   currentMonth.setHours(0, 0, 0, 0);
@@ -85,16 +95,18 @@ async function createStorySession(userId: string, elements: StoryElements) {
 
   if (monthlyStoryCount >= tierConfig.storyLimit) {
     return NextResponse.json(
-      { error: `Monthly story limit reached (${tierConfig.storyLimit} stories for ${userTier} tier)` },
+      {
+        error: `Monthly story limit reached (${tierConfig.storyLimit} stories for ${userTier} tier)`,
+      },
       { status: 429 }
     );
   }
 
   // Get next story number
-  const lastSession = await StorySession.findOne({ childId: userId })
+  const lastSession = (await StorySession.findOne({ childId: userId })
     .sort({ storyNumber: -1 })
     .select('storyNumber')
-    .lean() as { storyNumber: number } | null;
+    .lean()) as { storyNumber: number } | null;
 
   const nextStoryNumber = lastSession ? lastSession.storyNumber + 1 : 1;
 
@@ -171,7 +183,9 @@ export async function POST(request: Request) {
         );
       }
 
-      console.log(`🔍 Processing pending token: ${body.pendingToken.substring(0, 8)}...`);
+      console.log(
+        `🔍 Processing pending token: ${body.pendingToken.substring(0, 8)}...`
+      );
 
       // Retrieve elements from database
       const pendingElements = await PendingStoryElements.findOne({
@@ -180,7 +194,9 @@ export async function POST(request: Request) {
       });
 
       if (!pendingElements) {
-        console.log(`❌ Token not found or expired: ${body.pendingToken.substring(0, 8)}...`);
+        console.log(
+          `❌ Token not found or expired: ${body.pendingToken.substring(0, 8)}...`
+        );
         return NextResponse.json(
           { error: 'Token not found or expired. Please start over.' },
           { status: 404 }
@@ -190,7 +206,10 @@ export async function POST(request: Request) {
       // Clean up token and create story
       console.log(`✅ Token found, creating story from stored elements`);
       await PendingStoryElements.findByIdAndDelete(pendingElements._id);
-      return await createStorySession(session.user.id, pendingElements.elements);
+      return await createStorySession(
+        session.user.id,
+        pendingElements.elements
+      );
     }
 
     // ===== CASE 2: User provides elements directly =====
@@ -206,7 +225,7 @@ export async function POST(request: Request) {
       // CASE 2A: Not authenticated - store elements in database
       if (!session || session.user.role !== 'child') {
         console.log(`🔒 User not authenticated, storing elements in database`);
-        
+
         const token = crypto.randomBytes(32).toString('hex');
         const expiresAt = new Date(Date.now() + 30 * 60 * 1000); // 30 minutes
 
@@ -216,12 +235,15 @@ export async function POST(request: Request) {
           expiresAt,
         });
 
-        console.log(`📦 Stored elements in database with token: ${token.substring(0, 8)}...`);
+        console.log(
+          `📦 Stored elements in database with token: ${token.substring(0, 8)}...`
+        );
 
         return NextResponse.json({
           requiresAuth: true,
           token,
-          message: 'Please log in to create your story. Your progress will be saved!'
+          message:
+            'Please log in to create your story. Your progress will be saved!',
         });
       }
 
@@ -235,7 +257,6 @@ export async function POST(request: Request) {
       { error: 'Invalid request. Provide either elements or pendingToken.' },
       { status: 400 }
     );
-
   } catch (error) {
     console.error('❌ Error in create-session API:', error);
     return NextResponse.json(

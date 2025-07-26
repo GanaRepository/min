@@ -40,12 +40,12 @@ export async function POST(request: Request) {
 
     // Create full story content
     const fullContent = [];
-    
+
     if (storySession.aiOpening) {
       fullContent.push(storySession.aiOpening);
     }
 
-    turns.forEach(turn => {
+    turns.forEach((turn) => {
       fullContent.push(turn.childInput);
       if (turn.aiResponse) {
         fullContent.push(turn.aiResponse);
@@ -54,7 +54,7 @@ export async function POST(request: Request) {
 
     // Check if already published
     const existingPublished = await PublishedStory.findOne({ sessionId });
-    
+
     if (existingPublished) {
       return NextResponse.json({
         success: true,
@@ -86,7 +86,6 @@ export async function POST(request: Request) {
         publishedAt: publishedStory.publishedAt,
       },
     });
-
   } catch (error) {
     console.error('Error publishing story:', error);
     return NextResponse.json(

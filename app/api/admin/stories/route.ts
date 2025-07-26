@@ -39,16 +39,16 @@ export async function GET(request: Request) {
           from: 'users',
           localField: 'childId',
           foreignField: '_id',
-          as: 'child'
-        }
+          as: 'child',
+        },
       },
       {
         $lookup: {
           from: 'storycomments',
           localField: '_id',
           foreignField: 'storyId',
-          as: 'comments'
-        }
+          as: 'comments',
+        },
       },
       {
         $addFields: {
@@ -58,21 +58,21 @@ export async function GET(request: Request) {
             $size: {
               $filter: {
                 input: '$comments',
-                cond: { $eq: ['$$this.isResolved', false] }
-              }
-            }
-          }
-        }
+                cond: { $eq: ['$$this.isResolved', false] },
+              },
+            },
+          },
+        },
       },
       {
         $project: {
           'child.password': 0,
-          comments: 0
-        }
+          comments: 0,
+        },
       },
       { $sort: { updatedAt: -1 } },
       { $skip: (page - 1) * limit },
-      { $limit: limit }
+      { $limit: limit },
     ]);
 
     // Get total count
@@ -85,10 +85,9 @@ export async function GET(request: Request) {
         page,
         limit,
         total: totalCount,
-        pages: Math.ceil(totalCount / limit)
-      }
+        pages: Math.ceil(totalCount / limit),
+      },
     });
-
   } catch (error) {
     console.error('Error fetching admin stories:', error);
     return NextResponse.json(

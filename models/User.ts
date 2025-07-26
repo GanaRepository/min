@@ -200,7 +200,7 @@
 //   {
 //     timestamps: true,
 //   },
- 
+
 // );
 
 // UserSchema.index({ role: 1, isActive: 1 });
@@ -425,7 +425,6 @@ UserSchema.index({ role: 1, isActive: 1 });
 UserSchema.index({ subscriptionTier: 1, subscriptionStatus: 1 });
 UserSchema.index({ email: 1, isVerified: 1 }); // Added index for verification queries
 UserSchema.index({ isActive: 1, isVerified: 1 }); // Added compound index
-
 
 export default mongoose.models.User ||
   mongoose.model<IUser>('User', UserSchema);

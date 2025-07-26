@@ -16,39 +16,39 @@ const MentorAssignmentSchema = new Schema<IMentorAssignment>(
       type: Schema.Types.ObjectId,
       ref: 'User',
       required: true,
-      index: true
+      index: true,
     },
     childId: {
       type: Schema.Types.ObjectId,
       ref: 'User',
       required: true,
-      index: true
+      index: true,
     },
     assignedAt: {
       type: Date,
       required: true,
-      default: Date.now
+      default: Date.now,
     },
     assignedBy: {
       type: Schema.Types.ObjectId,
       ref: 'User',
-      required: true
+      required: true,
     },
     isActive: {
       type: Boolean,
       default: true,
-      index: true
+      index: true,
     },
     unassignedAt: {
-      type: Date
+      type: Date,
     },
     unassignedBy: {
       type: Schema.Types.ObjectId,
-      ref: 'User'
-    }
+      ref: 'User',
+    },
   },
   {
-    timestamps: true
+    timestamps: true,
   }
 );
 

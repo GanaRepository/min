@@ -106,11 +106,11 @@
 //       const resumeResponse = await fetch(`/api/stories/session/${sessionId}/resume`, {
 //         method: 'POST',
 //       });
-      
+
 //       if (resumeResponse.ok) {
 //         const resumeData = await resumeResponse.json();
 //         setStorySession(resumeData.session);
-        
+
 //         toast({
 //           title: '▶️ Story Resumed',
 //           description: 'Welcome back! Continue your adventure.',
@@ -201,10 +201,10 @@
 //   if (!storySession) return;
 
 //   setIsLoadingAI(true);
-  
+
 //   try {
 //     console.log('🎯 Fetching assessment for session:', storySession._id);
-    
+
 //     // CORRECT: Use the proper endpoint structure
 //     let response = await fetch(`/api/stories/session/${storySession._id}/assessment`);
 //     let data = await response.json();
@@ -214,7 +214,7 @@
 //       // Assessment exists, show it
 //       setAssessment(data.assessment);
 //       setShowAssessment(true);
-      
+
 //       toast({
 //         title: '📊 Assessment Ready!',
 //         description: 'Your story has been evaluated!',
@@ -225,14 +225,14 @@
 //       const generateResponse = await fetch(`/api/stories/assess/${storySession._id}`, {
 //         method: 'POST',
 //       });
-      
+
 //       const generateData = await generateResponse.json();
-      
+
 //       if (generateResponse.ok && generateData.assessment) {
 //         console.log('✅ Generated new assessment:', generateData.assessment);
 //         setAssessment(generateData.assessment);
 //         setShowAssessment(true);
-        
+
 //         toast({
 //           title: '🎉 Assessment Complete!',
 //           description: 'Your story has been evaluated!',
@@ -264,17 +264,17 @@
 //   setIsLoadingAI(true);
 //   try {
 //     console.log('🎯 Requesting assessment for session:', storySession._id);
-    
+
 //     // CORRECT: First try to get existing assessment using the correct endpoint
 //     const fetchResponse = await fetch(`/api/stories/session/${storySession._id}/assessment`);
-    
+
 //     if (fetchResponse.ok) {
 //       const fetchData = await fetchResponse.json();
 //       if (fetchData.assessment) {
 //         console.log('✅ Found existing assessment:', fetchData.assessment);
 //         setAssessment(fetchData.assessment);
 //         setShowAssessment(true);
-        
+
 //         toast({
 //           title: '📊 Assessment Ready!',
 //           description: 'Your story has been evaluated!',
@@ -282,7 +282,7 @@
 //         return;
 //       }
 //     }
-    
+
 //     // If no existing assessment, generate new one
 //     console.log('🔄 Generating new assessment...');
 //     const generateResponse = await fetch(`/api/stories/assess/${storySession._id}`, {
@@ -295,7 +295,7 @@
 //       console.log('✅ Generated new assessment:', generateData.assessment);
 //       setAssessment(generateData.assessment);
 //       setShowAssessment(true);
-      
+
 //       toast({
 //         title: '🎉 Assessment Complete!',
 //         description: 'Your story has been evaluated!',
@@ -306,7 +306,7 @@
 //   } catch (error) {
 //     console.error('❌ Error with assessment:', error);
 //     toast({
-//       title: '❌ Assessment Error', 
+//       title: '❌ Assessment Error',
 //       description: 'Could not load assessment. Please try again.',
 //       variant: 'destructive',
 //     });
@@ -893,7 +893,6 @@
 //   );
 // }
 
-
 // app/children-dashboard/story/[sessionId]/page.tsx - PROPERLY FIXED
 'use client';
 
@@ -1003,14 +1002,17 @@ export default function StoryWritingPage({
 
       // Auto-resume if the session is paused
       if (data.session.status === 'paused') {
-        const resumeResponse = await fetch(`/api/stories/session/${sessionId}/resume`, {
-          method: 'POST',
-        });
-        
+        const resumeResponse = await fetch(
+          `/api/stories/session/${sessionId}/resume`,
+          {
+            method: 'POST',
+          }
+        );
+
         if (resumeResponse.ok) {
           const resumeData = await resumeResponse.json();
           setStorySession(resumeData.session);
-          
+
           toast({
             title: '▶️ Story Resumed',
             description: 'Welcome back! Continue your adventure.',
@@ -1037,7 +1039,9 @@ export default function StoryWritingPage({
 
   const fetchTurns = async (actualSessionId: string) => {
     try {
-      const response = await fetch(`/api/stories/session/${actualSessionId}/turns`);
+      const response = await fetch(
+        `/api/stories/session/${actualSessionId}/turns`
+      );
       const data = await response.json();
 
       if (response.ok) {
@@ -1097,43 +1101,53 @@ export default function StoryWritingPage({
     if (!storySession) return;
 
     setIsLoadingAI(true);
-    
+
     try {
       console.log('🎯 Fetching assessment for session:', storySession._id);
-      
+
       // CORRECT: Use the proper endpoint structure
-      let response = await fetch(`/api/stories/session/${storySession._id}/assessment`);
+      let response = await fetch(
+        `/api/stories/session/${storySession._id}/assessment`
+      );
       let data = await response.json();
 
       if (response.ok && data.assessment) {
         console.log('✅ Found existing assessment:', data.assessment);
         setAssessment(data.assessment);
         setShowAssessment(true);
-        
+
         toast({
           title: '📊 Assessment Ready!',
           description: 'Your story has been evaluated!',
         });
       } else if (response.status === 404) {
         console.log('🔄 No assessment found, generating new one...');
-        const generateResponse = await fetch(`/api/stories/assess/${storySession._id}`, {
-          method: 'POST',
-        });
-        
+        const generateResponse = await fetch(
+          `/api/stories/assess/${storySession._id}`,
+          {
+            method: 'POST',
+          }
+        );
+
         const generateData = await generateResponse.json();
-        
+
         if (generateResponse.ok && generateData.assessment) {
           console.log('✅ Generated new assessment:', generateData.assessment);
           setAssessment(generateData.assessment);
           setShowAssessment(true);
-          
+
           toast({
             title: '🎉 Assessment Complete!',
             description: 'Your story has been evaluated!',
           });
         } else {
-          console.error('❌ Failed to generate assessment:', generateData.error);
-          throw new Error(generateData.error || 'Failed to generate assessment');
+          console.error(
+            '❌ Failed to generate assessment:',
+            generateData.error
+          );
+          throw new Error(
+            generateData.error || 'Failed to generate assessment'
+          );
         }
       } else {
         console.error('❌ Assessment fetch failed:', data.error);
@@ -1143,7 +1157,8 @@ export default function StoryWritingPage({
       console.error('❌ Error fetching assessment:', error);
       toast({
         title: '❌ Assessment Error',
-        description: error instanceof Error ? error.message : 'Could not load assessment',
+        description:
+          error instanceof Error ? error.message : 'Could not load assessment',
         variant: 'destructive',
       });
     } finally {
@@ -1158,17 +1173,19 @@ export default function StoryWritingPage({
     setIsLoadingAI(true);
     try {
       console.log('🎯 Requesting assessment for session:', storySession._id);
-      
+
       // CORRECT: First try to get existing assessment using the correct endpoint
-      const fetchResponse = await fetch(`/api/stories/session/${storySession._id}/assessment`);
-      
+      const fetchResponse = await fetch(
+        `/api/stories/session/${storySession._id}/assessment`
+      );
+
       if (fetchResponse.ok) {
         const fetchData = await fetchResponse.json();
         if (fetchData.assessment) {
           console.log('✅ Found existing assessment:', fetchData.assessment);
           setAssessment(fetchData.assessment);
           setShowAssessment(true);
-          
+
           toast({
             title: '📊 Assessment Ready!',
             description: 'Your story has been evaluated!',
@@ -1176,12 +1193,15 @@ export default function StoryWritingPage({
           return;
         }
       }
-      
+
       // If no existing assessment, generate new one
       console.log('🔄 Generating new assessment...');
-      const generateResponse = await fetch(`/api/stories/assess/${storySession._id}`, {
-        method: 'POST',
-      });
+      const generateResponse = await fetch(
+        `/api/stories/assess/${storySession._id}`,
+        {
+          method: 'POST',
+        }
+      );
 
       const generateData = await generateResponse.json();
 
@@ -1189,7 +1209,7 @@ export default function StoryWritingPage({
         console.log('✅ Generated new assessment:', generateData.assessment);
         setAssessment(generateData.assessment);
         setShowAssessment(true);
-        
+
         toast({
           title: '🎉 Assessment Complete!',
           description: 'Your story has been evaluated!',
@@ -1200,7 +1220,7 @@ export default function StoryWritingPage({
     } catch (error) {
       console.error('❌ Error with assessment:', error);
       toast({
-        title: '❌ Assessment Error', 
+        title: '❌ Assessment Error',
         description: 'Could not load assessment. Please try again.',
         variant: 'destructive',
       });
@@ -1269,7 +1289,10 @@ export default function StoryWritingPage({
       console.error('Error submitting turn:', error);
       toast({
         title: '❌ Error',
-        description: error instanceof Error ? error.message : 'Failed to submit your story part.',
+        description:
+          error instanceof Error
+            ? error.message
+            : 'Failed to submit your story part.',
         variant: 'destructive',
       });
     } finally {
@@ -1284,16 +1307,19 @@ export default function StoryWritingPage({
     setIsSaving(true);
 
     try {
-      const response = await fetch(`/api/stories/session/${storySession._id}/draft`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          draftContent: currentInput.trim(),
-          turnNumber: storySession.currentTurn,
-        }),
-      });
+      const response = await fetch(
+        `/api/stories/session/${storySession._id}/draft`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            draftContent: currentInput.trim(),
+            turnNumber: storySession.currentTurn,
+          }),
+        }
+      );
 
       if (!response.ok) {
         throw new Error('Failed to save draft');
@@ -1321,9 +1347,12 @@ export default function StoryWritingPage({
     setIsSaving(true);
 
     try {
-      const response = await fetch(`/api/stories/session/${storySession._id}/pause`, {
-        method: 'POST',
-      });
+      const response = await fetch(
+        `/api/stories/session/${storySession._id}/pause`,
+        {
+          method: 'POST',
+        }
+      );
 
       if (!response.ok) {
         throw new Error('Failed to pause story');
@@ -1349,7 +1378,8 @@ export default function StoryWritingPage({
 
   useEffect(() => {
     if (storyTimelineRef.current) {
-      storyTimelineRef.current.scrollTop = storyTimelineRef.current.scrollHeight;
+      storyTimelineRef.current.scrollTop =
+        storyTimelineRef.current.scrollHeight;
     }
   }, [turns]);
 
@@ -1457,8 +1487,12 @@ export default function StoryWritingPage({
                           </motion.div>
                         </div>
                         <div>
-                          <h3 className="font-semibold text-blue-400">AI Teacher</h3>
-                          <p className="text-sm text-blue-300">Preparing your story opening...</p>
+                          <h3 className="font-semibold text-blue-400">
+                            AI Teacher
+                          </h3>
+                          <p className="text-sm text-blue-300">
+                            Preparing your story opening...
+                          </p>
                         </div>
                       </div>
 
@@ -1469,29 +1503,44 @@ export default function StoryWritingPage({
                             animate={{ opacity: [0.3, 1, 0.3] }}
                             transition={{ duration: 1.5, repeat: Infinity }}
                           />
-                          <span className="text-blue-300 text-sm">Analyzing your story elements</span>
+                          <span className="text-blue-300 text-sm">
+                            Analyzing your story elements
+                          </span>
                         </div>
                         <div className="flex items-center space-x-2">
                           <motion.div
                             className="w-2 h-2 bg-blue-400 rounded-full"
                             animate={{ opacity: [0.3, 1, 0.3] }}
-                            transition={{ duration: 1.5, repeat: Infinity, delay: 0.5 }}
+                            transition={{
+                              duration: 1.5,
+                              repeat: Infinity,
+                              delay: 0.5,
+                            }}
                           />
-                          <span className="text-blue-300 text-sm">Crafting the perfect opening</span>
+                          <span className="text-blue-300 text-sm">
+                            Crafting the perfect opening
+                          </span>
                         </div>
                         <div className="flex items-center space-x-2">
                           <motion.div
                             className="w-2 h-2 bg-blue-400 rounded-full"
                             animate={{ opacity: [0.3, 1, 0.3] }}
-                            transition={{ duration: 1.5, repeat: Infinity, delay: 1 }}
+                            transition={{
+                              duration: 1.5,
+                              repeat: Infinity,
+                              delay: 1,
+                            }}
                           />
-                          <span className="text-blue-300 text-sm">Almost ready...</span>
+                          <span className="text-blue-300 text-sm">
+                            Almost ready...
+                          </span>
                         </div>
                       </div>
 
                       <div className="mt-4 p-3 bg-blue-500/20 rounded-lg">
                         <p className="text-sm text-blue-200">
-                          💡 <strong>Tip:</strong> You can explore your story elements below while the AI prepares your opening!
+                          💡 <strong>Tip:</strong> You can explore your story
+                          elements below while the AI prepares your opening!
                         </p>
                       </div>
                     </motion.div>
@@ -1506,10 +1555,14 @@ export default function StoryWritingPage({
                           🤖
                         </div>
                         <div>
-                          <h3 className="font-semibold text-purple-400">AI Teacher's Story Opening</h3>
+                          <h3 className="font-semibold text-purple-400">
+                            AI Teacher&apos;s Story Opening
+                          </h3>
                         </div>
                       </div>
-                      <p className="text-white leading-relaxed">{storySession.aiOpening}</p>
+                      <p className="text-white leading-relaxed">
+                        {storySession.aiOpening}
+                      </p>
                     </motion.div>
                   ) : null}
                 </div>
@@ -1527,22 +1580,34 @@ export default function StoryWritingPage({
                     <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center">
                         <Target className="w-5 h-5 text-green-400 mr-2" />
-                        <span className="text-green-300 font-medium">Your Turn {turn.turnNumber}</span>
+                        <span className="text-green-300 font-medium">
+                          Your Turn {turn.turnNumber}
+                        </span>
                       </div>
-                      <span className="text-green-300 text-sm">{turn.childWordCount} words</span>
+                      <span className="text-green-300 text-sm">
+                        {turn.childWordCount} words
+                      </span>
                     </div>
-                    <p className="text-gray-100 leading-relaxed">{turn.childInput}</p>
+                    <p className="text-gray-100 leading-relaxed">
+                      {turn.childInput}
+                    </p>
                   </div>
 
                   <div className="bg-gradient-to-r from-blue-500/20 to-purple-500/20 border border-blue-500/30 rounded-xl p-6">
                     <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center">
                         <Brain className="w-5 h-5 text-blue-400 mr-2" />
-                        <span className="text-blue-300 font-medium">AI Teacher Response</span>
+                        <span className="text-blue-300 font-medium">
+                          AI Teacher Response
+                        </span>
                       </div>
-                      <span className="text-blue-300 text-sm">{turn.aiWordCount} words</span>
+                      <span className="text-blue-300 text-sm">
+                        {turn.aiWordCount} words
+                      </span>
                     </div>
-                    <p className="text-gray-100 leading-relaxed">{turn.aiResponse}</p>
+                    <p className="text-gray-100 leading-relaxed">
+                      {turn.aiResponse}
+                    </p>
                   </div>
                 </motion.div>
               ))}
@@ -1555,7 +1620,9 @@ export default function StoryWritingPage({
                 >
                   <div className="flex items-center justify-center space-x-3">
                     <div className="w-6 h-6 border-2 border-purple-400/30 border-t-purple-400 rounded-full animate-spin" />
-                    <span className="text-purple-300 font-medium">AI Teacher is thinking...</span>
+                    <span className="text-purple-300 font-medium">
+                      AI Teacher is thinking...
+                    </span>
                   </div>
                   <p className="text-center text-gray-300 text-sm mt-2">
                     Creating an educational response to your wonderful writing!
@@ -1569,9 +1636,12 @@ export default function StoryWritingPage({
             {storySession.status === 'completed' ? (
               <div className="bg-green-500/20 border border-green-500/30 rounded-xl p-8 text-center">
                 <CheckCircle className="w-16 h-16 text-green-400 mx-auto mb-4" />
-                <h3 className="text-2xl font-bold text-green-300 mb-2">Story Complete! 🎉</h3>
+                <h3 className="text-2xl font-bold text-green-300 mb-2">
+                  Story Complete! 🎉
+                </h3>
                 <p className="text-gray-300 mb-6">
-                  Congratulations! You've finished your {storySession.childWords}-word adventure.
+                  Congratulations! You&apos;ve finished your{' '}
+                  {storySession.childWords}-word adventure.
                 </p>
                 <button
                   onClick={fetchAssessment}
@@ -1615,12 +1685,18 @@ export default function StoryWritingPage({
                     {isSubmitting || isLoadingAI ? (
                       <>
                         <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                        <span>{isLoadingAI ? 'AI Thinking...' : 'Submitting...'}</span>
+                        <span>
+                          {isLoadingAI ? 'AI Thinking...' : 'Submitting...'}
+                        </span>
                       </>
                     ) : (
                       <>
                         <Send className="w-5 h-5" />
-                        <span>{storySession.currentTurn === 6 ? 'Complete Story' : 'Submit Turn'}</span>
+                        <span>
+                          {storySession.currentTurn === 6
+                            ? 'Complete Story'
+                            : 'Submit Turn'}
+                        </span>
                       </>
                     )}
                   </motion.button>
@@ -1665,106 +1741,119 @@ export default function StoryWritingPage({
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="bg-blue-500/20 border border-blue-500/30 rounded-lg p-4 text-center">
-                  <div className="text-2xl font-bold text-white">{storySession.childWords}</div>
+                  <div className="text-2xl font-bold text-white">
+                    {storySession.childWords}
+                  </div>
                   <div className="text-blue-300 text-sm">Your Words</div>
                 </div>
 
-               <div className="bg-green-500/20 border border-green-500/30 rounded-lg p-4 text-center">
-                 <div className="text-2xl font-bold text-white">{storySession.totalWords}</div>
-                 <div className="text-green-300 text-sm">Total Words</div>
-               </div>
+                <div className="bg-green-500/20 border border-green-500/30 rounded-lg p-4 text-center">
+                  <div className="text-2xl font-bold text-white">
+                    {storySession.totalWords}
+                  </div>
+                  <div className="text-green-300 text-sm">Total Words</div>
+                </div>
 
-               <div className="bg-purple-500/20 border border-purple-500/30 rounded-lg p-4 text-center">
-                 <div className="text-2xl font-bold text-white">{storySession.currentTurn}/6</div>
-                 <div className="text-purple-300 text-sm">Current Turn</div>
-               </div>
+                <div className="bg-purple-500/20 border border-purple-500/30 rounded-lg p-4 text-center">
+                  <div className="text-2xl font-bold text-white">
+                    {storySession.currentTurn}/6
+                  </div>
+                  <div className="text-purple-300 text-sm">Current Turn</div>
+                </div>
 
-               <div className="bg-orange-500/20 border border-orange-500/30 rounded-lg p-4 text-center">
-                 <div className="text-2xl font-bold text-white">{storySession.apiCallsUsed}/7</div>
-                 <div className="text-orange-300 text-sm">AI Calls Used</div>
-               </div>
-             </div>
+                <div className="bg-orange-500/20 border border-orange-500/30 rounded-lg p-4 text-center">
+                  <div className="text-2xl font-bold text-white">
+                    {storySession.apiCallsUsed}/7
+                  </div>
+                  <div className="text-orange-300 text-sm">AI Calls Used</div>
+                </div>
+              </div>
 
-             <div className="mt-6 flex items-center justify-center">
-               <div className="relative w-24 h-24">
-                 <svg className="w-24 h-24 transform -rotate-90" viewBox="0 0 100 100">
-                   <circle
-                     cx="50"
-                     cy="50"
-                     r="40"
-                     stroke="currentColor"
-                     strokeWidth="8"
-                     fill="transparent"
-                     className="text-gray-700"
-                   />
-                   <motion.circle
-                     cx="50"
-                     cy="50"
-                     r="40"
-                     stroke="currentColor"
-                     strokeWidth="8"
-                     fill="transparent"
-                     strokeDasharray={`${progressPercentage * 2.51} 251`}
-                     className="text-green-400"
-                     initial={{ strokeDasharray: '0 251' }}
-                     animate={{ strokeDasharray: `${progressPercentage * 2.51} 251` }}
-                     transition={{ duration: 1, ease: 'easeInOut' }}
-                   />
-                 </svg>
-                 <div className="absolute inset-0 flex items-center justify-center">
-                   <span className="text-lg font-bold text-white">
-                     {Math.round(progressPercentage)}%
-                   </span>
-                 </div>
-               </div>
-             </div>
-           </div>
-         </div>
-       </div>
-     </div>
+              <div className="mt-6 flex items-center justify-center">
+                <div className="relative w-24 h-24">
+                  <svg
+                    className="w-24 h-24 transform -rotate-90"
+                    viewBox="0 0 100 100"
+                  >
+                    <circle
+                      cx="50"
+                      cy="50"
+                      r="40"
+                      stroke="currentColor"
+                      strokeWidth="8"
+                      fill="transparent"
+                      className="text-gray-700"
+                    />
+                    <motion.circle
+                      cx="50"
+                      cy="50"
+                      r="40"
+                      stroke="currentColor"
+                      strokeWidth="8"
+                      fill="transparent"
+                      strokeDasharray={`${progressPercentage * 2.51} 251`}
+                      className="text-green-400"
+                      initial={{ strokeDasharray: '0 251' }}
+                      animate={{
+                        strokeDasharray: `${progressPercentage * 2.51} 251`,
+                      }}
+                      transition={{ duration: 1, ease: 'easeInOut' }}
+                    />
+                  </svg>
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <span className="text-lg font-bold text-white">
+                      {Math.round(progressPercentage)}%
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-     {/* FIXED: Assessment Modal with assessment prop */}
-     <AssessmentModal
-       isOpen={showAssessment}
-       onClose={() => setShowAssessment(false)}
-       storySession={storySession}
-       turns={turns}
-       assessment={assessment}
-     />
+      {/* FIXED: Assessment Modal with assessment prop */}
+      <AssessmentModal
+        isOpen={showAssessment}
+        onClose={() => setShowAssessment(false)}
+        storySession={storySession}
+        turns={turns}
+        assessment={assessment}
+      />
 
-     <style jsx global>{`
-       .scrollbar-thin::-webkit-scrollbar {
-         width: 8px;
-       }
+      <style jsx global>{`
+        .scrollbar-thin::-webkit-scrollbar {
+          width: 8px;
+        }
 
-       .scrollbar-track-gray-700\/30::-webkit-scrollbar-track {
-         background: rgba(55, 65, 81, 0.3);
-         border-radius: 4px;
-       }
+        .scrollbar-track-gray-700\/30::-webkit-scrollbar-track {
+          background: rgba(55, 65, 81, 0.3);
+          border-radius: 4px;
+        }
 
-       .scrollbar-thumb-emerald-500::-webkit-scrollbar-thumb {
-         background: linear-gradient(to bottom, #10b981, #059669);
-         border-radius: 4px;
-         border: 1px solid rgba(255, 255, 255, 0.1);
-       }
+        .scrollbar-thumb-emerald-500::-webkit-scrollbar-thumb {
+          background: linear-gradient(to bottom, #10b981, #059669);
+          border-radius: 4px;
+          border: 1px solid rgba(255, 255, 255, 0.1);
+        }
 
-       .hover\\:scrollbar-thumb-emerald-400::-webkit-scrollbar-thumb:hover {
-         background: linear-gradient(to bottom, #34d399, #10b981);
-       }
+        .hover\\:scrollbar-thumb-emerald-400::-webkit-scrollbar-thumb:hover {
+          background: linear-gradient(to bottom, #34d399, #10b981);
+        }
 
-       .scrollbar-thumb-rounded-full::-webkit-scrollbar-thumb {
-         border-radius: 9999px;
-       }
+        .scrollbar-thumb-rounded-full::-webkit-scrollbar-thumb {
+          border-radius: 9999px;
+        }
 
-       .scrollbar-track-rounded-full::-webkit-scrollbar-track {
-         border-radius: 9999px;
-       }
+        .scrollbar-track-rounded-full::-webkit-scrollbar-track {
+          border-radius: 9999px;
+        }
 
-       .scrollbar-thin {
-         scrollbar-width: thin;
-         scrollbar-color: #10b981 rgba(55, 65, 81, 0.3);
-       }
-     `}</style>
-   </div>
- );
+        .scrollbar-thin {
+          scrollbar-width: thin;
+          scrollbar-color: #10b981 rgba(55, 65, 81, 0.3);
+        }
+      `}</style>
+    </div>
+  );
 }

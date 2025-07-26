@@ -1159,7 +1159,6 @@
 //   );
 // }
 
-
 // app/children-dashboard/page.tsx - COMPLETE FIXED VERSION
 'use client';
 
@@ -1232,7 +1231,9 @@ export default function DashboardPage() {
   const router = useRouter();
   const [progressData, setProgressData] = useState<ProgressData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [selectedTimeframe, setSelectedTimeframe] = useState<'week' | 'month' | 'year'>('month');
+  const [selectedTimeframe, setSelectedTimeframe] = useState<
+    'week' | 'month' | 'year'
+  >('month');
 
   useEffect(() => {
     if (status === 'loading') return;
@@ -1254,10 +1255,15 @@ export default function DashboardPage() {
 
   const fetchProgressData = async () => {
     try {
-      console.log('🔄 Fetching progress data for timeframe:', selectedTimeframe);
-      
+      console.log(
+        '🔄 Fetching progress data for timeframe:',
+        selectedTimeframe
+      );
+
       // FIXED: Use the new progress API endpoint
-      const response = await fetch(`/api/user/progress?timeframe=${selectedTimeframe}`);
+      const response = await fetch(
+        `/api/user/progress?timeframe=${selectedTimeframe}`
+      );
       const data = await response.json();
 
       if (data.success) {
@@ -1289,7 +1295,8 @@ export default function DashboardPage() {
     return null;
   }
 
-  const { overview, monthly, weekly, achievements, skills, goals } = progressData;
+  const { overview, monthly, weekly, achievements, skills, goals } =
+    progressData;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 text-white">
@@ -1307,7 +1314,8 @@ export default function DashboardPage() {
                 Your Writing Progress
               </h1>
               <p className="text-gray-300 mt-2 text-lg">
-                Track your amazing writing journey and see how much you've grown! 🚀
+                Track your amazing writing journey and see how much you&apos;ve
+                grown! 🚀
               </p>
             </div>
 
@@ -1431,7 +1439,9 @@ export default function DashboardPage() {
               </div>
             </div>
             <div className="text-orange-300 text-sm">
-              {overview.writingStreak === 1 ? 'Keep it going!' : 'Amazing consistency!'}
+              {overview.writingStreak === 1
+                ? 'Keep it going!'
+                : 'Amazing consistency!'}
             </div>
           </motion.div>
 
@@ -1475,8 +1485,17 @@ export default function DashboardPage() {
               <div className="grid grid-cols-7 gap-4 mb-6">
                 {weekly.map((day, index) => {
                   const maxWords = Math.max(...weekly.map((d) => d.words), 1);
-                  const wordsHeight = maxWords > 0 ? Math.max((day.words / maxWords) * 80, day.words > 0 ? 8 : 0) : 0;
-                  const storiesHeight = Math.max(day.stories * 20, day.stories > 0 ? 8 : 0);
+                  const wordsHeight =
+                    maxWords > 0
+                      ? Math.max(
+                          (day.words / maxWords) * 80,
+                          day.words > 0 ? 8 : 0
+                        )
+                      : 0;
+                  const storiesHeight = Math.max(
+                    day.stories * 20,
+                    day.stories > 0 ? 8 : 0
+                  );
 
                   return (
                     <div key={day.date} className="text-center">
@@ -1494,7 +1513,10 @@ export default function DashboardPage() {
                         <motion.div
                           initial={{ height: 0 }}
                           animate={{ height: `${storiesHeight}px` }}
-                          transition={{ delay: 0.1 * index + 0.1, duration: 0.6 }}
+                          transition={{
+                            delay: 0.1 * index + 0.1,
+                            duration: 0.6,
+                          }}
                           className="w-6 bg-gradient-to-t from-green-500 to-green-400 rounded-t"
                           title={`${day.stories} stories`}
                           style={{ minHeight: day.stories > 0 ? '8px' : '0px' }}
@@ -1566,7 +1588,7 @@ export default function DashboardPage() {
                       <motion.div
                         initial={{ width: 0 }}
                         animate={{ width: `${data.current}%` }}
-                        transition={{ duration: 1.5, delay: 0.2 + (0.1 * index) }}
+                        transition={{ duration: 1.5, delay: 0.2 + 0.1 * index }}
                         className="h-full bg-gradient-to-r from-green-500 to-emerald-500 rounded-full"
                       />
                     </div>
@@ -1683,14 +1705,19 @@ export default function DashboardPage() {
             >
               <h3 className="text-xl font-semibold mb-6 flex items-center">
                 <Calendar className="w-6 h-6 mr-3 text-blue-400" />
-                This {selectedTimeframe.charAt(0).toUpperCase() + selectedTimeframe.slice(1)}'s Summary
+                This{' '}
+                {selectedTimeframe.charAt(0).toUpperCase() +
+                  selectedTimeframe.slice(1)}
+                &apos;s Summary
               </h3>
 
               <div className="space-y-4">
                 <div className="flex items-center justify-between p-3 bg-blue-500/20 rounded-xl">
                   <div className="flex items-center">
                     <BookOpen className="w-5 h-5 text-blue-400 mr-2" />
-                    <span className="text-white text-sm">Stories Completed</span>
+                    <span className="text-white text-sm">
+                      Stories Completed
+                    </span>
                   </div>
                   <span className="text-blue-400 font-semibold">
                     {monthly.storiesCreated}

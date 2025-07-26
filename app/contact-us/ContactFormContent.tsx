@@ -146,7 +146,7 @@ export default function MintoonsContactPage() {
             🎉 Welcome to the Mintoons Family! 🎉
           </h2>
           <p className="text-xl text-slate-600 mb-8 leading-relaxed">
-            Your creative journey begins now! We'll reach out within 24 hours
+            Your creative journey begins now! We&apos;ll reach out within 24 hours
             with more information about our services.
           </p>
           <div className="flex items-center justify-center space-x-3 text-slate-500 text-lg">
@@ -233,7 +233,7 @@ export default function MintoonsContactPage() {
                 <Quote className="w-8 h-8 text-green-500 flex-shrink-0 mt-1" />
                 <div>
                   <p className="text-slate-700 text-lg mb-3 leading-relaxed">
-                    "{testimonials[currentTestimonial].text}"
+                    &quot;{testimonials[currentTestimonial].text}&quot;
                   </p>
                   <div className="flex items-center justify-between">
                     <div>
@@ -278,7 +278,7 @@ export default function MintoonsContactPage() {
                   Start Your Journey
                 </h2>
                 <p className="text-slate-600">
-                  Tell us about your child's creative vision and how we can
+                  Tell us about your child&apos;s creative vision and how we can
                   assist in their storytelling journey.
                 </p>
               </div>
@@ -340,7 +340,7 @@ export default function MintoonsContactPage() {
 
                 <div className="group">
                   <label className="block text-sm font-medium text-slate-700 mb-2">
-                    Child's Age
+                    Child&apos;s Age
                   </label>
                   <div className="relative">
                     <input
@@ -374,7 +374,7 @@ export default function MintoonsContactPage() {
 
                 <div className="group">
                   <label className="block text-sm font-medium text-slate-700 mb-2">
-                    Tell us more about your child's interests and how we can
+                    Tell us more about your child&apos;s interests and how we can
                     help... *
                   </label>
                   <div className="relative">

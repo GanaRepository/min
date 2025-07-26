@@ -31,7 +31,11 @@ export async function POST(
     if (mongoose.Types.ObjectId.isValid(sessionId)) {
       query = { _id: sessionId, childId: session.user.id, status: 'active' };
     } else if (!isNaN(Number(sessionId))) {
-      query = { storyNumber: Number(sessionId), childId: session.user.id, status: 'active' };
+      query = {
+        storyNumber: Number(sessionId),
+        childId: session.user.id,
+        status: 'active',
+      };
     } else {
       return NextResponse.json(
         { error: 'Invalid session ID format' },

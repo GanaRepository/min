@@ -28,7 +28,10 @@ interface StoryCommentsProps {
   isOwnStory: boolean;
 }
 
-export default function StoryComments({ storyId, isOwnStory }: StoryCommentsProps) {
+export default function StoryComments({
+  storyId,
+  isOwnStory,
+}: StoryCommentsProps) {
   const { data: session } = useSession();
   const [comments, setComments] = useState<Comment[]>([]);
   const [loading, setLoading] = useState(true);
@@ -53,7 +56,7 @@ export default function StoryComments({ storyId, isOwnStory }: StoryCommentsProp
     }
   };
 
-  const filteredComments = comments.filter(comment => {
+  const filteredComments = comments.filter((comment) => {
     if (filter === 'unresolved') {
       return !comment.isResolved;
     }
@@ -62,21 +65,31 @@ export default function StoryComments({ storyId, isOwnStory }: StoryCommentsProp
 
   const getCommentTypeColor = (type: string) => {
     switch (type) {
-      case 'grammar': return 'from-red-500/20 to-red-600/20 border-red-500/30';
-      case 'creativity': return 'from-purple-500/20 to-purple-600/20 border-purple-500/30';
-      case 'structure': return 'from-blue-500/20 to-blue-600/20 border-blue-500/30';
-      case 'suggestion': return 'from-green-500/20 to-green-600/20 border-green-500/30';
-      default: return 'from-gray-500/20 to-gray-600/20 border-gray-500/30';
+      case 'grammar':
+        return 'from-red-500/20 to-red-600/20 border-red-500/30';
+      case 'creativity':
+        return 'from-purple-500/20 to-purple-600/20 border-purple-500/30';
+      case 'structure':
+        return 'from-blue-500/20 to-blue-600/20 border-blue-500/30';
+      case 'suggestion':
+        return 'from-green-500/20 to-green-600/20 border-green-500/30';
+      default:
+        return 'from-gray-500/20 to-gray-600/20 border-gray-500/30';
     }
   };
 
   const getCommentTypeIcon = (type: string) => {
     switch (type) {
-      case 'grammar': return '📝';
-      case 'creativity': return '🎨';
-      case 'structure': return '🏗️';
-      case 'suggestion': return '💡';
-      default: return '💬';
+      case 'grammar':
+        return '📝';
+      case 'creativity':
+        return '🎨';
+      case 'structure':
+        return '🏗️';
+      case 'suggestion':
+        return '💡';
+      default:
+        return '💬';
     }
   };
 
@@ -111,8 +124,8 @@ export default function StoryComments({ storyId, isOwnStory }: StoryCommentsProp
             <button
               onClick={() => setFilter('all')}
               className={`px-3 py-1 rounded-lg text-sm transition-all duration-200 ${
-                filter === 'all' 
-                  ? 'bg-blue-600 text-white' 
+                filter === 'all'
+                  ? 'bg-blue-600 text-white'
                   : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
               }`}
             >
@@ -121,12 +134,12 @@ export default function StoryComments({ storyId, isOwnStory }: StoryCommentsProp
             <button
               onClick={() => setFilter('unresolved')}
               className={`px-3 py-1 rounded-lg text-sm transition-all duration-200 ${
-                filter === 'unresolved' 
-                  ? 'bg-orange-600 text-white' 
+                filter === 'unresolved'
+                  ? 'bg-orange-600 text-white'
                   : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
               }`}
             >
-              Needs Action ({comments.filter(c => !c.isResolved).length})
+              Needs Action ({comments.filter((c) => !c.isResolved).length})
             </button>
           </div>
         )}
@@ -154,11 +167,18 @@ export default function StoryComments({ storyId, isOwnStory }: StoryCommentsProp
                         {comment.authorId.firstName} {comment.authorId.lastName}
                       </p>
                       <div className="flex items-center space-x-2 text-xs text-gray-400">
-                        <span className="capitalize">{comment.authorId.role}</span>
+                        <span className="capitalize">
+                          {comment.authorId.role}
+                        </span>
                         <span>•</span>
-                        <span>{getCommentTypeIcon(comment.commentType)} {comment.commentType}</span>
+                        <span>
+                          {getCommentTypeIcon(comment.commentType)}{' '}
+                          {comment.commentType}
+                        </span>
                         <span>•</span>
-                        <span>{new Date(comment.createdAt).toLocaleDateString()}</span>
+                        <span>
+                          {new Date(comment.createdAt).toLocaleDateString()}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -178,11 +198,14 @@ export default function StoryComments({ storyId, isOwnStory }: StoryCommentsProp
                   </div>
                 </div>
 
-                <p className="text-gray-200 leading-relaxed">{comment.comment}</p>
+                <p className="text-gray-200 leading-relaxed">
+                  {comment.comment}
+                </p>
 
                 {comment.position && (
                   <div className="mt-2 text-xs text-gray-400">
-                    📍 Paragraph {comment.position.paragraph}, Sentence {comment.position.sentence}
+                    📍 Paragraph {comment.position.paragraph}, Sentence{' '}
+                    {comment.position.sentence}
                   </div>
                 )}
               </motion.div>
@@ -192,10 +215,9 @@ export default function StoryComments({ storyId, isOwnStory }: StoryCommentsProp
           <div className="text-center py-8">
             <MessageSquare className="w-12 h-12 text-gray-600 mx-auto mb-4" />
             <p className="text-gray-400">
-              {filter === 'unresolved' 
-                ? 'No pending feedback! You\'re all caught up! 🎉' 
-                : 'No teacher feedback yet. Keep writing great stories!'
-              }
+              {filter === 'unresolved'
+                ? "No pending feedback! You're all caught up! 🎉"
+                : 'No teacher feedback yet. Keep writing great stories!'}
             </p>
           </div>
         )}

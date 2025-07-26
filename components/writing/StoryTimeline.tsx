@@ -445,7 +445,7 @@ export default function StoryTimeline({
             <div className="flex items-start space-x-3 max-w-[85%]">
               <div className="bg-green-500/20 border border-green-500/30 rounded-lg p-4 rounded-br-none">
                 <div className="text-green-300 font-medium text-sm mb-2">
-                  🎭 Teacher's Opening:
+                  🎭 Teacher&apos;s Opening:
                 </div>
                 <p className="text-gray-200 text-sm leading-relaxed">
                   {aiOpening}

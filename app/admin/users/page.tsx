@@ -27,7 +27,7 @@ export default function UsersManagement() {
 
   useEffect(() => {
     if (status === 'loading') return;
-    
+
     if (!session || session.user.role !== 'admin') {
       router.push('/login/admin');
       return;
@@ -40,7 +40,7 @@ export default function UsersManagement() {
     try {
       const response = await fetch('/api/admin/users');
       const data = await response.json();
-      
+
       if (data.success) {
         setUsers(data.users);
       }
@@ -51,8 +51,8 @@ export default function UsersManagement() {
     }
   };
 
-  const filteredUsers = users.filter(user => 
-    filterRole === 'all' || user.role === filterRole
+  const filteredUsers = users.filter(
+    (user) => filterRole === 'all' || user.role === filterRole
   );
 
   return (
@@ -68,7 +68,9 @@ export default function UsersManagement() {
               >
                 ← Back to Dashboard
               </button>
-              <h1 className="text-3xl font-bold text-gray-900">User Management</h1>
+              <h1 className="text-3xl font-bold text-gray-900">
+                User Management
+              </h1>
             </div>
           </div>
         </div>
@@ -124,7 +126,8 @@ export default function UsersManagement() {
                       <div className="h-10 w-10 flex-shrink-0">
                         <div className="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center">
                           <span className="text-sm font-medium text-gray-700">
-                            {user.firstName[0]}{user.lastName[0]}
+                            {user.firstName[0]}
+                            {user.lastName[0]}
                           </span>
                         </div>
                       </div>
@@ -139,16 +142,22 @@ export default function UsersManagement() {
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getRoleBadgeColor(user.role)}`}>
+                    <span
+                      className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getRoleBadgeColor(user.role)}`}
+                    >
                       {user.role}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                     <div>Total: {user.totalStories}</div>
-                    <div className="text-gray-500">Completed: {user.completedStories}</div>
+                    <div className="text-gray-500">
+                      Completed: {user.completedStories}
+                    </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${user.isVerified ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                    <span
+                      className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${user.isVerified ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}
+                    >
                       {user.isVerified ? 'Verified' : 'Unverified'}
                     </span>
                   </td>
@@ -157,14 +166,20 @@ export default function UsersManagement() {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <button
-                      onClick={() => router.push(`/admin-dashboard/users/${user._id}`)}
+                      onClick={() =>
+                        router.push(`/admin-dashboard/users/${user._id}`)
+                      }
                       className="text-indigo-600 hover:text-indigo-900 mr-4"
                     >
                       View Details
                     </button>
                     {user.role === 'child' && (
                       <button
-                        onClick={() => router.push(`/admin-dashboard/assign-mentor/${user._id}`)}
+                        onClick={() =>
+                          router.push(
+                            `/admin-dashboard/assign-mentor/${user._id}`
+                          )
+                        }
                         className="text-green-600 hover:text-green-900"
                       >
                         Assign Mentor
@@ -183,9 +198,13 @@ export default function UsersManagement() {
 
 function getRoleBadgeColor(role: string) {
   switch (role) {
-    case 'admin': return 'bg-red-100 text-red-800';
-    case 'mentor': return 'bg-blue-100 text-blue-800';
-    case 'child': return 'bg-green-100 text-green-800';
-    default: return 'bg-gray-100 text-gray-800';
+    case 'admin':
+      return 'bg-red-100 text-red-800';
+    case 'mentor':
+      return 'bg-blue-100 text-blue-800';
+    case 'child':
+      return 'bg-green-100 text-green-800';
+    default:
+      return 'bg-gray-100 text-gray-800';
   }
 }

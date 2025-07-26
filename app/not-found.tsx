@@ -130,8 +130,8 @@ const NotFound = () => {
                 Lost in Space?
               </h2>
               <p className="text-white/80 text-lg mb-8 leading-relaxed">
-                Oops! It seems like you've drifted into uncharted territory. The
-                page you're looking for doesn't exist in the Mintoons universe.
+                Oops! It seems like you&apos;ve drifted into uncharted territory. The
+                page you&apos;re looking for doesn&apos;t exist in the Mintoons universe.
               </p>
             </motion.div>
 
@@ -230,7 +230,7 @@ const NotFound = () => {
             className="text-center mt-6"
           >
             <p className="text-white/80 text-sm italic">
-              "Not all who wander are lost, but this page certainly is!"
+              &quot;Not all who wander are lost, but this page certainly is!&quot;
             </p>
             <p className="text-white/60 text-xs mt-2">- Mintoons Navigator</p>
           </motion.div>

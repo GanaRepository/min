@@ -35,7 +35,6 @@ import React from 'react';
 
 import { DiamondSeparator } from '../seperators/DiamondSeparator';
 
-
 export default function Home() {
   const features = [
     {
@@ -707,7 +706,7 @@ export default function Home() {
                         animate={{ opacity: 1 }}
                         transition={{ delay: 1.2 }}
                       >
-                        "Where Young Writers Create Amazing Stories"
+                        &quot;Where Young Writers Create Amazing Stories&quot;
                       </motion.p>
                       <motion.p
                         className="text-gray-300 text-xs sm:text-sm leading-relaxed"
@@ -727,7 +726,7 @@ export default function Home() {
                         animate={{ opacity: 1 }}
                         transition={{ delay: 1.5 }}
                       >
-                        Dive into a world where children's original ideas come
+                        Dive into a world where children&apos;s original ideas come
                         to life, building writing skills and creative
                         confidence.
                       </motion.p>
@@ -982,7 +981,6 @@ export default function Home() {
         </div>
       </section>
 
-      
       <DiamondSeparator />
 
       {/* Story Elements Section */}
@@ -1210,8 +1208,6 @@ export default function Home() {
         </div>
       </section>
 
-      
-      
       <DiamondSeparator />
 
       {/* Features Section with Images */}
@@ -1314,7 +1310,7 @@ export default function Home() {
             </h2>
             <p className="text-lg sm:text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
               The foundational values that guide our educational approach and
-              commitment to developing children's creativity and writing skills.
+              commitment to developing children&apos;s creativity and writing skills.
             </p>
           </motion.div>
 
@@ -1345,7 +1341,6 @@ export default function Home() {
         </div>
       </section>
 
-      
       <DiamondSeparator />
 
       {/* How It Works Section */}
@@ -1481,8 +1476,6 @@ export default function Home() {
         </div>
       </section>
 
-
-
       {/* CTA Section */}
       <section className="relative px-4 sm:px-6 lg:px-8 py-20">
         <div className="max-w-8xl mx-auto">
@@ -1525,7 +1518,7 @@ export default function Home() {
               </h2>
 
               <p className="text-base sm:text-lg lg:text-xl text-gray-300 mb-6 sm:mb-8 leading-relaxed max-w-3xl mx-auto">
-                Join a platform designed to develop children's{' '}
+                Join a platform designed to develop children&apos;s{' '}
                 <span className="text-green-300 font-medium">
                   creativity and original thinking
                 </span>{' '}

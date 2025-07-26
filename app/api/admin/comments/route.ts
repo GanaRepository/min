@@ -9,7 +9,10 @@ export async function GET(request: Request) {
   try {
     const session = await getServerSession(authOptions);
 
-    if (!session || (session.user.role !== 'admin' && session.user.role !== 'mentor')) {
+    if (
+      !session ||
+      (session.user.role !== 'admin' && session.user.role !== 'mentor')
+    ) {
       return NextResponse.json(
         { error: 'Admin or mentor access required' },
         { status: 403 }
@@ -44,8 +47,8 @@ export async function GET(request: Request) {
         path: 'storyId',
         populate: {
           path: 'childId',
-          select: 'firstName lastName'
-        }
+          select: 'firstName lastName',
+        },
       })
       .sort({ createdAt: -1 })
       .skip((page - 1) * limit)
@@ -61,10 +64,9 @@ export async function GET(request: Request) {
         page,
         limit,
         total: totalCount,
-        pages: Math.ceil(totalCount / limit)
-      }
+        pages: Math.ceil(totalCount / limit),
+      },
     });
-
   } catch (error) {
     console.error('Error fetching comments:', error);
     return NextResponse.json(
@@ -79,7 +81,10 @@ export async function POST(request: Request) {
   try {
     const session = await getServerSession(authOptions);
 
-    if (!session || (session.user.role !== 'admin' && session.user.role !== 'mentor')) {
+    if (
+      !session ||
+      (session.user.role !== 'admin' && session.user.role !== 'mentor')
+    ) {
       return NextResponse.json(
         { error: 'Admin or mentor access required' },
         { status: 403 }
@@ -107,7 +112,7 @@ export async function POST(request: Request) {
       commentType: commentType || 'general',
       position,
       isResolved: false,
-      createdAt: new Date()
+      createdAt: new Date(),
     });
 
     // Populate the comment for response
@@ -117,9 +122,8 @@ export async function POST(request: Request) {
 
     return NextResponse.json({
       success: true,
-      comment: populatedComment
+      comment: populatedComment,
     });
-
   } catch (error) {
     console.error('Error creating comment:', error);
     return NextResponse.json(

@@ -67,7 +67,7 @@ export async function GET(
     if (storySession.aiOpening) {
       storyParts.push(storySession.aiOpening);
     }
-    turns.forEach(turn => {
+    turns.forEach((turn) => {
       if (turn.childInput) storyParts.push(turn.childInput);
       if (turn.aiResponse) storyParts.push(turn.aiResponse);
     });
@@ -81,9 +81,18 @@ export async function GET(
       publishedAt: storySession.updatedAt.toISOString(),
       elements: storySession.elements,
       scores: {
-        grammar: storySession.assessment?.grammarScore || storySession.grammarScore || 0,
-        creativity: storySession.assessment?.creativityScore || storySession.creativityScore || 0,
-        overall: storySession.assessment?.overallScore || storySession.overallScore || 0,
+        grammar:
+          storySession.assessment?.grammarScore ||
+          storySession.grammarScore ||
+          0,
+        creativity:
+          storySession.assessment?.creativityScore ||
+          storySession.creativityScore ||
+          0,
+        overall:
+          storySession.assessment?.overallScore ||
+          storySession.overallScore ||
+          0,
       },
     };
 
@@ -101,7 +110,8 @@ export async function GET(
       const wordGenerator = new WordGenerator();
       fileBlob = await wordGenerator.generateStoryDocument(storyData);
       filename = `${storySession.title}.docx`;
-      contentType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+      contentType =
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
     }
 
     const buffer = Buffer.from(await fileBlob.arrayBuffer());
@@ -113,7 +123,6 @@ export async function GET(
         'Content-Length': buffer.length.toString(),
       },
     });
-
   } catch (error) {
     console.error('Error exporting story:', error);
     return NextResponse.json(

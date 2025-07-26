@@ -2,8 +2,8 @@ interface HexagonSeparatorProps {
   className?: string;
 }
 
-export const HexagonSeparator: React.FC<HexagonSeparatorProps> = ({ 
-  className = "" 
+export const HexagonSeparator: React.FC<HexagonSeparatorProps> = ({
+  className = '',
 }) => {
   return (
     <div className={`py-14 flex justify-center ${className}`}>
