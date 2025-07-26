@@ -1,25 +1,22 @@
-// // app/children-dashboard/story/[sessionId]/page.tsx
+// // app/children-dashboard/story/[sessionId]/page.tsx - PROPERLY FIXED
 // 'use client';
 
 // import { useState, useEffect, useRef } from 'react';
 // import { useSession } from 'next-auth/react';
 // import { useRouter } from 'next/navigation';
-// import { motion, AnimatePresence } from 'framer-motion';
+// import { motion } from 'framer-motion';
 // import {
 //   ArrowLeft,
 //   Send,
 //   Save,
 //   Pause,
 //   CheckCircle,
-//   AlertCircle,
 //   Sparkles,
 //   BookOpen,
-//   Clock,
 //   Target,
 //   Award,
 //   Brain,
 //   Zap,
-//   Star,
 // } from 'lucide-react';
 // import { useToast } from '@/hooks/use-toast';
 // import WordCountValidator from '@/components/writing/WordCountValidator';
@@ -43,6 +40,7 @@
 //   maxApiCalls: number;
 //   status: 'active' | 'completed' | 'paused';
 //   aiOpening?: string;
+//   assessment?: any;
 // }
 
 // interface Turn {
@@ -77,7 +75,6 @@
 //   const [assessment, setAssessment] = useState<any>(null);
 //   const [isLoadingAI, setIsLoadingAI] = useState(false);
 //   const [isAIGenerating, setIsAIGenerating] = useState(false);
-//   const [aiOpeningReady, setAIOpeningReady] = useState(false);
 
 //   useEffect(() => {
 //     if (status === 'loading') return;
@@ -87,55 +84,61 @@
 //       return;
 //     }
 
-//     console.log('Story page sessionId from URL:', sessionId);
 //     fetchStorySession();
 //   }, [session, status, sessionId]);
 
-//   const fetchStorySession = async () => {
-//     try {
-//       console.log('Fetching story session:', sessionId);
+//  const fetchStorySession = async () => {
+//   try {
+//     console.log('Fetching story session:', sessionId);
 
-//       const response = await fetch(`/api/stories/session/${sessionId}`);
-//       const data = await response.json();
+//     // Use the helper to get and potentially resume the session
+//     const response = await fetch(`/api/stories/session/${sessionId}`);
+//     const data = await response.json();
 
-//       console.log('Story session response:', { ok: response.ok, data });
-
-//       if (!response.ok) {
-//         throw new Error(data.error || 'Failed to fetch story session');
-//       }
-
-//       setStorySession(data.session);
-
-//       // Fetch turns using the actual session ID from response
-//       fetchTurns(data.session._id);
-
-//       // Start polling for AI opening if needed
-//       if (!data.session.aiOpening) {
-//         pollForAIOpening(data.session._id);
-//       }
-//     } catch (error) {
-//       console.error('Error fetching story session:', error);
-//       toast({
-//         title: '❌ Error',
-//         description: 'Failed to load story session. Please try again.',
-//         variant: 'destructive',
-//       });
-//       router.push('/children-dashboard/my-stories');
-//     } finally {
-//       setIsLoading(false);
+//     if (!response.ok) {
+//       throw new Error(data.error || 'Failed to fetch story session');
 //     }
-//   };
+
+//     setStorySession(data.session);
+
+//     // Auto-resume if the session is paused
+//     if (data.session.status === 'paused') {
+//       const resumeResponse = await fetch(`/api/stories/session/${sessionId}/resume`, {
+//         method: 'POST',
+//       });
+      
+//       if (resumeResponse.ok) {
+//         const resumeData = await resumeResponse.json();
+//         setStorySession(resumeData.session);
+        
+//         toast({
+//           title: '▶️ Story Resumed',
+//           description: 'Welcome back! Continue your adventure.',
+//         });
+//       }
+//     }
+
+//     fetchTurns(data.session._id);
+
+//     if (!data.session.aiOpening) {
+//       pollForAIOpening(data.session._id);
+//     }
+//   } catch (error) {
+//     console.error('Error fetching story session:', error);
+//     toast({
+//       title: '❌ Error',
+//       description: 'Failed to load story session. Please try again.',
+//       variant: 'destructive',
+//     });
+//   } finally {
+//     setIsLoading(false);
+//   }
+// };
 
 //   const fetchTurns = async (actualSessionId: string) => {
 //     try {
-//       console.log('Fetching turns for session:', actualSessionId);
-
-//       const response = await fetch(
-//         `/api/stories/session/${actualSessionId}/turns`
-//       );
+//       const response = await fetch(`/api/stories/session/${actualSessionId}/turns`);
 //       const data = await response.json();
-
-//       console.log('Turns response:', { ok: response.ok, data });
 
 //       if (response.ok) {
 //         setTurns(data.turns || []);
@@ -147,12 +150,10 @@
 //     }
 //   };
 
-//   // New function to poll for AI opening
+//   // FIXED: Properly structured AI opening polling
 //   const pollForAIOpening = (actualSessionId: string) => {
 //     setIsAIGenerating(true);
-//     setAIOpeningReady(false);
 
-//     // Show initial toast
 //     toast({
 //       title: '🤖 AI Teacher is Preparing',
 //       description: 'Your story opening is being crafted...',
@@ -169,11 +170,8 @@
 //             prev ? { ...prev, aiOpening: data.session.aiOpening } : null
 //           );
 //           setIsAIGenerating(false);
-//           setAIOpeningReady(true);
-
 //           clearInterval(pollInterval);
 
-//           // Show success toast
 //           toast({
 //             title: '✨ Story Opening Ready!',
 //             description: 'Your AI teacher has prepared your story opening!',
@@ -193,65 +191,129 @@
 //         toast({
 //           title: '⏰ Taking Longer Than Expected',
 //           description: 'You can start writing while AI prepares your opening.',
-//           variant: 'default',
 //         });
 //       }
 //     }, 180000); // 3 minutes
 //   };
 
-//   // FIXED: fetchAssessment function with correct API endpoints
-//   const fetchAssessment = async () => {
-//     if (!storySession) return;
+//   // FIXED: fetchAssessment function with correct API endpoint
+// const fetchAssessment = async () => {
+//   if (!storySession) return;
 
-//     setIsLoadingAI(true);
+//   setIsLoadingAI(true);
+  
+//   try {
+//     console.log('🎯 Fetching assessment for session:', storySession._id);
     
-//     try {
-//       // First try to get existing assessment
-//       let response = await fetch(
-//         `/api/stories/assess/${storySession._id}/assessment`
-//       );
-      
-//       let data = await response.json();
+//     // CORRECT: Use the proper endpoint structure
+//     let response = await fetch(`/api/stories/session/${storySession._id}/assessment`);
+//     let data = await response.json();
 
-//       if (response.ok && data.assessment) {
-//         // Assessment exists, show it
-//         setAssessment(data.assessment);
-//         setShowAssessment(true);
-//       } else if (response.status === 404) {
-//         // Assessment doesn't exist, generate it
-//         console.log('Assessment not found, generating new one...');
-        
-//         const generateResponse = await fetch(`/api/stories/assess/${storySession._id}`, {
-//           method: 'POST',
-//         });
-        
-//         const generateData = await generateResponse.json();
-        
-//         if (generateResponse.ok && generateData.assessment) {
-//           setAssessment(generateData.assessment);
-//           setShowAssessment(true);
-          
-//           toast({
-//             title: '📊 Assessment Ready!',
-//             description: 'Your story has been evaluated.',
-//           });
-//         } else {
-//           throw new Error(generateData.error || 'Failed to generate assessment');
-//         }
-//       } else {
-//         throw new Error(data.error || 'Failed to fetch assessment');
-//       }
-//     } catch (error) {
-//       console.error('Error fetching assessment:', error);
+//     if (response.ok && data.assessment) {
+//       console.log('✅ Found existing assessment:', data.assessment);
+//       // Assessment exists, show it
+//       setAssessment(data.assessment);
+//       setShowAssessment(true);
+      
 //       toast({
-//         title: '❌ Assessment Error',
-//         description: error instanceof Error ? error.message : 'Could not load assessment',
-//         variant: 'destructive',
+//         title: '📊 Assessment Ready!',
+//         description: 'Your story has been evaluated!',
 //       });
-//     } finally {
-//       setIsLoadingAI(false);
+//     } else if (response.status === 404) {
+//       console.log('🔄 No assessment found, generating new one...');
+//       // Assessment doesn't exist, generate it
+//       const generateResponse = await fetch(`/api/stories/assess/${storySession._id}`, {
+//         method: 'POST',
+//       });
+      
+//       const generateData = await generateResponse.json();
+      
+//       if (generateResponse.ok && generateData.assessment) {
+//         console.log('✅ Generated new assessment:', generateData.assessment);
+//         setAssessment(generateData.assessment);
+//         setShowAssessment(true);
+        
+//         toast({
+//           title: '🎉 Assessment Complete!',
+//           description: 'Your story has been evaluated!',
+//         });
+//       } else {
+//         console.error('❌ Failed to generate assessment:', generateData.error);
+//         throw new Error(generateData.error || 'Failed to generate assessment');
+//       }
+//     } else {
+//       console.error('❌ Assessment fetch failed:', data.error);
+//       throw new Error(data.error || 'Failed to fetch assessment');
 //     }
-//   };
+//   } catch (error) {
+//     console.error('❌ Error fetching assessment:', error);
+//     toast({
+//       title: '❌ Assessment Error',
+//       description: error instanceof Error ? error.message : 'Could not load assessment',
+//       variant: 'destructive',
+//     });
+//   } finally {
+//     setIsLoadingAI(false);
+//   }
+// };
+
+// // Also fix the requestAssessment function to use the correct endpoint:
+// const requestAssessment = async () => {
+//   if (!storySession) return;
+
+//   setIsLoadingAI(true);
+//   try {
+//     console.log('🎯 Requesting assessment for session:', storySession._id);
+    
+//     // CORRECT: First try to get existing assessment using the correct endpoint
+//     const fetchResponse = await fetch(`/api/stories/session/${storySession._id}/assessment`);
+    
+//     if (fetchResponse.ok) {
+//       const fetchData = await fetchResponse.json();
+//       if (fetchData.assessment) {
+//         console.log('✅ Found existing assessment:', fetchData.assessment);
+//         setAssessment(fetchData.assessment);
+//         setShowAssessment(true);
+        
+//         toast({
+//           title: '📊 Assessment Ready!',
+//           description: 'Your story has been evaluated!',
+//         });
+//         return;
+//       }
+//     }
+    
+//     // If no existing assessment, generate new one
+//     console.log('🔄 Generating new assessment...');
+//     const generateResponse = await fetch(`/api/stories/assess/${storySession._id}`, {
+//       method: 'POST',
+//     });
+
+//     const generateData = await generateResponse.json();
+
+//     if (generateResponse.ok && generateData.assessment) {
+//       console.log('✅ Generated new assessment:', generateData.assessment);
+//       setAssessment(generateData.assessment);
+//       setShowAssessment(true);
+      
+//       toast({
+//         title: '🎉 Assessment Complete!',
+//         description: 'Your story has been evaluated!',
+//       });
+//     } else {
+//       throw new Error(generateData.error || 'Failed to generate assessment');
+//     }
+//   } catch (error) {
+//     console.error('❌ Error with assessment:', error);
+//     toast({
+//       title: '❌ Assessment Error', 
+//       description: 'Could not load assessment. Please try again.',
+//       variant: 'destructive',
+//     });
+//   } finally {
+//     setIsLoadingAI(false);
+//   }
+// };
 
 //   const handleSubmitTurn = async () => {
 //     if (!isValid || !storySession) return;
@@ -279,7 +341,6 @@
 //       }
 
 //       setTurns((prev) => [...prev, data.turn]);
-
 //       setStorySession((prev) =>
 //         prev
 //           ? {
@@ -307,66 +368,18 @@
 //       } else {
 //         toast({
 //           title: '✅ Great job!',
-//           description: `Turn ${data.turn.turnNumber} submitted successfully! The AI is continuing your story.`,
+//           description: `Turn ${data.turn.turnNumber} submitted successfully!`,
 //         });
 //       }
 //     } catch (error) {
 //       console.error('Error submitting turn:', error);
 //       toast({
 //         title: '❌ Error',
-//         description:
-//           error instanceof Error
-//             ? error.message
-//             : 'Failed to submit your story part.',
+//         description: error instanceof Error ? error.message : 'Failed to submit your story part.',
 //         variant: 'destructive',
 //       });
 //     } finally {
 //       setIsSubmitting(false);
-//       setIsLoadingAI(false);
-//     }
-//   };
-
-//   // FIXED: requestAssessment function called after story completion
-//   const requestAssessment = async () => {
-//     if (!storySession) return;
-
-//     setIsLoadingAI(true);
-//     try {
-//       const response = await fetch(`/api/stories/assess/${storySession._id}`, {
-//         method: 'POST',
-//       });
-
-//       const data = await response.json();
-
-//       if (response.ok && data.assessment) {
-//         setAssessment(data.assessment);
-//         setShowAssessment(true);
-
-//         // Update story session status
-//         setStorySession((prev) =>
-//           prev
-//             ? {
-//                 ...prev,
-//                 status: 'completed',
-//               }
-//             : null
-//         );
-        
-//         toast({
-//           title: '🎉 Story Complete!',
-//           description: 'Your assessment is ready!',
-//         });
-//       } else {
-//         throw new Error(data.error || 'Failed to generate assessment');
-//       }
-//     } catch (error) {
-//       console.error('Error requesting assessment:', error);
-//       toast({
-//         title: '❌ Assessment Error',
-//         description: "Your story is complete but we couldn't generate your scores.",
-//         variant: 'destructive',
-//       });
-//     } finally {
 //       setIsLoadingAI(false);
 //     }
 //   };
@@ -377,19 +390,16 @@
 //     setIsSaving(true);
 
 //     try {
-//       const response = await fetch(
-//         `/api/stories/session/${storySession._id}/draft`,
-//         {
-//           method: 'POST',
-//           headers: {
-//             'Content-Type': 'application/json',
-//           },
-//           body: JSON.stringify({
-//             draftContent: currentInput.trim(),
-//             turnNumber: storySession.currentTurn,
-//           }),
-//         }
-//       );
+//       const response = await fetch(`/api/stories/session/${storySession._id}/draft`, {
+//         method: 'POST',
+//         headers: {
+//           'Content-Type': 'application/json',
+//         },
+//         body: JSON.stringify({
+//           draftContent: currentInput.trim(),
+//           turnNumber: storySession.currentTurn,
+//         }),
+//       });
 
 //       if (!response.ok) {
 //         throw new Error('Failed to save draft');
@@ -417,12 +427,9 @@
 //     setIsSaving(true);
 
 //     try {
-//       const response = await fetch(
-//         `/api/stories/session/${storySession._id}/pause`,
-//         {
-//           method: 'POST',
-//         }
-//       );
+//       const response = await fetch(`/api/stories/session/${storySession._id}/pause`, {
+//         method: 'POST',
+//       });
 
 //       if (!response.ok) {
 //         throw new Error('Failed to pause story');
@@ -449,8 +456,7 @@
 //   // Auto-scroll to bottom when turns change
 //   useEffect(() => {
 //     if (storyTimelineRef.current) {
-//       storyTimelineRef.current.scrollTop =
-//         storyTimelineRef.current.scrollHeight;
+//       storyTimelineRef.current.scrollTop = storyTimelineRef.current.scrollHeight;
 //     }
 //   }, [turns]);
 
@@ -472,20 +478,20 @@
 //   const progressPercentage = ((storySession.currentTurn - 1) / 6) * 100;
 
 //   return (
-//     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 text-white ">
-//       {/* Header with proper spacing and responsive container */}
+//     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 text-white">
+//       {/* Header */}
 //       <div className="bg-gray-800/50 backdrop-blur-xl border-b border-gray-600/40 sticky top-0 z-10">
 //         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
 //           <div className="flex items-center justify-between pt-20">
 //             <button
 //               onClick={() => router.push('/children-dashboard/my-stories')}
-//               className="flex items-center space-x-2 text-gray-300 hover:text-white transition-colors "
+//               className="flex items-center space-x-2 text-gray-300 hover:text-white transition-colors"
 //             >
 //               <ArrowLeft className="w-5 h-5" />
 //               <span>Back to Stories</span>
 //             </button>
 
-//             {/* Enhanced Progress Indicator */}
+//             {/* Progress Indicator */}
 //             <div className="flex items-center space-x-4">
 //               <div className="text-sm text-gray-300">
 //                 Turn {storySession.currentTurn} of 6
@@ -505,7 +511,7 @@
 //         </div>
 //       </div>
 
-//       {/* Main Content with proper responsive container */}
+//       {/* Main Content */}
 //       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 //         {/* Story Title and Elements */}
 //         <motion.div
@@ -527,14 +533,9 @@
 //         </motion.div>
 
 //         <div className="grid grid-cols-1 xl:grid-cols-12 gap-8">
-//           {/* FIXED: Story Timeline with custom scrollbar using Tailwind */}
+//           {/* Story Timeline */}
 //           <div
-//             className={`
-//              xl:col-span-8 space-y-6 h-[68rem] overflow-y-auto
-//              scrollbar-thin scrollbar-track-gray-700/30 scrollbar-thumb-emerald-500
-//              hover:scrollbar-thumb-emerald-400 scrollbar-thumb-rounded-full scrollbar-track-rounded-full
-//              scrollbar-corner-transparent
-//            `}
+//             className="xl:col-span-8 space-y-6 h-[68rem] overflow-y-auto scrollbar-thin scrollbar-track-gray-700/30 scrollbar-thumb-emerald-500 hover:scrollbar-thumb-emerald-400 scrollbar-thumb-rounded-full scrollbar-track-rounded-full"
 //             ref={storyTimelineRef}
 //           >
 //             <h2 className="text-xl font-semibold flex items-center">
@@ -543,7 +544,6 @@
 //             </h2>
 
 //             <div className="space-y-6">
-//               {/* AI Opening */}
 //               {/* AI Opening Section */}
 //               {storySession && (
 //                 <div className="mb-6">
@@ -569,12 +569,8 @@
 //                           </motion.div>
 //                         </div>
 //                         <div>
-//                           <h3 className="font-semibold text-blue-400">
-//                             AI Teacher
-//                           </h3>
-//                           <p className="text-sm text-blue-300">
-//                             Preparing your story opening...
-//                           </p>
+//                           <h3 className="font-semibold text-blue-400">AI Teacher</h3>
+//                           <p className="text-sm text-blue-300">Preparing your story opening...</p>
 //                         </div>
 //                       </div>
 
@@ -585,44 +581,29 @@
 //                             animate={{ opacity: [0.3, 1, 0.3] }}
 //                             transition={{ duration: 1.5, repeat: Infinity }}
 //                           />
-//                           <span className="text-blue-300 text-sm">
-//                             Analyzing your story elements
-//                           </span>
+//                           <span className="text-blue-300 text-sm">Analyzing your story elements</span>
 //                         </div>
 //                         <div className="flex items-center space-x-2">
 //                           <motion.div
 //                             className="w-2 h-2 bg-blue-400 rounded-full"
 //                             animate={{ opacity: [0.3, 1, 0.3] }}
-//                             transition={{
-//                               duration: 1.5,
-//                               repeat: Infinity,
-//                               delay: 0.5,
-//                             }}
+//                             transition={{ duration: 1.5, repeat: Infinity, delay: 0.5 }}
 //                           />
-//                           <span className="text-blue-300 text-sm">
-//                             Crafting the perfect opening
-//                           </span>
+//                           <span className="text-blue-300 text-sm">Crafting the perfect opening</span>
 //                         </div>
 //                         <div className="flex items-center space-x-2">
 //                           <motion.div
 //                             className="w-2 h-2 bg-blue-400 rounded-full"
 //                             animate={{ opacity: [0.3, 1, 0.3] }}
-//                             transition={{
-//                               duration: 1.5,
-//                               repeat: Infinity,
-//                               delay: 1,
-//                             }}
+//                             transition={{ duration: 1.5, repeat: Infinity, delay: 1 }}
 //                           />
-//                           <span className="text-blue-300 text-sm">
-//                             Almost ready...
-//                           </span>
+//                           <span className="text-blue-300 text-sm">Almost ready...</span>
 //                         </div>
 //                       </div>
 
 //                       <div className="mt-4 p-3 bg-blue-500/20 rounded-lg">
 //                         <p className="text-sm text-blue-200">
-//                           💡 <strong>Tip:</strong> You can explore your story
-//                           elements below while the AI prepares your opening!
+//                           💡 <strong>Tip:</strong> You can explore your story elements below while the AI prepares your opening!
 //                         </p>
 //                       </div>
 //                     </motion.div>
@@ -638,18 +619,15 @@
 //                           🤖
 //                         </div>
 //                         <div>
-//                           <h3 className="font-semibold text-purple-400">
-//                             AI Teacher's Story Opening
-//                           </h3>
+//                           <h3 className="font-semibold text-purple-400">AI Teacher's Story Opening</h3>
 //                         </div>
 //                       </div>
-//                       <p className="text-white leading-relaxed">
-//                         {storySession.aiOpening}
-//                       </p>
+//                       <p className="text-white leading-relaxed">{storySession.aiOpening}</p>
 //                     </motion.div>
 //                   ) : null}
 //                 </div>
 //               )}
+
 //               {/* Story Turns */}
 //               {turns.map((turn, index) => (
 //                 <motion.div
@@ -660,21 +638,15 @@
 //                   className="space-y-4"
 //                 >
 //                   {/* Child's Input */}
-//                   <div className="bg-gradient-to-r from-green-500/20 to-emerald-500/20 border border-green-500/30 rounded-xl p-6 ">
+//                   <div className="bg-gradient-to-r from-green-500/20 to-emerald-500/20 border border-green-500/30 rounded-xl p-6">
 //                     <div className="flex items-center justify-between mb-3">
 //                       <div className="flex items-center">
 //                         <Target className="w-5 h-5 text-green-400 mr-2" />
-//                         <span className="text-green-300 font-medium">
-//                           Your Turn {turn.turnNumber}
-//                         </span>
+//                         <span className="text-green-300 font-medium">Your Turn {turn.turnNumber}</span>
 //                       </div>
-//                       <span className="text-green-300 text-sm">
-//                         {turn.childWordCount} words
-//                       </span>
+//                       <span className="text-green-300 text-sm">{turn.childWordCount} words</span>
 //                     </div>
-//                     <p className="text-gray-100 leading-relaxed  ">
-//                       {turn.childInput}
-//                     </p>
+//                     <p className="text-gray-100 leading-relaxed">{turn.childInput}</p>
 //                   </div>
 
 //                   {/* AI Response */}
@@ -682,17 +654,11 @@
 //                     <div className="flex items-center justify-between mb-3">
 //                       <div className="flex items-center">
 //                         <Brain className="w-5 h-5 text-blue-400 mr-2" />
-//                         <span className="text-blue-300 font-medium">
-//                           AI Teacher Response
-//                         </span>
+//                         <span className="text-blue-300 font-medium">AI Teacher Response</span>
 //                       </div>
-//                       <span className="text-blue-300 text-sm">
-//                         {turn.aiWordCount} words
-//                       </span>
+//                       <span className="text-blue-300 text-sm">{turn.aiWordCount} words</span>
 //                     </div>
-//                     <p className="text-gray-100 leading-relaxed">
-//                       {turn.aiResponse}
-//                     </p>
+//                     <p className="text-gray-100 leading-relaxed">{turn.aiResponse}</p>
 //                   </div>
 //                 </motion.div>
 //               ))}
@@ -706,9 +672,7 @@
 //                 >
 //                   <div className="flex items-center justify-center space-x-3">
 //                     <div className="w-6 h-6 border-2 border-purple-400/30 border-t-purple-400 rounded-full animate-spin" />
-//                     <span className="text-purple-300 font-medium">
-//                       AI Teacher is thinking...
-//                     </span>
+//                     <span className="text-purple-300 font-medium">AI Teacher is thinking...</span>
 //                   </div>
 //                   <p className="text-center text-gray-300 text-sm mt-2">
 //                     Creating an educational response to your wonderful writing!
@@ -718,17 +682,14 @@
 //             </div>
 //           </div>
 
-//           {/* Writing Interface with improved layout */}
+//           {/* Writing Interface */}
 //           <div className="xl:col-span-4 space-y-6">
 //             {storySession.status === 'completed' ? (
 //               <div className="bg-green-500/20 border border-green-500/30 rounded-xl p-8 text-center">
 //                 <CheckCircle className="w-16 h-16 text-green-400 mx-auto mb-4" />
-//                 <h3 className="text-2xl font-bold text-green-300 mb-2">
-//                   Story Complete! 🎉
-//                 </h3>
+//                 <h3 className="text-2xl font-bold text-green-300 mb-2">Story Complete! 🎉</h3>
 //                 <p className="text-gray-300 mb-6">
-//                   Congratulations! You've finished your{' '}
-//                   {storySession.childWords}-word adventure.
+//                   Congratulations! You've finished your {storySession.childWords}-word adventure.
 //                 </p>
 //                 <button
 //                   onClick={fetchAssessment}
@@ -750,7 +711,7 @@
 //               </div>
 //             ) : (
 //               <>
-//                 {/* Word Count Validator with consistent requirements */}
+//                 {/* Word Count Validator */}
 //                 <WordCountValidator
 //                   value={currentInput}
 //                   onChange={setCurrentInput}
@@ -774,18 +735,12 @@
 //                     {isSubmitting || isLoadingAI ? (
 //                       <>
 //                         <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-//                         <span>
-//                           {isLoadingAI ? 'AI Thinking...' : 'Submitting...'}
-//                         </span>
+//                         <span>{isLoadingAI ? 'AI Thinking...' : 'Submitting...'}</span>
 //                       </>
 //                     ) : (
 //                       <>
 //                         <Send className="w-5 h-5" />
-//                         <span>
-//                           {storySession.currentTurn === 6
-//                             ? 'Complete Story'
-//                             : 'Submit Turn'}
-//                         </span>
+//                         <span>{storySession.currentTurn === 6 ? 'Complete Story' : 'Submit Turn'}</span>
 //                       </>
 //                     )}
 //                   </motion.button>
@@ -822,7 +777,7 @@
 //               </>
 //             )}
 
-//             {/* Story Stats with better visual hierarchy */}
+//             {/* Story Stats */}
 //             <div className="bg-gray-800/50 border border-gray-600/50 rounded-xl p-6">
 //               <h3 className="text-lg font-semibold mb-4 flex items-center">
 //                 <Zap className="w-5 h-5 mr-2 text-yellow-400" />
@@ -831,29 +786,22 @@
 
 //               <div className="grid grid-cols-2 gap-4">
 //                 <div className="bg-blue-500/20 border border-blue-500/30 rounded-lg p-4 text-center">
-//                   <div className="text-2xl font-bold text-white">
-//                     {storySession.childWords}
-//                   </div>
+//                   <div className="text-2xl font-bold text-white">{storySession.childWords}</div>
 //                   <div className="text-blue-300 text-sm">Your Words</div>
 //                 </div>
 
 //                 <div className="bg-green-500/20 border border-green-500/30 rounded-lg p-4 text-center">
-//                   <div className="text-2xl font-bold text-white">
-//                     {storySession.totalWords}
-//                   </div>
+//                   <div className="text-2xl font-bold text-white">{storySession.totalWords}</div>
 //                   <div className="text-green-300 text-sm">Total Words</div>
 //                 </div>
 
 //                 <div className="bg-purple-500/20 border border-purple-500/30 rounded-lg p-4 text-center">
-//                   <div className="text-2xl font-bold text-white">
-//                     {storySession.currentTurn}/6
-//                   </div>
+//                   <div className="text-2xl font-bold text-white">{storySession.currentTurn}/6</div>
 //                   <div className="text-purple-300 text-sm">Current Turn</div>
 //                 </div>
+
 //                 <div className="bg-orange-500/20 border border-orange-500/30 rounded-lg p-4 text-center">
-//                   <div className="text-2xl font-bold text-white">
-//                     {storySession.apiCallsUsed}/7
-//                   </div>
+//                   <div className="text-2xl font-bold text-white">{storySession.apiCallsUsed}/7</div>
 //                   <div className="text-orange-300 text-sm">AI Calls Used</div>
 //                 </div>
 //               </div>
@@ -861,10 +809,7 @@
 //               {/* Progress Ring */}
 //               <div className="mt-6 flex items-center justify-center">
 //                 <div className="relative w-24 h-24">
-//                   <svg
-//                     className="w-24 h-24 transform -rotate-90"
-//                     viewBox="0 0 100 100"
-//                   >
+//                   <svg className="w-24 h-24 transform -rotate-90" viewBox="0 0 100 100">
 //                     <circle
 //                       cx="50"
 //                       cy="50"
@@ -884,9 +829,7 @@
 //                       strokeDasharray={`${progressPercentage * 2.51} 251`}
 //                       className="text-green-400"
 //                       initial={{ strokeDasharray: '0 251' }}
-//                       animate={{
-//                         strokeDasharray: `${progressPercentage * 2.51} 251`,
-//                       }}
+//                       animate={{ strokeDasharray: `${progressPercentage * 2.51} 251` }}
 //                       transition={{ duration: 1, ease: 'easeInOut' }}
 //                     />
 //                   </svg>
@@ -902,12 +845,13 @@
 //         </div>
 //       </div>
 
-//       {/* FIXED: Assessment Modal with proper component */}
+//       {/* Assessment Modal */}
 //       <AssessmentModal
 //         isOpen={showAssessment}
 //         onClose={() => setShowAssessment(false)}
 //         storySession={storySession}
 //         turns={turns}
+//         assessment={assessment}
 //       />
 
 //       <style jsx global>{`
@@ -1028,6 +972,11 @@ export default function StoryWritingPage({
   const [isLoadingAI, setIsLoadingAI] = useState(false);
   const [isAIGenerating, setIsAIGenerating] = useState(false);
 
+  // Debug logging
+  console.log('🔍 Story session:', storySession);
+  console.log('📊 Assessment state:', assessment);
+  console.log('👀 Show assessment:', showAssessment);
+
   useEffect(() => {
     if (status === 'loading') return;
 
@@ -1041,6 +990,8 @@ export default function StoryWritingPage({
 
   const fetchStorySession = async () => {
     try {
+      console.log('Fetching story session:', sessionId);
+
       const response = await fetch(`/api/stories/session/${sessionId}`);
       const data = await response.json();
 
@@ -1049,9 +1000,26 @@ export default function StoryWritingPage({
       }
 
       setStorySession(data.session);
+
+      // Auto-resume if the session is paused
+      if (data.session.status === 'paused') {
+        const resumeResponse = await fetch(`/api/stories/session/${sessionId}/resume`, {
+          method: 'POST',
+        });
+        
+        if (resumeResponse.ok) {
+          const resumeData = await resumeResponse.json();
+          setStorySession(resumeData.session);
+          
+          toast({
+            title: '▶️ Story Resumed',
+            description: 'Welcome back! Continue your adventure.',
+          });
+        }
+      }
+
       fetchTurns(data.session._id);
 
-      // Start polling for AI opening if needed
       if (!data.session.aiOpening) {
         pollForAIOpening(data.session._id);
       }
@@ -1062,7 +1030,6 @@ export default function StoryWritingPage({
         description: 'Failed to load story session. Please try again.',
         variant: 'destructive',
       });
-      router.push('/children-dashboard/my-stories');
     } finally {
       setIsLoading(false);
     }
@@ -1083,7 +1050,6 @@ export default function StoryWritingPage({
     }
   };
 
-  // FIXED: Properly structured AI opening polling
   const pollForAIOpening = (actualSessionId: string) => {
     setIsAIGenerating(true);
 
@@ -1098,7 +1064,6 @@ export default function StoryWritingPage({
         const data = await response.json();
 
         if (data.session?.aiOpening) {
-          // AI opening is ready!
           setStorySession((prev) =>
             prev ? { ...prev, aiOpening: data.session.aiOpening } : null
           );
@@ -1112,11 +1077,9 @@ export default function StoryWritingPage({
         }
       } catch (error) {
         console.error('Error polling for AI opening:', error);
-        // Continue polling on error
       }
-    }, 3000); // Poll every 3 seconds
+    }, 3000);
 
-    // Stop polling after 3 minutes (fallback safety)
     setTimeout(() => {
       clearInterval(pollInterval);
       if (isAIGenerating) {
@@ -1126,26 +1089,33 @@ export default function StoryWritingPage({
           description: 'You can start writing while AI prepares your opening.',
         });
       }
-    }, 180000); // 3 minutes
+    }, 180000);
   };
 
-  // FIXED: Proper assessment fetching function
+  // FIXED: fetchAssessment function with correct API endpoint
   const fetchAssessment = async () => {
     if (!storySession) return;
 
     setIsLoadingAI(true);
     
     try {
-      // First try to get existing assessment
+      console.log('🎯 Fetching assessment for session:', storySession._id);
+      
+      // CORRECT: Use the proper endpoint structure
       let response = await fetch(`/api/stories/session/${storySession._id}/assessment`);
       let data = await response.json();
 
       if (response.ok && data.assessment) {
-        // Assessment exists, show it
+        console.log('✅ Found existing assessment:', data.assessment);
         setAssessment(data.assessment);
         setShowAssessment(true);
+        
+        toast({
+          title: '📊 Assessment Ready!',
+          description: 'Your story has been evaluated!',
+        });
       } else if (response.status === 404) {
-        // Assessment doesn't exist, generate it
+        console.log('🔄 No assessment found, generating new one...');
         const generateResponse = await fetch(`/api/stories/assess/${storySession._id}`, {
           method: 'POST',
         });
@@ -1153,24 +1123,85 @@ export default function StoryWritingPage({
         const generateData = await generateResponse.json();
         
         if (generateResponse.ok && generateData.assessment) {
+          console.log('✅ Generated new assessment:', generateData.assessment);
           setAssessment(generateData.assessment);
           setShowAssessment(true);
           
           toast({
-            title: '📊 Assessment Ready!',
-            description: 'Your story has been evaluated.',
+            title: '🎉 Assessment Complete!',
+            description: 'Your story has been evaluated!',
           });
         } else {
+          console.error('❌ Failed to generate assessment:', generateData.error);
           throw new Error(generateData.error || 'Failed to generate assessment');
         }
       } else {
+        console.error('❌ Assessment fetch failed:', data.error);
         throw new Error(data.error || 'Failed to fetch assessment');
       }
     } catch (error) {
-      console.error('Error fetching assessment:', error);
+      console.error('❌ Error fetching assessment:', error);
       toast({
         title: '❌ Assessment Error',
         description: error instanceof Error ? error.message : 'Could not load assessment',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsLoadingAI(false);
+    }
+  };
+
+  // FIXED: requestAssessment function with correct endpoint
+  const requestAssessment = async () => {
+    if (!storySession) return;
+
+    setIsLoadingAI(true);
+    try {
+      console.log('🎯 Requesting assessment for session:', storySession._id);
+      
+      // CORRECT: First try to get existing assessment using the correct endpoint
+      const fetchResponse = await fetch(`/api/stories/session/${storySession._id}/assessment`);
+      
+      if (fetchResponse.ok) {
+        const fetchData = await fetchResponse.json();
+        if (fetchData.assessment) {
+          console.log('✅ Found existing assessment:', fetchData.assessment);
+          setAssessment(fetchData.assessment);
+          setShowAssessment(true);
+          
+          toast({
+            title: '📊 Assessment Ready!',
+            description: 'Your story has been evaluated!',
+          });
+          return;
+        }
+      }
+      
+      // If no existing assessment, generate new one
+      console.log('🔄 Generating new assessment...');
+      const generateResponse = await fetch(`/api/stories/assess/${storySession._id}`, {
+        method: 'POST',
+      });
+
+      const generateData = await generateResponse.json();
+
+      if (generateResponse.ok && generateData.assessment) {
+        console.log('✅ Generated new assessment:', generateData.assessment);
+        setAssessment(generateData.assessment);
+        setShowAssessment(true);
+        
+        toast({
+          title: '🎉 Assessment Complete!',
+          description: 'Your story has been evaluated!',
+        });
+      } else {
+        throw new Error(generateData.error || 'Failed to generate assessment');
+      }
+    } catch (error) {
+      console.error('❌ Error with assessment:', error);
+      toast({
+        title: '❌ Assessment Error', 
+        description: 'Could not load assessment. Please try again.',
         variant: 'destructive',
       });
     } finally {
@@ -1247,51 +1278,6 @@ export default function StoryWritingPage({
     }
   };
 
-  const requestAssessment = async () => {
-    if (!storySession) return;
-
-    setIsLoadingAI(true);
-    try {
-      const response = await fetch(`/api/stories/assess/${storySession._id}`, {
-        method: 'POST',
-      });
-
-      const data = await response.json();
-
-      if (response.ok && data.assessment) {
-        setAssessment(data.assessment);
-        setShowAssessment(true);
-
-        // Update story session status and assessment
-        setStorySession((prev) =>
-          prev
-            ? {
-                ...prev,
-                status: 'completed',
-                assessment: data.assessment,
-              }
-            : null
-        );
-        
-        toast({
-          title: '🎉 Assessment Complete!',
-          description: 'Your assessment is ready!',
-        });
-      } else {
-        throw new Error(data.error || 'Failed to generate assessment');
-      }
-    } catch (error) {
-      console.error('Error requesting assessment:', error);
-      toast({
-        title: '❌ Assessment Error',
-        description: "Your story is complete but we couldn't generate your scores.",
-        variant: 'destructive',
-      });
-    } finally {
-      setIsLoadingAI(false);
-    }
-  };
-
   const handleSaveDraft = async () => {
     if (!storySession || !currentInput.trim()) return;
 
@@ -1361,7 +1347,6 @@ export default function StoryWritingPage({
     }
   };
 
-  // Auto-scroll to bottom when turns change
   useEffect(() => {
     if (storyTimelineRef.current) {
       storyTimelineRef.current.scrollTop = storyTimelineRef.current.scrollHeight;
@@ -1399,7 +1384,6 @@ export default function StoryWritingPage({
               <span>Back to Stories</span>
             </button>
 
-            {/* Progress Indicator */}
             <div className="flex items-center space-x-4">
               <div className="text-sm text-gray-300">
                 Turn {storySession.currentTurn} of 6
@@ -1421,7 +1405,6 @@ export default function StoryWritingPage({
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Story Title and Elements */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -1441,7 +1424,6 @@ export default function StoryWritingPage({
         </motion.div>
 
         <div className="grid grid-cols-1 xl:grid-cols-12 gap-8">
-          {/* Story Timeline */}
           <div
             className="xl:col-span-8 space-y-6 h-[68rem] overflow-y-auto scrollbar-thin scrollbar-track-gray-700/30 scrollbar-thumb-emerald-500 hover:scrollbar-thumb-emerald-400 scrollbar-thumb-rounded-full scrollbar-track-rounded-full"
             ref={storyTimelineRef}
@@ -1452,11 +1434,9 @@ export default function StoryWritingPage({
             </h2>
 
             <div className="space-y-6">
-              {/* AI Opening Section */}
               {storySession && (
                 <div className="mb-6">
                   {isAIGenerating ? (
-                    // Loading state for AI opening
                     <motion.div
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
@@ -1516,7 +1496,6 @@ export default function StoryWritingPage({
                       </div>
                     </motion.div>
                   ) : storySession.aiOpening ? (
-                    // Normal AI opening display
                     <motion.div
                       initial={{ opacity: 0, scale: 0.95 }}
                       animate={{ opacity: 1, scale: 1 }}
@@ -1536,7 +1515,6 @@ export default function StoryWritingPage({
                 </div>
               )}
 
-              {/* Story Turns */}
               {turns.map((turn, index) => (
                 <motion.div
                   key={turn._id}
@@ -1545,7 +1523,6 @@ export default function StoryWritingPage({
                   transition={{ delay: index * 0.1 }}
                   className="space-y-4"
                 >
-                  {/* Child's Input */}
                   <div className="bg-gradient-to-r from-green-500/20 to-emerald-500/20 border border-green-500/30 rounded-xl p-6">
                     <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center">
@@ -1557,7 +1534,6 @@ export default function StoryWritingPage({
                     <p className="text-gray-100 leading-relaxed">{turn.childInput}</p>
                   </div>
 
-                  {/* AI Response */}
                   <div className="bg-gradient-to-r from-blue-500/20 to-purple-500/20 border border-blue-500/30 rounded-xl p-6">
                     <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center">
@@ -1571,7 +1547,6 @@ export default function StoryWritingPage({
                 </motion.div>
               ))}
 
-              {/* AI Loading State */}
               {isLoadingAI && (
                 <motion.div
                   initial={{ opacity: 0, scale: 0.9 }}
@@ -1590,7 +1565,6 @@ export default function StoryWritingPage({
             </div>
           </div>
 
-          {/* Writing Interface */}
           <div className="xl:col-span-4 space-y-6">
             {storySession.status === 'completed' ? (
               <div className="bg-green-500/20 border border-green-500/30 rounded-xl p-8 text-center">
@@ -1619,7 +1593,6 @@ export default function StoryWritingPage({
               </div>
             ) : (
               <>
-                {/* Word Count Validator */}
                 <WordCountValidator
                   value={currentInput}
                   onChange={setCurrentInput}
@@ -1631,7 +1604,6 @@ export default function StoryWritingPage({
                   disabled={isSubmitting || isLoadingAI}
                 />
 
-                {/* Action Buttons */}
                 <div className="flex flex-col gap-4">
                   <motion.button
                     whileHover={{ scale: 1.02 }}
@@ -1685,7 +1657,6 @@ export default function StoryWritingPage({
               </>
             )}
 
-            {/* Story Stats */}
             <div className="bg-gray-800/50 border border-gray-600/50 rounded-xl p-6">
               <h3 className="text-lg font-semibold mb-4 flex items-center">
                 <Zap className="w-5 h-5 mr-2 text-yellow-400" />
@@ -1698,104 +1669,102 @@ export default function StoryWritingPage({
                   <div className="text-blue-300 text-sm">Your Words</div>
                 </div>
 
-                <div className="bg-green-500/20 border border-green-500/30 rounded-lg p-4 text-center">
-                  <div className="text-2xl font-bold text-white">{storySession.totalWords}</div>
-                  <div className="text-green-300 text-sm">Total Words</div>
-                </div>
+               <div className="bg-green-500/20 border border-green-500/30 rounded-lg p-4 text-center">
+                 <div className="text-2xl font-bold text-white">{storySession.totalWords}</div>
+                 <div className="text-green-300 text-sm">Total Words</div>
+               </div>
 
-                <div className="bg-purple-500/20 border border-purple-500/30 rounded-lg p-4 text-center">
-                  <div className="text-2xl font-bold text-white">{storySession.currentTurn}/6</div>
-                  <div className="text-purple-300 text-sm">Current Turn</div>
-                </div>
+               <div className="bg-purple-500/20 border border-purple-500/30 rounded-lg p-4 text-center">
+                 <div className="text-2xl font-bold text-white">{storySession.currentTurn}/6</div>
+                 <div className="text-purple-300 text-sm">Current Turn</div>
+               </div>
 
-                <div className="bg-orange-500/20 border border-orange-500/30 rounded-lg p-4 text-center">
-                  <div className="text-2xl font-bold text-white">{storySession.apiCallsUsed}/7</div>
-                  <div className="text-orange-300 text-sm">AI Calls Used</div>
-                </div>
-              </div>
+               <div className="bg-orange-500/20 border border-orange-500/30 rounded-lg p-4 text-center">
+                 <div className="text-2xl font-bold text-white">{storySession.apiCallsUsed}/7</div>
+                 <div className="text-orange-300 text-sm">AI Calls Used</div>
+               </div>
+             </div>
 
-              {/* Progress Ring */}
-              <div className="mt-6 flex items-center justify-center">
-                <div className="relative w-24 h-24">
-                  <svg className="w-24 h-24 transform -rotate-90" viewBox="0 0 100 100">
-                    <circle
-                      cx="50"
-                      cy="50"
-                      r="40"
-                      stroke="currentColor"
-                      strokeWidth="8"
-                      fill="transparent"
-                      className="text-gray-700"
-                    />
-                    <motion.circle
-                      cx="50"
-                      cy="50"
-                      r="40"
-                      stroke="currentColor"
-                      strokeWidth="8"
-                      fill="transparent"
-                      strokeDasharray={`${progressPercentage * 2.51} 251`}
-                      className="text-green-400"
-                      initial={{ strokeDasharray: '0 251' }}
-                      animate={{ strokeDasharray: `${progressPercentage * 2.51} 251` }}
-                      transition={{ duration: 1, ease: 'easeInOut' }}
-                    />
-                  </svg>
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="text-lg font-bold text-white">
-                      {Math.round(progressPercentage)}%
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+             <div className="mt-6 flex items-center justify-center">
+               <div className="relative w-24 h-24">
+                 <svg className="w-24 h-24 transform -rotate-90" viewBox="0 0 100 100">
+                   <circle
+                     cx="50"
+                     cy="50"
+                     r="40"
+                     stroke="currentColor"
+                     strokeWidth="8"
+                     fill="transparent"
+                     className="text-gray-700"
+                   />
+                   <motion.circle
+                     cx="50"
+                     cy="50"
+                     r="40"
+                     stroke="currentColor"
+                     strokeWidth="8"
+                     fill="transparent"
+                     strokeDasharray={`${progressPercentage * 2.51} 251`}
+                     className="text-green-400"
+                     initial={{ strokeDasharray: '0 251' }}
+                     animate={{ strokeDasharray: `${progressPercentage * 2.51} 251` }}
+                     transition={{ duration: 1, ease: 'easeInOut' }}
+                   />
+                 </svg>
+                 <div className="absolute inset-0 flex items-center justify-center">
+                   <span className="text-lg font-bold text-white">
+                     {Math.round(progressPercentage)}%
+                   </span>
+                 </div>
+               </div>
+             </div>
+           </div>
+         </div>
+       </div>
+     </div>
 
-      {/* Assessment Modal */}
-      <AssessmentModal
-        isOpen={showAssessment}
-        onClose={() => setShowAssessment(false)}
-        storySession={storySession}
-        turns={turns}
-      />
+     {/* FIXED: Assessment Modal with assessment prop */}
+     <AssessmentModal
+       isOpen={showAssessment}
+       onClose={() => setShowAssessment(false)}
+       storySession={storySession}
+       turns={turns}
+       assessment={assessment}
+     />
 
-      <style jsx global>{`
-        /* Custom scrollbar styles for browsers that don't support Tailwind scrollbar */
-        .scrollbar-thin::-webkit-scrollbar {
-          width: 8px;
-        }
+     <style jsx global>{`
+       .scrollbar-thin::-webkit-scrollbar {
+         width: 8px;
+       }
 
-        .scrollbar-track-gray-700\/30::-webkit-scrollbar-track {
-          background: rgba(55, 65, 81, 0.3);
-          border-radius: 4px;
-        }
+       .scrollbar-track-gray-700\/30::-webkit-scrollbar-track {
+         background: rgba(55, 65, 81, 0.3);
+         border-radius: 4px;
+       }
 
-        .scrollbar-thumb-emerald-500::-webkit-scrollbar-thumb {
-          background: linear-gradient(to bottom, #10b981, #059669);
-          border-radius: 4px;
-          border: 1px solid rgba(255, 255, 255, 0.1);
-        }
+       .scrollbar-thumb-emerald-500::-webkit-scrollbar-thumb {
+         background: linear-gradient(to bottom, #10b981, #059669);
+         border-radius: 4px;
+         border: 1px solid rgba(255, 255, 255, 0.1);
+       }
 
-        .hover\\:scrollbar-thumb-emerald-400::-webkit-scrollbar-thumb:hover {
-          background: linear-gradient(to bottom, #34d399, #10b981);
-        }
+       .hover\\:scrollbar-thumb-emerald-400::-webkit-scrollbar-thumb:hover {
+         background: linear-gradient(to bottom, #34d399, #10b981);
+       }
 
-        .scrollbar-thumb-rounded-full::-webkit-scrollbar-thumb {
-          border-radius: 9999px;
-        }
+       .scrollbar-thumb-rounded-full::-webkit-scrollbar-thumb {
+         border-radius: 9999px;
+       }
 
-        .scrollbar-track-rounded-full::-webkit-scrollbar-track {
-          border-radius: 9999px;
-        }
+       .scrollbar-track-rounded-full::-webkit-scrollbar-track {
+         border-radius: 9999px;
+       }
 
-        /* Firefox scrollbar */
-        .scrollbar-thin {
-          scrollbar-width: thin;
-          scrollbar-color: #10b981 rgba(55, 65, 81, 0.3);
-        }
-      `}</style>
-    </div>
-  );
+       .scrollbar-thin {
+         scrollbar-width: thin;
+         scrollbar-color: #10b981 rgba(55, 65, 81, 0.3);
+       }
+     `}</style>
+   </div>
+ );
 }

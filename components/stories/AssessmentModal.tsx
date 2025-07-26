@@ -1,7 +1,7 @@
-// // components/stories/AssessmentModal.tsx - Fixed version
+// // components/stories/AssessmentModal.tsx - FIXED WITH PROPER INTERFACE
 // 'use client';
 
-// import { useState, useEffect } from 'react';
+// import { useState, useEffect, useRef } from 'react';
 // import { motion, AnimatePresence } from 'framer-motion';
 // import { useRouter } from 'next/navigation';
 // import {
@@ -11,6 +11,9 @@
 //   BookOpen,
 //   TrendingUp,
 //   Sparkles,
+//   Target,
+//   Brain,
+//   BookMarked,
 // } from 'lucide-react';
 // import { useToast } from '@/hooks/use-toast';
 
@@ -25,48 +28,70 @@
 //   turns: Array<{
 //     childInput: string;
 //     aiResponse: string;
-//   }>;
+//   }>; // FIXED: Added turns back to interface
+//   assessment?: DetailedAssessment | null;
 // }
 
-// interface AssessmentData {
+// interface DetailedAssessment {
 //   grammarScore: number;
 //   creativityScore: number;
 //   overallScore: number;
+//   readingLevel?: string;
+//   vocabularyScore?: number;
+//   structureScore?: number;
+//   characterDevelopmentScore?: number;
+//   plotDevelopmentScore?: number;
 //   feedback: string;
+//   strengths?: string[];
+//   improvements?: string[];
+//   vocabularyUsed?: string[];
+//   suggestedWords?: string[];
+//   educationalInsights?: string;
 // }
 
 // export default function AssessmentModal({
 //   isOpen,
 //   onClose,
 //   storySession,
-//   turns,
+//   turns, // FIXED: Added turns parameter back
+//   assessment: propAssessment,
 // }: AssessmentModalProps) {
 //   const router = useRouter();
 //   const { toast } = useToast();
 
-//   const [assessment, setAssessment] = useState<AssessmentData | null>(null);
+//   const [assessment, setAssessment] = useState<DetailedAssessment | null>(propAssessment || null);
 //   const [isAssessing, setIsAssessing] = useState(false);
 //   const [isPublishing, setIsPublishing] = useState(false);
 
+//   // OPTIMIZATION: Add mounted ref for cleanup
+//   const mountedRef = useRef(true);
+
+//   useEffect(() => {
+//     mountedRef.current = true;
+//     return () => {
+//       mountedRef.current = false;
+//     };
+//   }, []);
+
 //   // When modal opens, try to get existing assessment first
 //   useEffect(() => {
-//     if (isOpen && storySession && !assessment) {
+//     if (isOpen && storySession && !assessment && mountedRef.current) {
 //       fetchExistingAssessment();
 //     }
 //   }, [isOpen, storySession]);
 
 //   const fetchExistingAssessment = async () => {
-//     if (!storySession) return;
+//     if (!storySession || !mountedRef.current) return;
 
 //     setIsAssessing(true);
 
 //     try {
 //       // Try to get existing assessment first
-//       const response = await fetch(`/api/stories/assess/${storySession._id}/assessment`);
+//       const response = await fetch(`/api/stories/session/${storySession._id}/assessment`);
       
 //       if (response.ok) {
 //         const data = await response.json();
-//         if (data.assessment) {
+//         if (data.assessment && mountedRef.current) {
 //           setAssessment(data.assessment);
 //           setIsAssessing(false);
 //           return;
@@ -84,7 +109,7 @@
 //   };
 
 //   const generateNewAssessment = async () => {
-//     if (!storySession) return;
+//     if (!storySession || !mountedRef.current) return;
 
 //     try {
 //       const response = await fetch(`/api/stories/assess/${storySession._id}`, {
@@ -97,50 +122,78 @@
 //         console.error('Assessment API error:', data.error);
         
 //         // Provide fallback assessment
-//         setAssessment({
-//           grammarScore: 85,
-//           creativityScore: 88,
-//           overallScore: 86,
-//           feedback: 'Great work on your creative story! Your writing shows imagination and effort.',
-//         });
-        
-//         toast({
-//           title: '⚠️ Assessment Generated',
-//           description: 'Using default assessment scores.',
-//         });
+//         if (mountedRef.current) {
+//           setAssessment({
+//             grammarScore: 85,
+//             creativityScore: 88,
+//             overallScore: 86,
+//             readingLevel: 'Elementary',
+//             vocabularyScore: 82,
+//             structureScore: 84,
+//             characterDevelopmentScore: 86,
+//             plotDevelopmentScore: 87,
+//             feedback: 'Great work on your creative story! Your writing shows imagination and effort.',
+//             strengths: ['Creative imagination', 'Good story flow', 'Engaging characters', 'Descriptive writing', 'Story structure'],
+//             improvements: ['Add more dialogue', 'Use more descriptive words', 'Vary sentence length'],
+//             vocabularyUsed: ['adventure', 'mysterious', 'brave', 'discovered', 'amazing'],
+//             suggestedWords: ['magnificent', 'extraordinary', 'perilous', 'astonishing', 'triumphant'],
+//             educationalInsights: 'Keep developing your creative writing skills! Your storytelling abilities are improving.'
+//           });
+          
+//           toast({
+//             title: '⚠️ Assessment Generated',
+//             description: 'Using default assessment scores.',
+//           });
+//         }
 //         return;
 //       }
 
-//       setAssessment(data.assessment);
-      
-//       toast({
-//         title: '📊 Assessment Complete!',
-//         description: 'Your story has been evaluated.',
-//       });
+//       if (mountedRef.current) {
+//         setAssessment(data.assessment);
+        
+//         toast({
+//           title: '📊 Assessment Complete!',
+//           description: 'Your story has been evaluated.',
+//         });
+//       }
       
 //     } catch (error) {
 //       console.error('Error generating assessment:', error);
       
 //       // Provide fallback assessment on error
-//       setAssessment({
-//         grammarScore: 85,
-//         creativityScore: 88,
-//         overallScore: 86,
-//         feedback: 'Great work on your creative story! Assessment could not be fully generated, but your effort is commendable.',
-//       });
-      
-//       toast({
-//         title: '⚠️ Assessment Error',
-//         description: 'Using fallback scores.',
-//         variant: 'destructive',
-//       });
+//       if (mountedRef.current) {
+//         setAssessment({
+//           grammarScore: 85,
+//           creativityScore: 88,
+//           overallScore: 86,
+//           readingLevel: 'Elementary',
+//           vocabularyScore: 82,
+//           structureScore: 84,
+//           characterDevelopmentScore: 86,
+//           plotDevelopmentScore: 87,
+//           feedback: 'Great work on your creative story! Assessment could not be fully generated, but your effort is commendable.',
+//           strengths: ['Creative imagination', 'Good story flow', 'Engaging characters'],
+//           improvements: ['Add more dialogue', 'Use more descriptive words', 'Vary sentence length'],
+//           vocabularyUsed: ['adventure', 'mysterious', 'brave', 'discovered', 'amazing'],
+//           suggestedWords: ['magnificent', 'extraordinary', 'perilous', 'astonishing', 'triumphant'],
+//           educationalInsights: 'Keep developing your creative writing skills!'
+//         });
+        
+//         toast({
+//           title: '⚠️ Assessment Error',
+//           description: 'Using fallback scores.',
+//           variant: 'destructive',
+//         });
+//       }
 //     } finally {
-//       setIsAssessing(false);
+//       if (mountedRef.current) {
+//         setIsAssessing(false);
+//       }
 //     }
 //   };
 
 //   const handlePublishStory = async () => {
-//     if (!storySession || !assessment) return;
+//     if (!storySession || !assessment || !mountedRef.current) return;
 
 //     setIsPublishing(true);
 
@@ -162,22 +215,28 @@
 //         throw new Error(data.error || 'Failed to publish story');
 //       }
 
-//       toast({
-//         title: '🎉 Story Published!',
-//         description: 'Your amazing story is now in your library!',
-//       });
+//       if (mountedRef.current) {
+//         toast({
+//           title: '🎉 Story Published!',
+//           description: 'Your amazing story is now in your library!',
+//         });
 
-//       onClose();
-//       router.push('/children-dashboard/my-stories');
+//         onClose();
+//         router.push('/children-dashboard/my-stories');
+//       }
 //     } catch (error) {
 //       console.error('Error publishing story:', error);
-//       toast({
-//         title: '❌ Error',
-//         description: 'Failed to publish story. Please try again.',
-//         variant: 'destructive',
-//       });
+//       if (mountedRef.current) {
+//         toast({
+//           title: '❌ Error',
+//           description: 'Failed to publish story. Please try again.',
+//           variant: 'destructive',
+//         });
+//       }
 //     } finally {
-//       setIsPublishing(false);
+//       if (mountedRef.current) {
+//         setIsPublishing(false);
+//       }
 //     }
 //   };
 
@@ -215,7 +274,7 @@
 //           initial={{ opacity: 0, scale: 0.9, y: 20 }}
 //           animate={{ opacity: 1, scale: 1, y: 0 }}
 //           exit={{ opacity: 0, scale: 0.9, y: 20 }}
-//           className="bg-gray-800 border border-gray-600 rounded-2xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto"
+//           className="bg-gray-800 border border-gray-600 rounded-2xl p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto"
 //           onClick={(e) => e.stopPropagation()}
 //         >
 //           {/* Header */}
@@ -248,10 +307,10 @@
 //             </div>
 //           ) : assessment ? (
 //             <>
-//               {/* Score Cards */}
-//               <div className="grid grid-cols-3 gap-4 mb-8">
+//               {/* Main Score Cards */}
+//               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
 //                 {/* Grammar Score */}
-//                 <div className="bg-gradient-to-br from-blue-500/20 to-blue-600/20 border border-blue-500/30 rounded-xl p-4 text-center">
+//                 <div className="bg-gradient-to-br from-blue-500/20 to-blue-600/20 border border-blue-500/30 rounded-xl p-6 text-center">
 //                   <TrendingUp className="w-8 h-8 text-blue-400 mx-auto mb-3" />
 //                   <div className={`text-3xl font-bold mb-2 ${getScoreColor(assessment.grammarScore)}`}>
 //                     {assessment.grammarScore}%
@@ -270,7 +329,7 @@
 //                 </div>
 
 //                 {/* Creativity Score */}
-//                 <div className="bg-gradient-to-br from-purple-500/20 to-purple-600/20 border border-purple-500/30 rounded-xl p-4 text-center">
+//                 <div className="bg-gradient-to-br from-purple-500/20 to-purple-600/20 border border-purple-500/30 rounded-xl p-6 text-center">
 //                   <Sparkles className="w-8 h-8 text-purple-400 mx-auto mb-3" />
 //                   <div className={`text-3xl font-bold mb-2 ${getScoreColor(assessment.creativityScore)}`}>
 //                     {assessment.creativityScore}%
@@ -289,7 +348,7 @@
 //                 </div>
 
 //                 {/* Overall Score */}
-//                 <div className="bg-gradient-to-br from-green-500/20 to-green-600/20 border border-green-500/30 rounded-xl p-4 text-center">
+//                 <div className="bg-gradient-to-br from-green-500/20 to-green-600/20 border border-green-500/30 rounded-xl p-6 text-center">
 //                   <Award className="w-8 h-8 text-green-400 mx-auto mb-3" />
 //                   <div className={`text-3xl font-bold mb-2 ${getScoreColor(assessment.overallScore)}`}>
 //                     {assessment.overallScore}%
@@ -308,6 +367,35 @@
 //                 </div>
 //               </div>
 
+//               {/* Detailed Assessment Scores */}
+//               {(assessment.vocabularyScore || assessment.structureScore || assessment.characterDevelopmentScore || assessment.plotDevelopmentScore) && (
+//                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+//                   {[
+//                     { label: 'Vocabulary', score: assessment.vocabularyScore || 0, color: 'orange' },
+//                     { label: 'Structure', score: assessment.structureScore || 0, color: 'cyan' },
+//                     { label: 'Character Dev.', score: assessment.characterDevelopmentScore || 0, color: 'pink' },
+//                     { label: 'Plot Dev.', score: assessment.plotDevelopmentScore || 0, color: 'indigo' },
+//                   ].map((item) => (
+//                     <div key={item.label} className="bg-gray-700/30 rounded-lg p-3 text-center">
+//                       <div className={`text-lg font-bold text-${item.color}-400`}>
+//                         {item.score}%
+//                       </div>
+//                       <div className="text-gray-300 text-xs">{item.label}</div>
+//                     </div>
+//                   ))}
+//                 </div>
+//               )}
+
+//               {/* Reading Level */}
+//               {assessment.readingLevel && (
+//                 <div className="bg-gradient-to-r from-blue-500/20 to-cyan-500/20 rounded-xl p-4 border border-blue-500/30 mb-6">
+//                   <h3 className="text-white font-semibold mb-2 flex items-center">
+//                     <BookOpen className="w-5 h-5 mr-2 text-blue-400" />
+//                     📚 Reading Level: {assessment.readingLevel}
+//                   </h3>
+//                 </div>
+//               )}
+
 //               {/* AI Teacher Feedback */}
 //               <div className="bg-gradient-to-r from-blue-500/20 to-purple-500/20 border border-blue-500/30 rounded-xl p-6 mb-8">
 //                 <h3 className="text-lg font-semibold text-white mb-3 flex items-center">
@@ -318,6 +406,105 @@
 //                   {assessment.feedback}
 //                 </p>
 //               </div>
+
+//               {/* Strengths and Improvements */}
+//               {(assessment.strengths || assessment.improvements) && (
+//                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+//                   {/* Strengths */}
+//                   {assessment.strengths && (
+//                     <div className="bg-gradient-to-r from-green-500/20 to-emerald-500/20 border border-green-500/30 rounded-xl p-6">
+//                       <h3 className="text-white font-semibold mb-4 flex items-center">
+//                         <Star className="w-5 h-5 mr-2 text-green-400" />
+//                         Your Strengths
+//                       </h3>
+//                       <div className="space-y-2">
+//                         {(assessment.strengths || []).slice(0, 5).map((strength, index) => (
+//                           <div key={index} className="flex items-center text-green-300 text-sm">
+//                             <span className="w-2 h-2 bg-green-400 rounded-full mr-3"></span>
+//                             {strength}
+//                           </div>
+//                         ))}
+//                       </div>
+//                     </div>
+//                   )}
+
+//                   {/* Areas for Improvement */}
+//                   {assessment.improvements && (
+//                     <div className="bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border border-yellow-500/30 rounded-xl p-6">
+//                       <h3 className="text-white font-semibold mb-4 flex items-center">
+//                         <Target className="w-5 h-5 mr-2 text-yellow-400" />
+//                         Areas to Improve
+//                       </h3>
+//                       <div className="space-y-2">
+//                         {(assessment.improvements || []).map((improvement, index) => (
+//                           <div key={index} className="flex items-center text-yellow-300 text-sm">
+//                             <span className="w-2 h-2 bg-yellow-400 rounded-full mr-3"></span>
+//                             {improvement}
+//                           </div>
+//                         ))}
+//                       </div>
+//                     </div>
+//                   )}
+//                 </div>
+//               )}
+
+//               {/* Vocabulary Analysis */}
+//               {(assessment.vocabularyUsed || assessment.suggestedWords) && (
+//                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+//                   {/* Great Words Used */}
+//                   {assessment.vocabularyUsed && (
+//                     <div className="bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-500/30 rounded-xl p-6">
+//                       <h3 className="text-white font-semibold mb-4 flex items-center">
+//                         <Sparkles className="w-5 h-5 mr-2 text-purple-400" />
+//                         Great Words You Used
+//                       </h3>
+//                       <div className="flex flex-wrap gap-2">
+//                         {(assessment.vocabularyUsed || []).map((word, index) => (
+//                           <span
+//                             key={index}
+//                             className="bg-purple-600/30 text-purple-300 px-3 py-1 rounded-lg text-sm font-medium"
+//                           >
+//                             {word}
+//                           </span>
+//                         ))}
+//                       </div>
+//                     </div>
+//                   )}
+
+//                   {/* New Words to Learn */}
+//                   {assessment.suggestedWords && (
+//                     <div className="bg-gradient-to-r from-indigo-500/20 to-blue-500/20 border border-indigo-500/30 rounded-xl p-6">
+//                       <h3 className="text-white font-semibold mb-4 flex items-center">
+//                         <BookMarked className="w-5 h-5 mr-2 text-indigo-400" />
+//                         New Words to Learn
+//                       </h3>
+//                       <div className="flex flex-wrap gap-2">
+//                         {(assessment.suggestedWords || []).map((word, index) => (
+//                           <span
+//                             key={index}
+//                             className="bg-indigo-600/30 text-indigo-300 px-3 py-1 rounded-lg text-sm font-medium"
+//                           >
+//                             {word}
+//                           </span>
+//                         ))}
+//                       </div>
+//                     </div>
+//                   )}
+//                 </div>
+//               )}
+
+//               {/* Educational Insights */}
+//               {assessment.educationalInsights && (
+//                 <div className="bg-gradient-to-r from-green-500/20 to-blue-500/20 border border-green-500/30 rounded-xl p-6 mb-8">
+//                   <h3 className="text-white font-semibold mb-4 flex items-center">
+//                     <Brain className="w-5 h-5 mr-2 text-green-400" />
+//                     Educational Insights
+//                   </h3>
+//                   <p className="text-gray-300 leading-relaxed">
+//                     {assessment.educationalInsights}
+//                   </p>
+//                 </div>
+//               )}
 
 //               {/* Action Buttons */}
 //               <motion.div 
@@ -385,11 +572,10 @@
 //   );
 // }
 
-
-// components/stories/AssessmentModal.tsx - Fixed version with detailed assessment display
+// components/stories/AssessmentModal.tsx - FIXED WITH PROPER INTERFACE
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import {
@@ -417,23 +603,24 @@ interface AssessmentModalProps {
     childInput: string;
     aiResponse: string;
   }>;
+  assessment?: DetailedAssessment | null; // ← Added this prop
 }
 
 interface DetailedAssessment {
   grammarScore: number;
   creativityScore: number;
   overallScore: number;
-  readingLevel: string;
-  vocabularyScore: number;
-  structureScore: number;
-  characterDevelopmentScore: number;
-  plotDevelopmentScore: number;
+  readingLevel?: string;
+  vocabularyScore?: number;
+  structureScore?: number;
+  characterDevelopmentScore?: number;
+  plotDevelopmentScore?: number;
   feedback: string;
-  strengths: string[];
-  improvements: string[];
-  vocabularyUsed: string[];
-  suggestedWords: string[];
-  educationalInsights: string;
+  strengths?: string[];
+  improvements?: string[];
+  vocabularyUsed?: string[];
+  suggestedWords?: string[];
+  educationalInsights?: string;
 }
 
 export default function AssessmentModal({
@@ -441,23 +628,44 @@ export default function AssessmentModal({
   onClose,
   storySession,
   turns,
+  assessment: propAssessment, // ← Accept the assessment prop
 }: AssessmentModalProps) {
   const router = useRouter();
   const { toast } = useToast();
 
-  const [assessment, setAssessment] = useState<DetailedAssessment | null>(null);
+  const [assessment, setAssessment] = useState<DetailedAssessment | null>(propAssessment || null);
   const [isAssessing, setIsAssessing] = useState(false);
   const [isPublishing, setIsPublishing] = useState(false);
 
-  // When modal opens, try to get existing assessment first
+  // OPTIMIZATION: Add mounted ref for cleanup
+  const mountedRef = useRef(true);
+
   useEffect(() => {
-    if (isOpen && storySession && !assessment) {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+    };
+  }, []);
+
+  // Update assessment when prop changes
+  useEffect(() => {
+    if (propAssessment && mountedRef.current) {
+      console.log('📊 Received assessment prop:', propAssessment);
+      setAssessment(propAssessment);
+      setIsAssessing(false);
+    }
+  }, [propAssessment]);
+
+  // When modal opens, try to get existing assessment first ONLY if no prop assessment
+  useEffect(() => {
+    if (isOpen && storySession && !propAssessment && !assessment && mountedRef.current) {
+      console.log('🔍 No assessment prop, fetching from API...');
       fetchExistingAssessment();
     }
-  }, [isOpen, storySession]);
+  }, [isOpen, storySession, propAssessment]);
 
   const fetchExistingAssessment = async () => {
-    if (!storySession) return;
+    if (!storySession || !mountedRef.current) return;
 
     setIsAssessing(true);
 
@@ -467,7 +675,7 @@ export default function AssessmentModal({
       
       if (response.ok) {
         const data = await response.json();
-        if (data.assessment) {
+        if (data.assessment && mountedRef.current) {
           setAssessment(data.assessment);
           setIsAssessing(false);
           return;
@@ -485,7 +693,7 @@ export default function AssessmentModal({
   };
 
   const generateNewAssessment = async () => {
-    if (!storySession) return;
+    if (!storySession || !mountedRef.current) return;
 
     try {
       const response = await fetch(`/api/stories/assess/${storySession._id}`, {
@@ -498,6 +706,46 @@ export default function AssessmentModal({
         console.error('Assessment API error:', data.error);
         
         // Provide fallback assessment
+        if (mountedRef.current) {
+          setAssessment({
+            grammarScore: 85,
+            creativityScore: 88,
+            overallScore: 86,
+            readingLevel: 'Elementary',
+            vocabularyScore: 82,
+            structureScore: 84,
+            characterDevelopmentScore: 86,
+            plotDevelopmentScore: 87,
+            feedback: 'Great work on your creative story! Your writing shows imagination and effort.',
+            strengths: ['Creative imagination', 'Good story flow', 'Engaging characters', 'Descriptive writing', 'Story structure'],
+            improvements: ['Add more dialogue', 'Use more descriptive words', 'Vary sentence length'],
+            vocabularyUsed: ['adventure', 'mysterious', 'brave', 'discovered', 'amazing'],
+            suggestedWords: ['magnificent', 'extraordinary', 'perilous', 'astonishing', 'triumphant'],
+            educationalInsights: 'Keep developing your creative writing skills! Your storytelling abilities are improving.'
+          });
+          
+          toast({
+            title: '⚠️ Assessment Generated',
+            description: 'Using default assessment scores.',
+          });
+        }
+        return;
+      }
+
+      if (mountedRef.current) {
+        setAssessment(data.assessment);
+        
+        toast({
+          title: '📊 Assessment Complete!',
+          description: 'Your story has been evaluated.',
+        });
+      }
+      
+    } catch (error) {
+      console.error('Error generating assessment:', error);
+      
+      // Provide fallback assessment on error
+      if (mountedRef.current) {
         setAssessment({
           grammarScore: 85,
           creativityScore: 88,
@@ -507,61 +755,29 @@ export default function AssessmentModal({
           structureScore: 84,
           characterDevelopmentScore: 86,
           plotDevelopmentScore: 87,
-          feedback: 'Great work on your creative story! Your writing shows imagination and effort.',
-          strengths: ['Creative imagination', 'Good story flow', 'Engaging characters', 'Descriptive writing', 'Story structure'],
+          feedback: 'Great work on your creative story! Assessment could not be fully generated, but your effort is commendable.',
+          strengths: ['Creative imagination', 'Good story flow', 'Engaging characters'],
           improvements: ['Add more dialogue', 'Use more descriptive words', 'Vary sentence length'],
           vocabularyUsed: ['adventure', 'mysterious', 'brave', 'discovered', 'amazing'],
           suggestedWords: ['magnificent', 'extraordinary', 'perilous', 'astonishing', 'triumphant'],
-          educationalInsights: 'Keep developing your creative writing skills! Your storytelling abilities are improving.'
+          educationalInsights: 'Keep developing your creative writing skills!'
         });
         
         toast({
-          title: '⚠️ Assessment Generated',
-          description: 'Using default assessment scores.',
+          title: '⚠️ Assessment Error',
+          description: 'Using fallback scores.',
+          variant: 'destructive',
         });
-        return;
       }
-
-      setAssessment(data.assessment);
-      
-      toast({
-        title: '📊 Assessment Complete!',
-        description: 'Your story has been evaluated.',
-      });
-      
-    } catch (error) {
-      console.error('Error generating assessment:', error);
-      
-      // Provide fallback assessment on error
-      setAssessment({
-        grammarScore: 85,
-        creativityScore: 88,
-        overallScore: 86,
-        readingLevel: 'Elementary',
-        vocabularyScore: 82,
-        structureScore: 84,
-        characterDevelopmentScore: 86,
-        plotDevelopmentScore: 87,
-        feedback: 'Great work on your creative story! Assessment could not be fully generated, but your effort is commendable.',
-        strengths: ['Creative imagination', 'Good story flow', 'Engaging characters'],
-        improvements: ['Add more dialogue', 'Use more descriptive words', 'Vary sentence length'],
-        vocabularyUsed: ['adventure', 'mysterious', 'brave', 'discovered', 'amazing'],
-        suggestedWords: ['magnificent', 'extraordinary', 'perilous', 'astonishing', 'triumphant'],
-        educationalInsights: 'Keep developing your creative writing skills!'
-      });
-      
-      toast({
-        title: '⚠️ Assessment Error',
-        description: 'Using fallback scores.',
-        variant: 'destructive',
-      });
     } finally {
-      setIsAssessing(false);
+      if (mountedRef.current) {
+        setIsAssessing(false);
+      }
     }
   };
 
   const handlePublishStory = async () => {
-    if (!storySession || !assessment) return;
+    if (!storySession || !assessment || !mountedRef.current) return;
 
     setIsPublishing(true);
 
@@ -583,22 +799,28 @@ export default function AssessmentModal({
         throw new Error(data.error || 'Failed to publish story');
       }
 
-      toast({
-        title: '🎉 Story Published!',
-        description: 'Your amazing story is now in your library!',
-      });
+      if (mountedRef.current) {
+        toast({
+          title: '🎉 Story Published!',
+          description: 'Your amazing story is now in your library!',
+        });
 
-      onClose();
-      router.push('/children-dashboard/my-stories');
+        onClose();
+        router.push('/children-dashboard/my-stories');
+      }
     } catch (error) {
       console.error('Error publishing story:', error);
-      toast({
-        title: '❌ Error',
-        description: 'Failed to publish story. Please try again.',
-        variant: 'destructive',
-      });
+      if (mountedRef.current) {
+        toast({
+          title: '❌ Error',
+          description: 'Failed to publish story. Please try again.',
+          variant: 'destructive',
+        });
+      }
     } finally {
-      setIsPublishing(false);
+      if (mountedRef.current) {
+        setIsPublishing(false);
+      }
     }
   };
 
@@ -730,29 +952,33 @@ export default function AssessmentModal({
               </div>
 
               {/* Detailed Assessment Scores */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-                {[
-                  { label: 'Vocabulary', score: assessment.vocabularyScore, color: 'orange' },
-                  { label: 'Structure', score: assessment.structureScore, color: 'cyan' },
-                  { label: 'Character Dev.', score: assessment.characterDevelopmentScore, color: 'pink' },
-                  { label: 'Plot Dev.', score: assessment.plotDevelopmentScore, color: 'indigo' },
-                ].map((item) => (
-                  <div key={item.label} className="bg-gray-700/30 rounded-lg p-3 text-center">
-                    <div className={`text-lg font-bold text-${item.color}-400`}>
-                      {item.score}%
+              {(assessment.vocabularyScore || assessment.structureScore || assessment.characterDevelopmentScore || assessment.plotDevelopmentScore) && (
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                  {[
+                    { label: 'Vocabulary', score: assessment.vocabularyScore || 0, color: 'orange' },
+                    { label: 'Structure', score: assessment.structureScore || 0, color: 'cyan' },
+                    { label: 'Character Dev.', score: assessment.characterDevelopmentScore || 0, color: 'pink' },
+                    { label: 'Plot Dev.', score: assessment.plotDevelopmentScore || 0, color: 'indigo' },
+                  ].map((item) => (
+                    <div key={item.label} className="bg-gray-700/30 rounded-lg p-3 text-center">
+                      <div className={`text-lg font-bold text-${item.color}-400`}>
+                        {item.score}%
+                      </div>
+                      <div className="text-gray-300 text-xs">{item.label}</div>
                     </div>
-                    <div className="text-gray-300 text-xs">{item.label}</div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
 
               {/* Reading Level */}
-              <div className="bg-gradient-to-r from-blue-500/20 to-cyan-500/20 rounded-xl p-4 border border-blue-500/30 mb-6">
-                <h3 className="text-white font-semibold mb-2 flex items-center">
-                  <BookOpen className="w-5 h-5 mr-2 text-blue-400" />
-                  📚 Reading Level: {assessment.readingLevel}
-                </h3>
-              </div>
+              {assessment.readingLevel && (
+                <div className="bg-gradient-to-r from-blue-500/20 to-cyan-500/20 rounded-xl p-4 border border-blue-500/30 mb-6">
+                  <h3 className="text-white font-semibold mb-2 flex items-center">
+                    <BookOpen className="w-5 h-5 mr-2 text-blue-400" />
+                    📚 Reading Level: {assessment.readingLevel}
+                  </h3>
+                </div>
+              )}
 
               {/* AI Teacher Feedback */}
               <div className="bg-gradient-to-r from-blue-500/20 to-purple-500/20 border border-blue-500/30 rounded-xl p-6 mb-8">
@@ -766,89 +992,103 @@ export default function AssessmentModal({
               </div>
 
               {/* Strengths and Improvements */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                {/* Strengths */}
-                <div className="bg-gradient-to-r from-green-500/20 to-emerald-500/20 border border-green-500/30 rounded-xl p-6">
-                  <h3 className="text-white font-semibold mb-4 flex items-center">
-                    <Star className="w-5 h-5 mr-2 text-green-400" />
-                    Your Strengths
-                  </h3>
-                  <div className="space-y-2">
-                    {assessment.strengths.slice(0, 5).map((strength, index) => (
-                      <div key={index} className="flex items-center text-green-300 text-sm">
-                        <span className="w-2 h-2 bg-green-400 rounded-full mr-3"></span>
-                        {strength}
+              {(assessment.strengths || assessment.improvements) && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                  {/* Strengths */}
+                  {assessment.strengths && (
+                    <div className="bg-gradient-to-r from-green-500/20 to-emerald-500/20 border border-green-500/30 rounded-xl p-6">
+                      <h3 className="text-white font-semibold mb-4 flex items-center">
+                        <Star className="w-5 h-5 mr-2 text-green-400" />
+                        Your Strengths
+                      </h3>
+                      <div className="space-y-2">
+                        {(assessment.strengths || []).slice(0, 5).map((strength, index) => (
+                          <div key={index} className="flex items-center text-green-300 text-sm">
+                            <span className="w-2 h-2 bg-green-400 rounded-full mr-3"></span>
+                            {strength}
+                          </div>
+                        ))}
                       </div>
-                    ))}
-                  </div>
-                </div>
+                    </div>
+                  )}
 
-                {/* Areas for Improvement */}
-                <div className="bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border border-yellow-500/30 rounded-xl p-6">
-                  <h3 className="text-white font-semibold mb-4 flex items-center">
-                    <Target className="w-5 h-5 mr-2 text-yellow-400" />
-                    Areas to Improve
-                  </h3>
-                  <div className="space-y-2">
-                    {assessment.improvements.map((improvement, index) => (
-                      <div key={index} className="flex items-center text-yellow-300 text-sm">
-                        <span className="w-2 h-2 bg-yellow-400 rounded-full mr-3"></span>
-                        {improvement}
+                  {/* Areas for Improvement */}
+                  {assessment.improvements && (
+                    <div className="bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border border-yellow-500/30 rounded-xl p-6">
+                      <h3 className="text-white font-semibold mb-4 flex items-center">
+                        <Target className="w-5 h-5 mr-2 text-yellow-400" />
+                        Areas to Improve
+                      </h3>
+                      <div className="space-y-2">
+                        {(assessment.improvements || []).map((improvement, index) => (
+                          <div key={index} className="flex items-center text-yellow-300 text-sm">
+                            <span className="w-2 h-2 bg-yellow-400 rounded-full mr-3"></span>
+                            {improvement}
+                          </div>
+                        ))}
                       </div>
-                    ))}
-                  </div>
+                    </div>
+                  )}
                 </div>
-              </div>
+              )}
 
               {/* Vocabulary Analysis */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                {/* Great Words Used */}
-                <div className="bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-500/30 rounded-xl p-6">
-                  <h3 className="text-white font-semibold mb-4 flex items-center">
-                    <Sparkles className="w-5 h-5 mr-2 text-purple-400" />
-                    Great Words You Used
-                  </h3>
-                  <div className="flex flex-wrap gap-2">
-                    {assessment.vocabularyUsed.map((word, index) => (
-                      <span
-                        key={index}
-                        className="bg-purple-600/30 text-purple-300 px-3 py-1 rounded-lg text-sm font-medium"
-                      >
-                        {word}
-                      </span>
-                    ))}
-                  </div>
-                </div>
+              {(assessment.vocabularyUsed || assessment.suggestedWords) && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                  {/* Great Words Used */}
+                  {assessment.vocabularyUsed && (
+                    <div className="bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-500/30 rounded-xl p-6">
+                      <h3 className="text-white font-semibold mb-4 flex items-center">
+                        <Sparkles className="w-5 h-5 mr-2 text-purple-400" />
+                        Great Words You Used
+                      </h3>
+                      <div className="flex flex-wrap gap-2">
+                        {(assessment.vocabularyUsed || []).map((word, index) => (
+                          <span
+                            key={index}
+                            className="bg-purple-600/30 text-purple-300 px-3 py-1 rounded-lg text-sm font-medium"
+                          >
+                            {word}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
 
-                {/* New Words to Learn */}
-                <div className="bg-gradient-to-r from-indigo-500/20 to-blue-500/20 border border-indigo-500/30 rounded-xl p-6">
-                  <h3 className="text-white font-semibold mb-4 flex items-center">
-                    <BookMarked className="w-5 h-5 mr-2 text-indigo-400" />
-                    New Words to Learn
-                  </h3>
-                  <div className="flex flex-wrap gap-2">
-                    {assessment.suggestedWords.map((word, index) => (
-                      <span
-                        key={index}
-                        className="bg-indigo-600/30 text-indigo-300 px-3 py-1 rounded-lg text-sm font-medium"
-                      >
-                        {word}
-                      </span>
-                    ))}
-                  </div>
+                  {/* New Words to Learn */}
+                  {assessment.suggestedWords && (
+                    <div className="bg-gradient-to-r from-indigo-500/20 to-blue-500/20 border border-indigo-500/30 rounded-xl p-6">
+                      <h3 className="text-white font-semibold mb-4 flex items-center">
+                        <BookMarked className="w-5 h-5 mr-2 text-indigo-400" />
+                        New Words to Learn
+                      </h3>
+                      <div className="flex flex-wrap gap-2">
+                        {(assessment.suggestedWords || []).map((word, index) => (
+                          <span
+                            key={index}
+                            className="bg-indigo-600/30 text-indigo-300 px-3 py-1 rounded-lg text-sm font-medium"
+                          >
+                            {word}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
-              </div>
+              )}
 
               {/* Educational Insights */}
-              <div className="bg-gradient-to-r from-green-500/20 to-blue-500/20 border border-green-500/30 rounded-xl p-6 mb-8">
-                <h3 className="text-white font-semibold mb-4 flex items-center">
-                  <Brain className="w-5 h-5 mr-2 text-green-400" />
-                  Educational Insights
-                </h3>
-                <p className="text-gray-300 leading-relaxed">
-                  {assessment.educationalInsights}
-                </p>
-              </div>
+              {assessment.educationalInsights && (
+                <div className="bg-gradient-to-r from-green-500/20 to-blue-500/20 border border-green-500/30 rounded-xl p-6 mb-8">
+                  <h3 className="text-white font-semibold mb-4 flex items-center">
+                    <Brain className="w-5 h-5 mr-2 text-green-400" />
+                    Educational Insights
+                  </h3>
+                  <p className="text-gray-300 leading-relaxed">
+                    {assessment.educationalInsights}
+                  </p>
+                </div>
+              )}
 
               {/* Action Buttons */}
               <motion.div 

@@ -91,19 +91,15 @@ export default function MyStoriesPage() {
   };
 
   // FIXED: Handle both continuing and viewing stories
-  const handleStoryAction = (story: Story) => {
-    if (story.status === 'completed') {
-      // Use StorySession._id (which is what we have in the stories list)
-      router.push(`/children-dashboard/my-stories/${story._id}`);
-    } else {
-      // For active/paused stories, continue using storyNumber for editor
-      if (story.storyNumber) {
-        router.push(`/children-dashboard/story/${story.storyNumber}`);
-      } else {
-        router.push(`/children-dashboard/story/${story._id}`);
-      }
-    }
-  };
+const handleStoryAction = (story: Story) => {
+  if (story.status === 'completed') {
+    // Use MongoDB _id for completed stories
+    router.push(`/children-dashboard/my-stories/${story._id}`);
+  } else {
+    // FIXED: Use MongoDB _id consistently for active/paused stories
+    router.push(`/children-dashboard/story/${story._id}`);
+  }
+};
 
   const filteredStories = stories.filter((story) => {
     if (
