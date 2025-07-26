@@ -1485,7 +1485,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import {
@@ -1542,6 +1542,8 @@ import { useToast } from '@/hooks/use-toast';
 import { STORY_ELEMENTS } from '@/config/story-elements';
 import Link from 'next/link';
 import { DiamondSeparator } from '@/components/seperators/DiamondSeparator';
+import { Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 
 interface SelectedElements {
   genre: string;
@@ -1586,7 +1588,7 @@ const steps = [
   },
 ];
 
-export default function CreateStoriesPage() {
+function CreateStoriesContent() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -3121,5 +3123,17 @@ export default function CreateStoriesPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function CreateStoriesPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 flex items-center justify-center">
+        <div className="text-white">Loading...</div>
+      </div>
+    }>
+      <CreateStoriesContent />
+    </Suspense>
   );
 }

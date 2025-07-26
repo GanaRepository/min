@@ -4,11 +4,12 @@
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { Suspense } from 'react';
 import { motion } from 'framer-motion';
 import { Sparkles, BookOpen } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
-export default function CreateStoryFromTokenPage() {
+function StoryCreateContent() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -135,5 +136,17 @@ export default function CreateStoryFromTokenPage() {
         </motion.div>
       </div>
     </div>
+  );
+}
+
+export default function StoryCreatePage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 flex items-center justify-center">
+        <div className="text-white">Loading...</div>
+      </div>
+    }>
+      <StoryCreateContent />
+    </Suspense>
   );
 }

@@ -3,6 +3,7 @@
 
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
+import { Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -47,7 +48,7 @@ interface Story {
   updatedAt: string;
 }
 
-export default function MyStoriesPage() {
+function MyStoriesContent() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -558,5 +559,17 @@ export default function MyStoriesPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function MyStoriesPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 flex items-center justify-center">
+        <div className="text-white">Loading...</div>
+      </div>
+    }>
+      <MyStoriesContent />
+    </Suspense>
   );
 }

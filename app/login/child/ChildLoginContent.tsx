@@ -9,7 +9,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { signIn } from 'next-auth/react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import Image from 'next/image';
-
+import { Suspense } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -23,7 +23,7 @@ import {
   ToastClose,
 } from '@/components/ui/toast';
 
-const ChildLoginContent: React.FC = () => {
+function ChildLoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get('callbackUrl') || '/create-stories';
@@ -491,4 +491,14 @@ const ChildLoginContent: React.FC = () => {
   );
 };
 
-export default ChildLoginContent;
+export default function ChildLoginPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 flex items-center justify-center">
+        <div className="text-white">Loading...</div>
+      </div>
+    }>
+      <ChildLoginContent />
+    </Suspense>
+  );
+}
