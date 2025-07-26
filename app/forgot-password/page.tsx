@@ -270,8 +270,9 @@ const ForgotPasswordPage: React.FC = () => {
                 className="text-white/90 mb-4"
               >
                 <p className="text-sm leading-relaxed mb-3">
-                  &quot;Every great storyteller sometimes forgets their magic words.
-                  Let&apos;s help you get back to creating amazing stories!&quot;
+                  &quot;Every great storyteller sometimes forgets their magic
+                  words. Let&apos;s help you get back to creating amazing
+                  stories!&quot;
                 </p>
                 <p className="text-xs text-white/60">- The Mintoons Team</p>
               </motion.div>
@@ -322,8 +323,8 @@ const ForgotPasswordPage: React.FC = () => {
                   Magic Key?
                 </h2>
                 <p className="text-white/60 text-sm">
-                  No worries! Enter your email and we&apos;ll send you a magic link
-                  to restore your creative powers
+                  No worries! Enter your email and we&apos;ll send you a magic
+                  link to restore your creative powers
                 </p>
               </motion.div>
             </div>

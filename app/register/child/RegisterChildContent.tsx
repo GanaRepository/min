@@ -606,8 +606,8 @@ const RegisterChildContent: React.FC = () => {
                     Mintoons
                   </h3>
                   <p className="text-gray-300 text-sm leading-relaxed">
-                    &quot;Unleash Your Creative Magic&quot; - Empowering young writers to
-                    create amazing stories with AI assistance, expert
+                    &quot;Unleash Your Creative Magic&quot; - Empowering young
+                    writers to create amazing stories with AI assistance, expert
                     mentorship, and unlimited imagination.
                   </p>
                   <p className="text-gray-400 text-xs mt-3">

@@ -146,8 +146,8 @@ export default function MintoonsContactPage() {
             🎉 Welcome to the Mintoons Family! 🎉
           </h2>
           <p className="text-xl text-slate-600 mb-8 leading-relaxed">
-            Your creative journey begins now! We&apos;ll reach out within 24 hours
-            with more information about our services.
+            Your creative journey begins now! We&apos;ll reach out within 24
+            hours with more information about our services.
           </p>
           <div className="flex items-center justify-center space-x-3 text-slate-500 text-lg">
             <Heart className="w-6 h-6 animate-pulse text-blue-600" />
@@ -374,8 +374,8 @@ export default function MintoonsContactPage() {
 
                 <div className="group">
                   <label className="block text-sm font-medium text-slate-700 mb-2">
-                    Tell us more about your child&apos;s interests and how we can
-                    help... *
+                    Tell us more about your child&apos;s interests and how we
+                    can help... *
                   </label>
                   <div className="relative">
                     <textarea

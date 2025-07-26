@@ -167,7 +167,9 @@ export default function DashboardSidebar({
                 <Clock className="w-4 h-4 mr-2 text-purple-400" />
                 Continue Writing
               </h3>
-              <p className="text-gray-300 text-sm mb-3">&quot;Magic Forest Quest&quot;</p>
+              <p className="text-gray-300 text-sm mb-3">
+                &quot;Magic Forest Quest&quot;
+              </p>
               <p className="text-xs text-gray-400 mb-3">Turn 3/6 • 245 words</p>
               <Link href="/children-dashboard/story/current">
                 <motion.button

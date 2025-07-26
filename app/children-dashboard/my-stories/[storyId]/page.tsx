@@ -676,32 +676,33 @@ export default function StoryViewPage({
       return;
     }
 
-    fetchStory();
-  }, [session, status, storyId]);
+    const fetchStory = async () => {
+      try {
+        const response = await fetch(
+          `/api/stories/session/${storyId}/complete`
+        );
+        const data = await response.json();
 
-  // FIXED: Use the correct API endpoint for complete stories
-  const fetchStory = async () => {
-    try {
-      const response = await fetch(`/api/stories/session/${storyId}/complete`);
-      const data = await response.json();
+        if (!response.ok) {
+          throw new Error(data.error || 'Failed to fetch story');
+        }
 
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to fetch story');
+        setStory(data.story);
+      } catch (error) {
+        console.error('Error fetching story:', error);
+        toast({
+          title: '❌ Error',
+          description: 'Failed to load story. Please try again.',
+          variant: 'destructive',
+        });
+        router.push('/children-dashboard/my-stories');
+      } finally {
+        setIsLoading(false);
       }
+    };
 
-      setStory(data.story);
-    } catch (error) {
-      console.error('Error fetching story:', error);
-      toast({
-        title: '❌ Error',
-        description: 'Failed to load story. Please try again.',
-        variant: 'destructive',
-      });
-      router.push('/children-dashboard/my-stories');
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    fetchStory();
+  }, [session, status, storyId, router, toast]);
 
   const handleDownload = async (format: 'pdf' | 'word') => {
     if (!story) return;

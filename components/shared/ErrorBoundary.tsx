@@ -71,7 +71,8 @@ export default class ErrorBoundary extends Component<Props, State> {
               transition={{ delay: 0.4 }}
               className="text-gray-400 mb-6"
             >
-              Don&apos;t worry! This happens sometimes. Let&apos;s try to fix it.
+              Don&apos;t worry! This happens sometimes. Let&apos;s try to fix
+              it.
             </motion.p>
 
             <motion.div

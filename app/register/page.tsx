@@ -95,8 +95,8 @@ const RegisterPage: React.FC = () => {
 
           {/* Description */}
           <p className="text-lg sm:text-xl text-gray-300 mb-16 max-w-2xl mx-auto leading-relaxed">
-            Select the type of account you&apos;d like to create to get started with
-            our creative writing platform and join our community.
+            Select the type of account you&apos;d like to create to get started
+            with our creative writing platform and join our community.
           </p>
 
           {/* Registration Options Cards */}

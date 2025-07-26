@@ -726,8 +726,8 @@ export default function Home() {
                         animate={{ opacity: 1 }}
                         transition={{ delay: 1.5 }}
                       >
-                        Dive into a world where children&apos;s original ideas come
-                        to life, building writing skills and creative
+                        Dive into a world where children&apos;s original ideas
+                        come to life, building writing skills and creative
                         confidence.
                       </motion.p>
 
@@ -1310,7 +1310,8 @@ export default function Home() {
             </h2>
             <p className="text-lg sm:text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
               The foundational values that guide our educational approach and
-              commitment to developing children&apos;s creativity and writing skills.
+              commitment to developing children&apos;s creativity and writing
+              skills.
             </p>
           </motion.div>
 

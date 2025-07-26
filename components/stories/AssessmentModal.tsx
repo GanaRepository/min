@@ -28,8 +28,8 @@
 //   turns: Array<{
 //     childInput: string;
 //     aiResponse: string;
-//   }>; // FIXED: Added turns back to interface
-//   assessment?: DetailedAssessment | null;
+//   }>;
+//   assessment?: DetailedAssessment | null; // ← Added this prop
 // }
 
 // interface DetailedAssessment {
@@ -53,13 +53,15 @@
 //   isOpen,
 //   onClose,
 //   storySession,
-//   turns, // FIXED: Added turns parameter back
-//   assessment: propAssessment,
+//   turns,
+//   assessment: propAssessment, // ← Accept the assessment prop
 // }: AssessmentModalProps) {
 //   const router = useRouter();
 //   const { toast } = useToast();
 
-//   const [assessment, setAssessment] = useState<DetailedAssessment | null>(propAssessment || null);
+//   const [assessment, setAssessment] = useState<DetailedAssessment | null>(
+//     propAssessment || null
+//   );
 //   const [isAssessing, setIsAssessing] = useState(false);
 //   const [isPublishing, setIsPublishing] = useState(false);
 
@@ -73,12 +75,28 @@
 //     };
 //   }, []);
 
-//   // When modal opens, try to get existing assessment first
+//   // Update assessment when prop changes
 //   useEffect(() => {
-//     if (isOpen && storySession && !assessment && mountedRef.current) {
+//     if (propAssessment && mountedRef.current) {
+//       console.log('📊 Received assessment prop:', propAssessment);
+//       setAssessment(propAssessment);
+//       setIsAssessing(false);
+//     }
+//   }, [propAssessment]);
+
+//   // When modal opens, try to get existing assessment first ONLY if no prop assessment
+//   useEffect(() => {
+//     if (
+//       isOpen &&
+//       storySession &&
+//       !propAssessment &&
+//       !assessment &&
+//       mountedRef.current
+//     ) {
+//       console.log('🔍 No assessment prop, fetching from API...');
 //       fetchExistingAssessment();
 //     }
-//   }, [isOpen, storySession]);
+//   }, [isOpen, storySession, propAssessment]);
 
 //   const fetchExistingAssessment = async () => {
 //     if (!storySession || !mountedRef.current) return;
@@ -87,7 +105,9 @@
 
 //     try {
 //       // Try to get existing assessment first
-//       const response = await fetch(`/api/stories/session/${storySession._id}/assessment`);
+//       const response = await fetch(
+//         `/api/stories/session/${storySession._id}/assessment`
+//       );
 
 //       if (response.ok) {
 //         const data = await response.json();
@@ -101,7 +121,6 @@
 //       // If no existing assessment, generate new one
 //       console.log('No existing assessment found, generating...');
 //       await generateNewAssessment();
-
 //     } catch (error) {
 //       console.error('Error fetching assessment:', error);
 //       await generateNewAssessment(); // Fallback to generation
@@ -132,12 +151,36 @@
 //             structureScore: 84,
 //             characterDevelopmentScore: 86,
 //             plotDevelopmentScore: 87,
-//             feedback: 'Great work on your creative story! Your writing shows imagination and effort.',
-//             strengths: ['Creative imagination', 'Good story flow', 'Engaging characters', 'Descriptive writing', 'Story structure'],
-//             improvements: ['Add more dialogue', 'Use more descriptive words', 'Vary sentence length'],
-//             vocabularyUsed: ['adventure', 'mysterious', 'brave', 'discovered', 'amazing'],
-//             suggestedWords: ['magnificent', 'extraordinary', 'perilous', 'astonishing', 'triumphant'],
-//             educationalInsights: 'Keep developing your creative writing skills! Your storytelling abilities are improving.'
+//             feedback:
+//               'Great work on your creative story! Your writing shows imagination and effort.',
+//             strengths: [
+//               'Creative imagination',
+//               'Good story flow',
+//               'Engaging characters',
+//               'Descriptive writing',
+//               'Story structure',
+//             ],
+//             improvements: [
+//               'Add more dialogue',
+//               'Use more descriptive words',
+//               'Vary sentence length',
+//             ],
+//             vocabularyUsed: [
+//               'adventure',
+//               'mysterious',
+//               'brave',
+//               'discovered',
+//               'amazing',
+//             ],
+//             suggestedWords: [
+//               'magnificent',
+//               'extraordinary',
+//               'perilous',
+//               'astonishing',
+//               'triumphant',
+//             ],
+//             educationalInsights:
+//               'Keep developing your creative writing skills! Your storytelling abilities are improving.',
 //           });
 
 //           toast({
@@ -156,7 +199,6 @@
 //           description: 'Your story has been evaluated.',
 //         });
 //       }
-
 //     } catch (error) {
 //       console.error('Error generating assessment:', error);
 
@@ -171,12 +213,33 @@
 //           structureScore: 84,
 //           characterDevelopmentScore: 86,
 //           plotDevelopmentScore: 87,
-//           feedback: 'Great work on your creative story! Assessment could not be fully generated, but your effort is commendable.',
-//           strengths: ['Creative imagination', 'Good story flow', 'Engaging characters'],
-//           improvements: ['Add more dialogue', 'Use more descriptive words', 'Vary sentence length'],
-//           vocabularyUsed: ['adventure', 'mysterious', 'brave', 'discovered', 'amazing'],
-//           suggestedWords: ['magnificent', 'extraordinary', 'perilous', 'astonishing', 'triumphant'],
-//           educationalInsights: 'Keep developing your creative writing skills!'
+//           feedback:
+//             'Great work on your creative story! Assessment could not be fully generated, but your effort is commendable.',
+//           strengths: [
+//             'Creative imagination',
+//             'Good story flow',
+//             'Engaging characters',
+//           ],
+//           improvements: [
+//             'Add more dialogue',
+//             'Use more descriptive words',
+//             'Vary sentence length',
+//           ],
+//           vocabularyUsed: [
+//             'adventure',
+//             'mysterious',
+//             'brave',
+//             'discovered',
+//             'amazing',
+//           ],
+//           suggestedWords: [
+//             'magnificent',
+//             'extraordinary',
+//             'perilous',
+//             'astonishing',
+//             'triumphant',
+//           ],
+//           educationalInsights: 'Keep developing your creative writing skills!',
 //         });
 
 //         toast({
@@ -280,7 +343,7 @@
 //           {/* Header */}
 //           <div className="flex items-center justify-between mb-6">
 //             <h2 className="text-2xl font-bold text-white flex items-center">
-//               🎉 Story Complete! "{storySession.title}"
+//               🎉 Story Complete! &quot;{storySession.title}&quot;
 //             </h2>
 //             <button
 //               onClick={onClose}
@@ -312,7 +375,9 @@
 //                 {/* Grammar Score */}
 //                 <div className="bg-gradient-to-br from-blue-500/20 to-blue-600/20 border border-blue-500/30 rounded-xl p-6 text-center">
 //                   <TrendingUp className="w-8 h-8 text-blue-400 mx-auto mb-3" />
-//                   <div className={`text-3xl font-bold mb-2 ${getScoreColor(assessment.grammarScore)}`}>
+//                   <div
+//                     className={`text-3xl font-bold mb-2 ${getScoreColor(assessment.grammarScore)}`}
+//                   >
 //                     {assessment.grammarScore}%
 //                   </div>
 //                   <div className="text-gray-300 text-sm font-medium">
@@ -331,7 +396,9 @@
 //                 {/* Creativity Score */}
 //                 <div className="bg-gradient-to-br from-purple-500/20 to-purple-600/20 border border-purple-500/30 rounded-xl p-6 text-center">
 //                   <Sparkles className="w-8 h-8 text-purple-400 mx-auto mb-3" />
-//                   <div className={`text-3xl font-bold mb-2 ${getScoreColor(assessment.creativityScore)}`}>
+//                   <div
+//                     className={`text-3xl font-bold mb-2 ${getScoreColor(assessment.creativityScore)}`}
+//                   >
 //                     {assessment.creativityScore}%
 //                   </div>
 //                   <div className="text-gray-300 text-sm font-medium">
@@ -350,7 +417,9 @@
 //                 {/* Overall Score */}
 //                 <div className="bg-gradient-to-br from-green-500/20 to-green-600/20 border border-green-500/30 rounded-xl p-6 text-center">
 //                   <Award className="w-8 h-8 text-green-400 mx-auto mb-3" />
-//                   <div className={`text-3xl font-bold mb-2 ${getScoreColor(assessment.overallScore)}`}>
+//                   <div
+//                     className={`text-3xl font-bold mb-2 ${getScoreColor(assessment.overallScore)}`}
+//                   >
 //                     {assessment.overallScore}%
 //                   </div>
 //                   <div className="text-gray-300 text-sm font-medium">
@@ -368,16 +437,40 @@
 //               </div>
 
 //               {/* Detailed Assessment Scores */}
-//               {(assessment.vocabularyScore || assessment.structureScore || assessment.characterDevelopmentScore || assessment.plotDevelopmentScore) && (
+//               {(assessment.vocabularyScore ||
+//                 assessment.structureScore ||
+//                 assessment.characterDevelopmentScore ||
+//                 assessment.plotDevelopmentScore) && (
 //                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
 //                   {[
-//                     { label: 'Vocabulary', score: assessment.vocabularyScore || 0, color: 'orange' },
-//                     { label: 'Structure', score: assessment.structureScore || 0, color: 'cyan' },
-//                     { label: 'Character Dev.', score: assessment.characterDevelopmentScore || 0, color: 'pink' },
-//                     { label: 'Plot Dev.', score: assessment.plotDevelopmentScore || 0, color: 'indigo' },
+//                     {
+//                       label: 'Vocabulary',
+//                       score: assessment.vocabularyScore || 0,
+//                       color: 'orange',
+//                     },
+//                     {
+//                       label: 'Structure',
+//                       score: assessment.structureScore || 0,
+//                       color: 'cyan',
+//                     },
+//                     {
+//                       label: 'Character Dev.',
+//                       score: assessment.characterDevelopmentScore || 0,
+//                       color: 'pink',
+//                     },
+//                     {
+//                       label: 'Plot Dev.',
+//                       score: assessment.plotDevelopmentScore || 0,
+//                       color: 'indigo',
+//                     },
 //                   ].map((item) => (
-//                     <div key={item.label} className="bg-gray-700/30 rounded-lg p-3 text-center">
-//                       <div className={`text-lg font-bold text-${item.color}-400`}>
+//                     <div
+//                       key={item.label}
+//                       className="bg-gray-700/30 rounded-lg p-3 text-center"
+//                     >
+//                       <div
+//                         className={`text-lg font-bold text-${item.color}-400`}
+//                       >
 //                         {item.score}%
 //                       </div>
 //                       <div className="text-gray-300 text-xs">{item.label}</div>
@@ -418,12 +511,17 @@
 //                         Your Strengths
 //                       </h3>
 //                       <div className="space-y-2">
-//                         {(assessment.strengths || []).slice(0, 5).map((strength, index) => (
-//                           <div key={index} className="flex items-center text-green-300 text-sm">
-//                             <span className="w-2 h-2 bg-green-400 rounded-full mr-3"></span>
-//                             {strength}
-//                           </div>
-//                         ))}
+//                         {(assessment.strengths || [])
+//                           .slice(0, 5)
+//                           .map((strength, index) => (
+//                             <div
+//                               key={index}
+//                               className="flex items-center text-green-300 text-sm"
+//                             >
+//                               <span className="w-2 h-2 bg-green-400 rounded-full mr-3"></span>
+//                               {strength}
+//                             </div>
+//                           ))}
 //                       </div>
 //                     </div>
 //                   )}
@@ -436,12 +534,17 @@
 //                         Areas to Improve
 //                       </h3>
 //                       <div className="space-y-2">
-//                         {(assessment.improvements || []).map((improvement, index) => (
-//                           <div key={index} className="flex items-center text-yellow-300 text-sm">
-//                             <span className="w-2 h-2 bg-yellow-400 rounded-full mr-3"></span>
-//                             {improvement}
-//                           </div>
-//                         ))}
+//                         {(assessment.improvements || []).map(
+//                           (improvement, index) => (
+//                             <div
+//                               key={index}
+//                               className="flex items-center text-yellow-300 text-sm"
+//                             >
+//                               <span className="w-2 h-2 bg-yellow-400 rounded-full mr-3"></span>
+//                               {improvement}
+//                             </div>
+//                           )
+//                         )}
 //                       </div>
 //                     </div>
 //                   )}
@@ -459,14 +562,16 @@
 //                         Great Words You Used
 //                       </h3>
 //                       <div className="flex flex-wrap gap-2">
-//                         {(assessment.vocabularyUsed || []).map((word, index) => (
-//                           <span
-//                             key={index}
-//                             className="bg-purple-600/30 text-purple-300 px-3 py-1 rounded-lg text-sm font-medium"
-//                           >
-//                             {word}
-//                           </span>
-//                         ))}
+//                         {(assessment.vocabularyUsed || []).map(
+//                           (word, index) => (
+//                             <span
+//                               key={index}
+//                               className="bg-purple-600/30 text-purple-300 px-3 py-1 rounded-lg text-sm font-medium"
+//                             >
+//                               {word}
+//                             </span>
+//                           )
+//                         )}
 //                       </div>
 //                     </div>
 //                   )}
@@ -479,14 +584,16 @@
 //                         New Words to Learn
 //                       </h3>
 //                       <div className="flex flex-wrap gap-2">
-//                         {(assessment.suggestedWords || []).map((word, index) => (
-//                           <span
-//                             key={index}
-//                             className="bg-indigo-600/30 text-indigo-300 px-3 py-1 rounded-lg text-sm font-medium"
-//                           >
-//                             {word}
-//                           </span>
-//                         ))}
+//                         {(assessment.suggestedWords || []).map(
+//                           (word, index) => (
+//                             <span
+//                               key={index}
+//                               className="bg-indigo-600/30 text-indigo-300 px-3 py-1 rounded-lg text-sm font-medium"
+//                             >
+//                               {word}
+//                             </span>
+//                           )
+//                         )}
 //                       </div>
 //                     </div>
 //                   )}
@@ -575,7 +682,7 @@
 // components/stories/AssessmentModal.tsx - FIXED WITH PROPER INTERFACE
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import {
@@ -658,50 +765,8 @@ export default function AssessmentModal({
     }
   }, [propAssessment]);
 
-  // When modal opens, try to get existing assessment first ONLY if no prop assessment
-  useEffect(() => {
-    if (
-      isOpen &&
-      storySession &&
-      !propAssessment &&
-      !assessment &&
-      mountedRef.current
-    ) {
-      console.log('🔍 No assessment prop, fetching from API...');
-      fetchExistingAssessment();
-    }
-  }, [isOpen, storySession, propAssessment]);
-
-  const fetchExistingAssessment = async () => {
-    if (!storySession || !mountedRef.current) return;
-
-    setIsAssessing(true);
-
-    try {
-      // Try to get existing assessment first
-      const response = await fetch(
-        `/api/stories/session/${storySession._id}/assessment`
-      );
-
-      if (response.ok) {
-        const data = await response.json();
-        if (data.assessment && mountedRef.current) {
-          setAssessment(data.assessment);
-          setIsAssessing(false);
-          return;
-        }
-      }
-
-      // If no existing assessment, generate new one
-      console.log('No existing assessment found, generating...');
-      await generateNewAssessment();
-    } catch (error) {
-      console.error('Error fetching assessment:', error);
-      await generateNewAssessment(); // Fallback to generation
-    }
-  };
-
-  const generateNewAssessment = async () => {
+  // FIXED: Memoized functions to prevent infinite loops
+  const generateNewAssessment = useCallback(async () => {
     if (!storySession || !mountedRef.current) return;
 
     try {
@@ -827,7 +892,56 @@ export default function AssessmentModal({
         setIsAssessing(false);
       }
     }
-  };
+  }, [storySession, toast]);
+
+  const fetchExistingAssessment = useCallback(async () => {
+    if (!storySession || !mountedRef.current) return;
+
+    setIsAssessing(true);
+
+    try {
+      // Try to get existing assessment first
+      const response = await fetch(
+        `/api/stories/session/${storySession._id}/assessment`
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.assessment && mountedRef.current) {
+          setAssessment(data.assessment);
+          setIsAssessing(false);
+          return;
+        }
+      }
+
+      // If no existing assessment, generate new one
+      console.log('No existing assessment found, generating...');
+      await generateNewAssessment();
+    } catch (error) {
+      console.error('Error fetching assessment:', error);
+      await generateNewAssessment(); // Fallback to generation
+    }
+  }, [storySession, generateNewAssessment]);
+
+  // When modal opens, try to get existing assessment first ONLY if no prop assessment
+  useEffect(() => {
+    if (
+      isOpen &&
+      storySession &&
+      !propAssessment &&
+      !assessment &&
+      mountedRef.current
+    ) {
+      console.log('🔍 No assessment prop, fetching from API...');
+      fetchExistingAssessment();
+    }
+  }, [
+    isOpen,
+    storySession,
+    propAssessment,
+    assessment,
+    fetchExistingAssessment,
+  ]);
 
   const handlePublishStory = async () => {
     if (!storySession || !assessment || !mountedRef.current) return;
