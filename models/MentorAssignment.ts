@@ -16,13 +16,11 @@ const MentorAssignmentSchema = new Schema<IMentorAssignment>(
       type: Schema.Types.ObjectId,
       ref: 'User',
       required: true,
-      index: true,
     },
     childId: {
       type: Schema.Types.ObjectId,
       ref: 'User',
       required: true,
-      index: true,
     },
     assignedAt: {
       type: Date,
@@ -37,7 +35,6 @@ const MentorAssignmentSchema = new Schema<IMentorAssignment>(
     isActive: {
       type: Boolean,
       default: true,
-      index: true,
     },
     unassignedAt: {
       type: Date,
@@ -54,7 +51,6 @@ const MentorAssignmentSchema = new Schema<IMentorAssignment>(
 
 // Compound indexes
 MentorAssignmentSchema.index({ mentorId: 1, isActive: 1 });
-MentorAssignmentSchema.index({ childId: 1, isActive: 1 });
 
 // Ensure a child can only be assigned to one active mentor
 MentorAssignmentSchema.index(
