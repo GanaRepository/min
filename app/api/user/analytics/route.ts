@@ -7,6 +7,8 @@ import User from '@/models/User';
 import StorySession from '@/models/StorySession';
 import mongoose from 'mongoose';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   try {
     const session = await getServerSession(authOptions);

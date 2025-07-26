@@ -1046,6 +1046,55 @@ export default function StoryWritingPage({
   console.log('📊 Assessment state:', assessment);
   console.log('👀 Show assessment:', showAssessment);
 
+  // FIXED: Memoized pollForAIOpening function
+  const pollForAIOpening = useCallback(
+    (actualSessionId: string) => {
+      setIsAIGenerating(true);
+
+      toast({
+        title: '🤖 AI Teacher is Preparing',
+        description: 'Your story opening is being crafted...',
+      });
+
+      const pollInterval = setInterval(async () => {
+        try {
+          const response = await fetch(
+            `/api/stories/session/${actualSessionId}`
+          );
+          const data = await response.json();
+
+          if (data.session?.aiOpening) {
+            setStorySession((prev) =>
+              prev ? { ...prev, aiOpening: data.session.aiOpening } : null
+            );
+            setIsAIGenerating(false);
+            clearInterval(pollInterval);
+
+            toast({
+              title: '✨ Story Opening Ready!',
+              description: 'Your AI teacher has prepared your story opening!',
+            });
+          }
+        } catch (error) {
+          console.error('Error polling for AI opening:', error);
+        }
+      }, 3000);
+
+      setTimeout(() => {
+        clearInterval(pollInterval);
+        if (isAIGenerating) {
+          setIsAIGenerating(false);
+          toast({
+            title: '⏰ Taking Longer Than Expected',
+            description:
+              'You can start writing while AI prepares your opening.',
+          });
+        }
+      }, 180000);
+    },
+    [toast, setIsAIGenerating, setStorySession, isAIGenerating]
+  );
+
   // FIXED: Memoized fetchStorySession function
   const fetchStorySession = useCallback(async () => {
     try {
@@ -1095,7 +1144,7 @@ export default function StoryWritingPage({
     } finally {
       setIsLoading(false);
     }
-  }, [sessionId, toast]);
+  }, [sessionId, toast, pollForAIOpening]);
 
   useEffect(() => {
     if (status === 'loading') return;
@@ -1125,47 +1174,7 @@ export default function StoryWritingPage({
     }
   };
 
-  const pollForAIOpening = (actualSessionId: string) => {
-    setIsAIGenerating(true);
-
-    toast({
-      title: '🤖 AI Teacher is Preparing',
-      description: 'Your story opening is being crafted...',
-    });
-
-    const pollInterval = setInterval(async () => {
-      try {
-        const response = await fetch(`/api/stories/session/${actualSessionId}`);
-        const data = await response.json();
-
-        if (data.session?.aiOpening) {
-          setStorySession((prev) =>
-            prev ? { ...prev, aiOpening: data.session.aiOpening } : null
-          );
-          setIsAIGenerating(false);
-          clearInterval(pollInterval);
-
-          toast({
-            title: '✨ Story Opening Ready!',
-            description: 'Your AI teacher has prepared your story opening!',
-          });
-        }
-      } catch (error) {
-        console.error('Error polling for AI opening:', error);
-      }
-    }, 3000);
-
-    setTimeout(() => {
-      clearInterval(pollInterval);
-      if (isAIGenerating) {
-        setIsAIGenerating(false);
-        toast({
-          title: '⏰ Taking Longer Than Expected',
-          description: 'You can start writing while AI prepares your opening.',
-        });
-      }
-    }, 180000);
-  };
+  // (removed duplicate pollForAIOpening declaration)
 
   // FIXED: fetchAssessment function with correct API endpoint
   const fetchAssessment = async () => {

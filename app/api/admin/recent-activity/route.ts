@@ -6,6 +6,8 @@ import User from '@/models/User';
 import StorySession from '@/models/StorySession';
 import StoryComment from '@/models/StoryComment';
 
+export const dynamic = 'force-dynamic';
+
 interface Activity {
   id: string;
   type: string;

@@ -7,6 +7,8 @@ import StorySession from '@/models/StorySession';
 import User from '@/models/User';
 import StoryComment from '@/models/StoryComment';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: Request) {
   try {
     const session = await getServerSession(authOptions);
