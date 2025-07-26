@@ -49,8 +49,8 @@ export default function AdminDashboard() {
   useEffect(() => {
     if (status === 'loading') return;
 
-    if (!session || session.user.role !== 'admin') {
-      router.push('/login/admin');
+    if (!session || session.user?.role !== 'admin') {
+      router.push('/admin/login');
       return;
     }
 
@@ -64,15 +64,18 @@ export default function AdminDashboard() {
         fetch('/api/admin/recent-activity'),
       ]);
 
-      const statsData = await statsResponse.json();
-      const activityData = await activityResponse.json();
-
-      if (statsData.success) {
-        setStats(statsData.stats);
+      if (statsResponse.ok) {
+        const statsData = await statsResponse.json();
+        if (statsData.success) {
+          setStats(statsData.stats);
+        }
       }
 
-      if (activityData.success) {
-        setRecentActivity(activityData.activities);
+      if (activityResponse.ok) {
+        const activityData = await activityResponse.json();
+        if (activityData.success) {
+          setRecentActivity(activityData.activities);
+        }
       }
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
@@ -230,7 +233,7 @@ export default function AdminDashboard() {
             Quick Actions
           </h3>
           <div className="space-y-3">
-            <Link href="/admin/mentors/create">
+            <Link href="/admin/create-mentor">
               <button className="w-full bg-gradient-to-r from-green-600 to-green-700 text-white py-2 px-4 rounded-lg hover:from-green-700 hover:to-green-800 transition-all duration-200">
                 Create Mentor
               </button>

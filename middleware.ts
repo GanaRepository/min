@@ -399,7 +399,7 @@ const publicPaths = [
   '/login',
   '/login/child',
   '/login/mentor',
-  '/login/admin',
+  '/admin/login',
   '/register',
   '/register/child',
   '/register/mentor',
@@ -561,7 +561,7 @@ export async function middleware(request: NextRequest) {
     ) {
       if (!token) {
         logMiddleware('warn', `Unauthenticated admin access attempt: ${path}`);
-        return NextResponse.redirect(new URL('/login/admin', request.url));
+        return NextResponse.redirect(new URL('/admin/login', request.url));
       }
 
       if (token.role !== 'admin') {

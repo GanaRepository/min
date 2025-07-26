@@ -1099,7 +1099,7 @@ export default function Home() {
             transition={{ delay: 0.5 }}
             viewport={{ once: true }}
           >
-            <Link href="/create-story">
+            <Link href="/create-stories">
               <motion.button
                 className="group relative px-10 py-4 bg-gradient-to-r from-purple-500 to-blue-600 rounded-xl font-semibold text-lg text-white shadow-lg shadow-purple-500/25 overflow-hidden"
                 whileHover={{ scale: 1.05 }}
