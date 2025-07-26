@@ -1,4 +1,3 @@
-// //models/User.ts
 // import mongoose, { Schema, Document } from 'mongoose';
 
 // export interface IUser extends Document {
@@ -15,7 +14,7 @@
 //   avatar?: string;
 //   isActive: boolean;
 
-//   // ADDED: Subscription fields
+//   // Subscription fields
 //   subscriptionTier: 'FREE' | 'BASIC' | 'PREMIUM';
 //   subscriptionStatus: 'active' | 'inactive' | 'cancelled';
 //   billingPeriodStart?: Date;
@@ -37,6 +36,10 @@
 //     soundEffects: boolean;
 //     autoSave: boolean;
 //   };
+
+//   // Optional mentor/child relationship fields
+//   assignedMentor?: mongoose.Types.ObjectId;
+//   createdBy?: mongoose.Types.ObjectId;
 
 //   createdAt: Date;
 //   updatedAt: Date;
@@ -99,7 +102,7 @@
 //       default: true,
 //     },
 
-//     // ADDED: Subscription fields with defaults
+//     // Subscription fields with defaults
 //     subscriptionTier: {
 //       type: String,
 //       enum: ['FREE', 'BASIC', 'PREMIUM'],
@@ -183,10 +186,21 @@
 //         default: true,
 //       },
 //     },
+
+//     // Optional relationship fields
+//     assignedMentor: {
+//       type: Schema.Types.ObjectId,
+//       ref: 'User',
+//     },
+//     createdBy: {
+//       type: Schema.Types.ObjectId,
+//       ref: 'User',
+//     },
 //   },
 //   {
 //     timestamps: true,
-//   }
+//   },
+ 
 // );
 
 // UserSchema.index({ role: 1, isActive: 1 });
@@ -210,6 +224,7 @@ export interface IUser extends Document {
   school?: string;
   avatar?: string;
   isActive: boolean;
+  isVerified: boolean; // Added this field
 
   // Subscription fields
   subscriptionTier: 'FREE' | 'BASIC' | 'PREMIUM';
@@ -297,6 +312,12 @@ const UserSchema = new Schema<IUser>(
     isActive: {
       type: Boolean,
       default: true,
+    },
+    // Added isVerified field
+    isVerified: {
+      type: Boolean,
+      required: true,
+      default: false,
     },
 
     // Subscription fields with defaults
@@ -399,8 +420,12 @@ const UserSchema = new Schema<IUser>(
   }
 );
 
+// Indexes
 UserSchema.index({ role: 1, isActive: 1 });
 UserSchema.index({ subscriptionTier: 1, subscriptionStatus: 1 });
+UserSchema.index({ email: 1, isVerified: 1 }); // Added index for verification queries
+UserSchema.index({ isActive: 1, isVerified: 1 }); // Added compound index
+
 
 export default mongoose.models.User ||
   mongoose.model<IUser>('User', UserSchema);

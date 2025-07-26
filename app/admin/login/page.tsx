@@ -1,295 +1,330 @@
-// app/admin/login/page.tsx
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { useInView } from 'react-intersection-observer';
-import { ArrowLeft, Shield, Mail, KeyRound, Eye, EyeOff } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { signIn, getSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
-import { signIn } from 'next-auth/react';
 
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import {
-  ToastProvider,
-  ToastViewport,
-  Toast,
-  ToastTitle,
-  ToastDescription,
-  ToastClose,
-} from '@/components/ui/toast';
-
-import useSessionStore from '@/stores/useSessionStore';
-
-const AdminLoginPage: React.FC = () => {
+export default function AdminLogin() {
+  const router = useRouter();
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+  });
   const [isLoading, setIsLoading] = useState(false);
-  const [toastVisible, setToastVisible] = useState(false);
-  const [toastMessage, setToastMessage] = useState('');
-  const [toastType, setToastType] = useState<'default' | 'destructive'>(
-    'default'
-  );
+  const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [email, setEmail] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
-  const [error, setError] = useState<string>('');
 
-  const { ref: heroRef, inView: heroInView } = useInView({
-    triggerOnce: true,
-    threshold: 0.1,
-  });
-
-  const { ref: formRef, inView: formInView } = useInView({
-    triggerOnce: true,
-    threshold: 0.1,
-  });
-
-  const fetchSession = useSessionStore((state) => state.fetchSession);
-
-  // Auto-hide toast after 5 seconds
   useEffect(() => {
-    if (toastVisible) {
-      const timer = setTimeout(() => {
-        setToastVisible(false);
-      }, 5000);
-      return () => clearTimeout(timer);
-    }
-  }, [toastVisible]);
+    const checkExistingSession = async () => {
+      const session = await getSession();
+      if (session?.user?.role === 'admin') {
+        router.push('/admin/dashboard');
+      }
+    };
+    checkExistingSession();
+  }, [router]);
 
-  const showToast = (message: string, type: 'default' | 'destructive') => {
-    setToastMessage(message);
-    setToastType(type);
-    setToastVisible(true);
-  };
-
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-  };
-
-  const handleLoginSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError('');
 
     try {
       const result = await signIn('credentials', {
+        email: formData.email,
+        password: formData.password,
         redirect: false,
-        email,
-        password,
       });
 
       if (result?.error) {
-        setError(result.error);
-        showToast(`Login Failed: ${result.error}`, 'destructive');
-      } else if (result?.ok) {
-        showToast('Login successful! Redirecting to dashboard...', 'default');
-
-        // Fetch session to update the Zustand store
-        await fetchSession();
-
-        // Use a short timeout to ensure the toast is visible
-        setTimeout(() => {
-          window.location.href = '/admin/dashboard';
-        }, 1000);
+        setError('Invalid email or password');
+        setIsLoading(false);
+        return;
       }
+
+      const session = await getSession();
+      if (session?.user?.role !== 'admin') {
+        setError('Access denied. Admin privileges required.');
+        setIsLoading(false);
+        return;
+      }
+
+      router.push('/admin/dashboard');
     } catch (error) {
-      setError('An unexpected error occurred. Please try again.');
-      showToast('Login Failed: An unexpected error occurred', 'destructive');
-    } finally {
+      setError('An error occurred. Please try again.');
       setIsLoading(false);
     }
   };
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+    if (error) setError('');
+  };
+
   return (
-    <ToastProvider>
-      {/* Hero Section */}
-      <section className="relative overflow-hidden pt-16 pattern-bg">
-        <div className="container mx-auto px-4 py-12 sm:py-16 md:py-24 relative z-10">
-          <div
-            ref={heroRef}
-            className={`max-w-5xl mx-auto text-center transition-all duration-1000 ${
-              heroInView
-                ? 'opacity-100 translate-y-0'
-                : 'opacity-0 translate-y-12'
-            }`}
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-red-900 flex items-center justify-center relative overflow-hidden">
+      {/* Animated Background */}
+      <div className="absolute inset-0 overflow-hidden">
+        <motion.div
+          animate={{
+            rotate: [0, 360],
+            scale: [1, 1.1, 1],
+          }}
+          transition={{
+            duration: 20,
+            repeat: Infinity,
+            ease: "linear"
+          }}
+          className="absolute top-1/4 left-1/4 w-64 h-64 bg-red-500/10 rounded-full blur-xl"
+        />
+        <motion.div
+          animate={{
+            rotate: [360, 0],
+            scale: [1.1, 1, 1.1],
+          }}
+          transition={{
+            duration: 15,
+            repeat: Infinity,
+            ease: "linear"
+          }}
+          className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-gray-500/10 rounded-full blur-xl"
+        />
+      </div>
+
+      {/* Floating Admin Icons */}
+      <div className="absolute inset-0 pointer-events-none">
+        {[...Array(6)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute text-red-300/20 text-4xl"
+            initial={{
+              x: Math.random() * 1200,
+              y: Math.random() * 800,
+            }}
+            animate={{
+              y: [0, -30, 0],
+              rotate: [0, 180, 360],
+              opacity: [0.3, 0.7, 0.3],
+            }}
+            transition={{
+              duration: 4 + i,
+              repeat: Infinity,
+              delay: i * 0.5,
+            }}
           >
-            <div className="inline-block mb-8">
-              <div className="relative inline-flex items-center justify-center">
-                <div className="absolute -inset-1 rounded-full bg-gradient-to-r from-contact-purple to-contact-teal opacity-70 blur"></div>
-                <div className="relative px-6 py-2 bg-white rounded-full text-sm font-normal text-gray-800">
-                  Admin Access
-                </div>
+            {['👑', '🛡️', '⚡', '🔒', '⚙️', '📊'][i]}
+          </motion.div>
+        ))}
+      </div>
+
+      {/* Login Card */}
+      <motion.div
+        initial={{ opacity: 0, y: 50, scale: 0.9 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+        className="bg-gray-800/90 backdrop-blur-xl border border-gray-600/50 rounded-2xl p-8 w-full max-w-md mx-4 shadow-2xl relative z-10"
+      >
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2, duration: 0.6 }}
+          className="text-center mb-8"
+        >
+          <div className="mb-4">
+            <motion.div
+              animate={{ 
+                rotate: [0, 10, -10, 0],
+                scale: [1, 1.1, 1]
+              }}
+              transition={{ 
+                duration: 2,
+                repeat: Infinity,
+                repeatDelay: 3
+              }}
+              className="w-16 h-16 bg-gradient-to-br from-red-500 to-red-600 rounded-full flex items-center justify-center mx-auto text-white text-2xl shadow-lg"
+            >
+              👑
+            </motion.div>
+          </div>
+          <h1 className="text-3xl font-bold text-white mb-2">
+            Admin Portal
+          </h1>
+          <p className="text-gray-300 text-sm">
+            Secure access to platform management
+          </p>
+        </motion.div>
+
+        {/* Error Message */}
+        <AnimatePresence>
+          {error && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              className="bg-red-500/20 border border-red-500/50 rounded-lg p-3 mb-6"
+            >
+              <div className="flex items-center text-red-300 text-sm">
+                <span className="mr-2">⚠️</span>
+                {error}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Form */}
+        <motion.form
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.4, duration: 0.6 }}
+          onSubmit={handleSubmit}
+          className="space-y-6"
+        >
+          <motion.div
+            initial={{ x: -20, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{ delay: 0.5, duration: 0.5 }}
+          >
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              Admin Email
+            </label>
+            <div className="relative">
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleInputChange}
+                required
+                className="w-full bg-gray-700/50 border border-gray-600 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-300 pl-12"
+                placeholder="admin@mintoons.com"
+              />
+              <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">
+                📧
               </div>
             </div>
+          </motion.div>
 
-            <h1 className="text-5xl md:text-7xl font-normal mb-6 gradient-text leading-tight">
-              Admin Login
-            </h1>
-            <p className="text-xl text-gray-700 mb-12 max-w-3xl mx-auto">
-              Access the admin dashboard to manage employees, resources, and
-              company settings.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Login Form Section */}
-      <section className="py-16 bg-white/90 backdrop-blur-sm">
-        <div className="container mx-auto px-4">
-          <div
-            ref={formRef}
-            className={`max-w-md mx-auto transition-all duration-1000 ${
-              formInView
-                ? 'opacity-100 translate-y-0'
-                : 'opacity-0 translate-y-12'
-            }`}
+          <motion.div
+            initial={{ x: -20, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{ delay: 0.6, duration: 0.5 }}
           >
-            <Link href="/">
-              <Button variant="outline" className="mb-6">
-                <ArrowLeft className="mr-2 h-4 w-4" /> Back to options
-              </Button>
-            </Link>
-
-            <Card className="border shadow-lg">
-              <CardContent className="p-8">
-                <div className="flex items-center justify-center mb-6">
-                  <div className="w-16 h-16 bg-contact-purple/10 rounded-full flex items-center justify-center text-contact-purple">
-                    <Shield className="h-8 w-8" />
-                  </div>
-                </div>
-
-                <h2 className="text-2xl font-medium text-center mb-8">
-                  Admin Login
-                </h2>
-
-                <form onSubmit={handleLoginSubmit} className="space-y-6">
-                  <div className="space-y-2">
-                    <Label
-                      htmlFor="admin-email"
-                      className="flex items-center gap-2"
-                    >
-                      <Mail className="h-4 w-4 text-contact-purple" /> Email
-                    </Label>
-                    <Input
-                      id="admin-email"
-                      type="email"
-                      placeholder="admin@example.com"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value.toLowerCase())}
-                      required
-                      autoComplete="email"
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label
-                      htmlFor="admin-password"
-                      className="flex items-center gap-2"
-                    >
-                      <KeyRound className="h-4 w-4 text-contact-purple" />{' '}
-                      Password
-                    </Label>
-                    <div className="relative">
-                      <Input
-                        id="admin-password"
-                        type={showPassword ? 'text' : 'password'}
-                        placeholder="Enter your password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                        autoComplete="current-password"
-                        className="pr-10"
-                      />
-                      <button
-                        type="button"
-                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-contact-purple transition-colors"
-                        onClick={togglePasswordVisibility}
-                        tabIndex={-1}
-                      >
-                        {showPassword ? (
-                          <EyeOff size={18} />
-                        ) : (
-                          <Eye size={18} />
-                        )}
-                      </button>
-                    </div>
-                  </div>
-
-                  <Button
-                    type="submit"
-                    className="w-full bg-gradient-to-r from-contact-purple to-contact-teal text-white"
-                    disabled={isLoading}
-                  >
-                    {isLoading ? (
-                      <span className="flex items-center justify-center">
-                        <span className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></span>
-                        Signing in...
-                      </span>
-                    ) : (
-                      'Sign In'
-                    )}
-                  </Button>
-                </form>
-
-                <div className="mt-6 text-center">
-                  <p className="text-sm text-gray-500 mt-4">
-                    By signing in, you agree to our{' '}
-                    <Link
-                      href="/terms"
-                      className="text-contact-purple hover:underline"
-                    >
-                      Terms of Service
-                    </Link>{' '}
-                    and{' '}
-                    <Link
-                      href="/privacy"
-                      className="text-contact-purple hover:underline"
-                    >
-                      Privacy Policy
-                    </Link>
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* Toast Notification */}
-      {toastVisible && (
-        <Toast
-          variant={toastType}
-          className={`fixed top-4 right-4 z-50 w-auto max-w-md ${
-            toastType === 'default'
-              ? 'bg-contact-purple/10 border-contact-purple'
-              : 'bg-red-950 border-red-500'
-          }`}
-        >
-          <div className="flex">
-            <div className="flex-1">
-              <ToastTitle
-                className={
-                  toastType === 'default'
-                    ? 'text-contact-purple'
-                    : 'text-red-300'
-                }
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              Admin Password
+            </label>
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                name="password"
+                value={formData.password}
+                onChange={handleInputChange}
+                required
+                className="w-full bg-gray-700/50 border border-gray-600 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-300 pl-12 pr-12"
+                placeholder="Enter your admin password"
+              />
+              <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">
+                🔒
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-300 transition-colors"
               >
-                {toastType === 'default' ? 'Success' : 'Error'}
-              </ToastTitle>
-              <ToastDescription className="text-gray-700 dark:text-white">
-                {toastMessage}
-              </ToastDescription>
+                {showPassword ? '🙈' : '👁️'}
+              </button>
             </div>
-            <ToastClose
-              onClick={() => setToastVisible(false)}
-              className="opacity-100 text-gray-700 dark:text-white hover:text-gray-500"
-            />
-          </div>
-        </Toast>
-      )}
-      <ToastViewport />
-    </ToastProvider>
-  );
-};
+          </motion.div>
 
-export default AdminLoginPage;
+          <motion.button
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.7, duration: 0.5 }}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            type="submit"
+            disabled={isLoading}
+            className="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden"
+          >
+            <AnimatePresence mode="wait">
+              {isLoading ? (
+                <motion.div
+                  key="loading"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="flex items-center justify-center"
+                >
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                    className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full mr-2"
+                  />
+                  Authenticating...
+                </motion.div>
+              ) : (
+                <motion.span
+                  key="submit"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="flex items-center justify-center"
+                >
+                  🚀 Access Admin Portal
+                </motion.span>
+              )}
+            </AnimatePresence>
+          </motion.button>
+        </motion.form>
+
+        {/* Security Notice */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.8, duration: 0.6 }}
+          className="mt-6 p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-lg"
+        >
+          <div className="flex items-start">
+            <span className="text-yellow-400 mr-2 mt-0.5">🛡️</span>
+            <div className="text-yellow-300 text-xs">
+              <p className="font-medium mb-1">Security Notice</p>
+              <p>This is a restricted access portal. All admin activities are logged and monitored.</p>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Back Link */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.9, duration: 0.6 }}
+          className="mt-8 text-center"
+        >
+          <Link
+            href="/"
+            className="text-gray-400 hover:text-gray-300 text-sm transition-colors duration-300"
+          >
+            ← Back to Mintoons
+          </Link>
+        </motion.div>
+      </motion.div>
+
+      {/* Bottom Text */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 1, duration: 0.6 }}
+        className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-center"
+      >
+        <p className="text-gray-500 text-xs">
+          Mintoons Admin Portal v1.0 • Secure Access
+        </p>
+      </motion.div>
+    </div>
+  );
+}

@@ -1,567 +1,191 @@
 'use client';
 
-import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
+import { useSession } from 'next-auth/react';
+import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
-import {
+import { 
+  Users, 
+  FileText, 
+  MessageSquare, 
+  BarChart3, 
+  Settings, 
   LogOut,
-  Briefcase,
-  FileText,
-  LayoutDashboard,
   Menu,
-  Users,
-  Edit3,
-  Clock,
-  MessageSquare,
+  X,
+  Crown,
+  UserCheck,
+  BookOpen
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-  SheetClose,
-} from '@/components/ui/sheet';
-import useSessionStore from '@/stores/useSessionStore';
+import { motion, AnimatePresence } from 'framer-motion';
 
-export default function AdminLayout({
-  children,
-}: {
+interface AdminLayoutProps {
   children: React.ReactNode;
-}) {
-  const pathname = usePathname();
-  const router = useRouter();
-  const [loading, setLoading] = useState(true);
+}
 
-  // Get session data and fetch function from store
-  const { session, loading: sessionLoading, fetchSession } = useSessionStore();
+export default function AdminLayout({ children }: AdminLayoutProps) {
+  const { data: session, status } = useSession();
+  const router = useRouter();
+  const pathname = usePathname();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
-    if (pathname === '/admin/login') {
-      setLoading(false);
+    if (status === 'loading') return;
+    
+    if (!session || session.user.role !== 'admin') {
+      router.push('/login/admin');
       return;
     }
+  }, [session, status, router]);
 
-    const verifyAuth = async () => {
-      // First check Zustand store
-      if (session) {
-        setLoading(false);
-        return;
-      }
+  const navigation = [
+    { name: 'Dashboard', href: '/admin', icon: BarChart3 },
+    { name: 'All Users', href: '/admin/users', icon: Users },
+    { name: 'All Stories', href: '/admin/stories', icon: BookOpen },
+    { name: 'Comments & Reviews', href: '/admin/comments', icon: MessageSquare },
+    { name: 'Mentors', href: '/admin/mentors', icon: UserCheck },
+    { name: 'Analytics', href: '/admin/analytics', icon: BarChart3 },
+    { name: 'Settings', href: '/admin/settings', icon: Settings },
+  ];
 
-      // If no session in store, try to fetch it
-      await fetchSession();
+  const isActive = (path: string) => {
+    if (path === '/admin') {
+      return pathname === '/admin';
+    }
+    return pathname.startsWith(path);
+  };
 
-      // After fetch, check if we have a session
-      const currentSession = useSessionStore.getState().session;
-
-      if (!currentSession) {
-        router.push('/admin/login');
-      } else {
-        setLoading(false);
-      }
-    };
-
-    verifyAuth();
-  }, [pathname, router, session, fetchSession]);
-
-  if (loading && pathname !== '/admin/login') {
+  if (status === 'loading') {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-[#F6F9FC]">
-        <div className="text-center">
-          <div className="animate-spin h-8 w-8 border-4 border-[#7E69AB] border-t-transparent rounded-full mx-auto mb-4"></div>
-          <p className="text-gray-700">Loading dashboard...</p>
-        </div>
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+        <div className="text-white text-xl">Loading admin panel...</div>
       </div>
     );
   }
 
-  if (pathname === '/admin/login') {
-    return children;
+  if (!session || session.user.role !== 'admin') {
+    return null;
   }
 
-  const isActive = (path: string) => {
-    return pathname === path;
-  };
-
-  const NavButton = ({
-    path,
-    icon: Icon,
-    label,
-    className = '',
-  }: {
-    path: string;
-    icon: React.ComponentType<{ className?: string }>;
-    label: string;
-    className?: string;
-  }) => (
-    <Button
-      variant={isActive(path) ? 'default' : 'ghost'}
-      className={`justify-start ${
-        isActive(path)
-          ? 'bg-[#7E69AB] text-white'
-          : 'text-gray-700 hover:text-[#7E69AB] hover:bg-[#7E69AB]/10'
-      } ${className}`}
-      onClick={() => router.push(path)}
-    >
-      <Icon className="h-4 w-4 mr-2" />
-      {label}
-    </Button>
-  );
-
   return (
-    <div className="min-h-screen bg-[#F6F9FC]">
-      {/* Desktop Navigation (Two-Row) - Only visible on lg and above */}
-      <nav className="fixed top-0 inset-x-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100 hidden lg:block w-full">
-        <div className="w-full px-4">
-          {/* First row - Logo and company name */}
-          <div className="flex justify-between h-16 border-b  border-gray-200">
-            <div className="flex items-center">
-              <div className="flex items-center">
-                <div className="text-2xl text-gray-900 font-heading mr-1">
-                  Pioneer
-                </div>
-                <div className="text-2xl text-[#7E69AB] font-heading">IT</div>
-                <div className="text-2xl text-gray-900 font-heading ml-1">
-                  Systems
-                </div>
-                <div className="text-xl text-gray-900 ml-1">🚀</div>
-              </div>
-            </div>
-            <div className="flex items-center">
-              <Link href="/logout" passHref legacyBehavior>
-                <Button
-                  variant="outline"
-                  className="gradient-button text-white rounded-full"
-                >
-                  <LogOut className="h-4 w-4 mr-2" />
-                  Logout
-                </Button>
-              </Link>
-            </div>
-          </div>
-
-          {/* Second row - Navigation buttons */}
-          <div className="flex flex-wrap items-center h-auto p-2">
-            <div className="flex justify-center space-x-4 flex-wrap">
-              <NavButton
-                path="/admin/dashboard"
-                icon={LayoutDashboard}
-                label="Inquiry/Feedback"
-                className="mx-4 lg:ml-10"
-              />
-              <NavButton
-                path="/admin/job-openings"
-                icon={Briefcase}
-                label="Post Job Openings"
-                className="mx-4"
-              />
-              <NavButton
-                path="/admin/applications"
-                icon={FileText}
-                label="Job Applications Received"
-                className="mx-4"
-              />
-              <NavButton
-                path="/admin/manage-employees"
-                icon={Users}
-                label="Create & Manage Employees"
-                className="mx-4"
-              />
-              <NavButton
-                path="/admin/manage-users"
-                icon={Users}
-                label="Manage Users"
-                className="mx-4"
-              />
-              <NavButton
-                path="/admin/timesheets"
-                icon={Clock}
-                label="Manage Timesheets"
-                className="mx-4"
-              />
-              <NavButton
-                path="/admin/blogs"
-                icon={Edit3}
-                label="Post Blogs"
-                className="mx-4"
-              />
-              <NavButton
-                path="/admin/comments"
-                icon={MessageSquare}
-                label="Blog Comments"
-                className="mx-4"
-              />
-            </div>
-          </div>
-        </div>
-      </nav>
-
-      {/* Tablet Navigation (Single Row with Hamburger) - Only visible on sm to md */}
-      <nav className="fixed top-0 inset-x-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100 hidden sm:block lg:hidden w-full">
-        <div className="w-full px-4 sm:px-6">
-          <div className="flex justify-between h-16">
-            <div className="flex items-center">
-              <div className="flex items-center">
-                <div className="text-2xl text-gray-900 font-heading mr-1">
-                  Pioneer
-                </div>
-                <div className="text-2xl text-[#7E69AB] font-heading">IT</div>
-                <div className="text-2xl text-gray-900 font-heading ml-1">
-                  Systems
-                </div>
-                <div className="text-xl text-gray-900 ml-1">🚀</div>
-              </div>
-            </div>
-            <div className="flex items-center space-x-4">
-              <Link href="/logout" passHref legacyBehavior>
-                <Button
-                  variant="outline"
-                  className="text-gray-700 border-gray-300 hover:bg-[#7E69AB]/10 hover:text-[#7E69AB] rounded-full mr-2"
-                >
-                  <LogOut className="h-4 w-4 mr-2" />
-                  Logout
-                </Button>
-              </Link>
-
-              <Sheet>
-                <SheetTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="text-gray-700 hover:bg-[#7E69AB]/10"
-                  >
-                    <Menu className="h-6 w-6" />
-                  </Button>
-                </SheetTrigger>
-                <SheetContent
-                  side="right"
-                  className="bg-white border-gray-100 w-64"
-                >
-                  <SheetHeader>
-                    <SheetTitle className="text-gray-900">Menu</SheetTitle>
-                  </SheetHeader>
-                  <div className="flex flex-col space-y-4 pt-6">
-                    <SheetClose asChild>
-                      <NavButton
-                        path="/admin/dashboard"
-                        icon={LayoutDashboard}
-                        label="Inquiry/Feedback"
-                        className="w-full"
-                      />
-                    </SheetClose>
-
-                    <SheetClose asChild>
-                      <NavButton
-                        path="/admin/job-openings"
-                        icon={Briefcase}
-                        label="Post Job Openings"
-                        className="w-full"
-                      />
-                    </SheetClose>
-
-                    <SheetClose asChild>
-                      <NavButton
-                        path="/admin/applications"
-                        icon={FileText}
-                        label="Job Applications Received"
-                        className="w-full"
-                      />
-                    </SheetClose>
-
-                    <SheetClose asChild>
-                      <NavButton
-                        path="/admin/manage-employees"
-                        icon={Users}
-                        label="Create & Manage Employees"
-                        className="w-full"
-                      />
-                    </SheetClose>
-
-                    <SheetClose asChild>
-                      <NavButton
-                        path="/admin/manage-users"
-                        icon={Users}
-                        label="Manage Users"
-                        className="w-full"
-                      />
-                    </SheetClose>
-
-                    <SheetClose asChild>
-                      <NavButton
-                        path="/admin/timesheets"
-                        icon={Clock}
-                        label="Manage Timesheets"
-                        className="w-full"
-                      />
-                    </SheetClose>
-
-                    <SheetClose asChild>
-                      <NavButton
-                        path="/admin/blogs"
-                        icon={Edit3}
-                        label="Post Blogs"
-                        className="w-full"
-                      />
-                    </SheetClose>
-
-                    <SheetClose asChild>
-                      <NavButton
-                        path="/admin/comments"
-                        icon={MessageSquare}
-                        label="Blog Comments"
-                        className="w-full"
-                      />
-                    </SheetClose>
-                  </div>
-                </SheetContent>
-              </Sheet>
-            </div>
-          </div>
-        </div>
-      </nav>
-
-      {/* Mobile Navigation */}
-      <nav className="sm:hidden fixed top-0 inset-x-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100 w-full">
-        <div className="flex justify-between items-center p-4">
-          <div className="flex items-center">
-            <div className="text-xl text-gray-900 font-heading mr-1">
-              Pioneer
-            </div>
-            <div className="text-xl text-[#7E69AB] font-heading">IT</div>
-            <div className="text-xl text-gray-900 font-heading ml-1">
-              Systems
-            </div>
-            <div className="text-lg text-gray-900 ml-1">🚀</div>
-          </div>
-
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="text-gray-700 hover:bg-[#7E69AB]/10"
-              >
-                <Menu className="h-6 w-6" />
-              </Button>
-            </SheetTrigger>
-            <SheetContent
-              side="right"
-              className="bg-white border-gray-100 w-64"
-            >
-              <SheetHeader>
-                <SheetTitle className="text-gray-900">Menu</SheetTitle>
-              </SheetHeader>
-              <div className="flex flex-col space-y-4 pt-6">
-                <SheetClose asChild>
-                  <NavButton
-                    path="/admin/dashboard"
-                    icon={LayoutDashboard}
-                    label="Inquiry/Feedback"
-                    className="w-full"
-                  />
-                </SheetClose>
-
-                <SheetClose asChild>
-                  <NavButton
-                    path="/admin/job-openings"
-                    icon={Briefcase}
-                    label="Post Job Openings"
-                    className="w-full"
-                  />
-                </SheetClose>
-
-                <SheetClose asChild>
-                  <NavButton
-                    path="/admin/applications"
-                    icon={FileText}
-                    label="Job Applications Received"
-                    className="w-full"
-                  />
-                </SheetClose>
-
-                <SheetClose asChild>
-                  <NavButton
-                    path="/admin/manage-employees"
-                    icon={Users}
-                    label="Create & Manage Employees"
-                    className="w-full"
-                  />
-                </SheetClose>
-
-                <SheetClose asChild>
-                  <NavButton
-                    path="/admin/manage-users"
-                    icon={Users}
-                    label="Manage Users"
-                    className="w-full"
-                  />
-                </SheetClose>
-
-                <SheetClose asChild>
-                  <NavButton
-                    path="/admin/timesheets"
-                    icon={Clock}
-                    label="Manage Timesheets"
-                    className="w-full"
-                  />
-                </SheetClose>
-
-                <SheetClose asChild>
-                  <NavButton
-                    path="/admin/blogs"
-                    icon={Edit3}
-                    label="Post Blogs"
-                    className="w-full"
-                  />
-                </SheetClose>
-
-                <SheetClose asChild>
-                  <NavButton
-                    path="/admin/comments"
-                    icon={MessageSquare}
-                    label="Blog Comments"
-                    className="w-full"
-                  />
-                </SheetClose>
-
-                <SheetClose asChild>
-                  <Link href="/logout" passHref legacyBehavior>
-                    <Button
-                      variant="ghost"
-                      className="justify-start w-full text-white gradient-button"
-                    >
-                      <LogOut className="h-4 w-4 mr-2" />
-                      Logout
-                    </Button>
-                  </Link>
-                </SheetClose>
-              </div>
-            </SheetContent>
-          </Sheet>
-        </div>
-      </nav>
-
-      {/* Mobile Bottom Bar */}
-      <div className="sm:hidden fixed bottom-4 left-0 right-0 z-50 flex justify-center w-full">
-        <div className="flex items-center space-x-1 rounded-full bg-white backdrop-blur-lg border border-gray-100 p-1.5 shadow-lg">
-          <Button
-            variant="ghost"
-            size="sm"
-            className={`rounded-full p-2 ${
-              isActive('/admin/dashboard')
-                ? 'bg-gradient-to-r from-[#7E69AB] to-[#33C3F0] text-white'
-                : 'text-gray-700'
-            }`}
-            onClick={() => router.push('/admin/dashboard')}
-          >
-            <LayoutDashboard className="h-5 w-5" />
-          </Button>
-
-          <Button
-            variant="ghost"
-            size="sm"
-            className={`rounded-full p-2 ${
-              isActive('/admin/job-openings')
-                ? 'bg-gradient-to-r from-[#7E69AB] to-[#33C3F0] text-white'
-                : 'text-gray-700'
-            }`}
-            onClick={() => router.push('/admin/job-openings')}
-          >
-            <Briefcase className="h-5 w-5" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            className={`rounded-full p-2 ${
-              isActive('/admin/applications')
-                ? 'bg-gradient-to-r from-[#7E69AB] to-[#33C3F0] text-white'
-                : 'text-gray-700'
-            }`}
-            onClick={() => router.push('/admin/applications')}
-          >
-            <FileText className="h-5 w-5" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            className={`rounded-full p-2 ${
-              isActive('/admin/manage-employees')
-                ? 'bg-gradient-to-r from-[#7E69AB] to-[#33C3F0] text-white'
-                : 'text-gray-700'
-            }`}
-            onClick={() => router.push('/admin/manage-employees')}
-          >
-            <Users className="h-5 w-5" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            className={`rounded-full p-2 ${
-              isActive('/admin/manage-users')
-                ? 'bg-gradient-to-r from-[#7E69AB] to-[#33C3F0] text-white'
-                : 'text-gray-700'
-            }`}
-            onClick={() => router.push('/admin/manage-users')}
-          >
-            <Users className="h-5 w-5" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            className={`rounded-full p-2 ${
-              isActive('/admin/timesheets')
-                ? 'bg-gradient-to-r from-[#7E69AB] to-[#33C3F0] text-white'
-                : 'text-gray-700'
-            }`}
-            onClick={() => router.push('/admin/timesheets')}
-          >
-            <Clock className="h-5 w-5" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            className={`rounded-full p-2 ${
-              isActive('/admin/blogs')
-                ? 'bg-gradient-to-r from-[#7E69AB] to-[#33C3F0] text-white'
-                : 'text-gray-700'
-            }`}
-            onClick={() => router.push('/admin/blogs')}
-          >
-            <Edit3 className="h-5 w-5" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            className={`rounded-full p-2 ${
-              isActive('/admin/comments')
-                ? 'bg-gradient-to-r from-[#7E69AB] to-[#33C3F0] text-white'
-                : 'text-gray-700'
-            }`}
-            onClick={() => router.push('/admin/comments')}
-          >
-            <MessageSquare className="h-5 w-5" />
-          </Button>
-          <Link href="/logout">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="rounded-full p-2 text-gray-700"
-            >
-              <LogOut className="h-5 w-5" />
-            </Button>
-          </Link>
-        </div>
+    <div className="min-h-screen bg-gray-900 text-white">
+      {/* Mobile menu button */}
+      <div className="lg:hidden fixed top-4 left-4 z-50">
+        <button
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+          className="bg-gray-800 p-2 rounded-lg text-white hover:bg-gray-700 transition-colors"
+        >
+          {sidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+        </button>
       </div>
 
-      <main className="w-full pt-32 lg:pt-28 pb-24 px-4 sm:px-6 lg:px-8">
-        {children}
-      </main>
+      {/* Sidebar */}
+      <AnimatePresence>
+        {(sidebarOpen || window.innerWidth >= 1024) && (
+          <motion.div
+            initial={{ x: -300 }}
+            animate={{ x: 0 }}
+            exit={{ x: -300 }}
+            transition={{ duration: 0.3 }}
+            className="fixed inset-y-0 left-0 w-64 bg-gray-800 border-r border-gray-700 lg:static lg:inset-auto lg:translate-x-0 z-40"
+          >
+            {/* Admin Header */}
+            <div className="p-6 border-b border-gray-700">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-gradient-to-br from-red-500 to-red-600 rounded-full flex items-center justify-center">
+                  <Crown className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h1 className="text-xl font-bold text-white">Admin Portal</h1>
+                  <p className="text-sm text-gray-400">Mintoons Control Center</p>
+                </div>
+              </div>
+            </div>
 
-      <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0 opacity-30 pointer-events-none">
-        <div className="absolute -top-1/4 -right-1/4 w-1/2 h-1/2 bg-[#7E69AB]/5 rounded-full blur-3xl"></div>
-        <div className="absolute -bottom-1/4 -left-1/4 w-1/2 h-1/2 bg-[#33C3F0]/5 rounded-full blur-3xl"></div>
+            {/* Admin Info */}
+            <div className="p-4 border-b border-gray-700">
+              <div className="flex items-center space-x-3">
+                <div className="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center">
+                  <span className="text-sm font-medium">
+                    {session.user.firstName?.[0]}{session.user.lastName?.[0]}
+                  </span>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-white">
+                    {session.user.firstName} {session.user.lastName}
+                  </p>
+                  <p className="text-xs text-gray-400">Administrator</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Navigation */}
+            <nav className="p-4 space-y-2">
+              {navigation.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <Link
+                    key={item.name}
+                    href={item.href}
+                    onClick={() => setSidebarOpen(false)}
+                    className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 ${
+                      isActive(item.href)
+                        ? 'bg-gradient-to-r from-red-600/20 to-red-500/20 border border-red-500/30 text-red-300'
+                        : 'text-gray-300 hover:bg-gray-700 hover:text-white'
+                    }`}
+                  >
+                    <Icon className="w-5 h-5" />
+                    <span className="font-medium">{item.name}</span>
+                  </Link>
+                );
+              })}
+            </nav>
+
+            {/* Logout */}
+            <div className="absolute bottom-4 left-4 right-4">
+              <Link
+                href="/api/auth/signout"
+                className="flex items-center space-x-3 px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-all duration-200"
+              >
+                <LogOut className="w-5 h-5" />
+                <span className="font-medium">Logout</span>
+              </Link>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Mobile overlay */}
+      {sidebarOpen && (
+        <div
+          className="lg:hidden fixed inset-0 bg-black/50 z-30"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
+      {/* Main content */}
+      <div className="lg:ml-64 min-h-screen">
+        {/* Top bar */}
+        <div className="bg-gray-800 border-b border-gray-700 p-4 lg:p-6">
+          <div className="flex items-center justify-between">
+            <div className="lg:hidden" /> {/* Spacer for mobile menu button */}
+            <div className="flex-1 lg:flex-none lg:ml-0 ml-12">
+              <h2 className="text-xl font-semibold text-white">
+                {navigation.find(item => isActive(item.href))?.name || 'Admin Dashboard'}
+              </h2>
+            </div>
+            <div className="flex items-center space-x-4">
+              <span className="text-sm text-gray-400">
+                {new Date().toLocaleDateString()}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Page content */}
+        <main className="p-4 lg:p-6">
+          {children}
+        </main>
       </div>
     </div>
   );
