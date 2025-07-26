@@ -51,13 +51,11 @@ const StorySessionSchema = new Schema<IStorySession>(
       type: Schema.Types.ObjectId,
       ref: 'User',
       required: true,
-      index: true,
     },
     storyNumber: {
       type: Number,
       required: true,
       min: 1,
-      index: true,
     },
     title: {
       type: String,

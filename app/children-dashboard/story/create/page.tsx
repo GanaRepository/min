@@ -141,11 +141,13 @@ function StoryCreateContent() {
 
 export default function StoryCreatePage() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 flex items-center justify-center">
-        <div className="text-white">Loading...</div>
-      </div>
-    }>
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 flex items-center justify-center">
+          <div className="text-white">Loading...</div>
+        </div>
+      }
+    >
       <StoryCreateContent />
     </Suspense>
   );
