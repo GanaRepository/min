@@ -177,13 +177,7 @@ export default function StoriesManagement() {
             Monitor and manage all stories in the platform
           </p>
         </div>
-        <div className="mt-4 sm:mt-0">
-          <Link href="/admin/stories/create">
-            <button className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-4 py-2 rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200">
-              Create Story
-            </button>
-          </Link>
-        </div>
+
       </div>
 
       {/* Stats Cards */}
@@ -268,32 +262,7 @@ export default function StoriesManagement() {
             <option value="paused">Paused</option>
           </select>
 
-          {/* Role Filter */}
-          <select
-            value={roleFilter}
-            onChange={(e) => setRoleFilter(e.target.value)}
-            className="bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="all">All Users</option>
-            <option value="child">Children</option>
-          </select>
-
-          {/* Sort */}
-          <select
-            value={`${sortBy}_${sortOrder}`}
-            onChange={(e) => {
-              const [field, order] = e.target.value.split('_');
-              setSortBy(field);
-              setSortOrder(order);
-            }}
-            className="bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="updatedAt_desc">Recently Updated</option>
-            <option value="createdAt_desc">Recently Created</option>
-            <option value="title_asc">Title A-Z</option>
-            <option value="childName_asc">Author A-Z</option>
-            <option value="totalWords_desc">Most Words</option>
-          </select>
+       
         </div>
       </div>
 

@@ -326,14 +326,7 @@ export default function UsersManagement() {
           </h1>
           <p className="text-gray-400">Manage all users in the platform</p>
         </div>
-        <div className="mt-4 sm:mt-0">
-          <Link href="/admin/create-user">
-            <button className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-4 py-2 rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 flex items-center space-x-2">
-              <UserPlus className="w-4 h-4" />
-              <span>Add User</span>
-            </button>
-          </Link>
-        </div>
+      
       </div>
 
       {/* Stats Cards */}
