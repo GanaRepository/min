@@ -4,6 +4,8 @@ import { authOptions } from '@/utils/authOptions';
 import { connectToDatabase } from '@/utils/db';
 import StoryComment from '@/models/StoryComment';
 
+export const dynamic = 'force-dynamic';
+
 // PATCH - Update comment status
 export async function PATCH(
   request: Request,

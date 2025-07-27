@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
@@ -70,18 +70,7 @@ export default function CommentsManagement() {
   const [totalPages, setTotalPages] = useState(1);
   const limit = 20;
 
-  useEffect(() => {
-    if (status === 'loading') return;
-
-    if (!session || session.user.role !== 'admin') {
-      router.push('/admin/login');
-      return;
-    }
-
-    fetchComments();
-  }, [session, status, router, typeFilter, resolvedFilter, currentPage]);
-
-  const fetchComments = async () => {
+  const fetchComments = useCallback(async () => {
     try {
       const params = new URLSearchParams({
         page: currentPage.toString(),
@@ -105,7 +94,18 @@ export default function CommentsManagement() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [typeFilter, resolvedFilter, currentPage, searchParams]);
+
+  useEffect(() => {
+    if (status === 'loading') return;
+
+    if (!session || session.user.role !== 'admin') {
+      router.push('/admin/login');
+      return;
+    }
+
+    fetchComments();
+  }, [session, status, router, fetchComments]);
 
   const toggleResolveComment = async (
     commentId: string,

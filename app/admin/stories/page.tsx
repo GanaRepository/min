@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
@@ -85,27 +85,7 @@ export default function StoriesManagement() {
   const [totalPages, setTotalPages] = useState(1);
   const limit = 10;
 
-  useEffect(() => {
-    if (status === 'loading') return;
-
-    if (!session || session.user.role !== 'admin') {
-      router.push('/admin/login');
-      return;
-    }
-
-    fetchStories();
-  }, [
-    session,
-    status,
-    router,
-    statusFilter,
-    roleFilter,
-    sortBy,
-    sortOrder,
-    currentPage,
-  ]);
-
-  const fetchStories = async () => {
+  const fetchStories = useCallback(async () => {
     try {
       const params = new URLSearchParams({
         page: currentPage.toString(),
@@ -129,7 +109,18 @@ export default function StoriesManagement() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [statusFilter, roleFilter, sortBy, sortOrder, currentPage]);
+
+  useEffect(() => {
+    if (status === 'loading') return;
+
+    if (!session || session.user?.role !== 'admin') {
+      router.push('/admin/login');
+      return;
+    }
+
+    fetchStories();
+  }, [session, status, router, fetchStories]);
 
   const getStatusIcon = (status: string) => {
     switch (status) {

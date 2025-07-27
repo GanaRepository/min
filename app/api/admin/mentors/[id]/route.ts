@@ -7,6 +7,8 @@ import MentorAssignment from '@/models/MentorAssignment';
 import StorySession from '@/models/StorySession';
 import StoryComment from '@/models/StoryComment';
 
+export const dynamic = 'force-dynamic';
+
 // GET - Get mentor details with assigned students
 export async function GET(
   request: Request,

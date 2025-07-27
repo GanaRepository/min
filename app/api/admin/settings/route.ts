@@ -4,6 +4,8 @@ import { authOptions } from '@/utils/authOptions';
 import { connectToDatabase } from '@/utils/db';
 import PlatformSettings from '@/models/PlatformSettings';
 
+export const dynamic = 'force-dynamic';
+
 // GET - Fetch platform settings
 export async function GET() {
   try {

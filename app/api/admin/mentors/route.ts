@@ -87,6 +87,8 @@ import StorySession from '@/models/StorySession';
 import StoryComment from '@/models/StoryComment';
 import bcrypt from 'bcryptjs';
 
+export const dynamic = 'force-dynamic';
+
 // GET - Fetch all mentors with statistics
 export async function GET() {
   try {

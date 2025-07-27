@@ -5,6 +5,8 @@ import { authOptions } from '@/utils/authOptions';
 import { connectToDatabase } from '@/utils/db';
 import StoryComment from '@/models/StoryComment';
 
+export const dynamic = 'force-dynamic';
+
 // GET - Fetch all comments with filtering
 export async function GET(request: Request) {
   try {
