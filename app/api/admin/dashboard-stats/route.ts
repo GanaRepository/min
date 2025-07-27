@@ -1,12 +1,13 @@
-// app/api/admin/dashboard-stats/route.ts
+export const dynamic = 'force-dynamic';
+
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/utils/authOptions';
 import { connectToDatabase } from '@/utils/db';
 import User from '@/models/User';
 import StorySession from '@/models/StorySession';
-
-export const dynamic = 'force-dynamic';
+import StoryComment from '@/models/StoryComment';
+import MentorAssignment from '@/models/MentorAssignment';
 
 export async function GET() {
   try {
@@ -21,9 +22,13 @@ export async function GET() {
 
     await connectToDatabase();
 
+    // Get current date ranges
     const now = new Date();
-    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const startOfLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+    const endOfLastMonth = new Date(now.getFullYear(), now.getMonth(), 0);
 
+    // Get REAL statistics from your actual database
     const [
       totalUsers,
       totalChildren,
@@ -31,8 +36,12 @@ export async function GET() {
       totalStories,
       activeStories,
       completedStories,
-      monthlyNewUsers,
-      monthlyStories,
+      totalComments,
+      newUsersThisMonth,
+      storiesThisMonth,
+      assessmentsThisMonth,
+      newUsersLastMonth,
+      storiesLastMonth,
     ] = await Promise.all([
       User.countDocuments(),
       User.countDocuments({ role: 'child' }),
@@ -40,9 +49,30 @@ export async function GET() {
       StorySession.countDocuments(),
       StorySession.countDocuments({ status: 'active' }),
       StorySession.countDocuments({ status: 'completed' }),
-      User.countDocuments({ createdAt: { $gte: monthStart } }),
-      StorySession.countDocuments({ createdAt: { $gte: monthStart } }),
+      StoryComment.countDocuments(),
+      User.countDocuments({ 
+        createdAt: { $gte: startOfMonth } 
+      }),
+      StorySession.countDocuments({ 
+        createdAt: { $gte: startOfMonth } 
+      }),
+      StorySession.countDocuments({ 
+        status: 'completed',
+        completedAt: { $gte: startOfMonth } 
+      }),
+      User.countDocuments({ 
+        createdAt: { $gte: startOfLastMonth, $lt: endOfLastMonth } 
+      }),
+      StorySession.countDocuments({ 
+        createdAt: { $gte: startOfLastMonth, $lt: endOfLastMonth } 
+      }),
     ]);
+
+    // Calculate growth percentages
+    const calculateGrowth = (current: number, previous: number) => {
+      if (previous === 0) return current > 0 ? 100 : 0;
+      return Math.round(((current - previous) / previous) * 100);
+    };
 
     const stats = {
       totalUsers,
@@ -52,9 +82,11 @@ export async function GET() {
       activeStories,
       completedStories,
       monthlyStats: {
-        newUsers: monthlyNewUsers,
-        storiesCreated: monthlyStories,
-        assessmentsCompleted: completedStories,
+        newUsers: newUsersThisMonth,
+        storiesCreated: storiesThisMonth,
+        assessmentsCompleted: assessmentsThisMonth,
+        usersGrowth: calculateGrowth(newUsersThisMonth, newUsersLastMonth),
+        storiesGrowth: calculateGrowth(storiesThisMonth, storiesLastMonth),
       },
     };
 

@@ -51,6 +51,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     { name: 'Create Mentor', href: '/admin/create-mentor', icon: UserPlus },
     { name: 'Mentor Details', href: '/admin/mentors', icon: UserCheck },
     { name: 'Analytics', href: '/admin/analytics', icon: BarChart3 },
+    { name: 'Subscriptions', href: '/admin/subscriptions', icon: BarChart3 },
   ];
 
   const isActive = (path: string) => {

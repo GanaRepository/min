@@ -20,7 +20,7 @@ export default function AdminLogin() {
     const checkExistingSession = async () => {
       const session = await getSession();
       if (session?.user?.role === 'admin') {
-        router.push('/admin/dashboard');
+        router.push('/admin');
       }
     };
     checkExistingSession();

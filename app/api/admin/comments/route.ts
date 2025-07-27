@@ -1,64 +1,63 @@
-// app/api/admin/comments/route.ts
+export const dynamic = 'force-dynamic';
+
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/utils/authOptions';
 import { connectToDatabase } from '@/utils/db';
 import StoryComment from '@/models/StoryComment';
 
-export const dynamic = 'force-dynamic';
-
-// GET - Fetch all comments with filtering
 export async function GET(request: Request) {
   try {
     const session = await getServerSession(authOptions);
 
-    if (
-      !session ||
-      (session.user.role !== 'admin' && session.user.role !== 'mentor')
-    ) {
+    if (!session || session.user.role !== 'admin') {
       return NextResponse.json(
-        { error: 'Admin or mentor access required' },
+        { error: 'Admin access required' },
         { status: 403 }
       );
     }
 
     const { searchParams } = new URL(request.url);
-    const page = parseInt(searchParams.get('page') || '1');
-    const limit = parseInt(searchParams.get('limit') || '20');
-    const storyId = searchParams.get('storyId');
-    const authorId = searchParams.get('authorId');
     const commentType = searchParams.get('commentType');
     const isResolved = searchParams.get('isResolved');
-    const unresolved = searchParams.get('unresolved') === 'true';
+    const unresolved = searchParams.get('unresolved');
+    const page = parseInt(searchParams.get('page') || '1');
+    const limit = parseInt(searchParams.get('limit') || '20');
 
     await connectToDatabase();
 
-    // Build query
-    const query: any = {};
-    if (storyId) query.storyId = storyId;
-    if (authorId) query.authorId = authorId;
-    if (commentType) query.commentType = commentType;
-    if (isResolved !== null) query.isResolved = isResolved === 'true';
-    if (unresolved) query.isResolved = false;
+    // Build query for REAL comments
+    let query: any = {};
+    
+    if (commentType && commentType !== 'all') {
+      query.commentType = commentType;
+    }
+    
+    if (isResolved && isResolved !== 'all') {
+      query.isResolved = isResolved === 'true';
+    }
+    
+    if (unresolved === 'true') {
+      query.isResolved = false;
+    }
 
-    // Get comments with populated data
+    // Get REAL comments from your database
     const comments = await StoryComment.find(query)
-      .populate('storyId', 'title childId storyNumber')
       .populate('authorId', 'firstName lastName role')
-      .populate('resolvedBy', 'firstName lastName')
       .populate({
         path: 'storyId',
+        select: 'title childId storyNumber',
         populate: {
           path: 'childId',
-          select: 'firstName lastName',
-        },
+          select: 'firstName lastName'
+        }
       })
+      .populate('resolvedBy', 'firstName lastName')
       .sort({ createdAt: -1 })
       .skip((page - 1) * limit)
       .limit(limit);
 
-    // Get total count for pagination
-    const totalCount = await StoryComment.countDocuments(query);
+    const totalComments = await StoryComment.countDocuments(query);
 
     return NextResponse.json({
       success: true,
@@ -66,12 +65,12 @@ export async function GET(request: Request) {
       pagination: {
         page,
         limit,
-        total: totalCount,
-        pages: Math.ceil(totalCount / limit),
+        total: totalComments,
+        pages: Math.ceil(totalComments / limit),
       },
     });
   } catch (error) {
-    console.error('Error fetching comments:', error);
+    console.error('Error fetching admin comments:', error);
     return NextResponse.json(
       { error: 'Failed to fetch comments' },
       { status: 500 }
@@ -79,23 +78,19 @@ export async function GET(request: Request) {
   }
 }
 
-// POST - Create new comment (admin/mentor commenting on a story)
+// Add the POST method for adding comments
 export async function POST(request: Request) {
   try {
     const session = await getServerSession(authOptions);
 
-    if (
-      !session ||
-      (session.user.role !== 'admin' && session.user.role !== 'mentor')
-    ) {
+    if (!session || session.user.role !== 'admin') {
       return NextResponse.json(
-        { error: 'Admin or mentor access required' },
+        { error: 'Admin access required' },
         { status: 403 }
       );
     }
 
-    const body = await request.json();
-    const { storyId, comment, commentType, position } = body;
+    const { storyId, comment, commentType } = await request.json();
 
     if (!storyId || !comment) {
       return NextResponse.json(
@@ -106,22 +101,18 @@ export async function POST(request: Request) {
 
     await connectToDatabase();
 
-    // Create new comment
     const newComment = await StoryComment.create({
       storyId,
-      authorId: session.user.id,
-      authorRole: session.user.role,
       comment,
       commentType: commentType || 'general',
-      position,
+      authorId: session.user.id,
       isResolved: false,
       createdAt: new Date(),
     });
 
-    // Populate the comment for response
     const populatedComment = await StoryComment.findById(newComment._id)
       .populate('authorId', 'firstName lastName role')
-      .populate('storyId', 'title childId');
+      .populate('storyId', 'title');
 
     return NextResponse.json({
       success: true,

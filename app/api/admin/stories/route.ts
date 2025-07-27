@@ -1,13 +1,11 @@
-// app/api/admin/stories/route.ts
+export const dynamic = 'force-dynamic';
+
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/utils/authOptions';
 import { connectToDatabase } from '@/utils/db';
 import StorySession from '@/models/StorySession';
-import User from '@/models/User';
 import StoryComment from '@/models/StoryComment';
-
-export const dynamic = 'force-dynamic';
 
 export async function GET(request: Request) {
   try {
@@ -21,73 +19,69 @@ export async function GET(request: Request) {
     }
 
     const { searchParams } = new URL(request.url);
-    const page = parseInt(searchParams.get('page') || '1');
-    const limit = parseInt(searchParams.get('limit') || '10');
     const status = searchParams.get('status');
-    const userId = searchParams.get('userId');
+    const author = searchParams.get('author');
+    const page = parseInt(searchParams.get('page') || '1');
+    const limit = parseInt(searchParams.get('limit') || '20');
 
     await connectToDatabase();
 
-    // Build query
-    const query: any = {};
-    if (status) query.status = status;
-    if (userId) query.childId = userId;
+    // Build query for REAL story sessions from your database
+    let query: any = {};
+    if (status && status !== 'all') {
+      query.status = status;
+    }
+    if (author) {
+      query.childId = author;
+    }
 
-    // Get stories with user info and comment counts
-    const stories = await StorySession.aggregate([
-      { $match: query },
-      {
-        $lookup: {
-          from: 'users',
-          localField: 'childId',
-          foreignField: '_id',
-          as: 'child',
-        },
-      },
-      {
-        $lookup: {
-          from: 'storycomments',
-          localField: '_id',
-          foreignField: 'storyId',
-          as: 'comments',
-        },
-      },
-      {
-        $addFields: {
-          child: { $arrayElemAt: ['$child', 0] },
-          commentCount: { $size: '$comments' },
-          unresolvedComments: {
-            $size: {
-              $filter: {
-                input: '$comments',
-                cond: { $eq: ['$$this.isResolved', false] },
-              },
-            },
-          },
-        },
-      },
-      {
-        $project: {
-          'child.password': 0,
-          comments: 0,
-        },
-      },
-      { $sort: { updatedAt: -1 } },
-      { $skip: (page - 1) * limit },
-      { $limit: limit },
-    ]);
+    // Get REAL stories from your StorySession collection
+    const stories = await StorySession.find(query)
+      .populate('childId', 'firstName lastName email subscriptionTier')
+      .sort({ updatedAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(limit);
 
-    // Get total count
-    const totalCount = await StorySession.countDocuments(query);
+    // Get REAL comment counts for each story
+    const storiesWithComments = await Promise.all(
+      stories.map(async (story) => {
+        const [commentCount, unresolvedComments] = await Promise.all([
+          StoryComment.countDocuments({ storyId: story._id }),
+          StoryComment.countDocuments({ 
+            storyId: story._id, 
+            isResolved: false 
+          }),
+        ]);
+
+        return {
+          _id: story._id,
+          title: story.title,
+          status: story.status,
+          storyNumber: story.storyNumber,
+          totalWords: story.totalWords || 0,
+          childWords: story.childWords || 0,
+          apiCallsUsed: story.apiCallsUsed || 0,
+          maxApiCalls: story.maxApiCalls || 7,
+          createdAt: story.createdAt,
+          updatedAt: story.updatedAt,
+          completedAt: story.completedAt,
+          child: story.childId,
+          commentCount,
+          unresolvedComments,
+        };
+      })
+    );
+
+    const totalStories = await StorySession.countDocuments(query);
 
     return NextResponse.json({
       success: true,
-      stories,
+      stories: storiesWithComments,
       pagination: {
         page,
         limit,
-        total: totalCount,
-        pages: Math.ceil(totalCount / limit),
+        total: totalStories,
+        pages: Math.ceil(totalStories / limit),
       },
     });
   } catch (error) {

@@ -20,15 +20,14 @@ export async function GET() {
 
     await connectToDatabase();
 
-    // Get REAL users with subscription data
     const users = await User.find({ role: 'child' })
       .select('firstName lastName email subscriptionTier subscriptionStartDate subscriptionEndDate createdAt')
       .sort({ createdAt: -1 });
 
-    // Get REAL usage stats for each user
+    // Get usage stats for each user
     const usersWithStats = await Promise.all(
       users.map(async (user) => {
-        const [totalStories, apiCallsData] = await Promise.all([
+        const [totalStories, apiCallsUsed] = await Promise.all([
           StorySession.countDocuments({ childId: user._id }),
           StorySession.aggregate([
             { $match: { childId: user._id } },
@@ -37,16 +36,9 @@ export async function GET() {
         ]);
 
         return {
-          _id: user._id,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          email: user.email,
-          subscriptionTier: user.subscriptionTier || 'free',
-          subscriptionStartDate: user.subscriptionStartDate,
-          subscriptionEndDate: user.subscriptionEndDate,
-          createdAt: user.createdAt,
+          ...user.toObject(),
           totalStories,
-          apiCallsUsed: apiCallsData[0]?.total || 0,
+          apiCallsUsed: apiCallsUsed[0]?.total || 0,
         };
       })
     );
