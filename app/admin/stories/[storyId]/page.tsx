@@ -52,7 +52,7 @@ interface StoryDetails {
   content: string;
 }
 
-export default function StoryDetailPage({ params }: { params: { id: string } }) {
+export default function StoryDetailPage({ params }: { params: { storyId: string  } }) {
   const { data: session, status } = useSession();
   const router = useRouter();
   const { toast } = useToast();
@@ -71,11 +71,12 @@ export default function StoryDetailPage({ params }: { params: { id: string } }) 
     }
 
     fetchStoryDetails();
-  }, [session, status, router, params.id]);
+  }, [session, status, router, params.storyId]);
 
   const fetchStoryDetails = async () => {
     try {
-      const response = await fetch(`/api/admin/stories/${params.id}`);
+const response = await fetch(`/api/admin/stories/${params.storyId}`);
+
       const data = await response.json();
 
       if (data.success) {
@@ -115,7 +116,7 @@ export default function StoryDetailPage({ params }: { params: { id: string } }) 
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          storyId: params.id,
+         storyId: params.storyId,
           comment: newComment,
           commentType,
         }),
