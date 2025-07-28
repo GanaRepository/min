@@ -326,7 +326,6 @@ export default function UsersManagement() {
           </h1>
           <p className="text-gray-400">Manage all users in the platform</p>
         </div>
-      
       </div>
 
       {/* Stats Cards */}

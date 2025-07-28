@@ -115,12 +115,17 @@ export default function MentorComments() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white mb-2">My Comments & Reviews</h1>
-          <p className="text-gray-400">Manage your feedback and guidance to students</p>
+          <h1 className="text-2xl font-bold text-white mb-2">
+            My Comments & Reviews
+          </h1>
+          <p className="text-gray-400">
+            Manage your feedback and guidance to students
+          </p>
         </div>
         <div className="mt-4 sm:mt-0">
           <div className="text-sm text-gray-400">
-            Total Comments: {comments.length} | Unresolved: {comments.filter(c => !c.isResolved).length}
+            Total Comments: {comments.length} | Unresolved:{' '}
+            {comments.filter((c) => !c.isResolved).length}
           </div>
         </div>
       </div>
@@ -142,7 +147,7 @@ export default function MentorComments() {
             <div>
               <p className="text-gray-400 text-sm">Suggestions</p>
               <p className="text-2xl font-bold text-white">
-                {comments.filter(c => c.commentType === 'suggestion').length}
+                {comments.filter((c) => c.commentType === 'suggestion').length}
               </p>
             </div>
             <Plus className="w-8 h-8 text-green-400" />
@@ -154,7 +159,7 @@ export default function MentorComments() {
             <div>
               <p className="text-gray-400 text-sm">Resolved</p>
               <p className="text-2xl font-bold text-white">
-                {comments.filter(c => c.isResolved).length}
+                {comments.filter((c) => c.isResolved).length}
               </p>
             </div>
             <CheckCircle className="w-8 h-8 text-green-400" />
@@ -166,7 +171,7 @@ export default function MentorComments() {
             <div>
               <p className="text-gray-400 text-sm">Pending</p>
               <p className="text-2xl font-bold text-white">
-                {comments.filter(c => !c.isResolved).length}
+                {comments.filter((c) => !c.isResolved).length}
               </p>
             </div>
             <Clock className="w-8 h-8 text-orange-400" />
@@ -226,7 +231,9 @@ export default function MentorComments() {
               <div className="flex-1">
                 {/* Comment Header */}
                 <div className="flex items-center space-x-3 mb-3">
-                  <span className={`px-2 py-1 rounded-full text-xs border ${getCommentTypeColor(comment.commentType)}`}>
+                  <span
+                    className={`px-2 py-1 rounded-full text-xs border ${getCommentTypeColor(comment.commentType)}`}
+                  >
                     {comment.commentType}
                   </span>
                   <div className="flex items-center space-x-1">
@@ -235,7 +242,9 @@ export default function MentorComments() {
                     ) : (
                       <Clock className="w-4 h-4 text-orange-400" />
                     )}
-                    <span className={`text-sm ${comment.isResolved ? 'text-green-400' : 'text-orange-400'}`}>
+                    <span
+                      className={`text-sm ${comment.isResolved ? 'text-green-400' : 'text-orange-400'}`}
+                    >
                       {comment.isResolved ? 'Resolved' : 'Pending'}
                     </span>
                   </div>
@@ -246,14 +255,18 @@ export default function MentorComments() {
                   <div className="flex items-center space-x-2 text-sm text-gray-300">
                     <BookOpen className="w-4 h-4" />
                     <span>
-                      Story: "{comment.storyId.title}" by {comment.storyId.childId.firstName} {comment.storyId.childId.lastName}
+                      Story: &quot;{comment.storyId.title}&quot; by{' '}
+                      {comment.storyId.childId.firstName}{' '}
+                      {comment.storyId.childId.lastName}
                     </span>
                   </div>
                 </div>
 
                 {/* Comment Content */}
                 <div className="mb-4">
-                  <p className="text-gray-300 leading-relaxed">{comment.comment}</p>
+                  <p className="text-gray-300 leading-relaxed">
+                    {comment.comment}
+                  </p>
                 </div>
 
                 {/* Comment Footer */}
@@ -261,7 +274,9 @@ export default function MentorComments() {
                   <div className="flex items-center space-x-4">
                     <div className="flex items-center space-x-1">
                       <Calendar className="w-4 h-4" />
-                      <span>{new Date(comment.createdAt).toLocaleDateString()}</span>
+                      <span>
+                        {new Date(comment.createdAt).toLocaleDateString()}
+                      </span>
                     </div>
                     {comment.responses && comment.responses > 0 && (
                       <div className="flex items-center space-x-1">
@@ -273,7 +288,8 @@ export default function MentorComments() {
 
                   {comment.resolvedAt && (
                     <div className="text-green-400 text-xs">
-                      Resolved: {new Date(comment.resolvedAt).toLocaleDateString()}
+                      Resolved:{' '}
+                      {new Date(comment.resolvedAt).toLocaleDateString()}
                     </div>
                   )}
                 </div>
@@ -298,9 +314,13 @@ export default function MentorComments() {
       {filteredComments.length === 0 && !loading && (
         <div className="text-center py-12">
           <MessageSquare className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-          <h3 className="text-xl font-medium text-gray-400 mb-2">No comments found</h3>
+          <h3 className="text-xl font-medium text-gray-400 mb-2">
+            No comments found
+          </h3>
           <p className="text-gray-500">
-            {searchTerm ? 'Try adjusting your search criteria.' : 'You haven\'t made any comments yet.'}
+            {searchTerm
+              ? 'Try adjusting your search criteria.'
+              : "You haven't made any comments yet."}
           </p>
         </div>
       )}

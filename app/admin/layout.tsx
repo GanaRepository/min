@@ -201,7 +201,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           </div>
 
           {/* Page content */}
-          <main className='p-10'>{children}</main>
+          <main className="p-10">{children}</main>
         </div>
       </div>
     </div>

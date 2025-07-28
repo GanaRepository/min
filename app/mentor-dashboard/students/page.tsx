@@ -62,9 +62,12 @@ export default function MentorStudents() {
     fetchStudents();
   }, [session, status, router, fetchStudents]);
 
-  const filteredStudents = students.filter((student) =>
-    `${student.firstName} ${student.lastName}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    student.email.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredStudents = students.filter(
+    (student) =>
+      `${student.firstName} ${student.lastName}`
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
+      student.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   if (loading) {
@@ -118,7 +121,8 @@ export default function MentorStudents() {
             <div className="flex items-center space-x-3 mb-4">
               <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center">
                 <span className="text-white font-medium">
-                  {student.firstName[0]}{student.lastName[0]}
+                  {student.firstName[0]}
+                  {student.lastName[0]}
                 </span>
               </div>
               <div>
@@ -132,15 +136,21 @@ export default function MentorStudents() {
             {/* Stats */}
             <div className="grid grid-cols-3 gap-4 mb-4">
               <div className="text-center">
-                <div className="text-xl font-bold text-white">{student.totalStories}</div>
+                <div className="text-xl font-bold text-white">
+                  {student.totalStories}
+                </div>
                 <div className="text-gray-400 text-xs">Total Stories</div>
               </div>
               <div className="text-center">
-                <div className="text-xl font-bold text-green-400">{student.completedStories}</div>
+                <div className="text-xl font-bold text-green-400">
+                  {student.completedStories}
+                </div>
                 <div className="text-gray-400 text-xs">Completed</div>
               </div>
               <div className="text-center">
-                <div className="text-xl font-bold text-blue-400">{student.activeStories}</div>
+                <div className="text-xl font-bold text-blue-400">
+                  {student.activeStories}
+                </div>
                 <div className="text-gray-400 text-xs">Active</div>
               </div>
             </div>
@@ -149,17 +159,25 @@ export default function MentorStudents() {
             <div className="space-y-2 mb-4">
               <div className="flex items-center space-x-2 text-gray-400 text-sm">
                 <Calendar className="w-4 h-4" />
-                <span>Assigned: {new Date(student.assignedAt).toLocaleDateString()}</span>
+                <span>
+                  Assigned: {new Date(student.assignedAt).toLocaleDateString()}
+                </span>
               </div>
               <div className="flex items-center space-x-2 text-gray-400 text-sm">
                 <Clock className="w-4 h-4" />
-                <span>Last Active: {new Date(student.lastActiveAt).toLocaleDateString()}</span>
+                <span>
+                  Last Active:{' '}
+                  {new Date(student.lastActiveAt).toLocaleDateString()}
+                </span>
               </div>
             </div>
 
             {/* Actions */}
             <div className="flex space-x-2">
-              <Link href={`/mentor-dashboard/students/${student._id}`} className="flex-1">
+              <Link
+                href={`/mentor-dashboard/students/${student._id}`}
+                className="flex-1"
+              >
                 <button className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-2 px-3 rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 flex items-center justify-center space-x-2">
                   <Eye className="w-4 h-4" />
                   <span>View Profile</span>
@@ -182,7 +200,9 @@ export default function MentorStudents() {
             No students found
           </h3>
           <p className="text-gray-500">
-            {searchTerm ? 'Try adjusting your search criteria.' : 'No students have been assigned to you yet.'}
+            {searchTerm
+              ? 'Try adjusting your search criteria.'
+              : 'No students have been assigned to you yet.'}
           </p>
         </div>
       )}

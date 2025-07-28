@@ -42,16 +42,30 @@ export default function MentorLayout({ children }: MentorLayoutProps) {
   const navigation = [
     { name: 'Dashboard', href: '/mentor-dashboard', icon: BarChart3 },
     { name: 'My Students', href: '/mentor-dashboard/students', icon: Users },
-    { name: 'Student Stories', href: '/mentor-dashboard/stories', icon: BookOpen },
-    { name: 'Comments & Reviews', href: '/mentor-dashboard/comments', icon: MessageSquare },
-    { name: 'Assessments', href: '/mentor-dashboard/assessments', icon: FileText },
+    {
+      name: 'Student Stories',
+      href: '/mentor-dashboard/stories',
+      icon: BookOpen,
+    },
+    {
+      name: 'Comments & Reviews',
+      href: '/mentor-dashboard/comments',
+      icon: MessageSquare,
+    },
+    {
+      name: 'Assessments',
+      href: '/mentor-dashboard/assessments',
+      icon: FileText,
+    },
     { name: 'Activity Log', href: '/mentor-dashboard/activity', icon: Clock },
     { name: 'Settings', href: '/mentor-dashboard/settings', icon: Settings },
   ];
 
   const isActive = (path: string) => {
     if (path === '/mentor-dashboard') {
-      return pathname === '/mentor-dashboard' || pathname === '/mentor-dashboard/';
+      return (
+        pathname === '/mentor-dashboard' || pathname === '/mentor-dashboard/'
+      );
     }
     return pathname.startsWith(path);
   };
@@ -80,14 +94,20 @@ export default function MentorLayout({ children }: MentorLayoutProps) {
           onClick={() => setSidebarOpen(!sidebarOpen)}
           className="bg-gray-800 p-2 rounded-lg text-white hover:bg-gray-700 transition-colors"
         >
-          {sidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          {sidebarOpen ? (
+            <X className="w-6 h-6" />
+          ) : (
+            <Menu className="w-6 h-6" />
+          )}
         </button>
       </div>
 
       {/* Layout Container */}
       <div className="flex">
         {/* Sidebar */}
-        <div className={`w-64 bg-gray-800 border-r border-gray-700 flex-shrink-0 transform transition-transform duration-300 ease-in-out ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 fixed lg:static inset-y-0 left-0 z-40 lg:z-auto`}>
+        <div
+          className={`w-64 bg-gray-800 border-r border-gray-700 flex-shrink-0 transform transition-transform duration-300 ease-in-out ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 fixed lg:static inset-y-0 left-0 z-40 lg:z-auto`}
+        >
           <div className="flex flex-col h-full">
             {/* Mentor Header */}
             <div className="p-6 border-b border-gray-700 flex-shrink-0">
@@ -96,7 +116,9 @@ export default function MentorLayout({ children }: MentorLayoutProps) {
                   <GraduationCap className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h1 className="text-xl font-bold text-white">Mentor Portal</h1>
+                  <h1 className="text-xl font-bold text-white">
+                    Mentor Portal
+                  </h1>
                   <p className="text-sm text-gray-400">Mintoons Teaching Hub</p>
                 </div>
               </div>
@@ -107,7 +129,8 @@ export default function MentorLayout({ children }: MentorLayoutProps) {
               <div className="flex items-center space-x-3">
                 <div className="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center">
                   <span className="text-sm font-medium">
-                    {session.user.firstName?.[0]}{session.user.lastName?.[0]}
+                    {session.user.firstName?.[0]}
+                    {session.user.lastName?.[0]}
                   </span>
                 </div>
                 <div>
@@ -170,7 +193,8 @@ export default function MentorLayout({ children }: MentorLayoutProps) {
               <div className="lg:hidden w-10" />
               <div className="flex-1 lg:flex-none lg:ml-0 ml-12">
                 <h2 className="text-xl font-semibold text-white">
-                  {navigation.find((item) => isActive(item.href))?.name || 'Mentor Dashboard'}
+                  {navigation.find((item) => isActive(item.href))?.name ||
+                    'Mentor Dashboard'}
                 </h2>
               </div>
               <div className="flex items-center space-x-4">
@@ -182,9 +206,7 @@ export default function MentorLayout({ children }: MentorLayoutProps) {
           </div>
 
           {/* Page content */}
-          <main>
-            {children}
-          </main>
+          <main>{children}</main>
         </div>
       </div>
     </div>

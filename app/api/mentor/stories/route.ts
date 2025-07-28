@@ -30,15 +30,15 @@ export async function GET(request: Request) {
     const mentorId = session.user.id;
 
     // Get assigned students
-    const assignments = await MentorAssignment.find({ 
+    const assignments = await MentorAssignment.find({
       mentorId,
-      isActive: { $ne: false }
+      isActive: { $ne: false },
     });
-    const studentIds = assignments.map(a => a.childId);
+    const studentIds = assignments.map((a) => a.childId);
 
     // Build query for stories
     let query: any = { childId: { $in: studentIds } };
-    
+
     if (status && status !== 'all') {
       if (status === 'pending') {
         // Stories that need mentor review
@@ -50,7 +50,7 @@ export async function GET(request: Request) {
         query.status = status;
       }
     }
-    
+
     if (student && student !== 'all') {
       query.childId = student;
     }
@@ -69,21 +69,23 @@ export async function GET(request: Request) {
           commentCount,
           mentorCommentCount,
           unresolvedComments,
-          lastMentorComment
+          lastMentorComment,
         ] = await Promise.all([
           StoryComment.countDocuments({ storyId: story._id }),
-          StoryComment.countDocuments({ 
+          StoryComment.countDocuments({
             storyId: story._id,
-            authorId: mentorId
+            authorId: mentorId,
           }),
-          StoryComment.countDocuments({ 
-            storyId: story._id, 
-            isResolved: false 
-          }),
-          StoryComment.findOne({ 
+          StoryComment.countDocuments({
             storyId: story._id,
-            authorId: mentorId
-          }).sort({ createdAt: -1 }).select('comment')
+            isResolved: false,
+          }),
+          StoryComment.findOne({
+            storyId: story._id,
+            authorId: mentorId,
+          })
+            .sort({ createdAt: -1 })
+            .select('comment'),
         ]);
 
         return {

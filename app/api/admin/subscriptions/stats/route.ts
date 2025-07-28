@@ -26,23 +26,23 @@ export async function GET() {
         { $match: { role: 'child' } },
         {
           $group: {
-            _id: { 
-              $ifNull: [
-                { $toLower: '$subscriptionTier' }, 
-                'free'
-              ] 
+            _id: {
+              $ifNull: [{ $toLower: '$subscriptionTier' }, 'free'],
             },
-            count: { $sum: 1 }
-          }
-        }
-      ])
+            count: { $sum: 1 },
+          },
+        },
+      ]),
     ]);
 
     // Process the aggregation results
-    const tierCounts = subscriptionData.reduce((acc, item) => {
-      acc[item._id] = item.count;
-      return acc;
-    }, {} as Record<string, number>);
+    const tierCounts = subscriptionData.reduce(
+      (acc, item) => {
+        acc[item._id] = item.count;
+        return acc;
+      },
+      {} as Record<string, number>
+    );
 
     const free = tierCounts.free || 0;
     const basic = tierCounts.basic || 0;
@@ -51,7 +51,7 @@ export async function GET() {
     // Calculate revenue (you can adjust these prices)
     const basicPrice = 9.99;
     const premiumPrice = 19.99;
-    const monthlyRevenue = (basic * basicPrice) + (premium * premiumPrice);
+    const monthlyRevenue = basic * basicPrice + premium * premiumPrice;
 
     const stats = {
       total,

@@ -29,11 +29,11 @@ export async function GET(request: Request) {
 
     // Build query for mentor's comments only
     let query: any = { authorId: mentorId };
-    
+
     if (commentType && commentType !== 'all') {
       query.commentType = commentType;
     }
-    
+
     if (isResolved && isResolved !== 'all') {
       query.isResolved = isResolved === 'true';
     }
@@ -45,8 +45,8 @@ export async function GET(request: Request) {
         select: 'title childId',
         populate: {
           path: 'childId',
-          select: 'firstName lastName'
-        }
+          select: 'firstName lastName',
+        },
       })
       .sort({ createdAt: -1 })
       .skip((page - 1) * limit)

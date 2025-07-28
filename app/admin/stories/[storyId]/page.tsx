@@ -52,7 +52,11 @@ interface StoryDetails {
   content: string;
 }
 
-export default function StoryDetailPage({ params }: { params: { storyId: string  } }) {
+export default function StoryDetailPage({
+  params,
+}: {
+  params: { storyId: string };
+}) {
   const { data: session, status } = useSession();
   const router = useRouter();
   const { toast } = useToast();
@@ -75,7 +79,7 @@ export default function StoryDetailPage({ params }: { params: { storyId: string 
 
   const fetchStoryDetails = async () => {
     try {
-const response = await fetch(`/api/admin/stories/${params.storyId}`);
+      const response = await fetch(`/api/admin/stories/${params.storyId}`);
 
       const data = await response.json();
 
@@ -112,11 +116,11 @@ const response = await fetch(`/api/admin/stories/${params.storyId}`);
 
     setAddingComment(true);
     try {
-      const response = await fetch('/api/admin/comments', {
+      const response = await fetch(`/api/stories/${params.storyId}/comments`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-         storyId: params.storyId,
+          storyId: params.storyId,
           comment: newComment,
           commentType,
         }),
@@ -189,8 +193,12 @@ const response = await fetch(`/api/admin/stories/${params.storyId}`);
     return (
       <div className="text-center py-12">
         <BookOpen className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-        <h3 className="text-xl font-medium text-gray-400 mb-2">Story not found</h3>
-        <p className="text-gray-500">The story you're looking for doesn't exist.</p>
+        <h3 className="text-xl font-medium text-gray-400 mb-2">
+          Story not found
+        </h3>
+        <p className="text-gray-500">
+          The story you&apos;re looking for doesn&apos;t exist.
+        </p>
         <Link href="/admin/stories">
           <button className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
             Back to Stories
@@ -226,7 +234,9 @@ const response = await fetch(`/api/admin/stories/${params.storyId}`);
             <h2 className="text-xl font-bold text-white mb-2">{story.title}</h2>
             <p className="text-gray-400">Story #{story.storyNumber}</p>
             <div className="flex items-center space-x-2 mt-2">
-              <span className={`px-2 py-1 rounded-full text-xs border ${getStatusColor(story.status)}`}>
+              <span
+                className={`px-2 py-1 rounded-full text-xs border ${getStatusColor(story.status)}`}
+              >
                 {story.status}
               </span>
             </div>
@@ -250,7 +260,8 @@ const response = await fetch(`/api/admin/stories/${params.storyId}`);
         <div className="flex items-center space-x-4 mb-6 p-4 bg-gray-700/50 rounded-lg">
           <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center">
             <span className="text-white font-medium">
-              {story.child.firstName[0]}{story.child.lastName[0]}
+              {story.child.firstName[0]}
+              {story.child.lastName[0]}
             </span>
           </div>
           <div>
@@ -269,15 +280,21 @@ const response = await fetch(`/api/admin/stories/${params.storyId}`);
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="text-center">
-            <div className="text-2xl font-bold text-white">{story.totalWords}</div>
+            <div className="text-2xl font-bold text-white">
+              {story.totalWords}
+            </div>
             <div className="text-gray-400 text-sm">Total Words</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-blue-400">{story.childWords}</div>
+            <div className="text-2xl font-bold text-blue-400">
+              {story.childWords}
+            </div>
             <div className="text-gray-400 text-sm">Child Words</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-purple-400">{story.comments.length}</div>
+            <div className="text-2xl font-bold text-purple-400">
+              {story.comments.length}
+            </div>
             <div className="text-gray-400 text-sm">Comments</div>
           </div>
         </div>
@@ -286,16 +303,22 @@ const response = await fetch(`/api/admin/stories/${params.storyId}`);
         <div className="flex items-center justify-between mt-6 pt-6 border-t border-gray-700">
           <div className="flex items-center space-x-1 text-gray-400">
             <Calendar className="w-4 h-4" />
-            <span className="text-sm">Created: {new Date(story.createdAt).toLocaleDateString()}</span>
+            <span className="text-sm">
+              Created: {new Date(story.createdAt).toLocaleDateString()}
+            </span>
           </div>
           <div className="flex items-center space-x-1 text-gray-400">
             <Clock className="w-4 h-4" />
-            <span className="text-sm">Updated: {new Date(story.updatedAt).toLocaleDateString()}</span>
+            <span className="text-sm">
+              Updated: {new Date(story.updatedAt).toLocaleDateString()}
+            </span>
           </div>
           {story.completedAt && (
             <div className="flex items-center space-x-1 text-green-400">
               <CheckCircle className="w-4 h-4" />
-              <span className="text-sm">Completed: {new Date(story.completedAt).toLocaleDateString()}</span>
+              <span className="text-sm">
+                Completed: {new Date(story.completedAt).toLocaleDateString()}
+              </span>
             </div>
           )}
         </div>
@@ -325,7 +348,9 @@ const response = await fetch(`/api/admin/stories/${params.storyId}`);
           transition={{ delay: 0.2 }}
           className="bg-gray-800 rounded-xl p-6"
         >
-          <h3 className="text-lg font-medium text-white mb-4">Comments ({story.comments.length})</h3>
+          <h3 className="text-lg font-medium text-white mb-4">
+            Comments ({story.comments.length})
+          </h3>
           <div className="space-y-4 max-h-96 overflow-y-auto">
             {story.comments.map((comment) => (
               <div key={comment._id} className="p-4 bg-gray-700/50 rounded-lg">
@@ -334,7 +359,9 @@ const response = await fetch(`/api/admin/stories/${params.storyId}`);
                     <span className="text-white text-sm font-medium">
                       {comment.authorId.firstName} {comment.authorId.lastName}
                     </span>
-                    <span className={`px-2 py-1 rounded-full text-xs border ${getCommentTypeColor(comment.commentType)}`}>
+                    <span
+                      className={`px-2 py-1 rounded-full text-xs border ${getCommentTypeColor(comment.commentType)}`}
+                    >
                       {comment.commentType}
                     </span>
                   </div>
@@ -382,7 +409,7 @@ const response = await fetch(`/api/admin/stories/${params.storyId}`);
                 <option value="praise">Praise</option>
               </select>
             </div>
-            
+
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">
                 Comment

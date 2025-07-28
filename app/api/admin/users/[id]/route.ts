@@ -29,14 +29,17 @@ export async function GET(
     const user = await User.findById(id).select('-password');
 
     if (!user) {
-      return NextResponse.json(
-        { error: 'User not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
     // Get user statistics
-    const [totalStories, completedStories, activeStories, totalComments, stories] = await Promise.all([
+    const [
+      totalStories,
+      completedStories,
+      activeStories,
+      totalComments,
+      stories,
+    ] = await Promise.all([
       StorySession.countDocuments({ childId: id }),
       StorySession.countDocuments({ childId: id, status: 'completed' }),
       StorySession.countDocuments({ childId: id, status: 'active' }),
@@ -44,7 +47,7 @@ export async function GET(
       StorySession.find({ childId: id })
         .select('title status createdAt totalWords')
         .sort({ createdAt: -1 })
-        .limit(10)
+        .limit(10),
     ]);
 
     const userWithStats = {
@@ -69,6 +72,7 @@ export async function GET(
   }
 }
 
+// Update the PATCH method to handle verification properly
 export async function PATCH(
   request: Request,
   { params }: { params: { id: string } }
@@ -93,6 +97,12 @@ export async function PATCH(
     
     if (typeof isVerified === 'boolean') {
       updateData.isVerified = isVerified;
+      // If verifying user, also set verification date
+      if (isVerified) {
+        updateData.emailVerifiedAt = new Date();
+      } else {
+        updateData.emailVerifiedAt = null;
+      }
     }
     
     if (subscriptionTier) {
@@ -115,6 +125,7 @@ export async function PATCH(
     return NextResponse.json({
       success: true,
       user,
+      message: `User ${isVerified ? 'verified' : 'unverified'} successfully`,
     });
   } catch (error) {
     console.error('Error updating user:', error);

@@ -27,14 +27,13 @@ export async function GET(
     await connectToDatabase();
 
     // Get REAL story from your database
-    const story = await StorySession.findById(id)
-      .populate('childId', 'firstName lastName email subscriptionTier');
+    const story = await StorySession.findById(id).populate(
+      'childId',
+      'firstName lastName email subscriptionTier'
+    );
 
     if (!story) {
-      return NextResponse.json(
-        { error: 'Story not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Story not found' }, { status: 404 });
     }
 
     // Get REAL comments for this story
@@ -44,12 +43,12 @@ export async function GET(
       .sort({ createdAt: -1 });
 
     // Get REAL story turns to build the content - Fixed the query
-    const turns = await Turn.find({ sessionId: id })
-      .sort({ turnNumber: 1 });
+    const turns = await Turn.find({ sessionId: id }).sort({ turnNumber: 1 });
 
     // Build the complete story content from turns
     let content = story.aiOpening || '';
-    turns.forEach((turn: any) => { // Added type annotation to fix the 'any' error
+    turns.forEach((turn: any) => {
+      // Added type annotation to fix the 'any' error
       if (turn.childInput) {
         content += `\n\n${turn.childInput}`;
       }

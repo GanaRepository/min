@@ -57,7 +57,7 @@ export default function SubscriptionManagement() {
     try {
       const [usersResponse, statsResponse] = await Promise.all([
         fetch('/api/admin/subscriptions/users'),
-        fetch('/api/admin/subscriptions/stats')
+        fetch('/api/admin/subscriptions/stats'),
       ]);
 
       const usersData = await usersResponse.json();
@@ -104,9 +104,11 @@ export default function SubscriptionManagement() {
       const data = await response.json();
 
       if (data.success) {
-        setUsers(prev => prev.map(user => 
-          user._id === userId ? { ...user, subscriptionTier: newTier } : user
-        ));
+        setUsers((prev) =>
+          prev.map((user) =>
+            user._id === userId ? { ...user, subscriptionTier: newTier } : user
+          )
+        );
         toast({
           title: 'Success',
           description: 'Subscription updated successfully',
@@ -150,20 +152,26 @@ export default function SubscriptionManagement() {
   };
 
   const filteredUsers = users.filter((user) => {
-    const matchesSearch = 
-      `${user.firstName} ${user.lastName}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    const matchesSearch =
+      `${user.firstName} ${user.lastName}`
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
       user.email.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesTier = tierFilter === 'all' || 
-      (user.subscriptionTier || 'free').toLowerCase() === tierFilter.toLowerCase();
-    
+
+    const matchesTier =
+      tierFilter === 'all' ||
+      (user.subscriptionTier || 'free').toLowerCase() ===
+        tierFilter.toLowerCase();
+
     return matchesSearch && matchesTier;
   });
 
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-xl text-gray-400">Loading subscription data...</div>
+        <div className="text-xl text-gray-400">
+          Loading subscription data...
+        </div>
       </div>
     );
   }
@@ -173,7 +181,9 @@ export default function SubscriptionManagement() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white mb-2">Subscription Management</h1>
+          <h1 className="text-2xl font-bold text-white mb-2">
+            Subscription Management
+          </h1>
           <p className="text-gray-400">Monitor and manage user subscriptions</p>
         </div>
       </div>
@@ -225,7 +235,9 @@ export default function SubscriptionManagement() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-400 text-sm">Monthly Revenue</p>
-                <p className="text-2xl font-bold text-white">${stats.revenue.monthly}</p>
+                <p className="text-2xl font-bold text-white">
+                  ${stats.revenue.monthly}
+                </p>
               </div>
               <TrendingUp className="w-8 h-8 text-green-400" />
             </div>
@@ -246,7 +258,7 @@ export default function SubscriptionManagement() {
               className="w-full bg-gray-700 border border-gray-600 rounded-lg pl-10 pr-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
-          
+
           <select
             value={tierFilter}
             onChange={(e) => setTierFilter(e.target.value)}
@@ -266,119 +278,148 @@ export default function SubscriptionManagement() {
           <table className="w-full">
             <thead className="bg-gray-700/50">
               <tr>
-                <th className="text-left p-4 text-gray-300 font-medium">User</th>
-                <th className="text-left p-4 text-gray-300 font-medium">Subscription</th>
-                <th className="text-left p-4 text-gray-300 font-medium">Usage</th>
-                <th className="text-left p-4 text-gray-300 font-medium">Duration</th>
-                <th className="text-left p-4 text-gray-300 font-medium">Joined</th>
-                <th className="text-left p-4 text-gray-300 font-medium">Actions</th>
+                <th className="text-left p-4 text-gray-300 font-medium">
+                  User
+                </th>
+                <th className="text-left p-4 text-gray-300 font-medium">
+                  Subscription
+                </th>
+                <th className="text-left p-4 text-gray-300 font-medium">
+                  Usage
+                </th>
+                <th className="text-left p-4 text-gray-300 font-medium">
+                  Duration
+                </th>
+                <th className="text-left p-4 text-gray-300 font-medium">
+                  Joined
+                </th>
+                <th className="text-left p-4 text-gray-300 font-medium">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-700/50">
-            {filteredUsers.map((user, index) => (
-               <motion.tr
-                 key={user._id}
-                 initial={{ opacity: 0, y: 20 }}
-                 animate={{ opacity: 1, y: 0 }}
-                 transition={{ delay: index * 0.05 }}
-                 className="hover:bg-gray-700/30 transition-colors"
-               >
-                 <td className="p-4">
-                   <div className="flex items-center space-x-3">
-                     <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center">
-                       <span className="text-white font-medium text-sm">
-                         {user.firstName[0]}{user.lastName[0]}
-                       </span>
-                     </div>
-                     <div>
-                       <h3 className="text-white font-medium">
-                         {user.firstName} {user.lastName}
-                       </h3>
-                       <p className="text-gray-400 text-sm">{user.email}</p>
-                     </div>
-                   </div>
-                 </td>
+              {filteredUsers.map((user, index) => (
+                <motion.tr
+                  key={user._id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                  className="hover:bg-gray-700/30 transition-colors"
+                >
+                  <td className="p-4">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center">
+                        <span className="text-white font-medium text-sm">
+                          {user.firstName[0]}
+                          {user.lastName[0]}
+                        </span>
+                      </div>
+                      <div>
+                        <h3 className="text-white font-medium">
+                          {user.firstName} {user.lastName}
+                        </h3>
+                        <p className="text-gray-400 text-sm">{user.email}</p>
+                      </div>
+                    </div>
+                  </td>
 
-                 <td className="p-4">
-                   <div className="flex items-center space-x-2">
-                     {getTierIcon(user.subscriptionTier || 'free')}
-                     <span className={`inline-flex px-2 py-1 rounded-full text-xs border ${getTierColor(user.subscriptionTier || 'free')}`}>
-                       {(user.subscriptionTier || 'free').toUpperCase()}
-                     </span>
-                   </div>
-                 </td>
+                  <td className="p-4">
+                    <div className="flex items-center space-x-2">
+                      {getTierIcon(user.subscriptionTier || 'free')}
+                      <span
+                        className={`inline-flex px-2 py-1 rounded-full text-xs border ${getTierColor(user.subscriptionTier || 'free')}`}
+                      >
+                        {(user.subscriptionTier || 'free').toUpperCase()}
+                      </span>
+                    </div>
+                  </td>
 
-                 <td className="p-4">
-                   <div>
-                     <p className="text-white text-sm">{user.totalStories} stories</p>
-                     <p className="text-gray-400 text-xs">
-                       {user.apiCallsUsed} API calls used
-                     </p>
-                   </div>
-                 </td>
+                  <td className="p-4">
+                    <div>
+                      <p className="text-white text-sm">
+                        {user.totalStories} stories
+                      </p>
+                      <p className="text-gray-400 text-xs">
+                        {user.apiCallsUsed} API calls used
+                      </p>
+                    </div>
+                  </td>
 
-                 <td className="p-4">
-                   <div className="text-sm">
-                     {user.subscriptionStartDate ? (
-                       <>
-                         <p className="text-white">
-                           Since: {new Date(user.subscriptionStartDate).toLocaleDateString()}
-                         </p>
-                         {user.subscriptionEndDate && (
-                           <p className="text-gray-400">
-                             Until: {new Date(user.subscriptionEndDate).toLocaleDateString()}
-                           </p>
-                         )}
-                       </>
-                     ) : (
-                       <p className="text-gray-400">No subscription</p>
-                     )}
-                   </div>
-                 </td>
+                  <td className="p-4">
+                    <div className="text-sm">
+                      {user.subscriptionStartDate ? (
+                        <>
+                          <p className="text-white">
+                            Since:{' '}
+                            {new Date(
+                              user.subscriptionStartDate
+                            ).toLocaleDateString()}
+                          </p>
+                          {user.subscriptionEndDate && (
+                            <p className="text-gray-400">
+                              Until:{' '}
+                              {new Date(
+                                user.subscriptionEndDate
+                              ).toLocaleDateString()}
+                            </p>
+                          )}
+                        </>
+                      ) : (
+                        <p className="text-gray-400">No subscription</p>
+                      )}
+                    </div>
+                  </td>
 
-                 <td className="p-4">
-                   <div className="flex items-center space-x-1 text-gray-400">
-                     <Calendar className="w-4 h-4" />
-                     <span className="text-sm">
-                       {new Date(user.createdAt).toLocaleDateString()}
-                     </span>
-                   </div>
-                 </td>
+                  <td className="p-4">
+                    <div className="flex items-center space-x-1 text-gray-400">
+                      <Calendar className="w-4 h-4" />
+                      <span className="text-sm">
+                        {new Date(user.createdAt).toLocaleDateString()}
+                      </span>
+                    </div>
+                  </td>
 
-                 <td className="p-4">
-                   <div className="flex items-center space-x-2">
-                     <select
-                       value={user.subscriptionTier || 'free'}
-                       onChange={(e) => updateSubscription(user._id, e.target.value)}
-                       className="bg-gray-700 border border-gray-600 rounded px-2 py-1 text-white text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
-                     >
-                       <option value="free">Free</option>
-                       <option value="basic">Basic</option>
-                       <option value="premium">Premium</option>
-                     </select>
-                     
-                     <button
-                       onClick={() => router.push(`/admin/users/${user._id}`)}
-                       className="text-blue-400 hover:text-blue-300 p-1 rounded hover:bg-gray-700"
-                     >
-                       <Eye className="w-4 h-4" />
-                     </button>
-                   </div>
-                 </td>
-               </motion.tr>
-             ))}
-           </tbody>
-         </table>
-       </div>
-     </div>
+                  <td className="p-4">
+                    <div className="flex items-center space-x-2">
+                      <select
+                        value={user.subscriptionTier || 'free'}
+                        onChange={(e) =>
+                          updateSubscription(user._id, e.target.value)
+                        }
+                        className="bg-gray-700 border border-gray-600 rounded px-2 py-1 text-white text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+                      >
+                        <option value="free">Free</option>
+                        <option value="basic">Basic</option>
+                        <option value="premium">Premium</option>
+                      </select>
 
-     {filteredUsers.length === 0 && !loading && (
-       <div className="text-center py-12">
-         <CreditCard className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-         <h3 className="text-xl font-medium text-gray-400 mb-2">No users found</h3>
-         <p className="text-gray-500">Try adjusting your search or filter criteria.</p>
-       </div>
-     )}
-   </div>
- );
+                      <button
+                        onClick={() => router.push(`/admin/users/${user._id}`)}
+                        className="text-blue-400 hover:text-blue-300 p-1 rounded hover:bg-gray-700"
+                      >
+                        <Eye className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </td>
+                </motion.tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {filteredUsers.length === 0 && !loading && (
+        <div className="text-center py-12">
+          <CreditCard className="w-16 h-16 text-gray-600 mx-auto mb-4" />
+          <h3 className="text-xl font-medium text-gray-400 mb-2">
+            No users found
+          </h3>
+          <p className="text-gray-500">
+            Try adjusting your search or filter criteria.
+          </p>
+        </div>
+      )}
+    </div>
+  );
 }

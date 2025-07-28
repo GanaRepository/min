@@ -26,9 +26,9 @@ export async function GET(request: Request) {
     const mentorId = session.user.id;
 
     // Get assignments with student details
-    let query = MentorAssignment.find({ 
+    let query = MentorAssignment.find({
       mentorId,
-      isActive: { $ne: false }
+      isActive: { $ne: false },
     }).populate('childId', 'firstName lastName email createdAt lastLoginAt');
 
     if (limit) {
@@ -40,17 +40,18 @@ export async function GET(request: Request) {
     // Get story counts for each student
     const studentsWithStats = await Promise.all(
       assignments.map(async (assignment) => {
-        const [totalStories, completedStories, activeStories] = await Promise.all([
-          StorySession.countDocuments({ childId: assignment.childId._id }),
-          StorySession.countDocuments({ 
-            childId: assignment.childId._id,
-            status: 'completed'
-          }),
-          StorySession.countDocuments({ 
-            childId: assignment.childId._id,
-            status: 'active'
-          }),
-        ]);
+        const [totalStories, completedStories, activeStories] =
+          await Promise.all([
+            StorySession.countDocuments({ childId: assignment.childId._id }),
+            StorySession.countDocuments({
+              childId: assignment.childId._id,
+              status: 'completed',
+            }),
+            StorySession.countDocuments({
+              childId: assignment.childId._id,
+              status: 'active',
+            }),
+          ]);
 
         return {
           _id: assignment.childId._id,
@@ -61,7 +62,8 @@ export async function GET(request: Request) {
           completedStories,
           activeStories,
           assignedAt: assignment.assignedAt,
-          lastActiveAt: assignment.childId.lastLoginAt || assignment.childId.createdAt,
+          lastActiveAt:
+            assignment.childId.lastLoginAt || assignment.childId.createdAt,
         };
       })
     );

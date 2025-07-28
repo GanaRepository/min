@@ -59,11 +59,12 @@ export default function MentorDashboard() {
 
   const fetchDashboardData = useCallback(async () => {
     try {
-      const [statsResponse, activityResponse, studentsResponse] = await Promise.all([
-        fetch('/api/mentor/dashboard-stats'),
-        fetch('/api/mentor/recent-activity'),
-        fetch('/api/mentor/students?limit=3'),
-      ]);
+      const [statsResponse, activityResponse, studentsResponse] =
+        await Promise.all([
+          fetch('/api/mentor/dashboard-stats'),
+          fetch('/api/mentor/recent-activity'),
+          fetch('/api/mentor/students?limit=3'),
+        ]);
 
       if (statsResponse.ok) {
         const statsData = await statsResponse.json();
@@ -150,7 +151,8 @@ export default function MentorDashboard() {
           Welcome back, {session?.user.firstName}!
         </h1>
         <p className="text-gray-300">
-          Ready to inspire young writers today? Check your student's progress below.
+          Ready to inspire young writers today? Check your student&apos;s progress
+          below.
         </p>
       </div>
 
@@ -221,13 +223,16 @@ export default function MentorDashboard() {
 
         {/* Top Students */}
         <div className="bg-gray-800 rounded-xl p-6">
-          <h3 className="text-lg font-semibold text-white mb-4">Active Students</h3>
+          <h3 className="text-lg font-semibold text-white mb-4">
+            Active Students
+          </h3>
           <div className="space-y-4">
             {topStudents.map((student, index) => (
               <div key={student._id} className="flex items-center space-x-3">
                 <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center">
                   <span className="text-white text-sm font-medium">
-                    {student.firstName[0]}{student.lastName[0]}
+                    {student.firstName[0]}
+                    {student.lastName[0]}
                   </span>
                 </div>
                 <div className="flex-1">
@@ -235,7 +240,8 @@ export default function MentorDashboard() {
                     {student.firstName} {student.lastName}
                   </p>
                   <p className="text-gray-400 text-xs">
-                    {student.totalStories} stories • {student.completedStories} completed
+                    {student.totalStories} stories • {student.completedStories}{' '}
+                    completed
                   </p>
                 </div>
                 <Link href={`/mentor-dashboard/students/${student._id}`}>
@@ -311,14 +317,14 @@ export default function MentorDashboard() {
               <span>Review Pending Stories</span>
             </button>
           </Link>
-          
+
           <Link href="/mentor-dashboard/students">
             <button className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-3 px-4 rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 flex items-center justify-center space-x-2">
               <Users className="w-4 h-4" />
               <span>Manage Students</span>
             </button>
           </Link>
-          
+
           <Link href="/mentor-dashboard/assessments">
             <button className="w-full bg-gradient-to-r from-green-600 to-green-700 text-white py-3 px-4 rounded-lg hover:from-green-700 hover:to-green-800 transition-all duration-200 flex items-center justify-center space-x-2">
               <Star className="w-4 h-4" />

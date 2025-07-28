@@ -47,12 +47,16 @@ export default function MentorStories() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
-  
+
   const [stories, setStories] = useState<Story[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState(searchParams.get('filter') || 'all');
-  const [studentFilter, setStudentFilter] = useState(searchParams.get('student') || 'all');
+  const [statusFilter, setStatusFilter] = useState(
+    searchParams.get('filter') || 'all'
+  );
+  const [studentFilter, setStudentFilter] = useState(
+    searchParams.get('student') || 'all'
+  );
 
   const fetchStories = useCallback(async () => {
     try {
@@ -119,7 +123,9 @@ export default function MentorStories() {
         .includes(searchTerm.toLowerCase())
   );
 
-  const pendingReviewCount = stories.filter(s => s.needsReview || s.unresolvedComments > 0).length;
+  const pendingReviewCount = stories.filter(
+    (s) => s.needsReview || s.unresolvedComments > 0
+  ).length;
 
   if (loading) {
     return (
@@ -134,8 +140,12 @@ export default function MentorStories() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white mb-2">Student Stories</h1>
-          <p className="text-gray-400">Review and guide your students' creative writing</p>
+          <h1 className="text-2xl font-bold text-white mb-2">
+            Student Stories
+          </h1>
+          <p className="text-gray-400">
+            Review and guide your student&apos;s creative writing
+          </p>
         </div>
         <div className="mt-4 sm:mt-0 flex items-center space-x-4">
           {pendingReviewCount > 0 && (
@@ -166,7 +176,7 @@ export default function MentorStories() {
             <div>
               <p className="text-gray-400 text-sm">Active Stories</p>
               <p className="text-2xl font-bold text-white">
-                {stories.filter(s => s.status === 'active').length}
+                {stories.filter((s) => s.status === 'active').length}
               </p>
             </div>
             <Clock className="w-8 h-8 text-blue-400" />
@@ -178,7 +188,7 @@ export default function MentorStories() {
             <div>
               <p className="text-gray-400 text-sm">Completed</p>
               <p className="text-2xl font-bold text-white">
-                {stories.filter(s => s.status === 'completed').length}
+                {stories.filter((s) => s.status === 'completed').length}
               </p>
             </div>
             <CheckCircle className="w-8 h-8 text-green-400" />
@@ -189,7 +199,9 @@ export default function MentorStories() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-400 text-sm">Need Review</p>
-              <p className="text-2xl font-bold text-white">{pendingReviewCount}</p>
+              <p className="text-2xl font-bold text-white">
+                {pendingReviewCount}
+              </p>
             </div>
             <AlertCircle className="w-8 h-8 text-orange-400" />
           </div>
@@ -246,14 +258,20 @@ export default function MentorStories() {
             {/* Story Header */}
             <div className="flex items-start justify-between mb-4">
               <div className="flex-1">
-                <h3 className="text-white font-medium text-lg mb-1">{story.title}</h3>
-                <p className="text-gray-400 text-sm">Story #{story.storyNumber}</p>
+                <h3 className="text-white font-medium text-lg mb-1">
+                  {story.title}
+                </h3>
+                <p className="text-gray-400 text-sm">
+                  Story #{story.storyNumber}
+                </p>
               </div>
               <div className="flex items-center space-x-2">
                 {(story.needsReview || story.unresolvedComments > 0) && (
                   <div className="w-3 h-3 bg-orange-400 rounded-full"></div>
                 )}
-                <span className={`inline-flex items-center space-x-1 px-2 py-1 rounded-full text-xs border ${getStatusColor(story.status)}`}>
+                <span
+                  className={`inline-flex items-center space-x-1 px-2 py-1 rounded-full text-xs border ${getStatusColor(story.status)}`}
+                >
                   {getStatusIcon(story.status)}
                   <span className="capitalize">{story.status}</span>
                 </span>
@@ -264,7 +282,8 @@ export default function MentorStories() {
             <div className="flex items-center space-x-3 mb-4 p-3 bg-gray-700/50 rounded-lg">
               <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center">
                 <span className="text-white text-sm font-medium">
-                  {story.child.firstName[0]}{story.child.lastName[0]}
+                  {story.child.firstName[0]}
+                  {story.child.lastName[0]}
                 </span>
               </div>
               <div>
@@ -278,82 +297,101 @@ export default function MentorStories() {
             {/* Story Stats */}
             <div className="grid grid-cols-3 gap-4 mb-4">
               <div className="text-center">
-                <div className="text-lg font-bold text-white">{story.totalWords}</div>
-                <div className="text-gray-400 text-xs">Total Words</div>
+                <div className="text-lg font-bold text-white">
+                  {story.totalWords}
                 </div>
-             <div className="text-center">
-               <div className="text-lg font-bold text-blue-400">{story.mentorCommentCount}</div>
-               <div className="text-gray-400 text-xs">My Comments</div>
-             </div>
-             <div className="text-center">
-               <div className="text-lg font-bold text-orange-400">{story.unresolvedComments}</div>
-               <div className="text-gray-400 text-xs">Unresolved</div>
-             </div>
-           </div>
+                <div className="text-gray-400 text-xs">Total Words</div>
+              </div>
+              <div className="text-center">
+                <div className="text-lg font-bold text-blue-400">
+                  {story.mentorCommentCount}
+                </div>
+                <div className="text-gray-400 text-xs">My Comments</div>
+              </div>
+              <div className="text-center">
+                <div className="text-lg font-bold text-orange-400">
+                  {story.unresolvedComments}
+                </div>
+                <div className="text-gray-400 text-xs">Unresolved</div>
+              </div>
+            </div>
 
-           {/* Progress Bar */}
-           <div className="mb-4">
-             <div className="flex items-center justify-between text-sm text-gray-400 mb-1">
-               <span>API Calls Used</span>
-               <span>{story.apiCallsUsed}/{story.maxApiCalls}</span>
-             </div>
-             <div className="w-full bg-gray-700 rounded-full h-2">
-               <div
-                 className="bg-gradient-to-r from-green-400 to-green-500 h-2 rounded-full"
-                 style={{
-                   width: `${Math.min((story.apiCallsUsed / story.maxApiCalls) * 100, 100)}%`,
-                 }}
-               ></div>
-             </div>
-           </div>
+            {/* Progress Bar */}
+            <div className="mb-4">
+              <div className="flex items-center justify-between text-sm text-gray-400 mb-1">
+                <span>API Calls Used</span>
+                <span>
+                  {story.apiCallsUsed}/{story.maxApiCalls}
+                </span>
+              </div>
+              <div className="w-full bg-gray-700 rounded-full h-2">
+                <div
+                  className="bg-gradient-to-r from-green-400 to-green-500 h-2 rounded-full"
+                  style={{
+                    width: `${Math.min((story.apiCallsUsed / story.maxApiCalls) * 100, 100)}%`,
+                  }}
+                ></div>
+              </div>
+            </div>
 
-           {/* Metadata */}
-           <div className="flex items-center justify-between text-sm text-gray-400 mb-4">
-             <div className="flex items-center space-x-1">
-               <Calendar className="w-4 h-4" />
-               <span>Updated: {new Date(story.updatedAt).toLocaleDateString()}</span>
-             </div>
-             <div className="flex items-center space-x-1">
-               <MessageSquare className="w-4 h-4" />
-               <span>{story.commentCount} comments</span>
-             </div>
-           </div>
+            {/* Metadata */}
+            <div className="flex items-center justify-between text-sm text-gray-400 mb-4">
+              <div className="flex items-center space-x-1">
+                <Calendar className="w-4 h-4" />
+                <span>
+                  Updated: {new Date(story.updatedAt).toLocaleDateString()}
+                </span>
+              </div>
+              <div className="flex items-center space-x-1">
+                <MessageSquare className="w-4 h-4" />
+                <span>{story.commentCount} comments</span>
+              </div>
+            </div>
 
-           {/* Actions */}
-           <div className="flex space-x-2">
-             <Link href={`/mentor-dashboard/stories/${story._id}`} className="flex-1">
-               <button className="w-full bg-gradient-to-r from-green-600 to-green-700 text-white py-2 px-3 rounded-lg hover:from-green-700 hover:to-green-800 transition-all duration-200 flex items-center justify-center space-x-2">
-                 <Eye className="w-4 h-4" />
-                 <span>Review Story</span>
-               </button>
-             </Link>
-             <Link href={`/mentor-dashboard/stories/${story._id}/comments`}>
-               <button className="bg-gray-700 text-white py-2 px-3 rounded-lg hover:bg-gray-600 transition-colors">
-                 <MessageSquare className="w-4 h-4" />
-               </button>
-             </Link>
-           </div>
+            {/* Actions */}
+            <div className="flex space-x-2">
+              <Link
+                href={`/mentor-dashboard/stories/${story._id}`}
+                className="flex-1"
+              >
+                <button className="w-full bg-gradient-to-r from-green-600 to-green-700 text-white py-2 px-3 rounded-lg hover:from-green-700 hover:to-green-800 transition-all duration-200 flex items-center justify-center space-x-2">
+                  <Eye className="w-4 h-4" />
+                  <span>Review Story</span>
+                </button>
+              </Link>
+              <Link href={`/mentor-dashboard/stories/${story._id}/comments`}>
+                <button className="bg-gray-700 text-white py-2 px-3 rounded-lg hover:bg-gray-600 transition-colors">
+                  <MessageSquare className="w-4 h-4" />
+                </button>
+              </Link>
+            </div>
 
-           {/* Last Comment Preview */}
-           {story.lastMentorComment && (
-             <div className="mt-3 p-3 bg-gray-700/30 rounded-lg">
-               <p className="text-gray-400 text-xs mb-1">Your last comment:</p>
-               <p className="text-gray-300 text-sm truncate">{story.lastMentorComment}</p>
-             </div>
-           )}
-         </motion.div>
-       ))}
-     </div>
+            {/* Last Comment Preview */}
+            {story.lastMentorComment && (
+              <div className="mt-3 p-3 bg-gray-700/30 rounded-lg">
+                <p className="text-gray-400 text-xs mb-1">Your last comment:</p>
+                <p className="text-gray-300 text-sm truncate">
+                  {story.lastMentorComment}
+                </p>
+              </div>
+            )}
+          </motion.div>
+        ))}
+      </div>
 
-     {filteredStories.length === 0 && !loading && (
-       <div className="text-center py-12">
-         <BookOpen className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-         <h3 className="text-xl font-medium text-gray-400 mb-2">No stories found</h3>
-         <p className="text-gray-500">
-           {searchTerm ? 'Try adjusting your search criteria.' : 'No stories have been created by your students yet.'}
-         </p>
-       </div>
-     )}
-   </div>
- );
+      {filteredStories.length === 0 && !loading && (
+        <div className="text-center py-12">
+          <BookOpen className="w-16 h-16 text-gray-600 mx-auto mb-4" />
+          <h3 className="text-xl font-medium text-gray-400 mb-2">
+            No stories found
+          </h3>
+          <p className="text-gray-500">
+            {searchTerm
+              ? 'Try adjusting your search criteria.'
+              : 'No stories have been created by your students yet.'}
+          </p>
+        </div>
+      )}
+    </div>
+  );
 }

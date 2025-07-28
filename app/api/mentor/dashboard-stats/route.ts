@@ -29,11 +29,11 @@ export async function GET() {
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
 
     // Get assigned students
-    const assignments = await MentorAssignment.find({ 
+    const assignments = await MentorAssignment.find({
       mentorId,
-      isActive: { $ne: false }
+      isActive: { $ne: false },
     });
-    const studentIds = assignments.map(a => a.childId);
+    const studentIds = assignments.map((a) => a.childId);
 
     // Parallel data fetching
     const [
@@ -47,18 +47,18 @@ export async function GET() {
       assignments.length,
       StorySession.countDocuments({ childId: { $in: studentIds } }),
       StoryComment.countDocuments({ authorId: mentorId }),
-      StorySession.countDocuments({ 
+      StorySession.countDocuments({
         childId: { $in: studentIds },
         status: { $in: ['active', 'completed'] },
-        needsMentorReview: true
+        needsMentorReview: true,
       }),
       StorySession.countDocuments({
         childId: { $in: studentIds },
-        createdAt: { $gte: startOfMonth }
+        createdAt: { $gte: startOfMonth },
       }),
       StoryComment.countDocuments({
         authorId: mentorId,
-        createdAt: { $gte: startOfMonth }
+        createdAt: { $gte: startOfMonth },
       }),
     ]);
 

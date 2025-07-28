@@ -5,13 +5,7 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
-import {
-  ArrowLeft,
-  UserPlus,
-  Search,
-  CheckCircle,
-  User,
-} from 'lucide-react';
+import { ArrowLeft, UserPlus, Search, CheckCircle, User } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface Student {
@@ -29,11 +23,15 @@ interface Mentor {
   assignedStudents: number;
 }
 
-export default function AssignMentorPage({ params }: { params: { id: string } }) {
+export default function AssignMentorPage({
+  params,
+}: {
+  params: { id: string };
+}) {
   const { data: session, status } = useSession();
   const router = useRouter();
   const { toast } = useToast();
-  
+
   const [student, setStudent] = useState<Student | null>(null);
   const [mentors, setMentors] = useState<Mentor[]>([]);
   const [selectedMentor, setSelectedMentor] = useState<string>('');
@@ -56,7 +54,7 @@ export default function AssignMentorPage({ params }: { params: { id: string } })
     try {
       const [studentResponse, mentorsResponse] = await Promise.all([
         fetch(`/api/admin/users/${params.id}`),
-        fetch('/api/admin/mentors')
+        fetch('/api/admin/mentors'),
       ]);
 
       const studentData = await studentResponse.json();
@@ -128,9 +126,12 @@ export default function AssignMentorPage({ params }: { params: { id: string } })
     }
   };
 
-  const filteredMentors = mentors.filter(mentor =>
-    `${mentor.firstName} ${mentor.lastName}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    mentor.email.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredMentors = mentors.filter(
+    (mentor) =>
+      `${mentor.firstName} ${mentor.lastName}`
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
+      mentor.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   if (loading) {
@@ -144,7 +145,9 @@ export default function AssignMentorPage({ params }: { params: { id: string } })
   if (!student) {
     return (
       <div className="text-center py-12">
-        <h3 className="text-xl font-medium text-gray-400 mb-2">Student not found</h3>
+        <h3 className="text-xl font-medium text-gray-400 mb-2">
+          Student not found
+        </h3>
         <Link href="/admin/users">
           <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
             Back to Users
@@ -165,7 +168,9 @@ export default function AssignMentorPage({ params }: { params: { id: string } })
         </Link>
         <div>
           <h1 className="text-2xl font-bold text-white">Assign Mentor</h1>
-          <p className="text-gray-400">Select a mentor for {student.firstName} {student.lastName}</p>
+          <p className="text-gray-400">
+            Select a mentor for {student.firstName} {student.lastName}
+          </p>
         </div>
       </div>
 
@@ -178,7 +183,8 @@ export default function AssignMentorPage({ params }: { params: { id: string } })
         <div className="flex items-center space-x-4">
           <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center">
             <span className="text-white font-medium">
-              {student.firstName[0]}{student.lastName[0]}
+              {student.firstName[0]}
+              {student.lastName[0]}
             </span>
           </div>
           <div>
@@ -206,7 +212,9 @@ export default function AssignMentorPage({ params }: { params: { id: string } })
 
       {/* Mentors List */}
       <div className="bg-gray-800 rounded-xl p-6">
-        <h3 className="text-lg font-medium text-white mb-4">Available Mentors</h3>
+        <h3 className="text-lg font-medium text-white mb-4">
+          Available Mentors
+        </h3>
         <div className="space-y-3">
           {filteredMentors.map((mentor) => (
             <motion.div
@@ -224,7 +232,8 @@ export default function AssignMentorPage({ params }: { params: { id: string } })
                 <div className="flex items-center space-x-3">
                   <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-purple-600 rounded-full flex items-center justify-center">
                     <span className="text-white font-medium text-sm">
-                      {mentor.firstName[0]}{mentor.lastName[0]}
+                      {mentor.firstName[0]}
+                      {mentor.lastName[0]}
                     </span>
                   </div>
                   <div>

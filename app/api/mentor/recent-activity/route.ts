@@ -1,5 +1,3 @@
-
-
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/utils/authOptions';
@@ -61,11 +59,11 @@ export async function GET() {
     const mentorId = session.user.id;
 
     // Get assigned students
-    const assignments = await MentorAssignment.find({ 
+    const assignments = await MentorAssignment.find({
       mentorId,
-      isActive: { $ne: false }
+      isActive: { $ne: false },
     });
-    const studentIds = assignments.map(a => a.childId);
+    const studentIds = assignments.map((a) => a.childId);
 
     // Get recent comments
     const recentComments = await StoryComment.find({ authorId: mentorId })
@@ -74,15 +72,17 @@ export async function GET() {
         select: 'title childId',
         populate: {
           path: 'childId',
-          select: 'firstName lastName'
-        }
+          select: 'firstName lastName',
+        },
       })
       .sort({ createdAt: -1 })
       .limit(5)
       .lean();
 
     // Get recent stories
-    const recentStories = await StorySession.find({ childId: { $in: studentIds } })
+    const recentStories = await StorySession.find({
+      childId: { $in: studentIds },
+    })
       .populate('childId', 'firstName lastName')
       .sort({ createdAt: -1 })
       .limit(3)
@@ -119,7 +119,10 @@ export async function GET() {
     });
 
     // Sort by date and limit
-    activities.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    activities.sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
 
     return NextResponse.json({
       success: true,

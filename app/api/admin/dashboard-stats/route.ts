@@ -50,21 +50,21 @@ export async function GET() {
       StorySession.countDocuments({ status: 'active' }),
       StorySession.countDocuments({ status: 'completed' }),
       StoryComment.countDocuments(),
-      User.countDocuments({ 
-        createdAt: { $gte: startOfMonth } 
+      User.countDocuments({
+        createdAt: { $gte: startOfMonth },
       }),
-      StorySession.countDocuments({ 
-        createdAt: { $gte: startOfMonth } 
+      StorySession.countDocuments({
+        createdAt: { $gte: startOfMonth },
       }),
-      StorySession.countDocuments({ 
+      StorySession.countDocuments({
         status: 'completed',
-        completedAt: { $gte: startOfMonth } 
+        completedAt: { $gte: startOfMonth },
       }),
-      User.countDocuments({ 
-        createdAt: { $gte: startOfLastMonth, $lt: endOfLastMonth } 
+      User.countDocuments({
+        createdAt: { $gte: startOfLastMonth, $lt: endOfLastMonth },
       }),
-      StorySession.countDocuments({ 
-        createdAt: { $gte: startOfLastMonth, $lt: endOfLastMonth } 
+      StorySession.countDocuments({
+        createdAt: { $gte: startOfLastMonth, $lt: endOfLastMonth },
       }),
     ]);
 

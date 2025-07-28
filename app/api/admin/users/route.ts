@@ -22,7 +22,9 @@ export async function GET() {
 
     // Get REAL users with subscription data
     const users = await User.find({ role: 'child' })
-      .select('firstName lastName email subscriptionTier subscriptionStartDate subscriptionEndDate createdAt')
+      .select(
+        'firstName lastName email subscriptionTier subscriptionStartDate subscriptionEndDate createdAt'
+      )
       .sort({ createdAt: -1 });
 
     // Get REAL usage stats for each user
@@ -32,8 +34,8 @@ export async function GET() {
           StorySession.countDocuments({ childId: user._id }),
           StorySession.aggregate([
             { $match: { childId: user._id } },
-            { $group: { _id: null, total: { $sum: '$apiCallsUsed' } } }
-          ])
+            { $group: { _id: null, total: { $sum: '$apiCallsUsed' } } },
+          ]),
         ]);
 
         return {

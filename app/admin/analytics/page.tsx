@@ -411,7 +411,6 @@ export default function AnalyticsDashboard() {
           </div>
         </div>
       </motion.div>
-
     </div>
   );
 }

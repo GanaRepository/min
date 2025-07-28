@@ -27,14 +27,13 @@ export async function GET(
     await connectToDatabase();
 
     // Get REAL story from your database
-    const story = await StorySession.findById(storyId)
-      .populate('childId', 'firstName lastName email subscriptionTier');
+    const story = await StorySession.findById(storyId).populate(
+      'childId',
+      'firstName lastName email subscriptionTier'
+    );
 
     if (!story) {
-      return NextResponse.json(
-        { error: 'Story not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Story not found' }, { status: 404 });
     }
 
     // Get REAL comments for this story
@@ -44,8 +43,9 @@ export async function GET(
       .sort({ createdAt: -1 });
 
     // Get REAL story turns to build the content
-    const turns = await Turn.find({ sessionId: storyId })
-      .sort({ turnNumber: 1 });
+    const turns = await Turn.find({ sessionId: storyId }).sort({
+      turnNumber: 1,
+    });
 
     // Build the complete story content from turns
     let content = story.aiOpening || '';

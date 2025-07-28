@@ -243,7 +243,6 @@ export default function AdminDashboard() {
                 Review Stories
               </button>
             </Link>
-    
           </div>
         </div>
       </div>
@@ -252,7 +251,6 @@ export default function AdminDashboard() {
       <div className="bg-gray-800 rounded-xl p-6">
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-xl font-semibold text-white">Recent Activity</h3>
-        
         </div>
 
         {recentActivity.length > 0 ? (

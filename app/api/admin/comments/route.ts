@@ -28,15 +28,15 @@ export async function GET(request: Request) {
 
     // Build query for REAL comments
     let query: any = {};
-    
+
     if (commentType && commentType !== 'all') {
       query.commentType = commentType;
     }
-    
+
     if (isResolved && isResolved !== 'all') {
       query.isResolved = isResolved === 'true';
     }
-    
+
     if (unresolved === 'true') {
       query.isResolved = false;
     }
@@ -49,8 +49,8 @@ export async function GET(request: Request) {
         select: 'title childId storyNumber',
         populate: {
           path: 'childId',
-          select: 'firstName lastName'
-        }
+          select: 'firstName lastName',
+        },
       })
       .populate('resolvedBy', 'firstName lastName')
       .sort({ createdAt: -1 })
