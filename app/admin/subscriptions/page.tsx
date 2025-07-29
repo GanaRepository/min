@@ -1,6 +1,14 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationPrevious,
+  PaginationNext,
+} from '@/components/ui/pagination';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
@@ -52,11 +60,13 @@ export default function SubscriptionManagement() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [tierFilter, setTierFilter] = useState('all');
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
-  const fetchData = useCallback(async () => {
+  const fetchData = useCallback(async (pageNum: number) => {
     try {
       const [usersResponse, statsResponse] = await Promise.all([
-        fetch('/api/admin/subscriptions/users'),
+        fetch(`/api/admin/subscriptions/users?page=${pageNum}&limit=10`),
         fetch('/api/admin/subscriptions/stats'),
       ]);
 
@@ -65,6 +75,7 @@ export default function SubscriptionManagement() {
 
       if (usersData.success) {
         setUsers(usersData.users);
+        setTotalPages(usersData.pagination?.pages || 1);
       }
 
       if (statsData.success) {
@@ -84,14 +95,13 @@ export default function SubscriptionManagement() {
 
   useEffect(() => {
     if (status === 'loading') return;
-
     if (!session || session.user?.role !== 'admin') {
       router.push('/admin/login');
       return;
     }
-
-    fetchData();
-  }, [session, status, router, fetchData]);
+    fetchData(page);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session, status, router, fetchData, page]);
 
   const updateSubscription = async (userId: string, newTier: string) => {
     try {
@@ -407,6 +417,36 @@ export default function SubscriptionManagement() {
             </tbody>
           </table>
         </div>
+      </div>
+
+      {/* Pagination */}
+      <div className="mt-8">
+        <Pagination>
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious
+                onClick={() => setPage(page > 1 ? page - 1 : 1)}
+                aria-disabled={page === 1}
+              />
+            </PaginationItem>
+            {[...Array(totalPages)].map((_, idx) => (
+              <PaginationItem key={idx + 1}>
+                <PaginationLink
+                  isActive={page === idx + 1}
+                  onClick={() => setPage(idx + 1)}
+                >
+                  {idx + 1}
+                </PaginationLink>
+              </PaginationItem>
+            ))}
+            <PaginationItem>
+              <PaginationNext
+                onClick={() => setPage(page < totalPages ? page + 1 : totalPages)}
+                aria-disabled={page === totalPages}
+              />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
       </div>
 
       {filteredUsers.length === 0 && !loading && (

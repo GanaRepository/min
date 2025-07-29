@@ -13,6 +13,7 @@ import {
   FileText,
   Star,
   AlertCircle,
+  DollarSign
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 

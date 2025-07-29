@@ -11,12 +11,24 @@ import {
   Filter,
   Search,
   Eye,
-  CheckCircle,
-  AlertCircle,
+  BadgeCheck,
+  CircleAlert,
   Clock,
   BookOpen,
+  Edit2,
+  Trash2,
+  X,
+  Save,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationPrevious,
+  PaginationNext,
+} from '@/components/ui/pagination';
 
 interface Comment {
   _id: string;
@@ -53,6 +65,63 @@ export default function CommentsManagement() {
   const searchParams = useSearchParams();
 
   const [comments, setComments] = useState<Comment[]>([]);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editValue, setEditValue] = useState<string>('');
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  // Edit comment handler
+  const handleEditClick = (comment: Comment) => {
+    setEditingId(comment._id);
+    setEditValue(comment.comment);
+  };
+
+  const handleEditCancel = () => {
+    setEditingId(null);
+    setEditValue('');
+  };
+
+  const handleEditSave = async (comment: Comment) => {
+    try {
+      const response = await fetch(`/api/admin/comments/${comment._id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ comment: editValue }),
+      });
+      const data = await response.json();
+      if (data.success) {
+        setComments((prev) =>
+          prev.map((c) => (c._id === comment._id ? { ...c, comment: editValue } : c))
+        );
+        setEditingId(null);
+        setEditValue('');
+      }
+    } catch (error) {
+      console.error('Error editing comment:', error);
+    }
+  };
+
+  // Delete comment handler
+  const handleDeleteClick = (comment: Comment) => {
+    setDeletingId(comment._id);
+  };
+
+  const handleDeleteConfirm = async (comment: Comment) => {
+    try {
+      const response = await fetch(`/api/admin/comments/${comment._id}`, {
+        method: 'DELETE',
+      });
+      const data = await response.json();
+      if (data.success) {
+        setComments((prev) => prev.filter((c) => c._id !== comment._id));
+        setDeletingId(null);
+      }
+    } catch (error) {
+      console.error('Error deleting comment:', error);
+    }
+  };
+
+  const handleDeleteCancel = () => {
+    setDeletingId(null);
+  };
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -66,14 +135,14 @@ export default function CommentsManagement() {
   const [authorFilter, setAuthorFilter] = useState('all');
 
   // Pagination
-  const [currentPage, setCurrentPage] = useState(1);
+  const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const limit = 20;
+  const limit = 10;
 
   const fetchComments = useCallback(async () => {
     try {
       const params = new URLSearchParams({
-        page: currentPage.toString(),
+        page: page.toString(),
         limit: limit.toString(),
         ...(typeFilter !== 'all' && { commentType: typeFilter }),
         ...(resolvedFilter !== 'all' && { isResolved: resolvedFilter }),
@@ -94,7 +163,7 @@ export default function CommentsManagement() {
     } finally {
       setLoading(false);
     }
-  }, [typeFilter, resolvedFilter, currentPage, searchParams]);
+  }, [typeFilter, resolvedFilter, page, searchParams]);
 
   useEffect(() => {
     if (status === 'loading') return;
@@ -192,13 +261,7 @@ export default function CommentsManagement() {
             Monitor and manage all comments across stories
           </p>
         </div>
-        <div className="mt-4 sm:mt-0 flex space-x-3">
-          <Link href="/admin/comments?unresolved=true">
-            <button className="bg-gradient-to-r from-orange-600 to-orange-700 text-white px-4 py-2 rounded-lg hover:from-orange-700 hover:to-orange-800 transition-all duration-200">
-              Show Unresolved
-            </button>
-          </Link>
-        </div>
+        
       </div>
 
       {/* Filters and Search */}
@@ -227,8 +290,6 @@ export default function CommentsManagement() {
             <option value="all">All Types</option>
             <option value="general">General</option>
             <option value="suggestion">Suggestion</option>
-            <option value="correction">Correction</option>
-            <option value="praise">Praise</option>
           </select>
 
           {/* Resolved Filter */}
@@ -251,26 +312,25 @@ export default function CommentsManagement() {
             <option value="all">All Authors</option>
             <option value="admin">Admins</option>
             <option value="mentor">Mentors</option>
-            <option value="child">Children</option>
           </select>
         </div>
       </div>
 
       {/* Comments List */}
-      <div className="space-y-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredComments.map((comment, index) => (
           <motion.div
             key={comment._id}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.05 }}
-            className="bg-gray-800 rounded-xl p-6 hover:bg-gray-750 transition-colors"
+            className="bg-gray-800 rounded-xl p-6 hover:bg-gray-750 transition-colors h-full flex flex-col"
           >
-            <div className="flex items-start justify-between">
+            <div className="flex items-start justify-between gap-4">
               <div className="flex-1">
                 {/* Comment Header */}
-                <div className="flex items-center space-x-3 mb-3">
-                  <div className="flex items-center space-x-2">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="flex items-center gap-2">
                     <div className="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center">
                       <span className="text-sm font-medium text-white">
                         {comment.authorId.firstName[0]}
@@ -278,10 +338,10 @@ export default function CommentsManagement() {
                       </span>
                     </div>
                     <div>
-                      <p className="text-white text-sm font-medium">
+                      <p className="text-white text-sm font-medium leading-tight">
                         {comment.authorId.firstName} {comment.authorId.lastName}
                       </p>
-                      <div className="flex items-center space-x-2">
+                      <div className="flex items-center gap-2 mt-1">
                         <span
                           className={`px-2 py-1 rounded-full text-xs ${getRoleColor(comment.authorId.role)}`}
                         >
@@ -298,7 +358,7 @@ export default function CommentsManagement() {
                 </div>
 
                 {/* Story Info */}
-                <div className="mb-3 p-3 bg-gray-700/50 rounded-lg">
+                <div className="mb-4 p-3 bg-gray-700/50 rounded-lg">
                   <div className="flex items-center space-x-2 text-sm text-gray-300">
                     <BookOpen className="w-4 h-4" />
                     <span>
@@ -310,16 +370,41 @@ export default function CommentsManagement() {
                 </div>
 
                 {/* Comment Content */}
-                <div className="mb-4">
-                  <p className="text-gray-300 leading-relaxed">
-                    {comment.comment}
-                  </p>
+                <div className="mb-4 mt-2">
+                  {editingId === comment._id ? (
+                    <div className="flex flex-col gap-2">
+                      <textarea
+                        className="w-full rounded bg-gray-700 text-gray-100 p-2"
+                        value={editValue}
+                        onChange={(e) => setEditValue(e.target.value)}
+                        rows={3}
+                      />
+                      <div className="flex gap-2">
+                        <button
+                          className="flex items-center gap-1 px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700"
+                          onClick={() => handleEditSave(comment)}
+                        >
+                          <Save className="w-4 h-4" /> Save
+                        </button>
+                        <button
+                          className="flex items-center gap-1 px-3 py-1 bg-gray-600 text-white rounded hover:bg-gray-700"
+                          onClick={handleEditCancel}
+                        >
+                          <X className="w-4 h-4" /> Cancel
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <p className="text-gray-300 leading-relaxed">
+                      {comment.comment}
+                    </p>
+                  )}
                 </div>
 
                 {/* Comment Footer */}
-                <div className="flex items-center justify-between text-sm text-gray-400">
-                  <div className="flex items-center space-x-4">
-                    <div className="flex items-center space-x-1">
+                <div className="flex flex-wrap items-center justify-between text-sm text-gray-400 mt-2 gap-2">
+                  <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-1">
                       <Calendar className="w-4 h-4" />
                       <span>
                         {new Date(comment.createdAt).toLocaleDateString()}
@@ -329,11 +414,12 @@ export default function CommentsManagement() {
                       <span>Position: {comment.position}</span>
                     )}
                   </div>
+    
 
-                  <div className="flex items-center space-x-3">
+                  <div className="flex items-center gap-3">
                     {comment.isResolved ? (
                       <div className="flex items-center space-x-1 text-green-400">
-                        <CheckCircle className="w-4 h-4" />
+                        <BadgeCheck className="w-4 h-4" />
                         <span>Resolved</span>
                         {comment.resolvedBy && (
                           <span className="text-gray-400">
@@ -344,7 +430,7 @@ export default function CommentsManagement() {
                       </div>
                     ) : (
                       <div className="flex items-center space-x-1 text-orange-400">
-                        <Clock className="w-4 h-4" />
+                        <CircleAlert className="w-4 h-4" />
                         <span>Unresolved</span>
                       </div>
                     )}
@@ -353,16 +439,14 @@ export default function CommentsManagement() {
               </div>
 
               {/* Action Buttons */}
-              <div className="flex items-center space-x-2 ml-4">
+              <div className="flex items-center gap-2 ml-4 mt-1">
                 <Link href={`/admin/stories/${comment.storyId._id}`}>
                   <button className="text-blue-400 hover:text-blue-300 p-2 rounded-lg hover:bg-gray-700 transition-colors">
                     <Eye className="w-4 h-4" />
                   </button>
                 </Link>
                 <button
-                  onClick={() =>
-                    toggleResolveComment(comment._id, comment.isResolved)
-                  }
+                  onClick={() => toggleResolveComment(comment._id, comment.isResolved)}
                   className={`p-2 rounded-lg transition-colors ${
                     comment.isResolved
                       ? 'text-orange-400 hover:text-orange-300 hover:bg-gray-700'
@@ -370,12 +454,50 @@ export default function CommentsManagement() {
                   }`}
                 >
                   {comment.isResolved ? (
-                    <AlertCircle className="w-4 h-4" />
+                    <CircleAlert className="w-4 h-4" />
                   ) : (
-                    <CheckCircle className="w-4 h-4" />
+                    <BadgeCheck className="w-4 h-4" />
                   )}
                 </button>
+                <button
+                  className="text-yellow-400 hover:text-yellow-300 p-2 rounded-lg hover:bg-gray-700 transition-colors"
+                  onClick={() => handleEditClick(comment)}
+                  disabled={editingId !== null && editingId !== comment._id}
+                  title="Edit Comment"
+                >
+                  <Edit2 className="w-4 h-4" />
+                </button>
+                <button
+                  className="text-red-400 hover:text-red-300 p-2 rounded-lg hover:bg-gray-700 transition-colors"
+                  onClick={() => handleDeleteClick(comment)}
+                  disabled={editingId !== null}
+                  title="Delete Comment"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
               </div>
+              {/* Delete confirmation dialog */}
+              {deletingId === comment._id && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+                  <div className="bg-gray-800 p-6 rounded-xl shadow-lg flex flex-col items-center">
+                    <p className="text-white mb-4">Are you sure you want to delete this comment?</p>
+                    <div className="flex gap-4">
+                      <button
+                        className="flex items-center gap-1 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+                        onClick={() => handleDeleteConfirm(comment)}
+                      >
+                        <Trash2 className="w-4 h-4" /> Delete
+                      </button>
+                      <button
+                        className="flex items-center gap-1 px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
+                        onClick={handleDeleteCancel}
+                      >
+                        <X className="w-4 h-4" /> Cancel
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </motion.div>
         ))}
@@ -385,21 +507,19 @@ export default function CommentsManagement() {
       {totalPages > 1 && (
         <div className="bg-gray-800 rounded-xl px-6 py-4 flex items-center justify-between">
           <div className="text-gray-400 text-sm">
-            Page {currentPage} of {totalPages}
+            Page {page} of {totalPages}
           </div>
           <div className="flex space-x-2">
             <button
-              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-              disabled={currentPage === 1}
+              onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+              disabled={page === 1}
               className="px-3 py-1 bg-gray-700 text-white rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-600 transition-colors"
             >
               Previous
             </button>
             <button
-              onClick={() =>
-                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-              }
-              disabled={currentPage === totalPages}
+              onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))}
+              disabled={page === totalPages}
               className="px-3 py-1 bg-gray-700 text-white rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-600 transition-colors"
             >
               Next

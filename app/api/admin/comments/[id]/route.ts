@@ -26,21 +26,25 @@ export async function PATCH(
 
     const { id } = params;
     const body = await request.json();
-    const { isResolved } = body;
+    const { isResolved, comment: newComment } = body;
 
     await connectToDatabase();
 
     const updateData: any = {
-      isResolved,
       updatedAt: new Date(),
     };
-
-    if (isResolved) {
-      updateData.resolvedAt = new Date();
-      updateData.resolvedBy = session.user.id;
-    } else {
-      updateData.resolvedAt = null;
-      updateData.resolvedBy = null;
+    if (typeof isResolved !== 'undefined') {
+      updateData.isResolved = isResolved;
+      if (isResolved) {
+        updateData.resolvedAt = new Date();
+        updateData.resolvedBy = session.user.id;
+      } else {
+        updateData.resolvedAt = null;
+        updateData.resolvedBy = null;
+      }
+    }
+    if (typeof newComment === 'string') {
+      updateData.comment = newComment;
     }
 
     const comment = await StoryComment.findByIdAndUpdate(id, updateData, {

@@ -212,6 +212,14 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationPrevious,
+  PaginationNext,
+} from '@/components/ui/pagination';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -250,25 +258,28 @@ export default function UsersManagement() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterRole, setFilterRole] = useState('all');
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+
 
   useEffect(() => {
     if (status === 'loading') return;
-
     if (!session || session.user?.role !== 'admin') {
       router.push('/admin/login');
       return;
     }
+    fetchUsers(page);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session, status, router, page]);
 
-    fetchUsers();
-  }, [session, status, router]);
-
-  const fetchUsers = async () => {
+  const fetchUsers = async (pageNum: number) => {
+    setLoading(true);
     try {
-      const response = await fetch('/api/admin/users');
+      const response = await fetch(`/api/admin/users?page=${pageNum}&limit=10`);
       const data = await response.json();
-
       if (data.success) {
         setUsers(data.users);
+        setTotalPages(data.pagination.pages || 1);
       }
     } catch (error) {
       console.error('Error fetching users:', error);
@@ -519,9 +530,6 @@ export default function UsersManagement() {
                         </Link>
                       )}
 
-                      <button className="text-gray-400 hover:text-gray-300 p-2 rounded-lg hover:bg-gray-700 transition-colors">
-                        <MoreHorizontal className="w-4 h-4" />
-                      </button>
                     </div>
                   </td>
                 </motion.tr>
@@ -529,6 +537,36 @@ export default function UsersManagement() {
             </tbody>
           </table>
         </div>
+      </div>
+
+      {/* Pagination */}
+      <div className="mt-8">
+        <Pagination>
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious
+                onClick={() => setPage(page > 1 ? page - 1 : 1)}
+                aria-disabled={page === 1}
+              />
+            </PaginationItem>
+            {[...Array(totalPages)].map((_, idx) => (
+              <PaginationItem key={idx + 1}>
+                <PaginationLink
+                  isActive={page === idx + 1}
+                  onClick={() => setPage(idx + 1)}
+                >
+                  {idx + 1}
+                </PaginationLink>
+              </PaginationItem>
+            ))}
+            <PaginationItem>
+              <PaginationNext
+                onClick={() => setPage(page < totalPages ? page + 1 : totalPages)}
+                aria-disabled={page === totalPages}
+              />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
       </div>
 
       {filteredUsers.length === 0 && !loading && (

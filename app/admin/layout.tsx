@@ -9,7 +9,7 @@ import {
   FileText,
   MessageSquare,
   BarChart3,
-  Settings,
+  DollarSign,
   LogOut,
   Menu,
   X,
@@ -40,7 +40,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   }, [session, status, router, pathname]);
 
   const navigation = [
-    { name: 'Dashboard', href: '/admin', icon: BarChart3 },
+    { name: 'Dashboard', href: '/admin', icon: Crown },
     { name: 'All Users', href: '/admin/users', icon: Users },
     { name: 'All Stories', href: '/admin/stories', icon: BookOpen },
     {
@@ -49,9 +49,9 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       icon: MessageSquare,
     },
     { name: 'Create Mentor', href: '/admin/create-mentor', icon: UserPlus },
-    { name: 'Mentor Details', href: '/admin/mentors', icon: UserCheck },
+    { name: 'Mentor Details', href: '/admin/mentors', icon: FileText },
     { name: 'Analytics', href: '/admin/analytics', icon: BarChart3 },
-    { name: 'Subscriptions', href: '/admin/subscriptions', icon: BarChart3 },
+    { name: 'Subscriptions', href: '/admin/subscriptions', icon: DollarSign },
   ];
 
   const isActive = (path: string) => {

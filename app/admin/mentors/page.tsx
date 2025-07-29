@@ -1,6 +1,14 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationPrevious,
+  PaginationNext,
+} from '@/components/ui/pagination';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -48,25 +56,28 @@ export default function MentorsManagement() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedMentor, setSelectedMentor] = useState<Mentor | null>(null);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+
 
   useEffect(() => {
     if (status === 'loading') return;
-
     if (!session || session.user.role !== 'admin') {
       router.push('/admin/login');
       return;
     }
+    fetchMentors(page);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session, status, router, page]);
 
-    fetchMentors();
-  }, [session, status, router]);
-
-  const fetchMentors = async () => {
+  const fetchMentors = async (pageNum: number) => {
+    setLoading(true);
     try {
-      const response = await fetch('/api/admin/mentors');
+      const response = await fetch(`/api/admin/mentors?page=${pageNum}&limit=10`);
       const data = await response.json();
-
       if (data.success) {
         setMentors(data.mentors);
+        setTotalPages(data.pagination.pages || 1);
       }
     } catch (error) {
       console.error('Error fetching mentors:', error);
@@ -88,6 +99,7 @@ export default function MentorsManagement() {
       console.error('Error fetching mentor details:', error);
     }
   };
+
 
   const filteredMentors = mentors.filter(
     (mentor) =>
@@ -257,11 +269,7 @@ export default function MentorsManagement() {
                 <Eye className="w-4 h-4" />
                 <span>View Details</span>
               </button>
-              <Link href={`/admin/mentors/${mentor._id}/edit`}>
-                <button className="bg-gray-700 hover:bg-gray-600 text-white py-2 px-3 rounded-lg transition-colors">
-                  <Edit className="w-4 h-4" />
-                </button>
-              </Link>
+  
             </div>
           </motion.div>
         ))}
@@ -351,6 +359,36 @@ export default function MentorsManagement() {
           </motion.div>
         </div>
       )}
+
+      {/* Pagination */}
+      <div className="mt-8">
+        <Pagination>
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious
+                onClick={() => setPage(page > 1 ? page - 1 : 1)}
+                aria-disabled={page === 1}
+              />
+            </PaginationItem>
+            {[...Array(totalPages)].map((_, idx) => (
+              <PaginationItem key={idx + 1}>
+                <PaginationLink
+                  isActive={page === idx + 1}
+                  onClick={() => setPage(idx + 1)}
+                >
+                  {idx + 1}
+                </PaginationLink>
+              </PaginationItem>
+            ))}
+            <PaginationItem>
+              <PaginationNext
+                onClick={() => setPage(page < totalPages ? page + 1 : totalPages)}
+                aria-disabled={page === totalPages}
+              />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
+      </div>
 
       {filteredMentors.length === 0 && !loading && (
         <div className="text-center py-12">

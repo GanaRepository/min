@@ -48,7 +48,7 @@ const StoryCommentSchema = new Schema<IStoryComment>(
     },
     commentType: {
       type: String,
-      enum: ['general', 'grammar', 'creativity', 'structure', 'suggestion'],
+      enum: ['general', 'suggestion'],
       default: 'general',
     },
     isResolved: {

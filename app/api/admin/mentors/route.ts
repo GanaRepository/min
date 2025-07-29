@@ -90,7 +90,7 @@ import bcrypt from 'bcryptjs';
 export const dynamic = 'force-dynamic';
 
 // GET - Fetch all mentors with statistics
-export async function GET() {
+export async function GET(request: Request) {
   try {
     const session = await getServerSession(authOptions);
 
@@ -101,11 +101,21 @@ export async function GET() {
       );
     }
 
+    const { searchParams } = new URL(request.url);
+    const page = parseInt(searchParams.get('page') || '1');
+    const limit = parseInt(searchParams.get('limit') || '10');
+
     await connectToDatabase();
 
-    // Get all mentors with their statistics
+    // Get total count for pagination
+    const totalMentors = await User.countDocuments({ role: 'mentor' });
+
+    // Get paginated mentors with their statistics
     const mentors = await User.aggregate([
       { $match: { role: 'mentor' } },
+      { $sort: { createdAt: -1 } },
+      { $skip: (page - 1) * limit },
+      { $limit: limit },
       {
         $lookup: {
           from: 'mentorassignments',
@@ -143,7 +153,6 @@ export async function GET() {
           comments: 0,
         },
       },
-      { $sort: { createdAt: -1 } },
     ]);
 
     // Get total stories for each mentor (stories by their assigned students)
@@ -168,6 +177,12 @@ export async function GET() {
     return NextResponse.json({
       success: true,
       mentors: mentorsWithStories,
+      pagination: {
+        page,
+        limit,
+        total: totalMentors,
+        pages: Math.ceil(totalMentors / limit),
+      },
     });
   } catch (error) {
     console.error('Error fetching mentors:', error);
