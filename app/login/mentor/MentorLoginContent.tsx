@@ -76,7 +76,7 @@ const MentorLoginContent: React.FC = () => {
       } else if (result?.ok) {
         setToastMessage('Welcome back, mentor! Loading your dashboard...');
         setTimeout(() => {
-          router.push('/mentor/dashboard');
+          router.push('/mentor-dashboard');
         }, 1500);
       }
     } catch (error) {

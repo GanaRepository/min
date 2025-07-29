@@ -1,0 +1,240 @@
+// Mentor Story Detail Page with Comments
+'use client';
+
+import { useEffect, useState } from 'react';
+import { useParams, useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { BookOpen, Calendar, MessageSquare, User, Edit, Trash2 } from 'lucide-react';
+
+interface Comment {
+  _id: string;
+  comment: string;
+  commentType: string;
+  createdAt: string;
+  updatedAt: string;
+  mentorId: {
+    _id: string;
+    firstName: string;
+    lastName: string;
+  };
+}
+
+interface Story {
+  _id: string;
+  title: string;
+  status: string;
+  updatedAt: string;
+  totalWords: number;
+  content?: string;
+  child: {
+    _id: string;
+    firstName: string;
+    lastName: string;
+    email?: string;
+  } | null;
+}
+
+export default function MentorStoryDetail() {
+  const params = useParams();
+  const router = useRouter();
+  const [story, setStory] = useState<Story | null>(null);
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [newComment, setNewComment] = useState('');
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editValue, setEditValue] = useState('');
+
+  useEffect(() => {
+    const fetchStory = async () => {
+      try {
+        const res = await fetch(`/api/mentor/stories/${params.id}`);
+        const data = await res.json();
+        if (data.success) {
+          setStory(data.story);
+          setComments(data.comments || []);
+        } else {
+          setStory(null);
+        }
+      } catch (e) {
+        setStory(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchStory();
+  }, [params.id]);
+
+  const handleAddComment = async () => {
+    if (!newComment.trim()) return;
+    try {
+      const res = await fetch(`/api/mentor/comments`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ storyId: story?._id, comment: newComment }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setComments([data.comment, ...comments]);
+        setNewComment('');
+      }
+    } catch (e) {}
+  };
+
+  const handleEditClick = (comment: Comment) => {
+    setEditingId(comment._id);
+    setEditValue(comment.comment);
+  };
+
+  const handleEditSave = async (comment: Comment) => {
+    try {
+      const res = await fetch(`/api/mentor/comments/${comment._id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ comment: editValue }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setComments((prev) => prev.map((c) => (c._id === comment._id ? { ...c, comment: editValue } : c)));
+        setEditingId(null);
+        setEditValue('');
+      }
+    } catch (e) {}
+  };
+
+  const handleDelete = async (comment: Comment) => {
+    if (!window.confirm('Delete this comment?')) return;
+    try {
+      const res = await fetch(`/api/mentor/comments/${comment._id}`, {
+        method: 'DELETE',
+      });
+      const data = await res.json();
+      if (data.success) {
+        setComments((prev) => prev.filter((c) => c._id !== comment._id));
+      }
+    } catch (e) {}
+  };
+
+  if (loading) {
+    return <div className="text-center py-12 text-gray-400">Loading story...</div>;
+  }
+
+  if (!story) {
+    return (
+      <div className="text-center py-12">
+        <BookOpen className="w-16 h-16 text-gray-600 mx-auto mb-4" />
+        <h3 className="text-xl font-medium text-gray-400 mb-2">Story not found</h3>
+        <Link href="/mentor-dashboard/stories">
+          <button className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+            Back to Stories
+          </button>
+        </Link>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center space-x-4">
+        <Link href="/mentor-dashboard/stories">
+          <button className="text-gray-400 hover:text-white transition-colors">← Back</button>
+        </Link>
+        <div>
+          <h1 className="text-2xl font-bold text-white">{story.title}</h1>
+          <p className="text-gray-400">
+            by {story.child ? `${story.child.firstName} ${story.child.lastName}` : 'Unknown'}
+          </p>
+        </div>
+      </div>
+
+      {/* Story Content */}
+      <div className="bg-gray-800 rounded-xl p-6 mb-6">
+        <div className="flex items-center space-x-3 mb-2">
+          <span className="px-2 py-1 rounded-full text-xs border bg-blue-500/20 text-blue-300 border-blue-500/30">{story.status}</span>
+          <span className="text-gray-400 text-xs">{story.totalWords} words</span>
+          <Calendar className="w-4 h-4 ml-4" />
+          <span className="text-gray-400 text-xs">Updated: {new Date(story.updatedAt).toLocaleDateString()}</span>
+        </div>
+        <div className="text-white whitespace-pre-line text-base mt-4">{story.content}</div>
+      </div>
+
+      {/* Comments Section */}
+      <div className="bg-gray-800 rounded-xl p-6">
+        <h3 className="text-lg font-medium text-white mb-4">Comments & Reviews</h3>
+        {/* Add Comment */}
+        <div className="mb-4 flex items-center space-x-2">
+          <input
+            type="text"
+            value={newComment}
+            onChange={(e) => setNewComment(e.target.value)}
+            placeholder="Add a comment..."
+            className="flex-1 bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <button
+            onClick={handleAddComment}
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            Add
+          </button>
+        </div>
+        {/* Comments List */}
+        <div className="space-y-4">
+          {comments.length === 0 && <p className="text-gray-400 text-sm">No comments yet.</p>}
+          {comments.map((comment) => (
+            <div key={comment._id} className="flex items-start space-x-3 bg-gray-700/50 rounded-lg p-3">
+              <div className="flex-shrink-0 w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center">
+                <User className="w-4 h-4 text-white" />
+              </div>
+              <div className="flex-1">
+                <div className="flex items-center space-x-2">
+                  <span className="text-white font-medium text-sm">{comment.mentorId.firstName} {comment.mentorId.lastName}</span>
+                  <span className="text-gray-400 text-xs">{new Date(comment.createdAt).toLocaleDateString()}</span>
+                </div>
+                {editingId === comment._id ? (
+                  <div className="flex items-center space-x-2 mt-2">
+                    <input
+                      type="text"
+                      value={editValue}
+                      onChange={(e) => setEditValue(e.target.value)}
+                      className="flex-1 bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                    <button
+                      onClick={() => handleEditSave(comment)}
+                      className="bg-green-600 text-white px-3 py-1 rounded-lg hover:bg-green-700 transition-colors"
+                    >
+                      Save
+                    </button>
+                    <button
+                      onClick={() => setEditingId(null)}
+                      className="bg-gray-600 text-white px-3 py-1 rounded-lg hover:bg-gray-700 transition-colors"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                ) : (
+                  <p className="text-gray-200 mt-2">{comment.comment}</p>
+                )}
+              </div>
+              <div className="flex flex-col space-y-1">
+                <button
+                  onClick={() => handleEditClick(comment)}
+                  className="text-yellow-400 hover:text-yellow-300 p-1"
+                  title="Edit"
+                >
+                  <Edit className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => handleDelete(comment)}
+                  className="text-red-400 hover:text-red-300 p-1"
+                  title="Delete"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}

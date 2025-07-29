@@ -361,11 +361,11 @@ export default function CommentsManagement() {
                 <div className="mb-4 p-3 bg-gray-700/50 rounded-lg">
                   <div className="flex items-center space-x-2 text-sm text-gray-300">
                     <BookOpen className="w-4 h-4" />
-                    <span>
-                      Story: &quot;{comment.storyId.title}&quot; by{' '}
-                      {comment.storyId.childId.firstName}{' '}
-                      {comment.storyId.childId.lastName}
-                    </span>
+<span>
+  Story: &quot;{comment.storyId?.title}&quot; by{' '}
+  {comment.storyId?.childId?.firstName ? comment.storyId.childId.firstName + ' ' : ''}
+  {comment.storyId?.childId?.lastName || ''}
+</span>
                   </div>
                 </div>
 

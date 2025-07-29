@@ -1,3 +1,60 @@
+// Add the POST method for adding comments
+export async function POST(request: Request) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session || session.user.role !== 'mentor') {
+      return NextResponse.json(
+        { error: 'Mentor access required' },
+        { status: 403 }
+      );
+    }
+
+    const { storyId, comment, commentType } = await request.json();
+
+    if (!storyId || !comment) {
+      return NextResponse.json(
+        { error: 'Story ID and comment are required' },
+        { status: 400 }
+      );
+    }
+
+    await connectToDatabase();
+
+    // Optionally, check that this mentor is assigned to the child for this story
+    const story = await (await import('@/models/StorySession')).default.findById(storyId);
+    if (!story) {
+      return NextResponse.json({ error: 'Story not found' }, { status: 404 });
+    }
+    const MentorAssignment = (await import('@/models/MentorAssignment')).default;
+    const assignment = await MentorAssignment.findOne({ mentorId: session.user.id, childId: story.childId, isActive: { $ne: false } });
+    if (!assignment) {
+      return NextResponse.json({ error: 'Not authorized for this story' }, { status: 403 });
+    }
+
+    const newComment = await StoryComment.create({
+      storyId,
+      comment,
+      commentType: commentType || 'general',
+      mentorId: session.user.id,
+      isResolved: false,
+      createdAt: new Date(),
+    });
+
+    const populatedComment = await StoryComment.findById(newComment._id)
+      .populate('mentorId', 'firstName lastName');
+
+    return NextResponse.json({
+      success: true,
+      comment: populatedComment,
+    });
+  } catch (error) {
+    console.error('Error creating mentor comment:', error);
+    return NextResponse.json(
+      { error: 'Failed to create comment' },
+      { status: 500 }
+    );
+  }
+}
 export const dynamic = 'force-dynamic';
 
 import { NextResponse } from 'next/server';

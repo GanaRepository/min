@@ -52,13 +52,7 @@ export default function MentorLayout({ children }: MentorLayoutProps) {
       href: '/mentor-dashboard/comments',
       icon: MessageSquare,
     },
-    {
-      name: 'Assessments',
-      href: '/mentor-dashboard/assessments',
-      icon: FileText,
-    },
-    { name: 'Activity Log', href: '/mentor-dashboard/activity', icon: Clock },
-    { name: 'Settings', href: '/mentor-dashboard/settings', icon: Settings },
+  
   ];
 
   const isActive = (path: string) => {
@@ -108,7 +102,7 @@ export default function MentorLayout({ children }: MentorLayoutProps) {
         <div
           className={`w-64 bg-gray-800 border-r border-gray-700 flex-shrink-0 transform transition-transform duration-300 ease-in-out ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 fixed lg:static inset-y-0 left-0 z-40 lg:z-auto`}
         >
-          <div className="flex flex-col h-full">
+          <div className="flex flex-col h-full mt-24">
             {/* Mentor Header */}
             <div className="p-6 border-b border-gray-700 flex-shrink-0">
               <div className="flex items-center space-x-3">
@@ -206,7 +200,7 @@ export default function MentorLayout({ children }: MentorLayoutProps) {
           </div>
 
           {/* Page content */}
-          <main>{children}</main>
+          <main className='p-5'>{children}</main>
         </div>
       </div>
     </div>
