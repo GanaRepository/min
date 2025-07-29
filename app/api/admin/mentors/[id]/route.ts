@@ -1,3 +1,4 @@
+
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/utils/authOptions';
@@ -35,8 +36,8 @@ export async function GET(
       return NextResponse.json({ error: 'Mentor not found' }, { status: 404 });
     }
 
-    // Get mentor assignments with student details
-    const assignments = await MentorAssignment.find({ mentorId: id })
+    // Get only active mentor assignments with student details
+    const assignments = await MentorAssignment.find({ mentorId: id, isActive: true })
       .populate('childId', 'firstName lastName email')
       .sort({ assignedAt: -1 });
 
@@ -71,7 +72,7 @@ export async function GET(
       assignedStudents: assignments.length,
       totalStories,
       totalComments,
-      activeAssignments: assignments.filter((a) => a.isActive !== false).length,
+      activeAssignments: assignments.length,
       students: studentsWithStats,
     };
 
@@ -138,8 +139,9 @@ export async function PUT(
   }
 }
 
-// DELETE - Delete mentor (and reassign students)
-export async function DELETE(
+
+// DELETE_MENTOR - Delete mentor (and reassign students)
+export async function DELETE_MENTOR(
   request: Request,
   { params }: { params: { id: string } }
 ) {
@@ -179,5 +181,69 @@ export async function DELETE(
       { error: 'Failed to delete mentor' },
       { status: 500 }
     );
+  }
+}
+
+// POST - Assign a student to this mentor
+export async function POST(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session || session.user.role !== 'admin') {
+      return NextResponse.json(
+        { error: 'Admin access required' },
+        { status: 403 }
+      );
+    }
+    const { id: mentorId } = params;
+    const { childId } = await request.json();
+    if (!childId) {
+      return NextResponse.json({ error: 'Child ID required' }, { status: 400 });
+    }
+    await connectToDatabase();
+    // Unassign child from any previous mentor
+    await MentorAssignment.updateMany({ childId, isActive: true }, { isActive: false, unassignedAt: new Date(), unassignedBy: session.user.id });
+    // Assign to new mentor
+    const assignment = await MentorAssignment.create({
+      mentorId,
+      childId,
+      assignedAt: new Date(),
+      assignedBy: session.user.id,
+      isActive: true,
+    });
+    return NextResponse.json({ success: true, assignment });
+  } catch (error) {
+    console.error('Error assigning student:', error);
+    return NextResponse.json({ error: 'Failed to assign student' }, { status: 500 });
+  }
+}
+
+// DELETE - Unassign a student from this mentor
+export async function DELETE(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session || session.user.role !== 'admin') {
+      return NextResponse.json(
+        { error: 'Admin access required' },
+        { status: 403 }
+      );
+    }
+    const { id: mentorId } = params;
+    const { childId } = await request.json();
+    if (!childId) {
+      return NextResponse.json({ error: 'Child ID required' }, { status: 400 });
+    }
+    await connectToDatabase();
+    // Unassign only if currently assigned to this mentor
+    await MentorAssignment.updateMany({ mentorId, childId, isActive: true }, { isActive: false, unassignedAt: new Date(), unassignedBy: session.user.id });
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error('Error unassigning student:', error);
+    return NextResponse.json({ error: 'Failed to unassign student' }, { status: 500 });
   }
 }

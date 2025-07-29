@@ -522,13 +522,7 @@ export default function UsersManagement() {
                         </button>
                       </Link>
 
-                      {user.role === 'child' && (
-                        <Link href={`/admin/users/${user._id}/assign-mentor`}>
-                          <button className="text-green-400 hover:text-green-300 p-2 rounded-lg hover:bg-gray-700 transition-colors">
-                            <UserPlus className="w-4 h-4" />
-                          </button>
-                        </Link>
-                      )}
+                      {/* Assign-mentor button removed, use mentor management page for assignments */}
 
                     </div>
                   </td>

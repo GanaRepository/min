@@ -27,6 +27,10 @@
 //       )
 //       .sort({ createdAt: -1 });
 
+//     // Get mentor assignments for all children
+//     const assignments = await MentorAssignment.find({ isActive: true })
+//       .populate('mentorId', 'firstName lastName email');
+
 //     // Get REAL usage stats for each user
 //     const usersWithStats = await Promise.all(
 //       users.map(async (user) => {
@@ -37,6 +41,8 @@
 //             { $group: { _id: null, total: { $sum: '$apiCallsUsed' } } },
 //           ]),
 //         ]);
+
+
 
 //         return {
 //           _id: user._id,
@@ -49,6 +55,7 @@
 //           createdAt: user.createdAt,
 //           totalStories,
 //           apiCallsUsed: apiCallsData[0]?.total || 0,
+//           assignedMentor,
 //         };
 //       })
 //     );
@@ -74,6 +81,7 @@ import { authOptions } from '@/utils/authOptions';
 import { connectToDatabase } from '@/utils/db';
 import User from '@/models/User';
 import StorySession from '@/models/StorySession';
+import MentorAssignment from '@/models/MentorAssignment';
 
 export async function GET(request: Request) {
   try {
@@ -109,6 +117,8 @@ export async function GET(request: Request) {
       ];
     }
 
+
+
     // Get users with pagination
     const users = await User.find(query)
       .select('firstName lastName email role createdAt')
@@ -116,14 +126,30 @@ export async function GET(request: Request) {
       .skip((page - 1) * limit)
       .limit(limit);
 
-    // Get usage stats for each user
+    // Get mentor assignments for all children
+    const assignments = await MentorAssignment.find({ isActive: true })
+      .populate('mentorId', 'firstName lastName email');
+
+    // Get usage stats for each user and assigned mentor
     const usersWithStats = await Promise.all(
-      users.map(async (user) => {
+      users.map(async (user: any) => {
         const [totalStories, completedStories, activeStories] = await Promise.all([
           StorySession.countDocuments({ childId: user._id }),
           StorySession.countDocuments({ childId: user._id, status: 'completed' }),
           StorySession.countDocuments({ childId: user._id, status: 'active' }),
         ]);
+
+        // Find assigned mentor for this user
+        const assignment = assignments.find((a: any) => a.childId.toString() === user._id.toString());
+        let assignedMentor = null;
+        if (assignment && assignment.mentorId) {
+          assignedMentor = {
+            _id: assignment.mentorId._id,
+            firstName: assignment.mentorId.firstName,
+            lastName: assignment.mentorId.lastName,
+            email: assignment.mentorId.email,
+          };
+        }
 
         return {
           _id: user._id,
@@ -135,6 +161,7 @@ export async function GET(request: Request) {
           totalStories,
           completedStories,
           activeStories,
+          assignedMentor,
         };
       })
     );

@@ -1,6 +1,8 @@
-'use client';
+"use client";
 
+import { Trash2 } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { toast } from '@/hooks/use-toast';
 import {
   Pagination,
   PaginationContent,
@@ -47,7 +49,117 @@ interface Mentor {
   }>;
 }
 
+interface User {
+  _id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  assignedMentor?: string;
+}
+
 export default function MentorsManagement() {
+  // Assignment modal state
+  const [allStudents, setAllStudents] = useState<User[]>([]);
+  const [assignModalMentor, setAssignModalMentor] = useState<Mentor | null>(null);
+  const [selectedStudentId, setSelectedStudentId] = useState<string>('');
+  const [assignLoading, setAssignLoading] = useState(false);
+  const [assignError, setAssignError] = useState('');
+
+  // Delete mentor
+  const handleDeleteMentor = async (mentorId: string) => {
+    if (!window.confirm('Are you sure you want to delete this mentor? This will remove all assignments.')) return;
+    try {
+      const res = await fetch(`/api/admin/mentors/${mentorId}/delete`, {
+        method: 'DELETE',
+      });
+      const data = await res.json();
+      if (data.success) {
+        toast({ title: 'Mentor deleted', description: 'Mentor and all assignments deleted.' });
+        fetchMentors(page);
+      } else {
+        toast({ title: 'Error', description: data.message || 'Failed to delete mentor' });
+      }
+    } catch (e) {
+      toast({ title: 'Error', description: 'Failed to delete mentor' });
+    }
+  };
+
+  // Fetch all students and children for assignment modal
+  const fetchAllStudents = async () => {
+    try {
+      // Fetch both students and children
+      const [studentsRes, childrenRes] = await Promise.all([
+        fetch('/api/admin/users?role=student'),
+        fetch('/api/admin/users?role=child'),
+      ]);
+      const studentsData = await studentsRes.json();
+      const childrenData = await childrenRes.json();
+      let users: User[] = [];
+      if (studentsData.success) users = users.concat(studentsData.users);
+      if (childrenData.success) users = users.concat(childrenData.users);
+      setAllStudents(users);
+    } catch (e) {
+      setAllStudents([]);
+    }
+  };
+
+  // Assign student to mentor
+  const handleAssignStudent = async () => {
+    if (!assignModalMentor || !selectedStudentId) return;
+    setAssignLoading(true);
+    setAssignError('');
+    try {
+      const res = await fetch(`/api/admin/mentors/${assignModalMentor._id}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ childId: selectedStudentId }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        await fetchMentorDetails(assignModalMentor._id);
+        await fetchMentors(page);
+        setAssignModalMentor(null);
+        setSelectedStudentId('');
+        setShowDetailsModal(false);
+        toast({ title: 'Student assigned', description: 'Student assigned to mentor successfully.', });
+      } else {
+        setAssignError(data.message || 'Failed to assign student');
+        toast({ title: 'Error', description: data.message || 'Failed to assign student', });
+      }
+    } catch (e) {
+      setAssignError('Failed to assign student');
+      toast({ title: 'Error', description: 'Failed to assign student', });
+    } finally {
+      setAssignLoading(false);
+    }
+  };
+
+  // Unassign student from mentor
+  const handleUnassignStudent = async (mentorId: string, studentId: string) => {
+    if (!mentorId || !studentId) return;
+    // Remove confirm, use toast for feedback
+    setAssignLoading(true);
+    try {
+      const res = await fetch(`/api/admin/mentors/${mentorId}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ childId: studentId }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        await fetchMentorDetails(mentorId);
+        await fetchMentors(page);
+        setShowDetailsModal(false);
+        toast({ title: 'Student unassigned', description: 'Student unassigned from mentor successfully.', });
+      } else {
+        toast({ title: 'Error', description: data.message || 'Failed to unassign student', });
+      }
+    } catch (e) {
+      toast({ title: 'Error', description: 'Failed to unassign student', });
+    } finally {
+      setAssignLoading(false);
+    }
+  };
   const { data: session, status } = useSession();
   const router = useRouter();
 
@@ -269,7 +381,24 @@ export default function MentorsManagement() {
                 <Eye className="w-4 h-4" />
                 <span>View Details</span>
               </button>
-  
+              <button
+                onClick={() => {
+                  setAssignModalMentor(mentor);
+                  setSelectedStudentId('');
+                  fetchAllStudents();
+                }}
+                className="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 px-3 rounded-lg transition-colors text-sm flex items-center justify-center space-x-1"
+              >
+                <UserPlus className="w-4 h-4" />
+                <span>Assign Student</span>
+              </button>
+              <button
+                onClick={() => handleDeleteMentor(mentor._id)}
+                className="flex-1 bg-red-600 hover:bg-red-700 text-white py-2 px-3 rounded-lg transition-colors text-sm flex items-center justify-center space-x-1"
+              >
+                <Trash2 className="w-4 h-4" />
+                <span>Delete</span>
+              </button>
             </div>
           </motion.div>
         ))}
@@ -319,14 +448,14 @@ export default function MentorsManagement() {
               )}
             </div>
 
-            {/* Assigned Students */}
+            {/* Assigned Students (unique by _id) */}
             {selectedMentor.students && selectedMentor.students.length > 0 && (
               <div>
                 <h3 className="text-lg font-medium text-white mb-4">
                   Assigned Students
                 </h3>
                 <div className="space-y-3">
-                  {selectedMentor.students.map((student) => (
+                  {Array.from(new Map(selectedMentor.students.map(s => [s._id, s])).values()).map((student) => (
                     <div
                       key={student._id}
                       className="bg-gray-700/50 rounded-lg p-4"
@@ -349,6 +478,13 @@ export default function MentorsManagement() {
                               View Profile
                             </button>
                           </Link>
+                          <button
+                            className="ml-2 text-red-400 hover:text-red-300 text-sm"
+                            disabled={assignLoading}
+                            onClick={() => handleUnassignStudent(selectedMentor._id, student._id)}
+                          >
+                            Unassign
+                          </button>
                         </div>
                       </div>
                     </div>
@@ -356,6 +492,71 @@ export default function MentorsManagement() {
                 </div>
               </div>
             )}
+          </motion.div>
+        </div>
+      )}
+
+      {/* Assign Student Modal */}
+      {assignModalMentor && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-gray-800 rounded-xl p-6 max-w-md w-full"
+          >
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-bold text-white">
+                Assign Student to {assignModalMentor.firstName} {assignModalMentor.lastName}
+              </h2>
+              <button
+                onClick={() => {
+                  setAssignModalMentor(null);
+                  setSelectedStudentId('');
+                  setAssignError('');
+                }}
+                className="text-gray-400 hover:text-white"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="mb-4">
+              <label className="block text-gray-300 mb-2">Select Student</label>
+              <select
+                className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white"
+                value={selectedStudentId}
+                onChange={(e) => setSelectedStudentId(e.target.value)}
+              >
+                <option value="">-- Select a student --</option>
+                {allStudents
+                  .filter((u) => !u.assignedMentor || u.assignedMentor === assignModalMentor._id)
+                  .map((student) => (
+                    <option key={student._id} value={student._id}>
+                      {student.firstName} {student.lastName} ({student.email})
+                    </option>
+                  ))}
+              </select>
+            </div>
+            {assignError && <div className="text-red-400 mb-2">{assignError}</div>}
+            <div className="flex justify-end space-x-2">
+              <button
+                onClick={() => {
+                  setAssignModalMentor(null);
+                  setSelectedStudentId('');
+                  setAssignError('');
+                }}
+                className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg"
+                disabled={assignLoading}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleAssignStudent}
+                className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg"
+                disabled={assignLoading || !selectedStudentId}
+              >
+                {assignLoading ? 'Assigning...' : 'Assign'}
+              </button>
+            </div>
           </motion.div>
         </div>
       )}

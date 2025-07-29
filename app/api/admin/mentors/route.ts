@@ -119,9 +119,11 @@ export async function GET(request: Request) {
       {
         $lookup: {
           from: 'mentorassignments',
-          localField: '_id',
-          foreignField: 'mentorId',
-          as: 'assignments',
+          let: { mentorId: '$_id' },
+          pipeline: [
+            { $match: { $expr: { $and: [ { $eq: ['$mentorId', '$$mentorId'] }, { $eq: ['$isActive', true] } ] } } },
+          ],
+          as: 'activeAssignments',
         },
       },
       {
@@ -134,22 +136,15 @@ export async function GET(request: Request) {
       },
       {
         $addFields: {
-          assignedStudents: { $size: '$assignments' },
-          activeAssignments: {
-            $size: {
-              $filter: {
-                input: '$assignments',
-                cond: { $ne: ['$$this.isActive', false] },
-              },
-            },
-          },
+          assignedStudents: { $size: '$activeAssignments' },
+          activeAssignments: { $size: '$activeAssignments' },
           totalComments: { $size: '$comments' },
         },
       },
       {
         $project: {
           password: 0,
-          assignments: 0,
+          activeAssignments: 0,
           comments: 0,
         },
       },
