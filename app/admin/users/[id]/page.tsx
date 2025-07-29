@@ -221,7 +221,15 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
                   {user.isVerified ? 'Verified' : 'Unverified'}
                 </span>
                 <span className="px-2 py-1 rounded-full text-xs bg-purple-500/20 text-purple-300 border border-purple-500/30">
-                  {user.subscriptionTier || 'Free'}
+                  {(() => {
+                    // Normalize tier for display, only allow Free, Basic, Premium
+                    let tier = (user.subscriptionTier || '').trim().toLowerCase();
+                    if (!tier || tier === 'free') return 'Free';
+                    if (tier === 'basic') return 'Basic';
+                    if (tier === 'premium') return 'Premium';
+                    // If not recognized, fallback to 'Free'
+                    return 'Free';
+                  })()}
                 </span>
               </div>
             </div>

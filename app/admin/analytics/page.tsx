@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { SUBSCRIPTION_TIERS } from '@/config/tiers';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import {
@@ -133,6 +134,17 @@ export default function AnalyticsDashboard() {
         </p>
       </div>
     );
+  }
+
+  // Use config tiers for canonical tier list and display names
+  const tierKeys = Object.keys(SUBSCRIPTION_TIERS);
+  const normalizedTiers: Record<string, number> = {};
+  if (analytics && analytics.userMetrics && analytics.userMetrics.usersByTier) {
+    analytics.userMetrics.usersByTier.forEach((t) => {
+      let key = (t.tier || '').trim().toUpperCase();
+      if (!tierKeys.includes(key)) key = 'FREE';
+      normalizedTiers[key] = (normalizedTiers[key] || 0) + t.count;
+    });
   }
 
   return (
@@ -308,15 +320,10 @@ export default function AnalyticsDashboard() {
                 Users by Subscription Tier
               </h4>
               <div className="space-y-2">
-                {analytics.userMetrics.usersByTier.map((tier) => (
-                  <div
-                    key={tier.tier}
-                    className="flex items-center justify-between"
-                  >
-                    <span className="text-gray-300 capitalize">
-                      {tier.tier}
-                    </span>
-                    <span className="text-white">{tier.count}</span>
+                {tierKeys.map((tierKey) => (
+                  <div key={tierKey} className="flex items-center justify-between">
+                    <span className="text-gray-300 capitalize">{SUBSCRIPTION_TIERS[tierKey].name}</span>
+                    <span className="text-white">{normalizedTiers[tierKey] || 0}</span>
                   </div>
                 ))}
               </div>

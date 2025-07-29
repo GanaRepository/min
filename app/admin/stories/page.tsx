@@ -16,6 +16,7 @@ import {
   Clock,
   X,
   Pause,
+  FileText,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -370,7 +371,7 @@ export default function AdminStories() {
                       </Link>
                       <Link href={`/admin/users/${story.child._id}`}>
                         <button className="text-green-400 hover:text-green-300 p-2 rounded-lg hover:bg-gray-700 transition-colors">
-                          <User className="w-4 h-4" />
+                          <FileText className="w-4 h-4" />
                         </button>
                       </Link>
                       {story.unresolvedComments > 0 && (

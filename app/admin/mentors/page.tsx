@@ -66,6 +66,7 @@ export default function MentorsManagement() {
   const [assignError, setAssignError] = useState('');
 
   // Delete mentor
+  // Move this function below fetchMentors so fetchMentors and page are in scope
   const handleDeleteMentor = async (mentorId: string) => {
     if (!window.confirm('Are you sure you want to delete this mentor? This will remove all assignments.')) return;
     try {
@@ -75,7 +76,7 @@ export default function MentorsManagement() {
       const data = await res.json();
       if (data.success) {
         toast({ title: 'Mentor deleted', description: 'Mentor and all assignments deleted.' });
-        fetchMentors(page);
+        await fetchMentors(page);
       } else {
         toast({ title: 'Error', description: data.message || 'Failed to delete mentor' });
       }
@@ -328,17 +329,7 @@ export default function MentorsManagement() {
                   {mentor.firstName} {mentor.lastName}
                 </h3>
                 <p className="text-gray-400 text-sm">{mentor.email}</p>
-                <div className="flex items-center space-x-2 mt-1">
-                  <span
-                    className={`px-2 py-1 rounded-full text-xs ${
-                      mentor.isVerified
-                        ? 'bg-green-500/20 text-green-300'
-                        : 'bg-red-500/20 text-red-300'
-                    }`}
-                  >
-                    {mentor.isVerified ? 'Verified' : 'Unverified'}
-                  </span>
-                </div>
+            
               </div>
             </div>
 

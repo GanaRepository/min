@@ -234,7 +234,9 @@ import {
   CheckCircle,
   XCircle,
   MoreHorizontal,
+  Trash2,
 } from 'lucide-react';
+import { toast } from '@/hooks/use-toast';
 import { motion } from 'framer-motion';
 
 interface User {
@@ -260,6 +262,25 @@ export default function UsersManagement() {
   const [filterRole, setFilterRole] = useState('all');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+
+  // Delete user
+  const handleDeleteUser = async (userId: string) => {
+    if (!window.confirm('Are you sure you want to delete this user? This action cannot be undone.')) return;
+    try {
+      const res = await fetch(`/api/admin/users/${userId}`, {
+        method: 'DELETE',
+      });
+      const data = await res.json();
+      if (data.success) {
+        toast({ title: 'User deleted', description: 'User deleted successfully.' });
+        fetchUsers(page);
+      } else {
+        toast({ title: 'Error', description: data.message || 'Failed to delete user' });
+      }
+    } catch (e) {
+      toast({ title: 'Error', description: 'Failed to delete user' });
+    }
+  };
 
 
   useEffect(() => {
@@ -375,17 +396,7 @@ export default function UsersManagement() {
           </div>
         </div>
 
-        <div className="bg-gray-800 rounded-xl p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-gray-400 text-sm">Verified Users</p>
-              <p className="text-2xl font-bold text-white">
-                {users.filter((u) => u.isVerified).length}
-              </p>
-            </div>
-            <CheckCircle className="w-8 h-8 text-green-400" />
-          </div>
-        </div>
+   
       </div>
 
       {/* Filters */}
@@ -434,9 +445,7 @@ export default function UsersManagement() {
                 <th className="text-left p-4 text-gray-300 font-medium">
                   Stories
                 </th>
-                <th className="text-left p-4 text-gray-300 font-medium">
-                  Status
-                </th>
+        
                 <th className="text-left p-4 text-gray-300 font-medium">
                   Joined
                 </th>
@@ -490,20 +499,6 @@ export default function UsersManagement() {
                     </div>
                   </td>
 
-                  <td className="p-4">
-                    <div className="flex items-center space-x-1">
-                      {user.isVerified ? (
-                        <CheckCircle className="w-4 h-4 text-green-400" />
-                      ) : (
-                        <XCircle className="w-4 h-4 text-red-400" />
-                      )}
-                      <span
-                        className={`px-2 py-1 rounded-full text-xs border ${getStatusColor(user.isVerified)}`}
-                      >
-                        {user.isVerified ? 'Verified' : 'Unverified'}
-                      </span>
-                    </div>
-                  </td>
 
                   <td className="p-4">
                     <div className="flex items-center space-x-1 text-gray-400">
@@ -521,9 +516,13 @@ export default function UsersManagement() {
                           <Eye className="w-4 h-4" />
                         </button>
                       </Link>
-
-                      {/* Assign-mentor button removed, use mentor management page for assignments */}
-
+                      <button
+                        className="text-red-400 hover:text-red-300 p-2 rounded-lg hover:bg-gray-700 transition-colors"
+                        onClick={() => handleDeleteUser(user._id)}
+                        title="Delete user"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
                     </div>
                   </td>
                 </motion.tr>

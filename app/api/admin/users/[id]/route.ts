@@ -1,3 +1,29 @@
+// DELETE - Delete user by ID
+export async function DELETE(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session || session.user.role !== 'admin') {
+      return NextResponse.json(
+        { error: 'Admin access required' },
+        { status: 403 }
+      );
+    }
+    const { id } = params;
+    await connectToDatabase();
+    const user = await User.findByIdAndDelete(id);
+    if (!user) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    }
+    // Optionally, delete related data (e.g., stories, comments) here
+    return NextResponse.json({ success: true, message: 'User deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting user:', error);
+    return NextResponse.json({ error: 'Failed to delete user' }, { status: 500 });
+  }
+}
 export const dynamic = 'force-dynamic';
 
 import { NextResponse } from 'next/server';
@@ -105,8 +131,11 @@ export async function PATCH(
       }
     }
     
-    if (subscriptionTier) {
-      updateData.subscriptionTier = subscriptionTier;
+        if (subscriptionTier) {
+            updateData.subscriptionTier = subscriptionTier.trim().toUpperCase();
+            if (!["FREE", "BASIC", "PREMIUM"].includes(updateData.subscriptionTier)) {
+                updateData.subscriptionTier = "FREE";
+            }
     }
 
     const user = await User.findByIdAndUpdate(

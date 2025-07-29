@@ -130,7 +130,8 @@ export async function GET(request: Request) {
     const assignments = await MentorAssignment.find({ isActive: true })
       .populate('mentorId', 'firstName lastName email');
 
-    // Get usage stats for each user and assigned mentor
+    // Get usage stats for each user
+    // Normalize subscriptionTier for all users before returning
     const usersWithStats = await Promise.all(
       users.map(async (user: any) => {
         const [totalStories, completedStories, activeStories] = await Promise.all([
@@ -151,6 +152,8 @@ export async function GET(request: Request) {
           };
         }
 
+        let tier = (user.subscriptionTier || '').trim().toUpperCase();
+        if (!["FREE", "BASIC", "PREMIUM"].includes(tier)) tier = "FREE";
         return {
           _id: user._id,
           firstName: user.firstName,
@@ -158,6 +161,7 @@ export async function GET(request: Request) {
           email: user.email,
           role: user.role,
           createdAt: user.createdAt,
+          subscriptionTier: tier,
           totalStories,
           completedStories,
           activeStories,
