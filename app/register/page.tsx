@@ -65,7 +65,7 @@ const RegisterPage: React.FC = () => {
       {/* Hero Section */}
       <section
         ref={heroRef}
-        className="relative z-10 min-h-screen flex items-center justify-center px-2 sm:px-4 md:px-6 lg:px-8 pt-20 sm:pt-28 pb-8 sm:pb-12"
+        className="relative z-10 min-h-screen flex items-center justify-center px-2 sm:px-4 md:px-6 lg:px-8 pt-28 sm:pt-28 pb-8 sm:pb-12"
       >
         <div
           className={`text-center max-w-xl sm:max-w-2xl md:max-w-3xl lg:max-w-4xl mx-auto transition-all duration-1000 ${

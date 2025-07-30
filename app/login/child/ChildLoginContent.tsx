@@ -160,7 +160,7 @@ function ChildLoginContent() {
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8 }}
-          className="relative z-10 w-full max-w-6xl flex flex-col lg:flex-row items-center gap-8 px-2 sm:px-4 md:px-8 mt-16 md:mt-24 lg:mt-28 mb-8 md:mb-12 lg:mb-16"
+          className="relative z-10 w-full max-w-6xl flex flex-col lg:flex-row items-center gap-8 px-2 sm:px-4 md:px-8 mt-28 md:mt-24 lg:mt-28 mb-8 md:mb-12 lg:mb-16"
         >
           {/* Left side - Story showcase card */}
           <motion.div

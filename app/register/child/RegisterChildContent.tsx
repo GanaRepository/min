@@ -232,7 +232,7 @@ const RegisterChildContent: React.FC = () => {
     <ToastProvider>
       <div
         ref={containerRef}
-        className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black overflow-hidden relative pt-16 sm:pt-24 pb-8 sm:pb-12"
+        className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black overflow-hidden relative pt-28 sm:pt-24 pb-8 sm:pb-12"
       >
         {/* Animated background stars */}
         <div ref={starsRef} className="absolute inset-0 z-0">

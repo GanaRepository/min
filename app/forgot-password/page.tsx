@@ -78,18 +78,22 @@ const ForgotPasswordPage: React.FC = () => {
       const data = await response.json();
 
       if (response.ok) {
-        setToastMessage(
-          'Magic link sent! Check your email to reset your password and continue your creative journey.'
-        );
-
-        // Clear the form
-        setEmail('');
-
-        // Redirect to login page after a delay
-        setTimeout(() => {
-          router.push('/login');
-        }, 3000);
+        // If backend provides an error message, show it, otherwise show generic success
+        if (data && data.message && data.error) {
+          setError(data.message);
+          setToastMessage(data.message);
+        } else {
+          setToastMessage(
+            'If the email you entered is registered, you will receive a password reset link shortly.'
+          );
+          setError('');
+          setEmail('');
+          setTimeout(() => {
+            router.push('/login');
+          }, 3000);
+        }
       } else {
+        // Show backend error if provided, otherwise show generic error
         setError(data.message || 'Failed to send password reset email');
         setToastMessage(data.message || 'Failed to send password reset email');
       }

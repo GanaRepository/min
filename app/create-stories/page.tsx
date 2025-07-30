@@ -583,369 +583,371 @@ function CreateStoriesContent() {
         ))}
       </div>
 
-      {/* Enhanced Hero Section - Same as before */}
-      <div className="relative flex items-center px-2 sm:px-4 md:px-6 lg:px-8 py-10 sm:py-20">
-        <div className="max-w-7xl mx-auto w-full">
-          <div className="grid grid-cols-1 gap-8 sm:gap-12 lg:grid-cols-2 items-center pt-8 sm:pt-20">
-            {/* Left Content */}
-            <motion.div
-              className="space-y-8"
-              initial={{ opacity: 0, x: -100 }}
+   
+    {/* Enhanced Hero Section - FIXED LAYOUT */}
+      {/* Enhanced Hero Section - FIXED LAYOUT */}
+<div className="relative flex items-center px-2 sm:px-4 md:px-6 lg:px-8 py-10 sm:py-20">
+  <div className="max-w-7xl mx-auto w-full">
+    <div className="flex flex-col lg:grid lg:grid-cols-2 gap-8 sm:gap-12 items-center pt-8 sm:pt-20">
+      {/* Left Content - Always on top for mobile */}
+      <motion.div
+        className="space-y-8 text-center lg:text-left w-full lg:order-1"
+        initial={{ opacity: 0, x: -100 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 1, delay: 0.2 }}
+      >
+        <motion.div
+          className="inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-purple-500/20 to-indigo-500/20 border border-purple-400/30 backdrop-blur-xl"
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.4, duration: 0.8 }}
+          whileHover={{ scale: 1.05 }}
+        >
+          <motion.div
+            animate={{ rotate: [0, 360] }}
+            transition={{
+              duration: 3,
+              repeat: Infinity,
+              ease: 'linear',
+            }}
+          >
+            <Sparkles className="w-4 h-4 text-purple-400 mr-2" />
+          </motion.div>
+          <span className="text-purple-200 font-medium text-sm">
+            Start Your Creative Journey
+          </span>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6, duration: 0.8 }}
+        >
+          <h1 className="font-bold text-2xl sm:text-4xl lg:text-6xl leading-tight tracking-tight">
+            <motion.span
+              className="block text-white"
+              initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 1, delay: 0.2 }}
+              transition={{ delay: 0.8, duration: 0.6 }}
             >
-              <motion.div
-                className="inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-purple-500/20 to-indigo-500/20 border border-purple-400/30 backdrop-blur-xl"
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.4, duration: 0.8 }}
-                whileHover={{ scale: 1.05 }}
-              >
+              How to Create
+            </motion.span>
+            <motion.span
+              className="block bg-gradient-to-r from-purple-400 via-pink-300 to-cyan-400 bg-clip-text text-transparent"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 1.0, duration: 0.6 }}
+            >
+              Amazing Stories
+            </motion.span>
+          </h1>
+        </motion.div>
+
+        <motion.p
+          className="text-base sm:text-xl text-gray-300 leading-relaxed max-w-2xl mx-auto lg:mx-0"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.2, duration: 0.8 }}
+        >
+          Follow our simple 6-step process to transform your imagination
+          into incredible stories with AI collaboration and teacher
+          mentorship.
+        </motion.p>
+
+        <motion.div
+          className="flex flex-col gap-3 sm:flex-row sm:gap-4 justify-center lg:justify-start"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.4, duration: 0.8 }}
+        >
+          <Link href="/contact-us">
+            <motion.button
+              className="group relative px-8 py-4 bg-gradient-to-r from-purple-500 to-indigo-600 rounded-xl font-semibold text-lg text-white shadow-lg shadow-purple-500/25 overflow-hidden"
+              whileHover={{
+                scale: 1.05,
+                boxShadow: '0 20px 40px -10px rgba(147, 51, 234, 0.6)',
+              }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <span className="relative z-10 flex items-center">
                 <motion.div
-                  animate={{ rotate: [0, 360] }}
+                  animate={{ x: [0, 5, 0] }}
+                  transition={{ duration: 1.5, repeat: Infinity }}
+                >
+                  <Play className="w-5 h-5 mr-2" />
+                </motion.div>
+                Know More →
+              </span>
+              <motion.div
+                className="absolute inset-0 bg-gradient-to-r from-indigo-600 to-purple-500"
+                initial={{ x: '-100%' }}
+                whileHover={{ x: '0%' }}
+                transition={{ duration: 0.3 }}
+              />
+            </motion.button>
+          </Link>
+        </motion.div>
+      </motion.div>
+
+      {/* Right Side - Enhanced 3D Animated Scene - Below text on mobile */}
+      <motion.div
+        className="relative flex justify-center items-center w-full lg:order-2"
+        initial={{ opacity: 0, x: 100 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 1, delay: 0.8 }}
+      >
+        <motion.div
+          className="relative z-20"
+          animate={{
+            y: [0, -20, 0],
+            rotateY: [0, 5, 0, -5, 0],
+          }}
+          transition={{
+            duration: 6,
+            repeat: Infinity,
+            ease: 'easeInOut',
+          }}
+        >
+          <motion.div
+            className="relative w-full max-w-xs sm:max-w-lg h-72 sm:h-96 bg-gradient-to-br from-gray-800/90 to-gray-900/90 backdrop-blur-2xl rounded-2xl sm:rounded-3xl border border-cyan-400/30 shadow-2xl overflow-hidden"
+            whileHover={{
+              scale: 1.05,
+              rotateY: 10,
+              boxShadow: '0 30px 60px -10px rgba(34, 211, 238, 0.4)',
+            }}
+            style={{
+              transformStyle: 'preserve-3d',
+            }}
+          >
+            <div className="absolute inset-0">
+              <Image
+                src="/kid7.jpg"
+                alt="Creative young writer"
+                fill
+                className="object-cover"
+                sizes="(max-width: 640px) 90vw, 32rem"
+              />
+              <div className="absolute inset-0 bg-gray-900/70" />
+            </div>
+
+            <div className="absolute inset-0">
+              <motion.div
+                className="absolute inset-0 bg-gradient-to-br from-purple-500/20 to-cyan-500/20"
+                animate={{
+                  background: [
+                    'linear-gradient(135deg, rgba(168, 85, 247, 0.2) 0%, rgba(34, 211, 238, 0.2) 100%)',
+                    'linear-gradient(135deg, rgba(34, 211, 238, 0.2) 0%, rgba(236, 72, 153, 0.2) 100%)',
+                    'linear-gradient(135deg, rgba(236, 72, 153, 0.2) 0%, rgba(168, 85, 247, 0.2) 100%)',
+                  ],
+                }}
+                transition={{
+                  duration: 8,
+                  repeat: Infinity,
+                  ease: 'easeInOut',
+                }}
+              />
+            </div>
+
+            <div className="relative z-10 p-6 sm:p-8 h-full flex flex-col justify-between">
+              <div className="text-center">
+                <motion.div
+                  className="w-12 sm:w-16 h-12 sm:h-16 bg-gradient-to-r from-cyan-400 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4 shadow-lg"
+                  animate={{
+                    rotate: [0, 360],
+                    scale: [1, 1.1, 1],
+                  }}
                   transition={{
-                    duration: 3,
+                    duration: 4,
                     repeat: Infinity,
                     ease: 'linear',
                   }}
                 >
-                  <Sparkles className="w-4 h-4 text-purple-400 mr-2" />
+                  <span className="text-white font-bold text-lg sm:text-xl">M</span>
                 </motion.div>
-                <span className="text-purple-200 font-medium text-sm">
-                  Start Your Creative Journey
-                </span>
-              </motion.div>
 
-              <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.6, duration: 0.8 }}
-              >
-                <h1 className="font-bold text-2xl sm:text-4xl lg:text-6xl leading-tight tracking-tight">
-                  <motion.span
-                    className="block text-white"
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.8, duration: 0.6 }}
-                  >
-                    How to Create
-                  </motion.span>
-                  <motion.span
-                    className="block bg-gradient-to-r from-purple-400 via-pink-300 to-cyan-400 bg-clip-text text-transparent"
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 1.0, duration: 0.6 }}
-                  >
-                    Amazing Stories
-                  </motion.span>
-                </h1>
-              </motion.div>
-
-              <motion.p
-                className="text-base sm:text-xl text-gray-300 leading-relaxed"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1.2, duration: 0.8 }}
-              >
-                Follow our simple 6-step process to transform your imagination
-                into incredible stories with AI collaboration and teacher
-                mentorship.
-              </motion.p>
-
-              <motion.div
-                className="flex flex-col gap-3 sm:flex-row sm:gap-4"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1.4, duration: 0.8 }}
-              >
-                <Link href="/contact-us">
-                  <motion.button
-                    className="group relative px-8 py-4 bg-gradient-to-r from-purple-500 to-indigo-600 rounded-xl font-semibold text-lg text-white shadow-lg shadow-purple-500/25 overflow-hidden"
-                    whileHover={{
-                      scale: 1.05,
-                      boxShadow: '0 20px 40px -10px rgba(147, 51, 234, 0.6)',
-                    }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    <span className="relative z-10 flex items-center">
-                      <motion.div
-                        animate={{ x: [0, 5, 0] }}
-                        transition={{ duration: 1.5, repeat: Infinity }}
-                      >
-                        <Play className="w-5 h-5 mr-2" />
-                      </motion.div>
-                      Know More →
-                    </span>
-                    <motion.div
-                      className="absolute inset-0 bg-gradient-to-r from-indigo-600 to-purple-500"
-                      initial={{ x: '-100%' }}
-                      whileHover={{ x: '0%' }}
-                      transition={{ duration: 0.3 }}
-                    />
-                  </motion.button>
-                </Link>
-              </motion.div>
-            </motion.div>
-
-            {/* Right Side - Enhanced 3D Animated Scene */}
-            <motion.div
-              className="relative flex justify-center items-center "
-              initial={{ opacity: 0, x: 100 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 1, delay: 0.8 }}
-            >
-              <motion.div
-                className="relative z-20"
-                animate={{
-                  y: [0, -20, 0],
-                  rotateY: [0, 5, 0, -5, 0],
-                }}
-                transition={{
-                  duration: 6,
-                  repeat: Infinity,
-                  ease: 'easeInOut',
-                }}
-              >
-                <motion.div
-                className="relative w-full max-w-lg h-72 sm:h-96 bg-gradient-to-br from-gray-800/90 to-gray-900/90 backdrop-blur-2xl rounded-2xl sm:rounded-3xl border border-cyan-400/30 shadow-2xl overflow-hidden"
-                  whileHover={{
-                    scale: 1.05,
-                    rotateY: 10,
-                    boxShadow: '0 30px 60px -10px rgba(34, 211, 238, 0.4)',
+                <motion.h3
+                  className="text-xl sm:text-2xl font-bold text-white mb-2"
+                  animate={{
+                    opacity: [0.8, 1, 0.8],
                   }}
-                  style={{
-                    transformStyle: 'preserve-3d',
+                  transition={{
+                    duration: 3,
+                    repeat: Infinity,
                   }}
                 >
-                  <div className="absolute inset-0">
-                    <Image
-                      src="/kid7.jpg"
-                      alt="Creative young writer"
-                      fill
-                      className="object-cover"
-                      sizes="32rem"
-                    />
-                    <div className="absolute inset-0 bg-gray-900/70" />
-                  </div>
+                  Mintoons
+                </motion.h3>
 
-                  <div className="absolute inset-0">
-                    <motion.div
-                      className="absolute inset-0 bg-gradient-to-br from-purple-500/20 to-cyan-500/20"
-                      animate={{
-                        background: [
-                          'linear-gradient(135deg, rgba(168, 85, 247, 0.2) 0%, rgba(34, 211, 238, 0.2) 100%)',
-                          'linear-gradient(135deg, rgba(34, 211, 238, 0.2) 0%, rgba(236, 72, 153, 0.2) 100%)',
-                          'linear-gradient(135deg, rgba(236, 72, 153, 0.2) 0%, rgba(168, 85, 247, 0.2) 100%)',
-                        ],
-                      }}
-                      transition={{
-                        duration: 8,
-                        repeat: Infinity,
-                        ease: 'easeInOut',
-                      }}
-                    />
-                  </div>
+                <p className="text-cyan-300 text-xs sm:text-sm font-medium">
+                  &quot;How to Create Amazing Stories&quot;
+                </p>
+              </div>
 
-                  <div className="relative z-10 p-8 h-full flex flex-col justify-between">
-                    <div className="text-center">
-                      <motion.div
-                        className="w-16 h-16 bg-gradient-to-r from-cyan-400 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg"
-                        animate={{
-                          rotate: [0, 360],
-                          scale: [1, 1.1, 1],
-                        }}
-                        transition={{
-                          duration: 4,
-                          repeat: Infinity,
-                          ease: 'linear',
-                        }}
-                      >
-                        <span className="text-white font-bold text-xl">M</span>
-                      </motion.div>
-
-                      <motion.h3
-                        className="text-2xl font-bold text-white mb-2"
-                        animate={{
-                          opacity: [0.8, 1, 0.8],
-                        }}
-                        transition={{
-                          duration: 3,
-                          repeat: Infinity,
-                        }}
-                      >
-                        Mintoons
-                      </motion.h3>
-
-                      <p className="text-cyan-300 text-sm font-medium">
-                        &quot;How to Create Amazing Stories&quot;
-                      </p>
-                    </div>
-
-                    <div className="space-y-3">
-                      {[...Array(6)].map((_, i) => (
-                        <motion.div
-                          key={i}
-                          className="h-2 bg-gradient-to-r from-gray-600/50 to-transparent rounded-full"
-                          initial={{ width: 0 }}
-                          animate={{
-                            width: `${Math.random() * 40 + 60}%`,
-                            opacity: [0.3, 0.8, 0.3],
-                          }}
-                          transition={{
-                            duration: 2,
-                            repeat: Infinity,
-                            delay: i * 0.3,
-                            ease: 'easeInOut',
-                          }}
-                        />
-                      ))}
-                    </div>
-
-                    <div className="flex justify-center space-x-8">
-                      {[Feather, Palette, Sparkles, BookOpen].map((Icon, i) => (
-                        <motion.div
-                          key={i}
-                          className="w-8 h-8 bg-gray-700/50 rounded-lg flex items-center justify-center"
-                          animate={{
-                            scale: [1, 1.2, 1],
-                            opacity: [0.5, 1, 0.5],
-                          }}
-                          transition={{
-                            duration: 2,
-                            repeat: Infinity,
-                            delay: i * 0.4,
-                          }}
-                        >
-                          <Icon className="w-4 h-4 text-cyan-400" />
-                        </motion.div>
-                      ))}
-                    </div>
-                  </div>
-
+              <div className="space-y-2 sm:space-y-3">
+                {[...Array(6)].map((_, i) => (
                   <motion.div
-                    className="absolute inset-0 rounded-3xl border-2 border-transparent"
+                    key={i}
+                    className="h-2 bg-gradient-to-r from-gray-600/50 to-transparent rounded-full"
+                    initial={{ width: 0 }}
                     animate={{
-                      borderColor: [
-                        'rgba(34, 211, 238, 0.5)',
-                        'rgba(168, 85, 247, 0.5)',
-                        'rgba(236, 72, 153, 0.5)',
-                        'rgba(34, 211, 238, 0.5)',
-                      ],
+                      width: `${Math.random() * 40 + 60}%`,
+                      opacity: [0.3, 0.8, 0.3],
                     }}
                     transition={{
-                      duration: 4,
+                      duration: 2,
                       repeat: Infinity,
+                      delay: i * 0.3,
+                      ease: 'easeInOut',
                     }}
                   />
-                </motion.div>
-              </motion.div>
+                ))}
+              </div>
 
-              <motion.div
-                className="absolute w-full h-full"
-                animate={{ rotate: [0, 360] }}
-                transition={{
+              <div className="flex justify-center space-x-4 sm:space-x-8">
+                {[Feather, Palette, Sparkles, BookOpen].map((Icon, i) => (
+                  <motion.div
+                    key={i}
+                    className="w-6 sm:w-8 h-6 sm:h-8 bg-gray-700/50 rounded-lg flex items-center justify-center"
+                    animate={{
+                      scale: [1, 1.2, 1],
+                      opacity: [0.5, 1, 0.5],
+                    }}
+                    transition={{
+                      duration: 2,
+                      repeat: Infinity,
+                      delay: i * 0.4,
+                    }}
+                  >
+                    <Icon className="w-3 sm:w-4 h-3 sm:h-4 text-cyan-400" />
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+
+            <motion.div
+              className="absolute inset-0 rounded-2xl sm:rounded-3xl border-2 border-transparent"
+              animate={{
+                borderColor: [
+                  'rgba(34, 211, 238, 0.5)',
+                  'rgba(168, 85, 247, 0.5)',
+                  'rgba(236, 72, 153, 0.5)',
+                  'rgba(34, 211, 238, 0.5)',
+                ],
+              }}
+              transition={{
+                duration: 4,
+                repeat: Infinity,
+              }}
+            />
+          </motion.div>
+        </motion.div>
+
+        <motion.div
+          className="absolute w-full h-full"
+          animate={{ rotate: [0, 360] }}
+          transition={{
+            duration: 30,
+            repeat: Infinity,
+            ease: 'linear',
+          }}
+        >
+          {[
+            {
+              icon: Target,
+              color: 'from-purple-500 to-indigo-600',
+              position: 'top-0 left-1/2 -translate-x-1/2 -translate-y-6 sm:-translate-y-8',
+            },
+            {
+              icon: PenTool,
+              color: 'from-blue-500 to-cyan-600',
+              position: 'right-0 top-1/2 -translate-y-1/2 translate-x-6 sm:translate-x-8',
+            },
+            {
+              icon: MessageSquare,
+              color: 'from-orange-500 to-red-600',
+              position:
+                'bottom-0 left-1/2 -translate-x-1/2 translate-y-6 sm:translate-y-8',
+            },
+            {
+              icon: Share2,
+              color: 'from-pink-500 to-purple-600',
+              position: 'left-0 top-1/2 -translate-y-1/2 -translate-x-6 sm:-translate-x-8',
+            },
+          ].map((item, i) => (
+            <motion.div
+              key={i}
+              className={`absolute ${item.position} w-12 sm:w-16 h-12 sm:h-16 bg-gradient-to-r ${item.color} rounded-full flex items-center justify-center shadow-lg opacity-80`}
+              animate={{
+                rotate: [0, -360],
+                scale: [1, 1.2, 1],
+              }}
+              transition={{
+                rotate: {
                   duration: 30,
                   repeat: Infinity,
                   ease: 'linear',
-                }}
-              >
-                {[
-                  {
-                    icon: Target,
-                    color: 'from-purple-500 to-indigo-600',
-                    position: 'top-0 left-1/2 -translate-x-1/2 -translate-y-8',
-                  },
-                  {
-                    icon: PenTool,
-                    color: 'from-blue-500 to-cyan-600',
-                    position: 'right-0 top-1/2 -translate-y-1/2 translate-x-8',
-                  },
-                  {
-                    icon: MessageSquare,
-                    color: 'from-orange-500 to-red-600',
-                    position:
-                      'bottom-0 left-1/2 -translate-x-1/2 translate-y-8',
-                  },
-                  {
-                    icon: Share2,
-                    color: 'from-pink-500 to-purple-600',
-                    position: 'left-0 top-1/2 -translate-y-1/2 -translate-x-8',
-                  },
-                ].map((item, i) => (
-                  <motion.div
-                    key={i}
-                    className={`absolute ${item.position} w-16 h-16 bg-gradient-to-r ${item.color} rounded-full flex items-center justify-center shadow-lg opacity-80`}
-                    animate={{
-                      rotate: [0, -360],
-                      scale: [1, 1.2, 1],
-                    }}
-                    transition={{
-                      rotate: {
-                        duration: 30,
-                        repeat: Infinity,
-                        ease: 'linear',
-                      },
-                      scale: {
-                        duration: 3,
-                        repeat: Infinity,
-                        delay: i * 0.5,
-                      },
-                    }}
-                    whileHover={{ scale: 1.3, opacity: 1 }}
-                  >
-                    <item.icon className="w-8 h-8 text-white" />
-                  </motion.div>
-                ))}
-              </motion.div>
-
-              <motion.div
-                className="absolute -top-20 -left-20 bg-white/10 backdrop-blur-sm rounded-lg px-4 py-2 text-sm text-white border border-white/20"
-                animate={{
-                  y: [0, -10, 0],
-                  opacity: [0.7, 1, 0.7],
-                }}
-                transition={{
+                },
+                scale: {
                   duration: 3,
                   repeat: Infinity,
-                  delay: 1,
-                }}
-              >
-                ✨ Choose Elements
-              </motion.div>
-
-              <motion.div
-                className="absolute -bottom-20 -right-20 bg-white/10 backdrop-blur-sm rounded-lg px-4 py-2 text-sm text-white border border-white/20"
-                animate={{
-                  y: [0, 10, 0],
-                  opacity: [0.7, 1, 0.7],
-                }}
-                transition={{
-                  duration: 3,
-                  repeat: Infinity,
-                  delay: 2,
-                }}
-              >
-                📚 Publish Stories
-              </motion.div>
-
-              <motion.div
-                className="absolute top-1/2 -right-32 bg-white/10 backdrop-blur-sm rounded-lg px-4 py-2 text-sm text-white border border-white/20"
-                animate={{
-                  x: [0, 10, 0],
-                  opacity: [0.7, 1, 0.7],
-                }}
-                transition={{
-                  duration: 3,
-                  repeat: Infinity,
-                  delay: 0.5,
-                }}
-              >
-                🤖 AI Collaboration
-              </motion.div>
+                  delay: i * 0.5,
+                },
+              }}
+              whileHover={{ scale: 1.3, opacity: 1 }}
+            >
+              <item.icon className="w-5 sm:w-8 h-5 sm:h-8 text-white" />
             </motion.div>
-          </div>
-        </div>
-      </div>
+          ))}
+        </motion.div>
+
+        <motion.div
+          className="absolute -top-12 sm:-top-20 -left-12 sm:-left-20 bg-white/10 backdrop-blur-sm rounded-lg px-3 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm text-white border border-white/20"
+          animate={{
+            y: [0, -10, 0],
+            opacity: [0.7, 1, 0.7],
+          }}
+          transition={{
+            duration: 3,
+            repeat: Infinity,
+            delay: 1,
+          }}
+        >
+          ✨ Choose Elements
+        </motion.div>
+
+        <motion.div
+          className="absolute -bottom-12 sm:-bottom-20 -right-12 sm:-right-20 bg-white/10 backdrop-blur-sm rounded-lg px-3 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm text-white border border-white/20"
+          animate={{
+            y: [0, 10, 0],
+            opacity: [0.7, 1, 0.7],
+          }}
+          transition={{
+            duration: 3,
+            repeat: Infinity,
+            delay: 2,
+          }}
+        >
+          📚 Publish Stories
+        </motion.div>
+
+        <motion.div
+          className="absolute top-1/2 -right-20 sm:-right-32 bg-white/10 backdrop-blur-sm rounded-lg px-3 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm text-white border border-white/20"
+          animate={{
+            x: [0, 10, 0],
+            opacity: [0.7, 1, 0.7],
+          }}
+          transition={{
+            duration: 3,
+            repeat: Infinity,
+            delay: 0.5,
+          }}
+        >
+          🤖 AI Collaboration
+        </motion.div>
+      </motion.div>
+    </div>
+  </div>
+</div>
 
       <DiamondSeparator />
 

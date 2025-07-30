@@ -135,7 +135,7 @@ const MentorLoginContent: React.FC = () => {
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8 }}
-          className="relative z-10 w-full max-w-6xl flex flex-col lg:flex-row items-center gap-8 px-2 sm:px-4 md:px-8 mt-16 md:mt-24 lg:mt-28 mb-8 md:mb-12 lg:mb-16"
+          className="relative z-10 w-full max-w-6xl flex flex-col lg:flex-row items-center gap-8 px-2 sm:px-4 md:px-8 mt-28 md:mt-24 lg:mt-28 mb-8 md:mb-12 lg:mb-16"
         >
           {/* Left side - Mentor showcase card */}
           <motion.div
@@ -285,7 +285,7 @@ const MentorLoginContent: React.FC = () => {
               >
                 <div className="relative">
                   <GraduationCap className="w-8 h-8 text-white" />
-                  <Users className="w-4 h-4 text-teal-300 absolute -top-1 -right-1" />
+          
                 </div>
               </motion.div>
 

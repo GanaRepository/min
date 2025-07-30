@@ -73,7 +73,7 @@ const LoginPage: React.FC = () => {
       {/* Hero Section */}
       <section
         ref={heroRef}
-        className="relative z-10 min-h-screen flex items-center justify-center px-2 sm:px-4 md:px-8 mt-16 md:mt-24 lg:mt-28 mb-8 md:mb-12 lg:mb-16"
+        className="relative z-10 min-h-screen flex items-center justify-center px-2 sm:px-4 md:px-8 mt-28 md:mt-24 lg:mt-28 mb-8 md:mb-12 lg:mb-16"
       >
         <div
           className={`text-center max-w-2xl sm:max-w-3xl md:max-w-4xl mx-auto transition-all duration-1000 ${
@@ -83,7 +83,7 @@ const LoginPage: React.FC = () => {
           }`}
         >
           {/* Badge */}
-          <div className="inline-block mb-6 sm:mb-8">
+          <div className="inline-block mb-6 sm:mb-8 ">
             <div className="relative inline-flex items-center justify-center">
               <div className="absolute -inset-1 rounded-full bg-gradient-to-r from-green-500 to-teal-500 opacity-70 blur"></div>
               <div className="relative px-4 sm:px-6 py-1.5 sm:py-2 bg-gray-800/90 backdrop-blur-xl rounded-full text-xs sm:text-sm font-medium text-green-300 border border-green-400/30">
