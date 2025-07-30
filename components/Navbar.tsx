@@ -107,7 +107,7 @@ const Navbar = () => {
         <div className="flex justify-around items-center h-20">
           <Link href="/">
             <MintoonsLogo
-              size="lg"
+              size="md"
               theme="magical"
               animated={true}
               showText={true}

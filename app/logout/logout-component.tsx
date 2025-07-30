@@ -63,7 +63,7 @@ export default function LogoutPage() {
   // Prevent hydration issues
   if (!mounted) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-900/90 via-gray-800/90 to-blue-900/90 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-blue-900/90 via-gray-800/90 to-blue-900/90 flex items-center justify-center px-2 sm:px-4">
         <div className="text-white">Loading...</div>
       </div>
     );
@@ -73,7 +73,7 @@ export default function LogoutPage() {
     <ToastProvider>
       <div
         ref={containerRef}
-        className="min-h-screen bg-gradient-to-br from-blue-900/90 via-gray-800/90 to-blue-900/90 overflow-hidden flex items-center justify-center relative pt-20"
+        className="min-h-screen bg-gradient-to-br from-blue-900/90 via-gray-800/90 to-blue-900/90 overflow-hidden flex items-center justify-center relative pt-12 sm:pt-16 md:pt-20 px-2 sm:px-4"
       >
         {/* Animated background stars */}
         <div ref={starsRef} className="absolute inset-0 z-0">
@@ -109,17 +109,17 @@ export default function LogoutPage() {
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8 }}
-          className="relative z-10 w-full max-w-md mx-auto px-4"
+          className="relative z-10 w-full max-w-sm sm:max-w-md md:max-w-lg mx-auto px-2 sm:px-4"
         >
-          <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-8 shadow-2xl text-center">
+          <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-4 sm:p-8 shadow-2xl text-center">
             {/* Logo/Icon */}
             <motion.div
               initial={{ opacity: 0, scale: 0 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="inline-flex items-center justify-center w-20 h-20 bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl mb-6"
+              className="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl mb-4 sm:mb-6"
             >
-              <LogOut className="h-10 w-10 text-white" />
+              <LogOut className="h-8 w-8 sm:h-10 sm:w-10 text-white" />
             </motion.div>
 
             {/* Title */}
@@ -128,10 +128,10 @@ export default function LogoutPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.4 }}
             >
-              <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-2 sm:mb-4">
                 Signing Out
               </h1>
-              <p className="text-white/80 text-lg mb-8">
+              <p className="text-white/80 text-base sm:text-lg mb-4 sm:mb-8">
                 {isLoading
                   ? "We're safely logging you out of Mintoons..."
                   : error
@@ -151,7 +151,7 @@ export default function LogoutPage() {
                 <motion.div
                   animate={{ rotate: 360 }}
                   transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-                  className="w-12 h-12 border-4 border-white/20 border-t-white rounded-full"
+                  className="w-10 h-10 sm:w-12 sm:h-12 border-4 border-white/20 border-t-white rounded-full"
                 />
               ) : (
                 !error && (
@@ -159,10 +159,10 @@ export default function LogoutPage() {
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
                     transition={{ duration: 0.5, type: 'spring' }}
-                    className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center"
+                    className="w-10 h-10 sm:w-12 sm:h-12 bg-green-500 rounded-full flex items-center justify-center"
                   >
                     <svg
-                      className="w-6 h-6 text-white"
+                      className="w-5 h-5 sm:w-6 sm:h-6 text-white"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -184,7 +184,7 @@ export default function LogoutPage() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.6, delay: 0.8 }}
-              className="text-white/60 text-sm mt-6"
+              className="text-white/60 text-xs sm:text-sm mt-4 sm:mt-6"
             >
               Thank you for using Mintoons. Redirecting to homepage...
             </motion.p>

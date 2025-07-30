@@ -183,72 +183,72 @@ export default function MintoonsContactPage() {
         </svg>
       </div>
 
-      <div className="relative z-10 min-h-screen flex mt-16">
-        <div className="w-full lg:w-1/2 flex items-center justify-center p-8 lg:p-16">
-          <div className="max-w-xl">
+      <div className="relative z-10 min-h-screen flex flex-col lg:flex-row mt-8 sm:mt-12 lg:mt-16">
+        <div className="w-full lg:w-1/2 flex items-center justify-center p-4 sm:p-8 lg:p-16">
+          <div className="max-w-md sm:max-w-xl">
             {/* Floating badge */}
             <motion.div
-              className="mt-12 mb-12 inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-green-500/20 to-teal-500/20 border border-green-400/30 backdrop-blur-xl"
+              className="mt-8 sm:mt-12 mb-8 sm:mb-12 inline-flex items-center px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-gradient-to-r from-green-500/20 to-teal-500/20 border border-green-400/30 backdrop-blur-xl"
               initial={{ opacity: 0, x: -50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.2, duration: 0.8 }}
             >
               <Sparkles className="w-4 h-4 text-green-400 mr-2" />
-              <span className="text-green-200 font-medium text-sm">
+              <span className="text-green-200 font-medium text-xs sm:text-sm">
                 Creative Writing Education Platform
               </span>
             </motion.div>
 
-            <h1 className="text-5xl lg:text-7xl font-black text-slate-100 mb-6 leading-none">
+            <h1 className="text-3xl sm:text-5xl lg:text-7xl font-black text-slate-100 mb-4 sm:mb-6 leading-tight sm:leading-none">
               How can we help you
               <span className="block text-transparent bg-clip-text bg-gradient-to-r from-green-600 via-emerald-600 to-pink-600 animate-[gradient-x_3s_ease_infinite]">
                 create magic?
               </span>
             </h1>
 
-            <p className="text-xl text-slate-200 mb-8 leading-relaxed">
+            <p className="text-base sm:text-xl text-slate-200 mb-6 sm:mb-8 leading-relaxed">
               Our platform empowers children to collaborate with AI in crafting
               their own stories, fostering creativity and learning.
             </p>
 
-            <div className="grid grid-cols-2 gap-6 mb-8">
-              <div className="text-center p-6 bg-white/60 backdrop-blur-xl rounded-2xl border border-green-200 hover:bg-white/80 transition-all duration-300 hover:scale-105 shadow-lg">
-                <div className="text-3xl text-green-600 mb-1 font-bold">
+            <div className="grid grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
+              <div className="text-center p-4 sm:p-6 bg-white/60 backdrop-blur-xl rounded-2xl border border-green-200 hover:bg-white/80 transition-all duration-300 hover:scale-105 shadow-lg">
+                <div className="text-2xl sm:text-3xl text-green-600 mb-1 font-bold">
                   10K+
                 </div>
-                <div className="text-sm text-slate-600 font-medium">
+                <div className="text-xs sm:text-sm text-slate-600 font-medium">
                   Stories Created
                 </div>
               </div>
-              <div className="text-center p-6 bg-white/60 backdrop-blur-xl rounded-2xl border border-pink-200 hover:bg-white/80 transition-all duration-300 hover:scale-105 shadow-lg">
-                <div className="text-3xl text-blue-600 mb-1 font-bold">95%</div>
-                <div className="text-sm text-slate-600 font-medium">
+              <div className="text-center p-4 sm:p-6 bg-white/60 backdrop-blur-xl rounded-2xl border border-pink-200 hover:bg-white/80 transition-all duration-300 hover:scale-105 shadow-lg">
+                <div className="text-2xl sm:text-3xl text-blue-600 mb-1 font-bold">95%</div>
+                <div className="text-xs sm:text-sm text-slate-600 font-medium">
                   Happy Writers
                 </div>
               </div>
             </div>
 
-            <div className="bg-white/70 backdrop-blur-xl rounded-2xl p-6 border border-green-200 mb-8 shadow-lg">
-              <div className="flex items-start space-x-4">
-                <Quote className="w-8 h-8 text-green-500 flex-shrink-0 mt-1" />
-                <div>
-                  <p className="text-slate-700 text-lg mb-3 leading-relaxed">
+            <div className="bg-white/70 backdrop-blur-xl rounded-2xl p-4 sm:p-6 border border-green-200 mb-6 sm:mb-8 shadow-lg">
+              <div className="flex flex-col sm:flex-row items-start sm:space-x-4">
+                <Quote className="w-7 h-7 sm:w-8 sm:h-8 text-green-500 flex-shrink-0 mt-1" />
+                <div className="mt-3 sm:mt-0">
+                  <p className="text-slate-700 text-base sm:text-lg mb-2 sm:mb-3 leading-relaxed">
                     &quot;{testimonials[currentTestimonial].text}&quot;
                   </p>
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between">
                     <div>
-                      <div className="text-green-600 font-semibold">
+                      <div className="text-green-600 font-semibold text-sm sm:text-base">
                         {testimonials[currentTestimonial].author}
                       </div>
-                      <div className="text-slate-500 text-sm">
+                      <div className="text-slate-500 text-xs sm:text-sm">
                         {testimonials[currentTestimonial].role}
                       </div>
                     </div>
-                    <div className="flex space-x-1">
+                    <div className="flex space-x-1 mt-2 sm:mt-0">
                       {[...Array(5)].map((_, i) => (
                         <Star
                           key={i}
-                          className="w-4 h-4 fill-blue-600 text-blue-600"
+                          className="w-3 h-3 sm:w-4 sm:h-4 fill-blue-600 text-blue-600"
                         />
                       ))}
                     </div>
@@ -257,33 +257,33 @@ export default function MintoonsContactPage() {
               </div>
             </div>
 
-            <div className="flex flex-wrap items-center gap-6 text-slate-600">
+            <div className="flex flex-wrap items-center gap-4 sm:gap-6 text-slate-600">
               <div className="flex items-center space-x-2">
                 <Mail className="w-4 h-4 text-green-500" />
-                <span className="text-sm">hello@Mintoons.com</span>
+                <span className="text-xs sm:text-sm">hello@Mintoons.com</span>
               </div>
               <div className="flex items-center space-x-2">
                 <Phone className="w-4 h-4 text-green-500" />
-                <span className="text-sm">+1 1111-111-111</span>
+                <span className="text-xs sm:text-sm">+1 1111-111-111</span>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="w-full lg:w-1/2 flex items-center justify-center p-8 lg:p-16">
-          <div className="w-full max-w-lg">
-            <div className="bg-white/80 backdrop-blur-2xl rounded-3xl p-8 lg:p-10 border border-white/40 shadow-2xl">
-              <div className="text-center mb-8">
-                <h2 className="text-3xl text-slate-800 mb-3 font-bold">
+        <div className="w-full lg:w-1/2 flex items-center justify-center p-4 sm:p-8 lg:p-16">
+          <div className="w-full max-w-xs sm:max-w-lg">
+            <div className="bg-white/80 backdrop-blur-2xl rounded-2xl sm:rounded-3xl p-4 sm:p-8 lg:p-10 border border-white/40 shadow-2xl">
+              <div className="text-center mb-6 sm:mb-8">
+                <h2 className="text-xl sm:text-3xl text-slate-800 mb-2 sm:mb-3 font-bold">
                   Start Your Journey
                 </h2>
-                <p className="text-slate-600">
+                <p className="text-slate-600 text-xs sm:text-base">
                   Tell us about your child&apos;s creative vision and how we can
                   assist in their storytelling journey.
                 </p>
               </div>
 
-              <form onSubmit={handleSubmit} className="space-y-6">
+              <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
                 <div className="group">
                   <label className="block text-sm font-medium text-slate-700 mb-2">
                     Name *

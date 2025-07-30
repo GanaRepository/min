@@ -187,9 +187,9 @@ export default function SubscriptionManagement() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 px-2 sm:px-4 md:px-8 lg:px-12 xl:px-20 py-4 sm:py-6 md:py-8">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-white mb-2">
             Subscription Management
@@ -200,8 +200,8 @@ export default function SubscriptionManagement() {
 
       {/* Stats Cards */}
       {stats && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
-          <div className="bg-gray-800 rounded-xl p-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-6">
+          <div className="bg-gray-800 rounded-xl p-4 sm:p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-400 text-sm">Total Users</p>
@@ -211,7 +211,7 @@ export default function SubscriptionManagement() {
             </div>
           </div>
 
-          <div className="bg-gray-800 rounded-xl p-6">
+          <div className="bg-gray-800 rounded-xl p-4 sm:p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-400 text-sm">Free Users</p>
@@ -221,7 +221,7 @@ export default function SubscriptionManagement() {
             </div>
           </div>
 
-          <div className="bg-gray-800 rounded-xl p-6">
+          <div className="bg-gray-800 rounded-xl p-4 sm:p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-400 text-sm">Basic Users</p>
@@ -231,7 +231,7 @@ export default function SubscriptionManagement() {
             </div>
           </div>
 
-          <div className="bg-gray-800 rounded-xl p-6">
+          <div className="bg-gray-800 rounded-xl p-4 sm:p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-400 text-sm">Premium Users</p>
@@ -241,7 +241,7 @@ export default function SubscriptionManagement() {
             </div>
           </div>
 
-          <div className="bg-gray-800 rounded-xl p-6">
+          <div className="bg-gray-800 rounded-xl p-4 sm:p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-400 text-sm">Monthly Revenue</p>
@@ -256,8 +256,8 @@ export default function SubscriptionManagement() {
       )}
 
       {/* Filters */}
-      <div className="bg-gray-800 rounded-xl p-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="bg-gray-800 rounded-xl p-4 sm:p-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
             <input

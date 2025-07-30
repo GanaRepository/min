@@ -177,9 +177,9 @@ export default function AdminStories() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 px-2 sm:px-4 md:px-8 lg:px-12 xl:px-20 py-4 sm:py-6 md:py-8">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-white mb-2">Stories Management</h1>
           <p className="text-gray-400">
@@ -201,8 +201,8 @@ export default function AdminStories() {
 
       {/* Stats Cards */}
       {stats && !authorFilter && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="bg-gray-800 rounded-xl p-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+          <div className="bg-gray-800 rounded-xl p-4 sm:p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-400 text-sm">Total Stories</p>
@@ -211,7 +211,7 @@ export default function AdminStories() {
               <BookOpen className="w-8 h-8 text-blue-400" />
             </div>
           </div>
-          <div className="bg-gray-800 rounded-xl p-6">
+          <div className="bg-gray-800 rounded-xl p-4 sm:p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-400 text-sm">Active Stories</p>
@@ -220,7 +220,7 @@ export default function AdminStories() {
               <Clock className="w-8 h-8 text-blue-400" />
             </div>
           </div>
-          <div className="bg-gray-800 rounded-xl p-6">
+          <div className="bg-gray-800 rounded-xl p-4 sm:p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-400 text-sm">Completed</p>
@@ -229,7 +229,7 @@ export default function AdminStories() {
               <CheckCircle className="w-8 h-8 text-green-400" />
             </div>
           </div>
-          <div className="bg-gray-800 rounded-xl p-6">
+          <div className="bg-gray-800 rounded-xl p-4 sm:p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-400 text-sm">Need Attention</p>
@@ -242,8 +242,8 @@ export default function AdminStories() {
       )}
 
       {/* Filters */}
-      <div className="bg-gray-800 rounded-xl p-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="bg-gray-800 rounded-xl p-4 sm:p-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
             <input

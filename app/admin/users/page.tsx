@@ -349,59 +349,57 @@ export default function UsersManagement() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 px-2 sm:px-4 md:px-8 xl:px-24 py-4">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
         <div>
-          <h1 className="text-2xl font-bold text-white mb-2">
+          <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white mb-1 sm:mb-2">
             User Management
           </h1>
-          <p className="text-gray-400">Manage all users in the platform</p>
+          <p className="text-gray-400 text-sm sm:text-base">Manage all users in the platform</p>
         </div>
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div className="bg-gray-800 rounded-xl p-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+        <div className="bg-gray-800 rounded-xl p-4 sm:p-6 flex flex-col justify-between min-h-[110px]">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-400 text-sm">Total Users</p>
-              <p className="text-2xl font-bold text-white">{users.length}</p>
+              <p className="text-gray-400 text-xs sm:text-sm">Total Users</p>
+              <p className="text-lg sm:text-2xl font-bold text-white">{users.length}</p>
             </div>
-            <Users className="w-8 h-8 text-blue-400" />
+            <Users className="w-6 h-6 sm:w-8 sm:h-8 text-blue-400" />
           </div>
         </div>
 
-        <div className="bg-gray-800 rounded-xl p-6">
+        <div className="bg-gray-800 rounded-xl p-4 sm:p-6 flex flex-col justify-between min-h-[110px]">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-400 text-sm">Children</p>
-              <p className="text-2xl font-bold text-white">
+              <p className="text-gray-400 text-xs sm:text-sm">Children</p>
+              <p className="text-lg sm:text-2xl font-bold text-white">
                 {users.filter((u) => u.role === 'child').length}
               </p>
             </div>
-            <BookOpen className="w-8 h-8 text-green-400" />
+            <BookOpen className="w-6 h-6 sm:w-8 sm:h-8 text-green-400" />
           </div>
         </div>
 
-        <div className="bg-gray-800 rounded-xl p-6">
+        <div className="bg-gray-800 rounded-xl p-4 sm:p-6 flex flex-col justify-between min-h-[110px]">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-400 text-sm">Mentors</p>
-              <p className="text-2xl font-bold text-white">
+              <p className="text-gray-400 text-xs sm:text-sm">Mentors</p>
+              <p className="text-lg sm:text-2xl font-bold text-white">
                 {users.filter((u) => u.role === 'mentor').length}
               </p>
             </div>
-            <Users className="w-8 h-8 text-purple-400" />
+            <Users className="w-6 h-6 sm:w-8 sm:h-8 text-purple-400" />
           </div>
         </div>
-
-   
       </div>
 
       {/* Filters */}
-      <div className="bg-gray-800 rounded-xl p-6">
-        <div className="flex flex-col sm:flex-row gap-4">
+      <div className="bg-gray-800 rounded-xl p-4 sm:p-6">
+        <div className="flex flex-col md:flex-row gap-4">
           {/* Search */}
           <div className="flex-1">
             <div className="relative">
@@ -411,7 +409,7 @@ export default function UsersManagement() {
                 placeholder="Search users by name or email..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full bg-gray-700 border border-gray-600 rounded-lg pl-10 pr-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full bg-gray-700 border border-gray-600 rounded-lg pl-10 pr-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
               />
             </div>
           </div>
@@ -420,7 +418,7 @@ export default function UsersManagement() {
           <select
             value={filterRole}
             onChange={(e) => setFilterRole(e.target.value)}
-            className="bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base min-w-[120px]"
           >
             <option value="all">All Roles</option>
             <option value="child">Children</option>
@@ -431,27 +429,16 @@ export default function UsersManagement() {
       </div>
 
       {/* Users Table */}
-      <div className="bg-gray-800 rounded-xl overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full">
+      <div className="bg-gray-800 rounded-xl overflow-x-auto">
+        <div className="min-w-[600px] xl:min-w-0">
+          <table className="w-full text-sm md:text-base">
             <thead className="bg-gray-700/50">
               <tr>
-                <th className="text-left p-4 text-gray-300 font-medium">
-                  User
-                </th>
-                <th className="text-left p-4 text-gray-300 font-medium">
-                  Role
-                </th>
-                <th className="text-left p-4 text-gray-300 font-medium">
-                  Stories
-                </th>
-        
-                <th className="text-left p-4 text-gray-300 font-medium">
-                  Joined
-                </th>
-                <th className="text-left p-4 text-gray-300 font-medium">
-                  Actions
-                </th>
+                <th className="text-left p-2 sm:p-4 text-gray-300 font-medium min-w-[120px]">User</th>
+                <th className="text-left p-2 sm:p-4 text-gray-300 font-medium min-w-[80px]">Role</th>
+                <th className="text-left p-2 sm:p-4 text-gray-300 font-medium min-w-[120px]">Stories</th>
+                <th className="text-left p-2 sm:p-4 text-gray-300 font-medium min-w-[100px]">Joined</th>
+                <th className="text-left p-2 sm:p-4 text-gray-300 font-medium min-w-[100px]">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-700/50">
@@ -463,24 +450,24 @@ export default function UsersManagement() {
                   transition={{ delay: index * 0.05 }}
                   className="hover:bg-gray-700/30 transition-colors"
                 >
-                  <td className="p-4">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center">
-                        <span className="text-white font-medium text-sm">
+                  <td className="p-2 sm:p-4">
+                    <div className="flex items-center space-x-2 sm:space-x-3">
+                      <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center">
+                        <span className="text-white font-medium text-xs sm:text-sm">
                           {user.firstName[0]}
                           {user.lastName[0]}
                         </span>
                       </div>
                       <div>
-                        <h3 className="text-white font-medium">
+                        <h3 className="text-white font-medium text-xs sm:text-base">
                           {user.firstName} {user.lastName}
                         </h3>
-                        <p className="text-gray-400 text-sm">{user.email}</p>
+                        <p className="text-gray-400 text-xs sm:text-sm">{user.email}</p>
                       </div>
                     </div>
                   </td>
 
-                  <td className="p-4">
+                  <td className="p-2 sm:p-4">
                     <span
                       className={`inline-flex px-2 py-1 rounded-full text-xs border ${getRoleBadgeColor(user.role)}`}
                     >
@@ -488,36 +475,35 @@ export default function UsersManagement() {
                     </span>
                   </td>
 
-                  <td className="p-4">
+                  <td className="p-2 sm:p-4">
                     <div>
-                      <p className="text-white text-sm">
+                      <p className="text-white text-xs sm:text-sm">
                         Total: {user.totalStories}
                       </p>
-                      <p className="text-gray-400 text-xs">
+                      <p className="text-gray-400 text-[10px] sm:text-xs">
                         Completed: {user.completedStories}
                       </p>
                     </div>
                   </td>
 
-
-                  <td className="p-4">
+                  <td className="p-2 sm:p-4">
                     <div className="flex items-center space-x-1 text-gray-400">
-                      <Calendar className="w-4 h-4" />
-                      <span className="text-sm">
+                      <Calendar className="w-3 h-3 sm:w-4 sm:h-4" />
+                      <span className="text-xs sm:text-sm">
                         {new Date(user.createdAt).toLocaleDateString()}
                       </span>
                     </div>
                   </td>
 
-                  <td className="p-4">
-                    <div className="flex items-center space-x-2">
+                  <td className="p-2 sm:p-4">
+                    <div className="flex items-center space-x-1 sm:space-x-2">
                       <Link href={`/admin/users/${user._id}`}>
-                        <button className="text-blue-400 hover:text-blue-300 p-2 rounded-lg hover:bg-gray-700 transition-colors">
+                        <button className="text-blue-400 hover:text-blue-300 p-1 sm:p-2 rounded-lg hover:bg-gray-700 transition-colors">
                           <Eye className="w-4 h-4" />
                         </button>
                       </Link>
                       <button
-                        className="text-red-400 hover:text-red-300 p-2 rounded-lg hover:bg-gray-700 transition-colors"
+                        className="text-red-400 hover:text-red-300 p-1 sm:p-2 rounded-lg hover:bg-gray-700 transition-colors"
                         onClick={() => handleDeleteUser(user._id)}
                         title="Delete user"
                       >
@@ -533,7 +519,7 @@ export default function UsersManagement() {
       </div>
 
       {/* Pagination */}
-      <div className="mt-8">
+      <div className="mt-6 sm:mt-8 flex justify-center">
         <Pagination>
           <PaginationContent>
             <PaginationItem>
@@ -563,12 +549,12 @@ export default function UsersManagement() {
       </div>
 
       {filteredUsers.length === 0 && !loading && (
-        <div className="text-center py-12">
-          <Users className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-          <h3 className="text-xl font-medium text-gray-400 mb-2">
+        <div className="text-center py-8 sm:py-12">
+          <Users className="w-12 h-12 sm:w-16 sm:h-16 text-gray-600 mx-auto mb-3 sm:mb-4" />
+          <h3 className="text-lg sm:text-xl font-medium text-gray-400 mb-1 sm:mb-2">
             No users found
           </h3>
-          <p className="text-gray-500">
+          <p className="text-gray-500 text-xs sm:text-base">
             Try adjusting your search or filter criteria.
           </p>
         </div>

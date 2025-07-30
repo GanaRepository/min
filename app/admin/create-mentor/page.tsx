@@ -228,9 +228,9 @@ export default function CreateMentor() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 px-2 sm:px-4 md:px-8 lg:px-12 xl:px-20 py-4 sm:py-6 md:py-8">
       {/* Header */}
-      <div className="flex items-center space-x-4">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
         <button
           onClick={() => router.push('/admin/mentors')}
           className="text-gray-400 hover:text-white transition-colors"
@@ -238,8 +238,8 @@ export default function CreateMentor() {
           <ArrowLeft className="w-6 h-6" />
         </button>
         <div>
-          <h1 className="text-2xl font-bold text-white">Create New Mentor</h1>
-          <p className="text-gray-400">
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-white">Create New Mentor</h1>
+          <p className="text-gray-400 text-sm sm:text-base">
             Add a new mentor to guide student writers
           </p>
         </div>
@@ -249,12 +249,12 @@ export default function CreateMentor() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="max-w-2xl"
+        className="max-w-2xl w-full"
       >
-        <div className="bg-gray-800 rounded-xl p-6">
+        <div className="bg-gray-800 rounded-xl p-4 sm:p-6">
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Name Fields */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">
                   First Name *
@@ -306,7 +306,7 @@ export default function CreateMentor() {
             </div>
 
             {/* Password Fields */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">
                   Password *
@@ -344,11 +344,11 @@ export default function CreateMentor() {
             </div>
 
             {/* Actions */}
-            <div className="flex justify-end space-x-4 pt-6 border-t border-gray-700">
+            <div className="flex flex-col sm:flex-row justify-end gap-2 sm:gap-4 pt-6 border-t border-gray-700">
               <button
                 type="button"
                 onClick={() => router.push('/admin/mentors')}
-                className="px-6 py-2 text-gray-400 hover:text-white transition-colors flex items-center space-x-2"
+                className="px-4 sm:px-6 py-2 text-gray-400 hover:text-white transition-colors flex items-center space-x-2 text-sm sm:text-base"
               >
                 <X className="w-4 h-4" />
                 <span>Cancel</span>
@@ -357,7 +357,7 @@ export default function CreateMentor() {
               <button
                 type="submit"
                 disabled={loading}
-                className="bg-gradient-to-r from-green-600 to-green-700 text-white px-6 py-2 rounded-lg hover:from-green-700 hover:to-green-800 transition-all duration-200 flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="bg-gradient-to-r from-green-600 to-green-700 text-white px-4 sm:px-6 py-2 rounded-lg hover:from-green-700 hover:to-green-800 transition-all duration-200 flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
               >
                 {loading ? (
                   <>

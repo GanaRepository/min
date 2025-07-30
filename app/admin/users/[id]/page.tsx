@@ -174,19 +174,19 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 px-2 sm:px-4 md:px-8 xl:px-24 py-4">
       {/* Header */}
-      <div className="flex items-center space-x-4">
-        <Link href="/admin/users">
-          <button className="text-gray-400 hover:text-white transition-colors">
-            <ArrowLeft className="w-6 h-6" />
-          </button>
-        </Link>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4 gap-2">
+        <div className="flex items-center">
+          <Link href="/admin/users">
+            <button className="text-gray-400 hover:text-white transition-colors">
+              <ArrowLeft className="w-6 h-6" />
+            </button>
+          </Link>
+        </div>
         <div>
-          <h1 className="text-2xl font-bold text-white">User Details</h1>
-          <p className="text-gray-400">
-            Manage user information and activities
-          </p>
+          <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white mb-1 sm:mb-2">User Details</h1>
+          <p className="text-gray-400 text-sm sm:text-base">Manage user information and activities</p>
         </div>
       </div>
 
@@ -194,22 +194,22 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-gray-800 rounded-xl p-6"
+        className="bg-gray-800 rounded-xl p-4 sm:p-6"
       >
-        <div className="flex items-start justify-between">
-          <div className="flex items-center space-x-4">
-            <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center">
-              <span className="text-white font-bold text-xl">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div className="flex items-center space-x-3 sm:space-x-4">
+            <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center">
+              <span className="text-white font-bold text-lg sm:text-xl">
                 {user.firstName[0]}
                 {user.lastName[0]}
               </span>
             </div>
             <div>
-              <h2 className="text-xl font-bold text-white">
+              <h2 className="text-lg sm:text-xl font-bold text-white">
                 {user.firstName} {user.lastName}
               </h2>
-              <p className="text-gray-400">{user.email}</p>
-              <div className="flex items-center space-x-2 mt-2">
+              <p className="text-gray-400 text-xs sm:text-sm">{user.email}</p>
+              <div className="flex flex-wrap items-center gap-2 mt-2">
                 <span
                   className={`px-2 py-1 rounded-full text-xs border ${getRoleBadgeColor(user.role)}`}
                 >
@@ -235,10 +235,10 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
             </div>
           </div>
 
-          <div className="flex space-x-2">
+          <div className="flex flex-wrap gap-2">
             {user.role === 'child' && (
               <Link href={`/admin/users/${user._id}/assign-mentor`}>
-                <button className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center space-x-2">
+                <button className="bg-green-600 text-white px-3 sm:px-4 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center space-x-2 text-xs sm:text-sm">
                   <UserPlus className="w-4 h-4" />
                   <span>Assign Mentor</span>
                 </button>
@@ -247,7 +247,7 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
 
             <button
               onClick={() => updateUserStatus(!user.isVerified)}
-              className={`px-4 py-2 rounded-lg transition-colors flex items-center space-x-2 ${
+              className={`px-3 sm:px-4 py-2 rounded-lg transition-colors flex items-center space-x-2 text-xs sm:text-sm ${
                 user.isVerified
                   ? 'bg-red-600 hover:bg-red-700 text-white'
                   : 'bg-green-600 hover:bg-green-700 text-white'
@@ -265,92 +265,92 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
       </motion.div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div className="bg-gray-800 rounded-xl p-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+        <div className="bg-gray-800 rounded-xl p-4 sm:p-6 flex flex-col justify-between min-h-[90px]">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-400 text-sm">Total Stories</p>
-              <p className="text-2xl font-bold text-white">
+              <p className="text-gray-400 text-xs sm:text-sm">Total Stories</p>
+              <p className="text-lg sm:text-2xl font-bold text-white">
                 {user.totalStories}
               </p>
             </div>
-            <BookOpen className="w-8 h-8 text-blue-400" />
+            <BookOpen className="w-6 h-6 sm:w-8 sm:h-8 text-blue-400" />
           </div>
         </div>
 
-        <div className="bg-gray-800 rounded-xl p-6">
+        <div className="bg-gray-800 rounded-xl p-4 sm:p-6 flex flex-col justify-between min-h-[90px]">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-400 text-sm">Completed</p>
-              <p className="text-2xl font-bold text-white">
+              <p className="text-gray-400 text-xs sm:text-sm">Completed</p>
+              <p className="text-lg sm:text-2xl font-bold text-white">
                 {user.completedStories}
               </p>
             </div>
-            <CheckCircle className="w-8 h-8 text-green-400" />
+            <CheckCircle className="w-6 h-6 sm:w-8 sm:h-8 text-green-400" />
           </div>
         </div>
 
-        <div className="bg-gray-800 rounded-xl p-6">
+        <div className="bg-gray-800 rounded-xl p-4 sm:p-6 flex flex-col justify-between min-h-[90px]">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-400 text-sm">Active Stories</p>
-              <p className="text-2xl font-bold text-white">
+              <p className="text-gray-400 text-xs sm:text-sm">Active Stories</p>
+              <p className="text-lg sm:text-2xl font-bold text-white">
                 {user.activeStories}
               </p>
             </div>
-            <Edit className="w-8 h-8 text-blue-400" />
+            <Edit className="w-6 h-6 sm:w-8 sm:h-8 text-blue-400" />
           </div>
         </div>
 
-        <div className="bg-gray-800 rounded-xl p-6">
+        <div className="bg-gray-800 rounded-xl p-4 sm:p-6 flex flex-col justify-between min-h-[90px]">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-400 text-sm">Comments</p>
-              <p className="text-2xl font-bold text-white">
+              <p className="text-gray-400 text-xs sm:text-sm">Comments</p>
+              <p className="text-lg sm:text-2xl font-bold text-white">
                 {user.totalComments}
               </p>
             </div>
-            <MessageSquare className="w-8 h-8 text-purple-400" />
+            <MessageSquare className="w-6 h-6 sm:w-8 sm:h-8 text-purple-400" />
           </div>
         </div>
       </div>
 
       {/* User Details */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-gray-800 rounded-xl p-6"
+          className="bg-gray-800 rounded-xl p-4 sm:p-6"
         >
-          <h3 className="text-lg font-medium text-white mb-4">
+          <h3 className="text-base sm:text-lg font-medium text-white mb-3 sm:mb-4">
             Account Information
           </h3>
-          <div className="space-y-3">
-            <div className="flex items-center space-x-3">
-              <Mail className="w-5 h-5 text-gray-400" />
+          <div className="space-y-2 sm:space-y-3">
+            <div className="flex items-center space-x-2 sm:space-x-3">
+              <Mail className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
               <div>
-                <p className="text-white">{user.email}</p>
-                <p className="text-gray-400 text-sm">Email Address</p>
+                <p className="text-white text-xs sm:text-base">{user.email}</p>
+                <p className="text-gray-400 text-xs sm:text-sm">Email Address</p>
               </div>
             </div>
-            <div className="flex items-center space-x-3">
-              <Calendar className="w-5 h-5 text-gray-400" />
+            <div className="flex items-center space-x-2 sm:space-x-3">
+              <Calendar className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
               <div>
-                <p className="text-white">
+                <p className="text-white text-xs sm:text-base">
                   {new Date(user.createdAt).toLocaleDateString()}
                 </p>
-                <p className="text-gray-400 text-sm">Member Since</p>
+                <p className="text-gray-400 text-xs sm:text-sm">Member Since</p>
               </div>
             </div>
             {user.lastLoginAt && (
-              <div className="flex items-center space-x-3">
-                <Shield className="w-5 h-5 text-gray-400" />
+              <div className="flex items-center space-x-2 sm:space-x-3">
+                <Shield className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
                 <div>
-                  <p className="text-white">
+                  <p className="text-white text-xs sm:text-base">
                     {new Date(user.lastLoginAt).toLocaleDateString()}
                   </p>
-                  <p className="text-gray-400 text-sm">Last Login</p>
+                  <p className="text-gray-400 text-xs sm:text-sm">Last Login</p>
                 </div>
               </div>
             )}
@@ -358,43 +358,43 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
         </motion.div>
 
         {/* Recent Stories section - Fix the View All link */}
-<motion.div
-  initial={{ opacity: 0, y: 20 }}
-  animate={{ opacity: 1, y: 0 }}
-  transition={{ delay: 0.2 }}
-  className="bg-gray-800 rounded-xl p-6"
->
-  <div className="flex items-center justify-between mb-4">
-    <h3 className="text-lg font-medium text-white">Recent Stories</h3>
-    {/* FIX: Add the user ID as a query parameter */}
-    <Link href={`/admin/stories?author=${user._id}`}>
-      <button className="text-blue-400 hover:text-blue-300 text-sm">View All</button>
-    </Link>
-  </div>
-  <div className="space-y-3">
-    {user.stories.slice(0, 5).map((story) => (
-      <div key={story._id} className="flex items-center justify-between p-3 bg-gray-700/50 rounded-lg">
-        <div>
-          <p className="text-white text-sm font-medium">{story.title}</p>
-          <div className="flex items-center space-x-2 mt-1">
-            <span className={`px-2 py-1 rounded-full text-xs border ${getStatusColor(story.status)}`}>
-              {story.status}
-            </span>
-            <span className="text-gray-400 text-xs">{story.totalWords} words</span>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="bg-gray-800 rounded-xl p-4 sm:p-6"
+        >
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-3 sm:mb-4 gap-2">
+            <h3 className="text-base sm:text-lg font-medium text-white">Recent Stories</h3>
+            {/* FIX: Add the user ID as a query parameter */}
+            <Link href={`/admin/stories?author=${user._id}`}>
+              <button className="text-blue-400 hover:text-blue-300 text-xs sm:text-sm">View All</button>
+            </Link>
           </div>
-        </div>
-        <Link href={`/admin/stories/${story._id}`}>
-          <button className="text-blue-400 hover:text-blue-300 p-1">
-            <BookOpen className="w-4 h-4" />
-          </button>
-        </Link>
-      </div>
-    ))}
-    {user.stories.length === 0 && (
-      <p className="text-gray-400 text-sm text-center py-4">No stories created yet</p>
-    )}
-  </div>
-</motion.div>
+          <div className="space-y-2 sm:space-y-3">
+            {user.stories.slice(0, 5).map((story) => (
+              <div key={story._id} className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-2 sm:p-3 bg-gray-700/50 rounded-lg gap-2 sm:gap-0">
+                <div>
+                  <p className="text-white text-xs sm:text-sm font-medium">{story.title}</p>
+                  <div className="flex items-center space-x-1 sm:space-x-2 mt-1">
+                    <span className={`px-2 py-1 rounded-full text-xs border ${getStatusColor(story.status)}`}>
+                      {story.status}
+                    </span>
+                    <span className="text-gray-400 text-[10px] sm:text-xs">{story.totalWords} words</span>
+                  </div>
+                </div>
+                <Link href={`/admin/stories/${story._id}`}>
+                  <button className="text-blue-400 hover:text-blue-300 p-1">
+                    <BookOpen className="w-4 h-4" />
+                  </button>
+                </Link>
+              </div>
+            ))}
+            {user.stories.length === 0 && (
+              <p className="text-gray-400 text-xs sm:text-sm text-center py-2 sm:py-4">No stories created yet</p>
+            )}
+          </div>
+        </motion.div>
       </div>
     </div>
   );

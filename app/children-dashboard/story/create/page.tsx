@@ -88,22 +88,22 @@ function StoryCreateContent() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 flex items-center justify-center">
-      <div className="text-white text-center max-w-md mx-auto p-8">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 flex items-center justify-center px-2 sm:px-0">
+      <div className="text-white text-center max-w-xs sm:max-w-md mx-auto p-4 sm:p-8">
         <motion.div
-          className="mb-8"
+          className="mb-6 sm:mb-8"
           animate={{ rotate: 360 }}
           transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
         >
-          <Sparkles className="w-16 h-16 mx-auto text-green-400" />
+          <Sparkles className="w-12 h-12 sm:w-16 sm:h-16 mx-auto text-green-400" />
         </motion.div>
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="space-y-4"
+          className="space-y-3 sm:space-y-4"
         >
-          <h1 className="text-2xl font-bold">
+          <h1 className="text-xl sm:text-2xl font-bold">
             {isCreating
               ? 'Creating Your Magical Story...'
               : error
@@ -112,24 +112,24 @@ function StoryCreateContent() {
           </h1>
 
           {isCreating && (
-            <p className="text-gray-300">
+            <p className="text-gray-300 text-sm sm:text-base">
               We&apos;re preparing your adventure with the story elements you
               selected. This may take a moment!
             </p>
           )}
 
           {error && (
-            <div className="space-y-4">
-              <p className="text-red-300">{error}</p>
-              <p className="text-gray-400">
+            <div className="space-y-2 sm:space-y-4">
+              <p className="text-red-300 text-sm sm:text-base">{error}</p>
+              <p className="text-gray-400 text-xs sm:text-sm">
                 Redirecting you back to story creation...
               </p>
             </div>
           )}
 
-          <div className="flex items-center justify-center space-x-2 mt-6">
-            <BookOpen className="w-5 h-5 text-blue-400" />
-            <span className="text-sm text-gray-400">
+          <div className="flex items-center justify-center space-x-1 sm:space-x-2 mt-4 sm:mt-6">
+            <BookOpen className="w-4 h-4 sm:w-5 sm:h-5 text-blue-400" />
+            <span className="text-xs sm:text-sm text-gray-400">
               Mintoons Creative Writing Platform
             </span>
           </div>

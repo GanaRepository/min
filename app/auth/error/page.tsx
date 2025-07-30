@@ -83,10 +83,10 @@ function AuthErrorFallback() {
 // Main page component with Suspense boundary
 export default function AuthErrorPage() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="w-full max-w-md p-4">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-2 sm:px-4">
+      <div className="w-full max-w-xs sm:max-w-md md:max-w-lg lg:max-w-xl p-2 sm:p-4">
         <Card className="border shadow-lg">
-          <CardContent className="p-6">
+          <CardContent className="p-4 sm:p-6">
             <Suspense fallback={<AuthErrorFallback />}>
               <AuthErrorContent />
             </Suspense>

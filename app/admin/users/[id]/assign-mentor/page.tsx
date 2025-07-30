@@ -158,19 +158,19 @@ export default function AssignMentorPage({
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 px-2 sm:px-4 md:px-8 xl:px-24 py-4">
       {/* Header */}
-      <div className="flex items-center space-x-4">
-        <Link href={`/admin/users/${params.id}`}>
-          <button className="text-gray-400 hover:text-white transition-colors">
-            <ArrowLeft className="w-6 h-6" />
-          </button>
-        </Link>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4 gap-2">
+        <div className="flex items-center">
+          <Link href={`/admin/users/${params.id}`}>
+            <button className="text-gray-400 hover:text-white transition-colors">
+              <ArrowLeft className="w-6 h-6" />
+            </button>
+          </Link>
+        </div>
         <div>
-          <h1 className="text-2xl font-bold text-white">Assign Mentor</h1>
-          <p className="text-gray-400">
-            Select a mentor for {student.firstName} {student.lastName}
-          </p>
+          <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white mb-1 sm:mb-2">Assign Mentor</h1>
+          <p className="text-gray-400 text-sm sm:text-base">Select a mentor for {student.firstName} {student.lastName}</p>
         </div>
       </div>
 
@@ -178,26 +178,26 @@ export default function AssignMentorPage({
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-gray-800 rounded-xl p-6"
+        className="bg-gray-800 rounded-xl p-4 sm:p-6"
       >
-        <div className="flex items-center space-x-4">
-          <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center">
-            <span className="text-white font-medium">
+        <div className="flex items-center space-x-3 sm:space-x-4">
+          <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center">
+            <span className="text-white font-medium text-sm sm:text-base">
               {student.firstName[0]}
               {student.lastName[0]}
             </span>
           </div>
           <div>
-            <h3 className="text-lg font-medium text-white">
+            <h3 className="text-base sm:text-lg font-medium text-white">
               {student.firstName} {student.lastName}
             </h3>
-            <p className="text-gray-400">{student.email}</p>
+            <p className="text-gray-400 text-xs sm:text-sm">{student.email}</p>
           </div>
         </div>
       </motion.div>
 
       {/* Search */}
-      <div className="bg-gray-800 rounded-xl p-6">
+      <div className="bg-gray-800 rounded-xl p-4 sm:p-6">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
           <input
@@ -205,43 +205,41 @@ export default function AssignMentorPage({
             placeholder="Search mentors by name or email..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full bg-gray-700 border border-gray-600 rounded-lg pl-10 pr-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full bg-gray-700 border border-gray-600 rounded-lg pl-10 pr-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
           />
         </div>
       </div>
 
       {/* Mentors List */}
-      <div className="bg-gray-800 rounded-xl p-6">
-        <h3 className="text-lg font-medium text-white mb-4">
-          Available Mentors
-        </h3>
-        <div className="space-y-3">
+      <div className="bg-gray-800 rounded-xl p-4 sm:p-6">
+        <h3 className="text-base sm:text-lg font-medium text-white mb-3 sm:mb-4">Available Mentors</h3>
+        <div className="space-y-2 sm:space-y-3">
           {filteredMentors.map((mentor) => (
             <motion.div
               key={mentor._id}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className={`p-4 rounded-lg border cursor-pointer transition-all ${
+              className={`p-3 sm:p-4 rounded-lg border cursor-pointer transition-all ${
                 selectedMentor === mentor._id
                   ? 'bg-blue-500/20 border-blue-500/50'
                   : 'bg-gray-700/50 border-gray-600 hover:bg-gray-700'
               }`}
               onClick={() => setSelectedMentor(mentor._id)}
             >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-purple-600 rounded-full flex items-center justify-center">
-                    <span className="text-white font-medium text-sm">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0">
+                <div className="flex items-center space-x-2 sm:space-x-3">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-purple-500 to-purple-600 rounded-full flex items-center justify-center">
+                    <span className="text-white font-medium text-xs sm:text-sm">
                       {mentor.firstName[0]}
                       {mentor.lastName[0]}
                     </span>
                   </div>
                   <div>
-                    <p className="text-white font-medium">
+                    <p className="text-white font-medium text-xs sm:text-base">
                       {mentor.firstName} {mentor.lastName}
                     </p>
-                    <p className="text-gray-400 text-sm">{mentor.email}</p>
-                    <p className="text-gray-400 text-xs">
+                    <p className="text-gray-400 text-xs sm:text-sm">{mentor.email}</p>
+                    <p className="text-gray-400 text-[10px] sm:text-xs">
                       {mentor.assignedStudents} students assigned
                     </p>
                   </div>
@@ -255,24 +253,24 @@ export default function AssignMentorPage({
         </div>
 
         {filteredMentors.length === 0 && (
-          <div className="text-center py-8">
-            <User className="w-12 h-12 text-gray-600 mx-auto mb-4" />
-            <p className="text-gray-400">No mentors found</p>
+          <div className="text-center py-6 sm:py-8">
+            <User className="w-10 h-10 sm:w-12 sm:h-12 text-gray-600 mx-auto mb-3 sm:mb-4" />
+            <p className="text-gray-400 text-xs sm:text-base">No mentors found</p>
           </div>
         )}
       </div>
 
       {/* Actions */}
-      <div className="flex justify-end space-x-4">
+      <div className="flex flex-col sm:flex-row justify-end gap-2 sm:space-x-4">
         <Link href={`/admin/users/${params.id}`}>
-          <button className="px-6 py-2 text-gray-400 hover:text-white transition-colors">
+          <button className="px-4 sm:px-6 py-2 text-gray-400 hover:text-white transition-colors text-xs sm:text-base">
             Cancel
           </button>
         </Link>
         <button
           onClick={handleAssignMentor}
           disabled={!selectedMentor || assigning}
-          className="bg-gradient-to-r from-green-600 to-green-700 text-white px-6 py-2 rounded-lg hover:from-green-700 hover:to-green-800 transition-all duration-200 flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="bg-gradient-to-r from-green-600 to-green-700 text-white px-4 sm:px-6 py-2 rounded-lg hover:from-green-700 hover:to-green-800 transition-all duration-200 flex items-center space-x-2 text-xs sm:text-base disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {assigning ? (
             <>

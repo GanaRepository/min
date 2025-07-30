@@ -250,9 +250,9 @@ export default function CommentsManagement() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 px-2 sm:px-4 md:px-8 lg:px-12 xl:px-20 py-4 sm:py-6 md:py-8">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-white mb-2">
             Comments & Reviews
@@ -265,8 +265,8 @@ export default function CommentsManagement() {
       </div>
 
       {/* Filters and Search */}
-      <div className="bg-gray-800 rounded-xl p-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+      <div className="bg-gray-800 rounded-xl p-4 sm:p-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-4">
           {/* Search */}
           <div className="lg:col-span-2">
             <div className="relative">
@@ -317,14 +317,14 @@ export default function CommentsManagement() {
       </div>
 
       {/* Comments List */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         {filteredComments.map((comment, index) => (
           <motion.div
             key={comment._id}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.05 }}
-            className="bg-gray-800 rounded-xl p-6 hover:bg-gray-750 transition-colors h-full flex flex-col"
+            className="bg-gray-800 rounded-xl p-4 sm:p-6 hover:bg-gray-750 transition-colors h-full flex flex-col"
           >
             <div className="flex items-start justify-between gap-4">
               <div className="flex-1">
@@ -374,7 +374,7 @@ export default function CommentsManagement() {
                   {editingId === comment._id ? (
                     <div className="flex flex-col gap-2">
                       <textarea
-                        className="w-full rounded bg-gray-700 text-gray-100 p-2"
+                        className="w-full rounded bg-gray-700 text-gray-100 p-2 text-sm sm:text-base"
                         value={editValue}
                         onChange={(e) => setEditValue(e.target.value)}
                         rows={3}
@@ -505,22 +505,22 @@ export default function CommentsManagement() {
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="bg-gray-800 rounded-xl px-6 py-4 flex items-center justify-between">
-          <div className="text-gray-400 text-sm">
+        <div className="bg-gray-800 rounded-xl px-4 sm:px-6 py-3 sm:py-4 flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-0">
+          <div className="text-gray-400 text-xs sm:text-sm">
             Page {page} of {totalPages}
           </div>
-          <div className="flex space-x-2">
+          <div className="flex gap-2">
             <button
               onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
               disabled={page === 1}
-              className="px-3 py-1 bg-gray-700 text-white rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-600 transition-colors"
+              className="px-2 sm:px-3 py-1 bg-gray-700 text-white rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-600 transition-colors text-xs sm:text-sm"
             >
               Previous
             </button>
             <button
               onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))}
               disabled={page === totalPages}
-              className="px-3 py-1 bg-gray-700 text-white rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-600 transition-colors"
+              className="px-2 sm:px-3 py-1 bg-gray-700 text-white rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-600 transition-colors text-xs sm:text-sm"
             >
               Next
             </button>

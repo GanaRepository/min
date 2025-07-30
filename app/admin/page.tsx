@@ -125,10 +125,10 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 px-2 sm:px-4 md:px-8 lg:px-12 xl:px-20 py-4 sm:py-6 md:py-8">
       {/* Welcome Header */}
-      <div className="bg-gradient-to-r from-gray-800 to-gray-700 rounded-xl p-6">
-        <h1 className="text-3xl font-bold text-white mb-2">
+      <div className="bg-gradient-to-r from-gray-800 to-gray-700 rounded-xl p-4 sm:p-6">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-2">
           Welcome back, {session?.user.firstName}!
         </h1>
         <p className="text-gray-300">
@@ -137,7 +137,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         {statCards.map((card, index) => {
           const Icon = card.icon;
           return (
@@ -148,13 +148,13 @@ export default function AdminDashboard() {
               transition={{ delay: index * 0.1 }}
             >
               <Link href={card.href}>
-                <div className="bg-gray-800 rounded-xl p-6 hover:bg-gray-750 transition-all duration-200 cursor-pointer group">
+                <div className="bg-gray-800 rounded-xl p-4 sm:p-6 hover:bg-gray-750 transition-all duration-200 cursor-pointer group">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-gray-400 text-sm font-medium">
+                      <p className="text-gray-400 text-xs sm:text-sm font-medium">
                         {card.title}
                       </p>
-                      <p className="text-3xl font-bold text-white mt-2">
+                      <p className="text-2xl sm:text-3xl font-bold text-white mt-2">
                         {card.value.toLocaleString()}
                       </p>
                     </div>
@@ -172,8 +172,8 @@ export default function AdminDashboard() {
       </div>
 
       {/* Monthly Stats */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="bg-gray-800 rounded-xl p-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+        <div className="bg-gray-800 rounded-xl p-4 sm:p-6">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-white">This Month</h3>
             <TrendingUp className="w-5 h-5 text-green-400" />
@@ -201,7 +201,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Story Status */}
-        <div className="bg-gray-800 rounded-xl p-6">
+        <div className="bg-gray-800 rounded-xl p-4 sm:p-6">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-white">Story Status</h3>
             <FileText className="w-5 h-5 text-blue-400" />
@@ -229,18 +229,18 @@ export default function AdminDashboard() {
         </div>
 
         {/* Quick Actions */}
-        <div className="bg-gray-800 rounded-xl p-6">
+        <div className="bg-gray-800 rounded-xl p-4 sm:p-6">
           <h3 className="text-lg font-semibold text-white mb-4">
             Quick Actions
           </h3>
           <div className="space-y-3">
             <Link href="/admin/create-mentor">
-              <button className="mb-4 w-full bg-gradient-to-r from-green-600 to-green-700 text-white py-2 px-4 rounded-lg hover:from-green-700 hover:to-green-800 transition-all duration-200">
+              <button className="mb-4 w-full bg-gradient-to-r from-green-600 to-green-700 text-white py-2 sm:py-2.5 px-4 sm:px-6 rounded-lg hover:from-green-700 hover:to-green-800 transition-all duration-200 text-base sm:text-lg">
                 Create Mentor
               </button>
             </Link>
             <Link href="/admin/stories?status=pending">
-              <button className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-2 px-4 rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200">
+              <button className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-2 sm:py-2.5 px-4 sm:px-6 rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 text-base sm:text-lg">
                 Review Stories
               </button>
             </Link>
@@ -249,7 +249,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* Recent Activity */}
-      <div className="bg-gray-800 rounded-xl p-6">
+      <div className="bg-gray-800 rounded-xl p-4 sm:p-6">
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-xl font-semibold text-white">Recent Activity</h3>
         </div>
@@ -262,7 +262,7 @@ export default function AdminDashboard() {
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.05 }}
-                className="flex items-center space-x-4 p-4 bg-gray-700/50 rounded-lg"
+                className="flex items-center space-x-2 sm:space-x-4 p-2 sm:p-4 bg-gray-700/50 rounded-lg"
               >
                 <div
                   className={`w-10 h-10 rounded-full flex items-center justify-center ${getActivityColor(activity.type)}`}
@@ -270,8 +270,8 @@ export default function AdminDashboard() {
                   {getActivityIcon(activity.type)}
                 </div>
                 <div className="flex-1">
-                  <p className="text-white text-sm">{activity.description}</p>
-                  <p className="text-gray-400 text-xs mt-1">
+                  <p className="text-white text-xs sm:text-sm">{activity.description}</p>
+                  <p className="text-gray-400 text-[10px] sm:text-xs mt-1">
                     {new Date(activity.createdAt).toLocaleString()}
                   </p>
                 </div>

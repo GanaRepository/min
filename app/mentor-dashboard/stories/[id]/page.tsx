@@ -134,83 +134,83 @@ export default function MentorStoryDetail() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6 p-2 sm:p-4 md:p-6">
       {/* Header */}
-      <div className="flex items-center space-x-4">
+      <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
         <Link href="/mentor-dashboard/stories">
-          <button className="text-gray-800 hover:text-blue-600 transition-colors bg-white p-2 rounded-lg">← Back To Stories</button>
+          <button className="text-gray-800 hover:text-blue-600 transition-colors bg-white p-2 rounded-lg text-xs sm:text-base">← Back To Stories</button>
         </Link>
       </div>
 
       {/* Story Content */}
-      <div className="bg-gray-800 rounded-xl p-6 mb-6">
-        <div className="flex items-center space-x-3 mb-2">
+      <div className="bg-gray-800 rounded-xl p-3 sm:p-6 mb-4 sm:mb-6">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-2">
           <span className="px-2 py-1 rounded-full text-xs border bg-blue-500/20 text-blue-300 border-blue-500/30">{story.status}</span>
           <span className="text-gray-400 text-xs">{story.totalWords} words</span>
-          <Calendar className="w-4 h-4 ml-4" />
+          <Calendar className="w-4 h-4 ml-2 sm:ml-4" />
           <span className="text-gray-400 text-xs">Updated: {new Date(story.updatedAt).toLocaleDateString()}</span>
         </div>
-        <div className="text-white whitespace-pre-line text-base mt-4">{story.content}</div>
+        <div className="text-white whitespace-pre-line text-sm sm:text-base mt-2 sm:mt-4">{story.content}</div>
       </div>
 
       {/* Comments Section */}
-      <div className="bg-gray-800 rounded-xl p-6">
-        <h3 className="text-lg font-medium text-white mb-4">Comments & Reviews</h3>
+      <div className="bg-gray-800 rounded-xl p-3 sm:p-6">
+        <h3 className="text-base sm:text-lg font-medium text-white mb-2 sm:mb-4">Comments & Reviews</h3>
         {/* Add Comment */}
-        <div className="mb-4 flex items-center space-x-2">
+        <div className="mb-3 sm:mb-4 flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-2">
           <input
             type="text"
             value={newComment}
             onChange={(e) => setNewComment(e.target.value)}
             placeholder="Add a comment..."
-            className="flex-1 bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="flex-1 bg-gray-700 border border-gray-600 rounded-lg px-2 sm:px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 text-xs sm:text-base"
           />
           <button
             onClick={handleAddComment}
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+            className="bg-blue-600 text-white px-3 sm:px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-xs sm:text-base"
           >
             Add
           </button>
         </div>
         {/* Comments List */}
-        <div className="space-y-4">
-          {comments.length === 0 && <p className="text-gray-400 text-sm">No comments yet.</p>}
+        <div className="space-y-3 sm:space-y-4">
+          {comments.length === 0 && <p className="text-gray-400 text-xs sm:text-sm">No comments yet.</p>}
           {comments.map((comment) => (
-            <div key={comment._id} className="flex items-start space-x-3 bg-gray-700/50 rounded-lg p-3">
-              <div className="flex-shrink-0 w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center">
+            <div key={comment._id} className="flex flex-col sm:flex-row items-start gap-2 sm:gap-3 bg-gray-700/50 rounded-lg p-2 sm:p-3">
+              <div className="flex-shrink-0 w-7 h-7 sm:w-8 sm:h-8 bg-gray-600 rounded-full flex items-center justify-center">
                 <User className="w-4 h-4 text-white" />
               </div>
               <div className="flex-1">
-                <div className="flex items-center space-x-2">
-                  <span className="text-white font-medium text-sm">{comment.authorId?.firstName} {comment.authorId?.lastName}</span>
-                  <span className="text-gray-400 text-xs">{new Date(comment.createdAt).toLocaleDateString()}</span>
+                <div className="flex flex-wrap items-center gap-1 sm:gap-2">
+                  <span className="text-white font-medium text-xs sm:text-sm">{comment.authorId?.firstName} {comment.authorId?.lastName}</span>
+                  <span className="text-gray-400 text-[10px] sm:text-xs">{new Date(comment.createdAt).toLocaleDateString()}</span>
                 </div>
                 {editingId === comment._id ? (
-                  <div className="flex items-center space-x-2 mt-2">
+                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 mt-2">
                     <input
                       type="text"
                       value={editValue}
                       onChange={(e) => setEditValue(e.target.value)}
-                      className="flex-1 bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="flex-1 bg-gray-700 border border-gray-600 rounded-lg px-2 sm:px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 text-xs sm:text-base"
                     />
                     <button
                       onClick={() => handleEditSave(comment)}
-                      className="bg-green-600 text-white px-3 py-1 rounded-lg hover:bg-green-700 transition-colors"
+                      className="bg-green-600 text-white px-2 sm:px-3 py-1 rounded-lg hover:bg-green-700 transition-colors text-xs sm:text-base"
                     >
                       Save
                     </button>
                     <button
                       onClick={() => setEditingId(null)}
-                      className="bg-gray-600 text-white px-3 py-1 rounded-lg hover:bg-gray-700 transition-colors"
+                      className="bg-gray-600 text-white px-2 sm:px-3 py-1 rounded-lg hover:bg-gray-700 transition-colors text-xs sm:text-base"
                     >
                       Cancel
                     </button>
                   </div>
                 ) : (
-                  <p className="text-gray-200 mt-2">{comment.comment}</p>
+                  <p className="text-gray-200 mt-2 text-xs sm:text-base">{comment.comment}</p>
                 )}
               </div>
-              <div className="flex flex-col space-y-1">
+              <div className="flex flex-row sm:flex-col gap-1 sm:gap-1 mt-2 sm:mt-0">
                 <button
                   onClick={() => handleEditClick(comment)}
                   className="text-yellow-400 hover:text-yellow-300 p-1"

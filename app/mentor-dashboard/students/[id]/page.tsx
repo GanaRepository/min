@@ -69,52 +69,52 @@ export default function MentorStudentProfile() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6 p-2 sm:p-4 md:p-6">
       {/* Header */}
-      <div className="flex items-center space-x-4">
+      <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
         <Link href="/mentor-dashboard/students">
-          <button className="text-gray-400 hover:text-white transition-colors">← Back</button>
+          <button className="text-gray-400 hover:text-white transition-colors text-xs sm:text-base">← Back</button>
         </Link>
         <div>
-          <h1 className="text-2xl font-bold text-white">{student.firstName} {student.lastName}</h1>
-          <p className="text-gray-400">Student Profile</p>
+          <h1 className="text-xl sm:text-2xl font-bold text-white">{student.firstName} {student.lastName}</h1>
+          <p className="text-gray-400 text-xs sm:text-base">Student Profile</p>
         </div>
       </div>
 
       {/* Student Info Card */}
-      <div className="bg-gray-800 rounded-xl p-6 flex items-center space-x-6">
-        <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center">
-          <span className="text-white font-bold text-xl">{student.firstName[0]}{student.lastName[0]}</span>
+      <div className="bg-gray-800 rounded-xl p-3 sm:p-6 flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
+        <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center">
+          <span className="text-white font-bold text-lg sm:text-xl">{student.firstName[0]}{student.lastName[0]}</span>
         </div>
         <div>
-          <h2 className="text-xl font-bold text-white">{student.firstName} {student.lastName}</h2>
-          <p className="text-gray-400">{student.email}</p>
-          <div className="flex items-center space-x-2 mt-2">
+          <h2 className="text-lg sm:text-xl font-bold text-white">{student.firstName} {student.lastName}</h2>
+          <p className="text-gray-400 text-xs sm:text-base">{student.email}</p>
+          <div className="flex flex-wrap items-center gap-2 mt-2">
             <span className="px-2 py-1 rounded-full text-xs bg-green-500/20 text-green-300 border border-green-500/30">Active</span>
             <span className="px-2 py-1 rounded-full text-xs bg-purple-500/20 text-purple-300 border border-purple-500/30">Stories: {student.totalStories}</span>
           </div>
-          <div className="flex items-center space-x-3 mt-2 text-gray-400 text-xs">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3 mt-2 text-gray-400 text-[10px] sm:text-xs">
             <Mail className="w-4 h-4" /> {student.email}
-            <Calendar className="w-4 h-4 ml-4" /> Joined: {new Date(student.createdAt).toLocaleDateString()}
-            {student.lastActiveAt && <span><span className="ml-4">Last Active:</span> {new Date(student.lastActiveAt).toLocaleDateString()}</span>}
+            <Calendar className="w-4 h-4 ml-2 sm:ml-4" /> Joined: {new Date(student.createdAt).toLocaleDateString()}
+            {student.lastActiveAt && <span><span className="ml-2 sm:ml-4">Last Active:</span> {new Date(student.lastActiveAt).toLocaleDateString()}</span>}
           </div>
         </div>
       </div>
 
       {/* Student Stories */}
-      <div className="bg-gray-800 rounded-xl p-6">
-        <h3 className="text-lg font-medium text-white mb-4">Stories by {student.firstName}</h3>
-        <div className="space-y-3">
-          {student.stories.length === 0 && <p className="text-gray-400 text-sm">No stories yet.</p>}
+      <div className="bg-gray-800 rounded-xl p-3 sm:p-6">
+        <h3 className="text-base sm:text-lg font-medium text-white mb-2 sm:mb-4">Stories by {student.firstName}</h3>
+        <div className="space-y-2 sm:space-y-3">
+          {student.stories.length === 0 && <p className="text-gray-400 text-xs sm:text-sm">No stories yet.</p>}
           {student.stories.map((story) => (
-            <div key={story._id} className="flex items-center justify-between p-3 bg-gray-700/50 rounded-lg">
+            <div key={story._id} className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-4 p-2 sm:p-3 bg-gray-700/50 rounded-lg">
               <div>
-                <p className="text-white text-sm font-medium">{story.title}</p>
-                <div className="flex items-center space-x-2 mt-1">
+                <p className="text-white text-xs sm:text-sm font-medium">{story.title}</p>
+                <div className="flex flex-wrap items-center gap-1 sm:gap-2 mt-1">
                   <span className="px-2 py-1 rounded-full text-xs border bg-blue-500/20 text-blue-300 border-blue-500/30">{story.status}</span>
-                  <span className="text-gray-400 text-xs">{story.totalWords} words</span>
+                  <span className="text-gray-400 text-[10px] sm:text-xs">{story.totalWords} words</span>
                 </div>
-                <span className="text-gray-400 text-xs">Updated: {new Date(story.updatedAt).toLocaleDateString()}</span>
+                <span className="text-gray-400 text-[10px] sm:text-xs">Updated: {new Date(story.updatedAt).toLocaleDateString()}</span>
               </div>
               <Link href={`/mentor-dashboard/stories/${story._id}`}>
                 <button className="text-blue-400 hover:text-blue-300 p-1">

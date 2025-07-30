@@ -1,10 +1,13 @@
 export default function CookiePolicy() {
   return (
-    <div className="container mx-auto px-4 py-16 min-h-screen mt-6">
-      <h1 className="text-4xl font-bold mb-8 text-black">Cookie Policy</h1>
+    <div className="container mx-auto px-2 sm:px-4 md:px-8 lg:px-12 xl:px-20 py-8 sm:py-12 md:py-16 min-h-screen mt-4 sm:mt-6">
+      <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-8 text-black">Mintoons Cookie Policy</h1>
 
-      <div className="prose prose-lg max-w-none text-gray-900 space-y-6">
+      <div className="prose prose-base sm:prose-lg max-w-none text-gray-900 space-y-6">
         <p>Last updated: {new Date().toLocaleDateString()}</p>
+        <p>
+          This Cookie Policy explains how Mintoons ("we", "us", or "our") uses cookies and similar technologies on our website (mintoons.com). By using our website, you consent to the use of cookies as described in this policy.
+        </p>
 
         <div className="space-y-4">
           <h2 className="text-2xl font-semibold text-black mt-8">
@@ -12,9 +15,9 @@ export default function CookiePolicy() {
           </h2>
           <p>
             Cookies are small text files that are placed on your computer or
-            mobile device when you visit our website. They are widely used to
+            mobile device when you visit mintoons.com. They are widely used to
             make websites work more efficiently and provide useful information
-            to website owners.
+            to website owners, including us at Mintoons.
           </p>
         </div>
 
@@ -22,7 +25,7 @@ export default function CookiePolicy() {
           <h2 className="text-2xl font-semibold text-black mt-8">
             2. Types of Cookies We Use
           </h2>
-          <p>We use the following types of cookies:</p>
+          <p>We use the following types of cookies on mintoons.com:</p>
           <ul className="list-disc pl-6 space-y-2">
             <li>
               <strong className="text-black">Essential Cookies:</strong>{' '}
@@ -38,7 +41,7 @@ export default function CookiePolicy() {
             </li>
             <li>
               <strong className="text-black">Analytics Cookies:</strong> Help us
-              understand how visitors interact with our website
+              understand how visitors interact with our website and improve our creative writing platform
             </li>
           </ul>
         </div>
@@ -47,12 +50,12 @@ export default function CookiePolicy() {
           <h2 className="text-2xl font-semibold text-black mt-8">
             3. How We Use Cookies
           </h2>
-          <p>We use cookies for various purposes, including:</p>
+          <p>We use cookies for various purposes on mintoons.com, including:</p>
           <ul className="list-disc pl-6 space-y-2">
             <li>To provide essential website functionality</li>
             <li>To remember your preferences</li>
             <li>To analyze and improve our website performance</li>
-            <li>To personalize your experience</li>
+            <li>To personalize your experience on Mintoons</li>
           </ul>
         </div>
 
@@ -72,7 +75,7 @@ export default function CookiePolicy() {
           </ul>
           <p className="mt-4">
             Please note that blocking cookies may affect the functionality of
-            our website.
+            our website, including creative writing and mentorship features.
           </p>
         </div>
 
@@ -84,7 +87,7 @@ export default function CookiePolicy() {
           <ul className="list-disc pl-6 space-y-2">
             <li>Analyze website traffic (Google Analytics)</li>
             <li>Provide social media features</li>
-            <li>Display personalized content</li>
+            <li>Display personalized content and recommendations for young writers and mentors</li>
           </ul>
         </div>
 
@@ -94,9 +97,7 @@ export default function CookiePolicy() {
           </h2>
           <p>
             We may update this Cookie Policy from time to time. Please check
-            this page regularly for any changes. Your continued use of our
-            website after changes are posted constitutes your acceptance of the
-            updated policy.
+            this page regularly for any changes. Your continued use of mintoons.com after changes are posted constitutes your acceptance of the updated policy.
           </p>
         </div>
 
@@ -108,9 +109,9 @@ export default function CookiePolicy() {
             If you have questions about our Cookie Policy, please contact us:
           </p>
           <ul className="list-none space-y-2">
-            <li>By email: Hr@pioneeritsystems.com</li>
+            <li>By email: support@mintoons.com</li>
             <li>
-              By mail: 9401 40th Avenue West, Suite 115, Lynnwood, WA 98036
+              By mail: Mintoons, Dallas, TX, USA
             </li>
           </ul>
         </div>

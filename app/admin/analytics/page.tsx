@@ -148,18 +148,18 @@ export default function AnalyticsDashboard() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 px-2 sm:px-4 md:px-8 lg:px-12 xl:px-20 py-4 sm:py-6 md:py-8">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-white mb-2">
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-white mb-2">
             Analytics Dashboard
           </h1>
           <p className="text-gray-400">
             Platform insights and performance metrics
           </p>
         </div>
-        <div className="mt-4 sm:mt-0 flex space-x-3">
+      <div className="mt-4 sm:mt-0 flex flex-col sm:flex-row gap-2 sm:gap-3">
           <select
             value={timeRange}
             onChange={(e) => setTimeRange(e.target.value)}
@@ -181,17 +181,17 @@ export default function AnalyticsDashboard() {
       </div>
 
       {/* Overview Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-gray-800 rounded-xl p-6"
+          className="bg-gray-800 rounded-xl p-4 sm:p-6"
         >
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-400 text-sm">Total Users</p>
-              <p className="text-2xl font-bold text-white">
+              <p className="text-gray-400 text-xs sm:text-sm">Total Users</p>
+              <p className="text-xl sm:text-2xl font-bold text-white">
                 {analytics.overview.totalUsers}
               </p>
               <div className="flex items-center space-x-1 mt-1">
@@ -214,12 +214,12 @@ export default function AnalyticsDashboard() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="bg-gray-800 rounded-xl p-6"
+          className="bg-gray-800 rounded-xl p-4 sm:p-6"
         >
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-400 text-sm">Total Stories</p>
-              <p className="text-2xl font-bold text-white">
+              <p className="text-gray-400 text-xs sm:text-sm">Total Stories</p>
+              <p className="text-xl sm:text-2xl font-bold text-white">
                 {analytics.overview.totalStories}
               </p>
               <div className="flex items-center space-x-1 mt-1">
@@ -244,12 +244,12 @@ export default function AnalyticsDashboard() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="bg-gray-800 rounded-xl p-6"
+          className="bg-gray-800 rounded-xl p-4 sm:p-6"
         >
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-400 text-sm">Total Comments</p>
-              <p className="text-2xl font-bold text-white">
+              <p className="text-gray-400 text-xs sm:text-sm">Total Comments</p>
+              <p className="text-xl sm:text-2xl font-bold text-white">
                 {analytics.overview.totalComments}
               </p>
               <div className="flex items-center space-x-1 mt-1">
@@ -274,12 +274,12 @@ export default function AnalyticsDashboard() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="bg-gray-800 rounded-xl p-6"
+          className="bg-gray-800 rounded-xl p-4 sm:p-6"
         >
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-400 text-sm">Active Mentors</p>
-              <p className="text-2xl font-bold text-white">
+              <p className="text-gray-400 text-xs sm:text-sm">Active Mentors</p>
+              <p className="text-xl sm:text-2xl font-bold text-white">
                 {analytics.overview.totalMentors}
               </p>
               <p className="text-xs text-gray-400 mt-1">
@@ -292,13 +292,13 @@ export default function AnalyticsDashboard() {
       </div>
 
       {/* Detailed Metrics */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4 sm:gap-6">
         {/* User Metrics */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
-          className="bg-gray-800 rounded-xl p-6"
+          className="bg-gray-800 rounded-xl p-4 sm:p-6"
         >
           <h3 className="text-lg font-medium text-white mb-6">User Metrics</h3>
           <div className="space-y-4">
@@ -336,7 +336,7 @@ export default function AnalyticsDashboard() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
-          className="bg-gray-800 rounded-xl p-6"
+          className="bg-gray-800 rounded-xl p-4 sm:p-6"
         >
           <h3 className="text-lg font-medium text-white mb-6">Story Metrics</h3>
           <div className="space-y-4">
@@ -386,35 +386,35 @@ export default function AnalyticsDashboard() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.7 }}
-        className="bg-gray-800 rounded-xl p-6"
+        className="bg-gray-800 rounded-xl p-4 sm:p-6"
       >
         <h3 className="text-lg font-medium text-white mb-6">
           Engagement Metrics
         </h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           <div className="text-center">
-            <div className="text-2xl font-bold text-white mb-1">
+            <div className="text-xl sm:text-2xl font-bold text-white mb-1">
               {analytics.engagementMetrics.commentsThisMonth}
             </div>
-            <div className="text-gray-400 text-sm">Comments This Month</div>
+            <div className="text-gray-400 text-xs sm:text-sm">Comments This Month</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-white mb-1">
+            <div className="text-xl sm:text-2xl font-bold text-white mb-1">
               {analytics.engagementMetrics.averageCommentsPerStory}
             </div>
-            <div className="text-gray-400 text-sm">Avg Comments/Story</div>
+            <div className="text-gray-400 text-xs sm:text-sm">Avg Comments/Story</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-white mb-1">
+            <div className="text-xl sm:text-2xl font-bold text-white mb-1">
               {analytics.engagementMetrics.mentorEngagement}%
             </div>
-            <div className="text-gray-400 text-sm">Mentor Engagement</div>
+            <div className="text-gray-400 text-xs sm:text-sm">Mentor Engagement</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-white mb-1">
+            <div className="text-xl sm:text-2xl font-bold text-white mb-1">
               {analytics.engagementMetrics.responseRate}%
             </div>
-            <div className="text-gray-400 text-sm">Response Rate</div>
+            <div className="text-gray-400 text-xs sm:text-sm">Response Rate</div>
           </div>
         </div>
       </motion.div>

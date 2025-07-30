@@ -231,9 +231,9 @@ export default function MentorsManagement() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 px-2 sm:px-4 md:px-8 lg:px-12 xl:px-20 py-4 sm:py-6 md:py-8">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-white mb-2">
             Mentors Management
@@ -242,7 +242,7 @@ export default function MentorsManagement() {
             Manage mentors and their student assignments
           </p>
         </div>
-        <div className="mt-4 sm:mt-0 flex space-x-3">
+        <div className="mt-4 sm:mt-0 flex flex-col sm:flex-row gap-2 sm:gap-3">
           <Link href="/admin/create-mentor">
             <button className="bg-gradient-to-r from-green-600 to-green-700 text-white px-4 py-2 rounded-lg hover:from-green-700 hover:to-green-800 transition-all duration-200 flex items-center space-x-2">
               <UserPlus className="w-4 h-4" />
@@ -253,8 +253,8 @@ export default function MentorsManagement() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-gray-800 rounded-xl p-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
+        <div className="bg-gray-800 rounded-xl p-4 sm:p-6">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-400 text-sm">Total Mentors</p>
@@ -264,7 +264,7 @@ export default function MentorsManagement() {
           </div>
         </div>
 
-        <div className="bg-gray-800 rounded-xl p-6">
+        <div className="bg-gray-800 rounded-xl p-4 sm:p-6">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-400 text-sm">Active Mentors</p>
@@ -276,7 +276,7 @@ export default function MentorsManagement() {
           </div>
         </div>
 
-        <div className="bg-gray-800 rounded-xl p-6">
+        <div className="bg-gray-800 rounded-xl p-4 sm:p-6">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-400 text-sm">Total Assignments</p>
@@ -293,7 +293,7 @@ export default function MentorsManagement() {
       </div>
 
       {/* Search */}
-      <div className="bg-gray-800 rounded-xl p-6">
+      <div className="bg-gray-800 rounded-xl p-4 sm:p-6">
         <div className="relative max-w-md">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
           <input
@@ -307,14 +307,14 @@ export default function MentorsManagement() {
       </div>
 
       {/* Mentors Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         {filteredMentors.map((mentor, index) => (
           <motion.div
             key={mentor._id}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.1 }}
-            className="bg-gray-800 rounded-xl p-6 hover:bg-gray-750 transition-all duration-200"
+            className="bg-gray-800 rounded-xl p-4 sm:p-6 hover:bg-gray-750 transition-all duration-200"
           >
             {/* Mentor Header */}
             <div className="flex items-center space-x-3 mb-4">
@@ -397,11 +397,11 @@ export default function MentorsManagement() {
 
       {/* Mentor Details Modal */}
       {showDetailsModal && selectedMentor && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-2 sm:p-4">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-gray-800 rounded-xl p-6 max-w-2xl w-full max-h-[80vh] overflow-y-auto"
+            className="bg-gray-800 rounded-xl p-4 sm:p-6 max-w-2xl w-full max-h-[80vh] overflow-y-auto"
           >
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold text-white">
@@ -489,11 +489,11 @@ export default function MentorsManagement() {
 
       {/* Assign Student Modal */}
       {assignModalMentor && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-2 sm:p-4">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-gray-800 rounded-xl p-6 max-w-md w-full"
+            className="bg-gray-800 rounded-xl p-4 sm:p-6 max-w-md w-full"
           >
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xl font-bold text-white">
@@ -528,21 +528,21 @@ export default function MentorsManagement() {
               </select>
             </div>
             {assignError && <div className="text-red-400 mb-2">{assignError}</div>}
-            <div className="flex justify-end space-x-2">
+            <div className="flex flex-col sm:flex-row justify-end gap-2 sm:gap-4">
               <button
                 onClick={() => {
                   setAssignModalMentor(null);
                   setSelectedStudentId('');
                   setAssignError('');
                 }}
-                className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg"
+                className="bg-gray-600 hover:bg-gray-700 text-white px-4 sm:px-6 py-2 rounded-lg text-sm sm:text-base"
                 disabled={assignLoading}
               >
                 Cancel
               </button>
               <button
                 onClick={handleAssignStudent}
-                className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg"
+                className="bg-green-600 hover:bg-green-700 text-white px-4 sm:px-6 py-2 rounded-lg text-sm sm:text-base"
                 disabled={assignLoading || !selectedStudentId}
               >
                 {assignLoading ? 'Assigning...' : 'Assign'}

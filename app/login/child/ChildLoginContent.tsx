@@ -124,7 +124,7 @@ function ChildLoginContent() {
     <ToastProvider>
       <div
         ref={containerRef}
-        className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black overflow-hidden flex items-center justify-center relative"
+        className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black overflow-hidden flex items-center justify-center relative px-2 sm:px-4"
       >
         {/* Animated background stars */}
         <div ref={starsRef} className="absolute inset-0 z-0">
@@ -160,19 +160,19 @@ function ChildLoginContent() {
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8 }}
-          className="relative z-10 w-full max-w-6xl flex flex-col lg:flex-row items-center gap-8 px-4 mt-28 mb-16"
+          className="relative z-10 w-full max-w-6xl flex flex-col lg:flex-row items-center gap-8 px-2 sm:px-4 md:px-8 mt-16 md:mt-24 lg:mt-28 mb-8 md:mb-12 lg:mb-16"
         >
           {/* Left side - Story showcase card */}
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="flex-1 max-w-md"
+            className="flex-1 w-full max-w-md min-w-0 mb-8 lg:mb-0"
           >
-            <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-6 shadow-2xl">
+            <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-4 sm:p-6 shadow-2xl">
               {/* Story showcase with digital effects */}
               <div className="relative mb-6 rounded-2xl overflow-hidden">
-                <div className="relative w-full h-80 bg-gradient-to-br from-purple-500 via-pink-600 to-orange-600 rounded-2xl overflow-hidden">
+                <div className="relative w-full h-56 sm:h-64 md:h-72 lg:h-80 bg-gradient-to-br from-purple-500 via-pink-600 to-orange-600 rounded-2xl overflow-hidden">
                   {/* Child portrait - you can replace with actual image */}
                   <Image
                     src="/kid16.jpg" // Replace with actual child image
@@ -284,7 +284,7 @@ function ChildLoginContent() {
               <Link href="/login">
                 <Button
                   variant="outline"
-                  className="mb-6 bg-white/10 border-white/20 text-white hover:bg-white/20 m-10 flex justify-center"
+                  className="mb-6 bg-white/10 border-white/20 text-white hover:bg-white/20 m-6 sm:m-8 md:m-10 flex justify-center"
                 >
                   <ArrowLeft className="w-4 h-4 mr-2" />
                   Back to options
@@ -298,9 +298,9 @@ function ChildLoginContent() {
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="flex-1 max-w-md w-full ml-12"
+            className="flex-1 w-full max-w-md min-w-0 lg:ml-12"
           >
-            <div className="text-center mb-8">
+            <div className="text-center mb-6 sm:mb-8">
               {/* Logo */}
               <motion.div
                 initial={{ opacity: 0, scale: 0 }}
@@ -320,13 +320,13 @@ function ChildLoginContent() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.8 }}
               >
-                <h1 className="text-4xl md:text-5xl font-bold text-white mb-2">
+                <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-2">
                   Welcome back to
                 </h1>
-                <h2 className="text-4xl md:text-5xl font-bold text-white/80 mb-4 italic">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white/80 mb-4 italic">
                   Mintoons
                 </h2>
-                <p className="text-white/60 text-sm">
+                <p className="text-white/60 text-xs sm:text-sm">
                   Unleash your creative magic and write amazing stories with AI
                   assistance
                 </p>
@@ -338,7 +338,7 @@ function ChildLoginContent() {
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-red-500/20 backdrop-blur-sm border border-red-500/30 text-red-200 p-3 rounded-xl mb-4 text-sm"
+                className="bg-red-500/20 backdrop-blur-sm border border-red-500/30 text-red-200 p-2 sm:p-3 rounded-xl mb-4 text-xs sm:text-sm"
               >
                 {error}
               </motion.div>
@@ -350,10 +350,10 @@ function ChildLoginContent() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 1 }}
-              className="space-y-4"
+              className="space-y-3 sm:space-y-4"
             >
-              <div className="space-y-2">
-                <Label htmlFor="child-email" className="text-white/80 text-sm">
+              <div className="space-y-1 sm:space-y-2">
+                <Label htmlFor="child-email" className="text-white/80 text-xs sm:text-sm">
                   Email
                 </Label>
                 <input
@@ -364,21 +364,21 @@ function ChildLoginContent() {
                   onChange={(e) => setEmail(e.target.value.toLowerCase())}
                   required
                   disabled={isLoading}
-                  className="w-full px-4 py-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition-all"
+                  className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition-all text-xs sm:text-base"
                 />
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y-1 sm:space-y-2">
                 <div className="flex justify-between items-center">
                   <Label
                     htmlFor="child-password"
-                    className="text-white/80 text-sm"
+                    className="text-white/80 text-xs sm:text-sm"
                   >
                     Password
                   </Label>
                   <Link
                     href="/forgot-password"
-                    className="text-sm text-orange-300 hover:text-orange-200 transition-colors"
+                    className="text-xs sm:text-sm text-orange-300 hover:text-orange-200 transition-colors"
                   >
                     Forgot password?
                   </Link>
@@ -392,11 +392,11 @@ function ChildLoginContent() {
                     onChange={(e) => setPassword(e.target.value)}
                     required
                     disabled={isLoading}
-                    className="w-full px-4 py-3 pr-12 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition-all"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-3 pr-10 sm:pr-12 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition-all text-xs sm:text-base"
                   />
                   <button
                     type="button"
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white/60 hover:text-orange-300 transition-colors"
+                    className="absolute right-2 sm:right-3 top-1/2 transform -translate-y-1/2 text-white/60 hover:text-orange-300 transition-colors"
                     onClick={togglePasswordVisibility}
                     tabIndex={-1}
                   >
@@ -409,7 +409,7 @@ function ChildLoginContent() {
               <motion.button
                 type="submit"
                 disabled={isLoading}
-                className="w-full bg-white hover:bg-orange-100 text-purple-900 py-4 px-6 rounded-xl font-medium transition-all duration-300 backdrop-blur-sm border border-white/30 disabled:opacity-50 disabled:cursor-not-allowed mt-6"
+                className="w-full bg-white hover:bg-orange-100 text-purple-900 py-3 sm:py-4 px-4 sm:px-6 rounded-xl font-medium transition-all duration-300 backdrop-blur-sm border border-white/30 disabled:opacity-50 disabled:cursor-not-allowed mt-4 sm:mt-6 text-xs sm:text-base"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
@@ -425,12 +425,12 @@ function ChildLoginContent() {
             </motion.form>
 
             {/* Divider */}
-            <div className="relative my-6">
+            <div className="relative my-4 sm:my-6">
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-white/20" />
               </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-4 bg-transparent text-white/60">OR</span>
+              <div className="relative flex justify-center text-xs sm:text-sm">
+                <span className="px-2 sm:px-4 bg-transparent text-white/60">OR</span>
               </div>
             </div>
 
@@ -441,14 +441,14 @@ function ChildLoginContent() {
               transition={{ duration: 0.6, delay: 1.2 }}
               className="text-center"
             >
-              <span className="text-white/60 text-sm">First time here? </span>
+              <span className="text-white/60 text-xs sm:text-sm">First time here? </span>
               <Link
                 href="/register/child"
-                className="text-orange-300 text-sm underline hover:text-orange-200 transition-colors"
+                className="text-orange-300 text-xs sm:text-sm underline hover:text-orange-200 transition-colors"
               >
                 Join the Magic
               </Link>
-              <p className="text-xs text-white/40 mt-4">
+              <p className="text-[10px] sm:text-xs text-white/40 mt-2 sm:mt-4">
                 By signing in, you agree to our{' '}
                 <Link
                   href="/terms-of-service"

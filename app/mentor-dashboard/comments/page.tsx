@@ -111,19 +111,19 @@ export default function MentorComments() {
   }
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-2 sm:p-4 md:p-6 space-y-4 sm:space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0">
         <div>
-          <h1 className="text-2xl font-bold text-white mb-2">
+          <h1 className="text-xl sm:text-2xl font-bold text-white mb-1 sm:mb-2">
             My Comments & Reviews
           </h1>
-          <p className="text-gray-400">
+          <p className="text-gray-400 text-sm sm:text-base">
             Manage your feedback and guidance to students
           </p>
         </div>
-        <div className="mt-4 sm:mt-0">
-          <div className="text-sm text-gray-400">
+        <div className="mt-2 sm:mt-0">
+          <div className="text-xs sm:text-sm text-gray-400">
             Total Comments: {comments.length} | Unresolved:{' '}
             {comments.filter((c) => !c.isResolved).length}
           </div>
@@ -131,8 +131,8 @@ export default function MentorComments() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div className="bg-gray-800 rounded-xl p-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
+        <div className="bg-gray-800 rounded-xl p-4 sm:p-6">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-400 text-sm">Total Comments</p>
@@ -142,7 +142,7 @@ export default function MentorComments() {
           </div>
         </div>
 
-        <div className="bg-gray-800 rounded-xl p-6">
+        <div className="bg-gray-800 rounded-xl p-4 sm:p-6">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-400 text-sm">Suggestions</p>
@@ -154,7 +154,7 @@ export default function MentorComments() {
           </div>
         </div>
 
-        <div className="bg-gray-800 rounded-xl p-6">
+        <div className="bg-gray-800 rounded-xl p-4 sm:p-6">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-400 text-sm">Resolved</p>
@@ -166,7 +166,7 @@ export default function MentorComments() {
           </div>
         </div>
 
-        <div className="bg-gray-800 rounded-xl p-6">
+        <div className="bg-gray-800 rounded-xl p-4 sm:p-6">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-400 text-sm">Pending</p>
@@ -180,8 +180,8 @@ export default function MentorComments() {
       </div>
 
       {/* Filters */}
-      <div className="bg-gray-800 rounded-xl p-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="bg-gray-800 rounded-xl p-3 sm:p-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
             <input
@@ -218,36 +218,36 @@ export default function MentorComments() {
       </div>
 
       {/* Comments List - 3 columns on desktop */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
         {filteredComments.map((comment, index) => (
           <motion.div
             key={comment._id}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.05 }}
-            className="bg-gray-800 rounded-xl p-6 hover:bg-gray-750 transition-colors flex flex-col justify-between"
+            className="bg-gray-800 rounded-xl p-4 sm:p-6 hover:bg-gray-750 transition-colors flex flex-col justify-between"
           >
             <div>
               {/* Comment Header */}
-              <div className="flex items-center space-x-3 mb-3">
+              <div className="flex flex-wrap items-center gap-2 mb-2 sm:mb-3">
                 <span className={`px-2 py-1 rounded-full text-xs border ${getCommentTypeColor(comment.commentType)}`}>
                   {comment.commentType}
                 </span>
-                <div className="flex items-center space-x-1">
+                <div className="flex items-center gap-1">
                   {comment.isResolved ? (
                     <CheckCircle className="w-4 h-4 text-green-400" />
                   ) : (
                     <Clock className="w-4 h-4 text-orange-400" />
                   )}
-                  <span className={`text-sm ${comment.isResolved ? 'text-green-400' : 'text-orange-400'}`}>
+                  <span className={`text-xs sm:text-sm ${comment.isResolved ? 'text-green-400' : 'text-orange-400'}`}>
                     {comment.isResolved ? 'Resolved' : 'Pending'}
                   </span>
                 </div>
               </div>
 
               {/* Story Info */}
-              <div className="mb-3 p-3 bg-gray-700/50 rounded-lg">
-                <div className="flex items-center space-x-2 text-sm text-gray-300">
+              <div className="mb-2 sm:mb-3 p-2 sm:p-3 bg-gray-700/50 rounded-lg">
+                <div className="flex flex-wrap items-center gap-1 sm:gap-2 text-xs sm:text-sm text-gray-300">
                   <BookOpen className="w-4 h-4" />
                   <span>
                     Story: &quot;{comment.storyId.title}&quot; by {comment.storyId.childId.firstName} {comment.storyId.childId.lastName}
@@ -256,31 +256,31 @@ export default function MentorComments() {
               </div>
 
               {/* Comment Content */}
-              <div className="mb-4">
-                <p className="text-gray-300 leading-relaxed">
+              <div className="mb-2 sm:mb-4">
+                <p className="text-gray-300 leading-relaxed text-sm sm:text-base">
                   {comment.comment}
                 </p>
               </div>
             </div>
 
             {/* Comment Footer & Actions */}
-            <div className="flex items-center justify-between text-sm text-gray-400 mt-4">
-              <div className="flex items-center space-x-4">
-                <div className="flex items-center space-x-1">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between text-xs sm:text-sm text-gray-400 mt-2 sm:mt-4 gap-2 sm:gap-0">
+              <div className="flex items-center gap-2 sm:gap-4 flex-wrap">
+                <div className="flex items-center gap-1">
                   <Calendar className="w-4 h-4" />
                   <span>{new Date(comment.createdAt).toLocaleDateString()}</span>
                 </div>
                 {comment.responses && comment.responses > 0 && (
-                  <div className="flex items-center space-x-1">
+                  <div className="flex items-center gap-1">
                     <MessageSquare className="w-4 h-4" />
                     <span>{comment.responses} responses</span>
                   </div>
                 )}
               </div>
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center gap-1 sm:gap-2">
                 {!comment.isResolved && (
                   <button
-                    className="text-green-400 hover:text-green-300 p-2 rounded-lg hover:bg-gray-700 transition-colors border border-green-600"
+                    className="text-green-400 hover:text-green-300 p-1.5 sm:p-2 rounded-lg hover:bg-gray-700 transition-colors border border-green-600 text-xs sm:text-sm"
                     onClick={async () => {
                       try {
                         const res = await fetch(`/api/mentor/comments/${comment._id}`, {
@@ -300,17 +300,17 @@ export default function MentorComments() {
                   </button>
                 )}
                 <Link href={`/mentor-dashboard/stories/${comment.storyId._id}`}>
-                  <button className="text-blue-400 hover:text-blue-300 p-2 rounded-lg hover:bg-gray-700 transition-colors" title="View Story">
+                  <button className="text-blue-400 hover:text-blue-300 p-1.5 sm:p-2 rounded-lg hover:bg-gray-700 transition-colors" title="View Story">
                     <Eye className="w-4 h-4" />
                   </button>
                 </Link>
-                <button className="text-gray-400 hover:text-gray-300 p-2 rounded-lg hover:bg-gray-700 transition-colors" title="Edit (coming soon)">
+                <button className="text-gray-400 hover:text-gray-300 p-1.5 sm:p-2 rounded-lg hover:bg-gray-700 transition-colors" title="Edit (coming soon)">
                   <Edit className="w-4 h-4" />
                 </button>
               </div>
             </div>
             {comment.resolvedAt && (
-              <div className="text-green-400 text-xs mt-2">
+              <div className="text-green-400 text-[10px] sm:text-xs mt-1 sm:mt-2">
                 Resolved: {new Date(comment.resolvedAt).toLocaleDateString()}
               </div>
             )}
@@ -319,12 +319,12 @@ export default function MentorComments() {
       </div>
 
       {filteredComments.length === 0 && !loading && (
-        <div className="text-center py-12">
-          <MessageSquare className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-          <h3 className="text-xl font-medium text-gray-400 mb-2">
+        <div className="text-center py-8 sm:py-12">
+          <MessageSquare className="w-12 h-12 sm:w-16 sm:h-16 text-gray-600 mx-auto mb-2 sm:mb-4" />
+          <h3 className="text-lg sm:text-xl font-medium text-gray-400 mb-1 sm:mb-2">
             No comments found
           </h3>
-          <p className="text-gray-500">
+          <p className="text-gray-500 text-xs sm:text-base">
             {searchTerm
               ? 'Try adjusting your search criteria.'
               : "You haven't made any comments yet."}

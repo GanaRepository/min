@@ -113,7 +113,7 @@ const ForgotPasswordPage: React.FC = () => {
     <ToastProvider>
       <div
         ref={containerRef}
-        className="min-h-screen bg-gradient-radial from-blue-900/90 via-indigo-800/90 to-purple-900/90 overflow-hidden flex items-center justify-center relative"
+        className="min-h-screen bg-gradient-radial from-blue-900/90 via-indigo-800/90 to-purple-900/90 overflow-hidden flex items-center justify-center relative px-2 sm:px-4 md:px-8 lg:px-12 xl:px-20"
       >
         {/* Animated background stars */}
         <div ref={starsRef} className="absolute inset-0 z-0">
@@ -149,14 +149,14 @@ const ForgotPasswordPage: React.FC = () => {
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8 }}
-          className="relative z-10 w-full max-w-6xl flex flex-col lg:flex-row items-center gap-8 px-4 pt-28"
+          className="relative z-10 w-full max-w-6xl flex flex-col lg:flex-row items-center gap-8 px-2 sm:px-4 md:px-8 lg:px-12 xl:px-20 pt-20 sm:pt-24 md:pt-28"
         >
           {/* Left side - Story showcase card */}
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="flex-1 max-w-md"
+            className="flex-1 w-full max-w-md min-w-0 px-2 sm:px-4 md:px-6 lg:px-8 xl:px-10"
           >
             <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-6 shadow-2xl">
               {/* Story showcase with digital effects */}
@@ -294,7 +294,7 @@ const ForgotPasswordPage: React.FC = () => {
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="flex-1 max-w-md w-full pl-12"
+            className="flex-1 w-full max-w-md min-w-0 px-2 sm:px-4 md:px-6 lg:px-8 xl:px-10 lg:pl-12"
           >
             <div className="text-center mb-8">
               {/* Logo */}
@@ -316,10 +316,10 @@ const ForgotPasswordPage: React.FC = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.8 }}
               >
-                <h1 className="text-4xl md:text-5xl font-bold text-white mb-2">
+                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-2">
                   Forgot Your
                 </h1>
-                <h2 className="text-4xl md:text-5xl font-bold text-white/80 mb-4 italic">
+                <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white/80 mb-4 italic">
                   Magic Key?
                 </h2>
                 <p className="text-white/60 text-sm">

@@ -97,47 +97,47 @@ export default function MentorLayout({ children }: MentorLayoutProps) {
       </div>
 
       {/* Layout Container */}
-      <div className="flex">
+      <div className="flex flex-col lg:flex-row">
         {/* Sidebar */}
         <div
-          className={`w-64 bg-gray-800 border-r border-gray-700 flex-shrink-0 transform transition-transform duration-300 ease-in-out ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 fixed lg:static inset-y-0 left-0 z-40 lg:z-auto`}
+          className={`w-60 sm:w-64 bg-gray-800 border-r border-gray-700 flex-shrink-0 transform transition-transform duration-300 ease-in-out ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 fixed lg:static inset-y-0 left-0 z-40 lg:z-auto`}
         >
-          <div className="flex flex-col h-full mt-24">
+          <div className="flex flex-col h-full mt-20 sm:mt-24">
             {/* Mentor Header */}
-            <div className="p-6 border-b border-gray-700 flex-shrink-0">
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center">
-                  <GraduationCap className="w-6 h-6 text-white" />
+            <div className="p-4 sm:p-6 border-b border-gray-700 flex-shrink-0">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center">
+                  <GraduationCap className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                 </div>
                 <div>
-                  <h1 className="text-xl font-bold text-white">
+                  <h1 className="text-lg sm:text-xl font-bold text-white">
                     Mentor Portal
                   </h1>
-                  <p className="text-sm text-gray-400">Mintoons Teaching Hub</p>
+                  <p className="text-xs sm:text-sm text-gray-400">Mintoons Teaching Hub</p>
                 </div>
               </div>
             </div>
 
             {/* Mentor Info */}
-            <div className="p-4 border-b border-gray-700 flex-shrink-0">
-              <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center">
-                  <span className="text-sm font-medium">
+            <div className="p-3 sm:p-4 border-b border-gray-700 flex-shrink-0">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="w-7 h-7 sm:w-8 sm:h-8 bg-gray-600 rounded-full flex items-center justify-center">
+                  <span className="text-xs sm:text-sm font-medium">
                     {session.user.firstName?.[0]}
                     {session.user.lastName?.[0]}
                   </span>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-white">
+                  <p className="text-xs sm:text-sm font-medium text-white">
                     {session.user.firstName} {session.user.lastName}
                   </p>
-                  <p className="text-xs text-gray-400">Writing Mentor</p>
+                  <p className="text-[10px] sm:text-xs text-gray-400">Writing Mentor</p>
                 </div>
               </div>
             </div>
 
             {/* Navigation */}
-            <nav className="p-4 space-y-2 flex-1 overflow-y-auto">
+            <nav className="p-3 sm:p-4 space-y-1 sm:space-y-2 flex-1 overflow-y-auto">
               {navigation.map((item) => {
                 const Icon = item.icon;
                 return (
@@ -145,13 +145,13 @@ export default function MentorLayout({ children }: MentorLayoutProps) {
                     key={item.name}
                     href={item.href}
                     onClick={() => setSidebarOpen(false)}
-                    className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 ${
+                    className={`flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 sm:py-3 rounded-lg transition-all duration-200 text-xs sm:text-base ${
                       isActive(item.href)
                         ? 'bg-gradient-to-r from-green-600/20 to-green-500/20 border border-green-500/30 text-green-300'
                         : 'text-gray-300 hover:bg-gray-700 hover:text-white'
                     }`}
                   >
-                    <Icon className="w-5 h-5" />
+                    <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
                     <span className="font-medium">{item.name}</span>
                   </Link>
                 );
@@ -159,12 +159,12 @@ export default function MentorLayout({ children }: MentorLayoutProps) {
             </nav>
 
             {/* Logout */}
-            <div className="p-4 border-t border-gray-700 flex-shrink-0">
+            <div className="p-3 sm:p-4 border-t border-gray-700 flex-shrink-0">
               <Link
                 href="/api/auth/signout"
-                className="flex items-center space-x-3 px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-all duration-200"
+                className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 sm:py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-all duration-200 text-xs sm:text-base"
               >
-                <LogOut className="w-5 h-5" />
+                <LogOut className="w-4 h-4 sm:w-5 sm:h-5" />
                 <span className="font-medium">Logout</span>
               </Link>
             </div>
@@ -182,17 +182,17 @@ export default function MentorLayout({ children }: MentorLayoutProps) {
         {/* Main content area */}
         <div className="flex-1 min-h-screen lg:ml-0">
           {/* Top bar */}
-          <div className="bg-gray-800 border-b border-gray-700 p-4 lg:p-6">
+          <div className="bg-gray-800 border-b border-gray-700 p-3 sm:p-4 lg:p-6">
             <div className="flex items-center justify-between">
-              <div className="lg:hidden w-10" />
-              <div className="flex-1 lg:flex-none lg:ml-0 ml-12">
-                <h2 className="text-xl font-semibold text-white">
+              <div className="lg:hidden w-8 sm:w-10" />
+              <div className="flex-1 lg:flex-none lg:ml-0 ml-8 sm:ml-12">
+                <h2 className="text-lg sm:text-xl font-semibold text-white">
                   {navigation.find((item) => isActive(item.href))?.name ||
                     'Mentor Dashboard'}
                 </h2>
               </div>
-              <div className="flex items-center space-x-4">
-                <span className="text-sm text-gray-400">
+              <div className="flex items-center gap-2 sm:gap-4">
+                <span className="text-xs sm:text-sm text-gray-400">
                   {new Date().toLocaleDateString()}
                 </span>
               </div>
@@ -200,7 +200,7 @@ export default function MentorLayout({ children }: MentorLayoutProps) {
           </div>
 
           {/* Page content */}
-          <main className='p-5'>{children}</main>
+          <main className='p-2 sm:p-4 md:p-5'>{children}</main>
         </div>
       </div>
     </div>

@@ -65,10 +65,10 @@ const RegisterPage: React.FC = () => {
       {/* Hero Section */}
       <section
         ref={heroRef}
-        className="relative z-10 min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 pt-28 pb-12"
+        className="relative z-10 min-h-screen flex items-center justify-center px-2 sm:px-4 md:px-6 lg:px-8 pt-20 sm:pt-28 pb-8 sm:pb-12"
       >
         <div
-          className={`text-center max-w-4xl mx-auto transition-all duration-1000 ${
+          className={`text-center max-w-xl sm:max-w-2xl md:max-w-3xl lg:max-w-4xl mx-auto transition-all duration-1000 ${
             heroInView
               ? 'opacity-100 translate-y-0'
               : 'opacity-0 translate-y-12'
@@ -86,7 +86,7 @@ const RegisterPage: React.FC = () => {
           </div>
 
           {/* Main Heading */}
-          <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold mb-6 leading-tight">
+          <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-7xl font-bold mb-4 sm:mb-6 leading-tight">
             Create Your{' '}
             <span className="bg-gradient-to-r from-green-400 via-teal-300 to-cyan-400 bg-clip-text text-transparent">
               Creative Account
@@ -94,7 +94,7 @@ const RegisterPage: React.FC = () => {
           </h1>
 
           {/* Description */}
-          <p className="text-lg sm:text-xl text-gray-300 mb-16 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-base sm:text-lg md:text-xl text-gray-300 mb-8 sm:mb-16 max-w-lg sm:max-w-2xl mx-auto leading-relaxed">
             Select the type of account you&apos;d like to create to get started
             with our creative writing platform and join our community.
           </p>
@@ -109,11 +109,11 @@ const RegisterPage: React.FC = () => {
             }`}
           >
             {/* Centered single card container */}
-            <div className="flex justify-center max-w-4xl mx-auto">
+            <div className="flex flex-col sm:flex-row justify-center items-center gap-6 max-w-2xl sm:max-w-4xl mx-auto">
               {registrationOptions.map((option, index) => (
                 <div
                   key={option.id}
-                  className={`transition-all duration-700 max-w-md w-full ${
+                  className={`transition-all duration-700 w-full max-w-xs sm:max-w-md ${
                     cardsInView
                       ? 'opacity-100 translate-y-0'
                       : 'opacity-0 translate-y-12'
@@ -156,8 +156,8 @@ const RegisterPage: React.FC = () => {
             </div>
 
             {/* Sign In Link */}
-            <div className="text-center mt-12">
-              <p className="text-gray-300 text-lg">
+            <div className="text-center mt-8 sm:mt-12">
+              <p className="text-gray-300 text-base sm:text-lg">
                 Already have an account?{' '}
                 <Link
                   href="/login"

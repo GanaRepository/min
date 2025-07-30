@@ -165,7 +165,7 @@ function ResetPasswordContent() {
   return (
     <div
       ref={containerRef}
-      className="min-h-screen bg-gradient-to-br from-emerald-900/90 via-teal-800/90 to-blue-900/90 overflow-hidden flex items-center justify-center relative"
+      className="min-h-screen bg-gradient-to-br from-emerald-900/90 via-teal-800/90 to-blue-900/90 overflow-hidden flex items-center justify-center relative px-2 sm:px-4"
     >
       {/* Animated background stars */}
       <div ref={starsRef} className="absolute inset-0 z-0">
@@ -201,24 +201,24 @@ function ResetPasswordContent() {
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.8 }}
-        className="relative z-10 w-full max-w-6xl flex flex-col lg:flex-row items-center gap-8 px-4"
+        className="relative z-10 w-full max-w-2xl md:max-w-4xl lg:max-w-6xl flex flex-col lg:flex-row items-center gap-4 sm:gap-8 px-0 sm:px-4"
       >
         {/* Left side - Security showcase card */}
         <motion.div
           initial={{ opacity: 0, x: -50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="flex-1 max-w-md"
+          className="flex-1 w-full max-w-xs sm:max-w-md"
         >
-          <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-6 shadow-2xl">
+          <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-2xl">
             {/* Security showcase with digital effects */}
             <div className="relative mb-6 rounded-2xl overflow-hidden">
-              <div className="relative w-full h-80 bg-gradient-to-br from-emerald-500 via-teal-600 to-blue-600 rounded-2xl overflow-hidden">
+              <div className="relative w-full h-56 sm:h-80 bg-gradient-to-br from-emerald-500 via-teal-600 to-blue-600 rounded-xl sm:rounded-2xl overflow-hidden">
                 {/* Security illustration */}
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="text-center">
-                    <Shield className="w-24 h-24 text-white/80 mx-auto mb-4" />
-                    <div className="text-white/60 text-sm">
+                    <Shield className="w-16 h-16 sm:w-24 sm:h-24 text-white/80 mx-auto mb-2 sm:mb-4" />
+                    <div className="text-white/60 text-xs sm:text-sm">
                       Secure Password Reset
                     </div>
                   </div>
@@ -310,14 +310,14 @@ function ResetPasswordContent() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.8 }}
-              className="text-white/90 mb-4"
+              className="text-white/90 mb-2 sm:mb-4"
             >
-              <p className="text-sm leading-relaxed mb-3">
+              <p className="text-xs sm:text-sm leading-relaxed mb-2 sm:mb-3">
                 &quot;Creating a strong password is like building a magical
                 shield around your stories. Let&apos;s make sure your creative
                 work stays safe!&quot;
               </p>
-              <p className="text-xs text-white/60">- Mintoons Security Team</p>
+              <p className="text-[10px] sm:text-xs text-white/60">- Mintoons Security Team</p>
             </motion.div>
           </div>
         </motion.div>
@@ -327,7 +327,7 @@ function ResetPasswordContent() {
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
-          className="flex-1 max-w-md w-full"
+          className="flex-1 w-full max-w-xs sm:max-w-md"
         >
           {/* Back button */}
           <Link href="/login">
@@ -346,11 +346,11 @@ function ResetPasswordContent() {
               initial={{ opacity: 0, scale: 0 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.6, delay: 0.6 }}
-              className="inline-flex items-center justify-center w-16 h-16 bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl mb-8"
+              className="inline-flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 bg-white/10 backdrop-blur-lg border border-white/20 rounded-xl sm:rounded-2xl mb-6 sm:mb-8"
             >
               <div className="relative">
-                <Lock className="w-8 h-8 text-white" />
-                <Sparkles className="w-4 h-4 text-teal-300 absolute -top-1 -right-1" />
+                <Lock className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
+                <Sparkles className="w-3 h-3 sm:w-4 sm:h-4 text-teal-300 absolute -top-1 -right-1" />
               </div>
             </motion.div>
 
@@ -360,13 +360,13 @@ function ResetPasswordContent() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.8 }}
             >
-              <h1 className="text-4xl md:text-5xl font-bold text-white mb-2">
+              <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold text-white mb-1 sm:mb-2">
                 Create Your New
               </h1>
-              <h2 className="text-4xl md:text-5xl font-bold text-white/80 mb-4 italic">
+              <h2 className="text-2xl sm:text-4xl md:text-5xl font-bold text-white/80 mb-2 sm:mb-4 italic">
                 Magic Key
               </h2>
-              <p className="text-white/60 text-sm">
+              <p className="text-white/60 text-xs sm:text-sm">
                 Choose a strong password to protect your creative stories and
                 adventures
               </p>
@@ -406,9 +406,9 @@ function ResetPasswordContent() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 1 }}
-              className="space-y-6"
+              className="space-y-4 sm:space-y-6"
             >
-              <div className="space-y-2">
+              <div className="space-y-1 sm:space-y-2">
                 <Label htmlFor="password" className="text-white/80 text-sm">
                   New Magic Key (Password)
                 </Label>
@@ -433,13 +433,13 @@ function ResetPasswordContent() {
                     {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                   </motion.button>
                 </div>
-                <p className="text-xs text-white/50">
+                <p className="text-[10px] sm:text-xs text-white/50">
                   Must be at least 8 characters with uppercase, lowercase,
                   number, and special character
                 </p>
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y-1 sm:space-y-2">
                 <Label
                   htmlFor="confirmPassword"
                   className="text-white/80 text-sm"
@@ -477,7 +477,7 @@ function ResetPasswordContent() {
               <motion.button
                 type="submit"
                 disabled={isLoading}
-                className="w-full bg-white hover:bg-teal-100 text-emerald-900 py-4 px-6 rounded-xl font-medium transition-all duration-300 backdrop-blur-sm border border-white/30 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-teal-500/25"
+                className="w-full bg-white hover:bg-teal-100 text-emerald-900 py-3 sm:py-4 px-4 sm:px-6 rounded-lg sm:rounded-xl font-medium transition-all duration-300 backdrop-blur-sm border border-white/30 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-teal-500/25"
                 whileHover={{
                   scale: 1.02,
                   boxShadow: '0 10px 40px rgba(20, 184, 166, 0.3)',
@@ -512,18 +512,18 @@ function ResetPasswordContent() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 1.2 }}
-            className="text-center mt-6"
-          >
-            <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg p-4">
-              <div className="flex items-center justify-center mb-2">
-                <Shield className="w-4 h-4 text-teal-300 mr-2" />
-                <span className="text-white/70 text-sm">Security Tip</span>
-              </div>
-              <p className="text-xs text-white/50 leading-relaxed">
-                Choose a unique password that you haven&apos;t used elsewhere.
-                This keeps your creative stories extra safe!
-              </p>
+          className="text-center mt-4 sm:mt-6"
+        >
+          <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-md sm:rounded-lg p-3 sm:p-4">
+            <div className="flex items-center justify-center mb-1 sm:mb-2">
+              <Shield className="w-3 h-3 sm:w-4 sm:h-4 text-teal-300 mr-1 sm:mr-2" />
+              <span className="text-white/70 text-xs sm:text-sm">Security Tip</span>
             </div>
+            <p className="text-[10px] sm:text-xs text-white/50 leading-relaxed">
+              Choose a unique password that you haven&apos;t used elsewhere.
+              This keeps your creative stories extra safe!
+            </p>
+          </div>
           </motion.div>
         </motion.div>
       </motion.div>

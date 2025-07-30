@@ -232,7 +232,7 @@ const RegisterChildContent: React.FC = () => {
     <ToastProvider>
       <div
         ref={containerRef}
-        className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black overflow-hidden relative pt-24 pb-12"
+        className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black overflow-hidden relative pt-16 sm:pt-24 pb-8 sm:pb-12"
       >
         {/* Animated background stars */}
         <div ref={starsRef} className="absolute inset-0 z-0">
@@ -263,29 +263,29 @@ const RegisterChildContent: React.FC = () => {
           />
         </div>
 
-        <div className="flex min-h-screen">
+        <div className="flex flex-col lg:flex-row min-h-screen">
           {/* Left side - Registration form */}
-          <div className="flex-1 flex items-center justify-center p-8 relative z-10">
+          <div className="flex-1 flex items-center justify-center p-4 sm:p-8 relative z-10">
             <motion.div
               initial={{ opacity: 0, x: -50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
-              className="max-w-md w-full"
+              className="max-w-sm sm:max-w-md w-full"
             >
               {/* Logo */}
               <motion.div
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6 }}
-                className="flex items-center mb-12"
+                className="flex items-center mb-8 sm:mb-12"
               >
-                <div className="w-8 h-8 rounded-full bg-gradient-to-r from-green-400 to-blue-500 mr-3 relative">
+                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gradient-to-r from-green-400 to-blue-500 mr-2 sm:mr-3 relative">
                   <div className="absolute inset-1 rounded-full bg-gray-900" />
                   <div className="absolute inset-2 rounded-full bg-gradient-to-r from-green-400 to-blue-500 flex items-center justify-center">
                     <BookOpen className="w-3 h-3 text-white" />
                   </div>
                 </div>
-                <span className="text-white text-lg font-medium">Mintoons</span>
+                <span className="text-white text-base sm:text-lg font-medium">Mintoons</span>
               </motion.div>
 
               {/* Title */}
@@ -293,7 +293,7 @@ const RegisterChildContent: React.FC = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.4 }}
-                className="text-4xl md:text-5xl font-bold text-white mb-8 leading-tight"
+                className="text-2xl sm:text-4xl md:text-5xl font-bold text-white mb-4 sm:mb-8 leading-tight"
               >
                 Unleash Your Creative Magic
               </motion.h1>
@@ -304,9 +304,9 @@ const RegisterChildContent: React.FC = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.6 }}
                 onSubmit={handleSubmit}
-                className="space-y-4"
+                className="space-y-3 sm:space-y-4"
               >
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                   <div>
                     <label
                       htmlFor="firstName"
@@ -368,7 +368,7 @@ const RegisterChildContent: React.FC = () => {
                   />
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                   <div>
                     <label
                       htmlFor="age"
@@ -480,7 +480,7 @@ const RegisterChildContent: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="flex items-start space-x-2">
+                <div className="flex items-start gap-2">
                   <Checkbox
                     id="agreeToTerms"
                     checked={formData.agreeToTerms}
@@ -545,7 +545,7 @@ const RegisterChildContent: React.FC = () => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.8, delay: 1 }}
-                className="text-center mt-8"
+                className="text-center mt-6 sm:mt-8"
               >
                 <span className="text-gray-400 text-sm">
                   Already have an account?{' '}
@@ -561,7 +561,7 @@ const RegisterChildContent: React.FC = () => {
           </div>
 
           {/* Right side - Animated showcase */}
-          <div className="flex-1 relative overflow-hidden">
+          <div className="flex-1 relative overflow-hidden min-h-[400px] sm:min-h-0">
             <motion.div
               ref={planetRef}
               className="absolute inset-0 flex items-center justify-center"
@@ -596,29 +596,29 @@ const RegisterChildContent: React.FC = () => {
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 1, delay: 0.5 }}
-                className="relative z-20 bg-gray-800/40 backdrop-blur-xl border border-gray-700/50 rounded-2xl p-8 max-w-sm text-center shadow-2xl"
+                className="relative z-20 bg-gray-800/40 backdrop-blur-xl border border-gray-700/50 rounded-xl sm:rounded-2xl p-4 sm:p-8 max-w-xs sm:max-w-sm text-center shadow-2xl mx-auto"
               >
-                <div className="mb-6">
-                  <div className="w-12 h-12 bg-gradient-to-r from-green-400 to-blue-500 rounded-full mx-auto mb-4 flex items-center justify-center">
-                    <BookOpen className="text-white w-6 h-6" />
+                  <div className="mb-4 sm:mb-6">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-green-400 to-blue-500 rounded-full mx-auto mb-3 sm:mb-4 flex items-center justify-center">
+                      <BookOpen className="text-white w-5 h-5 sm:w-6 sm:h-6" />
+                    </div>
+                    <h3 className="text-lg sm:text-2xl font-bold text-white mb-1 sm:mb-2">
+                      Mintoons
+                    </h3>
+                    <p className="text-gray-300 text-xs sm:text-sm leading-relaxed">
+                      &quot;Unleash Your Creative Magic&quot; - Empowering young
+                      writers to create amazing stories with AI assistance, expert
+                      mentorship, and unlimited imagination.
+                    </p>
+                    <p className="text-gray-400 text-[10px] sm:text-xs mt-2 sm:mt-3">
+                      AI-Powered Creative Writing Platform for Kids
+                    </p>
                   </div>
-                  <h3 className="text-2xl font-bold text-white mb-2">
-                    Mintoons
-                  </h3>
-                  <p className="text-gray-300 text-sm leading-relaxed">
-                    &quot;Unleash Your Creative Magic&quot; - Empowering young
-                    writers to create amazing stories with AI assistance, expert
-                    mentorship, and unlimited imagination.
-                  </p>
-                  <p className="text-gray-400 text-xs mt-3">
-                    AI-Powered Creative Writing Platform for Kids
-                  </p>
-                </div>
 
-                <div className="flex justify-center space-x-2">
-                  <div className="w-8 h-1 bg-green-400 rounded" />
-                  <div className="w-2 h-1 bg-gray-600 rounded" />
-                  <div className="w-2 h-1 bg-gray-600 rounded" />
+                <div className="flex justify-center gap-1 sm:gap-2">
+                  <div className="w-6 sm:w-8 h-1 bg-green-400 rounded" />
+                  <div className="w-1 sm:w-2 h-1 bg-gray-600 rounded" />
+                  <div className="w-1 sm:w-2 h-1 bg-gray-600 rounded" />
                 </div>
               </motion.div>
 

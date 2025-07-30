@@ -61,7 +61,7 @@ const NotFound = () => {
   return (
     <div
       ref={containerRef}
-      className="min-h-screen bg-gradient-to-br from-blue-900/90 via-gray-800/90 to-blue-900/90 overflow-hidden flex items-center justify-center relative pt-20"
+      className="min-h-screen bg-gradient-to-br from-blue-900/90 via-gray-800/90 to-blue-900/90 overflow-hidden flex items-center justify-center relative pt-16 sm:pt-20 px-2 sm:px-4 md:px-8 lg:px-12 xl:px-20"
     >
       {/* Animated background stars */}
       <div ref={starsRef} className="absolute inset-0 z-0">
@@ -97,16 +97,16 @@ const NotFound = () => {
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.8 }}
-        className="relative z-10 w-full max-w-6xl flex flex-col lg:flex-row items-center gap-8 px-4"
+        className="relative z-10 w-full max-w-6xl flex flex-col lg:flex-row items-center gap-8 px-2 sm:px-4 md:px-8 lg:px-12 xl:px-20"
       >
         {/* Left side - Error content */}
         <motion.div
           initial={{ opacity: 0, x: -50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="flex-1 max-w-md text-center lg:text-left"
+          className="flex-1 w-full max-w-md min-w-0 px-2 sm:px-4 md:px-6 lg:px-8 xl:px-10 text-center lg:text-left"
         >
-          <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-8 shadow-2xl">
+          <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-4 sm:p-6 md:p-8 shadow-2xl">
             {/* 404 Icon */}
             <motion.div
               initial={{ opacity: 0, scale: 0 }}
@@ -123,13 +123,13 @@ const NotFound = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.6 }}
             >
-              <h1 className="text-5xl md:text-6xl font-bold text-white mb-4">
+              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-4">
                 404
               </h1>
-              <h2 className="text-2xl md:text-3xl font-bold text-white/90 mb-4">
+              <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-white/90 mb-4">
                 Lost in Space?
               </h2>
-              <p className="text-white/80 text-lg mb-8 leading-relaxed">
+              <p className="text-white/80 text-base sm:text-lg md:text-xl mb-8 leading-relaxed">
                 Oops! It seems like you&apos;ve drifted into uncharted
                 territory. The page you&apos;re looking for doesn&apos;t exist
                 in the Mintoons universe.
@@ -148,7 +148,7 @@ const NotFound = () => {
                 whileTap={{ scale: 0.98 }}
               >
                 <Link href="/">
-                  <button className="w-full bg-white hover:bg-gray-100 text-black py-4 px-6 rounded-xl font-medium transition-all duration-300 backdrop-blur-sm border border-white/20 flex items-center justify-center">
+                  <button className="w-full bg-white hover:bg-gray-100 text-black py-3 sm:py-4 px-4 sm:px-6 rounded-xl font-medium transition-all duration-300 backdrop-blur-sm border border-white/20 flex items-center justify-center text-base sm:text-lg">
                     <Home className="h-5 w-5 mr-2" />
                     Return to Mintoons Home
                   </button>
@@ -161,7 +161,7 @@ const NotFound = () => {
               >
                 <button
                   onClick={() => window.history.back()}
-                  className="w-full bg-white/10 hover:bg-white/20 text-white py-4 px-6 rounded-xl font-medium transition-all duration-300 backdrop-blur-sm border border-white/20 flex items-center justify-center"
+                  className="w-full bg-white/10 hover:bg-white/20 text-white py-3 sm:py-4 px-4 sm:px-6 rounded-xl font-medium transition-all duration-300 backdrop-blur-sm border border-white/20 flex items-center justify-center text-base sm:text-lg"
                 >
                   <ArrowLeft className="h-5 w-5 mr-2" />
                   Go Back
@@ -176,7 +176,7 @@ const NotFound = () => {
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
-          className="flex-1 max-w-md"
+          className="flex-1 w-full max-w-md min-w-0 px-2 sm:px-4 md:px-6 lg:px-8 xl:px-10"
         >
           <div className="relative">
             {/* Main illustration */}

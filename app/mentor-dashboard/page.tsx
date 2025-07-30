@@ -144,20 +144,19 @@ export default function MentorDashboard() {
   }
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-2 sm:p-4 md:p-6 space-y-4 sm:space-y-6">
       {/* Welcome Header */}
-      <div className="bg-gradient-to-r from-gray-800 to-gray-700 rounded-xl p-6">
-        <h1 className="text-3xl font-bold text-white mb-2">
+      <div className="bg-gradient-to-r from-gray-800 to-gray-700 rounded-xl p-4 sm:p-6">
+        <h1 className="text-2xl sm:text-3xl font-bold text-white mb-1 sm:mb-2">
           Welcome back, {session?.user.firstName}!
         </h1>
-        <p className="text-gray-300">
-          Ready to inspire young writers today? Check your student&apos;s progress
-          below.
+        <p className="text-gray-300 text-sm sm:text-base">
+          Ready to inspire young writers today? Check your student&apos;s progress below.
         </p>
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
         {statCards.map((card, index) => {
           const Icon = card.icon;
           return (
@@ -168,20 +167,20 @@ export default function MentorDashboard() {
               transition={{ delay: index * 0.1 }}
             >
               <Link href={card.href}>
-                <div className="bg-gray-800 rounded-xl p-6 hover:bg-gray-750 transition-all duration-200 cursor-pointer group">
+                <div className="bg-gray-800 rounded-xl p-4 sm:p-6 hover:bg-gray-750 transition-all duration-200 cursor-pointer group">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-gray-400 text-sm font-medium">
+                      <p className="text-gray-400 text-xs sm:text-sm font-medium">
                         {card.title}
                       </p>
-                      <p className="text-3xl font-bold text-white mt-2">
+                      <p className="text-2xl sm:text-3xl font-bold text-white mt-1 sm:mt-2">
                         {card.value.toLocaleString()}
                       </p>
                     </div>
                     <div
-                      className={`w-12 h-12 bg-gradient-to-r ${card.color} rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-200`}
+                      className={`w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r ${card.color} rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-200`}
                     >
-                      <Icon className="w-6 h-6 text-white" />
+                      <Icon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                     </div>
                   </div>
                 </div>
@@ -192,29 +191,29 @@ export default function MentorDashboard() {
       </div>
 
       {/* Monthly Stats & Top Students */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-6">
         {/* Monthly Performance */}
-        <div className="bg-gray-800 rounded-xl p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-white">This Month</h3>
-            <TrendingUp className="w-5 h-5 text-green-400" />
+        <div className="bg-gray-800 rounded-xl p-4 sm:p-6">
+          <div className="flex items-center justify-between mb-2 sm:mb-4">
+            <h3 className="text-base sm:text-lg font-semibold text-white">This Month</h3>
+            <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5 text-green-400" />
           </div>
-          <div className="space-y-4">
+          <div className="space-y-2 sm:space-y-4">
             <div className="flex justify-between items-center">
-              <span className="text-gray-400">New Stories</span>
-              <span className="text-white font-medium">
+              <span className="text-gray-400 text-xs sm:text-base">New Stories</span>
+              <span className="text-white font-medium text-xs sm:text-base">
                 {stats?.monthlyStats.newStories || 0}
               </span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-gray-400">Comments Given</span>
-              <span className="text-white font-medium">
+              <span className="text-gray-400 text-xs sm:text-base">Comments Given</span>
+              <span className="text-white font-medium text-xs sm:text-base">
                 {stats?.monthlyStats.commentsGiven || 0}
               </span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-gray-400">Assessments</span>
-              <span className="text-white font-medium">
+              <span className="text-gray-400 text-xs sm:text-base">Assessments</span>
+              <span className="text-white font-medium text-xs sm:text-base">
                 {stats?.monthlyStats.assessmentsCompleted || 0}
               </span>
             </div>
@@ -222,30 +221,30 @@ export default function MentorDashboard() {
         </div>
 
         {/* Top Students */}
-        <div className="bg-gray-800 rounded-xl p-6">
-          <h3 className="text-lg font-semibold text-white mb-4">
+        <div className="bg-gray-800 rounded-xl p-4 sm:p-6">
+          <h3 className="text-base sm:text-lg font-semibold text-white mb-2 sm:mb-4">
             Active Students
           </h3>
-          <div className="space-y-4">
+          <div className="space-y-2 sm:space-y-4">
             {topStudents.map((student, index) => (
-              <div key={student._id} className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center">
-                  <span className="text-white text-sm font-medium">
+              <div key={student._id} className="flex items-center gap-2 sm:gap-3">
+                <div className="w-7 h-7 sm:w-8 sm:h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center">
+                  <span className="text-white text-xs sm:text-sm font-medium">
                     {student.firstName[0]}
                     {student.lastName[0]}
                   </span>
                 </div>
                 <div className="flex-1">
-                  <p className="text-white text-sm font-medium">
+                  <p className="text-white text-xs sm:text-sm font-medium">
                     {student.firstName} {student.lastName}
                   </p>
-                  <p className="text-gray-400 text-xs">
+                  <p className="text-gray-400 text-[10px] sm:text-xs">
                     {student.totalStories} stories • {student.completedStories}{' '}
                     completed
                   </p>
                 </div>
                 <Link href={`/mentor-dashboard/students/${student._id}`}>
-                  <button className="text-blue-400 hover:text-blue-300 text-sm">
+                  <button className="text-blue-400 hover:text-blue-300 text-xs sm:text-sm">
                     View
                   </button>
                 </Link>
@@ -253,7 +252,7 @@ export default function MentorDashboard() {
             ))}
           </div>
           <Link href="/mentor-dashboard/students">
-            <button className="w-full mt-4 text-center text-blue-400 hover:text-blue-300 text-sm">
+            <button className="w-full mt-2 sm:mt-4 text-center text-blue-400 hover:text-blue-300 text-xs sm:text-sm">
               View All Students →
             </button>
           </Link>
@@ -261,37 +260,37 @@ export default function MentorDashboard() {
       </div>
 
       {/* Recent Activity */}
-      <div className="bg-gray-800 rounded-xl p-6">
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="text-xl font-semibold text-white">Recent Activity</h3>
+      <div className="bg-gray-800 rounded-xl p-4 sm:p-6">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 sm:mb-6 gap-2 sm:gap-0">
+          <h3 className="text-lg sm:text-xl font-semibold text-white">Recent Activity</h3>
           <Link
             href="/mentor-dashboard/activity"
-            className="text-blue-400 hover:text-blue-300 text-sm"
+            className="text-blue-400 hover:text-blue-300 text-xs sm:text-sm"
           >
             View All
           </Link>
         </div>
 
         {recentActivity.length > 0 ? (
-          <div className="space-y-4">
+          <div className="space-y-2 sm:space-y-4">
             {recentActivity.slice(0, 5).map((activity, index) => (
               <motion.div
                 key={activity.id}
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.05 }}
-                className="flex items-center space-x-4 p-4 bg-gray-700/50 rounded-lg"
+                className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 p-3 sm:p-4 bg-gray-700/50 rounded-lg"
               >
                 <div
-                  className={`w-10 h-10 rounded-full flex items-center justify-center ${getActivityColor(activity.type)}`}
+                  className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center ${getActivityColor(activity.type)}`}
                 >
                   {getActivityIcon(activity.type)}
                 </div>
                 <div className="flex-1">
-                  <p className="text-white text-sm">{activity.description}</p>
-                  <div className="flex items-center space-x-2 mt-1">
+                  <p className="text-white text-xs sm:text-sm">{activity.description}</p>
+                  <div className="flex items-center gap-1 sm:gap-2 mt-1">
                     <Clock className="w-3 h-3 text-gray-400" />
-                    <span className="text-gray-400 text-xs">
+                    <span className="text-gray-400 text-[10px] sm:text-xs">
                       {new Date(activity.createdAt).toLocaleString()}
                     </span>
                   </div>
@@ -300,9 +299,9 @@ export default function MentorDashboard() {
             ))}
           </div>
         ) : (
-          <div className="text-center py-8">
-            <AlertCircle className="w-12 h-12 text-gray-600 mx-auto mb-4" />
-            <p className="text-gray-400">No recent activity to display</p>
+          <div className="text-center py-6 sm:py-8">
+            <AlertCircle className="w-8 h-8 sm:w-12 sm:h-12 text-gray-600 mx-auto mb-3 sm:mb-4" />
+            <p className="text-gray-400 text-xs sm:text-base">No recent activity to display</p>
           </div>
         )}
       </div>

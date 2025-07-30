@@ -196,30 +196,30 @@ function MyStoriesContent() {
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 text-white">
       {/* Header */}
       <div className="bg-gray-800/50 backdrop-blur-xl border-b border-gray-600/40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="max-w-7xl mx-auto px-2 sm:px-4 md:px-6 lg:px-8 py-6 sm:py-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mt-16"
+            className="flex flex-col gap-6 mt-8 sm:mt-12 lg:flex-row lg:items-center lg:justify-between"
           >
             <div>
-              <h1 className="text-3xl lg:text-4xl font-bold flex items-center">
-                <BookOpen className="w-8 h-8 mr-4 text-blue-400" />
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold flex items-center">
+                <BookOpen className="w-7 h-7 sm:w-8 sm:h-8 mr-3 sm:mr-4 text-blue-400" />
                 My Amazing Stories
               </h1>
-              <p className="text-gray-300 mt-2 text-lg">
+              <p className="text-gray-300 mt-2 text-base sm:text-lg">
                 {stories.length === 0
                   ? 'Ready to write your first story?'
                   : `You've written ${stories.length} amazing ${stories.length === 1 ? 'story' : 'stories'}!`}
               </p>
             </div>
 
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2 sm:space-x-4 justify-end">
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => router.push('/create-stories')}
-                className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 px-6 py-3 rounded-xl font-semibold flex items-center space-x-2 shadow-lg"
+                className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl font-semibold flex items-center space-x-2 shadow-lg text-sm sm:text-base"
               >
                 <Plus className="w-5 h-5" />
                 <span>New Story</span>
@@ -230,25 +230,25 @@ function MyStoriesContent() {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-2 sm:px-4 md:px-6 lg:px-8 py-6 sm:py-8">
         {/* Search and Filters */}
-        <div className="mb-8 space-y-6">
+        <div className="mb-8 space-y-4 sm:space-y-6">
           {/* Search Bar */}
           <div className="relative">
-            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+            <Search className="absolute left-3 sm:left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
             <input
               type="text"
               placeholder="Search your stories..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-12 pr-4 py-4 bg-gray-800/50 border border-gray-600/50 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-blue-500/50 transition-colors"
+              className="w-full pl-10 sm:pl-12 pr-3 sm:pr-4 py-3 sm:py-4 bg-gray-800/50 border border-gray-600/50 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-blue-500/50 transition-colors text-sm sm:text-base"
             />
           </div>
 
           {/* Filters and View Controls */}
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+          <div className="flex flex-col gap-4 md:gap-6 lg:flex-row lg:items-center lg:justify-between">
             {/* Filter Buttons */}
-            <div className="flex flex-wrap gap-3">
+            <div className="flex flex-wrap gap-2 sm:gap-3">
               {[
                 { key: 'all', label: 'All Stories', count: stories.length },
                 {
@@ -293,11 +293,11 @@ function MyStoriesContent() {
             </div>
 
             {/* Sort and View Controls */}
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2 sm:space-x-4 mt-2 lg:mt-0">
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as any)}
-                className="px-4 py-2 bg-gray-800/50 border border-gray-600/50 rounded-xl text-white focus:outline-none focus:border-blue-500/50"
+                className="px-3 sm:px-4 py-2 bg-gray-800/50 border border-gray-600/50 rounded-xl text-white focus:outline-none focus:border-blue-500/50 text-sm sm:text-base"
               >
                 <option value="newest">Newest First</option>
                 <option value="oldest">Oldest First</option>
@@ -308,7 +308,7 @@ function MyStoriesContent() {
               <div className="flex bg-gray-800/50 border border-gray-600/50 rounded-xl overflow-hidden">
                 <button
                   onClick={() => setViewMode('grid')}
-                  className={`p-3 transition-colors ${
+                  className={`p-2 sm:p-3 transition-colors ${
                     viewMode === 'grid'
                       ? 'bg-blue-500 text-white'
                       : 'text-gray-400 hover:text-white'
@@ -318,7 +318,7 @@ function MyStoriesContent() {
                 </button>
                 <button
                   onClick={() => setViewMode('list')}
-                  className={`p-3 transition-colors ${
+                  className={`p-2 sm:p-3 transition-colors ${
                     viewMode === 'list'
                       ? 'bg-blue-500 text-white'
                       : 'text-gray-400 hover:text-white'
@@ -370,8 +370,8 @@ function MyStoriesContent() {
             animate={{ opacity: 1 }}
             className={
               viewMode === 'grid'
-                ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6'
-                : 'space-y-6'
+                ? 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6'
+                : 'space-y-4 sm:space-y-6'
             }
           >
             {sortedStories.map((story, index) => {
@@ -386,22 +386,22 @@ function MyStoriesContent() {
                   transition={{ delay: index * 0.1 }}
                   className={`group cursor-pointer ${
                     viewMode === 'grid'
-                      ? 'bg-gray-800/50 border border-gray-600/50 rounded-2xl p-6 hover:bg-gray-800/70 transition-all hover:border-blue-500/50'
-                      : 'bg-gray-800/50 border border-gray-600/50 rounded-xl p-6 hover:bg-gray-800/70 transition-all'
+                      ? 'bg-gray-800/50 border border-gray-600/50 rounded-2xl p-4 sm:p-6 hover:bg-gray-800/70 transition-all hover:border-blue-500/50'
+                      : 'bg-gray-800/50 border border-gray-600/50 rounded-xl p-4 sm:p-6 hover:bg-gray-800/70 transition-all'
                   }`}
                   onClick={() => handleStoryAction(story)}
                 >
                   {/* Story Header */}
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex-1">
-                      <h3 className="text-xl font-semibold text-white mb-2 group-hover:text-blue-300 transition-colors line-clamp-2">
+                      <h3 className="text-lg sm:text-xl font-semibold text-white mb-2 group-hover:text-blue-300 transition-colors line-clamp-2">
                         {story.title}
                         <span className="text-xs text-gray-400 ml-2">
                           Story #{story.storyNumber ?? story._id.slice(-6)}
                         </span>
                       </h3>
                       <div
-                        className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(story.status)}`}
+                        className={`inline-flex items-center px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-xs sm:text-sm font-medium ${getStatusColor(story.status)}`}
                       >
                         {getStatusIcon(story.status)}
                         <span className="ml-2 capitalize">
@@ -423,27 +423,27 @@ function MyStoriesContent() {
                   </div>
 
                   {/* Story Elements */}
-                  <div className="flex flex-wrap gap-2 mb-4">
+                  <div className="flex flex-wrap gap-1 sm:gap-2 mb-3 sm:mb-4">
                     {Object.entries(story.elements)
                       .slice(0, 3)
                       .map(([type, value]) => (
                         <span
                           key={type}
-                          className="px-2 py-1 bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-500/30 rounded-lg text-xs text-purple-200"
+                          className="px-1.5 sm:px-2 py-0.5 sm:py-1 bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-500/30 rounded-lg text-xs text-purple-200"
                         >
                           {value}
                         </span>
                       ))}
                     {Object.keys(story.elements).length > 3 && (
-                      <span className="px-2 py-1 bg-gray-700/50 border border-gray-600/30 rounded-lg text-xs text-gray-400">
+                      <span className="px-1.5 sm:px-2 py-0.5 sm:py-1 bg-gray-700/50 border border-gray-600/30 rounded-lg text-xs text-gray-400">
                         +{Object.keys(story.elements).length - 3} more
                       </span>
                     )}
                   </div>
 
                   {/* Stats */}
-                  <div className="flex items-center justify-between text-sm text-gray-400 mb-4">
-                    <div className="flex items-center space-x-4">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between text-xs sm:text-sm text-gray-400 mb-3 sm:mb-4 gap-1 sm:gap-0">
+                    <div className="flex items-center space-x-2 sm:space-x-4">
                       <div className="flex items-center">
                         <BookOpen className="w-4 h-4 mr-1" />
                         <span>
@@ -484,7 +484,7 @@ function MyStoriesContent() {
                         ? `Published ${new Date(story.publishedAt).toLocaleDateString()}`
                         : `Updated ${new Date(story.updatedAt).toLocaleDateString()}`}
                     </div>
-                    <div className="flex items-center space-x-2">
+                    <div className="flex items-center space-x-1 sm:space-x-2">
                       <span
                         className={`text-sm font-medium flex items-center ${
                           story.status === 'active'
@@ -511,13 +511,13 @@ function MyStoriesContent() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
-            className="mt-12 bg-gradient-to-r from-purple-500/20 to-blue-500/20 border border-purple-500/30 rounded-xl p-6"
+            className="mt-8 sm:mt-12 bg-gradient-to-r from-purple-500/20 to-blue-500/20 border border-purple-500/30 rounded-xl p-4 sm:p-6"
           >
             <h3 className="text-white font-semibold mb-4 flex items-center">
               <TrendingUp className="w-5 h-5 mr-2 text-purple-400" />
               Your Writing Journey
             </h3>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 gap-2 sm:gap-4 md:grid-cols-4">
               <div className="text-center">
                 <div className="text-2xl font-bold text-white">
                   {stories.length}

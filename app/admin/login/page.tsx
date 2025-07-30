@@ -68,7 +68,7 @@ export default function AdminLogin() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-red-900 flex items-center justify-center relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-red-900 flex items-center justify-center relative overflow-hidden px-2 sm:px-4 md:px-8 lg:px-12 xl:px-20">
       {/* Animated Background */}
       <div className="absolute inset-0 overflow-hidden">
         <motion.div
@@ -128,7 +128,7 @@ export default function AdminLogin() {
         initial={{ opacity: 0, y: 50, scale: 0.9 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.8, ease: 'easeOut' }}
-        className="bg-gray-800/90 backdrop-blur-xl border border-gray-600/50 rounded-2xl p-8 w-full max-w-md mx-4 shadow-2xl relative z-10"
+        className="bg-gray-800/90 backdrop-blur-xl border border-gray-600/50 rounded-2xl p-4 sm:p-6 md:p-8 w-full max-w-md mx-2 sm:mx-4 shadow-2xl relative z-10"
       >
         {/* Header */}
         <motion.div
@@ -153,8 +153,8 @@ export default function AdminLogin() {
               👑
             </motion.div>
           </div>
-          <h1 className="text-3xl font-bold text-white mb-2">Admin Portal</h1>
-          <p className="text-gray-300 text-sm">
+          <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">Admin Portal</h1>
+          <p className="text-gray-300 text-xs sm:text-sm">
             Secure access to platform management
           </p>
         </motion.div>
@@ -247,7 +247,7 @@ export default function AdminLogin() {
             whileTap={{ scale: 0.98 }}
             type="submit"
             disabled={isLoading}
-            className="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden"
+            className="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-semibold py-3 sm:py-4 px-4 sm:px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden text-base sm:text-lg"
           >
             <AnimatePresence mode="wait">
               {isLoading ? (
@@ -289,7 +289,7 @@ export default function AdminLogin() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.8, duration: 0.6 }}
-          className="mt-6 p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-lg"
+          className="mt-6 p-3 sm:p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-lg"
         >
           <div className="flex items-start">
             <span className="text-yellow-400 mr-2 mt-0.5">🛡️</span>
@@ -324,9 +324,9 @@ export default function AdminLogin() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 1, duration: 0.6 }}
-        className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-center"
+        className="absolute bottom-4 sm:bottom-8 left-1/2 transform -translate-x-1/2 text-center"
       >
-        <p className="text-gray-500 text-xs">
+        <p className="text-gray-500 text-[10px] sm:text-xs">
           Mintoons Admin Portal v1.0 • Secure Access
         </p>
       </motion.div>

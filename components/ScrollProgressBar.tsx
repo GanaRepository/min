@@ -22,10 +22,10 @@ const ScrollProgressBar: React.FC = () => {
     };
   }, []);
 
-  // Define pioneer colors directly in the component
-  const pioneerPrimary = '#3182ce'; // Blue
-  const pioneerSecondary = '#3b82f6'; // Slightly lighter blue
-  const pioneerAccent = '#33d6b6'; // Teal accent
+  // Mintoons website palette colors
+  const mintoonsPrimary = '#7C3AED'; // contact-purple (Tailwind: purple-600)
+  const mintoonsSecondary = '#2DD4BF'; // contact-teal (Tailwind: teal-400)
+  const mintoonsAccent = '#16A34A'; // green-600
 
   return (
     <div
@@ -38,8 +38,8 @@ const ScrollProgressBar: React.FC = () => {
         className="h-full transition-all duration-200"
         style={{
           width: `${scrollProgress}%`,
-          background: `linear-gradient(to right, ${pioneerPrimary}, ${pioneerSecondary}, ${pioneerAccent})`,
-          boxShadow: `0 0 10px rgba(49, 130, 206, 0.7)`,
+          background: `linear-gradient(to right, ${mintoonsPrimary}, ${mintoonsSecondary}, ${mintoonsAccent})`,
+          boxShadow: `0 0 10px ${mintoonsPrimary}99`, // 99 = ~60% opacity
         }}
       />
     </div>

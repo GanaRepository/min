@@ -209,9 +209,9 @@ export default function StoryDetailPage({
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 px-2 sm:px-4 md:px-8 lg:px-12 xl:px-20 py-4 sm:py-6 md:py-8">
       {/* Header */}
-      <div className="flex items-center space-x-4">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
         <Link href="/admin/stories">
           <button className="text-gray-400 hover:text-white transition-colors">
             <ArrowLeft className="w-6 h-6" />
@@ -227,9 +227,9 @@ export default function StoryDetailPage({
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-gray-800 rounded-xl p-6"
+        className="bg-gray-800 rounded-xl p-4 sm:p-6"
       >
-        <div className="flex items-start justify-between mb-6">
+        <div className="flex flex-col md:flex-row items-start justify-between mb-6 gap-4">
           <div>
             <h2 className="text-xl font-bold text-white mb-2">{story.title}</h2>
             <p className="text-gray-400">Story #{story.storyNumber}</p>
@@ -257,7 +257,7 @@ export default function StoryDetailPage({
         </div>
 
         {/* Author Info */}
-        <div className="flex items-center space-x-4 mb-6 p-4 bg-gray-700/50 rounded-lg">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 mb-6 p-3 sm:p-4 bg-gray-700/50 rounded-lg">
           <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center">
             <span className="text-white font-medium">
               {story.child.firstName[0]}
@@ -278,7 +278,7 @@ export default function StoryDetailPage({
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 sm:gap-4">
           <div className="text-center">
             <div className="text-2xl font-bold text-white">
               {story.totalWords}
@@ -329,7 +329,7 @@ export default function StoryDetailPage({
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="bg-gray-800 rounded-xl p-6"
+        className="bg-gray-800 rounded-xl p-4 sm:p-6"
       >
         <h3 className="text-lg font-medium text-white mb-4">Story Content</h3>
         <div className="bg-gray-700/50 rounded-lg p-4 max-h-96 overflow-y-auto">
@@ -340,13 +340,13 @@ export default function StoryDetailPage({
       </motion.div>
 
       {/* Comments Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4 sm:gap-6">
         {/* Existing Comments */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="bg-gray-800 rounded-xl p-6"
+          className="bg-gray-800 rounded-xl p-4 sm:p-6"
         >
           <h3 className="text-lg font-medium text-white mb-4">
             Comments ({story.comments.length})
@@ -390,7 +390,7 @@ export default function StoryDetailPage({
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="bg-gray-800 rounded-xl p-6"
+          className="bg-gray-800 rounded-xl p-4 sm:p-6"
         >
           <h3 className="text-lg font-medium text-white mb-4">Add Comment</h3>
           <div className="space-y-4">

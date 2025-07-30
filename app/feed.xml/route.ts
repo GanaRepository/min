@@ -13,17 +13,17 @@ async function generateRssFeed(): Promise<string> {
   // TODO: Replace with actual content fetching logic
   const items: FeedItem[] = [
     {
-      title: 'Artificial Intelligence Solutions',
-      link: 'https://www.pioneeritsystems.com',
+      title: 'Welcome to Mintoons!',
+      link: 'https://www.mintoons.com',
       description:
-        'Explore cutting-edge AI solutions transforming business operations',
+        'Unleash your creativity with Mintoons – the AI-powered creative writing platform for kids, mentors, and families.',
       pubDate: new Date().toUTCString(),
     },
     {
-      title: 'Machine Learning Innovations',
-      link: 'https://www.pioneeritsystems.com',
+      title: 'Mintoons Launches Story Creation Tools',
+      link: 'https://www.mintoons.com',
       description:
-        'Unlock insights with advanced machine learning technologies',
+        'Discover our new story builder, AI mentor feedback, and a safe, fun community for young writers.',
       pubDate: new Date(Date.now() - 86400000).toUTCString(), // 24 hours ago
     },
   ];
@@ -35,17 +35,16 @@ async function generateRssFeed(): Promise<string> {
   xmlns:content="http://purl.org/rss/1.0/modules/content/"
   xmlns:dc="http://purl.org/dc/elements/1.1/">
   <channel>
-    <title>A3 Tech Solutions - Technology Innovation</title>
-    <link>https://www.pioneeritsystems.com</link>
-    <description>Comprehensive technology solutions and innovative services</description>
-    <atom:link href="https://www.pioneeritsystems.com/feed.xml" rel="self" type="application/rss+xml" />
+    <title>Mintoons - Creative Writing for Kids</title>
+    <link>https://www.mintoons.com</link>
+    <description>AI-powered creative writing platform for kids, mentors, and families. Write, learn, and grow with Mintoons!</description>
+    <atom:link href="https://www.mintoons.com/feed.xml" rel="self" type="application/rss+xml" />
     <language>en-us</language>
     <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
-    <generator>A3 Tech Solutions RSS Generator</generator>
+    <generator>Mintoons RSS Generator</generator>
     <contact>
-      <address>2409 Aurora Ln, Denton, Tx, 76207</address>
-      <phone>+1 (945)-213 3883</phone>
-      <email>Hr@a3techsol.com</email>
+      <address>Dallas, TX, USA</address>
+      <email>support@mintoons.com</email>
     </contact>
     
     ${items
