@@ -1,3 +1,50 @@
+// PATCH method for updating a comment (e.g., mark as resolved)
+export async function PATCH(request: Request) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session || session.user.role !== 'mentor') {
+      return NextResponse.json(
+        { error: 'Mentor access required' },
+        { status: 403 }
+      );
+    }
+
+    // Extract commentId from URL (e.g., /api/mentor/comments/[id])
+    const url = new URL(request.url);
+    const paths = url.pathname.split('/');
+    const commentId = paths[paths.length - 1];
+    if (!commentId || commentId.length < 10) {
+      return NextResponse.json({ error: 'Invalid comment ID' }, { status: 400 });
+    }
+
+    const { isResolved, comment } = await request.json();
+    await connectToDatabase();
+    const update: any = {};
+    if (typeof isResolved === 'boolean') {
+      update.isResolved = isResolved;
+      if (isResolved) update.resolvedAt = new Date();
+      else update.resolvedAt = null;
+    }
+    if (typeof comment === 'string') {
+      update.comment = comment;
+    }
+    const updated = await StoryComment.findOneAndUpdate(
+      { _id: commentId, authorId: session.user.id },
+      { $set: update },
+      { new: true }
+    );
+    if (!updated) {
+      return NextResponse.json({ error: 'Comment not found or not authorized' }, { status: 404 });
+    }
+    return NextResponse.json({ success: true, comment: updated });
+  } catch (error) {
+    console.error('Error updating mentor comment:', error);
+    return NextResponse.json(
+      { error: 'Failed to update comment' },
+      { status: 500 }
+    );
+  }
+}
 // Add the POST method for adding comments
 export async function POST(request: Request) {
   try {

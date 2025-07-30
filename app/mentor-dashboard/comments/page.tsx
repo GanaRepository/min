@@ -217,96 +217,103 @@ export default function MentorComments() {
         </div>
       </div>
 
-      {/* Comments List */}
-      <div className="space-y-4">
+      {/* Comments List - 3 columns on desktop */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {filteredComments.map((comment, index) => (
           <motion.div
             key={comment._id}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.05 }}
-            className="bg-gray-800 rounded-xl p-6 hover:bg-gray-750 transition-colors"
+            className="bg-gray-800 rounded-xl p-6 hover:bg-gray-750 transition-colors flex flex-col justify-between"
           >
-            <div className="flex items-start justify-between">
-              <div className="flex-1">
-                {/* Comment Header */}
-                <div className="flex items-center space-x-3 mb-3">
-                  <span
-                    className={`px-2 py-1 rounded-full text-xs border ${getCommentTypeColor(comment.commentType)}`}
-                  >
-                    {comment.commentType}
-                  </span>
-                  <div className="flex items-center space-x-1">
-                    {comment.isResolved ? (
-                      <CheckCircle className="w-4 h-4 text-green-400" />
-                    ) : (
-                      <Clock className="w-4 h-4 text-orange-400" />
-                    )}
-                    <span
-                      className={`text-sm ${comment.isResolved ? 'text-green-400' : 'text-orange-400'}`}
-                    >
-                      {comment.isResolved ? 'Resolved' : 'Pending'}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Story Info */}
-                <div className="mb-3 p-3 bg-gray-700/50 rounded-lg">
-                  <div className="flex items-center space-x-2 text-sm text-gray-300">
-                    <BookOpen className="w-4 h-4" />
-                    <span>
-                      Story: &quot;{comment.storyId.title}&quot; by{' '}
-                      {comment.storyId.childId.firstName}{' '}
-                      {comment.storyId.childId.lastName}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Comment Content */}
-                <div className="mb-4">
-                  <p className="text-gray-300 leading-relaxed">
-                    {comment.comment}
-                  </p>
-                </div>
-
-                {/* Comment Footer */}
-                <div className="flex items-center justify-between text-sm text-gray-400">
-                  <div className="flex items-center space-x-4">
-                    <div className="flex items-center space-x-1">
-                      <Calendar className="w-4 h-4" />
-                      <span>
-                        {new Date(comment.createdAt).toLocaleDateString()}
-                      </span>
-                    </div>
-                    {comment.responses && comment.responses > 0 && (
-                      <div className="flex items-center space-x-1">
-                        <MessageSquare className="w-4 h-4" />
-                        <span>{comment.responses} responses</span>
-                      </div>
-                    )}
-                  </div>
-
-                  {comment.resolvedAt && (
-                    <div className="text-green-400 text-xs">
-                      Resolved:{' '}
-                      {new Date(comment.resolvedAt).toLocaleDateString()}
-                    </div>
+            <div>
+              {/* Comment Header */}
+              <div className="flex items-center space-x-3 mb-3">
+                <span className={`px-2 py-1 rounded-full text-xs border ${getCommentTypeColor(comment.commentType)}`}>
+                  {comment.commentType}
+                </span>
+                <div className="flex items-center space-x-1">
+                  {comment.isResolved ? (
+                    <CheckCircle className="w-4 h-4 text-green-400" />
+                  ) : (
+                    <Clock className="w-4 h-4 text-orange-400" />
                   )}
+                  <span className={`text-sm ${comment.isResolved ? 'text-green-400' : 'text-orange-400'}`}>
+                    {comment.isResolved ? 'Resolved' : 'Pending'}
+                  </span>
                 </div>
               </div>
 
-              {/* Action Buttons */}
-              <div className="flex items-center space-x-2 ml-4">
+              {/* Story Info */}
+              <div className="mb-3 p-3 bg-gray-700/50 rounded-lg">
+                <div className="flex items-center space-x-2 text-sm text-gray-300">
+                  <BookOpen className="w-4 h-4" />
+                  <span>
+                    Story: &quot;{comment.storyId.title}&quot; by {comment.storyId.childId.firstName} {comment.storyId.childId.lastName}
+                  </span>
+                </div>
+              </div>
+
+              {/* Comment Content */}
+              <div className="mb-4">
+                <p className="text-gray-300 leading-relaxed">
+                  {comment.comment}
+                </p>
+              </div>
+            </div>
+
+            {/* Comment Footer & Actions */}
+            <div className="flex items-center justify-between text-sm text-gray-400 mt-4">
+              <div className="flex items-center space-x-4">
+                <div className="flex items-center space-x-1">
+                  <Calendar className="w-4 h-4" />
+                  <span>{new Date(comment.createdAt).toLocaleDateString()}</span>
+                </div>
+                {comment.responses && comment.responses > 0 && (
+                  <div className="flex items-center space-x-1">
+                    <MessageSquare className="w-4 h-4" />
+                    <span>{comment.responses} responses</span>
+                  </div>
+                )}
+              </div>
+              <div className="flex items-center space-x-2">
+                {!comment.isResolved && (
+                  <button
+                    className="text-green-400 hover:text-green-300 p-2 rounded-lg hover:bg-gray-700 transition-colors border border-green-600"
+                    onClick={async () => {
+                      try {
+                        const res = await fetch(`/api/mentor/comments/${comment._id}`, {
+                          method: 'PATCH',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({ isResolved: true }),
+                        });
+                        const data = await res.json();
+                        if (data.success) {
+                          setComments((prev) => prev.map((c) => c._id === comment._id ? { ...c, isResolved: true, resolvedAt: new Date().toISOString() } : c));
+                        }
+                      } catch (e) {}
+                    }}
+                    title="Mark as Resolved"
+                  >
+                    Mark as Resolved
+                  </button>
+                )}
                 <Link href={`/mentor-dashboard/stories/${comment.storyId._id}`}>
-                  <button className="text-blue-400 hover:text-blue-300 p-2 rounded-lg hover:bg-gray-700 transition-colors">
+                  <button className="text-blue-400 hover:text-blue-300 p-2 rounded-lg hover:bg-gray-700 transition-colors" title="View Story">
                     <Eye className="w-4 h-4" />
                   </button>
                 </Link>
-                <button className="text-gray-400 hover:text-gray-300 p-2 rounded-lg hover:bg-gray-700 transition-colors">
+                <button className="text-gray-400 hover:text-gray-300 p-2 rounded-lg hover:bg-gray-700 transition-colors" title="Edit (coming soon)">
                   <Edit className="w-4 h-4" />
                 </button>
               </div>
             </div>
+            {comment.resolvedAt && (
+              <div className="text-green-400 text-xs mt-2">
+                Resolved: {new Date(comment.resolvedAt).toLocaleDateString()}
+              </div>
+            )}
           </motion.div>
         ))}
       </div>
