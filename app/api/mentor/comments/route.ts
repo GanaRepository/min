@@ -35,13 +35,15 @@ export async function POST(request: Request) {
       storyId,
       comment,
       commentType: commentType || 'general',
-      mentorId: session.user.id,
+      authorId: session.user.id,
+      authorRole: 'mentor',
+      mentorId: session.user.id, // for backward compatibility if needed
       isResolved: false,
       createdAt: new Date(),
     });
 
     const populatedComment = await StoryComment.findById(newComment._id)
-      .populate('mentorId', 'firstName lastName');
+      .populate('authorId', 'firstName lastName role');
 
     return NextResponse.json({
       success: true,

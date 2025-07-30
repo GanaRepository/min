@@ -359,11 +359,7 @@ export default function MentorStories() {
                   <span>Review Story</span>
                 </button>
               </Link>
-              <Link href={`/mentor-dashboard/stories/${story._id}/comments`}>
-                <button className="bg-gray-700 text-white py-2 px-3 rounded-lg hover:bg-gray-600 transition-colors">
-                  <MessageSquare className="w-4 h-4" />
-                </button>
-              </Link>
+           
             </div>
 
             {/* Last Comment Preview */}

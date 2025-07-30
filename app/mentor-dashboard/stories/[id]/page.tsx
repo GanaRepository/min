@@ -12,10 +12,11 @@ interface Comment {
   commentType: string;
   createdAt: string;
   updatedAt: string;
-  mentorId: {
+  authorId: {
     _id: string;
     firstName: string;
     lastName: string;
+    role?: string;
   };
 }
 
@@ -137,14 +138,8 @@ export default function MentorStoryDetail() {
       {/* Header */}
       <div className="flex items-center space-x-4">
         <Link href="/mentor-dashboard/stories">
-          <button className="text-gray-400 hover:text-white transition-colors">← Back</button>
+          <button className="text-gray-800 hover:text-blue-600 transition-colors bg-white p-2 rounded-lg">← Back To Stories</button>
         </Link>
-        <div>
-          <h1 className="text-2xl font-bold text-white">{story.title}</h1>
-          <p className="text-gray-400">
-            by {story.child ? `${story.child.firstName} ${story.child.lastName}` : 'Unknown'}
-          </p>
-        </div>
       </div>
 
       {/* Story Content */}
@@ -187,7 +182,7 @@ export default function MentorStoryDetail() {
               </div>
               <div className="flex-1">
                 <div className="flex items-center space-x-2">
-                  <span className="text-white font-medium text-sm">{comment.mentorId.firstName} {comment.mentorId.lastName}</span>
+                  <span className="text-white font-medium text-sm">{comment.authorId?.firstName} {comment.authorId?.lastName}</span>
                   <span className="text-gray-400 text-xs">{new Date(comment.createdAt).toLocaleDateString()}</span>
                 </div>
                 {editingId === comment._id ? (

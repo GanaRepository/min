@@ -29,7 +29,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     }
     // Get comments for this story
     const comments = await StoryComment.find({ storyId: story._id })
-      .populate('mentorId', 'firstName lastName')
+      .populate('authorId', 'firstName lastName role')
       .sort({ createdAt: -1 });
     // Get turns and build content
     const turns = await Turn.find({ sessionId: story._id }).sort({ turnNumber: 1 });
