@@ -1,4 +1,258 @@
-// app/api/stories/create-session/route.ts
+// import { NextResponse } from 'next/server';
+// import { getServerSession } from 'next-auth';
+// import { authOptions } from '@/utils/authOptions';
+// import { connectToDatabase } from '@/utils/db';
+// import { SUBSCRIPTION_TIERS } from '@/config/tiers';
+// import { DEFAULT_TIER } from '@/config/tiers';
+// import StorySession from '@/models/StorySession';
+// import User from '@/models/User';
+// import PendingStoryElements from '@/models/PendingStoryElements';
+// import { collaborationEngine } from '@/lib/ai/collaboration';
+// import { checkRateLimit } from '@/lib/rate-limiter';
+// import type { StoryElements } from '@/config/story-elements';
+// import crypto from 'crypto';
+
+// interface StoryCreationRequest {
+//   elements?: StoryElements;
+//   pendingToken?: string;
+//   storyMode?: 'guided' | 'freeform';
+//   openingText?: string;
+// }
+
+// function validateElements(elements: any): boolean {
+//   const requiredElements = ['genre', 'character', 'setting', 'theme', 'mood', 'tone'];
+//   return requiredElements.every((element) => elements[element]);
+// }
+
+// async function generateAIOpeningInBackground(
+//   sessionId: string,
+//   elements?: StoryElements,
+//   userOpening?: string
+// ) {
+//   try {
+//     console.log(`🤖 Starting AI opening generation for session: ${sessionId}`);
+
+//     let aiOpening: string;
+
+//     if (elements) {
+//       aiOpening = await collaborationEngine.generateOpeningPrompt(elements);
+//     } else if (userOpening) {
+//       aiOpening = userOpening;
+//     } else {
+//       aiOpening = await collaborationEngine.generateFreeformOpening();
+//     }
+
+//     await StorySession.findByIdAndUpdate(sessionId, {
+//       aiOpening,
+//       apiCallsUsed: elements ? 1 : 0,
+//     });
+
+//     console.log(`✅ AI opening generated and saved for session: ${sessionId}`);
+//   } catch (error) {
+//     console.error(`❌ Failed to generate AI opening for ${sessionId}:`, error);
+
+//     const fallbackOpening = elements 
+//       ? `Welcome to your ${elements.genre} adventure! Your character ${elements.character} is ready to explore ${elements.setting}. What happens first in this ${elements.mood} story?`
+//       : userOpening || "Welcome to your creative writing adventure! What story would you like to tell today?";
+
+//     await StorySession.findByIdAndUpdate(sessionId, {
+//       aiOpening: fallbackOpening,
+//       apiCallsUsed: 0,
+//     });
+
+//     console.log(`✅ Fallback opening saved for session: ${sessionId}`);
+//   }
+// }
+
+// async function createStorySession(
+//   userId: string, 
+//   elements?: StoryElements, 
+//   storyMode: 'guided' | 'freeform' = 'guided',
+//   openingText?: string
+// ) {
+//   await connectToDatabase();
+
+//   const user = await User.findById(userId);
+//   if (!user) {
+//     return NextResponse.json({ error: 'User not found' }, { status: 404 });
+//   }
+
+//   const userTier = user.subscriptionTier || 'FREE';
+//   const tierConfig = SUBSCRIPTION_TIERS[userTier] || DEFAULT_TIER;
+
+//   // Rate limiting check using centralized config
+//   const rateCheck = checkRateLimit(userId, 'story-create', userTier);
+//   if (!rateCheck.allowed) {
+//     return NextResponse.json(
+//       { error: rateCheck.message, retryAfter: rateCheck.retryAfter },
+//       { status: 429 }
+//     );
+//   }
+
+//   const lastSession = (await StorySession.findOne({ childId: userId })
+//     .sort({ storyNumber: -1 })
+//     .select('storyNumber')
+//     .lean()) as { storyNumber: number } | null;
+
+//   const nextStoryNumber = lastSession ? lastSession.storyNumber + 1 : 1;
+
+//   const title = elements 
+//     ? `${elements.character}'s ${elements.genre} Adventure`
+//     : `My Creative Story #${nextStoryNumber}`;
+
+//   const sessionData: any = {
+//     childId: userId,
+//     storyNumber: nextStoryNumber,
+//     title,
+//     storyMode,
+//     aiOpening: null,
+//     currentTurn: 1,
+//     totalWords: 0,
+//     childWords: 0,
+//     apiCallsUsed: 0,
+//     maxApiCalls: tierConfig.aiCalls,
+//     status: 'active',
+//   };
+
+//   if (storyMode === 'guided' && elements) {
+//     sessionData.elements = elements;
+//   }
+
+//   const newSession = await StorySession.create(sessionData);
+
+//   console.log(`✅ Created new ${storyMode} story session: ${newSession._id}`);
+
+//   await User.findByIdAndUpdate(userId, {
+//     $inc: {
+//       totalStoriesCreated: 1,
+//       storiesCreatedThisMonth: 1,
+//     },
+//     $set: { lastActiveDate: new Date() },
+//   });
+
+//   generateAIOpeningInBackground(newSession._id.toString(), elements, openingText);
+
+//   return NextResponse.json({
+//     success: true,
+//     session: {
+//       id: newSession._id,
+//       storyNumber: newSession.storyNumber,
+//       title: newSession.title,
+//       elements: newSession.elements || null,
+//       storyMode: newSession.storyMode,
+//       currentTurn: newSession.currentTurn,
+//       totalWords: newSession.totalWords,
+//       childWords: newSession.childWords,
+//       apiCallsUsed: newSession.apiCallsUsed,
+//       maxApiCalls: newSession.maxApiCalls,
+//       status: newSession.status,
+//     },
+//     aiOpening: null,
+//   });
+// }
+
+// export async function POST(request: Request) {
+//   try {
+//     const session = await getServerSession(authOptions);
+//     const body: StoryCreationRequest = await request.json();
+
+//     console.log(`📝 Create-session API called:`, {
+//       hasSession: !!session,
+//       userRole: session?.user?.role,
+//       hasElements: !!body.elements,
+//       hasPendingToken: !!body.pendingToken,
+//       storyMode: body.storyMode || 'freeform',
+//       hasOpeningText: !!body.openingText,
+//     });
+
+//     await connectToDatabase();
+
+//     if (body.pendingToken) {
+//       if (!session || session.user.role !== 'child') {
+//         return NextResponse.json(
+//           { error: 'Access denied. Children only.' },
+//           { status: 403 }
+//         );
+//       }
+
+//       console.log(`🔍 Processing pending token: ${body.pendingToken.substring(0, 8)}...`);
+
+//       const pendingElements = await PendingStoryElements.findOne({
+//         sessionToken: body.pendingToken,
+//         expiresAt: { $gt: new Date() },
+//       });
+
+//       if (!pendingElements) {
+//         console.log(`❌ Token not found or expired: ${body.pendingToken.substring(0, 8)}...`);
+//         return NextResponse.json(
+//           { error: 'Token not found or expired. Please start over.' },
+//           { status: 404 }
+//         );
+//       }
+
+//       console.log(`✅ Token found, creating guided story from stored elements`);
+//       await PendingStoryElements.findByIdAndDelete(pendingElements._id);
+//       return await createStorySession(session.user.id, pendingElements.elements, 'guided');
+//     }
+
+//     if (body.elements) {
+//       if (!validateElements(body.elements)) {
+//         return NextResponse.json(
+//           { error: 'Missing required story elements' },
+//           { status: 400 }
+//         );
+//       }
+
+//       if (!session || session.user.role !== 'child') {
+//         console.log(`🔒 User not authenticated, storing elements in database`);
+
+//         const token = crypto.randomBytes(32).toString('hex');
+//         const expiresAt = new Date(Date.now() + 30 * 60 * 1000);
+
+//         await PendingStoryElements.create({
+//           sessionToken: token,
+//           elements: body.elements,
+//           expiresAt,
+//         });
+
+//         console.log(`📦 Stored elements in database with token: ${token.substring(0, 8)}...`);
+
+//         return NextResponse.json({
+//           requiresAuth: true,
+//           token,
+//           message: 'Please log in to create your story. Your progress will be saved!',
+//         });
+//       }
+
+//       console.log(`✅ User authenticated, creating guided story immediately`);
+//       return await createStorySession(session.user.id, body.elements, 'guided');
+//     }
+
+//     if (body.storyMode === 'freeform' || (!body.elements && !body.pendingToken)) {
+//       if (!session || session.user.role !== 'child') {
+//         return NextResponse.json(
+//           { error: 'Access denied. Children only.' },
+//           { status: 403 }
+//         );
+//       }
+
+//       console.log(`✅ Creating freeform story for authenticated user`);
+//       return await createStorySession(session.user.id, undefined, 'freeform', body.openingText);
+//     }
+
+//     return NextResponse.json(
+//       { error: 'Invalid request. Provide either elements, pendingToken, or specify freeform mode.' },
+//       { status: 400 }
+//     );
+//   } catch (error) {
+//     console.error('❌ Error in create-session API:', error);
+//     return NextResponse.json(
+//       { error: 'Failed to process story creation request' },
+//       { status: 500 }
+//     );
+//   }
+// }
+
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/utils/authOptions';
@@ -16,57 +270,76 @@ import crypto from 'crypto';
 interface StoryCreationRequest {
   elements?: StoryElements;
   pendingToken?: string;
+  storyMode?: 'guided' | 'freeform';
+  openingText?: string;
 }
 
-// Helper function to validate elements
 function validateElements(elements: any): boolean {
-  const requiredElements = [
-    'genre',
-    'character',
-    'setting',
-    'theme',
-    'mood',
-    'tone',
-  ];
+  const requiredElements = ['genre', 'character', 'setting', 'theme', 'mood', 'tone'];
   return requiredElements.every((element) => elements[element]);
 }
 
-// Background AI generation function
 async function generateAIOpeningInBackground(
   sessionId: string,
-  elements: StoryElements
+  elements?: StoryElements,
+  userOpening?: string
 ) {
   try {
     console.log(`🤖 Starting AI opening generation for session: ${sessionId}`);
 
-    const aiOpening = await collaborationEngine.generateOpeningPrompt(elements);
+    let aiOpening: string;
+    let apiCallsUsed = 0;
+
+    if (elements) {
+      // Guided story - use AI to generate opening
+      aiOpening = await collaborationEngine.generateOpeningPrompt(elements);
+      apiCallsUsed = 1;
+    } else {
+      // Freeform story - use child's text directly, no AI call
+      aiOpening = userOpening || "Start writing your creative story...";
+      apiCallsUsed = 0;
+    }
 
     await StorySession.findByIdAndUpdate(sessionId, {
       aiOpening,
-      apiCallsUsed: 1,
+      apiCallsUsed,
     });
 
     console.log(`✅ AI opening generated and saved for session: ${sessionId}`);
   } catch (error) {
     console.error(`❌ Failed to generate AI opening for ${sessionId}:`, error);
 
-    const fallbackOpening = `Welcome to your ${elements.genre} adventure! Your character ${elements.character} is ready to explore ${elements.setting}. What happens first in this ${elements.mood} story?`;
+    const fallbackOpening = elements 
+      ? `Welcome to your ${elements.genre} adventure! Your character ${elements.character} is ready to explore ${elements.setting}. What happens first in this ${elements.mood} story?`
+      : userOpening || "Start writing your creative story...";
 
     await StorySession.findByIdAndUpdate(sessionId, {
       aiOpening: fallbackOpening,
-      apiCallsUsed: 1,
+      apiCallsUsed: 0,
     });
 
     console.log(`✅ Fallback opening saved for session: ${sessionId}`);
   }
 }
 
-// Helper function to create story session
-async function createStorySession(userId: string, elements: StoryElements) {
+async function createStorySession(
+  userId: string, 
+  elements?: StoryElements, 
+  storyMode: 'guided' | 'freeform' = 'guided',
+  openingText?: string
+) {
   await connectToDatabase();
 
-  // Rate limiting check
-  const rateCheck = checkRateLimit(userId, 'story-create');
+  const user = await User.findById(userId);
+  if (!user) {
+    return NextResponse.json({ error: 'User not found' }, { status: 404 });
+  }
+
+  const userTier = user.subscriptionTier || 'FREE';
+  const tierConfig = SUBSCRIPTION_TIERS[userTier] || DEFAULT_TIER;
+
+  // Rate limiting check using centralized config
+  const rateCheck = checkRateLimit(userId, 'story-create', userTier);
   if (!rateCheck.allowed) {
     return NextResponse.json(
       { error: rateCheck.message, retryAfter: rateCheck.retryAfter },
@@ -74,35 +347,6 @@ async function createStorySession(userId: string, elements: StoryElements) {
     );
   }
 
-  // Check story limits
-  const user = await User.findById(userId);
-  if (!user) {
-    return NextResponse.json({ error: 'User not found' }, { status: 404 });
-  }
-
-  // Get tier and check limits
-  const userTier = user.subscriptionTier || 'FREE';
-  const tierConfig = SUBSCRIPTION_TIERS[userTier] || DEFAULT_TIER;
-
-  const currentMonth = new Date();
-  currentMonth.setDate(1);
-  currentMonth.setHours(0, 0, 0, 0);
-
-  const monthlyStoryCount = await StorySession.countDocuments({
-    childId: userId,
-    createdAt: { $gte: currentMonth },
-  });
-
-  if (monthlyStoryCount >= tierConfig.storyLimit) {
-    return NextResponse.json(
-      {
-        error: `Monthly story limit reached (${tierConfig.storyLimit} stories for ${userTier} tier)`,
-      },
-      { status: 429 }
-    );
-  }
-
-  // Get next story number
   const lastSession = (await StorySession.findOne({ childId: userId })
     .sort({ storyNumber: -1 })
     .select('storyNumber')
@@ -110,15 +354,15 @@ async function createStorySession(userId: string, elements: StoryElements) {
 
   const nextStoryNumber = lastSession ? lastSession.storyNumber + 1 : 1;
 
-  // Generate title
-  const title = `${elements.character}'s ${elements.genre} Adventure`;
+  const title = elements 
+    ? `${elements.character}'s ${elements.genre} Adventure`
+    : `My Creative Story #${nextStoryNumber}`;
 
-  // Create new story session IMMEDIATELY
-  const newSession = await StorySession.create({
+  const sessionData: any = {
     childId: userId,
     storyNumber: nextStoryNumber,
     title,
-    elements,
+    storyMode,
     aiOpening: null,
     currentTurn: 1,
     totalWords: 0,
@@ -126,11 +370,16 @@ async function createStorySession(userId: string, elements: StoryElements) {
     apiCallsUsed: 0,
     maxApiCalls: tierConfig.aiCalls,
     status: 'active',
-  });
+  };
 
-  console.log(`✅ Created new story session: ${newSession._id}`);
+  if (storyMode === 'guided' && elements) {
+    sessionData.elements = elements;
+  }
 
-  // Update user statistics
+  const newSession = await StorySession.create(sessionData);
+
+  console.log(`✅ Created new ${storyMode} story session: ${newSession._id}`);
+
   await User.findByIdAndUpdate(userId, {
     $inc: {
       totalStoriesCreated: 1,
@@ -139,8 +388,7 @@ async function createStorySession(userId: string, elements: StoryElements) {
     $set: { lastActiveDate: new Date() },
   });
 
-  // Generate AI opening in background
-  generateAIOpeningInBackground(newSession._id, elements);
+  generateAIOpeningInBackground(newSession._id.toString(), elements, openingText);
 
   return NextResponse.json({
     success: true,
@@ -148,7 +396,8 @@ async function createStorySession(userId: string, elements: StoryElements) {
       id: newSession._id,
       storyNumber: newSession.storyNumber,
       title: newSession.title,
-      elements: newSession.elements,
+      elements: newSession.elements || null,
+      storyMode: newSession.storyMode,
       currentTurn: newSession.currentTurn,
       totalWords: newSession.totalWords,
       childWords: newSession.childWords,
@@ -170,11 +419,12 @@ export async function POST(request: Request) {
       userRole: session?.user?.role,
       hasElements: !!body.elements,
       hasPendingToken: !!body.pendingToken,
+      storyMode: body.storyMode || 'freeform',
+      hasOpeningText: !!body.openingText,
     });
 
     await connectToDatabase();
 
-    // ===== CASE 1: User has pendingToken (returning from login) =====
     if (body.pendingToken) {
       if (!session || session.user.role !== 'child') {
         return NextResponse.json(
@@ -183,38 +433,27 @@ export async function POST(request: Request) {
         );
       }
 
-      console.log(
-        `🔍 Processing pending token: ${body.pendingToken.substring(0, 8)}...`
-      );
+      console.log(`🔍 Processing pending token: ${body.pendingToken.substring(0, 8)}...`);
 
-      // Retrieve elements from database
       const pendingElements = await PendingStoryElements.findOne({
         sessionToken: body.pendingToken,
-        expiresAt: { $gt: new Date() }, // Not expired
+        expiresAt: { $gt: new Date() },
       });
 
       if (!pendingElements) {
-        console.log(
-          `❌ Token not found or expired: ${body.pendingToken.substring(0, 8)}...`
-        );
+        console.log(`❌ Token not found or expired: ${body.pendingToken.substring(0, 8)}...`);
         return NextResponse.json(
           { error: 'Token not found or expired. Please start over.' },
           { status: 404 }
         );
       }
 
-      // Clean up token and create story
-      console.log(`✅ Token found, creating story from stored elements`);
+      console.log(`✅ Token found, creating guided story from stored elements`);
       await PendingStoryElements.findByIdAndDelete(pendingElements._id);
-      return await createStorySession(
-        session.user.id,
-        pendingElements.elements
-      );
+      return await createStorySession(session.user.id, pendingElements.elements, 'guided');
     }
 
-    // ===== CASE 2: User provides elements directly =====
     if (body.elements) {
-      // Validate elements first
       if (!validateElements(body.elements)) {
         return NextResponse.json(
           { error: 'Missing required story elements' },
@@ -222,12 +461,11 @@ export async function POST(request: Request) {
         );
       }
 
-      // CASE 2A: Not authenticated - store elements in database
       if (!session || session.user.role !== 'child') {
         console.log(`🔒 User not authenticated, storing elements in database`);
 
         const token = crypto.randomBytes(32).toString('hex');
-        const expiresAt = new Date(Date.now() + 30 * 60 * 1000); // 30 minutes
+        const expiresAt = new Date(Date.now() + 30 * 60 * 1000);
 
         await PendingStoryElements.create({
           sessionToken: token,
@@ -235,26 +473,33 @@ export async function POST(request: Request) {
           expiresAt,
         });
 
-        console.log(
-          `📦 Stored elements in database with token: ${token.substring(0, 8)}...`
-        );
+        console.log(`📦 Stored elements in database with token: ${token.substring(0, 8)}...`);
 
         return NextResponse.json({
           requiresAuth: true,
           token,
-          message:
-            'Please log in to create your story. Your progress will be saved!',
+          message: 'Please log in to create your story. Your progress will be saved!',
         });
       }
 
-      // CASE 2B: Authenticated - create story immediately
-      console.log(`✅ User authenticated, creating story immediately`);
-      return await createStorySession(session.user.id, body.elements);
+      console.log(`✅ User authenticated, creating guided story immediately`);
+      return await createStorySession(session.user.id, body.elements, 'guided');
     }
 
-    // Invalid request
+    if (body.storyMode === 'freeform' || (!body.elements && !body.pendingToken)) {
+      if (!session || session.user.role !== 'child') {
+        return NextResponse.json(
+          { error: 'Access denied. Children only.' },
+          { status: 403 }
+        );
+      }
+
+      console.log(`✅ Creating freeform story for authenticated user`);
+      return await createStorySession(session.user.id, undefined, 'freeform', body.openingText);
+    }
+
     return NextResponse.json(
-      { error: 'Invalid request. Provide either elements or pendingToken.' },
+      { error: 'Invalid request. Provide either elements, pendingToken, or specify freeform mode.' },
       { status: 400 }
     );
   } catch (error) {

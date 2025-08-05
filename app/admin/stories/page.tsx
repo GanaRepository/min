@@ -301,16 +301,17 @@ export default function AdminStories() {
                     <div className="flex items-center space-x-3">
                       <div className="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center">
                         <span className="text-sm font-medium text-white">
-                          {story.child.firstName[0]}{story.child.lastName[0]}
+                          {story.child && story.child.firstName ? story.child.firstName[0] : ''}
+                          {story.child && story.child.lastName ? story.child.lastName[0] : ''}
                         </span>
                       </div>
                       <div>
                         <p className="text-white text-sm">
-                          {story.child.firstName} {story.child.lastName}
+                          {story.child && story.child.firstName ? story.child.firstName : ''} {story.child && story.child.lastName ? story.child.lastName : ''}
                         </p>
                         <div className="flex items-center space-x-2">
-                          <p className="text-gray-400 text-xs">{story.child.email}</p>
-                          {story.child.subscriptionTier && story.child.subscriptionTier !== 'FREE' && (
+                          <p className="text-gray-400 text-xs">{story.child && story.child.email ? story.child.email : ''}</p>
+                          {story.child && story.child.subscriptionTier && story.child.subscriptionTier !== 'FREE' && (
                             <span className={`px-1 py-0.5 rounded text-xs ${getTierColor(story.child.subscriptionTier)}`}>
                               {story.child.subscriptionTier}
                             </span>
@@ -369,7 +370,7 @@ export default function AdminStories() {
                           <Eye className="w-4 h-4" />
                         </button>
                       </Link>
-                      <Link href={`/admin/users/${story.child._id}`}>
+                      <Link href={`/admin/users/${story.child && story.child._id ? story.child._id : ''}`}>
                         <button className="text-green-400 hover:text-green-300 p-2 rounded-lg hover:bg-gray-700 transition-colors">
                           <FileText className="w-4 h-4" />
                         </button>

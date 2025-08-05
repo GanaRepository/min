@@ -22,10 +22,10 @@ const ScrollProgressBar: React.FC = () => {
     };
   }, []);
 
-  // Mintoons website palette colors
-  const mintoonsPrimary = '#7C3AED'; // contact-purple (Tailwind: purple-600)
-  const mintoonsSecondary = '#2DD4BF'; // contact-teal (Tailwind: teal-400)
-  const mintoonsAccent = '#16A34A'; // green-600
+  // Updated colors matching the contact page gradient
+  const darkGray = '#6380caff'; // gray-900
+  const mediumGray = '#495c77ff'; // gray-800
+  const darkGreen = '#5d896eff'; // green-900
 
   return (
     <div
@@ -38,8 +38,8 @@ const ScrollProgressBar: React.FC = () => {
         className="h-full transition-all duration-200"
         style={{
           width: `${scrollProgress}%`,
-          background: `linear-gradient(to right, ${mintoonsPrimary}, ${mintoonsSecondary}, ${mintoonsAccent})`,
-          boxShadow: `0 0 10px ${mintoonsPrimary}99`, // 99 = ~60% opacity
+          background: `linear-gradient(to right, ${darkGray}, ${mediumGray}, ${darkGreen})`,
+          boxShadow: `0 0 10px ${mediumGray}99`, // 99 = ~60% opacity
         }}
       />
     </div>

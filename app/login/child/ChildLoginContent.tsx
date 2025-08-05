@@ -142,7 +142,7 @@ function ChildLoginContent() {
         </div>
 
         {/* Grid pattern overlay */}
-        <div className="absolute inset-0 opacity-10">
+        {/* <div className="absolute inset-0 opacity-10">
           <div
             className="w-full h-full"
             style={{
@@ -153,7 +153,7 @@ function ChildLoginContent() {
               backgroundSize: '50px 50px',
             }}
           />
-        </div>
+        </div> */}
 
         {/* Main container */}
         <motion.div

@@ -260,17 +260,17 @@ export default function StoryDetailPage({
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 mb-6 p-3 sm:p-4 bg-gray-700/50 rounded-lg">
           <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center">
             <span className="text-white font-medium">
-              {story.child.firstName[0]}
-              {story.child.lastName[0]}
+              {story.child && story.child.firstName ? story.child.firstName[0] : ''}
+              {story.child && story.child.lastName ? story.child.lastName[0] : ''}
             </span>
           </div>
           <div>
             <h3 className="text-white font-medium">
-              {story.child.firstName} {story.child.lastName}
+              {story.child && story.child.firstName ? story.child.firstName : ''} {story.child && story.child.lastName ? story.child.lastName : ''}
             </h3>
-            <p className="text-gray-400">{story.child.email}</p>
+            <p className="text-gray-400">{story.child && story.child.email ? story.child.email : ''}</p>
           </div>
-          <Link href={`/admin/users/${story.child._id}`}>
+            <Link href={`/admin/users/${story.child && story.child._id ? story.child._id : ''}`}>
             <button className="ml-auto text-blue-400 hover:text-blue-300 text-sm">
               View Profile
             </button>

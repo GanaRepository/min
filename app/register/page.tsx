@@ -40,27 +40,7 @@ const RegisterPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 text-white relative overflow-hidden">
-      {/* Background Pattern */}
-      <div className="absolute inset-0 opacity-5">
-        <svg width="100%" height="100%" className="absolute inset-0">
-          <defs>
-            <pattern
-              id="grid"
-              width="40"
-              height="40"
-              patternUnits="userSpaceOnUse"
-            >
-              <path
-                d="M 40 0 L 0 0 0 40"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1"
-              />
-            </pattern>
-          </defs>
-          <rect width="100%" height="100%" fill="url(#grid)" />
-        </svg>
-      </div>
+ 
 
       {/* Hero Section */}
       <section
@@ -86,7 +66,7 @@ const RegisterPage: React.FC = () => {
           </div>
 
           {/* Main Heading */}
-          <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-7xl font-bold mb-4 sm:mb-6 leading-tight">
+          <h1 className="text-2xl sm:text-4xl md:text-5xl   mb-4 sm:mb-6 leading-tight">
             Create Your{' '}
             <span className="bg-gradient-to-r from-green-400 via-teal-300 to-cyan-400 bg-clip-text text-transparent">
               Creative Account
@@ -131,7 +111,7 @@ const RegisterPage: React.FC = () => {
                       </div>
 
                       {/* Title */}
-                      <h3 className="text-2xl font-bold text-white mb-4 group-hover:text-green-300 transition-colors">
+                      <h3 className="text-2xl  text-white mb-4 group-hover:text-green-300 transition-colors">
                         {option.title}
                       </h3>
 
@@ -142,7 +122,7 @@ const RegisterPage: React.FC = () => {
 
                       {/* Button */}
                       <Link href={option.link} className="w-full">
-                        <Button className="w-full bg-gradient-to-r from-green-500 to-teal-600 hover:from-green-600 hover:to-teal-700 text-white font-semibold py-3 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 group border-0">
+                        <Button className="w-full bg-gradient-to-r from-green-500 to-teal-600 hover:from-green-600 hover:to-teal-700 text-white  py-3 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 group border-0">
                           <span className="flex items-center justify-center">
                             Register as {option.title}
                             <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
@@ -161,7 +141,7 @@ const RegisterPage: React.FC = () => {
                 Already have an account?{' '}
                 <Link
                   href="/login"
-                  className="text-green-400 hover:text-green-300 font-semibold hover:underline transition-colors"
+                  className="text-green-400 hover:text-green-300  hover:underline transition-colors"
                 >
                   Sign in here
                 </Link>

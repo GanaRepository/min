@@ -141,7 +141,7 @@ export default function DashboardPage() {
     progressData;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 text-white">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 text-white pt-12">
       {/* Header */}
       <div className="bg-gray-800/50 backdrop-blur-xl border-b border-gray-600/40">
         <div className="max-w-7xl mx-auto px-2 sm:px-4 md:px-6 lg:px-8 py-6 sm:py-8">

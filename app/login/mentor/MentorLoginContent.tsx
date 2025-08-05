@@ -117,7 +117,7 @@ const MentorLoginContent: React.FC = () => {
         </div>
 
         {/* Grid pattern overlay */}
-        <div className="absolute inset-0 opacity-10">
+        {/* <div className="absolute inset-0 opacity-10">
           <div
             className="w-full h-full"
             style={{
@@ -128,7 +128,7 @@ const MentorLoginContent: React.FC = () => {
               backgroundSize: '50px 50px',
             }}
           />
-        </div>
+        </div> */}
 
         {/* Main container */}
         <motion.div

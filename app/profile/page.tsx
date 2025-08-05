@@ -75,7 +75,7 @@ export default function ProfilePage() {
         </div>
 
         {/* Grid pattern overlay */}
-        <div className="absolute inset-0 opacity-10">
+        {/* <div className="absolute inset-0 opacity-10">
           <div
             className="w-full h-full"
             style={{
@@ -86,7 +86,7 @@ export default function ProfilePage() {
               backgroundSize: '50px 50px',
             }}
           />
-        </div>
+        </div> */}
 
         <div className="relative z-10 container mx-auto px-2 sm:px-4">
           <div className="max-w-2xl md:max-w-3xl lg:max-w-4xl mx-auto">

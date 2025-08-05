@@ -81,7 +81,7 @@ export default function AdminLogin() {
             repeat: Infinity,
             ease: 'linear',
           }}
-          className="absolute top-1/4 left-1/4 w-64 h-64 bg-red-500/10 rounded-full blur-xl"
+          className="absolute top-1/4 left-1/4 w-64 h-64 bg-red-500/10  blur-xl"
         />
         <motion.div
           animate={{
@@ -93,7 +93,7 @@ export default function AdminLogin() {
             repeat: Infinity,
             ease: 'linear',
           }}
-          className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-gray-500/10 rounded-full blur-xl"
+          className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-gray-500/10  blur-xl"
         />
       </div>
 
@@ -128,14 +128,14 @@ export default function AdminLogin() {
         initial={{ opacity: 0, y: 50, scale: 0.9 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.8, ease: 'easeOut' }}
-        className="bg-gray-800/90 backdrop-blur-xl border border-gray-600/50 rounded-2xl p-4 sm:p-6 md:p-8 w-full max-w-md mx-2 sm:mx-4 shadow-2xl relative z-10"
+        className="bg-gray-800/90 backdrop-blur-xl border border-gray-600/50  p-4 sm:p-6 md:p-8 w-full max-w-md mx-2 sm:mx-4 shadow-2xl relative z-10"
       >
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, duration: 0.6 }}
-          className="text-center mb-8"
+          className="text-center mb-8 "
         >
           <div className="mb-4">
             <motion.div
@@ -148,7 +148,7 @@ export default function AdminLogin() {
                 repeat: Infinity,
                 repeatDelay: 3,
               }}
-              className="w-16 h-16 bg-gradient-to-br from-red-500 to-red-600 rounded-full flex items-center justify-center mx-auto text-white text-2xl shadow-lg"
+              className="rounded-lg w-16 h-16 bg-gradient-to-br from-red-500 to-red-600  flex items-center justify-center mx-auto text-white text-2xl shadow-lg"
             >
               👑
             </motion.div>
@@ -166,7 +166,7 @@ export default function AdminLogin() {
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
-              className="bg-red-500/20 border border-red-500/50 rounded-lg p-3 mb-6"
+              className="bg-red-500/20 border border-red-500/50  p-3 mb-6"
             >
               <div className="flex items-center text-red-300 text-sm">
                 <span className="mr-2">⚠️</span>
@@ -199,7 +199,7 @@ export default function AdminLogin() {
                 value={formData.email}
                 onChange={handleInputChange}
                 required
-                className="w-full bg-gray-700/50 border border-gray-600 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-300 pl-12"
+                className="w-full bg-gray-700/50 border border-gray-600  px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-300 pl-12"
                 placeholder="admin@mintoons.com"
               />
               <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">
@@ -223,7 +223,7 @@ export default function AdminLogin() {
                 value={formData.password}
                 onChange={handleInputChange}
                 required
-                className="w-full bg-gray-700/50 border border-gray-600 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-300 pl-12 pr-12"
+                className="w-full bg-gray-700/50 border border-gray-600  px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-300 pl-12 pr-12"
                 placeholder="Enter your admin password"
               />
               <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">
@@ -247,7 +247,7 @@ export default function AdminLogin() {
             whileTap={{ scale: 0.98 }}
             type="submit"
             disabled={isLoading}
-            className="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-semibold py-3 sm:py-4 px-4 sm:px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden text-base sm:text-lg"
+            className="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-semibold py-3 sm:py-4 px-4 sm:px-6  transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden text-base sm:text-lg"
           >
             <AnimatePresence mode="wait">
               {isLoading ? (
@@ -265,7 +265,7 @@ export default function AdminLogin() {
                       repeat: Infinity,
                       ease: 'linear',
                     }}
-                    className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full mr-2"
+                    className="w-5 h-5 border-2 border-white/30 border-t-white  mr-2"
                   />
                   Authenticating...
                 </motion.div>
@@ -289,7 +289,7 @@ export default function AdminLogin() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.8, duration: 0.6 }}
-          className="mt-6 p-3 sm:p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-lg"
+          className="mt-6 p-3 sm:p-4 bg-yellow-500/10 border border-yellow-500/30 "
         >
           <div className="flex items-start">
             <span className="text-yellow-400 mr-2 mt-0.5">🛡️</span>

@@ -44,12 +44,7 @@ const Footer: React.FC = () => {
           <div className="md:col-span-1 mb-8 sm:mb-12">
             <div className="flex justify-center sm:justify-around items-center h-16 sm:h-20">
               <Link href="/">
-                <MintoonsLogo
-                  size="lg"
-                  theme="magical"
-                  animated={true}
-                  showText={true}
-                />
+                         <MintoonsLogo variant="color" /> 
               </Link>
             </div>
             <p className="text-xs sm:text-sm text-gray-800 mb-2 sm:mb-4">
@@ -181,7 +176,7 @@ const Footer: React.FC = () => {
             {/* Office Location Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
               {/* USA Office Card */}
-              <div className="bg-gradient-to-br from-green-50 to-blue-50 backdrop-blur-sm overflow-hidden shadow-md relative rounded-lg border border-green-200 min-h-[260px] sm:min-h-[240px]">
+              <div className="bg-gradient-to-br from-green-50 to-blue-50 backdrop-blur-sm overflow-hidden shadow-md relative  border border-green-200 min-h-[260px] sm:min-h-[240px]">
                 <div className="absolute top-0 right-0 bg-blue-600 text-white rounded-bl-lg px-2 py-1 text-xs font-bold z-10">
                   US
                 </div>
@@ -225,7 +220,7 @@ const Footer: React.FC = () => {
               </div>
 
               {/* India Office Card */}
-              <div className="bg-gradient-to-br from-orange-50 to-green-50 backdrop-blur-sm overflow-hidden shadow-md relative rounded-lg border border-orange-200 min-h-[260px] sm:min-h-[240px]">
+              <div className="bg-gradient-to-br from-orange-50 to-green-50 backdrop-blur-sm overflow-hidden shadow-md relative  border border-orange-200 min-h-[260px] sm:min-h-[240px]">
                 <div className="absolute top-0 right-0 bg-orange-600 text-white rounded-bl-lg px-2 py-1 text-xs font-bold z-10">
                   IN
                 </div>

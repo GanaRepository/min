@@ -106,12 +106,7 @@ const Navbar = () => {
       <div className="w-full mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-around items-center h-20">
           <Link href="/">
-            <MintoonsLogo
-              size="md"
-              theme="magical"
-              animated={true}
-              showText={true}
-            />
+           <MintoonsLogo variant="color" /> 
           </Link>
 
           <div className="hidden md:flex items-center space-x-8">

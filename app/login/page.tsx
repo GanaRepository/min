@@ -49,7 +49,7 @@ const LoginPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 text-white relative overflow-hidden">
       {/* Background Pattern */}
-      <div className="absolute inset-0 opacity-5">
+      {/* <div className="absolute inset-0 opacity-5">
         <svg width="100%" height="100%" className="absolute inset-0">
           <defs>
             <pattern
@@ -68,7 +68,7 @@ const LoginPage: React.FC = () => {
           </defs>
           <rect width="100%" height="100%" fill="url(#grid)" />
         </svg>
-      </div>
+      </div> */}
 
       {/* Hero Section */}
       <section
@@ -94,7 +94,7 @@ const LoginPage: React.FC = () => {
           </div>
 
           {/* Main Heading */}
-          <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-7xl font-bold mb-4 sm:mb-6 leading-tight">
+          <h1 className="text-2xl sm:text-4xl md:text-5xl  font-bold mb-4 sm:mb-6 leading-tight">
             Login to Your{' '}
             <span className="bg-gradient-to-r from-green-400 via-teal-300 to-cyan-400 bg-clip-text text-transparent">
               Creative Portal

@@ -1,7 +1,6 @@
-
-// app/create-stories/page.tsx
 'use client';
 
+import React from 'react';
 import { useState, useEffect, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
@@ -63,6 +62,8 @@ import Link from 'next/link';
 import { DiamondSeparator } from '@/components/seperators/DiamondSeparator';
 import { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
+import StoryModeSelection from '@/components/stories/StoryModeSelection';
+import FreeformStoryCreator from '@/components/stories/FreeformStoryCreator';
 
 interface SelectedElements {
   genre: string;
@@ -113,6 +114,7 @@ function CreateStoriesContent() {
   const searchParams = useSearchParams();
   const { toast } = useToast();
 
+  const [storyMode, setStoryMode] = useState<'selection' | 'guided' | 'freeform'>('selection');
   const [currentStep, setCurrentStep] = useState(0);
   const [selectedElements, setSelectedElements] = useState<SelectedElements>({
     genre: '',
@@ -144,6 +146,72 @@ function CreateStoriesContent() {
       });
     }
   }
+
+  // Mode selection handlers
+  const handleModeSelect = (mode: 'guided' | 'freeform') => {
+    setStoryMode(mode);
+    if (mode === 'guided') {
+      scrollToStoryElements();
+    }
+  };
+
+  const handleBackToModeSelection = () => {
+    setStoryMode('selection');
+    // Reset any state if needed
+    setCurrentStep(0);
+    setSelectedElements({
+      genre: '',
+      character: '',
+      setting: '',
+      theme: '',
+      mood: '',
+      tone: '',
+    });
+  };
+
+ const handleFreeformComplete = async (openingText: string) => {
+  if (!session?.user?.id) {
+    toast({
+      title: '❌ Error',
+      description: 'Please log in to create a story.',
+      variant: 'destructive',
+    });
+    return;
+  }
+
+  setIsCreating(true);
+  try {
+    const response = await fetch('/api/stories/create-session', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+        storyMode: 'freeform',
+        openingText: openingText.trim()
+      }),
+    });
+
+    const data = await response.json();
+    
+    if (response.ok && data.success) {
+      toast({
+        title: '🎉 Story Created!',
+        description: 'Your story adventure begins!',
+      });
+      router.push(`/children-dashboard/story/${data.session.id}`);
+    } else {
+      throw new Error(data.error || 'Failed to create story');
+    }
+  } catch (error) {
+    console.error('Error creating freeform story:', error);
+    toast({
+      title: '❌ Error',
+      description: error instanceof Error ? error.message : 'Failed to create story. Please try again.',
+      variant: 'destructive',
+    });
+  } finally {
+    setIsCreating(false);
+  }
+};
 
   // FIXED: Memoized createStoryFromPendingToken function
   const createStoryFromPendingToken = useCallback(
@@ -217,195 +285,112 @@ function CreateStoriesContent() {
     const processInitialization = async () => {
       console.log('🔄 Initializing create stories page...', {
         pendingToken: !!pendingToken,
-        status,
-        userRole: session?.user?.role,
+        sessionStatus: status,
+        hasSession: !!session,
       });
 
-      // CASE 1: Has pending token - process immediately
-      if (pendingToken) {
-        console.log('🎯 Found pending token, processing...');
-        setIsProcessingToken(true);
-
-        // Show immediate feedback
-        toast({
-          title: '🔄 Processing Your Story',
-          description: 'Restoring your saved story elements...',
-        });
-
-        // Wait for authentication if needed
-        if (status === 'loading') {
-          console.log('⏳ Waiting for authentication...');
-          return; // Will retry when status changes
-        }
-
-        // If authenticated, process token
-        if (status === 'authenticated' && session?.user?.role === 'child') {
-          console.log('✅ User authenticated, processing token...');
-          await createStoryFromPendingToken(pendingToken);
-          setHasInitialized(true);
-          return;
-        }
-
-        // If not authenticated, something went wrong
-        if (status === 'unauthenticated') {
-          console.log('❌ User not authenticated, redirecting to login...');
-          toast({
-            title: '🔒 Authentication Required',
-            description: 'Please log in to continue creating your story.',
-            variant: 'destructive',
-          });
-
-          const callbackUrl = `/create-stories?pendingToken=${pendingToken}`;
-          router.push(
-            `/login/child?callbackUrl=${encodeURIComponent(callbackUrl)}`
-          );
-          setHasInitialized(true);
-          return;
-        }
+      // Wait for session to load
+      if (status === 'loading') {
+        console.log('⏳ Waiting for session to load...');
+        return;
       }
 
-      // CASE 2: No token - normal initialization
-      else {
-        console.log('📝 Normal page load, checking localStorage...');
+      // Check authentication
+      if (!session || session.user.role !== 'child') {
+        console.log('🚫 Not authenticated or not a child, redirecting...');
+        router.push('/login/child');
+        return;
+      }
 
-        // Try to restore from localStorage
-        if (typeof window !== 'undefined') {
-          const pendingElements = localStorage.getItem('pendingStoryElements');
-          if (pendingElements) {
-            try {
-              const parsed = JSON.parse(pendingElements);
-              setSelectedElements(parsed);
+      // Set initialized flag first to prevent re-runs
+      setHasInitialized(true);
 
-              const completedSteps = Object.values(parsed).filter(
-                (v) => v !== ''
-              ).length;
-              if (completedSteps > 0) {
-                setCurrentStep(Math.min(completedSteps, steps.length - 1));
-              }
-
-              localStorage.removeItem('pendingStoryElements');
-
-              toast({
-                title: '✨ Welcome Back!',
-                description: 'Your story elements have been restored.',
-              });
-            } catch (error) {
-              console.error('Error loading pending elements:', error);
-              localStorage.removeItem('pendingStoryElements');
-            }
-          }
-        }
-
-        setHasInitialized(true);
+      // Process pending token if it exists
+      if (pendingToken) {
+        console.log('🎫 Found pending token, processing...');
+        setIsProcessingToken(true);
+        await createStoryFromPendingToken(pendingToken);
+      } else {
+        console.log('✅ No pending token, showing normal page');
       }
     };
 
     processInitialization();
   }, [
     pendingToken,
-    status,
     session,
+    status,
     hasInitialized,
-    toast,
     router,
     createStoryFromPendingToken,
   ]);
 
-  // Handle element selection
-  const handleElementSelect = (elementName: string) => {
+  // Element selection handlers (existing code)
+  const handleElementSelect = (category: string, value: string) => {
     setSelectedElements((prev) => ({
       ...prev,
-      [currentStepData.id]: elementName,
+      [category]: value,
     }));
-  };
 
-  // Navigation handlers
-  const handleNext = () => {
-    if (currentStep < steps.length - 1) {
-      setCurrentStep(currentStep + 1);
+    // Auto-advance to next step
+    const currentStepId = steps[currentStep]?.id;
+    if (currentStepId === category && currentStep < steps.length - 1) {
+      setTimeout(() => {
+        setCurrentStep(currentStep + 1);
+      }, 300);
     }
   };
 
-  const handleBack = () => {
-    if (currentStep > 0) {
-      setCurrentStep(currentStep - 1);
+  const handleStepClick = (stepIndex: number) => {
+    if (stepIndex <= currentStep || isCurrentStepComplete(stepIndex)) {
+      setCurrentStep(stepIndex);
     }
   };
 
-  // Create story handler
-  const handleCreateStory = async () => {
+  const createStory = async () => {
+    const allElementsSelected = Object.values(selectedElements).every(
+      (value) => value !== ''
+    );
+
+    if (!allElementsSelected) {
+      toast({
+        title: '⚠️ Missing Elements',
+        description: 'Please select all story elements before creating your story.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
     setIsCreating(true);
 
     try {
-      // Validate all elements are selected
-      const incompleteElements = Object.entries(selectedElements).filter(
-        ([_, value]) => !value
-      );
-      if (incompleteElements.length > 0) {
-        toast({
-          title: '❌ Incomplete Selection',
-          description: 'Please select all story elements first!',
-          variant: 'destructive',
-        });
-        setIsCreating(false);
-        return;
-      }
-
-      toast({
-        title: '✨ Creating Your Story',
-        description: 'Getting everything ready for your creative adventure...',
-      });
-
       const response = await fetch('/api/stories/create-session', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ elements: selectedElements }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          elements: selectedElements,
+          storyMode: 'guided'
+        }),
       });
 
       const data = await response.json();
-      console.log('📤 Create-session response:', { ok: response.ok, data });
 
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to create story session');
-      }
-
-      // Case 1: Need authentication
-      if (data.requiresAuth) {
-        toast({
-          title: '🔒 Login Required',
-          description:
-            "Please log in to create your story. We'll save your progress!",
-        });
-
-        const callbackUrl = `/create-stories?pendingToken=${data.token}`;
-        router.push(
-          `/login/child?callbackUrl=${encodeURIComponent(callbackUrl)}`
-        );
-        return;
-      }
-
-      // Case 2: Story created successfully
-      if (data.success) {
+      if (response.ok && data.success) {
         toast({
           title: '🎉 Story Created!',
           description: 'Your magical adventure begins now!',
         });
 
-        // Clear localStorage
-        if (typeof window !== 'undefined') {
-          localStorage.removeItem('pendingStoryElements');
-        }
-
-        // Small delay to show success message
-        setTimeout(() => {
-          router.push(`/children-dashboard/story/${data.session.id}`);
-        }, 1500);
-        return;
+        // Navigate to the story page
+        router.push(`/children-dashboard/story/${data.session.id}`);
+      } else {
+        throw new Error(data.error || 'Unknown error occurred');
       }
-
-      throw new Error('Unexpected response from server');
     } catch (error) {
-      console.error('❌ Error creating story:', error);
+      console.error('Error creating story:', error);
+
       toast({
         title: '❌ Error Creating Story',
         description:
@@ -419,86 +404,27 @@ function CreateStoriesContent() {
     }
   };
 
-  // Loading state for token processing
-  if (isProcessingToken || (pendingToken && !hasInitialized)) {
+  // Show loading when processing token
+  if (isProcessingToken) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 flex items-center justify-center">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="text-center p-8 bg-gray-800/50 backdrop-blur-xl border border-gray-600/40 rounded-2xl max-w-md"
-        >
-          <motion.div
-            animate={{ rotate: 360 }}
-            transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
-            className="w-16 h-16 mx-auto mb-6 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center"
-          >
-            <Sparkles className="w-8 h-8 text-white" />
-          </motion.div>
-
-          <h2 className="text-2xl font-bold text-white mb-4">
-            ✨ Creating Your Story
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-16 h-16 text-purple-400 animate-spin mx-auto mb-4" />
+          <h2 className="text-2xl  text-white mb-2">
+            Creating Your Story...
           </h2>
-
-          <div className="space-y-2 text-gray-300 mb-6">
-            <motion.p
-              animate={{ opacity: [0.5, 1, 0.5] }}
-              transition={{ duration: 1.5, repeat: Infinity }}
-            >
-              🔄 Restoring your saved story elements...
-            </motion.p>
-            <motion.p
-              animate={{ opacity: [0.5, 1, 0.5] }}
-              transition={{ duration: 1.5, repeat: Infinity, delay: 0.5 }}
-            >
-              🤖 Preparing AI collaboration...
-            </motion.p>
-            <motion.p
-              animate={{ opacity: [0.5, 1, 0.5] }}
-              transition={{ duration: 1.5, repeat: Infinity, delay: 1 }}
-            >
-              📚 Setting up your writing space...
-            </motion.p>
-          </div>
-
-          <div className="w-full bg-gray-700 rounded-full h-2">
-            <motion.div
-              initial={{ width: 0 }}
-              animate={{ width: '100%' }}
-              transition={{ duration: 3, ease: 'easeInOut' }}
-              className="bg-gradient-to-r from-purple-500 to-pink-500 h-2 rounded-full"
-            />
-          </div>
-
-          <p className="text-gray-400 text-sm mt-4">
-            This usually takes a few seconds...
+          <p className="text-gray-400">
+            Your magical adventure is being prepared!
           </p>
-        </motion.div>
+        </div>
       </div>
     );
   }
-
-  // Don't show the main UI until initialized
-  if (!hasInitialized) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 flex items-center justify-center">
-        <Loader2 className="w-8 h-8 text-white animate-spin" />
-      </div>
-    );
-  }
-
-  // Get current step data
-  const currentStepData = steps[currentStep];
-  const elementType = currentStepData.id as keyof typeof STORY_ELEMENTS;
-  const currentElements = STORY_ELEMENTS[elementType] || [];
-  const allStepsComplete = Object.values(selectedElements).every(
-    (value) => value !== ''
-  );
 
   return (
-    <div className=" py-10 text-white min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 relative overflow-hidden">
+       <div className=" py-10 text-white min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 relative overflow-hidden">
       {/* Animated background */}
-      <div className="absolute inset-0 opacity-5">
+      {/* <div className="absolute inset-0 opacity-5">
         <svg width="100%" height="100%" className="absolute inset-0">
           <defs>
             <pattern
@@ -517,7 +443,7 @@ function CreateStoriesContent() {
           </defs>
           <rect width="100%" height="100%" fill="url(#grid)" />
         </svg>
-      </div>
+      </div> */}
 
       {/* Floating Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -583,986 +509,786 @@ function CreateStoriesContent() {
         ))}
       </div>
 
-   
-    {/* Enhanced Hero Section - FIXED LAYOUT */}
+
       {/* Enhanced Hero Section - FIXED LAYOUT */}
-<div className="relative flex items-center px-2 sm:px-4 md:px-6 lg:px-8 py-10 sm:py-20">
-  <div className="max-w-7xl mx-auto w-full">
-    <div className="flex flex-col lg:grid lg:grid-cols-2 gap-8 sm:gap-12 items-center pt-8 sm:pt-20">
-      {/* Left Content - Always on top for mobile */}
-      <motion.div
-        className="space-y-8 text-center lg:text-left w-full lg:order-1"
-        initial={{ opacity: 0, x: -100 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 1, delay: 0.2 }}
-      >
-        <motion.div
-          className="inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-purple-500/20 to-indigo-500/20 border border-purple-400/30 backdrop-blur-xl"
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.4, duration: 0.8 }}
-          whileHover={{ scale: 1.05 }}
-        >
-          <motion.div
-            animate={{ rotate: [0, 360] }}
-            transition={{
-              duration: 3,
-              repeat: Infinity,
-              ease: 'linear',
-            }}
-          >
-            <Sparkles className="w-4 h-4 text-purple-400 mr-2" />
-          </motion.div>
-          <span className="text-purple-200 font-medium text-sm">
-            Start Your Creative Journey
-          </span>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6, duration: 0.8 }}
-        >
-          <h1 className="font-bold text-2xl sm:text-4xl lg:text-6xl leading-tight tracking-tight">
-            <motion.span
-              className="block text-white"
-              initial={{ opacity: 0, x: -20 }}
+      <div className="relative flex items-center px-2 sm:px-4 md:px-6 lg:px-8 py-10 sm:py-12">
+        <div className="max-w-7xl mx-auto w-full">
+          <div className="flex flex-col lg:grid lg:grid-cols-2 gap-8 sm:gap-12 items-center pt-8 sm:pt-20">
+            {/* Left Content - Always on top for mobile */}
+            <motion.div
+              className="space-y-8 text-center lg:text-left w-full lg:order-1"
+              initial={{ opacity: 0, x: -100 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.8, duration: 0.6 }}
+              transition={{ duration: 1, delay: 0.2 }}
             >
-              How to Create
-            </motion.span>
-            <motion.span
-              className="block bg-gradient-to-r from-purple-400 via-pink-300 to-cyan-400 bg-clip-text text-transparent"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 1.0, duration: 0.6 }}
-            >
-              Amazing Stories
-            </motion.span>
-          </h1>
-        </motion.div>
-
-        <motion.p
-          className="text-base sm:text-xl text-gray-300 leading-relaxed max-w-2xl mx-auto lg:mx-0"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.2, duration: 0.8 }}
-        >
-          Follow our simple 6-step process to transform your imagination
-          into incredible stories with AI collaboration and teacher
-          mentorship.
-        </motion.p>
-
-        <motion.div
-          className="flex flex-col gap-3 sm:flex-row sm:gap-4 justify-center lg:justify-start"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.4, duration: 0.8 }}
-        >
-          <Link href="/contact-us">
-            <motion.button
-              className="group relative px-8 py-4 bg-gradient-to-r from-purple-500 to-indigo-600 rounded-xl font-semibold text-lg text-white shadow-lg shadow-purple-500/25 overflow-hidden"
-              whileHover={{
-                scale: 1.05,
-                boxShadow: '0 20px 40px -10px rgba(147, 51, 234, 0.6)',
-              }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <span className="relative z-10 flex items-center">
-                <motion.div
-                  animate={{ x: [0, 5, 0] }}
-                  transition={{ duration: 1.5, repeat: Infinity }}
-                >
-                  <Play className="w-5 h-5 mr-2" />
-                </motion.div>
-                Know More →
-              </span>
               <motion.div
-                className="absolute inset-0 bg-gradient-to-r from-indigo-600 to-purple-500"
-                initial={{ x: '-100%' }}
-                whileHover={{ x: '0%' }}
-                transition={{ duration: 0.3 }}
-              />
-            </motion.button>
-          </Link>
-        </motion.div>
-      </motion.div>
-
-      {/* Right Side - Enhanced 3D Animated Scene - Below text on mobile */}
-      <motion.div
-        className="relative flex justify-center items-center w-full lg:order-2"
-        initial={{ opacity: 0, x: 100 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 1, delay: 0.8 }}
-      >
-        <motion.div
-          className="relative z-20"
-          animate={{
-            y: [0, -20, 0],
-            rotateY: [0, 5, 0, -5, 0],
-          }}
-          transition={{
-            duration: 6,
-            repeat: Infinity,
-            ease: 'easeInOut',
-          }}
-        >
-          <motion.div
-            className="relative w-full max-w-xs sm:max-w-lg h-72 sm:h-96 bg-gradient-to-br from-gray-800/90 to-gray-900/90 backdrop-blur-2xl rounded-2xl sm:rounded-3xl border border-cyan-400/30 shadow-2xl overflow-hidden"
-            whileHover={{
-              scale: 1.05,
-              rotateY: 10,
-              boxShadow: '0 30px 60px -10px rgba(34, 211, 238, 0.4)',
-            }}
-            style={{
-              transformStyle: 'preserve-3d',
-            }}
-          >
-            <div className="absolute inset-0">
-              <Image
-                src="/kid7.jpg"
-                alt="Creative young writer"
-                fill
-                className="object-cover"
-                sizes="(max-width: 640px) 90vw, 32rem"
-              />
-              <div className="absolute inset-0 bg-gray-900/70" />
-            </div>
-
-            <div className="absolute inset-0">
-              <motion.div
-                className="absolute inset-0 bg-gradient-to-br from-purple-500/20 to-cyan-500/20"
-                animate={{
-                  background: [
-                    'linear-gradient(135deg, rgba(168, 85, 247, 0.2) 0%, rgba(34, 211, 238, 0.2) 100%)',
-                    'linear-gradient(135deg, rgba(34, 211, 238, 0.2) 0%, rgba(236, 72, 153, 0.2) 100%)',
-                    'linear-gradient(135deg, rgba(236, 72, 153, 0.2) 0%, rgba(168, 85, 247, 0.2) 100%)',
-                  ],
-                }}
-                transition={{
-                  duration: 8,
-                  repeat: Infinity,
-                  ease: 'easeInOut',
-                }}
-              />
-            </div>
-
-            <div className="relative z-10 p-6 sm:p-8 h-full flex flex-col justify-between">
-              <div className="text-center">
+                className="inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-purple-500/20 to-indigo-500/20 border border-purple-400/30 backdrop-blur-xl"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.4, duration: 0.8 }}
+                whileHover={{ scale: 1.05 }}
+              >
                 <motion.div
-                  className="w-12 sm:w-16 h-12 sm:h-16 bg-gradient-to-r from-cyan-400 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4 shadow-lg"
-                  animate={{
-                    rotate: [0, 360],
-                    scale: [1, 1.1, 1],
-                  }}
+                  animate={{ rotate: [0, 360] }}
                   transition={{
-                    duration: 4,
+                    duration: 3,
                     repeat: Infinity,
                     ease: 'linear',
                   }}
                 >
-                  <span className="text-white font-bold text-lg sm:text-xl">M</span>
+                  <Sparkles className="w-4 h-4 text-purple-400 mr-2" />
                 </motion.div>
+                <span className="text-purple-200 font-medium text-sm">
+                  Start Your Creative Journey
+                </span>
+              </motion.div>
 
-                <motion.h3
-                  className="text-xl sm:text-2xl font-bold text-white mb-2"
-                  animate={{
-                    opacity: [0.8, 1, 0.8],
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6, duration: 0.8 }}
+              >
+                <h1 className=" text-2xl sm:text-4xl lg:text-6xl leading-tight tracking-tight">
+                  <motion.span
+                    className="block text-white"
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.8, duration: 0.6 }}
+                  >
+                    How to Create
+                  </motion.span>
+                  <motion.span
+                    className="block bg-gradient-to-r from-purple-400 via-pink-300 to-cyan-400 bg-clip-text text-transparent"
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 1.0, duration: 0.6 }}
+                  >
+                    Amazing Stories
+                  </motion.span>
+                </h1>
+              </motion.div>
+
+              <motion.p
+                className="text-base sm:text-xl text-gray-300 leading-relaxed max-w-2xl mx-auto lg:mx-0"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1.2, duration: 0.8 }}
+              >
+                Follow our simple 6-step process to transform your imagination
+                into incredible stories with AI collaboration and teacher
+                mentorship.
+              </motion.p>
+
+              <motion.div
+                className="flex flex-col gap-3 sm:flex-row sm:gap-4 justify-center lg:justify-start"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1.4, duration: 0.8 }}
+              >
+                <Link href="/contact-us">
+                  <motion.button
+                    className="group relative px-8 py-4 bg-gradient-to-r from-purple-500 to-indigo-600   text-lg text-white shadow-lg shadow-purple-500/25 overflow-hidden"
+                    whileHover={{
+                      scale: 1.05,
+                      boxShadow: '0 20px 40px -10px rgba(147, 51, 234, 0.6)',
+                    }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <span className="relative z-10 flex items-center">
+                      <motion.div
+                        animate={{ x: [0, 5, 0] }}
+                        transition={{ duration: 1.5, repeat: Infinity }}
+                      >
+                        <Play className="w-5 h-5 mr-2" />
+                      </motion.div>
+                      Know More →
+                    </span>
+                    <motion.div
+                      className="absolute inset-0 bg-gradient-to-r from-indigo-600 to-purple-500"
+                      initial={{ x: '-100%' }}
+                      whileHover={{ x: '0%' }}
+                      transition={{ duration: 0.3 }}
+                    />
+                  </motion.button>
+                </Link>
+              </motion.div>
+            </motion.div>
+
+            {/* Right Side - Enhanced 3D Animated Scene - Below text on mobile */}
+            <motion.div
+              className="relative flex justify-center items-center w-full lg:order-2"
+              initial={{ opacity: 0, x: 100 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 1, delay: 0.8 }}
+            >
+              <motion.div
+                className="relative z-20"
+                animate={{
+                  y: [0, -20, 0],
+                  rotateY: [0, 5, 0, -5, 0],
+                }}
+                transition={{
+                  duration: 6,
+                  repeat: Infinity,
+                  ease: 'easeInOut',
+                }}
+              >
+                <motion.div
+                  className="relative w-full max-w-xs sm:max-w-lg h-72 sm:h-96 bg-gradient-to-br from-gray-800/90 to-gray-900/90 border border-cyan-400/30  overflow-hidden"
+                  whileHover={{
+                    scale: 1.05,
+                    rotateY: 10,
+                    boxShadow: '0 30px 60px -10px rgba(34, 211, 238, 0.4)',
                   }}
-                  transition={{
-                    duration: 3,
-                    repeat: Infinity,
+                  style={{
+                    transformStyle: 'preserve-3d',
                   }}
                 >
-                  Mintoons
-                </motion.h3>
+                  <div className="absolute inset-0">
+                    <Image
+                      src="/kid7.jpg"
+                      alt="Creative young writer"
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 640px) 90vw, 32rem"
+                    />
+           
+                  </div>
 
-                <p className="text-cyan-300 text-xs sm:text-sm font-medium">
-                  &quot;How to Create Amazing Stories&quot;
-                </p>
-              </div>
 
-              <div className="space-y-2 sm:space-y-3">
-                {[...Array(6)].map((_, i) => (
+                  <div className="relative z-10 p-6 sm:p-8 h-full flex flex-col justify-between">
+                    <div className="text-center">
+                      <motion.div
+                        className="w-12 sm:w-16 h-12 sm:h-16 bg-gradient-to-r from-cyan-400 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4 shadow-lg"
+                        animate={{
+                          rotate: [0, 360],
+                          scale: [1, 1.1, 1],
+                        }}
+                        transition={{
+                          duration: 4,
+                          repeat: Infinity,
+                          ease: 'linear',
+                        }}
+                      >
+                        <span className="text-white  text-lg sm:text-xl">M</span>
+                      </motion.div>
+
+                      <motion.h3
+                        className="text-xl sm:text-2xl  text-white mb-2"
+                        animate={{
+                          opacity: [0.8, 1, 0.8],
+                        }}
+                        transition={{
+                          duration: 3,
+                          repeat: Infinity,
+                        }}
+                      >
+                        Mintoons
+                      </motion.h3>
+
+                      <p className="text-cyan-300 text-xs sm:text-sm font-medium">
+                        &quot;How to Create Amazing Stories&quot;
+                      </p>
+                    </div>
+
+                    <div className="space-y-2 sm:space-y-3">
+                      {[...Array(6)].map((_, i) => (
+                        <motion.div
+                          key={i}
+                          className="h-2 bg-gradient-to-r from-gray-600/50 to-transparent rounded-full"
+                          initial={{ width: 0 }}
+                          animate={{
+                            width: `${Math.random() * 40 + 60}%`,
+                            opacity: [0.3, 0.8, 0.3],
+                          }}
+                          transition={{
+                            duration: 2,
+                            repeat: Infinity,
+                            delay: i * 0.3,
+                            ease: 'easeInOut',
+                          }}
+                        />
+                      ))}
+                    </div>
+
+                    <div className="flex justify-center space-x-4 sm:space-x-8">
+                      {[Feather, Palette, Sparkles, BookOpen].map((Icon, i) => (
+                        <motion.div
+                          key={i}
+                          className="w-6 sm:w-8 h-6 sm:h-8 bg-gray-700/50 rounded-lg flex items-center justify-center"
+                          animate={{
+                            scale: [1, 1.2, 1],
+                            opacity: [0.5, 1, 0.5],
+                          }}
+                          transition={{
+                            duration: 2,
+                            repeat: Infinity,
+                            delay: i * 0.4,
+                          }}
+                        >
+                          <Icon className="w-3 sm:w-4 h-3 sm:h-4 text-cyan-400" />
+                        </motion.div>
+                      ))}
+                    </div>
+                  </div>
+
                   <motion.div
-                    key={i}
-                    className="h-2 bg-gradient-to-r from-gray-600/50 to-transparent rounded-full"
-                    initial={{ width: 0 }}
+                    className="absolute inset-0  border-2 border-transparent"
                     animate={{
-                      width: `${Math.random() * 40 + 60}%`,
-                      opacity: [0.3, 0.8, 0.3],
+                      borderColor: [
+                        'rgba(34, 211, 238, 0.5)',
+                        'rgba(168, 85, 247, 0.5)',
+                        'rgba(236, 72, 153, 0.5)',
+                        'rgba(34, 211, 238, 0.5)',
+                      ],
                     }}
                     transition={{
-                      duration: 2,
+                      duration: 4,
                       repeat: Infinity,
-                      delay: i * 0.3,
-                      ease: 'easeInOut',
                     }}
                   />
-                ))}
-              </div>
+                </motion.div>
+              </motion.div>
 
-              <div className="flex justify-center space-x-4 sm:space-x-8">
-                {[Feather, Palette, Sparkles, BookOpen].map((Icon, i) => (
-                  <motion.div
-                    key={i}
-                    className="w-6 sm:w-8 h-6 sm:h-8 bg-gray-700/50 rounded-lg flex items-center justify-center"
-                    animate={{
-                      scale: [1, 1.2, 1],
-                      opacity: [0.5, 1, 0.5],
-                    }}
-                    transition={{
-                      duration: 2,
-                      repeat: Infinity,
-                      delay: i * 0.4,
-                    }}
-                  >
-                    <Icon className="w-3 sm:w-4 h-3 sm:h-4 text-cyan-400" />
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-
-            <motion.div
-              className="absolute inset-0 rounded-2xl sm:rounded-3xl border-2 border-transparent"
-              animate={{
-                borderColor: [
-                  'rgba(34, 211, 238, 0.5)',
-                  'rgba(168, 85, 247, 0.5)',
-                  'rgba(236, 72, 153, 0.5)',
-                  'rgba(34, 211, 238, 0.5)',
-                ],
-              }}
-              transition={{
-                duration: 4,
-                repeat: Infinity,
-              }}
-            />
-          </motion.div>
-        </motion.div>
-
-        <motion.div
-          className="absolute w-full h-full"
-          animate={{ rotate: [0, 360] }}
-          transition={{
-            duration: 30,
-            repeat: Infinity,
-            ease: 'linear',
-          }}
-        >
-          {[
-            {
-              icon: Target,
-              color: 'from-purple-500 to-indigo-600',
-              position: 'top-0 left-1/2 -translate-x-1/2 -translate-y-6 sm:-translate-y-8',
-            },
-            {
-              icon: PenTool,
-              color: 'from-blue-500 to-cyan-600',
-              position: 'right-0 top-1/2 -translate-y-1/2 translate-x-6 sm:translate-x-8',
-            },
-            {
-              icon: MessageSquare,
-              color: 'from-orange-500 to-red-600',
-              position:
-                'bottom-0 left-1/2 -translate-x-1/2 translate-y-6 sm:translate-y-8',
-            },
-            {
-              icon: Share2,
-              color: 'from-pink-500 to-purple-600',
-              position: 'left-0 top-1/2 -translate-y-1/2 -translate-x-6 sm:-translate-x-8',
-            },
-          ].map((item, i) => (
-            <motion.div
-              key={i}
-              className={`absolute ${item.position} w-12 sm:w-16 h-12 sm:h-16 bg-gradient-to-r ${item.color} rounded-full flex items-center justify-center shadow-lg opacity-80`}
-              animate={{
-                rotate: [0, -360],
-                scale: [1, 1.2, 1],
-              }}
-              transition={{
-                rotate: {
+              <motion.div
+                className="absolute w-full h-full"
+                animate={{ rotate: [0, 360] }}
+                transition={{
                   duration: 30,
                   repeat: Infinity,
                   ease: 'linear',
-                },
-                scale: {
+                }}
+              >
+                {[
+                  {
+                    icon: Target,
+                    color: 'from-purple-500 to-indigo-600',
+                    position: 'top-0 left-1/2 -translate-x-1/2 -translate-y-6 sm:-translate-y-8',
+                  },
+                  {
+                    icon: PenTool,
+                    color: 'from-blue-500 to-cyan-600',
+                    position: 'right-0 top-1/2 -translate-y-1/2 translate-x-6 sm:translate-x-8',
+                  },
+                  {
+                    icon: MessageSquare,
+                    color: 'from-orange-500 to-red-600',
+                    position:
+                      'bottom-0 left-1/2 -translate-x-1/2 translate-y-6 sm:translate-y-8',
+                  },
+                  {
+                    icon: Share2,
+                    color: 'from-pink-500 to-purple-600',
+                    position: 'left-0 top-1/2 -translate-y-1/2 -translate-x-6 sm:-translate-x-8',
+                  },
+                ].map((item, i) => (
+                  <motion.div
+                    key={i}
+                    className={`absolute ${item.position} w-12 sm:w-16 h-12 sm:h-16 bg-gradient-to-r ${item.color} rounded-full flex items-center justify-center shadow-lg opacity-80`}
+                    animate={{
+                      rotate: [0, -360],
+                      scale: [1, 1.2, 1],
+                    }}
+                    transition={{
+                      rotate: {
+                        duration: 30,
+                        repeat: Infinity,
+                        ease: 'linear',
+                      },
+                      scale: {
+                        duration: 3,
+                        repeat: Infinity,
+                        delay: i * 0.5,
+                      },
+                    }}
+                    whileHover={{ scale: 1.3, opacity: 1 }}
+                  >
+                    <item.icon className="w-5 sm:w-8 h-5 sm:h-8 text-white" />
+                  </motion.div>
+                ))}
+              </motion.div>
+
+              <motion.div
+                className="absolute -top-12 sm:-top-20 -left-12 sm:-left-20 bg-white/10 backdrop-blur-sm rounded-lg px-3 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm text-white border border-white/20"
+                animate={{
+                  y: [0, -10, 0],
+                  opacity: [0.7, 1, 0.7],
+                }}
+                transition={{
                   duration: 3,
                   repeat: Infinity,
-                  delay: i * 0.5,
-                },
-              }}
-              whileHover={{ scale: 1.3, opacity: 1 }}
-            >
-              <item.icon className="w-5 sm:w-8 h-5 sm:h-8 text-white" />
-            </motion.div>
-          ))}
-        </motion.div>
-
-        <motion.div
-          className="absolute -top-12 sm:-top-20 -left-12 sm:-left-20 bg-white/10 backdrop-blur-sm rounded-lg px-3 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm text-white border border-white/20"
-          animate={{
-            y: [0, -10, 0],
-            opacity: [0.7, 1, 0.7],
-          }}
-          transition={{
-            duration: 3,
-            repeat: Infinity,
-            delay: 1,
-          }}
-        >
-          ✨ Choose Elements
-        </motion.div>
-
-        <motion.div
-          className="absolute -bottom-12 sm:-bottom-20 -right-12 sm:-right-20 bg-white/10 backdrop-blur-sm rounded-lg px-3 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm text-white border border-white/20"
-          animate={{
-            y: [0, 10, 0],
-            opacity: [0.7, 1, 0.7],
-          }}
-          transition={{
-            duration: 3,
-            repeat: Infinity,
-            delay: 2,
-          }}
-        >
-          📚 Publish Stories
-        </motion.div>
-
-        <motion.div
-          className="absolute top-1/2 -right-20 sm:-right-32 bg-white/10 backdrop-blur-sm rounded-lg px-3 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm text-white border border-white/20"
-          animate={{
-            x: [0, 10, 0],
-            opacity: [0.7, 1, 0.7],
-          }}
-          transition={{
-            duration: 3,
-            repeat: Infinity,
-            delay: 0.5,
-          }}
-        >
-          🤖 AI Collaboration
-        </motion.div>
-      </motion.div>
-    </div>
-  </div>
-</div>
-
-      <DiamondSeparator />
-
-      {/* How It Works Section */}
-      <div className="relative px-2 sm:px-4 md:px-6 lg:px-8 py-10 sm:py-20 ">
-        <div className="max-w-6xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-2xl sm:text-4xl font-bold mb-4 sm:mb-6">
-              How{' '}
-              <span className="bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
-                It Works
-              </span>
-            </h2>
-            <p className="text-base sm:text-xl text-gray-300 max-w-3xl mx-auto">
-              Our AI-powered platform makes story creation fun and educational
-              through collaborative writing
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 md:gap-8">
-            {[
-              {
-                step: '01',
-                title: 'Choose Elements',
-                description:
-                  'Select your favorite story elements from our curated collection',
-                icon: Target,
-                color: 'from-blue-500 to-cyan-500',
-              },
-              {
-                step: '02',
-                title: 'AI Collaboration',
-                description:
-                  'Our AI creates story prompts based on your choices and guides your writing',
-                icon: Brain,
-                color: 'from-purple-500 to-pink-500',
-              },
-              {
-                step: '03',
-                title: 'Create Together',
-                description:
-                  'Write your story with AI assistance, getting real-time feedback and suggestions',
-                icon: PenTool,
-                color: 'from-green-500 to-emerald-500',
-              },
-            ].map((item, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.2 }}
-                viewport={{ once: true }}
-                className="relative"
-              >
-                <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-8 border border-white/20 hover:bg-white/15 transition-all duration-300 h-full">
-                  <div
-                    className={`w-16 h-16 bg-gradient-to-r ${item.color} rounded-xl flex items-center justify-center mb-6`}
-                  >
-                    <item.icon className="w-8 h-8 text-white" />
-                  </div>
-
-                  <div className="mb-4">
-                    <span className="text-sm font-mono text-gray-400 block mb-2">
-                      STEP {item.step}
-                    </span>
-                    <h3 className="text-2xl font-bold text-white mb-3">
-                      {item.title}
-                    </h3>
-                  </div>
-
-                  <p className="text-gray-300 leading-relaxed">
-                    {item.description}
-                  </p>
-                </div>
-
-                {index < 2 && (
-                  <div className="hidden md:block absolute top-1/2 -right-4 w-8 h-0.5 bg-gradient-to-r from-cyan-400 to-transparent transform -translate-y-1/2" />
-                )}
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      <DiamondSeparator />
-
-      {/* Features Section */}
-      <div className="relative px-2 sm:px-4 md:px-6 lg:px-8 py-10 sm:py-20">
-        <div className="max-w-6xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-2xl sm:text-4xl font-bold mb-4 sm:mb-6">
-              Why Choose{' '}
-              <span className="bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
-                Mintoons
-              </span>
-            </h2>
-            <p className="text-base sm:text-xl text-gray-300 max-w-3xl mx-auto">
-              Advanced features designed to make story writing engaging,
-              educational, and fun for children
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 sm:gap-6">
-            {[
-              {
-                title: 'AI-Powered Assistance',
-                description:
-                  "Smart AI that adapts to your child's writing level and provides helpful suggestions",
-                icon: Brain,
-                color: 'from-purple-500 to-indigo-500',
-              },
-              {
-                title: 'Age-Appropriate Content',
-                description:
-                  'All content is filtered and optimized for different age groups and learning levels',
-                icon: Shield,
-                color: 'from-green-500 to-teal-500',
-              },
-              {
-                title: 'Real-time Feedback',
-                description:
-                  'Instant feedback on grammar, creativity, and story structure as you write',
-                icon: MessageSquare,
-                color: 'from-blue-500 to-cyan-500',
-              },
-              {
-                title: 'Progress Tracking',
-                description:
-                  'Monitor writing improvement with detailed analytics and achievement systems',
-                icon: TrendingUp,
-                color: 'from-orange-500 to-red-500',
-              },
-              {
-                title: 'Creative Elements',
-                description:
-                  'Hundreds of story elements to choose from for endless creative possibilities',
-                icon: Lightbulb,
-                color: 'from-yellow-500 to-orange-500',
-              },
-              {
-                title: 'Safe Environment',
-                description:
-                  'Secure platform with parental controls and content moderation',
-                icon: Shield,
-                color: 'from-pink-500 to-purple-500',
-              },
-              {
-                title: 'Export Stories',
-                description:
-                  'Download completed stories as PDF or Word documents to share and print',
-                icon: BookOpen,
-                color: 'from-indigo-500 to-purple-500',
-              },
-              {
-                title: '24/7 Support',
-                description:
-                  'Round-the-clock support for both children and parents',
-                icon: Clock,
-                color: 'from-teal-500 to-green-500',
-              },
-            ].map((feature, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                viewport={{ once: true }}
-                className="group"
-              >
-                <div className="bg-white/10 backdrop-blur-xl rounded-xl p-6 border border-white/20 hover:bg-white/15 transition-all duration-300 h-full">
-                  <div
-                    className={`w-12 h-12 bg-gradient-to-r ${feature.color} rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}
-                  >
-                    <feature.icon className="w-6 h-6 text-white" />
-                  </div>
-
-                  <h3 className="text-lg font-semibold text-white mb-3">
-                    {feature.title}
-                  </h3>
-
-                  <p className="text-sm text-gray-300 leading-relaxed">
-                    {feature.description}
-                  </p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      <DiamondSeparator />
-
-      {/* Call to Action Section */}
-
-      {/* STORY ELEMENTS SELECTION SECTION */}
-      <div
-        className="relative z-10 min-h-screen flex flex-col"
-        id="story-elements"
-      >
-        <div className="sticky top-0 z-30 bg-gray-900/80 backdrop-blur-xl border-b border-gray-700/50 p-4 sm:p-8">
-          <div className="max-w-6xl mx-auto px-2 sm:px-4 md:px-6 lg:px-8 py-4 sm:py-6">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-2xl font-bold text-white">
-                Step {currentStep + 1} of {steps.length}
-              </h2>
-            </div>
-
-            <div className="mb-4">
-              <h3 className="text-xl text-cyan-400 font-semibold mb-2">
-                {currentStepData.title}
-              </h3>
-              <p className="text-gray-300">{currentStepData.description}</p>
-            </div>
-
-            <div className="w-full bg-gray-700/50 rounded-full h-2">
-              <motion.div
-                className="h-2 bg-gradient-to-r from-cyan-500 to-purple-500 rounded-full"
-                initial={{ width: 0 }}
-                animate={{
-                  width: `${((currentStep + (isCurrentStepComplete(currentStep) ? 1 : 0)) / steps.length) * 100}%`,
+                  delay: 1,
                 }}
-                transition={{ duration: 0.5, ease: 'easeInOut' }}
-              />
-            </div>
+              >
+                ✨ Choose Elements
+              </motion.div>
 
-            <div className="flex justify-between mt-4 text-xs">
-              {steps.map((step, index) => {
-                const isCompleted =
-                  selectedElements[step.id as keyof SelectedElements] !== '';
-                const isCurrent = index === currentStep;
+              <motion.div
+                className="absolute -bottom-12 sm:-bottom-20 -right-12 sm:-right-20 bg-white/10 backdrop-blur-sm rounded-lg px-3 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm text-white border border-white/20"
+                animate={{
+                  y: [0, 10, 0],
+                  opacity: [0.7, 1, 0.7],
+                }}
+                transition={{
+                  duration: 3,
+                  repeat: Infinity,
+                  delay: 2,
+                }}
+              >
+                📚 Publish Stories
+              </motion.div>
 
-                return (
-                  <div
-                    key={step.id}
-                    className={`flex flex-col items-center space-y-1 ${
-                      isCurrent
-                        ? 'text-cyan-400'
-                        : isCompleted
-                          ? 'text-green-400'
-                          : 'text-gray-500'
-                    }`}
-                  >
-                    <div
-                      className={`w-3 h-3 rounded-full ${
-                        isCurrent
-                          ? 'bg-cyan-400 animate-pulse'
-                          : isCompleted
-                            ? 'bg-green-400'
-                            : 'bg-gray-600'
-                      }`}
-                    />
-                    <span className="hidden sm:block text-center max-w-16">
-                      {step.title.split(' ')[0]}
-                    </span>
-                  </div>
-                );
-              })}
-            </div>
+              <motion.div
+                className="absolute top-1/2 -right-20 sm:-right-32 bg-white/10 backdrop-blur-sm rounded-lg px-3 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm text-white border border-white/20"
+                animate={{
+                  x: [0, 10, 0],
+                  opacity: [0.7, 1, 0.7],
+                }}
+                transition={{
+                  duration: 3,
+                  repeat: Infinity,
+                  delay: 0.5,
+                }}
+              >
+                🤖 AI Collaboration
+              </motion.div>
+            </motion.div>
           </div>
         </div>
-
-        <main className="flex-1 p-2 sm:p-4 md:p-6 mt-6 sm:mt-8 mb-6 sm:mb-8">
-          <div className="max-w-7xl mx-auto">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={currentStep}
-                initial={{ opacity: 0, y: 40 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -40 }}
-                transition={{ duration: 0.4 }}
-                className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 sm:gap-6 mb-6 sm:mb-8"
-              >
-                {currentElements.map((element: any, index: number) => {
-                  const isSelected =
-                    selectedElements[elementType as string] === element.name;
-                  const IconComponent = element.icon;
-
-                  return (
-                    <motion.button
-                      key={`${String(elementType)}-${element.name}-${index}`}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.1 + index * 0.05 }}
-                      whileHover={{
-                        y: -8,
-                        scale: 1.02,
-                        transition: { duration: 0.2 },
-                      }}
-                      whileTap={{ scale: 0.98 }}
-                      onClick={() => handleElementSelect(element.name)}
-                      className={`relative p-6 rounded-2xl border-2 transition-all duration-300 group overflow-hidden ${
-                        isSelected
-                          ? `bg-gradient-to-br ${element.color} border-white/30 text-white shadow-2xl shadow-black/20`
-                          : 'bg-gray-800/60 border-gray-600/40 text-gray-300 hover:border-gray-500/60 hover:bg-gray-700/60'
-                      }`}
-                    >
-                      <div className="absolute inset-0 opacity-10">
-                        <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent" />
-                      </div>
-
-                      {isSelected && (
-                        <motion.div
-                          initial={{ scale: 0, rotate: -180 }}
-                          animate={{ scale: 1, rotate: 0 }}
-                          transition={{ type: 'spring', duration: 0.6 }}
-                          className="absolute top-4 right-4 w-8 h-8 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center border border-white/30"
-                        >
-                          <Check className="w-4 h-4 text-white" />
-                        </motion.div>
-                      )}
-
-                      <div className="relative z-10 flex items-center justify-between mb-4">
-                        <div className="text-4xl">{element.emoji}</div>
-                        <motion.div
-                          className={`p-3 rounded-xl ${isSelected ? 'bg-white/20' : 'bg-gray-700/50 group-hover:bg-gray-600/50'} transition-colors`}
-                          whileHover={{ rotate: 15, scale: 1.1 }}
-                          transition={{ type: 'spring', duration: 0.3 }}
-                        >
-                          <IconComponent
-                            className={`w-6 h-6 ${isSelected ? 'text-white' : 'text-gray-400 group-hover:text-white'} transition-colors`}
-                          />
-                        </motion.div>
-                      </div>
-
-                      <h3
-                        className={`font-bold text-lg mb-3 relative z-10 ${
-                          isSelected
-                            ? 'text-white'
-                            : 'text-white group-hover:text-white'
-                        } transition-colors`}
-                      >
-                        {element.name}
-                      </h3>
-
-                      <div className="relative z-10">
-                        <div
-                          className={`w-full h-1 rounded-full overflow-hidden ${
-                            isSelected
-                              ? 'bg-white/30'
-                              : 'bg-gray-600 group-hover:bg-gray-500'
-                          } transition-colors`}
-                        >
-                          <motion.div
-                            className={`h-full ${
-                              isSelected
-                                ? 'bg-white'
-                                : 'bg-gradient-to-r from-blue-500 to-green-500 opacity-0 group-hover:opacity-100'
-                            } transition-opacity`}
-                            initial={{ width: '0%' }}
-                            animate={{ width: isSelected ? '100%' : '0%' }}
-                            whileHover={{ width: '100%' }}
-                            transition={{ duration: 0.3 }}
-                          />
-                        </div>
-                      </div>
-
-                      {isSelected && (
-                        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                          {[...Array(6)].map((_, i) => (
-                            <motion.div
-                              key={i}
-                              className="absolute w-1 h-1 bg-white rounded-full"
-                              animate={{
-                                y: [20, -20, 20],
-                                x: [0, Math.random() * 10 - 5, 0],
-                                opacity: [0, 1, 0],
-                              }}
-                              transition={{
-                                duration: 2 + Math.random() * 2,
-                                repeat: Infinity,
-                                delay: Math.random() * 2,
-                              }}
-                              style={{
-                                left: `${20 + Math.random() * 60}%`,
-                                top: `${50 + Math.random() * 30}%`,
-                              }}
-                            />
-                          ))}
-                        </div>
-                      )}
-                    </motion.button>
-                  );
-                })}
-              </motion.div>
-            </AnimatePresence>
-
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.5 }}
-              className="flex items-center justify-between mb-8"
-            >
-              <motion.button
-                whileHover={{ x: -2 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={handleBack}
-                disabled={currentStep === 0}
-                className={`flex items-center space-x-2 px-6 py-3 rounded-xl font-medium transition-all ${
-                  currentStep === 0
-                    ? 'text-gray-500 cursor-not-allowed bg-gray-800'
-                    : 'text-gray-300 hover:text-white hover:bg-gray-700/50 bg-gray-800/50'
-                }`}
-              >
-                <ArrowLeft className="w-4 h-4" />
-                <span>Back</span>
-              </motion.button>
-
-              <div className="text-center">
-                <div
-                  className={`text-sm mb-1 ${
-                    isCurrentStepComplete(currentStep)
-                      ? 'text-green-400'
-                      : 'text-yellow-400'
-                  }`}
-                >
-                  {isCurrentStepComplete(currentStep)
-                    ? '✅ Step complete!'
-                    : '⏳ Please select an option'}
-                </div>
-
-                {status === 'loading' && (
-                  <div className="text-xs text-gray-400">
-                    Checking authentication...
-                  </div>
-                )}
-              </div>
-
-              <motion.button
-                whileHover={
-                  !isCreating && isCurrentStepComplete(currentStep)
-                    ? { x: 2 }
-                    : {}
-                }
-                whileTap={
-                  !isCreating && isCurrentStepComplete(currentStep)
-                    ? { scale: 0.98 }
-                    : {}
-                }
-                onClick={
-                  currentStep === steps.length - 1
-                    ? handleCreateStory
-                    : handleNext
-                }
-                disabled={!isCurrentStepComplete(currentStep) || isCreating}
-                className={`flex items-center space-x-2 px-6 py-3 rounded-xl font-medium transition-all ${
-                  !isCurrentStepComplete(currentStep) || isCreating
-                    ? 'bg-gray-600/50 text-gray-400 cursor-not-allowed'
-                    : currentStep === steps.length - 1
-                      ? 'bg-gradient-to-r from-purple-500 to-pink-600 text-white hover:from-purple-600 hover:to-pink-700 shadow-lg shadow-purple-500/25'
-                      : 'bg-gradient-to-r from-green-500 to-blue-600 text-white hover:from-green-600 hover:to-blue-700 shadow-lg shadow-green-500/25'
-                }`}
-              >
-                {isCreating ? (
-                  <>
-                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    <span>Creating Magic...</span>
-                  </>
-                ) : currentStep === steps.length - 1 ? (
-                  <>
-                    <span>Create My Story</span>
-                    <Wand2 className="w-4 h-4" />
-                  </>
-                ) : (
-                  <>
-                    <span>Next</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </>
-                )}
-              </motion.button>
-            </motion.div>
-
-            {Object.values(selectedElements).some((value) => value !== '') && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="p-6 bg-gray-800/40 backdrop-blur-xl border border-gray-600/40 rounded-xl"
-              >
-                <h3 className="text-white font-semibold mb-4 flex items-center">
-                  <Sparkles className="w-5 h-5 mr-2 text-yellow-400" />
-                  Your Story Elements
-                </h3>
-                <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6 sm:gap-4">
-                  {Object.entries(selectedElements).map(
-                    ([type, elementName]) => {
-                      if (!elementName) return null;
-
-                      const elementTypeKey =
-                        type as keyof typeof STORY_ELEMENTS;
-                      const element = STORY_ELEMENTS[elementTypeKey]?.find(
-                        (e: any) => e.name === elementName
-                      );
-
-                      return (
-                        <div key={type} className="text-center">
-                          <div className="text-2xl mb-1">
-                            {element?.emoji || '✨'}
-                          </div>
-                          <div className="text-xs text-gray-400 uppercase mb-1">
-                            {type}
-                          </div>
-                          <div className="text-sm text-white font-medium">
-                            {elementName}
-                          </div>
-                          <div className="w-full h-1 bg-gradient-to-r from-blue-500 to-green-500 rounded-full mt-2" />
-                        </div>
-                      );
-                    }
-                  )}
-                </div>
-
-                {allStepsComplete && (
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    className="mt-8 p-4 bg-green-500/20 border border-green-500/30 rounded-xl text-center"
-                  >
-                    <div className="text-green-400 font-semibold text-lg mb-2">
-                      🎉 All elements selected! Ready to create your story!
-                    </div>
-                    <div className="text-green-300 text-sm">
-                      Your unique story will be:{' '}
-                      <strong>{selectedElements.genre}</strong> adventure with{' '}
-                      <strong>{selectedElements.character}</strong> in{' '}
-                      <strong>{selectedElements.setting}</strong>
-                    </div>
-                  </motion.div>
-                )}
-              </motion.div>
-            )}
-          </div>
-        </main>
       </div>
 
-      {/* Floating Action Button - Scroll to Elements */}
-      {!Object.values(selectedElements).some((value) => value !== '') && (
-        <motion.button
-          initial={{ opacity: 0, scale: 0 }}
-          animate={{ opacity: 1, scale: 1 }}
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-          onClick={scrollToStoryElements}
-          className="fixed bottom-8 right-8 bg-gradient-to-r from-purple-500 to-pink-600 text-white p-4 rounded-full shadow-2xl z-50 hover:shadow-purple-500/25 transition-all duration-300"
-        >
-          <motion.div
-            animate={{ y: [0, -4, 0] }}
-            transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-          >
-            <Rocket className="w-6 h-6" />
-          </motion.div>
-        </motion.button>
-      )}
+       <DiamondSeparator />
 
-      {/* Progress Indicator for Mobile */}
-      <div className="fixed bottom-4 left-4 right-4 sm:hidden z-40">
-        {Object.values(selectedElements).some((value) => value !== '') && (
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-gray-800/90 backdrop-blur-xl border border-gray-600/40 rounded-xl p-4"
-          >
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-white font-medium text-sm">
-                Progress:{' '}
-                {Object.values(selectedElements).filter((v) => v !== '').length}
-                /{steps.length}
-              </span>
-              {allStepsComplete && (
-                <motion.div
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  className="text-green-400"
-                >
-                  <CheckCircle className="w-5 h-5" />
-                </motion.div>
-              )}
-            </div>
-            <div className="w-full bg-gray-700 rounded-full h-2">
-              <motion.div
-                className="h-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full"
-                initial={{ width: 0 }}
-                animate={{
-                  width: `${(Object.values(selectedElements).filter((v) => v !== '').length / steps.length) * 100}%`,
-                }}
-                transition={{ duration: 0.5 }}
-              />
-            </div>
-          </motion.div>
-        )}
-      </div>
-    </div>
-  );
+       {/* How It Works Section */}
+       <section className="py-12 px-6">
+         <div className="max-w-6xl mx-auto text-center">
+           <motion.h2
+             initial={{ opacity: 0, y: 30 }}
+             whileInView={{ opacity: 1, y: 0 }}
+             viewport={{ once: true }}
+             className="text-4xl  text-white mb-4"
+           >
+             How It Works
+           </motion.h2>
+           <motion.p
+             initial={{ opacity: 0, y: 20 }}
+             whileInView={{ opacity: 1, y: 0 }}
+             viewport={{ once: true }}
+             transition={{ delay: 0.2 }}
+             className="text-gray-400 text-xl mb-16"
+           >
+             Create amazing stories in just 3 simple steps
+           </motion.p>
+
+           <div className="grid md:grid-cols-3 gap-12">
+             {[
+               {
+                 step: '01',
+                 title: 'Choose Your Path',
+                 description: 'Select guided story building with elements or write your own opening',
+                 icon: Compass,
+                 color: 'from-purple-500 to-indigo-600',
+               },
+               {
+                 step: '02',
+                 title: 'AI Collaboration',
+                 description: 'Our AI helps guide your story or responds to your creative writing',
+                 icon: Sparkles,
+                 color: 'from-blue-500 to-cyan-600',
+               },
+               {
+                 step: '03',
+                 title: 'Create Together',
+                 description: 'Continue writing your story with AI assistance and bring it to life',
+                 icon: BookOpen,
+                 color: 'from-green-500 to-teal-600',
+               },
+             ].map((item, index) => (
+               <motion.div
+                 key={index}
+                 initial={{ opacity: 0, y: 30 }}
+                 whileInView={{ opacity: 1, y: 0 }}
+                 viewport={{ once: true }}
+                 transition={{ delay: index * 0.2 }}
+                 className="relative"
+               >
+                 <div className="bg-gradient-to-br from-gray-800/60 to-gray-700/60 backdrop-blur-xl border border-gray-600/40  p-8 h-full hover:border-gray-500/60 transition-all duration-300 hover:scale-105">
+                   <div className="text-center">
+                     <div className="relative mb-6">
+                       <div className={`absolute inset-0 bg-gradient-to-r ${item.color} rounded-full blur-lg opacity-30`}></div>
+                       <div className={`relative bg-gradient-to-r ${item.color} w-16 h-16 rounded-full flex items-center justify-center mx-auto`}>
+                         <item.icon className="w-8 h-8 text-white" />
+                       </div>
+                     </div>
+                     
+                     <div className="text-sm  text-gray-400 mb-2">
+                       STEP {item.step}
+                     </div>
+                     <h3 className="text-xl  text-white mb-4">
+                       {item.title}
+                     </h3>
+                     <p className="text-gray-300">
+                       {item.description}
+                     </p>
+                   </div>
+                 </div>
+               </motion.div>
+             ))}
+           </div>
+         </div>
+       </section>
+
+       <DiamondSeparator />
+
+       {/* Features Section */}
+       <section className="py-12 px-6">
+         <div className="max-w-6xl mx-auto">
+           <motion.div
+             initial={{ opacity: 0, y: 30 }}
+             whileInView={{ opacity: 1, y: 0 }}
+             viewport={{ once: true }}
+             className="text-center mb-16"
+           >
+             <h2 className="text-4xl  text-white mb-4">
+               Why Choose Mintoons?
+             </h2>
+             <p className="text-gray-400 text-xl">
+               Everything you need to create amazing stories
+             </p>
+           </motion.div>
+
+           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+             {[
+               {
+                 icon: Sparkles,
+                 title: 'AI-Powered Assistance',
+                 description: 'Get creative help and story suggestions from our smart AI',
+                 color: 'from-purple-500 to-indigo-600',
+               },
+               {
+                 icon: Shield,
+                 title: 'Age-Appropriate Content',
+                 description: 'Safe, educational storytelling designed for young minds',
+                 color: 'from-green-500 to-teal-600',
+               },
+               {
+                 icon: TrendingUp,
+                 title: 'Real-time Feedback',
+                 description: 'Instant suggestions to improve your writing skills',
+                 color: 'from-blue-500 to-cyan-600',
+               },
+               {
+                 icon: Users,
+                 title: 'Collaborative Writing',
+                 description: 'Work together with AI to create amazing stories',
+                 color: 'from-pink-500 to-rose-600',
+               },
+               {
+                 icon: Target,
+                 title: 'Goal-Oriented Learning',
+                 description: 'Structured approach to develop writing skills',
+                 color: 'from-orange-500 to-red-600',
+               },
+               {
+                 icon: Award,
+                 title: 'Progress Tracking',
+                 description: 'See your improvement with detailed analytics',
+                 color: 'from-yellow-500 to-orange-600',
+               },
+               {
+                 icon: Globe,
+                 title: 'Unlimited Creativity',
+                 description: 'Explore any genre, character, or setting you can imagine',
+                 color: 'from-indigo-500 to-purple-600',
+               },
+               {
+                 icon: Clock,
+                 title: 'Anytime, Anywhere',
+                 description: 'Write your stories whenever inspiration strikes',
+                 color: 'from-teal-500 to-green-600',
+               },
+             ].map((feature, index) => (
+               <motion.div
+                 key={index}
+                 initial={{ opacity: 0, y: 30 }}
+                 whileInView={{ opacity: 1, y: 0 }}
+                 viewport={{ once: true }}
+                 transition={{ delay: index * 0.1 }}
+                 className="group"
+               >
+                 <div className="bg-gradient-to-br from-gray-800/60 to-gray-700/60 backdrop-blur-xl border border-gray-600/40  p-6 h-full hover:border-gray-500/60 transition-all duration-300 group-hover:scale-105">
+                   <div className="relative mb-4">
+                     <div className={`absolute inset-0 bg-gradient-to-r ${feature.color} rounded-lg blur-lg opacity-20 group-hover:opacity-30 transition-opacity`}></div>
+                     <div className={`relative bg-gradient-to-r ${feature.color} w-12 h-12 rounded-lg flex items-center justify-center`}>
+                       <feature.icon className="w-6 h-6 text-white" />
+                     </div>
+                   </div>
+                   
+                   <h3 className="text-lg  text-white mb-2">
+                     {feature.title}
+                   </h3>
+                   <p className="text-gray-300 text-sm">
+                     {feature.description}
+                   </p>
+                 </div>
+               </motion.div>
+             ))}
+           </div>
+         </div>
+       </section>
+
+       <DiamondSeparator />
+
+       {/* Story Creation Interface */}
+       <section id="story-elements" className="py-12 px-6">
+         <div className="max-w-7xl mx-auto">
+           <AnimatePresence mode="wait">
+             {storyMode === 'selection' && (
+               <motion.div
+                 key="selection"
+                 initial={{ opacity: 0, y: 20 }}
+                 animate={{ opacity: 1, y: 0 }}
+                 exit={{ opacity: 0, y: -20 }}
+               >
+                 <StoryModeSelection onModeSelect={handleModeSelect} />
+               </motion.div>
+             )}
+
+             {storyMode === 'freeform' && (
+               <motion.div
+                 key="freeform"
+                 initial={{ opacity: 0, y: 20 }}
+                 animate={{ opacity: 1, y: 0 }}
+                 exit={{ opacity: 0, y: -20 }}
+               >
+                 <FreeformStoryCreator 
+                   onComplete={handleFreeformComplete}
+                   onBack={handleBackToModeSelection}
+                 />
+               </motion.div>
+             )}
+
+             {storyMode === 'guided' && (
+               <motion.div
+                 key="guided"
+                 initial={{ opacity: 0, y: 20 }}
+                 animate={{ opacity: 1, y: 0 }}
+                 exit={{ opacity: 0, y: -20 }}
+               >
+                 <div className="mb-8">
+                   <button
+                     onClick={handleBackToModeSelection}
+                     className="flex items-center text-gray-800 hover:text-gray-900 transition-colors mb-8 bg-gray-300 p-2 rounded-lg m-2"
+                   >
+                     <ArrowLeft className="w-4 h-4 mr-2" />
+                     Back to Mode Selection
+                   </button>
+                 </div>
+
+                 {/* Story Elements Selection Header */}
+                 <div className="text-center mb-12">
+                   <motion.h2
+                     initial={{ opacity: 0, y: 20 }}
+                     animate={{ opacity: 1, y: 0 }}
+                     className="text-4xl  text-white mb-4"
+                   >
+                     Choose Your Story Elements
+                   </motion.h2>
+                   <motion.p
+                     initial={{ opacity: 0, y: 20 }}
+                     animate={{ opacity: 1, y: 0 }}
+                     transition={{ delay: 0.2 }}
+                     className="text-gray-400 text-xl"
+                   >
+                     Pick the elements that will shape your unique adventure
+                   </motion.p>
+                 </div>
+
+                 {/* Progress Steps */}
+                 <div className="mb-12">
+                   <div className="flex flex-wrap justify-center gap-4 mb-8">
+                     {steps.map((step, index) => (
+                       <motion.button
+                         key={step.id}
+                         initial={{ opacity: 0, scale: 0.8 }}
+                         animate={{ opacity: 1, scale: 1 }}
+                         transition={{ delay: index * 0.1 }}
+                         onClick={() => handleStepClick(index)}
+                         className={`flex items-center space-x-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                           index === currentStep
+                             ? 'bg-purple-500 text-white shadow-lg'
+                             : isCurrentStepComplete(index)
+                             ? 'bg-green-500/20 text-green-400 border border-green-500/30'
+                             : index < currentStep
+                             ? 'bg-gray-600/50 text-gray-300 cursor-pointer hover:bg-gray-600/70'
+                             : 'bg-gray-700/50 text-gray-500'
+                         }`}
+                         disabled={index > currentStep && !isCurrentStepComplete(index)}
+                       >
+                         <span className="w-6 h-6 rounded-full border-2 flex items-center justify-center text-xs">
+                           {isCurrentStepComplete(index) ? (
+                             <Check className="w-3 h-3" />
+                           ) : (
+                             index + 1
+                           )}
+                         </span>
+                         <span className="hidden sm:inline">{step.title}</span>
+                       </motion.button>
+                     ))}
+                   </div>
+
+                   {/* Progress Bar */}
+                   <div className="w-full bg-gray-700/50 rounded-full h-2">
+                     <motion.div
+                       className="bg-gradient-to-r from-purple-500 to-pink-600 h-2 rounded-full"
+                       initial={{ width: 0 }}
+                       animate={{
+                         width: `${((currentStep + 1) / steps.length) * 100}%`
+                       }}
+                       transition={{ duration: 0.5 }}
+                     />
+                   </div>
+                 </div>
+
+                 {/* Current Step */}
+                 <AnimatePresence mode="wait">
+                   <motion.div
+                     key={currentStep}
+                     initial={{ opacity: 0, x: 50 }}
+                     animate={{ opacity: 1, x: 0 }}
+                     exit={{ opacity: 0, x: -50 }}
+                     transition={{ duration: 0.3 }}
+                     className="mb-12"
+                   >
+                     <div className="text-center mb-8">
+                       <h3 className="text-2xl  text-white mb-2">
+                         {steps[currentStep]?.title}
+                       </h3>
+                       <p className="text-gray-400">
+                         {steps[currentStep]?.description}
+                       </p>
+                     </div>
+
+                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                      {STORY_ELEMENTS[steps[currentStep]?.id as keyof typeof STORY_ELEMENTS]?.map((element: any, index: number) => (
+                        <motion.div
+                          key={element.name}
+                          initial={{ opacity: 0, scale: 0.8 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{ delay: index * 0.05 }}
+                          className="cursor-pointer"
+                        >
+                          <div
+                            onClick={() => {
+                              console.log('Element clicked:', element.name);
+                              handleElementSelect(steps[currentStep]?.id, element.name);
+                            }}
+                            onTouchEnd={() => {
+                              console.log('Element touched:', element.name);
+                              handleElementSelect(steps[currentStep]?.id, element.name);
+                            }}
+                            className={`p-4  border-2 transition-all text-center hover:scale-105 active:scale-95 transform ${
+                              selectedElements[steps[currentStep]?.id] === element.name
+                                ? 'border-purple-500 bg-purple-500/20 text-white'
+                                : 'border-gray-600/40 bg-gray-800/60 text-gray-300 hover:border-gray-500/60 hover:bg-gray-700/60'
+                            }`}
+                          >
+                            <div className="text-2xl mb-2">{element.emoji}</div>
+                            <div className="font-medium text-sm">{element.name}</div>
+                            {element.description && (
+                              <div className="text-xs text-gray-400 mt-1">
+                                {element.description}
+                              </div>
+                            )}
+                          </div>
+                        </motion.div>
+                      ))}
+                     </div>
+                   </motion.div>
+                 </AnimatePresence>
+
+                 {/* Story Summary & Create Button */}
+                 <motion.div
+                   initial={{ opacity: 0, y: 20 }}
+                   animate={{ opacity: 1, y: 0 }}
+                   className="bg-gradient-to-br from-gray-800/60 to-gray-700/60 backdrop-blur-xl border border-gray-600/40  p-8"
+                 >
+                   <h4 className="text-xl  text-white mb-4 text-center">
+                     Your Story Preview
+                   </h4>
+                   
+                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
+                     {Object.entries(selectedElements).map(([type, value]) => (
+                       <div key={type} className="text-center">
+                         <div className="text-sm text-gray-400 capitalize mb-1">{type}</div>
+                         <div className={`text-white font-medium ${!value ? 'text-gray-500' : ''}`}>
+                           {value || 'Not selected'}
+                         </div>
+                       </div>
+                     ))}
+                   </div>
+
+                   {Object.values(selectedElements).every(value => value !== '') && (
+                     <motion.div
+                       initial={{ opacity: 0, scale: 0.9 }}
+                       animate={{ opacity: 1, scale: 1 }}
+                       className="text-center mb-6"
+                     >
+                       <div className="text-green-400  text-lg mb-2">
+                         🎉 All elements selected! Ready to create your story!
+                       </div>
+                       <div className="text-green-300 text-sm">
+                         Your {selectedElements.mood} {selectedElements.genre} adventure featuring {selectedElements.character} in {selectedElements.setting} awaits!
+                       </div>
+                     </motion.div>
+                   )}
+
+                   <motion.button
+                     whileHover={{ scale: Object.values(selectedElements).every(value => value !== '') ? 1.02 : 1 }}
+                     whileTap={{ scale: Object.values(selectedElements).every(value => value !== '') ? 0.98 : 1 }}
+                     onClick={createStory}
+                     disabled={!Object.values(selectedElements).every(value => value !== '') || isCreating}
+                     className={`w-full flex items-center justify-center space-x-2 py-4 px-6 rounded-lg font-medium text-lg transition-all ${
+                       Object.values(selectedElements).every(value => value !== '') && !isCreating
+                         ? 'bg-gradient-to-r from-purple-500 to-pink-600 text-white hover:from-purple-600 hover:to-pink-700 shadow-lg hover:shadow-xl'
+                         : 'bg-gray-600/50 text-gray-400 cursor-not-allowed'
+                     }`}
+                   >
+                     {isCreating ? (
+                       <>
+                         <Loader2 className="w-5 h-5 animate-spin" />
+                         <span>Creating Your Story...</span>
+                       </>
+                     ) : (
+                       <>
+                         <Sparkles className="w-5 h-5" />
+                         <span>Create My Story</span>
+                       </>
+                     )}
+                   </motion.button>
+                 </motion.div>
+               </motion.div>
+             )}
+           </AnimatePresence>
+         </div>
+       </section>
+     </div>
+ );
 }
 
 export default function CreateStoriesPage() {
-  return (
-    <Suspense
-      fallback={
-        <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 flex items-center justify-center">
-          <div className="text-white">Loading...</div>
-        </div>
-      }
-    >
-      <CreateStoriesContent />
-    </Suspense>
-  );
+ return (
+   <Suspense
+     fallback={
+       <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 flex items-center justify-center">
+         <div className="text-center">
+           <Loader2 className="w-16 h-16 text-purple-400 animate-spin mx-auto mb-4" />
+           <p className="text-white text-xl">Loading create stories page...</p>
+         </div>
+       </div>
+     }
+   >
+     <CreateStoriesContent />
+   </Suspense>
+ );
 }

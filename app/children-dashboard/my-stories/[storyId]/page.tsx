@@ -228,17 +228,17 @@ export default function StoryViewPage({
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900">
-      <div className="max-w-6xl mx-auto px-2 sm:px-4 md:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
+      <div className="max-w-6xl mx-auto px-2 sm:px-4 md:px-6 lg:px-8 py-4 sm:py-6 lg:py-8 ">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-6 sm:mb-8"
+          className="mb-6 sm:mb-8 "
         >
           <Link href="/children-dashboard/my-stories">
             <motion.button
               whileHover={{ x: -2 }}
-              className="flex items-center space-x-2 text-gray-700 hover:text-white transition-colors mt-8 sm:mt-16 mb-6 sm:mb-10 bg-white p-2 sm:p-3 rounded-lg text-sm sm:text-base"
+              className="flex items-center space-x-2 text-gray-700 hover:text-gray-900 transition-colors mt-8 sm:mt-16 mb-6 sm:mb-10 bg-white p-2 sm:p-3 rounded-lg text-sm sm:text-base"
             >
               <ArrowLeft className="w-5 h-5" />
               <span>Back to My Stories</span>
@@ -271,14 +271,16 @@ export default function StoryViewPage({
 
               {/* Story Elements */}
               <div className="flex flex-wrap gap-1 sm:gap-2">
-                {Object.entries(story.elements).map(([type, value]) => (
-                  <span
-                    key={type}
-                    className="px-3 py-1 bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-500/30 rounded-full text-sm text-white capitalize"
-                  >
-                    {value}
-                  </span>
-                ))}
+                {story.elements && typeof story.elements === 'object'
+                  ? Object.entries(story.elements).map(([type, value]) => (
+                      <span
+                        key={type}
+                        className="px-3 py-1 bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-500/30 rounded-full text-sm text-white capitalize"
+                      >
+                        {value}
+                      </span>
+                    ))
+                  : null}
               </div>
             </div>
 

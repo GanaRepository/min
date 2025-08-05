@@ -13,7 +13,7 @@ export const SUBSCRIPTION_TIERS: Record<string, SubscriptionTier> = {
   FREE: {
     id: 'free',
     name: 'Free',
-    storyLimit: 5, // per month
+    storyLimit: 10, // per month
     price: 0,
     aiCalls: 7,
     assessmentType: 'ai',

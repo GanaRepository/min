@@ -314,7 +314,7 @@ export default function Home() {
         'Story Library',
         'Achievement Badges',
       ],
-      image: '/kid13.jpg',
+      image: '/kid14.jpg',
     },
   ];
 
@@ -366,7 +366,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 text-white relative overflow-hidden">
       {/* Background Pattern */}
-      <div className="absolute inset-0 opacity-5">
+      {/* <div className="absolute inset-0 opacity-5">
         <svg width="100%" height="100%" className="absolute inset-0">
           <defs>
             <pattern
@@ -385,7 +385,7 @@ export default function Home() {
           </defs>
           <rect width="100%" height="100%" fill="url(#grid)" />
         </svg>
-      </div>
+      </div> */}
 
       {/* Animated Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
@@ -405,7 +405,7 @@ export default function Home() {
       </div>
 
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center px-4 sm:px-6 lg:px-8 py-16">
+      <section className="relative min-h-screen flex items-center px-4 sm:px-6 lg:px-8 py-12">
         <div className="max-w-7xl mx-auto w-full">
           <div className="grid grid-cols-1 lg:grid-cols-3 lg:gap-12 xl:gap-16 items-center">
             {/* Left Content */}
@@ -430,7 +430,7 @@ export default function Home() {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 1, delay: 0.4 }}
               >
-                <h1 className="font-bold text-3xl sm:text-4xl lg:text-5xl leading-tight tracking-tight">
+                <h1 className=" text-3xl sm:text-4xl lg:text-5xl leading-tight tracking-tight">
                   <span className="block text-white">Where Young Writers</span>
                   <span className="block bg-gradient-to-r from-green-400 via-teal-300 to-cyan-400 bg-clip-text text-transparent">
                     Create Amazing Stories
@@ -463,14 +463,14 @@ export default function Home() {
               >
                 <Link href="/create-stories">
                   <motion.button
-                    className="group relative px-8 py-3 bg-gradient-to-r from-green-500 to-teal-600 rounded-xl font-semibold text-base text-white shadow-lg shadow-green-500/25 overflow-hidden"
+                    className="group relative px-8 py-3 bg-gradient-to-r from-green-500 to-teal-600 rounded-xl  text-base text-white shadow-lg shadow-green-500/25 overflow-hidden"
                     whileHover={{
                       scale: 1.05,
                       boxShadow: '0 10px 25px -5px rgba(16, 185, 129, 0.4)',
                     }}
                     whileTap={{ scale: 0.95 }}
                   >
-                    <span className="relative z-10 flex items-center font-semibold">
+                    <span className="relative z-10 flex items-center ">
                       <PenTool className="w-4 h-4 mr-2" />
                       Start Writing Now →
                     </span>
@@ -485,7 +485,7 @@ export default function Home() {
 
                 <Link href="/contact-us">
                   <motion.button
-                    className="px-8 py-3 bg-gray-800/60 backdrop-blur-xl rounded-xl font-semibold text-base text-white border border-gray-600/50 shadow-lg hover:bg-gray-700/60 transition-all duration-300"
+                    className="px-8 py-3 bg-gray-800/60 backdrop-blur-xl rounded-xl  text-base text-white border border-gray-600/50 shadow-lg hover:bg-gray-700/60 transition-all duration-300"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
@@ -535,7 +535,7 @@ export default function Home() {
               >
                 {/* Glow Effect */}
                 <motion.div
-                  className="absolute inset-0 bg-gradient-to-r from-green-500/30 to-teal-500/30 rounded-3xl blur-xl"
+                  className="absolute inset-0 bg-gradient-to-r from-green-500/30 to-teal-500/30  blur-xl"
                   animate={{
                     scale: [1, 1.2, 1],
                     opacity: [0.4, 0.8, 0.4],
@@ -548,7 +548,7 @@ export default function Home() {
                 />
 
                 {/* Hero Image Container */}
-                <div className="relative w-80 sm:w-96 h-[28rem] sm:h-[32rem] rounded-3xl overflow-hidden shadow-2xl">
+                <div className="relative w-80 sm:w-96 h-[28rem] sm:h-[32rem]  overflow-hidden shadow-2xl">
                   <Image
                     src="/kid3.jpg"
                     alt="Creative young writer"
@@ -601,7 +601,7 @@ export default function Home() {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 1.5 }}
                     >
-                      <h3 className="text-lg sm:text-xl font-bold text-white mb-2">
+                      <h3 className="text-lg sm:text-xl  text-white mb-2">
                         Mintoons
                       </h3>
                       <p className="text-green-300 text-xs sm:text-sm font-medium">
@@ -634,7 +634,7 @@ export default function Home() {
               >
                 {/* Enhanced Glow Effect */}
                 <motion.div
-                  className="absolute inset-0 bg-gradient-to-r from-green-500/30 to-teal-500/30 rounded-3xl blur-xl"
+                  className="absolute inset-0 bg-gradient-to-r from-green-500/30 to-teal-500/30  blur-xl"
                   animate={{
                     scale: [1, 1.2, 1],
                     opacity: [0.4, 0.8, 0.4],
@@ -647,7 +647,7 @@ export default function Home() {
                 />
 
                 {/* Main Card with Image */}
-                <div className="relative w-80 sm:w-96 h-[28rem] sm:h-[32rem] bg-gradient-to-br from-gray-800/95 to-gray-900/95 backdrop-blur-2xl rounded-3xl border border-gray-600/40 shadow-2xl overflow-hidden">
+                <div className="relative w-80 sm:w-96 h-[28rem] sm:h-[32rem] bg-gradient-to-br from-gray-800/95 to-gray-900/95 backdrop-blur-2xl  border border-gray-600/40 shadow-2xl overflow-hidden">
                   {/* Background Image */}
                   <div className="absolute inset-0 opacity-20">
                     <div className="w-full h-full bg-gradient-to-br from-green-500/20 to-teal-500/20" />
@@ -680,7 +680,7 @@ export default function Home() {
                           repeat: Infinity,
                         }}
                       />
-                      <span className="text-white font-bold text-lg sm:text-xl relative z-10">
+                      <span className="text-white  text-lg sm:text-xl relative z-10">
                         M
                       </span>
                     </motion.div>
@@ -688,7 +688,7 @@ export default function Home() {
                     {/* Card Content */}
                     <div className="text-center space-y-2 sm:space-y-4 flex-grow">
                       <motion.h3
-                        className="text-xl sm:text-2xl font-bold text-white"
+                        className="text-xl sm:text-2xl  text-white"
                         animate={{
                           opacity: [0.8, 1, 0.8],
                         }}
@@ -851,7 +851,7 @@ export default function Home() {
       <DiamondSeparator />
 
       {/* Story Showcase Section */}
-      <section className="relative px-4 sm:px-6 lg:px-8 py-20">
+      <section className="relative px-4 sm:px-6 lg:px-8 py-12">
         <div className="max-w-6xl mx-auto">
           <motion.div
             className="text-center mb-16"
@@ -860,7 +860,7 @@ export default function Home() {
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl  mb-6">
               Amazing Stories by{' '}
               <span className="bg-gradient-to-r from-green-400 via-teal-400 to-cyan-400 bg-clip-text text-transparent">
                 Young Writers
@@ -882,7 +882,7 @@ export default function Home() {
                 viewport={{ once: true }}
                 whileHover={{ y: -8, transition: { duration: 0.3 } }}
               >
-                <div className="relative h-full rounded-2xl bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 shadow-xl overflow-hidden">
+                <div className="relative h-full  bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 shadow-xl overflow-hidden">
                   {/* Story Card Header */}
                   <div
                     className={`relative h-48 bg-gradient-to-br ${story.gradient} overflow-hidden`}
@@ -912,7 +912,7 @@ export default function Home() {
 
                   {/* Story Content */}
                   <div className="p-6">
-                    <h3 className="text-xl font-bold text-white mb-3 group-hover:text-green-400 transition-colors">
+                    <h3 className="text-xl  text-white mb-3 group-hover:text-green-400 transition-colors">
                       {story.title}
                     </h3>
                     <p className="text-gray-300 text-sm leading-relaxed mb-4 line-clamp-3">
@@ -923,7 +923,7 @@ export default function Home() {
                     <div className="flex items-center justify-between pt-4 border-t border-gray-600/30">
                       <div className="flex items-center space-x-3">
                         <div className="w-8 h-8 bg-gradient-to-r from-green-400 to-teal-500 rounded-full flex items-center justify-center">
-                          <span className="text-white text-xs font-bold">
+                          <span className="text-white text-xs ">
                             {story.author.split(',')[0].charAt(0)}
                           </span>
                         </div>
@@ -961,7 +961,7 @@ export default function Home() {
           >
             <Link href="/register">
               <motion.button
-                className="group relative px-8 py-4 bg-gradient-to-r from-purple-500 to-pink-600 rounded-xl font-semibold text-lg text-white shadow-lg shadow-purple-500/25 overflow-hidden"
+                className="group relative px-8 py-4 bg-gradient-to-r from-purple-500 to-pink-600 rounded-xl  text-lg text-white shadow-lg shadow-purple-500/25 overflow-hidden"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
@@ -984,7 +984,7 @@ export default function Home() {
       <DiamondSeparator />
 
       {/* Story Elements Section */}
-      <section className="relative px-4 sm:px-6 lg:px-8 py-20">
+      <section className="relative px-4 sm:px-6 lg:px-8 py-12">
         <div className="max-w-7xl mx-auto">
           <motion.div
             className="text-center mb-16"
@@ -993,7 +993,7 @@ export default function Home() {
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl  mb-6">
               Choose from{' '}
               <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
                 Amazing Elements
@@ -1017,7 +1017,7 @@ export default function Home() {
                 <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
                   <Sparkles className="w-6 h-6 text-white" />
                 </div>
-                <h3 className="text-2xl font-bold text-white">
+                <h3 className="text-2xl  text-white">
                   Exciting Genres
                 </h3>
               </div>
@@ -1026,7 +1026,7 @@ export default function Home() {
                 {storyElements.genres.map((genre, index) => (
                   <motion.div
                     key={index}
-                    className={`relative p-4 bg-gradient-to-r ${genre.gradient} rounded-xl text-white cursor-pointer group overflow-hidden`}
+                    className={`relative p-4 bg-gradient-to-r ${genre.gradient}  text-white cursor-pointer group overflow-hidden`}
                     whileHover={{ scale: 1.05, y: -2 }}
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
@@ -1035,7 +1035,7 @@ export default function Home() {
                   >
                     <div className="relative z-10 flex items-center space-x-3">
                       <span className="text-2xl">{genre.icon}</span>
-                      <span className="font-semibold">{genre.name}</span>
+                      <span className="">{genre.name}</span>
                     </div>
                     <motion.div
                       className="absolute inset-0 bg-white/10"
@@ -1059,7 +1059,7 @@ export default function Home() {
                 <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-teal-600 rounded-xl flex items-center justify-center">
                   <Globe className="w-6 h-6 text-white" />
                 </div>
-                <h3 className="text-2xl font-bold text-white">
+                <h3 className="text-2xl  text-white">
                   Magical Settings
                 </h3>
               </div>
@@ -1068,7 +1068,7 @@ export default function Home() {
                 {storyElements.settings.map((setting, index) => (
                   <motion.div
                     key={index}
-                    className={`relative p-4 bg-gradient-to-r ${setting.gradient} rounded-xl text-white cursor-pointer group overflow-hidden`}
+                    className={`relative p-4 bg-gradient-to-r ${setting.gradient}  text-white cursor-pointer group overflow-hidden`}
                     whileHover={{ scale: 1.05, y: -2 }}
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
@@ -1077,7 +1077,7 @@ export default function Home() {
                   >
                     <div className="relative z-10 flex items-center space-x-3">
                       <span className="text-2xl">{setting.icon}</span>
-                      <span className="font-semibold">{setting.name}</span>
+                      <span className="">{setting.name}</span>
                     </div>
                     <motion.div
                       className="absolute inset-0 bg-white/10"
@@ -1101,7 +1101,7 @@ export default function Home() {
           >
             <Link href="/create-stories">
               <motion.button
-                className="group relative px-10 py-4 bg-gradient-to-r from-purple-500 to-blue-600 rounded-xl font-semibold text-lg text-white shadow-lg shadow-purple-500/25 overflow-hidden"
+                className="group relative px-10 py-4 bg-gradient-to-r from-purple-500 to-blue-600 rounded-xl  text-lg text-white shadow-lg shadow-purple-500/25 overflow-hidden"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
@@ -1124,7 +1124,7 @@ export default function Home() {
       <DiamondSeparator />
 
       {/* Platform Features Section */}
-      <section className="relative px-4 sm:px-6 lg:px-8 py-20">
+      <section className="relative px-4 sm:px-6 lg:px-8 py-12">
         <div className="max-w-7xl mx-auto">
           <motion.div
             className="text-center mb-16"
@@ -1139,7 +1139,7 @@ export default function Home() {
                 Platform Features
               </span>
             </div>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl  mb-6">
               Everything Your Child Needs to{' '}
               <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-red-400 bg-clip-text text-transparent">
                 Write Amazing Stories
@@ -1163,11 +1163,11 @@ export default function Home() {
                 whileHover={{ y: -8, transition: { duration: 0.3 } }}
               >
                 <div
-                  className={`relative h-full p-8 rounded-2xl bg-gradient-to-br ${feature.bgColor} backdrop-blur-xl border border-gray-600/40 shadow-xl overflow-hidden`}
+                  className={`relative h-full p-8  bg-gradient-to-br ${feature.bgColor} backdrop-blur-xl border border-gray-600/40 shadow-xl overflow-hidden`}
                 >
                   {/* Icon */}
                   <div
-                    className={`w-16 h-16 bg-gradient-to-r ${feature.gradient} rounded-2xl flex items-center justify-center mb-6 shadow-lg group-hover:scale-110 transition-transform duration-300`}
+                    className={`w-16 h-16 bg-gradient-to-r ${feature.gradient}  flex items-center justify-center mb-6 shadow-lg group-hover:scale-110 transition-transform duration-300`}
                   >
                     {React.cloneElement(feature.icon, {
                       className: 'text-white',
@@ -1175,24 +1175,12 @@ export default function Home() {
                   </div>
 
                   {/* Content */}
-                  <h3 className="text-xl font-bold text-white mb-4 group-hover:text-green-400 transition-colors">
+                  <h3 className="text-xl  text-white mb-4 group-hover:text-green-400 transition-colors">
                     {feature.title}
                   </h3>
                   <p className="text-gray-300 text-sm leading-relaxed mb-6">
                     {feature.description}
                   </p>
-
-                  {/* Learn More Link */}
-                  {feature.learnMore && (
-                    <Link
-                      href={`/features/${feature.title.toLowerCase().replace(/\s+/g, '-')}`}
-                    >
-                      <div className="flex items-center text-purple-400 text-sm font-medium hover:text-purple-300  group-hover:translate-x-1 transition-transform">
-                        Learn more
-                        <ArrowRight className="w-4 h-4 ml-1" />
-                      </div>
-                    </Link>
-                  )}
 
                   {/* Hover Effect */}
                   <motion.div
@@ -1211,7 +1199,7 @@ export default function Home() {
       <DiamondSeparator />
 
       {/* Features Section with Images */}
-      <section className="relative px-4 sm:px-6 lg:px-8 py-20">
+      <section className="relative px-4 sm:px-6 lg:px-8 py-12">
         <div className="max-w-6xl mx-auto">
           <motion.div
             className="text-center mb-12"
@@ -1220,7 +1208,7 @@ export default function Home() {
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white pb-6">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl  text-white pb-6">
               Why Kids Love{' '}
               <span className="bg-gradient-to-r from-green-400 to-teal-400 bg-clip-text text-transparent">
                 Mintoons
@@ -1239,7 +1227,7 @@ export default function Home() {
                 viewport={{ once: true }}
                 whileHover={{ y: -8, transition: { duration: 0.3 } }}
               >
-                <div className="relative h-full rounded-2xl bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 shadow-xl overflow-hidden">
+                <div className="relative h-full  bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 shadow-xl overflow-hidden">
                   {/* Feature Image */}
                   <div className="relative h-40 sm:h-48 overflow-hidden">
                     <Image
@@ -1271,7 +1259,7 @@ export default function Home() {
 
                   {/* Content */}
                   <div className="p-4 sm:p-6">
-                    <h3 className="text-lg sm:text-xl font-semibold text-white mb-2 sm:mb-3">
+                    <h3 className="text-lg sm:text-xl  text-white mb-2 sm:mb-3">
                       {feature.title}
                     </h3>
 
@@ -1296,7 +1284,7 @@ export default function Home() {
       <DiamondSeparator />
 
       {/* Values Section */}
-      <section className="relative z-10 px-4 sm:px-6 lg:px-8 py-20">
+      <section className="relative z-10 px-4 sm:px-6 lg:px-8 py-12">
         <div className="max-w-7xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -1305,7 +1293,7 @@ export default function Home() {
             viewport={{ once: true }}
             className="text-center mb-12 sm:mb-16"
           >
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl  text-white mb-4">
               Our Core Principles
             </h2>
             <p className="text-lg sm:text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
@@ -1323,14 +1311,14 @@ export default function Home() {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
                 viewport={{ once: true }}
-                className="bg-white/10 backdrop-blur-xl rounded-2xl p-6 sm:p-8 border border-white/20 hover:bg-white/15 transition-all duration-300 group"
+                className="bg-white/10 backdrop-blur-xl  p-6 sm:p-8 border border-white/20 hover:bg-white/15 transition-all duration-300 group"
               >
                 <div
                   className={`w-14 sm:w-16 h-14 sm:h-16 bg-gradient-to-r ${value.gradient} rounded-xl flex items-center justify-center mb-4 sm:mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg`}
                 >
                   <value.icon className="w-6 sm:w-8 h-6 sm:h-8 text-white" />
                 </div>
-                <h3 className="text-xl sm:text-2xl font-bold text-white mb-2 sm:mb-4">
+                <h3 className="text-xl sm:text-2xl  text-white mb-2 sm:mb-4">
                   {value.title}
                 </h3>
                 <p className="text-gray-300 text-sm leading-relaxed">
@@ -1345,7 +1333,7 @@ export default function Home() {
       <DiamondSeparator />
 
       {/* How It Works Section */}
-      <section className="relative px-4 sm:px-6 lg:px-8 py-20">
+      <section className="relative px-4 sm:px-6 lg:px-8 py-12">
         <div className="max-w-7xl mx-auto">
           <motion.div
             className="text-center mb-16"
@@ -1354,7 +1342,7 @@ export default function Home() {
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-4xl sm:text-5xl font-bold text-white mb-6">
+            <h2 className="text-4xl sm:text-5xl  text-white mb-6">
               How It{' '}
               <span className="bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">
                 Works
@@ -1385,16 +1373,16 @@ export default function Home() {
                   >
                     <div className="flex items-center space-x-4">
                       <div
-                        className={`w-16 h-16 bg-gradient-to-r ${step.gradient} rounded-2xl flex items-center justify-center shadow-lg`}
+                        className={`w-16 h-16 bg-gradient-to-r ${step.gradient}  flex items-center justify-center shadow-lg`}
                       >
                         {step.icon}
                       </div>
-                      <div className="text-6xl font-bold text-blue-100 dark:text-gray-700">
+                      <div className="text-6xl  text-blue-100 dark:text-gray-700">
                         {step.number}
                       </div>
                     </div>
 
-                    <h3 className="text-3xl font-bold text-white">
+                    <h3 className="text-3xl  text-white">
                       {step.title}
                     </h3>
 
@@ -1420,7 +1408,7 @@ export default function Home() {
                     className={`relative ${index % 2 === 1 ? 'lg:order-1' : ''}`}
                   >
                     <motion.div
-                      className="relative h-80 bg-gradient-to-br from-gray-800/60 to-gray-900/60 backdrop-blur-xl rounded-3xl border border-gray-600/40 overflow-hidden shadow-xl"
+                      className="relative h-80 bg-gradient-to-br from-gray-800/60 to-gray-900/60 backdrop-blur-xl  border border-gray-600/40 overflow-hidden shadow-xl"
                       whileHover={{ scale: 1.02, y: -10 }}
                       transition={{ duration: 0.3 }}
                     >
@@ -1433,8 +1421,7 @@ export default function Home() {
                           className="object-cover"
                           sizes="(max-width: 768px) 100vw, 50vw"
                         />
-                        {/* Dark Overlay */}
-                        <div className="absolute inset-0 bg-gray-900/60" />
+                    
                       </div>
 
                       {/* Animated Color Overlay (on top of image) */}
@@ -1478,10 +1465,10 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-      <section className="relative px-4 sm:px-6 lg:px-8 py-20">
+      <section className="relative px-4 sm:px-6 lg:px-8 py-12">
         <div className="max-w-8xl mx-auto">
           <motion.div
-            className="bg-gradient-to-br from-gray-800/80 to-gray-900/80 backdrop-blur-xl rounded-2xl p-8 sm:p-10 lg:p-12 text-center border border-gray-600/40 shadow-xl relative overflow-hidden"
+            className="bg-gradient-to-br from-gray-800/80 to-gray-900/80 backdrop-blur-xl  p-8 sm:p-10 lg:p-12 text-center border border-gray-600/40 shadow-xl relative overflow-hidden"
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
@@ -1511,7 +1498,7 @@ export default function Home() {
                 <Lightbulb className="w-5 sm:w-6 h-5 sm:h-6 text-white" />
               </motion.div>
 
-              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-4">
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl  text-white mb-4">
                 Ready to Start Your{' '}
                 <span className="bg-gradient-to-r from-green-400 to-teal-400 bg-clip-text text-transparent">
                   Creative Writing Journey?
@@ -1535,7 +1522,7 @@ export default function Home() {
                 whileTap={{ scale: 0.95 }}
               >
                 <Link href="/create-stories">
-                  <button className="group relative px-8 sm:px-10 py-3 sm:py-4 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-xl font-semibold text-base sm:text-lg text-white shadow-lg shadow-cyan-500/25 overflow-hidden">
+                  <button className="group relative px-8 sm:px-10 py-3 sm:py-4 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-xl  text-base sm:text-lg text-white shadow-lg shadow-cyan-500/25 overflow-hidden">
                     <span className="relative z-10 flex items-center justify-center">
                       <Zap className="w-4 sm:w-5 h-4 sm:h-5 mr-2 sm:mr-3" />
                       Start Writing Your First Story →
