@@ -67,7 +67,6 @@ export const RATE_LIMITS = {
   },
 };
 
-// EXPORTS FOR USAGE MANAGER
 export const FREE_TIER_LIMITS = USAGE_LIMITS.FREE;
 
 export const STORY_PACK_BENEFITS = {
@@ -139,4 +138,9 @@ export function validateUsageWithinLimits(
     valid: violations.length === 0,
     violations,
   };
+}
+
+// Export getUserLimits for usage API
+export function getUserLimits(tier: keyof typeof USAGE_LIMITS): UsageLimits {
+  return USAGE_LIMITS[tier];
 }

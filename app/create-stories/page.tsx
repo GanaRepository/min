@@ -178,12 +178,20 @@ function CreateStoriesContent() {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
     if (selectedFile) {
-      if (selectedFile.type !== 'text/plain' && !selectedFile.name.endsWith('.txt')) {
-        setError('Please upload a .txt file');
+      const allowedTypes = [
+        'text/plain',
+        'application/pdf',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+      ];
+      const allowedExtensions = ['.txt', '.pdf', '.docx'];
+      const maxSize = selectedFile.type === 'text/plain' ? 2 * 1024 * 1024 : 4 * 1024 * 1024;
+      const ext = selectedFile.name.slice(selectedFile.name.lastIndexOf('.')).toLowerCase();
+      if (!allowedTypes.includes(selectedFile.type) || !allowedExtensions.includes(ext)) {
+        setError('Please upload a .txt, .pdf, or .docx file');
         return;
       }
-      if (selectedFile.size > 1024 * 1024) { // 1MB limit
-        setError('File size must be less than 1MB');
+      if (selectedFile.size > maxSize) {
+        setError('File size must be less than 2MB for .txt, 4MB for .pdf/.docx');
         return;
       }
       setFile(selectedFile);
@@ -858,381 +866,429 @@ function CreateStoriesContent() {
        </div>
      </section>
  
-        {/* Two Paths Section */}
-       <div className="max-w-4xl mx-auto px-4">
-        {/* Header */}
-        <div className="text-center mb-8 pt-16">
-          <h1 className="text-3xl font-medium text-white mb-2">Create Your Story</h1>
-          <p className="text-gray-300">Choose how you'd like to work on your story today</p>
+       {/* Two Paths Section */}
+<section className="py-12 px-6">
+  <div className="max-w-6xl mx-auto">
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      className="text-center mb-16"
+    >
+      <h2 className="text-4xl text-white mb-4">Choose Your Writing Journey</h2>
+      <p className="text-gray-400 text-xl mb-8">
+        Two powerful ways to develop your creative writing skills
+      </p>
+    </motion.div>
+
+    {/* Usage Display */}
+    {usage && limits && (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div className="bg-gradient-to-br from-gray-800/60 to-gray-700/60 backdrop-blur-xl border border-gray-600/40 p-4 text-center">
+          <p className="text-sm text-gray-400">Stories Created</p>
+          <p className="text-2xl font-medium text-white">
+            {usage.stories}/{limits.stories}
+          </p>
         </div>
-
-        {/* Usage Display */}
-        {usage && limits && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-            <div className="bg-white p-4 border border-gray-200 text-center">
-              <p className="text-sm text-gray-600">Stories Created</p>
-              <p className="text-2xl font-medium text-gray-900">
-                {usage.stories}/{limits.stories}
-              </p>
-            </div>
-            <div className="bg-white p-4 border border-gray-200 text-center">
-              <p className="text-sm text-gray-600">Assessment Uploads</p>
-              <p className="text-2xl font-medium text-gray-900">
-                {usage.assessments}/{limits.assessments}
-              </p>
-            </div>
-            <div className="bg-white p-4 border border-gray-200 text-center">
-              <p className="text-sm text-gray-600">Assessment Attempts</p>
-              <p className="text-2xl font-medium text-gray-900">
-                {usage.attempts}/{limits.totalAttempts}
-              </p>
-            </div>
-            <div className="bg-white p-4 border border-gray-200 text-center">
-              <p className="text-sm text-gray-600">Competition Entries</p>
-              <p className="text-2xl font-medium text-gray-900">
-                {usage.competition}/{limits.competition}
-              </p>
-            </div>
-          </div>
-        )}
-
-        {/* Error Display */}
-        {error && (
-          <Alert className="mb-6 bg-red-50 border-red-200">
-            <AlertCircle className="h-4 w-4 text-red-600" />
-            <AlertDescription className="text-red-700">{error}</AlertDescription>
-          </Alert>
-        )}
-
-        {mode === 'select' && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Write New Story Option */}
-            <Card className="border-2 hover:border-blue-300 transition-colors cursor-pointer h-full">
-              <CardHeader className="text-center pb-4">
-                <div className="w-16 h-16 bg-blue-100 text-blue-600 flex items-center justify-center mx-auto mb-4 border border-blue-200">
-                  <PenTool className="w-8 h-8" />
-                </div>
-                <CardTitle className="text-xl font-medium text-gray-900">Write New Story</CardTitle>
-                <CardDescription className="text-gray-600">
-                  Start writing a brand new story with AI collaboration
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="pt-0 flex-1 flex flex-col justify-between">
-                <div className="space-y-3 mb-6">
-                  <div className="flex items-center text-sm text-gray-600">
-                    <Zap className="w-4 h-4 mr-2 text-green-600" />
-                    Up to 7 AI responses to help develop your story
-                  </div>
-                  <div className="flex items-center text-sm text-gray-600">
-                    <FileText className="w-4 h-4 mr-2 text-green-600" />
-                    Turn-based collaborative writing experience
-                  </div>
-                  <div className="flex items-center text-sm text-gray-600">
-                    <AlertCircle className="w-4 h-4 mr-2 text-blue-600" />
-                    Automatic assessment when completed
-                  </div>
-                </div>
-                
-                {usage && limits && (
-                  <div className="mb-4 p-3 bg-gray-50 border border-gray-200">
-                    <p className="text-sm text-gray-600">
-                      Usage: {usage.stories}/{limits.stories} stories this month
-                    </p>
-                    {usage.stories >= limits.stories && (
-                      <p className="text-sm text-red-600 mt-1">
-                        Monthly limit reached. 
-                        <button 
-                          className="underline ml-1 hover:no-underline"
-                          onClick={() => router.push('/pricing')}
-                        >
-                          Buy Story Pack
-                        </button>
-                      </p>
-                    )}
-                  </div>
-                )}
-
-                <Button 
-                  onClick={() => setMode('write')}
-                  disabled={!!(loading || (usage && limits && usage.stories >= limits.stories))}
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white border-0"
-                >
-                  {loading ? 'Creating...' : 'Begin Writing'}
-                </Button>
-              </CardContent>
-            </Card>
-
-            {/* Upload for Assessment Option */}
-            <Card className="border-2 hover:border-green-300 transition-colors cursor-pointer h-full">
-              <CardHeader className="text-center pb-4">
-                <div className="w-16 h-16 bg-green-100 text-green-600 flex items-center justify-center mx-auto mb-4 border border-green-200">
-                  <Upload className="w-8 h-8" />
-                </div>
-                <CardTitle className="text-xl font-medium text-gray-900">Upload for Assessment</CardTitle>
-                <CardDescription className="text-gray-600">
-                  Get AI feedback on a story you've already written
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="pt-0 flex-1 flex flex-col justify-between">
-                <div className="space-y-3 mb-6">
-                  <div className="flex items-center text-sm text-gray-600">
-                    <FileText className="w-4 h-4 mr-2 text-green-600" />
-                    Upload .txt files or paste text directly
-                  </div>
-                  <div className="flex items-center text-sm text-gray-600">
-                    <Zap className="w-4 h-4 mr-2 text-green-600" />
-                    16-category AI assessment like an English teacher
-                  </div>
-                  <div className="flex items-center text-sm text-gray-600">
-                    <AlertCircle className="w-4 h-4 mr-2 text-blue-600" />
-                    Up to 3 revision attempts per story
-                  </div>
-                </div>
-
-                {usage && limits && (
-                  <div className="mb-4 p-3 bg-gray-50 border border-gray-200">
-                    <p className="text-sm text-gray-600">
-                      Usage: {usage.assessments}/{limits.assessments} assessments this month
-                    </p>
-                    <p className="text-sm text-gray-600">
-                      Attempts: {usage.attempts}/{limits.totalAttempts} total attempts
-                    </p>
-                    {usage.assessments >= limits.assessments && (
-                      <p className="text-sm text-red-600 mt-1">
-                        Monthly limit reached. 
-                        <button 
-                          className="underline ml-1 hover:no-underline"
-                          onClick={() => router.push('/pricing')}
-                        >
-                          Buy Story Pack
-                        </button>
-                      </p>
-                    )}
-                  </div>
-                )}
-
-                <Button 
-                  onClick={() => setMode('upload')}
-                  disabled={!!(loading || (usage && limits && usage.assessments >= limits.assessments))}
-                  className="w-full bg-green-600 hover:bg-green-700 text-white border-0"
-                >
-                  Upload Story
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
-        )}
-
-        {/* Write New Story Confirmation */}
-        {mode === 'write' && (
-          <Card className="max-w-2xl mx-auto">
-            <CardHeader>
-              <CardTitle className="text-center">Ready to Start Writing?</CardTitle>
-              <CardDescription className="text-center">
-                You'll be taken to the story writing interface where you can collaborate with AI
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="bg-blue-50 p-4 border border-blue-200">
-                <h4 className="font-medium text-blue-900 mb-2">What happens next:</h4>
-                <ul className="space-y-2 text-sm text-blue-800">
-                  <li>• You'll start with a blank page to write your opening</li>
-                  <li>• AI will respond to help develop your story (up to 7 turns)</li>
-                  <li>• Each turn requires at least 60 words from you</li>
-                  <li>• Your completed story gets automatic AI assessment</li>
-                </ul>
-              </div>
-
-              <div className="flex gap-3 justify-center">
-                <Button 
-                  variant="outline" 
-                  onClick={() => setMode('select')}
-                  disabled={loading}
-                  className="border-gray-300 text-gray-700 hover:bg-gray-50"
-                >
-                  Back to Options
-                </Button>
-                <Button 
-                  onClick={handleCreateNewStory}
-                  disabled={loading}
-                  className="bg-blue-600 hover:bg-blue-700 text-white border-0"
-                >
-                  {loading ? (
-                    <div className="flex items-center">
-                      <div className="w-4 h-4 border-2 border-white border-t-transparent border-solid animate-spin mr-2"></div>
-                      Creating Session...
-                    </div>
-                  ) : (
-                    'Start Writing Now'
-                  )}
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Upload Story Form */}
-        {mode === 'upload' && (
-          <Card className="max-w-2xl mx-auto">
-            <CardHeader>
-              <CardTitle>Upload Your Story for Assessment</CardTitle>
-              <CardDescription>
-                Upload a .txt file or paste your story text directly for AI feedback
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              {/* Title Input */}
-              <div className="space-y-2">
-                <Label htmlFor="title" className="text-sm font-medium text-gray-700">
-                  Story Title *
-                </Label>
-                <Input
-                  id="title"
-                  type="text"
-                  placeholder="Enter your story title..."
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  maxLength={100}
-                  className="border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-                />
-                <p className="text-sm text-gray-500">{title.length}/100 characters</p>
-              </div>
-
-              {/* File Upload */}
-              <div className="space-y-2">
-                <Label className="text-sm font-medium text-gray-700">Upload Story File</Label>
-                <div 
-                  className={`border-2 border-dashed p-6 text-center transition-colors ${
-                    dragActive ? 'border-blue-400 bg-blue-50' : 'border-gray-300 hover:border-gray-400'
-                  }`}
-                  onDragEnter={handleDrag}
-                  onDragLeave={handleDrag}
-                  onDragOver={handleDrag}
-                  onDrop={handleDrop}
-                >
-                  <Upload className="w-8 h-8 text-gray-400 mx-auto mb-4" />
-                  <p className="text-gray-600 mb-2">
-                    Drag and drop your .txt file here, or click to browse
-                  </p>
-                  <input
-                    type="file"
-                    accept=".txt,text/plain"
-                    onChange={handleFileChange}
-                    className="hidden"
-                    id="file-upload"
-                  />
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => document.getElementById('file-upload')?.click()}
-                    className="border-gray-300 text-gray-700 hover:bg-gray-50"
-                  >
-                    Choose File
-                  </Button>
-                  {file && (
-                    <p className="text-sm text-green-600 mt-2">
-                      Selected: {file.name} ({Math.round(file.size / 1024)} KB)
-                    </p>
-                  )}
-                </div>
-              </div>
-
-              {/* OR Divider */}
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-300" />
-                </div>
-                <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white text-gray-500">OR</span>
-                </div>
-              </div>
-
-              {/* Text Input */}
-              <div className="space-y-2">
-                <Label htmlFor="content" className="text-sm font-medium text-gray-700">
-                  Paste Story Text
-                </Label>
-                <Textarea
-                  id="content"
-                  placeholder="Paste your story here..."
-                  value={content}
-                  onChange={(e) => setContent(e.target.value)}
-                  rows={12}
-                  maxLength={5000}
-                  className="border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-                />
-                <div className="flex justify-between text-sm text-gray-500">
-                  <span>{content.length}/5,000 characters</span>
-                  <span>{content.trim().split(/\s+/).filter(Boolean).length} words</span>
-                </div>
-              </div>
-
-              {/* Requirements */}
-              <div className="bg-yellow-50 p-4 border border-yellow-200">
-                <h4 className="font-medium text-yellow-900 mb-2">Assessment Requirements:</h4>
-                <ul className="space-y-1 text-sm text-yellow-800">
-                  <li>• Story must be between 50-5,000 words</li>
-                  <li>• Original work only (plagiarism detection active)</li>
-                  <li>• You get 3 assessment attempts per story</li>
-                  <li>• Each attempt provides detailed feedback for improvement</li>
-                </ul>
-              </div>
-
-              {/* Action Buttons */}
-              <div className="flex gap-3 justify-center">
-                <Button 
-                  variant="outline" 
-                  onClick={() => setMode('select')}
-                  disabled={loading}
-                  className="border-gray-300 text-gray-700 hover:bg-gray-50"
-                >
-                  Back to Options
-                </Button>
-                <Button 
-                  onClick={handleUploadForAssessment}
-                  disabled={loading || (!content.trim() && !file) || !title.trim()}
-                  className="bg-green-600 hover:bg-green-700 text-white border-0"
-                >
-                  {loading ? (
-                    <div className="flex items-center">
-                      <div className="w-4 h-4 border-2 border-white border-t-transparent border-solid animate-spin mr-2"></div>
-                      Uploading...
-                    </div>
-                  ) : (
-                    'Get AI Assessment'
-                  )}
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Need More Stories/Assessments */}
-        {usage && limits && (usage.stories >= limits.stories || usage.assessments >= limits.assessments) && (
-          <Card className="max-w-2xl mx-auto mt-8 bg-blue-50 border-blue-200">
-            <CardHeader>
-              <CardTitle className="text-blue-900">Need More Stories?</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-blue-800 mb-4">
-                You've reached your monthly limit. Get a Story Pack for $15 to unlock:
-              </p>
-              <ul className="space-y-2 text-sm text-blue-800 mb-4">
-                <li>• +5 additional story creations</li>
-                <li>• +5 additional assessment uploads</li>
-                <li>• +15 total assessment attempts</li>
-                <li>• Priority AI processing</li>
-              </ul>
-              <Button 
-                onClick={() => router.push('/pricing')}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white border-0"
-              >
-                View Pricing Options
-              </Button>
-            </CardContent>
-          </Card>
-        )}
+        <div className="bg-gradient-to-br from-gray-800/60 to-gray-700/60 backdrop-blur-xl border border-gray-600/40 p-4 text-center">
+          <p className="text-sm text-gray-400">Assessment Uploads</p>
+          <p className="text-2xl font-medium text-white">
+            {usage.assessments}/{limits.assessments}
+          </p>
+        </div>
+        <div className="bg-gradient-to-br from-gray-800/60 to-gray-700/60 backdrop-blur-xl border border-gray-600/40 p-4 text-center">
+          <p className="text-sm text-gray-400">Assessment Attempts</p>
+          <p className="text-2xl font-medium text-white">
+            {usage.attempts}/{limits.totalAttempts}
+          </p>
+        </div>
+        <div className="bg-gradient-to-br from-gray-800/60 to-gray-700/60 backdrop-blur-xl border border-gray-600/40 p-4 text-center">
+          <p className="text-sm text-gray-400">Competition Entries</p>
+          <p className="text-2xl font-medium text-white">
+            {usage.competition}/{limits.competition}
+          </p>
+        </div>
       </div>
+    )}
+
+    {/* Error Display */}
+    {error && (
+      <div className="mb-6 bg-red-500/10 border border-red-500/30 backdrop-blur-xl p-4 rounded-lg">
+        <div className="flex items-center">
+          <AlertCircle className="h-4 w-4 text-red-400 mr-2" />
+          <span className="text-red-300">{error}</span>
+        </div>
+      </div>
+    )}
+
+    {mode === 'select' && (
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {/* Write New Story Option */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="group"
+        >
+          <div className="bg-gradient-to-br from-blue-500/10 to-cyan-500/10 backdrop-blur-xl border border-blue-500/30 p-8 hover:scale-105 transition-all duration-300 h-full">
+            <div className="text-center">
+              <div className="relative mb-6">
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-cyan-600 rounded-lg blur-lg opacity-30 group-hover:opacity-50 transition-opacity"></div>
+                <div className="relative bg-gradient-to-r from-blue-500 to-cyan-600 w-16 h-16 rounded-lg flex items-center justify-center mx-auto">
+                  <PenTool className="w-8 h-8 text-white" />
+                </div>
+              </div>
+
+              <h3 className="text-2xl text-white mb-4">Write New Story</h3>
+              <p className="text-gray-300 mb-6 text-center">
+                Start writing a brand new story with AI collaboration
+              </p>
+
+              <div className="space-y-3 mb-6">
+                <div className="flex items-center text-sm text-gray-300">
+                  <Zap className="w-4 h-4 mr-2 text-blue-400" />
+                  Up to 7 AI responses to help develop your story
+                </div>
+                <div className="flex items-center text-sm text-gray-300">
+                  <FileText className="w-4 h-4 mr-2 text-blue-400" />
+                  Turn-based collaborative writing experience
+                </div>
+                <div className="flex items-center text-sm text-gray-300">
+                  <AlertCircle className="w-4 h-4 mr-2 text-blue-400" />
+                  Automatic assessment when completed
+                </div>
+              </div>
+              
+              {usage && limits && (
+                <div className="mb-4 p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg">
+                  <p className="text-sm text-gray-300">
+                    Usage: {usage.stories}/{limits.stories} stories this month
+                  </p>
+                  {usage.stories >= limits.stories && (
+                    <p className="text-sm text-red-400 mt-1">
+                      Monthly limit reached. 
+                      <button 
+                        className="underline ml-1 hover:no-underline text-blue-400"
+                        onClick={() => router.push('/pricing')}
+                      >
+                        Buy Story Pack
+                      </button>
+                    </p>
+                  )}
+                </div>
+              )}
+
+              <Button 
+                onClick={() => setMode('write')}
+                disabled={!!(loading || (usage && limits && usage.stories >= limits.stories))}
+                className="w-full bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 text-white border-0"
+              >
+                {loading ? 'Creating...' : 'Begin Writing'}
+              </Button>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Upload for Assessment Option */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.2 }}
+          className="group"
+        >
+          <div className="bg-gradient-to-br from-green-500/10 to-teal-500/10 backdrop-blur-xl border border-green-500/30 p-8 hover:scale-105 transition-all duration-300 h-full">
+            <div className="text-center">
+              <div className="relative mb-6">
+                <div className="absolute inset-0 bg-gradient-to-r from-green-500 to-teal-600 rounded-lg blur-lg opacity-30 group-hover:opacity-50 transition-opacity"></div>
+                <div className="relative bg-gradient-to-r from-green-500 to-teal-600 w-16 h-16 rounded-lg flex items-center justify-center mx-auto">
+                  <Upload className="w-8 h-8 text-white" />
+                </div>
+              </div>
+
+              <h3 className="text-2xl text-white mb-4">Upload for Assessment</h3>
+              <p className="text-gray-300 mb-6 text-center">
+                Get AI feedback on a story you've already written
+              </p>
+
+              <div className="space-y-3 mb-6">
+                <div className="flex items-center text-sm text-gray-300">
+                  <FileText className="w-4 h-4 mr-2 text-green-400" />
+                  Upload .txt files or paste text directly
+                </div>
+                <div className="flex items-center text-sm text-gray-300">
+                  <Zap className="w-4 h-4 mr-2 text-green-400" />
+                  16-category AI assessment like an English teacher
+                </div>
+                <div className="flex items-center text-sm text-gray-300">
+                  <AlertCircle className="w-4 h-4 mr-2 text-green-400" />
+                  Up to 3 revision attempts per story
+                </div>
+              </div>
+
+              {usage && limits && (
+                <div className="mb-4 p-3 bg-green-500/10 border border-green-500/20 rounded-lg">
+                  <p className="text-sm text-gray-300">
+                    Usage: {usage.assessments}/{limits.assessments} assessments this month
+                  </p>
+                  <p className="text-sm text-gray-300">
+                    Attempts: {usage.attempts}/{limits.totalAttempts} total attempts
+                  </p>
+                  {usage.assessments >= limits.assessments && (
+                    <p className="text-sm text-red-400 mt-1">
+                      Monthly limit reached. 
+                      <button 
+                        className="underline ml-1 hover:no-underline text-green-400"
+                        onClick={() => router.push('/pricing')}
+                      >
+                        Buy Story Pack
+                      </button>
+                    </p>
+                  )}
+                </div>
+              )}
+
+              <Button 
+                onClick={() => setMode('upload')}
+                disabled={!!(loading || (usage && limits && usage.assessments >= limits.assessments))}
+                className="w-full bg-gradient-to-r from-green-500 to-teal-600 hover:from-green-600 hover:to-teal-700 text-white border-0"
+              >
+                Upload Story
+              </Button>
+            </div>
+          </div>
+        </motion.div>
+      </div>
+    )}
+
+    {/* Write New Story Confirmation */}
+    {mode === 'write' && (
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="max-w-2xl mx-auto"
+      >
+        <div className="bg-gradient-to-br from-gray-800/60 to-gray-700/60 backdrop-blur-xl border border-gray-600/40 p-8">
+          <div className="text-center mb-6">
+            <h3 className="text-2xl text-white mb-2">Ready to Start Writing?</h3>
+            <p className="text-gray-300">
+              You'll be taken to the story writing interface where you can collaborate with AI
+            </p>
+          </div>
+          
+          <div className="bg-blue-500/10 p-4 border border-blue-500/20 rounded-lg mb-6">
+            <h4 className="font-medium text-blue-300 mb-2">What happens next:</h4>
+            <ul className="space-y-2 text-sm text-gray-300">
+              <li>• You'll start with a blank page to write your opening</li>
+              <li>• AI will respond to help develop your story (up to 7 turns)</li>
+              <li>• Each turn requires at least 60 words from you</li>
+              <li>• Your completed story gets automatic AI assessment</li>
+            </ul>
+          </div>
+
+          <div className="flex gap-3 justify-center">
+            <Button 
+              variant="outline" 
+              onClick={() => setMode('select')}
+              disabled={loading}
+              className="border-gray-600 text-gray-300 hover:bg-gray-700/50 bg-transparent"
+            >
+              Back to Options
+            </Button>
+            <Button 
+              onClick={handleCreateNewStory}
+              disabled={loading}
+              className="bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 text-white border-0"
+            >
+              {loading ? (
+                <div className="flex items-center">
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent border-solid animate-spin mr-2"></div>
+                  Creating Session...
+                </div>
+              ) : (
+                'Start Writing Now'
+              )}
+            </Button>
+          </div>
+        </div>
+      </motion.div>
+    )}
+
+    {/* Upload Story Form */}
+    {mode === 'upload' && (
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="max-w-2xl mx-auto"
+      >
+        <div className="bg-gradient-to-br from-gray-800/60 to-gray-700/60 backdrop-blur-xl border border-gray-600/40 p-8">
+          <div className="text-center mb-6">
+            <h3 className="text-2xl text-white mb-2">Upload Your Story for Assessment</h3>
+            <p className="text-gray-300">
+              Upload a .txt file or paste your story text directly for AI feedback
+            </p>
+          </div>
+          
+          <div className="space-y-6">
+            {/* Title Input */}
+            <div className="space-y-2">
+              <Label htmlFor="title" className="text-sm font-medium text-gray-300">
+                Story Title *
+              </Label>
+              <Input
+                id="title"
+                type="text"
+                placeholder="Enter your story title..."
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                maxLength={100}
+                className="border-gray-600 bg-gray-800/50 text-white placeholder:text-gray-400 focus:border-green-500 focus:ring-green-500"
+              />
+              <p className="text-sm text-gray-400">{title.length}/100 characters</p>
+            </div>
+
+            {/* File Upload */}
+            <div className="space-y-2">
+              <Label className="text-sm font-medium text-gray-300">Upload Story File</Label>
+              <div 
+                className={`border-2 border-dashed p-6 text-center transition-colors rounded-lg ${
+                  dragActive ? 'border-green-400 bg-green-500/10' : 'border-gray-600 hover:border-gray-500'
+                }`}
+                onDragEnter={handleDrag}
+                onDragLeave={handleDrag}
+                onDragOver={handleDrag}
+                onDrop={handleDrop}
+              >
+                <Upload className="w-8 h-8 text-gray-400 mx-auto mb-4" />
+                <p className="text-gray-300 mb-2">
+                  Drag and drop your .txt file here, or click to browse
+                </p>
+                <input
+                  type="file"
+                  accept=".txt,text/plain"
+                  onChange={handleFileChange}
+                  className="hidden"
+                  id="file-upload"
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => document.getElementById('file-upload')?.click()}
+                  className="border-gray-600 text-gray-300 hover:bg-gray-700/50 bg-transparent"
+                >
+                  Choose File
+                </Button>
+                {file && (
+                  <p className="text-sm text-green-400 mt-2">
+                    Selected: {file.name} ({Math.round(file.size / 1024)} KB)
+                  </p>
+                )}
+              </div>
+            </div>
+
+            {/* OR Divider */}
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-600" />
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-2 bg-gray-800 text-gray-400">OR</span>
+              </div>
+            </div>
+
+            {/* Text Input */}
+            <div className="space-y-2">
+              <Label htmlFor="content" className="text-sm font-medium text-gray-300">
+                Paste Story Text
+              </Label>
+              <Textarea
+                id="content"
+                placeholder="Paste your story here..."
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+                rows={12}
+                maxLength={5000}
+                className="border-gray-600 bg-gray-800/50 text-white placeholder:text-gray-400 focus:border-green-500 focus:ring-green-500"
+              />
+              <div className="flex justify-between text-sm text-gray-400">
+                <span>{content.length}/5,000 characters</span>
+                <span>{content.trim().split(/\s+/).filter(Boolean).length} words</span>
+              </div>
+            </div>
+
+            {/* Requirements */}
+            <div className="bg-yellow-500/10 p-4 border border-yellow-500/20 rounded-lg">
+              <h4 className="font-medium text-yellow-300 mb-2">Assessment Requirements:</h4>
+              <ul className="space-y-1 text-sm text-gray-300">
+                <li>• Story must be between 50-5,000 words</li>
+                <li>• Original work only (plagiarism detection active)</li>
+                <li>• You get 3 assessment attempts per story</li>
+                <li>• Each attempt provides detailed feedback for improvement</li>
+              </ul>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex gap-3 justify-center">
+              <Button 
+                variant="outline" 
+                onClick={() => setMode('select')}
+                disabled={loading}
+                className="border-gray-600 text-gray-300 hover:bg-gray-700/50 bg-transparent"
+              >
+                Back to Options
+              </Button>
+              <Button 
+                onClick={handleUploadForAssessment}
+                disabled={loading || (!content.trim() && !file) || !title.trim()}
+                className="bg-gradient-to-r from-green-500 to-teal-600 hover:from-green-600 hover:to-teal-700 text-white border-0"
+              >
+                {loading ? (
+                  <div className="flex items-center">
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent border-solid animate-spin mr-2"></div>
+                    Uploading...
+                  </div>
+                ) : (
+                  'Get AI Assessment'
+                )}
+              </Button>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+    )}
+
+    {/* Need More Stories/Assessments */}
+    {usage && limits && (usage.stories >= limits.stories || usage.assessments >= limits.assessments) && (
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="max-w-2xl mx-auto mt-8"
+      >
+        <div className="bg-gradient-to-br from-purple-500/10 to-pink-500/10 backdrop-blur-xl border border-purple-500/30 p-8">
+          <h3 className="text-xl text-white mb-3 text-center">Need More Stories?</h3>
+          <p className="text-gray-300 mb-4 text-center">
+            You've reached your monthly limit. Get a Story Pack for $15 to unlock:
+          </p>
+          <ul className="space-y-2 text-sm text-gray-300 mb-4">
+            <li>• +5 additional story creations</li>
+            <li>• +5 additional assessment uploads</li>
+            <li>• +15 total assessment attempts</li>
+            <li>• Priority AI processing</li>
+          </ul>
+          <div className="text-center">
+            <Button 
+              onClick={() => router.push('/pricing')}
+              className="w-full bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white border-0"
+            >
+              View Pricing Options
+            </Button>
+          </div>
+        </div>
+      </motion.div>
+    )}
+  </div>
+</section>
 
          <DiamondSeparator />
 
