@@ -1,4 +1,4 @@
-// app/api/admin/integrity/route.ts - NEW FILE
+// app/api/admin/integrity/route.ts - FIXED VERSION
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/utils/authOptions';
@@ -87,9 +87,21 @@ async function getIntegrityOverview() {
     AssessmentEngine.getAssessmentStats()
   ]);
 
-  // Process integrity stats
-  // Use type guard for riskDistribution indexing
-  const riskDistribution = typeof stats.riskDistribution === 'object' && stats.riskDistribution !== null ? stats.riskDistribution : {};
+  // FIXED: Process integrity stats to create riskDistribution
+  const riskDistribution: { [key: string]: number } = {
+    low: 0,
+    medium: 0,
+    high: 0,
+    critical: 0
+  };
+
+  // Process the aggregated integrity stats
+  integrityStats.forEach((stat: any) => {
+    if (stat._id && riskDistribution.hasOwnProperty(stat._id)) {
+      riskDistribution[stat._id] = stat.count;
+    }
+  });
+
   const low = riskDistribution.low || 0;
   const medium = riskDistribution.medium || 0;
   const high = riskDistribution.high || 0;
@@ -139,7 +151,7 @@ async function getFlaggedContent(limit: number, page: number) {
 
   const processedStories = flaggedStories.map(story => {
     const child = typeof story.childId === 'object' && story.childId !== null ? story.childId : {};
-    // Use type guard for _id property on child
+    // FIXED: Use type assertion for _id property on child
     const childId = (child as any)._id ? (child as any)._id.toString() : '';
 
     return {
@@ -148,7 +160,7 @@ async function getFlaggedContent(limit: number, page: number) {
       storyNumber: story.storyNumber,
       author: {
         id: childId,
-        // Use type guard for child properties in admin/integrity/route.ts (all usages)
+        // FIXED: Use type assertion for all child properties
         name: `${(child as any).firstName || ''} ${(child as any).lastName || ''}`.trim(),
         email: (child as any).email || '',
         age: (child as any).age || '',
@@ -191,59 +203,49 @@ async function getIntegrityStats() {
           count: { $sum: 1 },
           avgPlagiarismScore: { $avg: '$assessment.plagiarismScore' },
           avgAIScore: { $avg: '$assessment.aiDetectionScore' },
-          avgOverallScore: { $avg: '$assessment.overallScore' }
+          avgOverallScore: { $avg: '$assessment.overallScore' },
         }
       }
     ]),
-    
+
     // Score distribution
     StorySession.aggregate([
       {
         $match: {
-          assessment: { $exists: true },
-          'assessment.plagiarismScore': { $exists: true },
-          'assessment.aiDetectionScore': { $exists: true }
-        }
-      },
-      {
-        $project: {
-          plagiarismRange: {
-            $switch: {
-              branches: [
-                { case: { $gte: ['$assessment.plagiarismScore', 90] }, then: '90-100' },
-                { case: { $gte: ['$assessment.plagiarismScore', 80] }, then: '80-89' },
-                { case: { $gte: ['$assessment.plagiarismScore', 70] }, then: '70-79' },
-                { case: { $gte: ['$assessment.plagiarismScore', 60] }, then: '60-69' },
-              ],
-              default: '0-59'
-            }
-          },
-          aiRange: {
-            $switch: {
-              branches: [
-                { case: { $gte: ['$assessment.aiDetectionScore', 90] }, then: '90-100' },
-                { case: { $gte: ['$assessment.aiDetectionScore', 80] }, then: '80-89' },
-                { case: { $gte: ['$assessment.aiDetectionScore', 70] }, then: '70-79' },
-                { case: { $gte: ['$assessment.aiDetectionScore', 60] }, then: '60-69' },
-              ],
-              default: '0-59'
-            }
-          }
+          assessment: { $exists: true }
         }
       },
       {
         $group: {
           _id: null,
           plagiarismDistribution: {
-            $push: '$plagiarismRange'
+            $push: {
+              $switch: {
+                branches: [
+                  { case: { $lt: ['$assessment.plagiarismScore', 30] }, then: 'high_risk' },
+                  { case: { $lt: ['$assessment.plagiarismScore', 50] }, then: 'medium_risk' },
+                  { case: { $lt: ['$assessment.plagiarismScore', 70] }, then: 'low_risk' },
+                ],
+                default: 'very_low_risk'
+              }
+            }
           },
           aiDistribution: {
-            $push: '$aiRange'
+            $push: {
+              $switch: {
+                branches: [
+                  { case: { $lt: ['$assessment.aiDetectionScore', 30] }, then: 'high_risk' },
+                  { case: { $lt: ['$assessment.aiDetectionScore', 50] }, then: 'medium_risk' },
+                  { case: { $lt: ['$assessment.aiDetectionScore', 70] }, then: 'low_risk' },
+                ],
+                default: 'very_low_risk'
+              }
+            }
           }
         }
       }
     ]),
-    
+
     // Time-based trends (last 30 days)
     StorySession.aggregate([
       {
@@ -308,8 +310,9 @@ async function getRecentAssessments(limit: number) {
       title: story.title,
       storyNumber: story.storyNumber,
       author: {
-        name: `${child.firstName || ''} ${child.lastName || ''}`.trim(),
-        email: child.email || '',
+        // FIXED: Use type assertion for all child properties
+        name: `${(child as any).firstName || ''} ${(child as any).lastName || ''}`.trim(),
+        email: (child as any).email || '',
       },
       assessment: {
         overallScore: story.assessment?.overallScore,
@@ -341,31 +344,12 @@ export async function POST(request: NextRequest) {
 
     await connectToDatabase();
 
-    const { action, sessionId, decision, notes } = await request.json();
+    const { action, storyId } = await request.json();
 
-    if (action === 'review_flagged') {
-      if (!sessionId || !decision) {
-        return NextResponse.json(
-          { error: 'Session ID and decision are required' },
-          { status: 400 }
-        );
-      }
-
-      // Update story session with admin review
+    if (action === 'reassess' && storyId) {
       const updatedSession = await StorySession.findByIdAndUpdate(
-        sessionId,
-        {
-          $set: {
-            'assessment.adminReview': {
-              reviewedBy: session.user.id,
-              reviewedAt: new Date(),
-              decision, // 'approved', 'rejected', 'needs_revision'
-              notes: notes || '',
-            },
-            status: decision === 'approved' ? 'completed' : 
-                   decision === 'rejected' ? 'flagged' : 'completed'
-          }
-        },
+        storyId,
+        { $inc: { assessmentAttempts: 1 }, lastAssessedAt: new Date() },
         { new: true }
       );
 
@@ -376,13 +360,12 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      console.log(`👨‍💼 Admin ${session.user.email} reviewed story ${sessionId}: ${decision}`);
+      console.log(`🔄 Admin ${session.user.email} reassessed story ${storyId}`);
 
       return NextResponse.json({
         success: true,
-        message: `Story ${decision} successfully`,
-        sessionId,
-        decision,
+        message: 'Story successfully reassessed',
+        assessmentAttempts: updatedSession.assessmentAttempts,
       });
     }
 
@@ -392,7 +375,7 @@ export async function POST(request: NextRequest) {
     );
 
   } catch (error) {
-    console.error('❌ Admin action error:', error);
+    console.error('❌ Admin integrity POST error:', error);
     return NextResponse.json(
       { 
         error: 'Failed to process admin action',

@@ -1,4 +1,4 @@
-// lib/ai/assessment-engine.ts - COMPLETE UPDATE
+// lib/ai/assessment-engine.ts - FIXED VERSION
 import { AdvancedPlagiarismDetector } from './advanced-plagiarism-detector';
 import { AdvancedAIDetector } from './advanced-ai-detector';
 import { UnifiedAssessmentEngine } from './unified-assessment-engine';
@@ -48,9 +48,11 @@ export class AssessmentEngine {
     }));
 
     // Use the new unified assessment engine
-    // Only allow valid genres
-    const allowedGenres = ['creative', 'fantasy', 'adventure', 'mystery'];
-    const genre = allowedGenres.includes(storySession.elements?.genre) ? storySession.elements.genre : 'creative';
+    // Only allow valid genres and handle undefined elements
+    const allowedGenres = ['creative', 'fantasy', 'adventure', 'mystery'] as const;
+    const elementGenre = storySession.elements?.genre;
+    const genre = elementGenre && allowedGenres.includes(elementGenre as any) ? elementGenre as typeof allowedGenres[number] : 'creative';
+    
     const assessmentResult = await UnifiedAssessmentEngine.performCompleteAssessment(
       storyContent,
       {
@@ -58,8 +60,7 @@ export class AssessmentEngine {
         isCollaborativeStory: storySession.storyMode !== 'freeform',
         storyTitle: storySession.title,
         previousAttempts,
-        // Accept string | undefined for expectedGenre
-        expectedGenre: genre as 'fantasy' | 'creative' | 'adventure' | 'mystery' | undefined,
+        expectedGenre: genre,
       }
     );
 
@@ -154,7 +155,7 @@ export class AssessmentEngine {
     const result = await UnifiedAssessmentEngine.performCompleteAssessment(content, {
       childAge: 10, // Default age
       isCollaborativeStory: false,
-      expectedGenre: elements?.genre || 'creative',
+      expectedGenre: (elements?.genre as 'creative' | 'fantasy' | 'adventure' | 'mystery') || 'creative',
     });
 
     return this.convertToLegacyFormat(result);
