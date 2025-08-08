@@ -1,38 +1,50 @@
-
 'use client';
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Send, Target, Lightbulb, BookOpen, Sparkles } from 'lucide-react';
+import {
+  ArrowLeft,
+  Send,
+  Target,
+  Lightbulb,
+  BookOpen,
+  Sparkles,
+} from 'lucide-react';
 
 interface FreeformStoryCreatorProps {
   onComplete: (openingText: string) => void;
   onBack: () => void;
 }
 
-export default function FreeformStoryCreator({ onComplete, onBack }: FreeformStoryCreatorProps) {
+export default function FreeformStoryCreator({
+  onComplete,
+  onBack,
+}: FreeformStoryCreatorProps) {
   const [openingText, setOpeningText] = useState('');
   const [wordCount, setWordCount] = useState(0);
 
   const handleInputChange = (text: string) => {
     setOpeningText(text);
-    const words = text.trim().split(/\s+/).filter(word => word.length > 0).length;
+    const words = text
+      .trim()
+      .split(/\s+/)
+      .filter((word) => word.length > 0).length;
     setWordCount(words);
   };
 
   const isValid = wordCount >= 60 && wordCount <= 150;
 
   const writingPrompts = [
-    "What if you discovered a hidden door in your bedroom?",
-    "Imagine you could talk to animals for one day...",
-    "You find a magical object in your backyard...",
-    "What would happen if gravity stopped working?",
-    "You wake up in a world made entirely of your favorite food..."
+    'What if you discovered a hidden door in your bedroom?',
+    'Imagine you could talk to animals for one day...',
+    'You find a magical object in your backyard...',
+    'What would happen if gravity stopped working?',
+    'You wake up in a world made entirely of your favorite food...',
   ];
 
   return (
     <div className="max-w-5xl mx-auto px-6 ">
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="mb-8"
@@ -44,20 +56,21 @@ export default function FreeformStoryCreator({ onComplete, onBack }: FreeformSto
           <ArrowLeft className="w-4 h-4 mr-2" />
           Back to Mode Selection
         </button>
-        
+
         <div className="text-center mb-12">
           <h2 className="text-4xl  text-white mb-4 flex items-center justify-center">
             <BookOpen className="w-10 h-10 mr-4 text-green-400" />
             Write Your Story Opening
           </h2>
           <p className="text-gray-400 text-lg">
-            Start your adventure with your own creative opening. Write 60-150 words to set the scene and let your imagination soar!
+            Start your adventure with your own creative opening. Write 60-150
+            words to set the scene and let your imagination soar!
           </p>
         </div>
       </motion.div>
 
       <div className="grid lg:grid-cols-3 gap-8">
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.1 }}
@@ -82,20 +95,26 @@ export default function FreeformStoryCreator({ onComplete, onBack }: FreeformSto
 
             <div className="flex justify-between items-center mt-4">
               <div className="text-sm">
-                <span className={` ${
-                  wordCount < 60 ? 'text-red-400' : 
-                  wordCount > 150 ? 'text-yellow-400' : 
-                  'text-green-400'
-                }`}>
+                <span
+                  className={` ${
+                    wordCount < 60
+                      ? 'text-red-400'
+                      : wordCount > 150
+                        ? 'text-yellow-400'
+                        : 'text-green-400'
+                  }`}
+                >
                   {wordCount} words
                 </span>
                 <span className="text-gray-500 ml-2">(60-150 required)</span>
               </div>
-              
+
               <div className="text-xs text-gray-500">
-                {wordCount < 60 ? `${60 - wordCount} more needed` : 
-                 wordCount > 150 ? `${wordCount - 150} over limit` : 
-                 'Perfect length! ✨'}
+                {wordCount < 60
+                  ? `${60 - wordCount} more needed`
+                  : wordCount > 150
+                    ? `${wordCount - 150} over limit`
+                    : 'Perfect length! ✨'}
               </div>
             </div>
 
@@ -107,10 +126,9 @@ export default function FreeformStoryCreator({ onComplete, onBack }: FreeformSto
               >
                 <p className="text-yellow-300 text-sm flex items-center">
                   <Target className="w-4 h-4 mr-2" />
-                  {wordCount < 60 ? 
-                    `Keep writing! You need ${60 - wordCount} more words to create a good opening.` : 
-                    'Your opening is getting long! Try to keep it under 150 words for the best start.'
-                  }
+                  {wordCount < 60
+                    ? `Keep writing! You need ${60 - wordCount} more words to create a good opening.`
+                    : 'Your opening is getting long! Try to keep it under 150 words for the best start.'}
                 </p>
               </motion.div>
             )}
@@ -132,7 +150,7 @@ export default function FreeformStoryCreator({ onComplete, onBack }: FreeformSto
           </div>
         </motion.div>
 
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.2 }}
@@ -143,30 +161,48 @@ export default function FreeformStoryCreator({ onComplete, onBack }: FreeformSto
               <Lightbulb className="w-5 h-5 mr-2 text-yellow-400" />
               Writing Tips
             </h4>
-            
+
             <div className="space-y-4 text-sm">
               <div className="p-3 bg-gray-700/30 rounded-lg">
-                <h5 className="text-green-400 font-medium mb-1">Start Strong</h5>
-                <p className="text-gray-300">Begin with action, dialogue, or an interesting situation to hook your readers.</p>
+                <h5 className="text-green-400 font-medium mb-1">
+                  Start Strong
+                </h5>
+                <p className="text-gray-300">
+                  Begin with action, dialogue, or an interesting situation to
+                  hook your readers.
+                </p>
               </div>
-              
+
               <div className="p-3 bg-gray-700/30 rounded-lg">
-                <h5 className="text-blue-400 font-medium mb-1">Show, Don't Tell</h5>
-                <p className="text-gray-300">Instead of "I was scared," try "My hands trembled as I reached for the door."</p>
+                <h5 className="text-blue-400 font-medium mb-1">
+                  Show, Don't Tell
+                </h5>
+                <p className="text-gray-300">
+                  Instead of "I was scared," try "My hands trembled as I reached
+                  for the door."
+                </p>
               </div>
-              
+
               <div className="p-3 bg-gray-700/30 rounded-lg">
-                <h5 className="text-purple-400 font-medium mb-1">Use Your Senses</h5>
-                <p className="text-gray-300">Describe what you see, hear, smell, feel, or taste to bring your story to life.</p>
+                <h5 className="text-purple-400 font-medium mb-1">
+                  Use Your Senses
+                </h5>
+                <p className="text-gray-300">
+                  Describe what you see, hear, smell, feel, or taste to bring
+                  your story to life.
+                </p>
               </div>
-                <div className="p-3 bg-gray-700/30 rounded-lg">
-                <h5 className="text-purple-400 font-medium mb-1">Use Your Senses</h5>
-                <p className="text-gray-300">Describe what you see, hear, smell, feel, or taste to bring your story to life.</p>
+              <div className="p-3 bg-gray-700/30 rounded-lg">
+                <h5 className="text-purple-400 font-medium mb-1">
+                  Use Your Senses
+                </h5>
+                <p className="text-gray-300">
+                  Describe what you see, hear, smell, feel, or taste to bring
+                  your story to life.
+                </p>
               </div>
             </div>
           </div>
-
-
         </motion.div>
       </div>
     </div>

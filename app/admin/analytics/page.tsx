@@ -1,79 +1,70 @@
+// app/admin/analytics/page.tsx
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
-import { SUBSCRIPTION_TIERS } from '@/config/tiers';
+import React from 'react';
+import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import {
-  BarChart3,
-  TrendingUp,
   Users,
   BookOpen,
   MessageSquare,
+  DollarSign,
+  TrendingUp,
+  TrendingDown,
   Calendar,
   Download,
-  Filter,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface AnalyticsData {
-  overview: {
-    totalUsers: number;
-    totalStories: number;
-    totalComments: number;
-    totalMentors: number;
-    growthMetrics: {
-      usersGrowth: number;
-      storiesGrowth: number;
-      commentsGrowth: number;
-    };
+  users: {
+    total: number;
+    thisMonth: number;
+    active: number;
+    verified: number;
+    growth: number;
   };
-  userMetrics: {
-    newUsersThisMonth: number;
-    activeUsers: number;
-    usersByTier: Array<{
-      tier: string;
-      count: number;
-    }>;
+  stories: {
+    total: number;
+    thisMonth: number;
+    completed: number;
+    published: number;
+    growth: number;
   };
-  storyMetrics: {
-    storiesCreatedThisMonth: number;
-    averageWordsPerStory: number;
-    completionRate: number;
-    storiesByStatus: Array<{
-      status: string;
-      count: number;
-    }>;
+  comments: {
+    total: number;
+    thisMonth: number;
+    unresolved: number;
   };
-  engagementMetrics: {
-    commentsThisMonth: number;
-    averageCommentsPerStory: number;
-    mentorEngagement: number;
-    responseRate: number;
+  revenue: {
+    total: number;
+    thisMonth: number;
+    growth: number;
   };
-  timeSeriesData: Array<{
-    date: string;
-    users: number;
-    stories: number;
-    comments: number;
-  }>;
 }
 
-export default function AnalyticsDashboard() {
+export default function AnalyticsPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
-
+  
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [timeRange, setTimeRange] = useState('30d');
 
-  const fetchAnalytics = useCallback(async () => {
+  useEffect(() => {
+    if (status === 'loading') return;
+    if (!session || session.user?.role !== 'admin') {
+      router.push('/admin/login');
+      return;
+    }
+    fetchAnalytics();
+  }, [session, status, router]);
+
+  const fetchAnalytics = async () => {
     try {
-      const response = await fetch(
-        `/api/admin/analytics?timeRange=${timeRange}`
-      );
+      const response = await fetch('/api/admin/analytics');
       const data = await response.json();
-
+      
       if (data.success) {
         setAnalytics(data.analytics);
       }
@@ -82,35 +73,23 @@ export default function AnalyticsDashboard() {
     } finally {
       setLoading(false);
     }
-  }, [timeRange]);
+  };
 
-  useEffect(() => {
-    if (status === 'loading') return;
-
-    if (!session || session.user.role !== 'admin') {
-      router.push('/admin/login');
-      return;
-    }
-
-    fetchAnalytics();
-  }, [session, status, router, fetchAnalytics]);
-
-  const exportData = async () => {
+  const exportAnalytics = async () => {
     try {
-      const response = await fetch(
-        `/api/admin/analytics/export?timeRange=${timeRange}`
-      );
+      const response = await fetch('/api/admin/analytics/export?timeRange=30');
       const blob = await response.blob();
+      
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `mintoons-analytics-${timeRange}.csv`;
+      a.download = `analytics-export-${new Date().toISOString().split('T')[0]}.csv`;
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
     } catch (error) {
-      console.error('Error exporting data:', error);
+      console.error('Error exporting analytics:', error);
     }
   };
 
@@ -124,300 +103,273 @@ export default function AnalyticsDashboard() {
 
   if (!analytics) {
     return (
-      <div className="text-center py-12">
-        <BarChart3 className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-        <h3 className="text-xl font-medium text-gray-400 mb-2">
-          Analytics Unavailable
-        </h3>
-        <p className="text-gray-500">
-          Unable to load analytics data at this time.
-        </p>
+      <div className="flex items-center justify-center h-64">
+        <div className="text-xl text-gray-400">Failed to load analytics</div>
       </div>
     );
   }
 
-  // Use config tiers for canonical tier list and display names
-  const tierKeys = Object.keys(SUBSCRIPTION_TIERS);
-  const normalizedTiers: Record<string, number> = {};
-  if (analytics && analytics.userMetrics && analytics.userMetrics.usersByTier) {
-    analytics.userMetrics.usersByTier.forEach((t) => {
-      let key = (t.tier || '').trim().toUpperCase();
-      if (!tierKeys.includes(key)) key = 'FREE';
-      normalizedTiers[key] = (normalizedTiers[key] || 0) + t.count;
-    });
-  }
+  const getGrowthColor = (growth: number) => {
+    return growth >= 0 ? 'text-green-400' : 'text-red-400';
+  };
+
+  const getGrowthIcon = (growth: number) => {
+    return growth >= 0 ? TrendingUp : TrendingDown;
+  };
 
   return (
     <div className="space-y-6 px-2 sm:px-4 md:px-8 lg:px-12 xl:px-20 py-4 sm:py-6 md:py-8">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-white mb-2">
-            Analytics Dashboard
+          <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">
+            Platform Analytics
           </h1>
           <p className="text-gray-400">
-            Platform insights and performance metrics
+            Comprehensive insights into your platform performance
           </p>
         </div>
-      <div className="mt-4 sm:mt-0 flex flex-col sm:flex-row gap-2 sm:gap-3">
-          <select
-            value={timeRange}
-            onChange={(e) => setTimeRange(e.target.value)}
-            className="bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="7d">Last 7 days</option>
-            <option value="30d">Last 30 days</option>
-            <option value="90d">Last 90 days</option>
-            <option value="1y">Last year</option>
-          </select>
+        <div className="flex items-center space-x-3">
           <button
-            onClick={exportData}
-            className="bg-gradient-to-r from-green-600 to-green-700 text-white px-4 py-2 rounded-lg hover:from-green-700 hover:to-green-800 transition-all duration-200 flex items-center space-x-2"
+            onClick={exportAnalytics}
+            className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center"
           >
-            <Download className="w-4 h-4" />
-            <span>Export</span>
+            <Download size={16} className="mr-2" />
+            Export Data
           </button>
         </div>
       </div>
 
-      {/* Overview Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+      {/* Key Metrics */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {/* Users */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-gray-800 rounded-xl p-6"
+        >
+          <div className="flex items-center justify-between mb-4">
+            <div className="bg-blue-600 p-3 rounded-lg">
+              <Users size={24} className="text-white" />
+            </div>
+            <div className="flex items-center">
+              {React.createElement(getGrowthIcon(analytics.users.growth), {
+                size: 20,
+                className: getGrowthColor(analytics.users.growth)
+              })}
+              <span className={`ml-1 font-medium ${getGrowthColor(analytics.users.growth)}`}>
+                {analytics.users.growth >= 0 ? '+' : ''}{analytics.users.growth.toFixed(1)}%
+              </span>
+            </div>
+          </div>
+          <h3 className="text-2xl font-bold text-white mb-1">
+            {analytics.users.total.toLocaleString()}
+          </h3>
+          <p className="text-gray-400 text-sm">Total Users</p>
+          <div className="mt-3 pt-3 border-t border-gray-700">
+            <div className="flex justify-between text-sm">
+              <span className="text-gray-400">This Month:</span>
+              <span className="text-white font-medium">{analytics.users.thisMonth}</span>
+            </div>
+            <div className="flex justify-between text-sm mt-1">
+              <span className="text-gray-400">Active:</span>
+              <span className="text-white font-medium">{analytics.users.active}</span>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Stories */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-gray-800 rounded-xl p-4 sm:p-6"
+          className="bg-gray-800 rounded-xl p-6"
         >
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-gray-400 text-xs sm:text-sm">Total Users</p>
-              <p className="text-xl sm:text-2xl font-bold text-white">
-                {analytics.overview.totalUsers}
-              </p>
-              <div className="flex items-center space-x-1 mt-1">
-                <TrendingUp
-                  className={`w-3 h-3 ${analytics.overview.growthMetrics.usersGrowth >= 0 ? 'text-green-400' : 'text-red-400'}`}
-                />
-                <span
-                  className={`text-xs ${analytics.overview.growthMetrics.usersGrowth >= 0 ? 'text-green-400' : 'text-red-400'}`}
-                >
-                  {analytics.overview.growthMetrics.usersGrowth >= 0 ? '+' : ''}
-                  {analytics.overview.growthMetrics.usersGrowth}%
-                </span>
-              </div>
+          <div className="flex items-center justify-between mb-4">
+            <div className="bg-green-600 p-3 rounded-lg">
+              <BookOpen size={24} className="text-white" />
             </div>
-            <Users className="w-8 h-8 text-blue-400" />
+            <div className="flex items-center">
+              {React.createElement(getGrowthIcon(analytics.stories.growth), {
+                size: 20,
+                className: getGrowthColor(analytics.stories.growth)
+              })}
+              <span className={`ml-1 font-medium ${getGrowthColor(analytics.stories.growth)}`}>
+                {analytics.stories.growth >= 0 ? '+' : ''}{analytics.stories.growth.toFixed(1)}%
+              </span>
+            </div>
+          </div>
+          <h3 className="text-2xl font-bold text-white mb-1">
+            {analytics.stories.total.toLocaleString()}
+          </h3>
+          <p className="text-gray-400 text-sm">Total Stories</p>
+          <div className="mt-3 pt-3 border-t border-gray-700">
+            <div className="flex justify-between text-sm">
+              <span className="text-gray-400">This Month:</span>
+              <span className="text-white font-medium">{analytics.stories.thisMonth}</span>
+            </div>
+            <div className="flex justify-between text-sm mt-1">
+              <span className="text-gray-400">Completed:</span>
+              <span className="text-white font-medium">{analytics.stories.completed}</span>
+            </div>
           </div>
         </motion.div>
 
+        {/* Comments */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="bg-gray-800 rounded-xl p-4 sm:p-6"
+          className="bg-gray-800 rounded-xl p-6"
         >
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-gray-400 text-xs sm:text-sm">Total Stories</p>
-              <p className="text-xl sm:text-2xl font-bold text-white">
-                {analytics.overview.totalStories}
-              </p>
-              <div className="flex items-center space-x-1 mt-1">
-                <TrendingUp
-                  className={`w-3 h-3 ${analytics.overview.growthMetrics.storiesGrowth >= 0 ? 'text-green-400' : 'text-red-400'}`}
-                />
-                <span
-                  className={`text-xs ${analytics.overview.growthMetrics.storiesGrowth >= 0 ? 'text-green-400' : 'text-red-400'}`}
-                >
-                  {analytics.overview.growthMetrics.storiesGrowth >= 0
-                    ? '+'
-                    : ''}
-                  {analytics.overview.growthMetrics.storiesGrowth}%
-                </span>
-              </div>
+          <div className="flex items-center justify-between mb-4">
+            <div className="bg-purple-600 p-3 rounded-lg">
+              <MessageSquare size={24} className="text-white" />
             </div>
-            <BookOpen className="w-8 h-8 text-green-400" />
+            <div className="flex items-center">
+              <span className="text-gray-400 text-sm">Engagement</span>
+            </div>
+          </div>
+          <h3 className="text-2xl font-bold text-white mb-1">
+            {analytics.comments.total.toLocaleString()}
+          </h3>
+          <p className="text-gray-400 text-sm">Total Comments</p>
+          <div className="mt-3 pt-3 border-t border-gray-700">
+            <div className="flex justify-between text-sm">
+              <span className="text-gray-400">This Month:</span>
+              <span className="text-white font-medium">{analytics.comments.thisMonth}</span>
+            </div>
+            <div className="flex justify-between text-sm mt-1">
+              <span className="text-gray-400">Unresolved:</span>
+              <span className="text-red-400 font-medium">{analytics.comments.unresolved}</span>
+            </div>
           </div>
         </motion.div>
 
+        {/* Revenue */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="bg-gray-800 rounded-xl p-4 sm:p-6"
+          className="bg-gray-800 rounded-xl p-6"
         >
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-gray-400 text-xs sm:text-sm">Total Comments</p>
-              <p className="text-xl sm:text-2xl font-bold text-white">
-                {analytics.overview.totalComments}
-              </p>
-              <div className="flex items-center space-x-1 mt-1">
-                <TrendingUp
-                  className={`w-3 h-3 ${analytics.overview.growthMetrics.commentsGrowth >= 0 ? 'text-green-400' : 'text-red-400'}`}
-                />
-                <span
-                  className={`text-xs ${analytics.overview.growthMetrics.commentsGrowth >= 0 ? 'text-green-400' : 'text-red-400'}`}
-                >
-                  {analytics.overview.growthMetrics.commentsGrowth >= 0
-                    ? '+'
-                    : ''}
-                  {analytics.overview.growthMetrics.commentsGrowth}%
-                </span>
-              </div>
+          <div className="flex items-center justify-between mb-4">
+            <div className="bg-emerald-600 p-3 rounded-lg">
+              <DollarSign size={24} className="text-white" />
             </div>
-            <MessageSquare className="w-8 h-8 text-purple-400" />
-          </div>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="bg-gray-800 rounded-xl p-4 sm:p-6"
-        >
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-gray-400 text-xs sm:text-sm">Active Mentors</p>
-              <p className="text-xl sm:text-2xl font-bold text-white">
-                {analytics.overview.totalMentors}
-              </p>
-              <p className="text-xs text-gray-400 mt-1">
-                Engagement: {analytics.engagementMetrics.mentorEngagement}%
-              </p>
-            </div>
-            <Users className="w-8 h-8 text-orange-400" />
-          </div>
-        </motion.div>
-      </div>
-
-      {/* Detailed Metrics */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4 sm:gap-6">
-        {/* User Metrics */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-          className="bg-gray-800 rounded-xl p-4 sm:p-6"
-        >
-          <h3 className="text-lg font-medium text-white mb-6">User Metrics</h3>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <span className="text-gray-400">New Users This Month</span>
-              <span className="text-white font-medium">
-                {analytics.userMetrics.newUsersThisMonth}
+            <div className="flex items-center">
+              {React.createElement(getGrowthIcon(analytics.revenue.growth), {
+                size: 20,
+                className: getGrowthColor(analytics.revenue.growth)
+              })}
+              <span className={`ml-1 font-medium ${getGrowthColor(analytics.revenue.growth)}`}>
+                {analytics.revenue.growth >= 0 ? '+' : ''}{analytics.revenue.growth.toFixed(1)}%
               </span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-gray-400">Active Users</span>
-              <span className="text-white font-medium">
-                {analytics.userMetrics.activeUsers}
-              </span>
-            </div>
-
-            <div className="mt-6">
-              <h4 className="text-sm font-medium text-gray-400 mb-3">
-                Users by Subscription Tier
-              </h4>
-              <div className="space-y-2">
-                {tierKeys.map((tierKey) => (
-                  <div key={tierKey} className="flex items-center justify-between">
-                    <span className="text-gray-300 capitalize">{SUBSCRIPTION_TIERS[tierKey].name}</span>
-                    <span className="text-white">{normalizedTiers[tierKey] || 0}</span>
-                  </div>
-                ))}
-              </div>
             </div>
           </div>
-        </motion.div>
-
-        {/* Story Metrics */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6 }}
-          className="bg-gray-800 rounded-xl p-4 sm:p-6"
-        >
-          <h3 className="text-lg font-medium text-white mb-6">Story Metrics</h3>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <span className="text-gray-400">Stories Created This Month</span>
-              <span className="text-white font-medium">
-                {analytics.storyMetrics.storiesCreatedThisMonth}
+          <h3 className="text-2xl font-bold text-white mb-1">
+            ${analytics.revenue.total.toLocaleString()}
+          </h3>
+          <p className="text-gray-400 text-sm">Total Revenue</p>
+          <div className="mt-3 pt-3 border-t border-gray-700">
+            <div className="flex justify-between text-sm">
+              <span className="text-gray-400">This Month:</span>
+              <span className="text-emerald-400 font-medium">
+                ${analytics.revenue.thisMonth.toLocaleString()}
               </span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-gray-400">Average Words per Story</span>
-              <span className="text-white font-medium">
-                {analytics.storyMetrics.averageWordsPerStory}
-              </span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-gray-400">Completion Rate</span>
-              <span className="text-white font-medium">
-                {analytics.storyMetrics.completionRate}%
-              </span>
-            </div>
-
-            <div className="mt-6">
-              <h4 className="text-sm font-medium text-gray-400 mb-3">
-                Stories by Status
-              </h4>
-              <div className="space-y-2">
-                {analytics.storyMetrics.storiesByStatus.map((status) => (
-                  <div
-                    key={status.status}
-                    className="flex items-center justify-between"
-                  >
-                    <span className="text-gray-300 capitalize">
-                      {status.status}
-                    </span>
-                    <span className="text-white">{status.count}</span>
-                  </div>
-                ))}
-              </div>
             </div>
           </div>
         </motion.div>
       </div>
 
-      {/* Engagement Metrics */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.7 }}
-        className="bg-gray-800 rounded-xl p-4 sm:p-6"
-      >
-        <h3 className="text-lg font-medium text-white mb-6">
-          Engagement Metrics
-        </h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-          <div className="text-center">
-            <div className="text-xl sm:text-2xl font-bold text-white mb-1">
-              {analytics.engagementMetrics.commentsThisMonth}
-            </div>
-            <div className="text-gray-400 text-xs sm:text-sm">Comments This Month</div>
-          </div>
-          <div className="text-center">
-            <div className="text-xl sm:text-2xl font-bold text-white mb-1">
-              {analytics.engagementMetrics.averageCommentsPerStory}
-            </div>
-            <div className="text-gray-400 text-xs sm:text-sm">Avg Comments/Story</div>
-          </div>
-          <div className="text-center">
-            <div className="text-xl sm:text-2xl font-bold text-white mb-1">
-              {analytics.engagementMetrics.mentorEngagement}%
-            </div>
-            <div className="text-gray-400 text-xs sm:text-sm">Mentor Engagement</div>
-          </div>
-          <div className="text-center">
-            <div className="text-xl sm:text-2xl font-bold text-white mb-1">
-              {analytics.engagementMetrics.responseRate}%
-            </div>
-            <div className="text-gray-400 text-xs sm:text-sm">Response Rate</div>
+      {/* Quick Actions */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="bg-gray-800 rounded-xl p-6">
+          <h3 className="text-lg font-semibold text-white mb-4">Detailed Analytics</h3>
+          <div className="space-y-3">
+            <button 
+              onClick={() => router.push('/admin/analytics/users')}
+              className="w-full text-left p-3 bg-gray-700/50 rounded-lg hover:bg-gray-700 transition-colors"
+            >
+              <div className="flex items-center justify-between">
+                <span className="text-white font-medium">User Analytics</span>
+                <Users size={16} className="text-blue-400" />
+              </div>
+              <p className="text-gray-400 text-sm mt-1">Registration trends, activity patterns</p>
+            </button>
+            
+            <button 
+              onClick={() => router.push('/admin/analytics/stories')}
+              className="w-full text-left p-3 bg-gray-700/50 rounded-lg hover:bg-gray-700 transition-colors"
+            >
+              <div className="flex items-center justify-between">
+                <span className="text-white font-medium">Story Analytics</span>
+                <BookOpen size={16} className="text-green-400" />
+              </div>
+              <p className="text-gray-400 text-sm mt-1">Creation trends, popular elements</p>
+            </button>
           </div>
         </div>
-      </motion.div>
+
+        <div className="bg-gray-800 rounded-xl p-6">
+          <h3 className="text-lg font-semibold text-white mb-4">Platform Health</h3>
+          <div className="space-y-3">
+            <div className="flex items-center justify-between p-3 bg-gray-700/50 rounded-lg">
+              <span className="text-gray-400">User Verification Rate</span>
+              <span className="text-white font-medium">
+                {analytics.users.total > 0 
+                  ? Math.round((analytics.users.verified / analytics.users.total) * 100)
+                  : 0}%
+              </span>
+            </div>
+            
+            <div className="flex items-center justify-between p-3 bg-gray-700/50 rounded-lg">
+              <span className="text-gray-400">Story Completion Rate</span>
+              <span className="text-white font-medium">
+                {analytics.stories.total > 0 
+                  ? Math.round((analytics.stories.completed / analytics.stories.total) * 100)
+                  : 0}%
+              </span>
+            </div>
+            
+            <div className="flex items-center justify-between p-3 bg-gray-700/50 rounded-lg">
+              <span className="text-gray-400">Comment Resolution Rate</span>
+              <span className="text-white font-medium">
+                {analytics.comments.total > 0 
+                  ? Math.round(((analytics.comments.total - analytics.comments.unresolved) / analytics.comments.total) * 100)
+                  : 0}%
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-gray-800 rounded-xl p-6">
+          <h3 className="text-lg font-semibold text-white mb-4">Quick Actions</h3>
+          <div className="space-y-3">
+            <button 
+              onClick={() => router.push('/admin/revenue')}
+              className="w-full bg-emerald-600 text-white p-3 rounded-lg hover:bg-emerald-700 transition-colors font-medium"
+            >
+              View Revenue Details
+            </button>
+            
+            <button 
+              onClick={() => router.push('/admin/comments?resolved=false')}
+              className="w-full bg-orange-600 text-white p-3 rounded-lg hover:bg-orange-700 transition-colors font-medium"
+            >
+              Review Unresolved Comments
+            </button>
+            
+            <button 
+              onClick={exportAnalytics}
+              className="w-full bg-gray-600 text-white p-3 rounded-lg hover:bg-gray-700 transition-colors font-medium flex items-center justify-center"
+            >
+              <Download size={16} className="mr-2" />
+              Export Full Report
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

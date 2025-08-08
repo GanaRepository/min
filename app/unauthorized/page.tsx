@@ -79,7 +79,6 @@ export default function UnauthorizedPage() {
           <p className="text-xs sm:text-sm text-white">
             If you believe this is an error, please contact our support team.
           </p>
-
         </div>
       </div>
     </div>

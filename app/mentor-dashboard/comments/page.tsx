@@ -230,7 +230,9 @@ export default function MentorComments() {
             <div>
               {/* Comment Header */}
               <div className="flex flex-wrap items-center gap-2 mb-2 sm:mb-3">
-                <span className={`px-2 py-1 rounded-full text-xs border ${getCommentTypeColor(comment.commentType)}`}>
+                <span
+                  className={`px-2 py-1 rounded-full text-xs border ${getCommentTypeColor(comment.commentType)}`}
+                >
                   {comment.commentType}
                 </span>
                 <div className="flex items-center gap-1">
@@ -239,7 +241,9 @@ export default function MentorComments() {
                   ) : (
                     <Clock className="w-4 h-4 text-orange-400" />
                   )}
-                  <span className={`text-xs sm:text-sm ${comment.isResolved ? 'text-green-400' : 'text-orange-400'}`}>
+                  <span
+                    className={`text-xs sm:text-sm ${comment.isResolved ? 'text-green-400' : 'text-orange-400'}`}
+                  >
                     {comment.isResolved ? 'Resolved' : 'Pending'}
                   </span>
                 </div>
@@ -250,7 +254,9 @@ export default function MentorComments() {
                 <div className="flex flex-wrap items-center gap-1 sm:gap-2 text-xs sm:text-sm text-gray-300">
                   <BookOpen className="w-4 h-4" />
                   <span>
-                    Story: &quot;{comment.storyId.title}&quot; by {comment.storyId.childId.firstName} {comment.storyId.childId.lastName}
+                    Story: &quot;{comment.storyId.title}&quot; by{' '}
+                    {comment.storyId.childId.firstName}{' '}
+                    {comment.storyId.childId.lastName}
                   </span>
                 </div>
               </div>
@@ -268,7 +274,9 @@ export default function MentorComments() {
               <div className="flex items-center gap-2 sm:gap-4 flex-wrap">
                 <div className="flex items-center gap-1">
                   <Calendar className="w-4 h-4" />
-                  <span>{new Date(comment.createdAt).toLocaleDateString()}</span>
+                  <span>
+                    {new Date(comment.createdAt).toLocaleDateString()}
+                  </span>
                 </div>
                 {comment.responses && comment.responses > 0 && (
                   <div className="flex items-center gap-1">
@@ -283,14 +291,27 @@ export default function MentorComments() {
                     className="text-green-400 hover:text-green-300 p-1.5 sm:p-2 rounded-lg hover:bg-gray-700 transition-colors border border-green-600 text-xs sm:text-sm"
                     onClick={async () => {
                       try {
-                        const res = await fetch(`/api/mentor/comments/${comment._id}`, {
-                          method: 'PATCH',
-                          headers: { 'Content-Type': 'application/json' },
-                          body: JSON.stringify({ isResolved: true }),
-                        });
+                        const res = await fetch(
+                          `/api/mentor/comments/${comment._id}`,
+                          {
+                            method: 'PATCH',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ isResolved: true }),
+                          }
+                        );
                         const data = await res.json();
                         if (data.success) {
-                          setComments((prev) => prev.map((c) => c._id === comment._id ? { ...c, isResolved: true, resolvedAt: new Date().toISOString() } : c));
+                          setComments((prev) =>
+                            prev.map((c) =>
+                              c._id === comment._id
+                                ? {
+                                    ...c,
+                                    isResolved: true,
+                                    resolvedAt: new Date().toISOString(),
+                                  }
+                                : c
+                            )
+                          );
                         }
                       } catch (e) {}
                     }}
@@ -300,11 +321,17 @@ export default function MentorComments() {
                   </button>
                 )}
                 <Link href={`/mentor-dashboard/stories/${comment.storyId._id}`}>
-                  <button className="text-blue-400 hover:text-blue-300 p-1.5 sm:p-2 rounded-lg hover:bg-gray-700 transition-colors" title="View Story">
+                  <button
+                    className="text-blue-400 hover:text-blue-300 p-1.5 sm:p-2 rounded-lg hover:bg-gray-700 transition-colors"
+                    title="View Story"
+                  >
                     <Eye className="w-4 h-4" />
                   </button>
                 </Link>
-                <button className="text-gray-400 hover:text-gray-300 p-1.5 sm:p-2 rounded-lg hover:bg-gray-700 transition-colors" title="Edit (coming soon)">
+                <button
+                  className="text-gray-400 hover:text-gray-300 p-1.5 sm:p-2 rounded-lg hover:bg-gray-700 transition-colors"
+                  title="Edit (coming soon)"
+                >
                   <Edit className="w-4 h-4" />
                 </button>
               </div>

@@ -290,7 +290,9 @@ export default function MentorStories() {
                 <p className="text-white text-xs sm:text-sm font-medium">
                   {story.child.firstName} {story.child.lastName}
                 </p>
-                <p className="text-gray-400 text-[10px] sm:text-xs">{story.child.email}</p>
+                <p className="text-gray-400 text-[10px] sm:text-xs">
+                  {story.child.email}
+                </p>
               </div>
             </div>
 
@@ -300,19 +302,25 @@ export default function MentorStories() {
                 <div className="text-base sm:text-lg font-bold text-white">
                   {story.totalWords}
                 </div>
-                <div className="text-gray-400 text-[10px] sm:text-xs">Total Words</div>
+                <div className="text-gray-400 text-[10px] sm:text-xs">
+                  Total Words
+                </div>
               </div>
               <div className="text-center">
                 <div className="text-base sm:text-lg font-bold text-blue-400">
                   {story.mentorCommentCount}
                 </div>
-                <div className="text-gray-400 text-[10px] sm:text-xs">My Comments</div>
+                <div className="text-gray-400 text-[10px] sm:text-xs">
+                  My Comments
+                </div>
               </div>
               <div className="text-center">
                 <div className="text-base sm:text-lg font-bold text-orange-400">
                   {story.unresolvedComments}
                 </div>
-                <div className="text-gray-400 text-[10px] sm:text-xs">Unresolved</div>
+                <div className="text-gray-400 text-[10px] sm:text-xs">
+                  Unresolved
+                </div>
               </div>
             </div>
 
@@ -364,7 +372,9 @@ export default function MentorStories() {
             {/* Last Comment Preview */}
             {story.lastMentorComment && (
               <div className="mt-2 sm:mt-3 p-2 sm:p-3 bg-gray-700/30 rounded-lg">
-                <p className="text-gray-400 text-[10px] sm:text-xs mb-0.5 sm:mb-1">Your last comment:</p>
+                <p className="text-gray-400 text-[10px] sm:text-xs mb-0.5 sm:mb-1">
+                  Your last comment:
+                </p>
                 <p className="text-gray-300 text-xs sm:text-sm truncate">
                   {story.lastMentorComment}
                 </p>

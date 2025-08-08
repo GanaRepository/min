@@ -151,7 +151,8 @@ export default function MentorDashboard() {
           Welcome back, {session?.user.firstName}!
         </h1>
         <p className="text-gray-300 text-sm sm:text-base">
-          Ready to inspire young writers today? Check your student&apos;s progress below.
+          Ready to inspire young writers today? Check your student&apos;s
+          progress below.
         </p>
       </div>
 
@@ -195,24 +196,32 @@ export default function MentorDashboard() {
         {/* Monthly Performance */}
         <div className="bg-gray-800 rounded-xl p-4 sm:p-6">
           <div className="flex items-center justify-between mb-2 sm:mb-4">
-            <h3 className="text-base sm:text-lg font-semibold text-white">This Month</h3>
+            <h3 className="text-base sm:text-lg font-semibold text-white">
+              This Month
+            </h3>
             <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5 text-green-400" />
           </div>
           <div className="space-y-2 sm:space-y-4">
             <div className="flex justify-between items-center">
-              <span className="text-gray-400 text-xs sm:text-base">New Stories</span>
+              <span className="text-gray-400 text-xs sm:text-base">
+                New Stories
+              </span>
               <span className="text-white font-medium text-xs sm:text-base">
                 {stats?.monthlyStats.newStories || 0}
               </span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-gray-400 text-xs sm:text-base">Comments Given</span>
+              <span className="text-gray-400 text-xs sm:text-base">
+                Comments Given
+              </span>
               <span className="text-white font-medium text-xs sm:text-base">
                 {stats?.monthlyStats.commentsGiven || 0}
               </span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-gray-400 text-xs sm:text-base">Assessments</span>
+              <span className="text-gray-400 text-xs sm:text-base">
+                Assessments
+              </span>
               <span className="text-white font-medium text-xs sm:text-base">
                 {stats?.monthlyStats.assessmentsCompleted || 0}
               </span>
@@ -227,7 +236,10 @@ export default function MentorDashboard() {
           </h3>
           <div className="space-y-2 sm:space-y-4">
             {topStudents.map((student, index) => (
-              <div key={student._id} className="flex items-center gap-2 sm:gap-3">
+              <div
+                key={student._id}
+                className="flex items-center gap-2 sm:gap-3"
+              >
                 <div className="w-7 h-7 sm:w-8 sm:h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center">
                   <span className="text-white text-xs sm:text-sm font-medium">
                     {student.firstName[0]}
@@ -262,7 +274,9 @@ export default function MentorDashboard() {
       {/* Recent Activity */}
       <div className="bg-gray-800 rounded-xl p-4 sm:p-6">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 sm:mb-6 gap-2 sm:gap-0">
-          <h3 className="text-lg sm:text-xl font-semibold text-white">Recent Activity</h3>
+          <h3 className="text-lg sm:text-xl font-semibold text-white">
+            Recent Activity
+          </h3>
           <Link
             href="/mentor-dashboard/activity"
             className="text-blue-400 hover:text-blue-300 text-xs sm:text-sm"
@@ -287,7 +301,9 @@ export default function MentorDashboard() {
                   {getActivityIcon(activity.type)}
                 </div>
                 <div className="flex-1">
-                  <p className="text-white text-xs sm:text-sm">{activity.description}</p>
+                  <p className="text-white text-xs sm:text-sm">
+                    {activity.description}
+                  </p>
                   <div className="flex items-center gap-1 sm:gap-2 mt-1">
                     <Clock className="w-3 h-3 text-gray-400" />
                     <span className="text-gray-400 text-[10px] sm:text-xs">
@@ -301,12 +317,12 @@ export default function MentorDashboard() {
         ) : (
           <div className="text-center py-6 sm:py-8">
             <AlertCircle className="w-8 h-8 sm:w-12 sm:h-12 text-gray-600 mx-auto mb-3 sm:mb-4" />
-            <p className="text-gray-400 text-xs sm:text-base">No recent activity to display</p>
+            <p className="text-gray-400 text-xs sm:text-base">
+              No recent activity to display
+            </p>
           </div>
         )}
       </div>
-
-     
     </div>
   );
 }

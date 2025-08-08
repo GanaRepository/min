@@ -1,0 +1,103 @@
+// components/PurchaseButton.tsx - Reusable Purchase Button Component
+'use client';
+
+import { useState } from 'react';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import { CreditCard, Loader2 } from 'lucide-react';
+
+interface PurchaseButtonProps {
+  productType: 'story_pack' | 'story_publication';
+  storyId?: string;
+  className?: string;
+  children?: React.ReactNode;
+  disabled?: boolean;
+  size?: 'sm' | 'md' | 'lg';
+}
+
+export default function PurchaseButton({
+  productType,
+  storyId,
+  className = '',
+  children,
+  disabled = false,
+  size = 'md',
+}: PurchaseButtonProps) {
+  const { data: session } = useSession();
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+
+  const sizeClasses = {
+    sm: 'px-4 py-2 text-sm',
+    md: 'px-6 py-3 text-base',
+    lg: 'px-8 py-4 text-lg',
+  };
+
+  const handlePurchase = async () => {
+    if (!session) {
+      router.push('/login/child');
+      return;
+    }
+
+    if (disabled) return;
+
+    setLoading(true);
+
+    try {
+      const response = await fetch('/api/stripe/checkout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          productType,
+          storyId,
+          userId: session.user.id,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.success && data.checkoutUrl) {
+        window.location.href = data.checkoutUrl;
+      } else {
+        throw new Error(data.error || 'Failed to create checkout session');
+      }
+    } catch (error) {
+      console.error('Purchase error:', error);
+      alert('Purchase failed. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const defaultText = {
+    story_pack: 'Buy Story Pack - $15',
+    story_publication: 'Publish Story - $10',
+  };
+
+  return (
+    <button
+      onClick={handlePurchase}
+      disabled={disabled || loading}
+      className={`
+        flex items-center justify-center gap-2 font-medium transition-colors
+        disabled:opacity-50 disabled:cursor-not-allowed
+        ${sizeClasses[size]}
+        ${className}
+      `}
+    >
+      {loading ? (
+        <>
+          <Loader2 className="animate-spin" size={16} />
+          Processing...
+        </>
+      ) : (
+        <>
+          <CreditCard size={16} />
+          {children || defaultText[productType]}
+        </>
+      )}
+    </button>
+  );
+}

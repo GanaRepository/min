@@ -245,7 +245,6 @@
 //   feedback: string;
 // }
 
-
 import { Document, Types } from 'mongoose';
 
 export interface IStoryElement {

@@ -106,7 +106,7 @@ const Navbar = () => {
       <div className="w-full mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-around items-center h-20">
           <Link href="/">
-           <MintoonsLogo variant="color" /> 
+            <MintoonsLogo variant="color" />
           </Link>
 
           <div className="hidden md:flex items-center space-x-8">
@@ -128,6 +128,18 @@ const Navbar = () => {
               className="text-black hover:text-contact-purple transition-colors"
             >
               Contact Us
+            </Link>
+            <Link
+              href="/pricing"
+              className="text-black hover:text-contact-purple transition-colors"
+            >
+              Pricing
+            </Link>
+            <Link
+              href="/competitions"
+              className="text-black hover:text-contact-purple transition-colors"
+            >
+              Competitions
             </Link>
           </div>
 
@@ -316,6 +328,19 @@ const Navbar = () => {
               onClick={() => setIsMobileMenuOpen(false)}
             >
               Contact Us
+            </Link>
+            <Link
+              href="/pricing"
+              className="text-black hover:text-contact-purple transition-colors"
+            >
+              Pricing
+            </Link>
+            <Link
+              href="/competitions"
+              className="text-black hover:text-contact-purple transition-colors py-2"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              Competitions
             </Link>
 
             {/* Login button (if not logged in) */}

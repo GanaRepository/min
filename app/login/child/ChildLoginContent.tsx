@@ -353,7 +353,10 @@ function ChildLoginContent() {
               className="space-y-3 sm:space-y-4"
             >
               <div className="space-y-1 sm:space-y-2">
-                <Label htmlFor="child-email" className="text-white/80 text-xs sm:text-sm">
+                <Label
+                  htmlFor="child-email"
+                  className="text-white/80 text-xs sm:text-sm"
+                >
                   Email
                 </Label>
                 <input
@@ -430,7 +433,9 @@ function ChildLoginContent() {
                 <div className="w-full border-t border-white/20" />
               </div>
               <div className="relative flex justify-center text-xs sm:text-sm">
-                <span className="px-2 sm:px-4 bg-transparent text-white/60">OR</span>
+                <span className="px-2 sm:px-4 bg-transparent text-white/60">
+                  OR
+                </span>
               </div>
             </div>
 
@@ -441,7 +446,9 @@ function ChildLoginContent() {
               transition={{ duration: 0.6, delay: 1.2 }}
               className="text-center"
             >
-              <span className="text-white/60 text-xs sm:text-sm">First time here? </span>
+              <span className="text-white/60 text-xs sm:text-sm">
+                First time here?{' '}
+              </span>
               <Link
                 href="/register/child"
                 className="text-orange-300 text-xs sm:text-sm underline hover:text-orange-200 transition-colors"

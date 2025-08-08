@@ -317,7 +317,9 @@ function ResetPasswordContent() {
                 shield around your stories. Let&apos;s make sure your creative
                 work stays safe!&quot;
               </p>
-              <p className="text-[10px] sm:text-xs text-white/60">- Mintoons Security Team</p>
+              <p className="text-[10px] sm:text-xs text-white/60">
+                - Mintoons Security Team
+              </p>
             </motion.div>
           </div>
         </motion.div>
@@ -512,18 +514,20 @@ function ResetPasswordContent() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 1.2 }}
-          className="text-center mt-4 sm:mt-6"
-        >
-          <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-md sm:rounded-lg p-3 sm:p-4">
-            <div className="flex items-center justify-center mb-1 sm:mb-2">
-              <Shield className="w-3 h-3 sm:w-4 sm:h-4 text-teal-300 mr-1 sm:mr-2" />
-              <span className="text-white/70 text-xs sm:text-sm">Security Tip</span>
+            className="text-center mt-4 sm:mt-6"
+          >
+            <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-md sm:rounded-lg p-3 sm:p-4">
+              <div className="flex items-center justify-center mb-1 sm:mb-2">
+                <Shield className="w-3 h-3 sm:w-4 sm:h-4 text-teal-300 mr-1 sm:mr-2" />
+                <span className="text-white/70 text-xs sm:text-sm">
+                  Security Tip
+                </span>
+              </div>
+              <p className="text-[10px] sm:text-xs text-white/50 leading-relaxed">
+                Choose a unique password that you haven&apos;t used elsewhere.
+                This keeps your creative stories extra safe!
+              </p>
             </div>
-            <p className="text-[10px] sm:text-xs text-white/50 leading-relaxed">
-              Choose a unique password that you haven&apos;t used elsewhere.
-              This keeps your creative stories extra safe!
-            </p>
-          </div>
           </motion.div>
         </motion.div>
       </motion.div>

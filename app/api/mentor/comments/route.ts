@@ -14,7 +14,10 @@ export async function PATCH(request: Request) {
     const paths = url.pathname.split('/');
     const commentId = paths[paths.length - 1];
     if (!commentId || commentId.length < 10) {
-      return NextResponse.json({ error: 'Invalid comment ID' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Invalid comment ID' },
+        { status: 400 }
+      );
     }
 
     const { isResolved, comment } = await request.json();
@@ -34,7 +37,10 @@ export async function PATCH(request: Request) {
       { new: true }
     );
     if (!updated) {
-      return NextResponse.json({ error: 'Comment not found or not authorized' }, { status: 404 });
+      return NextResponse.json(
+        { error: 'Comment not found or not authorized' },
+        { status: 404 }
+      );
     }
     return NextResponse.json({ success: true, comment: updated });
   } catch (error) {
@@ -68,14 +74,24 @@ export async function POST(request: Request) {
     await connectToDatabase();
 
     // Optionally, check that this mentor is assigned to the child for this story
-    const story = await (await import('@/models/StorySession')).default.findById(storyId);
+    const story = await (
+      await import('@/models/StorySession')
+    ).default.findById(storyId);
     if (!story) {
       return NextResponse.json({ error: 'Story not found' }, { status: 404 });
     }
-    const MentorAssignment = (await import('@/models/MentorAssignment')).default;
-    const assignment = await MentorAssignment.findOne({ mentorId: session.user.id, childId: story.childId, isActive: { $ne: false } });
+    const MentorAssignment = (await import('@/models/MentorAssignment'))
+      .default;
+    const assignment = await MentorAssignment.findOne({
+      mentorId: session.user.id,
+      childId: story.childId,
+      isActive: { $ne: false },
+    });
     if (!assignment) {
-      return NextResponse.json({ error: 'Not authorized for this story' }, { status: 403 });
+      return NextResponse.json(
+        { error: 'Not authorized for this story' },
+        { status: 403 }
+      );
     }
 
     const newComment = await StoryComment.create({
@@ -89,8 +105,9 @@ export async function POST(request: Request) {
       createdAt: new Date(),
     });
 
-    const populatedComment = await StoryComment.findById(newComment._id)
-      .populate('authorId', 'firstName lastName role');
+    const populatedComment = await StoryComment.findById(
+      newComment._id
+    ).populate('authorId', 'firstName lastName role');
 
     return NextResponse.json({
       success: true,

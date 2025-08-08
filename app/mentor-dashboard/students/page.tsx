@@ -83,8 +83,12 @@ export default function MentorStudents() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-white mb-1 sm:mb-2">My Students</h1>
-          <p className="text-gray-400 text-sm sm:text-base">Manage your assigned young writers</p>
+          <h1 className="text-xl sm:text-2xl font-bold text-white mb-1 sm:mb-2">
+            My Students
+          </h1>
+          <p className="text-gray-400 text-sm sm:text-base">
+            Manage your assigned young writers
+          </p>
         </div>
         <div className="mt-2 sm:mt-0">
           <div className="text-gray-400 text-xs sm:text-sm">
@@ -129,7 +133,9 @@ export default function MentorStudents() {
                 <h3 className="text-white font-medium text-sm sm:text-base">
                   {student.firstName} {student.lastName}
                 </h3>
-                <p className="text-gray-400 text-xs sm:text-sm">{student.email}</p>
+                <p className="text-gray-400 text-xs sm:text-sm">
+                  {student.email}
+                </p>
               </div>
             </div>
 
@@ -139,19 +145,25 @@ export default function MentorStudents() {
                 <div className="text-base sm:text-xl font-bold text-white">
                   {student.totalStories}
                 </div>
-                <div className="text-gray-400 text-[10px] sm:text-xs">Total Stories</div>
+                <div className="text-gray-400 text-[10px] sm:text-xs">
+                  Total Stories
+                </div>
               </div>
               <div className="text-center">
                 <div className="text-base sm:text-xl font-bold text-green-400">
                   {student.completedStories}
                 </div>
-                <div className="text-gray-400 text-[10px] sm:text-xs">Completed</div>
+                <div className="text-gray-400 text-[10px] sm:text-xs">
+                  Completed
+                </div>
               </div>
               <div className="text-center">
                 <div className="text-base sm:text-xl font-bold text-blue-400">
                   {student.activeStories}
                 </div>
-                <div className="text-gray-400 text-[10px] sm:text-xs">Active</div>
+                <div className="text-gray-400 text-[10px] sm:text-xs">
+                  Active
+                </div>
               </div>
             </div>
 

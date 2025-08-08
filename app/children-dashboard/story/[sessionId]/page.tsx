@@ -68,7 +68,7 @@
 //   const storyTimelineRef = useRef<HTMLDivElement>(null);
 //   const [isLoading, setIsLoading] = useState(true);
 //   const [currentInput, setCurrentInput] = useState('');
-  
+
 //   const [isValid, setIsValid] = useState(false);
 //   const [wordCount, setWordCount] = useState(0);
 //   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -379,7 +379,7 @@
 
 //       // Add the new turn to the turns array
 //       setTurns(prev => [...prev, data.turn]);
-      
+
 //       setCurrentInput(''); // Clear input after successful submission
 
 //       toast({
@@ -550,7 +550,7 @@
 //           className="mb-6 sm:mb-8"
 //         >
 //           <h1 className="text-2xl sm:text-3xl font-bold mb-3 sm:mb-4 break-words">{storySession.title}</h1>
-          
+
 //           {/* ✅ FIXED: Safe elements display */}
 //           <div className="flex flex-wrap gap-1 sm:gap-2">
 //             {storySession.elements && Object.entries(storySession.elements)
@@ -564,9 +564,9 @@
 //                 </span>
 //               ))
 //             }
-            
+
 //             {/* ✅ SAFE: Show story mode indicator for freeform stories */}
-//             {(!storySession.elements || 
+//             {(!storySession.elements ||
 //               Object.entries(storySession.elements).every(([_, value]) => !value || value.trim() === '')) && (
 //               <span className="px-3 py-1 bg-gray-500/20 border border-gray-500/30 rounded-full text-sm text-gray-300 italic">
 //                 ✨ Freeform Story
@@ -980,7 +980,6 @@
 //  );
 // }
 
-
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
@@ -1050,7 +1049,7 @@ export default function StoryWritingPage({
   const storyTimelineRef = useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [currentInput, setCurrentInput] = useState('');
-  
+
   const [isValid, setIsValid] = useState(false);
   const [wordCount, setWordCount] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -1267,7 +1266,7 @@ export default function StoryWritingPage({
         body: JSON.stringify({
           sessionId: storySession._id,
           childInput: currentInput.trim(),
-          turnNumber: storySession.currentTurn
+          turnNumber: storySession.currentTurn,
         }),
       });
 
@@ -1275,18 +1274,22 @@ export default function StoryWritingPage({
 
       if (response.ok) {
         // Update session state
-        setStorySession(prev => prev ? {
-          ...prev,
-          currentTurn: data.session.currentTurn,
-          totalWords: data.session.totalWords,
-          childWords: data.session.childWords,
-          apiCallsUsed: data.session.apiCallsUsed,
-          status: data.session.status
-        } : null);
+        setStorySession((prev) =>
+          prev
+            ? {
+                ...prev,
+                currentTurn: data.session.currentTurn,
+                totalWords: data.session.totalWords,
+                childWords: data.session.childWords,
+                apiCallsUsed: data.session.apiCallsUsed,
+                status: data.session.status,
+              }
+            : null
+        );
 
         // Add the new turn to the turns array
-        setTurns(prev => [...prev, data.turn]);
-        
+        setTurns((prev) => [...prev, data.turn]);
+
         setCurrentInput(''); // Clear input after successful submission
 
         toast({
@@ -1456,23 +1459,27 @@ export default function StoryWritingPage({
           animate={{ opacity: 1, y: 0 }}
           className="mb-6 sm:mb-8"
         >
-          <h1 className="text-2xl sm:text-3xl font-bold mb-3 sm:mb-4 break-words">{storySession.title}</h1>
-          
+          <h1 className="text-2xl sm:text-3xl font-bold mb-3 sm:mb-4 break-words">
+            {storySession.title}
+          </h1>
+
           <div className="flex flex-wrap gap-1 sm:gap-2">
-            {storySession.elements && Object.entries(storySession.elements)
-              .filter(([type, value]) => value && value.trim() !== '')
-              .map(([type, value]) => (
-                <span
-                  key={type}
-                  className="px-2 sm:px-3 py-0.5 sm:py-1 bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-500/30 rounded-full text-xs sm:text-sm text-white capitalize"
-                >
-                  {type}: {value}
-                </span>
-              ))
-            }
-            
-            {(!storySession.elements || 
-              Object.entries(storySession.elements).every(([_, value]) => !value || value.trim() === '')) && (
+            {storySession.elements &&
+              Object.entries(storySession.elements)
+                .filter(([type, value]) => value && value.trim() !== '')
+                .map(([type, value]) => (
+                  <span
+                    key={type}
+                    className="px-2 sm:px-3 py-0.5 sm:py-1 bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-500/30 rounded-full text-xs sm:text-sm text-white capitalize"
+                  >
+                    {type}: {value}
+                  </span>
+                ))}
+
+            {(!storySession.elements ||
+              Object.entries(storySession.elements).every(
+                ([_, value]) => !value || value.trim() === ''
+              )) && (
               <span className="px-3 py-1 bg-gray-500/20 border border-gray-500/30 rounded-full text-sm text-gray-300 italic">
                 ✨ Freeform Story
               </span>
@@ -1583,7 +1590,9 @@ export default function StoryWritingPage({
                         </div>
                         <div>
                           <h3 className="font-semibold text-purple-400">
-                            {storySession.storyMode === 'guided' ? "AI Teacher's Story Opening" : "Your Story Opening"}
+                            {storySession.storyMode === 'guided'
+                              ? "AI Teacher's Story Opening"
+                              : 'Your Story Opening'}
                           </h3>
                         </div>
                       </div>
@@ -1752,134 +1761,142 @@ export default function StoryWritingPage({
                       disabled={isSaving}
                       className="bg-yellow-500 hover:bg-yellow-600 disabled:bg-gray-600 px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl font-medium flex items-center justify-center space-x-1 sm:space-x-2 transition-colors disabled:cursor-not-allowed text-xs sm:text-sm"
                     >
-                    <Pause className="w-4 h-4" />
-                     <span>Pause</span>
-                   </button>
-                 </div>
-               </div>
-             </>
-           )}
+                      <Pause className="w-4 h-4" />
+                      <span>Pause</span>
+                    </button>
+                  </div>
+                </div>
+              </>
+            )}
 
-           <div className="bg-gray-800/50 border border-gray-600/50 rounded-xl p-4 sm:p-6">
-             <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4 flex items-center">
-               <Zap className="w-5 h-5 mr-2 text-yellow-400" />
-               Story Progress
-             </h3>
+            <div className="bg-gray-800/50 border border-gray-600/50 rounded-xl p-4 sm:p-6">
+              <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4 flex items-center">
+                <Zap className="w-5 h-5 mr-2 text-yellow-400" />
+                Story Progress
+              </h3>
 
-             <div className="grid grid-cols-2 gap-2 sm:gap-4">
-               <div className="bg-blue-500/20 border border-blue-500/30 rounded-lg p-3 sm:p-4 text-center">
-                 <div className="text-lg sm:text-2xl font-bold text-white">
-                   {storySession.childWords}
-                 </div>
-                 <div className="text-blue-300 text-xs sm:text-sm">Your Words</div>
-               </div>
+              <div className="grid grid-cols-2 gap-2 sm:gap-4">
+                <div className="bg-blue-500/20 border border-blue-500/30 rounded-lg p-3 sm:p-4 text-center">
+                  <div className="text-lg sm:text-2xl font-bold text-white">
+                    {storySession.childWords}
+                  </div>
+                  <div className="text-blue-300 text-xs sm:text-sm">
+                    Your Words
+                  </div>
+                </div>
 
-               <div className="bg-green-500/20 border border-green-500/30 rounded-lg p-3 sm:p-4 text-center">
-                 <div className="text-lg sm:text-2xl font-bold text-white">
-                   {storySession.totalWords}
-                 </div>
-                 <div className="text-green-300 text-xs sm:text-sm">Total Words</div>
-               </div>
+                <div className="bg-green-500/20 border border-green-500/30 rounded-lg p-3 sm:p-4 text-center">
+                  <div className="text-lg sm:text-2xl font-bold text-white">
+                    {storySession.totalWords}
+                  </div>
+                  <div className="text-green-300 text-xs sm:text-sm">
+                    Total Words
+                  </div>
+                </div>
 
-               <div className="bg-purple-500/20 border border-purple-500/30 rounded-lg p-3 sm:p-4 text-center">
-                 <div className="text-lg sm:text-2xl font-bold text-white">
-                   {storySession.currentTurn}/{maxTurns}
-                 </div>
-                 <div className="text-purple-300 text-xs sm:text-sm">Current Turn</div>
-               </div>
+                <div className="bg-purple-500/20 border border-purple-500/30 rounded-lg p-3 sm:p-4 text-center">
+                  <div className="text-lg sm:text-2xl font-bold text-white">
+                    {storySession.currentTurn}/{maxTurns}
+                  </div>
+                  <div className="text-purple-300 text-xs sm:text-sm">
+                    Current Turn
+                  </div>
+                </div>
 
-               <div className="bg-orange-500/20 border border-orange-500/30 rounded-lg p-3 sm:p-4 text-center">
-                 <div className="text-lg sm:text-2xl font-bold text-white">
-                   {storySession.apiCallsUsed}/{storySession.maxApiCalls}
-                 </div>
-                 <div className="text-orange-300 text-xs sm:text-sm">AI Calls Used</div>
-               </div>
-             </div>
+                <div className="bg-orange-500/20 border border-orange-500/30 rounded-lg p-3 sm:p-4 text-center">
+                  <div className="text-lg sm:text-2xl font-bold text-white">
+                    {storySession.apiCallsUsed}/{storySession.maxApiCalls}
+                  </div>
+                  <div className="text-orange-300 text-xs sm:text-sm">
+                    AI Calls Used
+                  </div>
+                </div>
+              </div>
 
-             <div className="mt-4 sm:mt-6 flex items-center justify-center">
-               <div className="relative w-20 h-20 sm:w-24 sm:h-24">
-                 <svg
-                   className="w-20 h-20 sm:w-24 sm:h-24 transform -rotate-90"
-                   viewBox="0 0 100 100"
-                 >
-                   <circle
-                     cx="50"
-                     cy="50"
-                     r="40"
-                     stroke="currentColor"
-                     strokeWidth="8"
-                     fill="transparent"
-                     className="text-gray-700"
-                   />
-                   <motion.circle
-                     cx="50"
-                     cy="50"
-                     r="40"
-                     stroke="currentColor"
-                     strokeWidth="8"
-                     fill="transparent"
-                     strokeDasharray={`${progressPercentage * 2.51} 251`}
-                     className="text-green-400"
-                     initial={{ strokeDasharray: '0 251' }}
-                     animate={{
-                       strokeDasharray: `${progressPercentage * 2.51} 251`,
-                     }}
-                     transition={{ duration: 1, ease: 'easeInOut' }}
-                   />
-                 </svg>
-                 <div className="absolute inset-0 flex items-center justify-center">
-                   <span className="text-base sm:text-lg font-bold text-white">
-                     {Math.round(progressPercentage)}%
-                   </span>
-                 </div>
-               </div>
-             </div>
-           </div>
-         </div>
-       </div>
-     </div>
+              <div className="mt-4 sm:mt-6 flex items-center justify-center">
+                <div className="relative w-20 h-20 sm:w-24 sm:h-24">
+                  <svg
+                    className="w-20 h-20 sm:w-24 sm:h-24 transform -rotate-90"
+                    viewBox="0 0 100 100"
+                  >
+                    <circle
+                      cx="50"
+                      cy="50"
+                      r="40"
+                      stroke="currentColor"
+                      strokeWidth="8"
+                      fill="transparent"
+                      className="text-gray-700"
+                    />
+                    <motion.circle
+                      cx="50"
+                      cy="50"
+                      r="40"
+                      stroke="currentColor"
+                      strokeWidth="8"
+                      fill="transparent"
+                      strokeDasharray={`${progressPercentage * 2.51} 251`}
+                      className="text-green-400"
+                      initial={{ strokeDasharray: '0 251' }}
+                      animate={{
+                        strokeDasharray: `${progressPercentage * 2.51} 251`,
+                      }}
+                      transition={{ duration: 1, ease: 'easeInOut' }}
+                    />
+                  </svg>
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <span className="text-base sm:text-lg font-bold text-white">
+                      {Math.round(progressPercentage)}%
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-     <AssessmentModal
-       isOpen={showAssessment}
-       onClose={() => setShowAssessment(false)}
-       storySession={storySession}
-       turns={turns}
-       assessment={assessment}
-     />
+      <AssessmentModal
+        isOpen={showAssessment}
+        onClose={() => setShowAssessment(false)}
+        storySession={storySession}
+        turns={turns}
+        assessment={assessment}
+      />
 
-     <style jsx global>{`
-       .scrollbar-thin::-webkit-scrollbar {
-         width: 8px;
-       }
+      <style jsx global>{`
+        .scrollbar-thin::-webkit-scrollbar {
+          width: 8px;
+        }
 
-       .scrollbar-track-gray-700\/30::-webkit-scrollbar-track {
-         background: rgba(55, 65, 81, 0.3);
-         border-radius: 4px;
-       }
+        .scrollbar-track-gray-700\/30::-webkit-scrollbar-track {
+          background: rgba(55, 65, 81, 0.3);
+          border-radius: 4px;
+        }
 
-       .scrollbar-thumb-emerald-500::-webkit-scrollbar-thumb {
-         background: linear-gradient(to bottom, #10b981, #059669);
-         border-radius: 4px;
-         border: 1px solid rgba(255, 255, 255, 0.1);
-       }
+        .scrollbar-thumb-emerald-500::-webkit-scrollbar-thumb {
+          background: linear-gradient(to bottom, #10b981, #059669);
+          border-radius: 4px;
+          border: 1px solid rgba(255, 255, 255, 0.1);
+        }
 
-       .hover\\:scrollbar-thumb-emerald-400::-webkit-scrollbar-thumb:hover {
-         background: linear-gradient(to bottom, #34d399, #10b981);
-       }
+        .hover\\:scrollbar-thumb-emerald-400::-webkit-scrollbar-thumb:hover {
+          background: linear-gradient(to bottom, #34d399, #10b981);
+        }
 
-       .scrollbar-thumb-rounded-full::-webkit-scrollbar-thumb {
-         border-radius: 9999px;
-       }
+        .scrollbar-thumb-rounded-full::-webkit-scrollbar-thumb {
+          border-radius: 9999px;
+        }
 
-       .scrollbar-track-rounded-full::-webkit-scrollbar-track {
-         border-radius: 9999px;
-       }
+        .scrollbar-track-rounded-full::-webkit-scrollbar-track {
+          border-radius: 9999px;
+        }
 
-       .scrollbar-thin {
-         scrollbar-width: thin;
-         scrollbar-color: #10b981 rgba(55, 65, 81, 0.3);
-       }
-     `}</style>
-   </div>
- );
+        .scrollbar-thin {
+          scrollbar-width: thin;
+          scrollbar-color: #10b981 rgba(55, 65, 81, 0.3);
+        }
+      `}</style>
+    </div>
+  );
 }

@@ -164,9 +164,7 @@ interface WritingInterfaceProps {
   onSubmit: () => void;
   isSubmitting: boolean;
   session: {
-    current
-
-: number;
+    current: number;
     totalWords: number;
     status: string;
   };

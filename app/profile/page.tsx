@@ -130,7 +130,9 @@ export default function ProfilePage() {
                   </p>
                   <div className="flex items-center justify-center md:justify-start">
                     <Mail className="h-4 w-4 text-white/60 mr-2" />
-                    <span className="text-white/80 text-xs sm:text-base">{session.user.email}</span>
+                    <span className="text-white/80 text-xs sm:text-base">
+                      {session.user.email}
+                    </span>
                   </div>
                 </motion.div>
               </div>
@@ -225,12 +227,12 @@ export default function ProfilePage() {
                       </div>
                       {session.user.createdBy && (
                         <div>
-                        <dt className="text-xs sm:text-sm font-medium text-white/60">
-                          Created By (Admin)
-                        </dt>
-                        <dd className="mt-1 text-white text-xs sm:text-base">
-                          {session.user.createdBy}
-                        </dd>
+                          <dt className="text-xs sm:text-sm font-medium text-white/60">
+                            Created By (Admin)
+                          </dt>
+                          <dd className="mt-1 text-white text-xs sm:text-base">
+                            {session.user.createdBy}
+                          </dd>
                         </div>
                       )}
                     </>
@@ -248,7 +250,9 @@ export default function ProfilePage() {
               >
                 <div className="flex items-center mb-4 sm:mb-6">
                   <Briefcase className="h-5 w-5 sm:h-6 sm:w-6 text-white mr-2 sm:mr-3" />
-                  <h2 className="text-lg sm:text-xl font-bold text-white">Quick Access</h2>
+                  <h2 className="text-lg sm:text-xl font-bold text-white">
+                    Quick Access
+                  </h2>
                 </div>
 
                 <div className="space-y-3 sm:space-y-4">
@@ -311,7 +315,9 @@ export default function ProfilePage() {
                         <Phone className="h-5 w-5 sm:h-6 sm:w-6" />
                       </div>
                       <div>
-                        <h3 className="font-medium text-white text-sm sm:text-base">Get Support</h3>
+                        <h3 className="font-medium text-white text-sm sm:text-base">
+                          Get Support
+                        </h3>
                         <p className="text-xs sm:text-sm text-white/60">
                           Connect with our Mintoons team
                         </p>

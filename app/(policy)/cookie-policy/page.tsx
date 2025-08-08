@@ -1,12 +1,17 @@
 export default function CookiePolicy() {
   return (
     <div className="container mx-auto px-2 sm:px-4 md:px-8 lg:px-12 xl:px-20 py-8 sm:py-12 md:py-16 min-h-screen mt-4 sm:mt-6">
-      <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-8 text-black">Mintoons Cookie Policy</h1>
+      <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-8 text-black">
+        Mintoons Cookie Policy
+      </h1>
 
       <div className="prose prose-base sm:prose-lg max-w-none text-gray-900 space-y-6">
         <p>Last updated: {new Date().toLocaleDateString()}</p>
         <p>
-          This Cookie Policy explains how Mintoons ("we", "us", or "our") uses cookies and similar technologies on our website (mintoons.com). By using our website, you consent to the use of cookies as described in this policy.
+          This Cookie Policy explains how Mintoons ("we", "us", or "our") uses
+          cookies and similar technologies on our website (mintoons.com). By
+          using our website, you consent to the use of cookies as described in
+          this policy.
         </p>
 
         <div className="space-y-4">
@@ -41,7 +46,8 @@ export default function CookiePolicy() {
             </li>
             <li>
               <strong className="text-black">Analytics Cookies:</strong> Help us
-              understand how visitors interact with our website and improve our creative writing platform
+              understand how visitors interact with our website and improve our
+              creative writing platform
             </li>
           </ul>
         </div>
@@ -87,7 +93,10 @@ export default function CookiePolicy() {
           <ul className="list-disc pl-6 space-y-2">
             <li>Analyze website traffic (Google Analytics)</li>
             <li>Provide social media features</li>
-            <li>Display personalized content and recommendations for young writers and mentors</li>
+            <li>
+              Display personalized content and recommendations for young writers
+              and mentors
+            </li>
           </ul>
         </div>
 
@@ -97,7 +106,9 @@ export default function CookiePolicy() {
           </h2>
           <p>
             We may update this Cookie Policy from time to time. Please check
-            this page regularly for any changes. Your continued use of mintoons.com after changes are posted constitutes your acceptance of the updated policy.
+            this page regularly for any changes. Your continued use of
+            mintoons.com after changes are posted constitutes your acceptance of
+            the updated policy.
           </p>
         </div>
 
@@ -110,9 +121,7 @@ export default function CookiePolicy() {
           </p>
           <ul className="list-none space-y-2">
             <li>By email: support@mintoons.com</li>
-            <li>
-              By mail: Mintoons, Dallas, TX, USA
-            </li>
+            <li>By mail: Mintoons, Dallas, TX, USA</li>
           </ul>
         </div>
       </div>

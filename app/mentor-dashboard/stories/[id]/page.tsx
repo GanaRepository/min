@@ -4,7 +4,14 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { BookOpen, Calendar, MessageSquare, User, Edit, Trash2 } from 'lucide-react';
+import {
+  BookOpen,
+  Calendar,
+  MessageSquare,
+  User,
+  Edit,
+  Trash2,
+} from 'lucide-react';
 
 interface Comment {
   _id: string;
@@ -95,7 +102,11 @@ export default function MentorStoryDetail() {
       });
       const data = await res.json();
       if (data.success) {
-        setComments((prev) => prev.map((c) => (c._id === comment._id ? { ...c, comment: editValue } : c)));
+        setComments((prev) =>
+          prev.map((c) =>
+            c._id === comment._id ? { ...c, comment: editValue } : c
+          )
+        );
         setEditingId(null);
         setEditValue('');
       }
@@ -116,14 +127,18 @@ export default function MentorStoryDetail() {
   };
 
   if (loading) {
-    return <div className="text-center py-12 text-gray-400">Loading story...</div>;
+    return (
+      <div className="text-center py-12 text-gray-400">Loading story...</div>
+    );
   }
 
   if (!story) {
     return (
       <div className="text-center py-12">
         <BookOpen className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-        <h3 className="text-xl font-medium text-gray-400 mb-2">Story not found</h3>
+        <h3 className="text-xl font-medium text-gray-400 mb-2">
+          Story not found
+        </h3>
         <Link href="/mentor-dashboard/stories">
           <button className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
             Back to Stories
@@ -138,24 +153,36 @@ export default function MentorStoryDetail() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
         <Link href="/mentor-dashboard/stories">
-          <button className="text-gray-800 hover:text-blue-600 transition-colors bg-white p-2 rounded-lg text-xs sm:text-base">← Back To Stories</button>
+          <button className="text-gray-800 hover:text-blue-600 transition-colors bg-white p-2 rounded-lg text-xs sm:text-base">
+            ← Back To Stories
+          </button>
         </Link>
       </div>
 
       {/* Story Content */}
       <div className="bg-gray-800 rounded-xl p-3 sm:p-6 mb-4 sm:mb-6">
         <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-2">
-          <span className="px-2 py-1 rounded-full text-xs border bg-blue-500/20 text-blue-300 border-blue-500/30">{story.status}</span>
-          <span className="text-gray-400 text-xs">{story.totalWords} words</span>
+          <span className="px-2 py-1 rounded-full text-xs border bg-blue-500/20 text-blue-300 border-blue-500/30">
+            {story.status}
+          </span>
+          <span className="text-gray-400 text-xs">
+            {story.totalWords} words
+          </span>
           <Calendar className="w-4 h-4 ml-2 sm:ml-4" />
-          <span className="text-gray-400 text-xs">Updated: {new Date(story.updatedAt).toLocaleDateString()}</span>
+          <span className="text-gray-400 text-xs">
+            Updated: {new Date(story.updatedAt).toLocaleDateString()}
+          </span>
         </div>
-        <div className="text-white whitespace-pre-line text-sm sm:text-base mt-2 sm:mt-4">{story.content}</div>
+        <div className="text-white whitespace-pre-line text-sm sm:text-base mt-2 sm:mt-4">
+          {story.content}
+        </div>
       </div>
 
       {/* Comments Section */}
       <div className="bg-gray-800 rounded-xl p-3 sm:p-6">
-        <h3 className="text-base sm:text-lg font-medium text-white mb-2 sm:mb-4">Comments & Reviews</h3>
+        <h3 className="text-base sm:text-lg font-medium text-white mb-2 sm:mb-4">
+          Comments & Reviews
+        </h3>
         {/* Add Comment */}
         <div className="mb-3 sm:mb-4 flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-2">
           <input
@@ -174,16 +201,25 @@ export default function MentorStoryDetail() {
         </div>
         {/* Comments List */}
         <div className="space-y-3 sm:space-y-4">
-          {comments.length === 0 && <p className="text-gray-400 text-xs sm:text-sm">No comments yet.</p>}
+          {comments.length === 0 && (
+            <p className="text-gray-400 text-xs sm:text-sm">No comments yet.</p>
+          )}
           {comments.map((comment) => (
-            <div key={comment._id} className="flex flex-col sm:flex-row items-start gap-2 sm:gap-3 bg-gray-700/50 rounded-lg p-2 sm:p-3">
+            <div
+              key={comment._id}
+              className="flex flex-col sm:flex-row items-start gap-2 sm:gap-3 bg-gray-700/50 rounded-lg p-2 sm:p-3"
+            >
               <div className="flex-shrink-0 w-7 h-7 sm:w-8 sm:h-8 bg-gray-600 rounded-full flex items-center justify-center">
                 <User className="w-4 h-4 text-white" />
               </div>
               <div className="flex-1">
                 <div className="flex flex-wrap items-center gap-1 sm:gap-2">
-                  <span className="text-white font-medium text-xs sm:text-sm">{comment.authorId?.firstName} {comment.authorId?.lastName}</span>
-                  <span className="text-gray-400 text-[10px] sm:text-xs">{new Date(comment.createdAt).toLocaleDateString()}</span>
+                  <span className="text-white font-medium text-xs sm:text-sm">
+                    {comment.authorId?.firstName} {comment.authorId?.lastName}
+                  </span>
+                  <span className="text-gray-400 text-[10px] sm:text-xs">
+                    {new Date(comment.createdAt).toLocaleDateString()}
+                  </span>
                 </div>
                 {editingId === comment._id ? (
                   <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 mt-2">
@@ -207,7 +243,9 @@ export default function MentorStoryDetail() {
                     </button>
                   </div>
                 ) : (
-                  <p className="text-gray-200 mt-2 text-xs sm:text-base">{comment.comment}</p>
+                  <p className="text-gray-200 mt-2 text-xs sm:text-base">
+                    {comment.comment}
+                  </p>
                 )}
               </div>
               <div className="flex flex-row sm:flex-col gap-1 sm:gap-1 mt-2 sm:mt-0">

@@ -40,8 +40,6 @@ const RegisterPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 text-white relative overflow-hidden">
- 
-
       {/* Hero Section */}
       <section
         ref={heroRef}

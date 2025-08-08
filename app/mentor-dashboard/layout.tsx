@@ -52,7 +52,6 @@ export default function MentorLayout({ children }: MentorLayoutProps) {
       href: '/mentor-dashboard/comments',
       icon: MessageSquare,
     },
-  
   ];
 
   const isActive = (path: string) => {
@@ -113,7 +112,9 @@ export default function MentorLayout({ children }: MentorLayoutProps) {
                   <h1 className="text-lg sm:text-xl font-bold text-white">
                     Mentor Portal
                   </h1>
-                  <p className="text-xs sm:text-sm text-gray-400">Mintoons Teaching Hub</p>
+                  <p className="text-xs sm:text-sm text-gray-400">
+                    Mintoons Teaching Hub
+                  </p>
                 </div>
               </div>
             </div>
@@ -131,7 +132,9 @@ export default function MentorLayout({ children }: MentorLayoutProps) {
                   <p className="text-xs sm:text-sm font-medium text-white">
                     {session.user.firstName} {session.user.lastName}
                   </p>
-                  <p className="text-[10px] sm:text-xs text-gray-400">Writing Mentor</p>
+                  <p className="text-[10px] sm:text-xs text-gray-400">
+                    Writing Mentor
+                  </p>
                 </div>
               </div>
             </div>
@@ -200,7 +203,7 @@ export default function MentorLayout({ children }: MentorLayoutProps) {
           </div>
 
           {/* Page content */}
-          <main className='p-2 sm:p-4 md:p-5'>{children}</main>
+          <main className="p-2 sm:p-4 md:p-5">{children}</main>
         </div>
       </div>
     </div>

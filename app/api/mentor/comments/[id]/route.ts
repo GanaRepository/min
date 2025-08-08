@@ -5,7 +5,10 @@ import { connectToDatabase } from '@/utils/db';
 import StoryComment from '@/models/StoryComment';
 
 // PATCH /api/mentor/comments/[id] - update a comment (resolve, edit)
-export async function PATCH(request: Request, { params }: { params: { id: string } }) {
+export async function PATCH(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
   try {
     const session = await getServerSession(authOptions);
     if (!session || session.user.role !== 'mentor') {
@@ -16,7 +19,10 @@ export async function PATCH(request: Request, { params }: { params: { id: string
     }
     const commentId = params.id;
     if (!commentId || commentId.length < 10) {
-      return NextResponse.json({ error: 'Invalid comment ID' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Invalid comment ID' },
+        { status: 400 }
+      );
     }
     const { isResolved, comment } = await request.json();
     await connectToDatabase();
@@ -35,7 +41,10 @@ export async function PATCH(request: Request, { params }: { params: { id: string
       { new: true }
     );
     if (!updated) {
-      return NextResponse.json({ error: 'Comment not found or not authorized' }, { status: 404 });
+      return NextResponse.json(
+        { error: 'Comment not found or not authorized' },
+        { status: 404 }
+      );
     }
     return NextResponse.json({ success: true, comment: updated });
   } catch (error) {

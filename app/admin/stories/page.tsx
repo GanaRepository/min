@@ -1,3 +1,4 @@
+// app/admin/stories/page.tsx
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
@@ -6,28 +7,18 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import {
   BookOpen,
+  Search,
+  Filter,
+  Eye,
+  Edit,
+  Trash2,
+  Download,
   MessageSquare,
   User,
   Calendar,
-  Search,
-  Eye,
-  AlertCircle,
-  CheckCircle,
-  Clock,
-  X,
-  Pause,
-  FileText,
+  BarChart3,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
-
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationPrevious,
-  PaginationNext,
-} from '@/components/ui/pagination';
 
 interface Story {
   _id: string;
@@ -46,10 +37,11 @@ interface Story {
     firstName: string;
     lastName: string;
     email: string;
-    subscriptionTier?: string;
   };
   commentCount: number;
   unresolvedComments: number;
+  isPublished?: boolean;
+  submittedToCompetition?: boolean;
 }
 
 interface StoryStats {
@@ -63,49 +55,55 @@ interface StoryStats {
   totalUnresolvedComments: number;
 }
 
-export default function AdminStories() {
+interface Pagination {
+  page: number;
+  limit: number;
+  total: number;
+  pages: number;
+}
+
+export default function StoriesPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
-  
+
   const [stories, setStories] = useState<Story[]>([]);
   const [stats, setStats] = useState<StoryStats | null>(null);
+  const [pagination, setPagination] = useState<Pagination | null>(null);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
+  const [statusFilter, setStatusFilter] = useState(searchParams.get('status') || 'all');
   const [authorFilter, setAuthorFilter] = useState(searchParams.get('author') || '');
-  const [authorName, setAuthorName] = useState('');
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const limit = 10;
+  const [page, setPage] = useState(parseInt(searchParams.get('page') || '1'));
 
   const fetchStories = useCallback(async () => {
     try {
+      setLoading(true);
       const params = new URLSearchParams({
-        ...(statusFilter !== 'all' && { status: statusFilter }),
-        ...(authorFilter && { author: authorFilter }),
         page: page.toString(),
-        limit: limit.toString(),
+        limit: '20',
       });
+      
+      if (statusFilter && statusFilter !== 'all') {
+        params.append('status', statusFilter);
+      }
+      if (authorFilter.trim()) {
+        params.append('author', authorFilter.trim());
+      }
+
       const response = await fetch(`/api/admin/stories?${params}`);
       const data = await response.json();
+
       if (data.success) {
         setStories(data.stories);
-        if (data.stats) {
-          setStats(data.stats);
-        }
-        if (authorFilter && data.stories.length > 0) {
-          const firstStory = data.stories[0];
-          setAuthorName(`${firstStory.child.firstName} ${firstStory.child.lastName}`);
-        }
-        setTotalPages(data.pagination.pages || 1);
+        setStats(data.stats);
+        setPagination(data.pagination);
       }
     } catch (error) {
       console.error('Error fetching stories:', error);
     } finally {
       setLoading(false);
     }
-  }, [statusFilter, authorFilter, page]);
+  }, [page, statusFilter, authorFilter]);
 
   useEffect(() => {
     if (status === 'loading') return;
@@ -116,59 +114,62 @@ export default function AdminStories() {
     fetchStories();
   }, [session, status, router, fetchStories]);
 
-  const clearAuthorFilter = () => {
-    setAuthorFilter('');
-    setAuthorName('');
-    router.push('/admin/stories');
+  const deleteStory = async (storyId: string, title: string) => {
+    if (!confirm(`Are you sure you want to delete "${title}"? This action cannot be undone.`)) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/admin/stories/${storyId}`, {
+        method: 'DELETE',
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setStories(stories.filter(story => story._id !== storyId));
+        alert('Story deleted successfully');
+      } else {
+        alert('Failed to delete story: ' + data.error);
+      }
+    } catch (error) {
+      console.error('Error deleting story:', error);
+      alert('Failed to delete story');
+    }
   };
 
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'completed':
-        return <CheckCircle className="w-4 h-4 text-green-400" />;
-      case 'active':
-        return <Clock className="w-4 h-4 text-blue-400" />;
-      case 'paused':
-        return <Pause className="w-4 h-4 text-yellow-400" />;
-      default:
-        return <AlertCircle className="w-4 h-4 text-gray-400" />;
+  const exportStories = async () => {
+    try {
+      const params = new URLSearchParams();
+      if (statusFilter !== 'all') params.append('status', statusFilter);
+      if (authorFilter) params.append('author', authorFilter);
+      
+      const response = await fetch(`/api/admin/stories/export?${params}`);
+      const blob = await response.blob();
+      
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `stories-export-${new Date().toISOString().split('T')[0]}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (error) {
+      console.error('Error exporting stories:', error);
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'completed':
-        return 'bg-green-500/20 text-green-300 border-green-500/30';
-      case 'active':
-        return 'bg-blue-500/20 text-blue-300 border-blue-500/30';
-      case 'paused':
-        return 'bg-yellow-500/20 text-yellow-300 border-yellow-500/30';
-      default:
-        return 'bg-gray-500/20 text-gray-300 border-gray-500/30';
+      case 'completed': return 'bg-green-100 text-green-800';
+      case 'active': return 'bg-blue-100 text-blue-800';
+      case 'paused': return 'bg-yellow-100 text-yellow-800';
+      default: return 'bg-gray-100 text-gray-800';
     }
   };
 
-  const getTierColor = (tier: string) => {
-    switch (tier?.toLowerCase()) {
-      case 'premium':
-        return 'bg-yellow-500/20 text-yellow-300';
-      case 'basic':
-        return 'bg-blue-500/20 text-blue-300';
-      default:
-        return 'bg-gray-500/20 text-gray-300';
-    }
-  };
-
-  const filteredStories = stories.filter(
-    (story) =>
-      story.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      `${story.child.firstName} ${story.child.lastName}`
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase()) ||
-      story.child.email.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  if (loading) {
+  if (loading && stories.length === 0) {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="text-xl text-gray-400">Loading stories...</div>
@@ -179,91 +180,106 @@ export default function AdminStories() {
   return (
     <div className="space-y-6 px-2 sm:px-4 md:px-8 lg:px-12 xl:px-20 py-4 sm:py-6 md:py-8">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-white mb-2">Stories Management</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">
+            Stories Management
+          </h1>
           <p className="text-gray-400">
-            {authorFilter 
-              ? `Stories by ${authorName || 'Selected User'}` 
-              : 'Monitor all stories in the platform'}
+            Manage all user stories and their content
           </p>
         </div>
-        {authorFilter && (
-          <button
-            onClick={clearAuthorFilter}
-            className="mt-4 sm:mt-0 bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors flex items-center space-x-2"
-          >
-            <X className="w-4 h-4" />
-            <span>Clear Filter</span>
-          </button>
-        )}
+        <button
+          onClick={exportStories}
+          className="bg-gradient-to-r from-green-600 to-green-700 text-white px-6 py-2.5 rounded-lg hover:from-green-700 hover:to-green-800 transition-all duration-200 flex items-center"
+        >
+          <Download size={20} className="mr-2" />
+          Export Stories
+        </button>
       </div>
 
       {/* Stats Cards */}
-      {stats && !authorFilter && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-          <div className="bg-gray-800 rounded-xl p-4 sm:p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-gray-400 text-sm">Total Stories</p>
-                <p className="text-2xl font-bold text-white">{stats.totalStories}</p>
-              </div>
-              <BookOpen className="w-8 h-8 text-blue-400" />
+      {stats && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="bg-gray-800 rounded-xl p-6">
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-sm font-medium text-gray-400">Total Stories</h3>
+              <BookOpen size={20} className="text-blue-400" />
             </div>
+            <p className="text-2xl font-bold text-white">{stats.totalStories}</p>
           </div>
-          <div className="bg-gray-800 rounded-xl p-4 sm:p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-gray-400 text-sm">Active Stories</p>
-                <p className="text-2xl font-bold text-white">{stats.activeStories}</p>
-              </div>
-              <Clock className="w-8 h-8 text-blue-400" />
+          
+          <div className="bg-gray-800 rounded-xl p-6">
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-sm font-medium text-gray-400">Completed</h3>
+              <BarChart3 size={20} className="text-green-400" />
             </div>
+            <p className="text-2xl font-bold text-white">{stats.completedStories}</p>
+            <p className="text-xs text-gray-500 mt-1">
+              {stats.totalStories > 0 ? Math.round((stats.completedStories / stats.totalStories) * 100) : 0}% completion rate
+            </p>
           </div>
-          <div className="bg-gray-800 rounded-xl p-4 sm:p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-gray-400 text-sm">Completed</p>
-                <p className="text-2xl font-bold text-white">{stats.completedStories}</p>
-              </div>
-              <CheckCircle className="w-8 h-8 text-green-400" />
+          
+          <div className="bg-gray-800 rounded-xl p-6">
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-sm font-medium text-gray-400">Active</h3>
+              <BookOpen size={20} className="text-blue-400" />
             </div>
+            <p className="text-2xl font-bold text-white">{stats.activeStories}</p>
           </div>
-          <div className="bg-gray-800 rounded-xl p-4 sm:p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-gray-400 text-sm">Need Attention</p>
-                <p className="text-2xl font-bold text-white">{stats.storiesWithUnresolvedComments}</p>
-              </div>
-              <AlertCircle className="w-8 h-8 text-orange-400" />
+          
+          <div className="bg-gray-800 rounded-xl p-6">
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-sm font-medium text-gray-400">Comments</h3>
+              <MessageSquare size={20} className="text-purple-400" />
             </div>
+            <p className="text-2xl font-bold text-white">{stats.totalComments}</p>
+            {stats.totalUnresolvedComments > 0 && (
+              <p className="text-xs text-red-400 mt-1">
+                {stats.totalUnresolvedComments} unresolved
+              </p>
+            )}
           </div>
         </div>
       )}
 
       {/* Filters */}
-      <div className="bg-gray-800 rounded-xl p-4 sm:p-6">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-            <input
-              type="text"
-              placeholder="Search stories, authors, or emails..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full bg-gray-700 border border-gray-600 rounded-lg pl-10 pr-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
+      <div className="bg-gray-800 rounded-xl p-6">
+        <div className="flex flex-col lg:flex-row gap-4">
+          {/* Status Filter */}
+          <div className="flex items-center gap-2">
+            <Filter size={20} className="text-gray-400" />
+            <div className="flex bg-gray-700 rounded-lg p-1">
+              {['all', 'active', 'completed', 'paused'].map((status) => (
+                <button
+                  key={status}
+                  onClick={() => setStatusFilter(status)}
+                  className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
+                    statusFilter === status
+                      ? 'bg-blue-600 text-white'
+                      : 'text-gray-300 hover:text-white'
+                  }`}
+                >
+                  {status.charAt(0).toUpperCase() + status.slice(1)}
+                  {status === 'all' ? ' Stories' : ''}
+                </button>
+              ))}
+            </div>
           </div>
-          <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            className="bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="all">All Status</option>
-            <option value="active">Active</option>
-            <option value="completed">Completed</option>
-            <option value="paused">Paused</option>
-          </select>
+
+          {/* Author Filter */}
+          <div className="flex-1">
+            <div className="relative">
+              <User size={20} className="absolute left-3 top-3 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Filter by author email..."
+                value={authorFilter}
+                onChange={(e) => setAuthorFilter(e.target.value)}
+                className="w-full pl-10 pr-4 py-2.5 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+          </div>
         </div>
       </div>
 
@@ -271,192 +287,197 @@ export default function AdminStories() {
       <div className="bg-gray-800 rounded-xl overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-700/50">
+            <thead className="bg-gray-700">
               <tr>
-                <th className="text-left p-4 text-gray-300 font-medium">Story</th>
-                <th className="text-left p-4 text-gray-300 font-medium">Author</th>
-                <th className="text-left p-4 text-gray-300 font-medium">Status</th>
-                <th className="text-left p-4 text-gray-300 font-medium">Progress</th>
-                <th className="text-left p-4 text-gray-300 font-medium">Comments</th>
-                <th className="text-left p-4 text-gray-300 font-medium">Created</th>
-                <th className="text-left p-4 text-gray-300 font-medium">Actions</th>
+                <th className="text-left py-3 px-4 text-sm font-medium text-gray-300">Story</th>
+                <th className="text-left py-3 px-4 text-sm font-medium text-gray-300">Author</th>
+                <th className="text-left py-3 px-4 text-sm font-medium text-gray-300">Status</th>
+                <th className="text-left py-3 px-4 text-sm font-medium text-gray-300">Progress</th>
+                <th className="text-left py-3 px-4 text-sm font-medium text-gray-300">Comments</th>
+                <th className="text-left py-3 px-4 text-sm font-medium text-gray-300">Created</th>
+                <th className="text-left py-3 px-4 text-sm font-medium text-gray-300">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-700/50">
-              {filteredStories.map((story, index) => (
-                <motion.tr
-                  key={story._id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.05 }}
-                  className="hover:bg-gray-700/30 transition-colors"
-                >
-                  <td className="p-4">
+            <tbody>
+              {stories.map((story) => (
+                <tr key={story._id} className="border-b border-gray-700/50 hover:bg-gray-700/20 transition-colors">
+                  {/* Story Title */}
+                  <td className="py-3 px-4">
                     <div>
-                      <h3 className="text-white font-medium">{story.title}</h3>
-                      <p className="text-gray-400 text-sm">Story #{story.storyNumber}</p>
+                      <Link href={`/admin/stories/${story._id}`}>
+                        <h4 className="text-white font-medium hover:text-blue-400 cursor-pointer">
+                          {story.title}
+                        </h4>
+                      </Link>
+                      <div className="flex items-center space-x-2 mt-1">
+                        <p className="text-xs text-gray-400">#{story.storyNumber}</p>
+                        {story.isPublished && (
+                          <span className="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full">
+                            Published
+                          </span>
+                        )}
+                        {story.submittedToCompetition && (
+                          <span className="px-2 py-1 text-xs bg-yellow-100 text-yellow-800 rounded-full">
+                            Competition
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </td>
-                  <td className="p-4">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center">
-                        <span className="text-sm font-medium text-white">
-                          {story.child && story.child.firstName ? story.child.firstName[0] : ''}
-                          {story.child && story.child.lastName ? story.child.lastName[0] : ''}
-                        </span>
-                      </div>
-                      <div>
-                        <p className="text-white text-sm">
-                          {story.child && story.child.firstName ? story.child.firstName : ''} {story.child && story.child.lastName ? story.child.lastName : ''}
+
+                  {/* Author */}
+                  <td className="py-3 px-4">
+                    <div>
+                      <Link href={`/admin/users/${story.child._id}`}>
+                        <p className="text-white font-medium hover:text-blue-400 cursor-pointer">
+                          {story.child.firstName} {story.child.lastName}
                         </p>
-                        <div className="flex items-center space-x-2">
-                          <p className="text-gray-400 text-xs">{story.child && story.child.email ? story.child.email : ''}</p>
-                          {story.child && story.child.subscriptionTier && story.child.subscriptionTier !== 'FREE' && (
-                            <span className={`px-1 py-0.5 rounded text-xs ${getTierColor(story.child.subscriptionTier)}`}>
-                              {story.child.subscriptionTier}
-                            </span>
-                          )}
-                        </div>
-                      </div>
+                      </Link>
+                      <p className="text-xs text-gray-400">{story.child.email}</p>
                     </div>
                   </td>
-                  <td className="p-4">
-                    <span className={`inline-flex items-center space-x-1 px-2 py-1 rounded-full text-xs border ${getStatusColor(story.status)}`}>
-                      {getStatusIcon(story.status)}
-                      <span className="capitalize">{story.status}</span>
+
+                  {/* Status */}
+                  <td className="py-3 px-4">
+                    <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(story.status)}`}>
+                      {story.status}
                     </span>
                   </td>
-                  <td className="p-4">
-                    <div>
-                      <p className="text-white text-sm">{story.totalWords} words</p>
-                      <div className="flex items-center space-x-2 mt-1">
-                        <div className="w-16 bg-gray-700 rounded-full h-1">
-                          <div
-                            className="bg-gradient-to-r from-blue-400 to-blue-500 h-1 rounded-full"
-                            style={{
-                              width: `${Math.min((story.apiCallsUsed / story.maxApiCalls) * 100, 100)}%`,
-                            }}
-                          ></div>
-                        </div>
-                        <span className="text-gray-400 text-xs">
-                          {story.apiCallsUsed}/{story.maxApiCalls}
-                        </span>
+
+                  {/* Progress */}
+                  <td className="py-3 px-4">
+                    <div className="space-y-1">
+                      <div className="flex justify-between text-xs">
+                        <span className="text-gray-400">Words:</span>
+                        <span className="text-white">{story.totalWords}</span>
+                      </div>
+                      <div className="flex justify-between text-xs">
+                        <span className="text-gray-400">AI Calls:</span>
+                        <span className="text-white">{story.apiCallsUsed}/{story.maxApiCalls}</span>
+                      </div>
+                      {/* Progress bar */}
+                      <div className="w-full bg-gray-600 rounded-full h-1">
+                        <div 
+                          className="bg-blue-500 h-1 rounded-full"
+                          style={{ width: `${Math.min((story.apiCallsUsed / story.maxApiCalls) * 100, 100)}%` }}
+                        ></div>
                       </div>
                     </div>
                   </td>
-                  <td className="p-4">
+
+                  {/* Comments */}
+                  <td className="py-3 px-4">
                     <div className="flex items-center space-x-2">
-                      <MessageSquare className="w-4 h-4 text-gray-400" />
-                      <span className="text-white text-sm">{story.commentCount}</span>
+                      <span className="text-white">{story.commentCount}</span>
                       {story.unresolvedComments > 0 && (
-                        <span className="bg-red-500/20 text-red-300 text-xs px-2 py-1 rounded-full border border-red-500/30">
+                        <span className="px-1 py-0.5 text-xs bg-red-100 text-red-800 rounded">
                           {story.unresolvedComments} unresolved
                         </span>
                       )}
                     </div>
                   </td>
-                  <td className="p-4">
-                    <div className="flex items-center space-x-1 text-gray-400">
-                      <Calendar className="w-4 h-4" />
-                      <span className="text-sm">
+
+                  {/* Created */}
+                  <td className="py-3 px-4">
+                    <div>
+                      <p className="text-white text-sm">
                         {new Date(story.createdAt).toLocaleDateString()}
-                      </span>
+                      </p>
+                      <p className="text-xs text-gray-400">
+                        {new Date(story.createdAt).toLocaleTimeString([], {
+                          hour: '2-digit',
+                          minute: '2-digit',
+                        })}
+                      </p>
                     </div>
                   </td>
-                  <td className="p-4">
+
+                  {/* Actions */}
+                  <td className="py-3 px-4">
                     <div className="flex items-center space-x-2">
                       <Link href={`/admin/stories/${story._id}`}>
-                        <button className="text-blue-400 hover:text-blue-300 p-2 rounded-lg hover:bg-gray-700 transition-colors">
-                          <Eye className="w-4 h-4" />
+                        <button className="p-2 text-gray-400 hover:text-blue-400 hover:bg-gray-700 rounded-lg transition-colors">
+                          <Eye size={16} />
                         </button>
                       </Link>
-                      <Link href={`/admin/users/${story.child && story.child._id ? story.child._id : ''}`}>
-                        <button className="text-green-400 hover:text-green-300 p-2 rounded-lg hover:bg-gray-700 transition-colors">
-                          <FileText className="w-4 h-4" />
+                      <Link href={`/admin/stories/${story._id}/edit`}>
+                        <button className="p-2 text-gray-400 hover:text-green-400 hover:bg-gray-700 rounded-lg transition-colors">
+                          <Edit size={16} />
                         </button>
                       </Link>
-                      {story.unresolvedComments > 0 && (
-                        <Link href={`/admin/stories/${story._id}#comments`}>
-                          <button className="text-orange-400 hover:text-orange-300 p-2 rounded-lg hover:bg-gray-700 transition-colors">
-                            <MessageSquare className="w-4 h-4" />
-                          </button>
-                        </Link>
-                      )}
+                      <button
+                        onClick={() => deleteStory(story._id, story.title)}
+                        className="p-2 text-gray-400 hover:text-red-400 hover:bg-gray-700 rounded-lg transition-colors"
+                      >
+                        <Trash2 size={16} />
+                      </button>
                     </div>
                   </td>
-                </motion.tr>
+                </tr>
               ))}
             </tbody>
           </table>
         </div>
+
+        {/* Empty State */}
+        {stories.length === 0 && !loading && (
+          <div className="text-center py-12">
+            <BookOpen size={48} className="text-gray-600 mx-auto mb-4" />
+            <h3 className="text-xl font-medium text-gray-400 mb-2">No stories found</h3>
+            <p className="text-gray-500">
+              {statusFilter !== 'all' || authorFilter 
+                ? 'Try adjusting your filters' 
+                : 'Stories will appear here as users create them'
+              }
+            </p>
+          </div>
+        )}
       </div>
 
       {/* Pagination */}
-      {totalPages > 1 && (
-        <div className="flex justify-center mt-6">
-          <Pagination>
-            <PaginationContent>
-              <PaginationItem>
-                <PaginationPrevious
-                  onClick={e => {
-                    e.preventDefault();
-                    setPage(p => Math.max(p - 1, 1));
-                  }}
-                  href="#"
-                  aria-disabled={page === 1}
-                  tabIndex={page === 1 ? -1 : 0}
-                />
-              </PaginationItem>
-              {Array.from({ length: totalPages }, (_, i) => (
-                <PaginationItem key={i}>
-                  <PaginationLink
-                    isActive={page === i + 1}
-                    href="#"
-                    onClick={e => {
-                      e.preventDefault();
-                      setPage(i + 1);
-                    }}
-                  >
-                    {i + 1}
-                  </PaginationLink>
-                </PaginationItem>
-              ))}
-              <PaginationItem>
-                <PaginationNext
-                  onClick={e => {
-                    e.preventDefault();
-                    setPage(p => Math.min(p + 1, totalPages));
-                  }}
-                  href="#"
-                  aria-disabled={page === totalPages}
-                  tabIndex={page === totalPages ? -1 : 0}
-                />
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
+      {pagination && pagination.pages > 1 && (
+        <div className="flex items-center justify-center space-x-4">
+          <button
+            onClick={() => setPage(Math.max(1, page - 1))}
+            disabled={page === 1}
+            className="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            Previous
+          </button>
+          
+          <div className="flex items-center space-x-2">
+            {Array.from({ length: Math.min(5, pagination.pages) }, (_, i) => {
+              const pageNum = Math.max(1, Math.min(pagination.pages - 4, page - 2)) + i;
+              return (
+                <button
+                  key={pageNum}
+                  onClick={() => setPage(pageNum)}
+                  className={`px-3 py-2 rounded-lg transition-colors ${
+                    page === pageNum
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                  }`}
+                >
+                  {pageNum}
+                </button>
+              );
+            })}
+          </div>
+
+          <button
+            onClick={() => setPage(Math.min(pagination.pages, page + 1))}
+            disabled={page === pagination.pages}
+            className="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            Next
+          </button>
         </div>
       )}
 
-      {filteredStories.length === 0 && !loading && (
-        <div className="text-center py-12">
-          <BookOpen className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-          <h3 className="text-xl font-medium text-gray-400 mb-2">No stories found</h3>
-          <p className="text-gray-500">
-            {authorFilter 
-              ? `${authorName || 'This user'} hasn't created any stories yet.`
-              : searchTerm 
-                ? 'Try adjusting your search criteria.'
-                : 'No stories have been created yet.'
-            }
-          </p>
-          {authorFilter && (
-            <button
-              onClick={clearAuthorFilter}
-              className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              View All Stories
-            </button>
-          )}
+      {/* Summary */}
+      {pagination && (
+        <div className="text-center text-gray-400 text-sm">
+          Showing {((pagination.page - 1) * pagination.limit) + 1} to {Math.min(pagination.page * pagination.limit, pagination.total)} of {pagination.total} stories
         </div>
       )}
     </div>

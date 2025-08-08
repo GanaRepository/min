@@ -365,27 +365,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 text-white relative overflow-hidden">
-      {/* Background Pattern */}
-      {/* <div className="absolute inset-0 opacity-5">
-        <svg width="100%" height="100%" className="absolute inset-0">
-          <defs>
-            <pattern
-              id="grid"
-              width="40"
-              height="40"
-              patternUnits="userSpaceOnUse"
-            >
-              <path
-                d="M 40 0 L 0 0 0 40"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1"
-              />
-            </pattern>
-          </defs>
-          <rect width="100%" height="100%" fill="url(#grid)" />
-        </svg>
-      </div> */}
+    
 
       {/* Animated Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
@@ -405,23 +385,13 @@ export default function Home() {
       </div>
 
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center px-4 sm:px-6 lg:px-8 py-12">
+      <section className="relative  flex items-center px-4 sm:px-6 lg:px-8 py-12 mt-24 ">
         <div className="max-w-7xl mx-auto w-full">
           <div className="grid grid-cols-1 lg:grid-cols-3 lg:gap-12 xl:gap-16 items-center">
             {/* Left Content */}
-            <div className="space-y-8 flex flex-col items-center">
-              {/* Floating badge */}
-              <motion.div
-                className="mt-12 inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-green-500/20 to-teal-500/20 border border-green-400/30 backdrop-blur-xl"
-                initial={{ opacity: 0, x: -50 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.2, duration: 0.8 }}
-              >
-                <Sparkles className="w-4 h-4 text-green-400 mr-2" />
-                <span className="text-green-200 font-medium text-sm">
-                  Creative Writing Education Platform
-                </span>
-              </motion.div>
+            <div className="space-y-8 flex flex-col items-center ">
+             
+         
 
               {/* Main heading */}
               <motion.div
@@ -497,22 +467,7 @@ export default function Home() {
                 </Link>
               </motion.div>
 
-              {/* Feature Icons Preview */}
-              <motion.div
-                className="flex items-center space-x-6 pt-4 justify-center"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 1.2 }}
-              >
-                <div className="flex items-center space-x-2 text-gray-400 text-sm">
-                  <ImageIcon className="w-4 h-4" />
-                  <span>AI Illustrations</span>
-                </div>
-                <div className="flex items-center space-x-2 text-gray-400 text-sm">
-                  <Palette className="w-4 h-4" />
-                  <span>Teacher Feedback</span>
-                </div>
-              </motion.div>
+         
             </div>
 
             {/* Middle - Hero Image */}
@@ -1017,9 +972,7 @@ export default function Home() {
                 <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
                   <Sparkles className="w-6 h-6 text-white" />
                 </div>
-                <h3 className="text-2xl  text-white">
-                  Exciting Genres
-                </h3>
+                <h3 className="text-2xl  text-white">Exciting Genres</h3>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
@@ -1059,9 +1012,7 @@ export default function Home() {
                 <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-teal-600 rounded-xl flex items-center justify-center">
                   <Globe className="w-6 h-6 text-white" />
                 </div>
-                <h3 className="text-2xl  text-white">
-                  Magical Settings
-                </h3>
+                <h3 className="text-2xl  text-white">Magical Settings</h3>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
@@ -1382,9 +1333,7 @@ export default function Home() {
                       </div>
                     </div>
 
-                    <h3 className="text-3xl  text-white">
-                      {step.title}
-                    </h3>
+                    <h3 className="text-3xl  text-white">{step.title}</h3>
 
                     <p className="text-lg text-gray-300 leading-relaxed">
                       {step.description}
@@ -1421,7 +1370,6 @@ export default function Home() {
                           className="object-cover"
                           sizes="(max-width: 768px) 100vw, 50vw"
                         />
-                    
                       </div>
 
                       {/* Animated Color Overlay (on top of image) */}

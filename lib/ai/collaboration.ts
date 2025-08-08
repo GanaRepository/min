@@ -13,7 +13,7 @@
 
 // Story Elements:
 // - Genre: ${elements.genre}
-// - Character: ${elements.character}  
+// - Character: ${elements.character}
 // - Setting: ${elements.setting}
 // - Theme: ${elements.theme}
 // - Mood: ${elements.mood}
@@ -56,7 +56,7 @@
 
 //     const educationalGuidance = this.getEducationalGuidanceForTurn(turnNumber);
 
-//     const prompt = `You are a supportive AI writing teacher helping a child write a ${elements.genre} story. 
+//     const prompt = `You are a supportive AI writing teacher helping a child write a ${elements.genre} story.
 
 // Current Story Context:
 // ${storyContext}
@@ -605,7 +605,6 @@
 
 // export const collaborationEngine = new AICollaborationEngine();
 
-
 import { smartAIProvider } from './smart-provider-manager';
 import type { StoryElements } from '@/config/story-elements';
 
@@ -640,13 +639,16 @@ Example structure: "Meet [character] in [setting]. Something interesting happens
       const response = await smartAIProvider.generateResponse(prompt);
       return response;
     } catch (error) {
-      console.error('AI opening generation failed, using educational fallback:', error);
+      console.error(
+        'AI opening generation failed, using educational fallback:',
+        error
+      );
       return this.getEducationalFallbackOpening(elements);
     }
   }
 
   async generateFreeformOpening(): Promise<string> {
-    return "Welcome to your creative writing adventure! What story would you like to tell today? Start with any idea, character, or situation that excites you.";
+    return 'Welcome to your creative writing adventure! What story would you like to tell today? Start with any idea, character, or situation that excites you.';
   }
 
   async generateContextualResponse(
@@ -657,9 +659,18 @@ Example structure: "Meet [character] in [setting]. Something interesting happens
     turnNumber: number
   ): Promise<string> {
     if (storyMode === 'guided' && elements) {
-      return this.generateGuidedResponse(elements, previousTurns, childInput, turnNumber);
+      return this.generateGuidedResponse(
+        elements,
+        previousTurns,
+        childInput,
+        turnNumber
+      );
     } else {
-      return this.generateFreeformResponse(previousTurns, childInput, turnNumber);
+      return this.generateFreeformResponse(
+        previousTurns,
+        childInput,
+        turnNumber
+      );
     }
   }
 
@@ -670,7 +681,10 @@ Example structure: "Meet [character] in [setting]. Something interesting happens
     turnNumber: number
   ): Promise<string> {
     const storyContext = previousTurns
-      .map((turn, index) => `Turn ${index + 1}:\nChild: ${turn.childInput}\nAI: ${turn.aiResponse}`)
+      .map(
+        (turn, index) =>
+          `Turn ${index + 1}:\nChild: ${turn.childInput}\nAI: ${turn.aiResponse}`
+      )
       .join('\n\n');
 
     const educationalGuidance = this.getEducationalGuidanceForTurn(turnNumber);
@@ -700,7 +714,10 @@ Respond as a supportive teacher who celebrates creativity while guiding learning
       const response = await smartAIProvider.generateResponse(prompt);
       return response;
     } catch (error) {
-      console.error(`AI response generation failed for turn ${turnNumber}, using educational fallback:`, error);
+      console.error(
+        `AI response generation failed for turn ${turnNumber}, using educational fallback:`,
+        error
+      );
       return this.getEducationalFallbackResponse(turnNumber, childInput);
     }
   }
@@ -711,7 +728,10 @@ Respond as a supportive teacher who celebrates creativity while guiding learning
     turnNumber: number
   ): Promise<string> {
     const storyContext = previousTurns
-      .map((turn, index) => `Turn ${index + 1}:\nChild: ${turn.childInput}\nAI: ${turn.aiResponse}`)
+      .map(
+        (turn, index) =>
+          `Turn ${index + 1}:\nChild: ${turn.childInput}\nAI: ${turn.aiResponse}`
+      )
       .join('\n\n');
 
     const educationalGuidance = this.getFreeformGuidanceForTurn(turnNumber);
@@ -742,7 +762,10 @@ Respond as a supportive teacher who celebrates the child's unique creative visio
       const response = await smartAIProvider.generateResponse(prompt);
       return response;
     } catch (error) {
-      console.error(`AI freeform response generation failed for turn ${turnNumber}, using fallback:`, error);
+      console.error(
+        `AI freeform response generation failed for turn ${turnNumber}, using fallback:`,
+        error
+      );
       return this.getFreeformFallbackResponse(turnNumber, childInput);
     }
   }
@@ -773,9 +796,12 @@ Respond as a supportive teacher who celebrates the child's unique creative visio
     suggestedWords: string[];
     educationalInsights: string;
   }> {
-    const storyModeText = storyStats.storyMode === 'guided' ? 'guided with story elements' : 'freeform creative writing';
-    const elementsText = storyElements 
-      ? `Genre: ${storyElements.genre}, Theme: ${storyElements.theme}` 
+    const storyModeText =
+      storyStats.storyMode === 'guided'
+        ? 'guided with story elements'
+        : 'freeform creative writing';
+    const elementsText = storyElements
+      ? `Genre: ${storyElements.genre}, Theme: ${storyElements.theme}`
       : `Theme: ${storyStats.storyTheme}, Genre: ${storyStats.storyGenre}`;
 
     const prompt = `You are an expert AI writing teacher conducting a comprehensive assessment of a child's creative story.
@@ -832,7 +858,10 @@ Educational: [educational insights about their writing development]`;
 
     try {
       const response = await smartAIProvider.generateResponse(prompt);
-      return this.parseDetailedAssessmentResponse(response, storyStats.totalWords);
+      return this.parseDetailedAssessmentResponse(
+        response,
+        storyStats.totalWords
+      );
     } catch (error) {
       console.error('AI assessment generation failed:', error);
       return this.getDetailedFallbackAssessment(storyStats.totalWords);
@@ -872,7 +901,10 @@ Educational: [educational insights about their writing development]`;
     return openings[Math.floor(Math.random() * openings.length)];
   }
 
-  private getEducationalFallbackResponse(turnNumber: number, childInput: string): string {
+  private getEducationalFallbackResponse(
+    turnNumber: number,
+    childInput: string
+  ): string {
     const responses = [
       `Wonderful writing! I love how you're developing this story. Your creativity really shows in how you described that scene. What exciting challenge does your character face next?`,
       `Excellent work! You're building such an engaging adventure. I can picture everything you've written so clearly. What happens when your character tries to solve this problem?`,
@@ -885,7 +917,10 @@ Educational: [educational insights about their writing development]`;
     return responses[responseIndex];
   }
 
-  private getFreeformFallbackResponse(turnNumber: number, childInput: string): string {
+  private getFreeformFallbackResponse(
+    turnNumber: number,
+    childInput: string
+  ): string {
     const responses = [
       `Wonderful creativity! I love the direction you're taking this story. Your unique ideas really shine through. What interesting twist happens next?`,
       `Excellent storytelling! You're building such an engaging world. I can picture everything you've created so clearly. How does your story continue to unfold?`,
@@ -898,7 +933,10 @@ Educational: [educational insights about their writing development]`;
     return responses[responseIndex];
   }
 
-  private parseDetailedAssessmentResponse(response: string, totalWords: number) {
+  private parseDetailedAssessmentResponse(
+    response: string,
+    totalWords: number
+  ) {
     const lines = response.split('\n').map((line) => line.trim());
 
     let grammarScore = 85;
@@ -945,16 +983,28 @@ Educational: [educational insights about their writing development]`;
           feedback = line.replace(/feedback:/i, '').trim();
         } else if (line.toLowerCase().includes('strengths:')) {
           const strengthsText = line.replace(/strengths:/i, '').trim();
-          strengths = strengthsText.split('|').map((s) => s.trim()).filter((s) => s);
+          strengths = strengthsText
+            .split('|')
+            .map((s) => s.trim())
+            .filter((s) => s);
         } else if (line.toLowerCase().includes('improvements:')) {
           const improvementsText = line.replace(/improvements:/i, '').trim();
-          improvements = improvementsText.split('|').map((s) => s.trim()).filter((s) => s);
+          improvements = improvementsText
+            .split('|')
+            .map((s) => s.trim())
+            .filter((s) => s);
         } else if (line.toLowerCase().includes('vocabularyused:')) {
           const vocabText = line.replace(/vocabularyused:/i, '').trim();
-          vocabularyUsed = vocabText.split('|').map((s) => s.trim()).filter((s) => s);
+          vocabularyUsed = vocabText
+            .split('|')
+            .map((s) => s.trim())
+            .filter((s) => s);
         } else if (line.toLowerCase().includes('suggestedwords:')) {
           const suggestedText = line.replace(/suggestedwords:/i, '').trim();
-          suggestedWords = suggestedText.split('|').map((s) => s.trim()).filter((s) => s);
+          suggestedWords = suggestedText
+            .split('|')
+            .map((s) => s.trim())
+            .filter((s) => s);
         } else if (line.toLowerCase().includes('educational:')) {
           educationalInsights = line.replace(/educational:/i, '').trim();
         }
@@ -965,15 +1015,46 @@ Educational: [educational insights about their writing development]`;
         creativityScore: Math.max(70, Math.min(100, creativityScore)),
         vocabularyScore: Math.max(70, Math.min(100, vocabularyScore)),
         structureScore: Math.max(70, Math.min(100, structureScore)),
-        characterDevelopmentScore: Math.max(70, Math.min(100, characterDevelopmentScore)),
+        characterDevelopmentScore: Math.max(
+          70,
+          Math.min(100, characterDevelopmentScore)
+        ),
         plotDevelopmentScore: Math.max(70, Math.min(100, plotDevelopmentScore)),
         overallScore: Math.max(70, Math.min(100, overallScore)),
         readingLevel,
         feedback,
-        strengths: strengths.length > 0 ? strengths : ['Creative imagination', 'Good story ideas', 'Engaging plot', 'Character development', 'Descriptive writing'],
-        improvements: improvements.length > 0 ? improvements : ['Add more dialogue', 'Use more descriptive adjectives', 'Vary sentence lengths'],
-        vocabularyUsed: vocabularyUsed.length > 0 ? vocabularyUsed : ['adventure', 'mysterious', 'brave', 'discovered', 'amazing'],
-        suggestedWords: suggestedWords.length > 0 ? suggestedWords : ['magnificent', 'extraordinary', 'perilous', 'astonishing', 'triumphant'],
+        strengths:
+          strengths.length > 0
+            ? strengths
+            : [
+                'Creative imagination',
+                'Good story ideas',
+                'Engaging plot',
+                'Character development',
+                'Descriptive writing',
+              ],
+        improvements:
+          improvements.length > 0
+            ? improvements
+            : [
+                'Add more dialogue',
+                'Use more descriptive adjectives',
+                'Vary sentence lengths',
+              ],
+        vocabularyUsed:
+          vocabularyUsed.length > 0
+            ? vocabularyUsed
+            : ['adventure', 'mysterious', 'brave', 'discovered', 'amazing'],
+        suggestedWords:
+          suggestedWords.length > 0
+            ? suggestedWords
+            : [
+                'magnificent',
+                'extraordinary',
+                'perilous',
+                'astonishing',
+                'triumphant',
+              ],
         educationalInsights,
       };
     } catch (error) {
@@ -1004,10 +1085,19 @@ Educational: [educational insights about their writing development]`;
     const structureScore = Math.floor(Math.random() * 18) + 76;
     const characterDevelopmentScore = Math.floor(Math.random() * 17) + 77;
     const plotDevelopmentScore = Math.floor(Math.random() * 19) + 79;
-    const overallScore = Math.round((grammarScore + creativityScore + vocabularyScore + structureScore + characterDevelopmentScore + plotDevelopmentScore) / 6);
+    const overallScore = Math.round(
+      (grammarScore +
+        creativityScore +
+        vocabularyScore +
+        structureScore +
+        characterDevelopmentScore +
+        plotDevelopmentScore) /
+        6
+    );
 
     const readingLevels = ['Elementary', 'Intermediate', 'Advanced'];
-    const readingLevel = readingLevels[Math.floor(Math.random() * readingLevels.length)];
+    const readingLevel =
+      readingLevels[Math.floor(Math.random() * readingLevels.length)];
 
     const feedbackOptions = [
       `Excellent work on your ${totalWords}-word story! Your imagination really shines through in how you developed the characters and plot. I especially loved your creative descriptions and the way you built excitement throughout the story. Try adding even more dialogue to bring your characters to life!`,
@@ -1025,16 +1115,44 @@ Educational: [educational insights about their writing development]`;
       plotDevelopmentScore,
       overallScore,
       readingLevel,
-      feedback: feedbackOptions[Math.floor(Math.random() * feedbackOptions.length)],
-      strengths: ['Creative imagination', 'Good story ideas', 'Engaging plot', 'Character development', 'Descriptive writing'],
-      improvements: ['Add more dialogue', 'Use more descriptive adjectives', 'Vary sentence lengths'],
-      vocabularyUsed: ['adventure', 'mysterious', 'brave', 'discovered', 'amazing'],
-      suggestedWords: ['magnificent', 'extraordinary', 'perilous', 'astonishing', 'triumphant'],
-      educationalInsights: 'Your writing shows strong development in narrative structure and creative expression. Continue practicing descriptive writing and character development to enhance your storytelling abilities.',
+      feedback:
+        feedbackOptions[Math.floor(Math.random() * feedbackOptions.length)],
+      strengths: [
+        'Creative imagination',
+        'Good story ideas',
+        'Engaging plot',
+        'Character development',
+        'Descriptive writing',
+      ],
+      improvements: [
+        'Add more dialogue',
+        'Use more descriptive adjectives',
+        'Vary sentence lengths',
+      ],
+      vocabularyUsed: [
+        'adventure',
+        'mysterious',
+        'brave',
+        'discovered',
+        'amazing',
+      ],
+      suggestedWords: [
+        'magnificent',
+        'extraordinary',
+        'perilous',
+        'astonishing',
+        'triumphant',
+      ],
+      educationalInsights:
+        'Your writing shows strong development in narrative structure and creative expression. Continue practicing descriptive writing and character development to enhance your storytelling abilities.',
     };
   }
 
-  async generateAssessmentLegacy(storyContent: string, totalWords: number, childAge?: number): Promise<{
+  async generateAssessmentLegacy(
+    storyContent: string,
+    totalWords: number,
+    childAge?: number
+  ): Promise<{
     grammarScore: number;
     creativityScore: number;
     overallScore: number;

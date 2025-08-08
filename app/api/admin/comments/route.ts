@@ -1,63 +1,46 @@
-export const dynamic = 'force-dynamic';
-
-import { NextResponse } from 'next/server';
+// app/api/admin/comments/route.ts - Comments Management
+import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/utils/authOptions';
 import { connectToDatabase } from '@/utils/db';
 import StoryComment from '@/models/StoryComment';
 
-export async function GET(request: Request) {
+export const dynamic = 'force-dynamic';
+
+export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-
     if (!session || session.user.role !== 'admin') {
-      return NextResponse.json(
-        { error: 'Admin access required' },
-        { status: 403 }
-      );
+      return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
     }
 
     const { searchParams } = new URL(request.url);
-    const commentType = searchParams.get('commentType');
-    const isResolved = searchParams.get('isResolved');
-    const unresolved = searchParams.get('unresolved');
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '20');
+    const resolved = searchParams.get('resolved');
+    const type = searchParams.get('type');
 
     await connectToDatabase();
 
-    // Build query for REAL comments
     let query: any = {};
-
-    if (commentType && commentType !== 'all') {
-      query.commentType = commentType;
-    }
-
-    if (isResolved && isResolved !== 'all') {
-      query.isResolved = isResolved === 'true';
-    }
-
-    if (unresolved === 'true') {
+    if (resolved === 'false') {
       query.isResolved = false;
+    } else if (resolved === 'true') {
+      query.isResolved = true;
+    }
+    if (type && type !== 'all') {
+      query.commentType = type;
     }
 
-    // Get REAL comments from your database
-    const comments = await StoryComment.find(query)
-      .populate('authorId', 'firstName lastName role')
-      .populate({
-        path: 'storyId',
-        select: 'title childId storyNumber',
-        populate: {
-          path: 'childId',
-          select: 'firstName lastName',
-        },
-      })
-      .populate('resolvedBy', 'firstName lastName')
-      .sort({ createdAt: -1 })
-      .skip((page - 1) * limit)
-      .limit(limit);
-
-    const totalComments = await StoryComment.countDocuments(query);
+    const [comments, totalComments] = await Promise.all([
+      StoryComment.find(query)
+        .populate('authorId', 'firstName lastName email role')
+        .populate('storyId', 'title')
+        .sort({ createdAt: -1 })
+        .skip((page - 1) * limit)
+        .limit(limit),
+      StoryComment.countDocuments(query),
+    ]);
 
     return NextResponse.json({
       success: true,
@@ -70,59 +53,7 @@ export async function GET(request: Request) {
       },
     });
   } catch (error) {
-    console.error('Error fetching admin comments:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch comments' },
-      { status: 500 }
-    );
-  }
-}
-
-// Add the POST method for adding comments
-export async function POST(request: Request) {
-  try {
-    const session = await getServerSession(authOptions);
-
-    if (!session || session.user.role !== 'admin') {
-      return NextResponse.json(
-        { error: 'Admin access required' },
-        { status: 403 }
-      );
-    }
-
-    const { storyId, comment, commentType } = await request.json();
-
-    if (!storyId || !comment) {
-      return NextResponse.json(
-        { error: 'Story ID and comment are required' },
-        { status: 400 }
-      );
-    }
-
-    await connectToDatabase();
-
-    const newComment = await StoryComment.create({
-      storyId,
-      comment,
-      commentType: commentType || 'general',
-      authorId: session.user.id,
-      isResolved: false,
-      createdAt: new Date(),
-    });
-
-    const populatedComment = await StoryComment.findById(newComment._id)
-      .populate('authorId', 'firstName lastName role')
-      .populate('storyId', 'title');
-
-    return NextResponse.json({
-      success: true,
-      comment: populatedComment,
-    });
-  } catch (error) {
-    console.error('Error creating comment:', error);
-    return NextResponse.json(
-      { error: 'Failed to create comment' },
-      { status: 500 }
-    );
+    console.error('Error fetching comments:', error);
+    return NextResponse.json({ error: 'Failed to fetch comments' }, { status: 500 });
   }
 }

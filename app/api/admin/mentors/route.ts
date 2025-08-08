@@ -1,83 +1,5 @@
-// // app/api/admin/mentors/route.ts
-// import { NextResponse } from 'next/server';
-// import { getServerSession } from 'next-auth';
-// import { authOptions } from '@/utils/authOptions';
-// import { connectToDatabase } from '@/utils/db';
-// import User from '@/models/User';
-// import MentorAssignment from '@/models/MentorAssignment';
-// import bcrypt from 'bcryptjs';
-
-// export async function POST(request: Request) {
-//   try {
-//     const session = await getServerSession(authOptions);
-
-//     if (!session || session.user.role !== 'admin') {
-//       return NextResponse.json(
-//         { error: 'Admin access required' },
-//         { status: 403 }
-//       );
-//     }
-
-//     const body = await request.json();
-//     const { email, firstName, lastName, password, assignedStudents } = body;
-
-//     await connectToDatabase();
-
-//     // Check if mentor already exists
-//     const existingUser = await User.findOne({ email });
-//     if (existingUser) {
-//       return NextResponse.json(
-//         { error: 'User with this email already exists' },
-//         { status: 400 }
-//       );
-//     }
-
-//     // Hash password
-//     const hashedPassword = await bcrypt.hash(password, 12);
-
-//     // Create mentor user
-//     const mentor = await User.create({
-//       email,
-//       firstName,
-//       lastName,
-//       password: hashedPassword,
-//       role: 'mentor',
-//       isVerified: true,
-//       createdAt: new Date(),
-//     });
-
-//     // Assign students to mentor
-//     if (assignedStudents && assignedStudents.length > 0) {
-//       const assignments = assignedStudents.map((studentId: string) => ({
-//         mentorId: mentor._id,
-//         childId: studentId,
-//         assignedAt: new Date(),
-//         assignedBy: session.user.id,
-//       }));
-
-//       await MentorAssignment.insertMany(assignments);
-//     }
-
-//     return NextResponse.json({
-//       success: true,
-//       mentor: {
-//         id: mentor._id,
-//         email: mentor.email,
-//         firstName: mentor.firstName,
-//         lastName: mentor.lastName,
-//         assignedStudents: assignedStudents?.length || 0,
-//       },
-//     });
-//   } catch (error) {
-//     console.error('Error creating mentor:', error);
-//     return NextResponse.json(
-//       { error: 'Failed to create mentor' },
-//       { status: 500 }
-//     );
-//   }
-// }
-
-import { NextResponse } from 'next/server';
+// app/api/admin/mentors/route.ts - Mentors Management
+import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/utils/authOptions';
 import { connectToDatabase } from '@/utils/db';
@@ -89,78 +11,77 @@ import bcrypt from 'bcryptjs';
 
 export const dynamic = 'force-dynamic';
 
-// GET - Fetch all mentors with statistics
-export async function GET(request: Request) {
+// GET all mentors
+export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-
     if (!session || session.user.role !== 'admin') {
-      return NextResponse.json(
-        { error: 'Admin access required' },
-        { status: 403 }
-      );
+      return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
     }
 
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get('page') || '1');
-    const limit = parseInt(searchParams.get('limit') || '10');
+    const limit = parseInt(searchParams.get('limit') || '20');
+    const search = searchParams.get('search');
 
     await connectToDatabase();
 
-    // Get total count for pagination
-    const totalMentors = await User.countDocuments({ role: 'mentor' });
+    let query: any = { role: 'mentor' };
+    if (search) {
+      query.$or = [
+        { firstName: { $regex: search, $options: 'i' } },
+        { lastName: { $regex: search, $options: 'i' } },
+        { email: { $regex: search, $options: 'i' } },
+      ];
+    }
 
-    // Get paginated mentors with their statistics
-    const mentors = await User.aggregate([
-      { $match: { role: 'mentor' } },
-      { $sort: { createdAt: -1 } },
-      { $skip: (page - 1) * limit },
-      { $limit: limit },
-      {
-        $lookup: {
-          from: 'mentorassignments',
-          let: { mentorId: '$_id' },
-          pipeline: [
-            { $match: { $expr: { $and: [ { $eq: ['$mentorId', '$$mentorId'] }, { $eq: ['$isActive', true] } ] } } },
-          ],
-          as: 'activeAssignments',
+    const [mentors, totalMentors] = await Promise.all([
+      User.aggregate([
+        { $match: query },
+        {
+          $lookup: {
+            from: 'mentorassignments',
+            let: { mentorId: '$_id' },
+            pipeline: [
+              { $match: { $expr: { $and: [{ $eq: ['$mentorId', '$$mentorId'] }, { $eq: ['$isActive', true] }] } } },
+            ],
+            as: 'activeAssignments',
+          },
         },
-      },
-      {
-        $lookup: {
-          from: 'storycomments',
-          localField: '_id',
-          foreignField: 'authorId',
-          as: 'comments',
+        {
+          $lookup: {
+            from: 'storycomments',
+            localField: '_id',
+            foreignField: 'authorId',
+            as: 'comments',
+          },
         },
-      },
-      {
-        $addFields: {
-          assignedStudents: { $size: '$activeAssignments' },
-          activeAssignments: { $size: '$activeAssignments' },
-          totalComments: { $size: '$comments' },
+        {
+          $addFields: {
+            assignedStudents: { $size: '$activeAssignments' },
+            totalComments: { $size: '$comments' },
+          },
         },
-      },
-      {
-        $project: {
-          password: 0,
-          activeAssignments: 0,
-          comments: 0,
+        {
+          $project: {
+            password: 0,
+            activeAssignments: 0,
+            comments: 0,
+          },
         },
-      },
+        { $sort: { createdAt: -1 } },
+        { $skip: (page - 1) * limit },
+        { $limit: limit },
+      ]),
+      User.countDocuments(query),
     ]);
 
     // Get total stories for each mentor (stories by their assigned students)
-    const mentorsWithStories = await Promise.all(
+    const mentorsWithStats = await Promise.all(
       mentors.map(async (mentor) => {
-        const assignments = await MentorAssignment.find({
-          mentorId: mentor._id,
-        }).select('childId');
-
+        const assignments = await MentorAssignment.find({ mentorId: mentor._id }).select('childId');
         const studentIds = assignments.map((a) => a.childId);
-        const totalStories = await StorySession.countDocuments({
-          childId: { $in: studentIds },
-        });
+        const totalStories = await StorySession.countDocuments({ childId: { $in: studentIds } });
 
         return {
           ...mentor,
@@ -171,7 +92,7 @@ export async function GET(request: Request) {
 
     return NextResponse.json({
       success: true,
-      mentors: mentorsWithStories,
+      mentors: mentorsWithStats,
       pagination: {
         page,
         limit,
@@ -181,29 +102,22 @@ export async function GET(request: Request) {
     });
   } catch (error) {
     console.error('Error fetching mentors:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch mentors' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch mentors' }, { status: 500 });
   }
 }
 
-// POST - Create new mentor (same as before but enhanced)
-export async function POST(request: Request) {
+// POST - Create new mentor
+export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-
     if (!session || session.user.role !== 'admin') {
-      return NextResponse.json(
-        { error: 'Admin access required' },
-        { status: 403 }
-      );
+      return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
     }
 
-    const body = await request.json();
-    const { email, firstName, lastName, password, assignedStudents } = body;
+    const { firstName, lastName, email, password } = await request.json();
 
-    if (!email || !firstName || !lastName || !password) {
+    // Validate required fields
+    if (!firstName || !lastName || !email || !password) {
       return NextResponse.json(
         { error: 'All fields are required' },
         { status: 400 }
@@ -212,8 +126,8 @@ export async function POST(request: Request) {
 
     await connectToDatabase();
 
-    // Check if mentor already exists
-    const existingUser = await User.findOne({ email });
+    // Check if user already exists
+    const existingUser = await User.findOne({ email: email.toLowerCase() });
     if (existingUser) {
       return NextResponse.json(
         { error: 'User with this email already exists' },
@@ -224,46 +138,40 @@ export async function POST(request: Request) {
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 12);
 
-    // Create mentor user
-    const mentor = await User.create({
-      email,
+    // Create mentor
+    const mentor = new User({
       firstName,
       lastName,
+      email: email.toLowerCase(),
       password: hashedPassword,
       role: 'mentor',
+      isActive: true,
       isVerified: true,
-      createdAt: new Date(),
+      preferences: {
+        theme: 'light',
+        language: 'en',
+        emailNotifications: true,
+        soundEffects: false,
+        autoSave: true,
+      },
     });
 
-    // Assign students to mentor if provided
-    if (assignedStudents && assignedStudents.length > 0) {
-      const assignments = assignedStudents.map((studentId: string) => ({
-        mentorId: mentor._id,
-        childId: studentId,
-        assignedAt: new Date(),
-        assignedBy: session.user.id,
-        isActive: true,
-      }));
-
-      await MentorAssignment.insertMany(assignments);
-    }
+    await mentor.save();
 
     return NextResponse.json({
       success: true,
       mentor: {
-        id: mentor._id,
-        email: mentor.email,
+        _id: mentor._id,
         firstName: mentor.firstName,
         lastName: mentor.lastName,
-        assignedStudents: assignedStudents?.length || 0,
+        email: mentor.email,
+        role: mentor.role,
+        createdAt: mentor.createdAt,
       },
       message: 'Mentor created successfully',
     });
   } catch (error) {
     console.error('Error creating mentor:', error);
-    return NextResponse.json(
-      { error: 'Failed to create mentor' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to create mentor' }, { status: 500 });
   }
 }

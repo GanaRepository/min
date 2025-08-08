@@ -1,13 +1,22 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Wand2, PenTool, ArrowRight, Sparkles, Users, BookOpen } from 'lucide-react';
+import {
+  Wand2,
+  PenTool,
+  ArrowRight,
+  Sparkles,
+  Users,
+  BookOpen,
+} from 'lucide-react';
 
 interface StoryModeSelectionProps {
   onModeSelect: (mode: 'guided' | 'freeform') => void;
 }
 
-export default function StoryModeSelection({ onModeSelect }: StoryModeSelectionProps) {
+export default function StoryModeSelection({
+  onModeSelect,
+}: StoryModeSelectionProps) {
   const handleGuidedClick = () => {
     console.log('Guided mode clicked');
     onModeSelect('guided');
@@ -21,14 +30,14 @@ export default function StoryModeSelection({ onModeSelect }: StoryModeSelectionP
   return (
     <div className="max-w-6xl mx-auto px-6 ">
       <div className="text-center mb-16">
-        <motion.h2 
+        <motion.h2
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="text-4xl  text-white mb-6"
         >
           How would you like to create your story?
         </motion.h2>
-        <motion.p 
+        <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
@@ -58,12 +67,13 @@ export default function StoryModeSelection({ onModeSelect }: StoryModeSelectionP
                   <Wand2 className="w-10 h-10 text-white" />
                 </div>
               </div>
-              
+
               <h3 className="text-2xl  text-white mb-6">
                 Guided Story Builder
               </h3>
               <p className="text-gray-300 text-md mb-8 leading-relaxed">
-                Choose story elements like genre, character, and setting. Our AI will create a magical opening scene for you to continue writing.
+                Choose story elements like genre, character, and setting. Our AI
+                will create a magical opening scene for you to continue writing.
               </p>
             </div>
           </div>
@@ -88,14 +98,12 @@ export default function StoryModeSelection({ onModeSelect }: StoryModeSelectionP
                   <PenTool className="w-10 h-10 text-white" />
                 </div>
               </div>
-              
-              <h3 className="text-2xl  text-white mb-6">
-                Write My Own Story
-              </h3>
-              <p className="text-gray-300 text-md mb-8 leading-relaxed">
-                Start with your own creative opening (60+ words). Perfect for young writers who have their own amazing ideas to explore.
-              </p>
 
+              <h3 className="text-2xl  text-white mb-6">Write My Own Story</h3>
+              <p className="text-gray-300 text-md mb-8 leading-relaxed">
+                Start with your own creative opening (60+ words). Perfect for
+                young writers who have their own amazing ideas to explore.
+              </p>
             </div>
           </div>
         </motion.div>
@@ -114,4 +122,3 @@ export default function StoryModeSelection({ onModeSelect }: StoryModeSelectionP
     </div>
   );
 }
-

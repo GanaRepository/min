@@ -285,7 +285,6 @@ const MentorLoginContent: React.FC = () => {
               >
                 <div className="relative">
                   <GraduationCap className="w-8 h-8 text-white" />
-          
                 </div>
               </motion.div>
 
@@ -327,7 +326,10 @@ const MentorLoginContent: React.FC = () => {
               className="space-y-3 sm:space-y-4"
             >
               <div className="space-y-1 sm:space-y-2">
-                <Label htmlFor="mentor-email" className="text-white/80 text-xs sm:text-sm">
+                <Label
+                  htmlFor="mentor-email"
+                  className="text-white/80 text-xs sm:text-sm"
+                >
                   Email
                 </Label>
                 <input
@@ -404,7 +406,9 @@ const MentorLoginContent: React.FC = () => {
                 <div className="w-full border-t border-white/20" />
               </div>
               <div className="relative flex justify-center text-xs sm:text-sm">
-                <span className="px-2 sm:px-4 bg-transparent text-white/60">OR</span>
+                <span className="px-2 sm:px-4 bg-transparent text-white/60">
+                  OR
+                </span>
               </div>
             </div>
 
@@ -415,7 +419,9 @@ const MentorLoginContent: React.FC = () => {
               transition={{ duration: 0.6, delay: 1.2 }}
               className="text-center"
             >
-              <span className="text-white/60 text-xs sm:text-sm">New mentor? </span>
+              <span className="text-white/60 text-xs sm:text-sm">
+                New mentor?{' '}
+              </span>
               <span className="text-teal-300 text-xs sm:text-sm">
                 Contact admin for access
               </span>

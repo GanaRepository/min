@@ -1,3 +1,4 @@
+// app/api/admin/recent-activity/route.ts (Fixed)
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/utils/authOptions';
@@ -9,110 +10,106 @@ import StoryComment from '@/models/StoryComment';
 export const dynamic = 'force-dynamic';
 
 interface Activity {
-  id: string;
   type: string;
   description: string;
-  createdAt: Date;
-  userId?: string;
-  storyId?: string;
+  timestamp: Date;
+  icon: string;
+  color: string;
 }
 
 export async function GET() {
   try {
     const session = await getServerSession(authOptions);
-
-    if (!session || session.user.role !== 'admin') {
-      return NextResponse.json(
-        { error: 'Admin access required' },
-        { status: 403 }
-      );
+    if (!session || session.user?.role !== 'admin') {
+      return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
     }
 
     await connectToDatabase();
 
-    // Get recent activities from different sources
-    const [recentUsers, recentStories, recentComments] = await Promise.all([
-      // Recent user registrations
-      User.find({ role: 'child' })
-        .sort({ createdAt: -1 })
-        .limit(10)
-        .select('firstName lastName createdAt'),
-
-      // Recent story completions
-      StorySession.find({ status: 'completed' })
-        .sort({ completedAt: -1 })
-        .limit(10)
-        .populate('childId', 'firstName lastName')
-        .select('title completedAt childId'),
-
-      // Recent comments
-      StoryComment.find()
-        .sort({ createdAt: -1 })
-        .limit(10)
-        .populate('authorId', 'firstName lastName role')
-        .populate('storyId', 'title')
-        .select('comment createdAt authorId storyId commentType'),
-    ]);
-
-    // Combine and format activities
     const activities: Activity[] = [];
+    const now = new Date();
+    const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
 
-    // Add user registrations
-    recentUsers.forEach((user: any) => {
+    // Get recent user registrations
+    const recentUsers = await User.find({
+      createdAt: { $gte: sevenDaysAgo },
+      role: { $in: ['child', 'mentor'] }
+    })
+    .sort({ createdAt: -1 })
+    .limit(10)
+    .select('firstName lastName role createdAt')
+    .lean();
+
+    recentUsers.forEach(user => {
       activities.push({
-        id: `user-${user._id}`,
         type: 'user_registered',
-        description: `${user.firstName} ${user.lastName} joined as a new writer`,
-        createdAt: user.createdAt,
-        userId: user._id.toString(),
+        description: `${user.firstName} ${user.lastName} registered as ${user.role}`,
+        timestamp: user.createdAt,
+        icon: 'user-plus',
+        color: user.role === 'child' ? 'green' : 'purple',
       });
     });
 
-    // Add story completions
-    recentStories.forEach((story: any) => {
-      if (story.childId) {
+    // Get recent story completions
+    const recentStories = await StorySession.find({
+      completedAt: { $gte: sevenDaysAgo },
+      status: 'completed'
+    })
+    .sort({ completedAt: -1 })
+    .limit(10)
+    .populate('childId', 'firstName lastName')
+    .select('title completedAt childId totalWords')
+    .lean();
+
+    recentStories.forEach(story => {
+      if (story.childId && typeof story.childId === 'object' && 'firstName' in story.childId) {
+        const child = story.childId as { firstName: string; lastName: string };
         activities.push({
-          id: `story-${story._id}`,
           type: 'story_completed',
-          description: `${story.childId.firstName} ${story.childId.lastName} completed "${story.title}"`,
-          createdAt: story.completedAt || story.updatedAt,
-          userId: story.childId._id.toString(),
-          storyId: story._id.toString(),
+          description: `${child.firstName} ${child.lastName} completed "${story.title}" (${story.totalWords || 0} words)`,
+          timestamp: story.completedAt || story.createdAt,
+          icon: 'book-open',
+          color: 'blue',
         });
       }
     });
 
-    // Add comments
-    recentComments.forEach((comment: any) => {
-      if (comment.authorId && comment.storyId) {
+    // Get recent comments
+    const recentComments = await StoryComment.find({
+      createdAt: { $gte: sevenDaysAgo }
+    })
+    .sort({ createdAt: -1 })
+    .limit(10)
+    .populate('authorId', 'firstName lastName role')
+    .populate('storyId', 'title')
+    .select('createdAt authorId storyId commentType')
+    .lean();
+
+    recentComments.forEach(comment => {
+      if (comment.authorId && typeof comment.authorId === 'object' && 'firstName' in comment.authorId &&
+          comment.storyId && typeof comment.storyId === 'object' && 'title' in comment.storyId) {
+        const author = comment.authorId as { firstName: string; lastName: string; role: string };
+        const story = comment.storyId as { title: string };
         activities.push({
-          id: `comment-${comment._id}`,
           type: 'comment_added',
-          description: `${comment.authorId.firstName} ${comment.authorId.lastName} (${comment.authorId.role}) added a ${comment.commentType} comment`,
-          createdAt: comment.createdAt,
-          userId: comment.authorId._id.toString(),
-          storyId:
-            comment.storyId._id?.toString() || comment.storyId.toString(),
+          description: `${author.firstName} ${author.lastName} (${author.role}) commented on "${story.title}"`,
+          timestamp: comment.createdAt,
+          icon: 'message-square',
+          color: 'orange',
         });
       }
     });
 
-    // Sort by date and limit to recent 20
-    activities.sort(
-      (a: Activity, b: Activity) =>
-        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    );
-    const recentActivities = activities.slice(0, 20);
+    // Sort all activities by timestamp
+    activities.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
 
     return NextResponse.json({
       success: true,
-      activities: recentActivities,
+      activities: activities.slice(0, 20), // Return top 20 most recent
     });
+
   } catch (error) {
     console.error('Error fetching recent activity:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch recent activity' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch recent activity' }, { status: 500 });
   }
 }

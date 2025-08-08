@@ -1,3 +1,4 @@
+// app/admin/layout.tsx (Fixed)
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -17,6 +18,7 @@ import {
   UserCheck,
   BookOpen,
   UserPlus,
+  Award,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -30,28 +32,32 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
+  // Unified redirect logic
   useEffect(() => {
     if (status === 'loading') return;
-    if (pathname === '/admin/login') return;
-    if (!session || session.user?.role !== 'admin') {
-      router.push('/admin/login');
+
+    // If on login page and authenticated as admin, redirect to dashboard
+    if (pathname === '/admin/login' && session && session.user?.role === 'admin') {
+      router.replace('/admin');
+      return;
+    }
+
+    // If not authenticated or not admin, redirect to login (except on login page)
+    if ((pathname.startsWith('/admin') && pathname !== '/admin/login') && (!session || session.user?.role !== 'admin')) {
+      router.replace('/admin/login');
       return;
     }
   }, [session, status, router, pathname]);
 
   const navigation = [
     { name: 'Dashboard', href: '/admin', icon: Crown },
-    { name: 'All Users', href: '/admin/users', icon: Users },
-    { name: 'All Stories', href: '/admin/stories', icon: BookOpen },
-    {
-      name: 'Comments & Reviews',
-      href: '/admin/comments',
-      icon: MessageSquare,
-    },
-    { name: 'Create Mentor', href: '/admin/create-mentor', icon: UserPlus },
-    { name: 'Mentor Details', href: '/admin/mentors', icon: FileText },
+    { name: 'Users', href: '/admin/users', icon: Users },
+    { name: 'Mentors', href: '/admin/mentors', icon: UserCheck },
+    { name: 'Stories', href: '/admin/stories', icon: BookOpen },
+    { name: 'Comments', href: '/admin/comments', icon: MessageSquare },
+    { name: 'Competitions', href: '/admin/competitions', icon: Award },
+    { name: 'Revenue', href: '/admin/revenue', icon: DollarSign },
     { name: 'Analytics', href: '/admin/analytics', icon: BarChart3 },
-    { name: 'Subscriptions', href: '/admin/subscriptions', icon: DollarSign },
   ];
 
   const isActive = (path: string) => {
@@ -61,28 +67,52 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     return pathname.startsWith(path);
   };
 
+  const handleLogout = () => {
+    router.push('/api/auth/signout');
+  };
+
+  // Show loading state while checking authentication
   if (status === 'loading') {
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <div className="text-white text-xl">Verifying admin access...</div>
+        <div className="text-white text-xl">Loading...</div>
       </div>
     );
   }
 
+  // Redirect authenticated admin away from /admin/login using useEffect
+  useEffect(() => {
+    if (pathname === '/admin/login' && session && session.user?.role === 'admin') {
+      router.replace('/admin');
+    }
+  }, [pathname, session, router]);
+
+  // For login page, only render children if not authenticated
   if (pathname === '/admin/login') {
+    if (session && session.user?.role === 'admin') {
+      return (
+        <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+          <div className="text-white text-xl">Redirecting to dashboard...</div>
+        </div>
+      );
+    }
+    // Not authenticated, show login page
     return <>{children}</>;
   }
 
+  // Check if user is authenticated and is admin
   if (!session || session.user?.role !== 'admin') {
+    console.log('User not authenticated or not admin, showing unauthorized');
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <div className="text-white text-xl">Redirecting to login...</div>
+        <div className="text-white text-xl">Unauthorized access. Redirecting...</div>
       </div>
     );
   }
 
+  // User is authenticated admin, show full layout
   return (
-    <div className="bg-gray-900 text-white">
+    <div className="bg-gray-900 text-white min-h-screen">
       {/* Mobile menu button */}
       <div className="lg:hidden fixed top-4 left-4 z-50">
         <button
@@ -98,45 +128,45 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       </div>
 
       {/* Layout Container */}
-      <div className="flex flex-col lg:flex-row">
-        {/* Sidebar - STATIC POSITION, NOT FIXED */}
-        <div
-          className={`w-64 bg-gray-800 border-r border-gray-700 flex-shrink-0 transform transition-transform duration-300 ease-in-out ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 fixed lg:static inset-y-0 left-0 z-40 lg:z-auto`}
-        >
+      <div className="flex flex-col lg:flex-row min-h-screen">
+        {/* Sidebar */}
+        <div className={`w-64 bg-gray-800 border-r border-gray-700 flex-shrink-0 ${
+          sidebarOpen ? 'block' : 'hidden'
+        } lg:block fixed lg:static inset-y-0 left-0 z-40 lg:z-auto`}>
           <div className="flex flex-col h-full">
             {/* Admin Header */}
-            <div className="p-4 sm:p-6 border-b border-gray-700 flex-shrink-0">
-              <div className="flex items-center space-x-2 sm:space-x-3">
-                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-red-500 to-red-600 rounded-full flex items-center justify-center">
-                  <Crown className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+            <div className="p-6 border-b border-gray-700 flex-shrink-0">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-gradient-to-br from-red-500 to-red-600 rounded-full flex items-center justify-center">
+                  <Crown className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h1 className="text-lg sm:text-xl font-bold text-white">Admin Portal</h1>
-                  <p className="text-xs sm:text-sm text-gray-400">Mintoons Control Center</p>
+                  <h1 className="text-xl font-bold text-white">Admin Portal</h1>
+                  <p className="text-sm text-gray-400">Mintoons Control Center</p>
                 </div>
               </div>
             </div>
 
             {/* Admin Info */}
-            <div className="p-3 sm:p-4 border-b border-gray-700 flex-shrink-0">
-              <div className="flex items-center space-x-2 sm:space-x-3">
-                <div className="w-7 h-7 sm:w-8 sm:h-8 bg-gray-600 rounded-full flex items-center justify-center">
-                  <span className="text-xs sm:text-sm font-medium">
-                    {session.user.firstName?.[0]}
-                    {session.user.lastName?.[0]}
+            <div className="p-4 border-b border-gray-700 flex-shrink-0">
+              <div className="flex items-center space-x-3">
+                <div className="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center">
+                  <span className="text-sm font-medium">
+                    {session.user.firstName?.[0] || 'A'}
+                    {session.user.lastName?.[0] || 'U'}
                   </span>
                 </div>
                 <div>
-                  <p className="text-xs sm:text-sm font-medium text-white">
-                    {session.user.firstName} {session.user.lastName}
+                  <p className="text-sm font-medium text-white">
+                    {session.user.firstName || 'Admin'} {session.user.lastName || 'User'}
                   </p>
-                  <p className="text-[10px] sm:text-xs text-gray-400">Administrator</p>
+                  <p className="text-xs text-gray-400">Administrator</p>
                 </div>
               </div>
             </div>
 
-            {/* Navigation - SCROLLABLE */}
-            <nav className="p-2 sm:p-4 space-y-1 sm:space-y-2 flex-1 overflow-y-auto">
+            {/* Navigation */}
+            <nav className="p-4 space-y-2 flex-1 overflow-y-auto">
               {navigation.map((item) => {
                 const Icon = item.icon;
                 return (
@@ -144,62 +174,45 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                     key={item.name}
                     href={item.href}
                     onClick={() => setSidebarOpen(false)}
-                    className={`flex items-center space-x-2 sm:space-x-3 px-3 sm:px-4 py-2 sm:py-3 rounded-lg transition-all duration-200 ${
+                    className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 ${
                       isActive(item.href)
-                        ? 'bg-gradient-to-r from-red-600/20 to-red-500/20 border border-red-500/30 text-red-300'
+                        ? 'bg-blue-600 text-white shadow-lg'
                         : 'text-gray-300 hover:bg-gray-700 hover:text-white'
                     }`}
                   >
-                    <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
-                    <span className="font-medium text-xs sm:text-base">{item.name}</span>
+                    <Icon className="w-5 h-5" />
+                    <span className="font-medium">{item.name}</span>
                   </Link>
                 );
               })}
             </nav>
 
-            {/* Logout - FIXED AT BOTTOM */}
-            <div className="p-3 sm:p-4 border-t border-gray-700 flex-shrink-0">
-              <Link
-                href="/api/auth/signout"
-                className="flex items-center space-x-2 sm:space-x-3 px-3 sm:px-4 py-2 sm:py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-all duration-200 text-xs sm:text-base"
+            {/* Logout */}
+            <div className="p-4 border-t border-gray-700 flex-shrink-0">
+              <button
+                onClick={handleLogout}
+                className="flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white transition-all duration-200 w-full"
               >
-                <LogOut className="w-4 h-4 sm:w-5 sm:h-5" />
+                <LogOut className="w-5 h-5" />
                 <span className="font-medium">Logout</span>
-              </Link>
+              </button>
             </div>
           </div>
         </div>
 
-        {/* Mobile overlay */}
+        {/* Overlay for mobile */}
         {sidebarOpen && (
           <div
-            className="lg:hidden fixed inset-0 bg-black/50 z-30"
+            className="fixed inset-0 bg-black bg-opacity-50 z-30 lg:hidden"
             onClick={() => setSidebarOpen(false)}
           />
         )}
 
-        {/* Main content area */}
-        <div className="flex-1 min-h-screen lg:ml-0">
-          {/* Top bar */}
-          <div className="bg-gray-800 border-b border-gray-700 p-3 sm:p-4 lg:p-6">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-              <div className="lg:hidden w-10" />
-              <div className="flex-1 lg:flex-none lg:ml-0 ml-12">
-                <h2 className="text-lg sm:text-xl font-semibold text-white">
-                  {navigation.find((item) => isActive(item.href))?.name ||
-                    'Admin Dashboard'}
-                </h2>
-              </div>
-              <div className="flex items-center space-x-2 sm:space-x-4">
-                <span className="text-xs sm:text-sm text-gray-400">
-                  {new Date().toLocaleDateString()}
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* Page content */}
-          <main className="p-3 sm:p-6 md:p-10">{children}</main>
+        {/* Main Content */}
+        <div className="flex-1">
+          <main className="min-h-screen">
+            {children}
+          </main>
         </div>
       </div>
     </div>

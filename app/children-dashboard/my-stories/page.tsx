@@ -64,7 +64,7 @@ function MyStoriesContent() {
   const [sortBy, setSortBy] = useState<'newest' | 'oldest' | 'score' | 'words'>(
     'newest'
   );
-  
+
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
   const storiesPerPage = 8; // 4 cards in each row for both layouts
@@ -99,7 +99,7 @@ function MyStoriesContent() {
 
   const handleStoryAction = (story: Story) => {
     console.log('🎯 Story action clicked:', story._id, story.status);
-    
+
     if (story.status === 'completed') {
       router.push(`/children-dashboard/my-stories/${story._id}`);
     } else {
@@ -112,15 +112,17 @@ function MyStoriesContent() {
     if (searchQuery) {
       const searchLower = searchQuery.toLowerCase();
       const titleMatch = story.title.toLowerCase().includes(searchLower);
-      const genreMatch = story.elements?.genre?.toLowerCase().includes(searchLower) || false;
-      
+      const genreMatch =
+        story.elements?.genre?.toLowerCase().includes(searchLower) || false;
+
       if (!titleMatch && !genreMatch) {
         return false;
       }
     }
 
     // Status filter
-    if (activeFilter === 'completed' && story.status !== 'completed') return false;
+    if (activeFilter === 'completed' && story.status !== 'completed')
+      return false;
     if (activeFilter === 'active' && story.status !== 'active') return false;
     if (activeFilter === 'paused' && story.status !== 'paused') return false;
 
@@ -130,9 +132,13 @@ function MyStoriesContent() {
   const sortedStories = [...filteredStories].sort((a, b) => {
     switch (sortBy) {
       case 'newest':
-        return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
+        return (
+          new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+        );
       case 'oldest':
-        return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+        return (
+          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+        );
       case 'score':
         return (b.overallScore || 0) - (a.overallScore || 0);
       case 'words':
@@ -423,7 +429,8 @@ function MyStoriesContent() {
                                 {story.title}
                               </h3>
                               <span className="text-xs text-gray-400">
-                                Story #{story.storyNumber ?? story._id.slice(-6)}
+                                Story #
+                                {story.storyNumber ?? story._id.slice(-6)}
                               </span>
                             </div>
 
@@ -444,28 +451,35 @@ function MyStoriesContent() {
                             >
                               {getStatusIcon(story.status)}
                               <span className="ml-2 capitalize">
-                                {story.status === 'active' ? 'In Progress' : story.status}
+                                {story.status === 'active'
+                                  ? 'In Progress'
+                                  : story.status}
                               </span>
                             </div>
                           </div>
 
                           {/* Story Elements */}
                           <div className="mb-4 space-y-2">
-                            {story.elements && Object.entries(story.elements)
-                              .filter(([type, value]) => value && value.trim() !== '')
-                              .slice(0, 2)
-                              .map(([type, value]) => (
-                                <span
-                                  key={type}
-                                  className="inline-block px-2 py-1 bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-500/30 rounded-lg text-xs text-white capitalize mr-1 mb-1"
-                                >
-                                  {type}: {value}
-                                </span>
-                              ))
-                            }
+                            {story.elements &&
+                              Object.entries(story.elements)
+                                .filter(
+                                  ([type, value]) =>
+                                    value && value.trim() !== ''
+                                )
+                                .slice(0, 2)
+                                .map(([type, value]) => (
+                                  <span
+                                    key={type}
+                                    className="inline-block px-2 py-1 bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-500/30 rounded-lg text-xs text-white capitalize mr-1 mb-1"
+                                  >
+                                    {type}: {value}
+                                  </span>
+                                ))}
 
-                            {(!story.elements || 
-                              Object.entries(story.elements).every(([_, value]) => !value || value.trim() === '')) && (
+                            {(!story.elements ||
+                              Object.entries(story.elements).every(
+                                ([_, value]) => !value || value.trim() === ''
+                              )) && (
                               <span className="inline-block px-2 py-1 bg-gray-700/50 border border-gray-600/30 rounded-lg text-xs text-gray-400 italic">
                                 ✨ Freeform Story
                               </span>
@@ -476,14 +490,19 @@ function MyStoriesContent() {
                           <div className="flex items-center justify-between text-sm text-gray-400 mb-4">
                             <div className="flex items-center">
                               <BookOpen className="w-4 h-4 mr-1" />
-                              <span>{story.childWords || story.totalWords} words</span>
+                              <span>
+                                {story.childWords || story.totalWords} words
+                              </span>
                             </div>
-                            {story.currentTurn && story.status !== 'completed' && (
-                              <div className="flex items-center">
-                                <Clock className="w-4 h-4 mr-1" />
-                                <span>Turn {story.currentTurn}/{maxTurns}</span>
-                              </div>
-                            )}
+                            {story.currentTurn &&
+                              story.status !== 'completed' && (
+                                <div className="flex items-center">
+                                  <Clock className="w-4 h-4 mr-1" />
+                                  <span>
+                                    Turn {story.currentTurn}/{maxTurns}
+                                  </span>
+                                </div>
+                              )}
                           </div>
 
                           {/* Progress Bar */}
@@ -498,7 +517,10 @@ function MyStoriesContent() {
                                 />
                               </div>
                               <div className="text-xs text-gray-400 mt-1">
-                                {Math.round(((story.currentTurn - 1) / maxTurns) * 100)}% complete
+                                {Math.round(
+                                  ((story.currentTurn - 1) / maxTurns) * 100
+                                )}
+                                % complete
                               </div>
                             </div>
                           )}
@@ -535,10 +557,11 @@ function MyStoriesContent() {
                                   {story.title}
                                 </h3>
                                 <span className="text-sm text-gray-400">
-                                  Story #{story.storyNumber ?? story._id.slice(-6)}
+                                  Story #
+                                  {story.storyNumber ?? story._id.slice(-6)}
                                 </span>
                               </div>
-                              
+
                               {story.overallScore && (
                                 <div className="flex items-center ml-4">
                                   <Star className="w-5 h-5 mr-1 text-yellow-400" />
@@ -556,25 +579,32 @@ function MyStoriesContent() {
                               >
                                 {getStatusIcon(story.status)}
                                 <span className="ml-2 capitalize">
-                                  {story.status === 'active' ? 'In Progress' : story.status}
+                                  {story.status === 'active'
+                                    ? 'In Progress'
+                                    : story.status}
                                 </span>
                               </div>
 
-                              {story.elements && Object.entries(story.elements)
-                                .filter(([type, value]) => value && value.trim() !== '')
-                                .slice(0, 3)
-                                .map(([type, value]) => (
-                                  <span
-                                    key={type}
-                                    className="px-2 py-1 bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-500/30 rounded-lg text-xs text-white capitalize"
-                                  >
-                                    {type}: {value}
-                                  </span>
-                                ))
-                              }
+                              {story.elements &&
+                                Object.entries(story.elements)
+                                  .filter(
+                                    ([type, value]) =>
+                                      value && value.trim() !== ''
+                                  )
+                                  .slice(0, 3)
+                                  .map(([type, value]) => (
+                                    <span
+                                      key={type}
+                                      className="px-2 py-1 bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-500/30 rounded-lg text-xs text-white capitalize"
+                                    >
+                                      {type}: {value}
+                                    </span>
+                                  ))}
 
-                              {(!story.elements || 
-                                Object.entries(story.elements).every(([_, value]) => !value || value.trim() === '')) && (
+                              {(!story.elements ||
+                                Object.entries(story.elements).every(
+                                  ([_, value]) => !value || value.trim() === ''
+                                )) && (
                                 <span className="px-2 py-1 bg-gray-700/50 border border-gray-600/30 rounded-lg text-xs text-gray-400 italic">
                                   ✨ Freeform Story
                                 </span>
@@ -593,7 +623,10 @@ function MyStoriesContent() {
                                   />
                                 </div>
                                 <div className="text-xs text-gray-400 mt-1">
-                                  {Math.round(((story.currentTurn - 1) / maxTurns) * 100)}% complete
+                                  {Math.round(
+                                    ((story.currentTurn - 1) / maxTurns) * 100
+                                  )}
+                                  % complete
                                 </div>
                               </div>
                             )}
@@ -605,16 +638,22 @@ function MyStoriesContent() {
                             <div className="flex flex-col items-end space-y-2 mb-4">
                               <div className="flex items-center text-gray-400">
                                 <BookOpen className="w-4 h-4 mr-2" />
-                                <span className="font-medium">{story.childWords || story.totalWords} words</span>
+                                <span className="font-medium">
+                                  {story.childWords || story.totalWords} words
+                                </span>
                               </div>
-                              {story.currentTurn && story.status !== 'completed' && (
-                                <div className="flex items-center text-gray-400">
-                                  <Clock className="w-4 h-4 mr-2" />
-                                  <span>Turn {story.currentTurn}/{maxTurns}</span>
-                                </div>
-                              )}
+                              {story.currentTurn &&
+                                story.status !== 'completed' && (
+                                  <div className="flex items-center text-gray-400">
+                                    <Clock className="w-4 h-4 mr-2" />
+                                    <span>
+                                      Turn {story.currentTurn}/{maxTurns}
+                                    </span>
+                                  </div>
+                                )}
                               <div className="text-xs text-gray-500 text-right">
-                                {story.status === 'completed' && story.publishedAt
+                                {story.status === 'completed' &&
+                                story.publishedAt
                                   ? `Published ${new Date(story.publishedAt).toLocaleDateString()}`
                                   : `Updated ${new Date(story.updatedAt).toLocaleDateString()}`}
                               </div>
@@ -653,22 +692,26 @@ function MyStoriesContent() {
                   <ChevronLeft className="w-5 h-5" />
                 </button>
 
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                  <button
-                    key={page}
-                    onClick={() => setCurrentPage(page)}
-                    className={`px-4 py-2 rounded-lg font-medium transition-all ${
-                      currentPage === page
-                        ? 'bg-blue-500 text-white shadow-lg'
-                        : 'bg-gray-800/50 border border-gray-600/50 text-gray-400 hover:text-white hover:border-blue-500/50'
-                    }`}
-                  >
-                    {page}
-                  </button>
-                ))}
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                  (page) => (
+                    <button
+                      key={page}
+                      onClick={() => setCurrentPage(page)}
+                      className={`px-4 py-2 rounded-lg font-medium transition-all ${
+                        currentPage === page
+                          ? 'bg-blue-500 text-white shadow-lg'
+                          : 'bg-gray-800/50 border border-gray-600/50 text-gray-400 hover:text-white hover:border-blue-500/50'
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  )
+                )}
 
                 <button
-                  onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+                  onClick={() =>
+                    setCurrentPage(Math.min(totalPages, currentPage + 1))
+                  }
                   disabled={currentPage === totalPages}
                   className="p-2 rounded-lg bg-gray-800/50 border border-gray-600/50 text-gray-400 hover:text-white hover:border-blue-500/50 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                 >
@@ -679,7 +722,9 @@ function MyStoriesContent() {
 
             {/* Show pagination info */}
             <div className="text-center mt-6 text-gray-400">
-              Showing {startIndex + 1}-{Math.min(endIndex, sortedStories.length)} of {sortedStories.length} stories
+              Showing {startIndex + 1}-
+              {Math.min(endIndex, sortedStories.length)} of{' '}
+              {sortedStories.length} stories
             </div>
           </>
         )}
@@ -705,7 +750,13 @@ function MyStoriesContent() {
               </div>
               <div className="text-center p-4 bg-white/5 rounded-xl">
                 <div className="text-3xl  text-white mb-1">
-                  {stories.reduce((sum, story) => sum + (story.childWords || story.totalWords), 0).toLocaleString()}
+                  {stories
+                    .reduce(
+                      (sum, story) =>
+                        sum + (story.childWords || story.totalWords),
+                      0
+                    )
+                    .toLocaleString()}
                 </div>
                 <div className="text-purple-300">Words Written</div>
               </div>
@@ -724,7 +775,8 @@ function MyStoriesContent() {
                           .reduce((sum, s) => sum + (s.overallScore || 0), 0) /
                           stories.filter((s) => s.overallScore).length
                       )
-                    : 0}%
+                    : 0}
+                  %
                 </div>
                 <div className="text-purple-300">Avg Score</div>
               </div>

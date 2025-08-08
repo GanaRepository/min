@@ -1,4 +1,3 @@
-
 // import { NextResponse } from 'next/server';
 // import { getServerSession } from 'next-auth';
 // import { authOptions } from '@/utils/authOptions';
@@ -392,7 +391,8 @@ export async function POST(request: Request) {
       .sort({ turnNumber: 1 })
       .lean();
 
-    const storyMode = (storySession.storyMode as 'guided' | 'freeform') || 'guided';
+    const storyMode =
+      (storySession.storyMode as 'guided' | 'freeform') || 'guided';
     const elements = storySession.elements as StoryElements | null;
 
     const aiResponse = await collaborationEngine.generateContextualResponse(
@@ -448,7 +448,9 @@ export async function POST(request: Request) {
     let assessment = null;
     if (isStoryComplete) {
       try {
-        console.log('🎯 Story completed! Auto-generating detailed assessment...');
+        console.log(
+          '🎯 Story completed! Auto-generating detailed assessment...'
+        );
 
         const allTurns = await Turn.find({ sessionId: actualSessionId })
           .sort({ turnNumber: 1 })
@@ -501,7 +503,10 @@ export async function POST(request: Request) {
 
         console.log('✅ Assessment saved to database successfully!');
       } catch (assessmentError) {
-        console.error('❌ Failed to auto-generate assessment:', assessmentError);
+        console.error(
+          '❌ Failed to auto-generate assessment:',
+          assessmentError
+        );
       }
     }
 

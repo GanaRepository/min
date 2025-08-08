@@ -249,7 +249,6 @@ const RegisterChildContent: React.FC = () => {
           ))}
         </div>
 
-
         <div className="flex flex-col lg:flex-row min-h-screen">
           {/* Left side - Registration form */}
           <div className="flex-1 flex items-center justify-center p-4 sm:p-8 relative z-10">
@@ -272,7 +271,9 @@ const RegisterChildContent: React.FC = () => {
                     <BookOpen className="w-3 h-3 text-white" />
                   </div>
                 </div>
-                <span className="text-white text-base sm:text-lg font-medium">Mintoons</span>
+                <span className="text-white text-base sm:text-lg font-medium">
+                  Mintoons
+                </span>
               </motion.div>
 
               {/* Title */}
@@ -585,22 +586,22 @@ const RegisterChildContent: React.FC = () => {
                 transition={{ duration: 1, delay: 0.5 }}
                 className="relative z-20 bg-gray-800/40 backdrop-blur-xl border border-gray-700/50 rounded-xl sm:rounded-2xl p-4 sm:p-8 max-w-xs sm:max-w-sm text-center shadow-2xl mx-auto"
               >
-                  <div className="mb-4 sm:mb-6">
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-green-400 to-blue-500 rounded-full mx-auto mb-3 sm:mb-4 flex items-center justify-center">
-                      <BookOpen className="text-white w-5 h-5 sm:w-6 sm:h-6" />
-                    </div>
-                    <h3 className="text-lg sm:text-2xl font-bold text-white mb-1 sm:mb-2">
-                      Mintoons
-                    </h3>
-                    <p className="text-gray-300 text-xs sm:text-sm leading-relaxed">
-                      &quot;Unleash Your Creative Magic&quot; - Empowering young
-                      writers to create amazing stories with AI assistance, expert
-                      mentorship, and unlimited imagination.
-                    </p>
-                    <p className="text-gray-400 text-[10px] sm:text-xs mt-2 sm:mt-3">
-                      AI-Powered Creative Writing Platform for Kids
-                    </p>
+                <div className="mb-4 sm:mb-6">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-green-400 to-blue-500 rounded-full mx-auto mb-3 sm:mb-4 flex items-center justify-center">
+                    <BookOpen className="text-white w-5 h-5 sm:w-6 sm:h-6" />
                   </div>
+                  <h3 className="text-lg sm:text-2xl font-bold text-white mb-1 sm:mb-2">
+                    Mintoons
+                  </h3>
+                  <p className="text-gray-300 text-xs sm:text-sm leading-relaxed">
+                    &quot;Unleash Your Creative Magic&quot; - Empowering young
+                    writers to create amazing stories with AI assistance, expert
+                    mentorship, and unlimited imagination.
+                  </p>
+                  <p className="text-gray-400 text-[10px] sm:text-xs mt-2 sm:mt-3">
+                    AI-Powered Creative Writing Platform for Kids
+                  </p>
+                </div>
 
                 <div className="flex justify-center gap-1 sm:gap-2">
                   <div className="w-6 sm:w-8 h-1 bg-green-400 rounded" />

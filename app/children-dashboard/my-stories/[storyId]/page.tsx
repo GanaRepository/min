@@ -462,17 +462,17 @@ export default function StoryViewPage({
                   <Star className="w-5 h-5 mr-2 text-green-400" />
                   Your Strengths
                 </h3>
-              <div className="space-y-1 sm:space-y-2">
-                {assessment.strengths.slice(0, 3).map((strength, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center text-green-300 text-xs sm:text-sm"
-                  >
-                    <span className="w-2 h-2 bg-green-400 rounded-full mr-2 sm:mr-3"></span>
-                    {strength}
-                  </div>
-                ))}
-              </div>
+                <div className="space-y-1 sm:space-y-2">
+                  {assessment.strengths.slice(0, 3).map((strength, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center text-green-300 text-xs sm:text-sm"
+                    >
+                      <span className="w-2 h-2 bg-green-400 rounded-full mr-2 sm:mr-3"></span>
+                      {strength}
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
 
@@ -483,17 +483,17 @@ export default function StoryViewPage({
                   <Target className="w-5 h-5 mr-2 text-yellow-400" />
                   Areas to Improve
                 </h3>
-              <div className="space-y-1 sm:space-y-2">
-                {assessment.improvements.map((improvement, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center text-yellow-300 text-xs sm:text-sm"
-                  >
-                    <span className="w-2 h-2 bg-yellow-400 rounded-full mr-2 sm:mr-3"></span>
-                    {improvement}
-                  </div>
-                ))}
-              </div>
+                <div className="space-y-1 sm:space-y-2">
+                  {assessment.improvements.map((improvement, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center text-yellow-300 text-xs sm:text-sm"
+                    >
+                      <span className="w-2 h-2 bg-yellow-400 rounded-full mr-2 sm:mr-3"></span>
+                      {improvement}
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
 

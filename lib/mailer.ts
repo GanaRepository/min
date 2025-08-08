@@ -1,6 +1,11 @@
 // lib/mailer.ts - COMPLETE FILE FOR MINTOONS PLATFORM
-import nodemailer from 'nodemailer';
 import { UserRole } from '@/types/auth';
+import nodemailer from 'nodemailer';
+import mongoose from 'mongoose';
+import { connectToDatabase } from '@/utils/db';
+import User from '@/models/User';
+import StorySession from '@/models/StorySession';
+import Competition from '@/models/Competition';
 
 // Email configuration
 const createTransporter = () => {
@@ -266,111 +271,7 @@ export const sendChildRegistrationEmail = async (
   }
 };
 
-/**
- * Send story publication notification to child AND notify mentor/admin
- * @param childEmail Child's email address
- * @param childName Child's first name
- * @param storyTitle Title of the published story
- * @param mentorEmail Optional mentor email to notify
- */
-export const sendStoryPublishedEmail = async (
-  childEmail: string,
-  childName: string,
-  storyTitle: string,
-  mentorEmail?: string
-): Promise<nodemailer.SentMessageInfo> => {
-  const transporter = createTransporter();
 
-  // CHILD EMAIL - Story published confirmation
-  const childMailOptions = {
-    from: `"Mintoons Magic Team" <${process.env.EMAIL_USER}>`,
-    to: childEmail,
-    subject: `🎉 Your Story "${storyTitle}" is Published!`,
-    html: `
-      <div style="font-family: 'Comic Sans MS', Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #e5e7eb; padding: 20px; border-radius: 15px; background: linear-gradient(135deg, #fef3ff 0%, #fff7ed 100%);">
-        <div style="text-align: center; padding: 20px 0;">
-          <div style="background: linear-gradient(45deg, #7c3aed, #ec4899, #f97316); color: white; padding: 15px; border-radius: 15px; font-size: 24px; font-weight: bold; display: inline-block;">
-            🎉 Success! 🎉
-          </div>
-        </div>
-        
-        <h2 style="color: #7c3aed; text-align: center; font-family: 'Comic Sans MS', Arial, sans-serif; font-size: 28px;">
-          Amazing Work, ${childName}! ⭐
-        </h2>
-        
-        <div style="background: rgba(124, 58, 237, 0.1); padding: 20px; border-radius: 10px; margin: 20px 0; text-align: center;">
-          <p style="font-size: 20px; color: #7c3aed; margin: 0; font-weight: bold;">
-            📚 "${storyTitle}" is now published! 🚀
-          </p>
-        </div>
-        
-        <p style="font-size: 16px; color: #374151; line-height: 1.6;">
-          Congratulations! Your creativity has brought another amazing story to life. You should be proud of your storytelling skills! 🌟
-        </p>
-        
-        <div style="background: #fef3ff; padding: 20px; border-radius: 10px; margin: 20px 0;">
-          <h3 style="color: #7c3aed; margin-top: 0;">🎯 What's next for you?</h3>
-          <ul style="font-size: 16px; color: #374151; line-height: 1.8;">
-            <li>📖 <strong>Read Your Story:</strong> Share it with family and friends</li>
-            <li>📝 <strong>Get Feedback:</strong> Your mentor will review and comment</li>
-            <li>🆕 <strong>Start Another:</strong> Ready for your next adventure?</li>
-            <li>🏆 <strong>Earn Badges:</strong> Check what achievements you've unlocked</li>
-          </ul>
-        </div>
-        
-        <div style="text-align: center; margin: 30px 0;">
-          <a href="${process.env.NEXTAUTH_URL}/my-stories" style="background: linear-gradient(45deg, #7c3aed, #ec4899); color: white; padding: 15px 30px; text-decoration: none; font-size: 18px; border-radius: 25px; display: inline-block; box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);">
-            📚 View My Stories
-          </a>
-        </div>
-        
-        <p style="font-size: 16px; color: #374151; text-align: center;">
-          Keep unleashing your creativity! Every story makes you a better writer! ✨📖<br/>
-          <span style="color: #7c3aed; font-weight: bold;">The Mintoons Team</span>
-        </p>
-      </div>
-    `,
-  };
-
-  // Email array for Promise.all
-  const emailPromises = [transporter.sendMail(childMailOptions)];
-
-  // MENTOR EMAIL - Story review notification (if mentor assigned)
-  if (mentorEmail) {
-    const mentorMailOptions = {
-      from: `"Mintoons Mentor System" <${process.env.EMAIL_USER}>`,
-      to: mentorEmail,
-      subject: `📚 New Story to Review: "${storyTitle}" by ${childName}`,
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #e5e7eb; padding: 20px; border-radius: 15px; background: linear-gradient(135deg, #ecfdf5 0%, #f0f9ff 100%);">
-          <h2 style="color: #059669;">📚 New Story Ready for Review</h2>
-          <div style="background: #f8fafc; padding: 15px; border-radius: 8px; margin: 20px 0;">
-            <p style="margin: 5px 0;"><strong>👤 Writer:</strong> ${childName}</p>
-            <p style="margin: 5px 0;"><strong>📖 Story:</strong> "${storyTitle}"</p>
-            <p style="margin: 5px 0;"><strong>📧 Email:</strong> ${childEmail}</p>
-            <p style="margin: 5px 0;"><strong>🕐 Published:</strong> ${new Date().toLocaleString()}</p>
-          </div>
-          <div style="text-align: center; margin: 20px 0;">
-            <a href="${process.env.NEXTAUTH_URL}/mentor/dashboard" style="background: linear-gradient(45deg, #059669, #0891b2); color: white; padding: 12px 24px; text-decoration: none; font-size: 16px; border-radius: 8px; display: inline-block;">
-              📝 Review Story
-            </a>
-          </div>
-          <p style="font-size: 14px; color: #6b7280;">A new story is ready for your expert review and feedback.</p>
-        </div>
-      `,
-    };
-    emailPromises.push(transporter.sendMail(mentorMailOptions));
-  }
-
-  try {
-    const results = await Promise.all(emailPromises);
-    console.log('Story published emails sent successfully');
-    return results[0]; // Return child email result
-  } catch (error) {
-    console.error('Error sending story published emails:', error);
-    throw error;
-  }
-};
 
 /**
  * Send contact form confirmation email AND notify admin
@@ -545,189 +446,260 @@ export const sendMentorRegistrationNotification = async (
   }
 };
 
+// Add competition-related mailer services
+
+
 /**
- * Send achievement unlock notification to child
- * @param childEmail Child's email address
- * @param childName Child's first name
- * @param achievementName Name of the achievement
- * @param achievementDescription Description of what they accomplished
+ * Send competition announcement email to admin
  */
-export const sendAchievementUnlockedEmail = async (
-  childEmail: string,
-  childName: string,
-  achievementName: string,
-  achievementDescription: string
+export const sendCompetitionAnnouncement = async (
+  competitionId: string,
+  month: string,
+  year: number
 ): Promise<nodemailer.SentMessageInfo> => {
   const transporter = createTransporter();
+  const adminEmail = process.env.ADMIN_EMAIL || process.env.EMAIL_USER || '';
+  const subject = `New Competition Created: ${month} ${year}`;
+  const html = `<p>A new competition for ${month} ${year} has been created and is now active. Competition ID: ${competitionId}</p>`;
+  return transporter.sendMail({ from: `"Mintoons" <${process.env.EMAIL_USER}>`, to: adminEmail, subject, html });
+};
 
-  const userMailOptions = {
-    from: `"Mintoons Magic Team" <${process.env.EMAIL_USER}>`,
-    to: childEmail,
-    subject: `🏆 Achievement Unlocked: ${achievementName}!`,
-    html: `
-     <div style="font-family: 'Comic Sans MS', Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #e5e7eb; padding: 20px; border-radius: 15px; background: linear-gradient(135deg, #fef3ff 0%, #fff7ed 100%);">
-       <div style="text-align: center; padding: 20px 0;">
-         <div style="background: linear-gradient(45deg, #f59e0b, #f97316, #dc2626); color: white; padding: 15px; border-radius: 15px; font-size: 24px; font-weight: bold; display: inline-block;">
-           🏆 ACHIEVEMENT! 🏆
-         </div>
-       </div>
-       
-       <h2 style="color: #f59e0b; text-align: center; font-family: 'Comic Sans MS', Arial, sans-serif; font-size: 28px;">
-         Congratulations, ${childName}! ⭐
-       </h2>
-       
-       <div style="background: rgba(245, 158, 11, 0.1); padding: 20px; border-radius: 10px; margin: 20px 0; text-align: center; border: 3px solid #f59e0b;">
-         <h3 style="color: #f59e0b; margin: 0; font-size: 24px;">
-           🎉 ${achievementName} 🎉
-         </h3>
-         <p style="font-size: 16px; color: #374151; margin: 10px 0 0 0;">
-           ${achievementDescription}
-         </p>
-       </div>
-       
-       <p style="font-size: 16px; color: #374151; line-height: 1.6; text-align: center;">
-         You're becoming an amazing storyteller! Keep up the fantastic work and continue creating magical stories! ✨
-       </p>
-       
-       <div style="text-align: center; margin: 30px 0;">
-         <a href="${process.env.NEXTAUTH_URL}/progress" style="background: linear-gradient(45deg, #f59e0b, #f97316); color: white; padding: 15px 30px; text-decoration: none; font-size: 18px; border-radius: 25px; display: inline-block; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);">
-           🏆 View All Achievements
-         </a>
-       </div>
-       
-       <p style="font-size: 16px; color: #374151; text-align: center;">
-         We're so proud of your progress! 🌟📖<br/>
-         <span style="color: #f59e0b; font-weight: bold;">The Mintoons Team</span>
-       </p>
-     </div>
-   `,
-  };
 
+
+/**
+ * Send phase change notification to admin
+ */
+export const sendCompetitionPhaseChange = async (
+  competitionId: string,
+  phase: string
+): Promise<nodemailer.SentMessageInfo> => {
+  const transporter = createTransporter();
+  const adminEmail = process.env.ADMIN_EMAIL || process.env.EMAIL_USER || '';
+  const subject = `Competition Phase Changed: ${phase}`;
+  const html = `<p>The competition phase has changed to ${phase} for competition ID: ${competitionId}.</p>`;
+  return transporter.sendMail({ from: `"Mintoons" <${process.env.EMAIL_USER}>`, to: adminEmail, subject, html });
+};
+
+/**
+ * Send competition results notification to admin
+ */
+export const sendCompetitionResults = async (
+  competitionId: string
+): Promise<nodemailer.SentMessageInfo> => {
+  const transporter = createTransporter();
+  const adminEmail = process.env.ADMIN_EMAIL || process.env.EMAIL_USER || '';
+  const subject = `Competition Results Announced`;
+  const html = `<p>The results for competition ID: ${competitionId} have been announced.</p>`;
+  return transporter.sendMail({ from: `"Mintoons" <${process.env.EMAIL_USER}>`, to: adminEmail, subject, html });
+};
+
+/**
+ * Send monthly reset notification to all children
+ */
+export const sendMonthlyResetNotification = async (): Promise<number> => {
+  const transporter = createTransporter();
+  
   try {
-    const userInfo = await transporter.sendMail(userMailOptions);
+    await connectToDatabase();
+    
+    // Get all active children with email notifications enabled
+    const children = await User.find({ 
+      role: 'child', 
+      isActive: true,
+      'preferences.emailNotifications': true 
+    }).select('firstName lastName email totalStoriesCreated');
 
-    console.log('Achievement email sent successfully:', {
-      userMessageId: userInfo.messageId,
-    });
+    let emailsSent = 0;
+    const currentDate = new Date();
+    const monthName = currentDate.toLocaleDateString('en-US', { month: 'long' });
 
-    return userInfo;
+    for (const child of children) {
+      const mailOptions = {
+        from: `"Stories Platform" <${process.env.EMAIL_USER}>`,
+        to: child.email,
+        subject: `🔄 ${monthName} Reset - Fresh Writing Opportunities Await!`,
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #e5e7eb; padding: 20px; border-radius: 15px; background: linear-gradient(135deg, #f0f9ff 0%, #fef3ff 100%);">
+            <div style="text-align: center; padding: 20px 0;">
+              <div style="background: linear-gradient(45deg, #3b82f6, #8b5cf6, #ec4899); color: white; padding: 15px; border-radius: 15px; font-size: 24px; font-weight: bold; display: inline-block;">
+                ✨ Stories Platform ✨
+              </div>
+            </div>
+            
+            <h2 style="color: #3b82f6; text-align: center; font-size: 28px;">
+              🔄 Welcome to ${monthName}!
+            </h2>
+            
+            <div style="background: rgba(59, 130, 246, 0.1); padding: 20px; border-radius: 10px; margin: 20px 0; text-align: center;">
+              <p style="font-size: 20px; color: #1e40af; margin: 0; font-weight: bold;">
+                🎉 Your writing limits have been reset! 🎉
+              </p>
+            </div>
+            
+            <div style="background: #fef3ff; padding: 20px; border-radius: 10px; margin: 20px 0;">
+              <h3 style="color: #8b5cf6; margin-top: 0;">📚 Your Fresh ${monthName} Limits:</h3>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px;">
+                <div style="text-align: center; padding: 15px; background: white; border-radius: 8px; border: 2px solid #3b82f6;">
+                  <div style="font-size: 28px; font-weight: bold; color: #3b82f6;">3</div>
+                  <div style="color: #374151;">Story Creations</div>
+                </div>
+                <div style="text-align: center; padding: 15px; background: white; border-radius: 8px; border: 2px solid #10b981;">
+                  <div style="font-size: 28px; font-weight: bold; color: #10b981;">3</div>
+                  <div style="color: #374151;">AI Assessments</div>
+                </div>
+                <div style="text-align: center; padding: 15px; background: white; border-radius: 8px; border: 2px solid #8b5cf6;">
+                  <div style="font-size: 28px; font-weight: bold; color: #8b5cf6;">3</div>
+                  <div style="color: #374151;">Competition Entries</div>
+                </div>
+              </div>
+            </div>
+            
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="${process.env.NEXTAUTH_URL}/children-dashboard" style="background: linear-gradient(45deg, #3b82f6, #8b5cf6); color: white; padding: 15px 30px; text-decoration: none; font-size: 18px; border-radius: 25px; display: inline-block; margin-right: 10px;">
+                🏠 View Dashboard
+              </a>
+              <a href="${process.env.NEXTAUTH_URL}/create-stories" style="background: linear-gradient(45deg, #10b981, #3b82f6); color: white; padding: 15px 30px; text-decoration: none; font-size: 18px; border-radius: 25px; display: inline-block;">
+                ✍️ Start Writing
+              </a>
+            </div>
+            
+            <div style="background: #fff7ed; padding: 15px; border-radius: 10px; margin: 20px 0; border-left: 5px solid #f59e0b;">
+              <p style="margin: 0; font-size: 14px; color: #92400e;">
+                🏆 <strong>Don't forget:</strong> Check out this month's writing competition! Submit your published stories for a chance to win recognition and prizes.
+              </p>
+            </div>
+            
+            <p style="font-size: 16px; color: #374151; text-align: center;">
+              Let's make this your most creative month yet! 🌟📖<br/>
+              <span style="color: #3b82f6; font-weight: bold;">The Stories Platform Team</span>
+            </p>
+            
+            <hr style="border: 1px solid #e5e7eb; margin: 30px 0;" />
+            <p style="font-size: 12px; color: #9ca3af; text-align: center;">
+              Keep writing, keep growing! ✨
+              <br/>
+              © ${new Date().getFullYear()} Stories Platform - Empowering Young Writers
+            </p>
+          </div>
+        `,
+      };
+
+      try {
+        await transporter.sendMail(mailOptions);
+        emailsSent++;
+        console.log(`📧 Monthly reset email sent to ${child.firstName} (${child.email})`);
+      } catch (emailError) {
+        console.error(`Failed to send monthly reset email to ${child.email}:`, emailError);
+      }
+
+      // Add small delay to avoid rate limiting
+      await new Promise(resolve => setTimeout(resolve, 100));
+    }
+
+    console.log(`📧 Monthly reset notifications sent to ${emailsSent} children`);
+    return emailsSent;
+
   } catch (error) {
-    console.error('Error sending achievement email:', error);
+    console.error('Error sending monthly reset notifications:', error);
     throw error;
   }
 };
 
 /**
- * Send weekly progress report to child and parents
- * @param childEmail Child's email address
- * @param childName Child's first name
- * @param storiesWritten Number of stories written this week
- * @param totalWords Total words written this week
- * @param improvementAreas Areas where the child is improving
+ * Send competition submission confirmation to child
  */
-export const sendWeeklyProgressEmail = async (
-  childEmail: string,
-  childName: string,
-  storiesWritten: number,
-  totalWords: number,
-  improvementAreas: string[]
+export const sendCompetitionSubmissionConfirmation = async (
+  childId: string,
+  storyId: string,
+  competitionId: string
 ): Promise<nodemailer.SentMessageInfo> => {
   const transporter = createTransporter();
 
-  const userMailOptions = {
-    from: `"Mintoons Progress Team" <${process.env.EMAIL_USER}>`,
-    to: childEmail,
-    subject: `📊 Your Weekly Writing Progress - ${childName}`,
-    html: `
-     <div style="font-family: 'Comic Sans MS', Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #e5e7eb; padding: 20px; border-radius: 15px; background: linear-gradient(135deg, #f0f9ff 0%, #fef3ff 100%);">
-       <div style="text-align: center; padding: 20px 0;">
-         <div style="background: linear-gradient(45deg, #3b82f6, #7c3aed); color: white; padding: 15px; border-radius: 15px; font-size: 24px; font-weight: bold; display: inline-block;">
-           📊 Weekly Report 📊
-         </div>
-       </div>
-       
-       <h2 style="color: #3b82f6; text-align: center; font-family: 'Comic Sans MS', Arial, sans-serif; font-size: 28px;">
-         Amazing Week, ${childName}! 🌟
-       </h2>
-       
-       <div style="background: rgba(59, 130, 246, 0.1); padding: 20px; border-radius: 10px; margin: 20px 0;">
-         <h3 style="color: #3b82f6; margin-top: 0;">📈 Your Writing Stats This Week:</h3>
-         <div style="display: flex; justify-content: space-around; text-align: center; margin: 20px 0;">
-           <div style="background: white; padding: 15px; border-radius: 10px; flex: 1; margin: 0 5px;">
-             <div style="font-size: 24px; font-weight: bold; color: #7c3aed;">${storiesWritten}</div>
-             <div style="font-size: 14px; color: #6b7280;">Stories Written</div>
-           </div>
-           <div style="background: white; padding: 15px; border-radius: 10px; flex: 1; margin: 0 5px;">
-             <div style="font-size: 24px; font-weight: bold; color: #f59e0b;">${totalWords}</div>
-             <div style="font-size: 14px; color: #6b7280;">Words Written</div>
-           </div>
-         </div>
-       </div>
-       
-       ${
-         improvementAreas.length > 0
-           ? `
-       <div style="background: #fef3ff; padding: 20px; border-radius: 10px; margin: 20px 0;">
-         <h3 style="color: #7c3aed; margin-top: 0;">🎯 Areas Where You're Growing:</h3>
-         <ul style="font-size: 16px; color: #374151; line-height: 1.8;">
-           ${improvementAreas.map((area) => `<li>✨ ${area}</li>`).join('')}
-         </ul>
-       </div>
-       `
-           : ''
-       }
-       
-       <div style="text-align: center; margin: 30px 0;">
-         <a href="${process.env.NEXTAUTH_URL}/create-story" style="background: linear-gradient(45deg, #3b82f6, #7c3aed); color: white; padding: 15px 30px; text-decoration: none; font-size: 18px; border-radius: 25px; display: inline-block; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);">
-           📝 Write Another Story
-         </a>
-       </div>
-       
-       <p style="font-size: 16px; color: #374151; text-align: center;">
-         Keep up the fantastic work! Every story you write makes you a better storyteller! 📚✨<br/>
-         <span style="color: #3b82f6; font-weight: bold;">The Mintoons Team</span>
-       </p>
-     </div>
-   `,
-  };
-
   try {
-    const userInfo = await transporter.sendMail(userMailOptions);
+    await connectToDatabase();
 
-    console.log('Weekly progress email sent successfully:', {
-      userMessageId: userInfo.messageId,
-    });
+    const [user, story, competition] = await Promise.all([
+      User.findById(childId).select('firstName lastName email preferences'),
+      StorySession.findById(storyId).select('title'),
+      Competition.findById(competitionId).select('month year phase submissionEnd')
+    ]);
 
-    return userInfo;
-  } catch (error) {
-    console.error('Error sending weekly progress email:', error);
-    throw error;
-  }
-};
+    if (!user || !story || !competition) {
+      throw new Error('User, story, or competition not found');
+    }
+    if (!user.preferences?.emailNotifications) {
+      throw new Error('User has disabled email notifications');
+    }
 
-// Helper function to send generic emails
-const sendEmail = async (
-  to: string,
-  subject: string,
-  html: string
-): Promise<nodemailer.SentMessageInfo> => {
-  const transporter = createTransporter();
+    const submissionDeadline = new Date(competition.submissionEnd).toLocaleDateString();
 
-  const mailOptions = {
-    from: `"Mintoons" <${process.env.EMAIL_USER}>`,
-    to,
-    subject,
-    html,
-  };
+    const mailOptions = {
+      from: `"Stories Platform Competition" <${process.env.EMAIL_USER}>`,
+      to: user.email,
+      subject: `🎉 Story Submitted - "${story.title}" is in the Competition!`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #e5e7eb; padding: 20px; border-radius: 15px; background: linear-gradient(135deg, #fef3ff 0%, #fff7ed 100%);">
+          <div style="text-align: center; padding: 20px 0;">
+            <div style="background: linear-gradient(45deg, #8b5cf6, #f59e0b); color: white; padding: 15px; border-radius: 15px; font-size: 24px; font-weight: bold; display: inline-block;">
+              🏆 Competition Entry 🏆
+            </div>
+          </div>
+          
+          <h2 style="color: #8b5cf6; text-align: center; font-size: 28px;">
+            🎉 Submission Confirmed!
+          </h2>
+          
+          <div style="background: rgba(139, 92, 246, 0.1); padding: 20px; border-radius: 10px; margin: 20px 0; text-align: center;">
+            <p style="font-size: 18px; color: #6b21a8; margin: 0;">
+              <strong>Congratulations, ${user.firstName}!</strong><br/>
+              Your story has been successfully submitted to the competition!
+            </p>
+          </div>
+          
+          <div style="background: #f8fafc; padding: 20px; border-radius: 10px; margin: 20px 0;">
+            <h3 style="color: #374151; margin-top: 0;">📖 Submission Details:</h3>
+            <ul style="color: #4b5563; line-height: 1.8;">
+              <li><strong>Story Title:</strong> "${story.title}"</li>
+              <li><strong>Competition:</strong> ${competition.month} ${competition.year}</li>
+              <li><strong>Submitted:</strong> ${new Date().toLocaleDateString()}</li>
+              <li><strong>Submission Deadline:</strong> ${submissionDeadline}</li>
+            </ul>
+          </div>
+          
+          <div style="background: #fef3ff; padding: 20px; border-radius: 10px; margin: 20px 0;">
+            <h3 style="color: #8b5cf6; margin-top: 0;">🚀 What Happens Next?</h3>
+            <div style="color: #374151; line-height: 1.6;">
+              <p><strong>📝 Judging Phase (Days 26-30):</strong> Our advanced AI system will evaluate your story across 16 different categories including creativity, grammar, vocabulary, and storytelling structure.</p>
+              <p><strong>🏆 Results (Day 31):</strong> Winners will be announced with Olympic-style recognition! Top 3 stories receive special badges and certificates.</p>
+            </div>
+          </div>
+          
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="${process.env.NEXTAUTH_URL}/competitions" style="background: linear-gradient(45deg, #8b5cf6, #f59e0b); color: white; padding: 15px 30px; text-decoration: none; font-size: 18px; border-radius: 25px; display: inline-block;">
+              🏆 View Competition
+            </a>
+          </div>
+          
+          <div style="background: #ecfdf5; padding: 15px; border-radius: 10px; margin: 20px 0; border-left: 5px solid #10b981;">
+            <p style="margin: 0; font-size: 14px; color: #065f46;">
+              💡 <strong>Good luck!</strong> You can submit up to 3 stories per competition. Keep writing and creating amazing stories!
+            </p>
+          </div>
+          
+          <p style="font-size: 16px; color: #374151; text-align: center;">
+            We're excited to see your creativity shine! 🌟<br/>
+            <span style="color: #8b5cf6; font-weight: bold;">The Stories Platform Team</span>
+          </p>
+        </div>
+      `,
+    };
 
-  try {
     const info = await transporter.sendMail(mailOptions);
-    console.log('Email sent successfully:', info.messageId);
+    console.log(`📧 Competition submission confirmation sent to ${user.firstName} (${user.email})`);
     return info;
+
   } catch (error) {
-    console.error('Error sending email:', error);
+    console.error('Error sending competition submission confirmation:', error);
     throw error;
   }
 };
-
-export { sendEmail };

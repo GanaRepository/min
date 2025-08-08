@@ -1,23 +1,23 @@
+// app/admin/users/[id]/page.tsx
 'use client';
 
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
-import { useToast } from '@/hooks/use-toast';
 import {
   ArrowLeft,
+  Edit,
+  Trash2,
   User,
   Mail,
   Calendar,
   BookOpen,
-  MessageSquare,
-  UserPlus,
-  Edit,
-  Trash2,
-  Shield,
-  CheckCircle,
-  XCircle,
+  Target,
+  Trophy,
+  DollarSign,
+  Star,
+  Activity,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -27,15 +27,28 @@ interface UserDetails {
   lastName: string;
   email: string;
   role: string;
-  isVerified: boolean;
-  subscriptionTier: string;
   createdAt: string;
-  lastLoginAt?: string;
-  totalStories: number;
-  completedStories: number;
-  activeStories: number;
-  totalComments: number;
-  stories: Array<{
+  lastActiveDate?: string;
+  isActive: boolean;
+  isVerified: boolean;
+  storiesCreatedThisMonth: number;
+  assessmentUploadsThisMonth: number;
+  competitionEntriesThisMonth: number;
+  totalStoriesCreated: number;
+  totalWordsWritten: number;
+  purchaseHistory: Array<{
+    type: string;
+    amount: number;
+    purchaseDate: string;
+    metadata?: any;
+  }>;
+  assignedMentor?: {
+    _id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+  };
+  recentStories: Array<{
     _id: string;
     title: string;
     status: string;
@@ -44,105 +57,67 @@ interface UserDetails {
   }>;
 }
 
-export default function UserDetailPage({ params }: { params: { id: string } }) {
+export default function ViewUser() {
   const { data: session, status } = useSession();
   const router = useRouter();
-  const { toast } = useToast();
+  const params = useParams();
+  const userId = params.id as string;
+
   const [user, setUser] = useState<UserDetails | null>(null);
   const [loading, setLoading] = useState(true);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     if (status === 'loading') return;
-
     if (!session || session.user?.role !== 'admin') {
       router.push('/admin/login');
       return;
     }
+    fetchUser();
+  }, [session, status, router, userId]);
 
-    fetchUserDetails();
-  }, [session, status, router, params.id]);
-
-  const fetchUserDetails = async () => {
+  const fetchUser = async () => {
     try {
-      const response = await fetch(`/api/admin/users/${params.id}`);
+      const response = await fetch(`/api/admin/users/${userId}`);
       const data = await response.json();
-
+      
       if (data.success) {
         setUser(data.user);
       } else {
-        toast({
-          title: 'Error',
-          description: data.error || 'Failed to fetch user details',
-          variant: 'destructive',
-        });
+        router.push('/admin/users');
       }
     } catch (error) {
-      console.error('Error fetching user details:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to fetch user details',
-        variant: 'destructive',
-      });
+      console.error('Error fetching user:', error);
+      router.push('/admin/users');
     } finally {
       setLoading(false);
     }
   };
 
-  const updateUserStatus = async (isVerified: boolean) => {
+  const deleteUser = async () => {
+    if (!confirm(`Are you sure you want to delete ${user?.firstName} ${user?.lastName}? This action cannot be undone.`)) {
+      return;
+    }
+
     try {
-      const response = await fetch(`/api/admin/users/${params.id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ isVerified }),
+      setDeleting(true);
+      const response = await fetch(`/api/admin/users/${userId}`, {
+        method: 'DELETE',
       });
 
       const data = await response.json();
 
       if (data.success) {
-        setUser((prev) => (prev ? { ...prev, isVerified } : null));
-        toast({
-          title: 'Success',
-          description: `User ${isVerified ? 'verified' : 'unverified'} successfully`,
-        });
+        alert('User deleted successfully');
+        router.push('/admin/users');
       } else {
-        toast({
-          title: 'Error',
-          description: data.error || 'Failed to update user status',
-          variant: 'destructive',
-        });
+        alert('Failed to delete user: ' + data.error);
       }
     } catch (error) {
-      toast({
-        title: 'Error',
-        description: 'Failed to update user status',
-        variant: 'destructive',
-      });
-    }
-  };
-
-  const getRoleBadgeColor = (role: string) => {
-    switch (role) {
-      case 'admin':
-        return 'bg-red-500/20 text-red-300 border-red-500/30';
-      case 'mentor':
-        return 'bg-purple-500/20 text-purple-300 border-purple-500/30';
-      case 'child':
-        return 'bg-green-500/20 text-green-300 border-green-500/30';
-      default:
-        return 'bg-gray-500/20 text-gray-300 border-gray-500/30';
-    }
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'completed':
-        return 'bg-green-500/20 text-green-300 border-green-500/30';
-      case 'active':
-        return 'bg-blue-500/20 text-blue-300 border-blue-500/30';
-      case 'paused':
-        return 'bg-yellow-500/20 text-yellow-300 border-yellow-500/30';
-      default:
-        return 'bg-gray-500/20 text-gray-300 border-gray-500/30';
+      console.error('Error deleting user:', error);
+      alert('Failed to delete user');
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -156,246 +131,262 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
 
   if (!user) {
     return (
-      <div className="text-center py-12">
-        <User className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-        <h3 className="text-xl font-medium text-gray-400 mb-2">
-          User not found
-        </h3>
-        <p className="text-gray-500">
-          The user you&apos;re looking for doesn&apos;t exist.
-        </p>
-        <Link href="/admin/users">
-          <button className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
-            Back to Users
-          </button>
-        </Link>
+      <div className="flex items-center justify-center h-64">
+        <div className="text-xl text-gray-400">User not found</div>
       </div>
     );
   }
 
+  const totalRevenue = user.purchaseHistory.reduce((sum, purchase) => sum + purchase.amount, 0);
+
   return (
-    <div className="space-y-6 px-2 sm:px-4 md:px-8 xl:px-24 py-4">
+    <div className="space-y-6 px-2 sm:px-4 md:px-8 lg:px-12 xl:px-20 py-4 sm:py-6 md:py-8">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4 gap-2">
-        <div className="flex items-center">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-4">
           <Link href="/admin/users">
-            <button className="text-gray-400 hover:text-white transition-colors">
-              <ArrowLeft className="w-6 h-6" />
+            <button className="p-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg transition-colors">
+              <ArrowLeft size={20} />
             </button>
           </Link>
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-bold text-white">
+              {user.firstName} {user.lastName}
+            </h1>
+            <p className="text-gray-400">User Details & Activity</p>
+          </div>
         </div>
-        <div>
-          <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white mb-1 sm:mb-2">User Details</h1>
-          <p className="text-gray-400 text-sm sm:text-base">Manage user information and activities</p>
+        
+        <div className="flex items-center space-x-2">
+          <Link href={`/admin/users/${userId}/edit`}>
+            <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center">
+              <Edit size={16} className="mr-2" />
+              Edit
+            </button>
+          </Link>
+          {user.role !== 'admin' && (
+            <button
+              onClick={deleteUser}
+              disabled={deleting}
+              className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors flex items-center disabled:opacity-50"
+            >
+              <Trash2 size={16} className="mr-2" />
+              {deleting ? 'Deleting...' : 'Delete'}
+            </button>
+          )}
         </div>
       </div>
 
       {/* User Info Card */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="bg-gray-800 rounded-xl p-4 sm:p-6"
-      >
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <div className="flex items-center space-x-3 sm:space-x-4">
-            <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center">
-              <span className="text-white font-bold text-lg sm:text-xl">
-                {user.firstName[0]}
-                {user.lastName[0]}
-              </span>
+      <div className="bg-gray-800 rounded-xl p-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="flex items-center space-x-3">
+            <div className="bg-blue-600 p-3 rounded-lg">
+              <User size={24} className="text-white" />
             </div>
             <div>
-              <h2 className="text-lg sm:text-xl font-bold text-white">
-                {user.firstName} {user.lastName}
-              </h2>
-              <p className="text-gray-400 text-xs sm:text-sm">{user.email}</p>
-              <div className="flex flex-wrap items-center gap-2 mt-2">
-                <span
-                  className={`px-2 py-1 rounded-full text-xs border ${getRoleBadgeColor(user.role)}`}
-                >
-                  {user.role}
-                </span>
-                <span
-                  className={`px-2 py-1 rounded-full text-xs border ${user.isVerified ? 'bg-green-500/20 text-green-300 border-green-500/30' : 'bg-red-500/20 text-red-300 border-red-500/30'}`}
-                >
-                  {user.isVerified ? 'Verified' : 'Unverified'}
-                </span>
-                <span className="px-2 py-1 rounded-full text-xs bg-purple-500/20 text-purple-300 border border-purple-500/30">
-                  {(() => {
-                    // Normalize tier for display, only allow Free, Basic, Premium
-                    let tier = (user.subscriptionTier || '').trim().toLowerCase();
-                    if (!tier || tier === 'free') return 'Free';
-                    if (tier === 'basic') return 'Basic';
-                    if (tier === 'premium') return 'Premium';
-                    // If not recognized, fallback to 'Free'
-                    return 'Free';
-                  })()}
-                </span>
-              </div>
+              <p className="text-sm text-gray-400">Role</p>
+              <p className="text-white font-medium capitalize">{user.role}</p>
             </div>
           </div>
-
-          <div className="flex flex-wrap gap-2">
-            {user.role === 'child' && (
-              <Link href={`/admin/users/${user._id}/assign-mentor`}>
-                <button className="bg-green-600 text-white px-3 sm:px-4 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center space-x-2 text-xs sm:text-sm">
-                  <UserPlus className="w-4 h-4" />
-                  <span>Assign Mentor</span>
-                </button>
-              </Link>
-            )}
-
-            <button
-              onClick={() => updateUserStatus(!user.isVerified)}
-              className={`px-3 sm:px-4 py-2 rounded-lg transition-colors flex items-center space-x-2 text-xs sm:text-sm ${
-                user.isVerified
-                  ? 'bg-red-600 hover:bg-red-700 text-white'
-                  : 'bg-green-600 hover:bg-green-700 text-white'
-              }`}
-            >
-              {user.isVerified ? (
-                <XCircle className="w-4 h-4" />
-              ) : (
-                <CheckCircle className="w-4 h-4" />
-              )}
-              <span>{user.isVerified ? 'Unverify' : 'Verify'}</span>
-            </button>
-          </div>
-        </div>
-      </motion.div>
-
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-        <div className="bg-gray-800 rounded-xl p-4 sm:p-6 flex flex-col justify-between min-h-[90px]">
-          <div className="flex items-center justify-between">
+          
+          <div className="flex items-center space-x-3">
+            <div className="bg-green-600 p-3 rounded-lg">
+              <Mail size={24} className="text-white" />
+            </div>
             <div>
-              <p className="text-gray-400 text-xs sm:text-sm">Total Stories</p>
-              <p className="text-lg sm:text-2xl font-bold text-white">
-                {user.totalStories}
+              <p className="text-sm text-gray-400">Email</p>
+              <p className="text-white font-medium">{user.email}</p>
+            </div>
+          </div>
+          
+          <div className="flex items-center space-x-3">
+            <div className="bg-purple-600 p-3 rounded-lg">
+              <Calendar size={24} className="text-white" />
+            </div>
+            <div>
+              <p className="text-sm text-gray-400">Joined</p>
+              <p className="text-white font-medium">
+                {new Date(user.createdAt).toLocaleDateString()}
               </p>
             </div>
-            <BookOpen className="w-6 h-6 sm:w-8 sm:h-8 text-blue-400" />
           </div>
-        </div>
-
-        <div className="bg-gray-800 rounded-xl p-4 sm:p-6 flex flex-col justify-between min-h-[90px]">
-          <div className="flex items-center justify-between">
+          
+          <div className="flex items-center space-x-3">
+            <div className={`${user.isActive ? 'bg-green-600' : 'bg-red-600'} p-3 rounded-lg`}>
+              <Activity size={24} className="text-white" />
+            </div>
             <div>
-              <p className="text-gray-400 text-xs sm:text-sm">Completed</p>
-              <p className="text-lg sm:text-2xl font-bold text-white">
-                {user.completedStories}
+              <p className="text-sm text-gray-400">Status</p>
+              <p className="text-white font-medium">
+                {user.isActive ? 'Active' : 'Inactive'}
               </p>
             </div>
-            <CheckCircle className="w-6 h-6 sm:w-8 sm:h-8 text-green-400" />
-          </div>
-        </div>
-
-        <div className="bg-gray-800 rounded-xl p-4 sm:p-6 flex flex-col justify-between min-h-[90px]">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-gray-400 text-xs sm:text-sm">Active Stories</p>
-              <p className="text-lg sm:text-2xl font-bold text-white">
-                {user.activeStories}
-              </p>
-            </div>
-            <Edit className="w-6 h-6 sm:w-8 sm:h-8 text-blue-400" />
-          </div>
-        </div>
-
-        <div className="bg-gray-800 rounded-xl p-4 sm:p-6 flex flex-col justify-between min-h-[90px]">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-gray-400 text-xs sm:text-sm">Comments</p>
-              <p className="text-lg sm:text-2xl font-bold text-white">
-                {user.totalComments}
-              </p>
-            </div>
-            <MessageSquare className="w-6 h-6 sm:w-8 sm:h-8 text-purple-400" />
           </div>
         </div>
       </div>
 
-      {/* User Details */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="bg-gray-800 rounded-xl p-4 sm:p-6"
-        >
-          <h3 className="text-base sm:text-lg font-medium text-white mb-3 sm:mb-4">
-            Account Information
-          </h3>
-          <div className="space-y-2 sm:space-y-3">
-            <div className="flex items-center space-x-2 sm:space-x-3">
-              <Mail className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
-              <div>
-                <p className="text-white text-xs sm:text-base">{user.email}</p>
-                <p className="text-gray-400 text-xs sm:text-sm">Email Address</p>
+      {/* Stats Grid - Child Only */}
+      {user.role === 'child' && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {/* Monthly Usage */}
+          <div className="bg-gray-800 rounded-xl p-6">
+            <h3 className="text-lg font-semibold text-white mb-4">Monthly Usage</h3>
+            <div className="space-y-3">
+              <div className="flex justify-between">
+                <span className="text-gray-400">Stories:</span>
+                <span className="text-blue-400 font-medium">{user.storiesCreatedThisMonth}/3</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-400">Assessments:</span>
+                <span className="text-green-400 font-medium">{user.assessmentUploadsThisMonth}/3</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-400">Competitions:</span>
+                <span className="text-yellow-400 font-medium">{user.competitionEntriesThisMonth}/3</span>
               </div>
             </div>
-            <div className="flex items-center space-x-2 sm:space-x-3">
-              <Calendar className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
-              <div>
-                <p className="text-white text-xs sm:text-base">
-                  {new Date(user.createdAt).toLocaleDateString()}
-                </p>
-                <p className="text-gray-400 text-xs sm:text-sm">Member Since</p>
-              </div>
-            </div>
-            {user.lastLoginAt && (
-              <div className="flex items-center space-x-2 sm:space-x-3">
-                <Shield className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
-                <div>
-                  <p className="text-white text-xs sm:text-base">
-                    {new Date(user.lastLoginAt).toLocaleDateString()}
-                  </p>
-                  <p className="text-gray-400 text-xs sm:text-sm">Last Login</p>
-                </div>
-              </div>
-            )}
           </div>
-        </motion.div>
 
-        {/* Recent Stories section - Fix the View All link */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="bg-gray-800 rounded-xl p-4 sm:p-6"
-        >
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-3 sm:mb-4 gap-2">
-            <h3 className="text-base sm:text-lg font-medium text-white">Recent Stories</h3>
-            {/* FIX: Add the user ID as a query parameter */}
-            <Link href={`/admin/stories?author=${user._id}`}>
-              <button className="text-blue-400 hover:text-blue-300 text-xs sm:text-sm">View All</button>
-            </Link>
-          </div>
-          <div className="space-y-2 sm:space-y-3">
-            {user.stories.slice(0, 5).map((story) => (
-              <div key={story._id} className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-2 sm:p-3 bg-gray-700/50 rounded-lg gap-2 sm:gap-0">
-                <div>
-                  <p className="text-white text-xs sm:text-sm font-medium">{story.title}</p>
-                  <div className="flex items-center space-x-1 sm:space-x-2 mt-1">
-                    <span className={`px-2 py-1 rounded-full text-xs border ${getStatusColor(story.status)}`}>
-                      {story.status}
-                    </span>
-                    <span className="text-gray-400 text-[10px] sm:text-xs">{story.totalWords} words</span>
-                  </div>
+          {/* Total Stats */}
+          <div className="bg-gray-800 rounded-xl p-6">
+            <h3 className="text-lg font-semibold text-white mb-4">Total Stats</h3>
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <BookOpen size={16} className="text-blue-400 mr-2" />
+                  <span className="text-gray-400">Stories:</span>
                 </div>
-                <Link href={`/admin/stories/${story._id}`}>
-                  <button className="text-blue-400 hover:text-blue-300 p-1">
-                    <BookOpen className="w-4 h-4" />
-                  </button>
-                </Link>
+                <span className="text-white font-medium">{user.totalStoriesCreated}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <Target size={16} className="text-green-400 mr-2" />
+                  <span className="text-gray-400">Words:</span>
+                </div>
+                <span className="text-white font-medium">{user.totalWordsWritten.toLocaleString()}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Revenue Generated */}
+          {totalRevenue > 0 && (
+            <div className="bg-gray-800 rounded-xl p-6">
+              <h3 className="text-lg font-semibold text-white mb-4">Revenue Generated</h3>
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center">
+                    <DollarSign size={16} className="text-emerald-400 mr-2" />
+                    <span className="text-gray-400">Total:</span>
+                  </div>
+                  <span className="text-emerald-400 font-bold text-xl">${totalRevenue.toFixed(2)}</span>
+                </div>
+                <div className="text-xs text-gray-500">
+                  {user.purchaseHistory.length} purchase{user.purchaseHistory.length !== 1 ? 's' : ''}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Assigned Mentor */}
+          {user.assignedMentor && (
+            <div className="bg-gray-800 rounded-xl p-6">
+              <h3 className="text-lg font-semibold text-white mb-4">Assigned Mentor</h3>
+              <div className="flex items-center space-x-3">
+                <div className="bg-purple-600 p-2 rounded-lg">
+                  <Star size={16} className="text-white" />
+                </div>
+                <div>
+                  <p className="text-white font-medium">
+                    {user.assignedMentor.firstName} {user.assignedMentor.lastName}
+                  </p>
+                  <p className="text-xs text-gray-400">{user.assignedMentor.email}</p>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Purchase History */}
+      {user.role === 'child' && user.purchaseHistory.length > 0 && (
+        <div className="bg-gray-800 rounded-xl p-6">
+          <h3 className="text-lg font-semibold text-white mb-4">Purchase History</h3>
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-gray-700">
+                  <th className="text-left py-2 text-sm font-medium text-gray-300">Type</th>
+                  <th className="text-left py-2 text-sm font-medium text-gray-300">Amount</th>
+                  <th className="text-left py-2 text-sm font-medium text-gray-300">Date</th>
+                  <th className="text-left py-2 text-sm font-medium text-gray-300">Details</th>
+                </tr>
+              </thead>
+              <tbody>
+                {user.purchaseHistory.map((purchase, index) => (
+                  <tr key={index} className="border-b border-gray-700/50">
+                    <td className="py-3">
+                      <span className={`px-2 py-1 text-xs rounded-full ${
+                        purchase.type === 'story_pack' 
+                          ? 'bg-blue-100 text-blue-800'
+                          : 'bg-purple-100 text-purple-800'
+                      }`}>
+                        {purchase.type === 'story_pack' ? 'Story Pack' : 'Publication'}
+                      </span>
+                    </td>
+                    <td className="py-3 text-emerald-400 font-medium">
+                      ${purchase.amount.toFixed(2)}
+                    </td>
+                    <td className="py-3 text-gray-300">
+                      {new Date(purchase.purchaseDate).toLocaleDateString()}
+                    </td>
+                    <td className="py-3 text-xs text-gray-400">
+                      {purchase.type === 'story_pack' && purchase.metadata && (
+                        <span>+{purchase.metadata.storiesAdded} stories, +{purchase.metadata.assessmentsAdded} assessments</span>
+                      )}
+                      {purchase.type === 'story_publication' && purchase.metadata?.storyTitle && (
+                        <span>"{purchase.metadata.storyTitle}"</span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* Recent Stories */}
+      {user.role === 'child' && user.recentStories && user.recentStories.length > 0 && (
+        <div className="bg-gray-800 rounded-xl p-6">
+          <h3 className="text-lg font-semibold text-white mb-4">Recent Stories</h3>
+          <div className="space-y-3">
+            {user.recentStories.slice(0, 5).map((story) => (
+              <div key={story._id} className="flex items-center justify-between p-3 bg-gray-700/50 rounded-lg">
+                <div className="flex-1">
+                  <Link href={`/admin/stories/${story._id}`}>
+                    <h4 className="text-white font-medium hover:text-blue-400 cursor-pointer">
+                      {story.title}
+                    </h4>
+                  </Link>
+                  <p className="text-xs text-gray-400 mt-1">
+                    {story.totalWords} words • {new Date(story.createdAt).toLocaleDateString()}
+                  </p>
+                </div>
+                <span className={`px-2 py-1 text-xs rounded-full ${
+                  story.status === 'completed' 
+                    ? 'bg-green-100 text-green-800'
+                    : story.status === 'active'
+                    ? 'bg-blue-100 text-blue-800'
+                    : 'bg-gray-100 text-gray-800'
+                }`}>
+                  {story.status}
+                </span>
               </div>
             ))}
-            {user.stories.length === 0 && (
-              <p className="text-gray-400 text-xs sm:text-sm text-center py-2 sm:py-4">No stories created yet</p>
-            )}
           </div>
-        </motion.div>
-      </div>
+        </div>
+      )}
     </div>
   );
 }

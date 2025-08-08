@@ -1,166 +1,174 @@
-// DELETE - Delete user by ID
-export async function DELETE(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
-  try {
-    const session = await getServerSession(authOptions);
-    if (!session || session.user.role !== 'admin') {
-      return NextResponse.json(
-        { error: 'Admin access required' },
-        { status: 403 }
-      );
-    }
-    const { id } = params;
-    await connectToDatabase();
-    const user = await User.findByIdAndDelete(id);
-    if (!user) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 });
-    }
-    // Optionally, delete related data (e.g., stories, comments) here
-    return NextResponse.json({ success: true, message: 'User deleted successfully' });
-  } catch (error) {
-    console.error('Error deleting user:', error);
-    return NextResponse.json({ error: 'Failed to delete user' }, { status: 500 });
-  }
-}
-export const dynamic = 'force-dynamic';
-
-import { NextResponse } from 'next/server';
+// app/api/admin/users/[id]/route.ts - Individual User CRUD
+import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/utils/authOptions';
 import { connectToDatabase } from '@/utils/db';
 import User from '@/models/User';
 import StorySession from '@/models/StorySession';
-import StoryComment from '@/models/StoryComment';
+import MentorAssignment from '@/models/MentorAssignment';
+
+export const dynamic = 'force-dynamic';
 
 export async function GET(
-  request: Request,
-  { params }: { params: { id: string } }
+ request: NextRequest,
+ { params }: { params: { id: string } }
 ) {
-  try {
-    const session = await getServerSession(authOptions);
+ try {
+   const session = await getServerSession(authOptions);
+   if (!session || session.user.role !== 'admin') {
+     return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
+   }
 
-    if (!session || session.user.role !== 'admin') {
-      return NextResponse.json(
-        { error: 'Admin access required' },
-        { status: 403 }
-      );
-    }
+   const { id } = params;
+   await connectToDatabase();
 
-    const { id } = params;
+   const user = await User.findById(id).select('-password');
+   if (!user) {
+     return NextResponse.json({ error: 'User not found' }, { status: 404 });
+   }
 
-    await connectToDatabase();
+   // Get additional data for child users
+   let additionalData = {};
+   if (user.role === 'child') {
+     const [
+       totalStoriesCreated,
+       totalWordsWritten,
+       assignedMentor,
+       recentStories,
+     ] = await Promise.all([
+       StorySession.countDocuments({ childId: id }),
+       StorySession.aggregate([
+         { $match: { childId: user._id } },
+         { $group: { _id: null, total: { $sum: '$totalWords' } } }
+       ]),
+       MentorAssignment.findOne({ childId: id, isActive: true })
+         .populate('mentorId', 'firstName lastName email'),
+       StorySession.find({ childId: id })
+         .sort({ createdAt: -1 })
+         .limit(10)
+         .select('title status createdAt totalWords')
+     ]);
 
-    const user = await User.findById(id).select('-password');
+     additionalData = {
+       totalStoriesCreated,
+       totalWordsWritten: totalWordsWritten[0]?.total || 0,
+       assignedMentor: assignedMentor?.mentorId || null,
+       recentStories,
+     };
+   }
 
-    if (!user) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 });
-    }
-
-    // Get user statistics
-    const [
-      totalStories,
-      completedStories,
-      activeStories,
-      totalComments,
-      stories,
-    ] = await Promise.all([
-      StorySession.countDocuments({ childId: id }),
-      StorySession.countDocuments({ childId: id, status: 'completed' }),
-      StorySession.countDocuments({ childId: id, status: 'active' }),
-      StoryComment.countDocuments({ authorId: id }),
-      StorySession.find({ childId: id })
-        .select('title status createdAt totalWords')
-        .sort({ createdAt: -1 })
-        .limit(10),
-    ]);
-
-    const userWithStats = {
-      ...user.toObject(),
-      totalStories,
-      completedStories,
-      activeStories,
-      totalComments,
-      stories,
-    };
-
-    return NextResponse.json({
-      success: true,
-      user: userWithStats,
-    });
-  } catch (error) {
-    console.error('Error fetching user details:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch user details' },
-      { status: 500 }
-    );
-  }
+   return NextResponse.json({
+     success: true,
+     user: {
+       ...user.toObject(),
+       ...additionalData,
+     },
+   });
+ } catch (error) {
+   console.error('Error fetching user:', error);
+   return NextResponse.json({ error: 'Failed to fetch user' }, { status: 500 });
+ }
 }
 
-// Update the PATCH method to handle verification properly
+// PATCH - Update user
 export async function PATCH(
-  request: Request,
-  { params }: { params: { id: string } }
+ request: NextRequest,
+ { params }: { params: { id: string } }
 ) {
-  try {
-    const session = await getServerSession(authOptions);
+ try {
+   const session = await getServerSession(authOptions);
+   if (!session || session.user.role !== 'admin') {
+     return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
+   }
 
-    if (!session || session.user.role !== 'admin') {
-      return NextResponse.json(
-        { error: 'Admin access required' },
-        { status: 403 }
-      );
-    }
+   const { id } = params;
+   const updateData = await request.json();
 
-    const { id } = params;
-    const body = await request.json();
-    const { isVerified, subscriptionTier } = body;
+   await connectToDatabase();
 
-    await connectToDatabase();
+   // Validate email uniqueness if email is being updated
+   if (updateData.email) {
+     const existingUser = await User.findOne({ 
+       email: updateData.email.toLowerCase(),
+       _id: { $ne: id } 
+     });
+     if (existingUser) {
+       return NextResponse.json(
+         { error: 'Email already exists', errors: { email: 'This email is already in use' } },
+         { status: 400 }
+       );
+     }
+   }
 
-    const updateData: any = { updatedAt: new Date() };
-    
-    if (typeof isVerified === 'boolean') {
-      updateData.isVerified = isVerified;
-      // If verifying user, also set verification date
-      if (isVerified) {
-        updateData.emailVerifiedAt = new Date();
-      } else {
-        updateData.emailVerifiedAt = null;
-      }
-    }
-    
-        if (subscriptionTier) {
-            updateData.subscriptionTier = subscriptionTier.trim().toUpperCase();
-            if (!["FREE", "BASIC", "PREMIUM"].includes(updateData.subscriptionTier)) {
-                updateData.subscriptionTier = "FREE";
-            }
-    }
+   const updatedUser = await User.findByIdAndUpdate(
+     id,
+     {
+       ...updateData,
+       email: updateData.email?.toLowerCase(),
+       updatedAt: new Date(),
+     },
+     { new: true, runValidators: true }
+   ).select('-password');
 
-    const user = await User.findByIdAndUpdate(
-      id,
-      updateData,
-      { new: true }
-    ).select('-password');
+   if (!updatedUser) {
+     return NextResponse.json({ error: 'User not found' }, { status: 404 });
+   }
 
-    if (!user) {
-      return NextResponse.json(
-        { error: 'User not found' },
-        { status: 404 }
-      );
-    }
+   return NextResponse.json({
+     success: true,
+     user: updatedUser,
+     message: 'User updated successfully',
+   });
+ } catch (error) {
+   console.error('Error updating user:', error);
+   return NextResponse.json({ error: 'Failed to update user' }, { status: 500 });
+ }
+}
 
-    return NextResponse.json({
-      success: true,
-      user,
-      message: `User ${isVerified ? 'verified' : 'unverified'} successfully`,
-    });
-  } catch (error) {
-    console.error('Error updating user:', error);
-    return NextResponse.json(
-      { error: 'Failed to update user' },
-      { status: 500 }
-    );
-  }
+// DELETE user
+export async function DELETE(
+ request: NextRequest,
+ { params }: { params: { id: string } }
+) {
+ try {
+   const session = await getServerSession(authOptions);
+   if (!session || session.user.role !== 'admin') {
+     return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
+   }
+
+   const { id } = params;
+   await connectToDatabase();
+
+   const user = await User.findById(id);
+   if (!user) {
+     return NextResponse.json({ error: 'User not found' }, { status: 404 });
+   }
+
+   // Prevent deleting admin users
+   if (user.role === 'admin') {
+     return NextResponse.json({ error: 'Cannot delete admin users' }, { status: 400 });
+   }
+
+   // Cascading delete - remove all related data
+   await Promise.all([
+     // Delete user's stories
+     StorySession.deleteMany({ childId: id }),
+     // Delete mentor assignments
+     MentorAssignment.deleteMany({ 
+       $or: [{ childId: id }, { mentorId: id }] 
+     }),
+     // Delete comments by this user
+     // Add other related data deletion as needed
+   ]);
+
+   await User.findByIdAndDelete(id);
+
+   return NextResponse.json({
+     success: true,
+     message: 'User and all related data deleted successfully',
+   });
+ } catch (error) {
+   console.error('Error deleting user:', error);
+   return NextResponse.json({ error: 'Failed to delete user' }, { status: 500 });
+ }
 }

@@ -1,5 +1,5 @@
-export const dynamic = 'force-dynamic';
-
+//app/api/admin/dashboard-stats/route.ts
+// app/api/admin/dashboard-stats/route.ts
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/utils/authOptions';
@@ -7,98 +7,120 @@ import { connectToDatabase } from '@/utils/db';
 import User from '@/models/User';
 import StorySession from '@/models/StorySession';
 import StoryComment from '@/models/StoryComment';
-import MentorAssignment from '@/models/MentorAssignment';
+
+export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
     const session = await getServerSession(authOptions);
-
     if (!session || session.user.role !== 'admin') {
-      return NextResponse.json(
-        { error: 'Admin access required' },
-        { status: 403 }
-      );
+      return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
     }
 
     await connectToDatabase();
 
-    // Get current date ranges
     const now = new Date();
-    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-    const startOfLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-    const endOfLastMonth = new Date(now.getFullYear(), now.getMonth(), 0);
+    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+    const weekStart = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+    const dayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
-    // Get REAL statistics from your actual database
     const [
+      // User stats
       totalUsers,
-      totalChildren,
-      totalMentors,
-      totalStories,
-      activeStories,
-      completedStories,
-      totalComments,
+      activeUsersToday,
+      newUsersThisWeek,
       newUsersThisMonth,
+      
+      // Story stats
+      totalStories,
       storiesThisMonth,
-      assessmentsThisMonth,
-      newUsersLastMonth,
-      storiesLastMonth,
+      storiesThisWeek,
+      completedStories,
+      
+      // Comment stats
+      totalComments,
+      commentsThisWeek,
+      unresolvedComments,
+      
+      // Revenue stats
+      revenueData,
     ] = await Promise.all([
-      User.countDocuments(),
-      User.countDocuments({ role: 'child' }),
-      User.countDocuments({ role: 'mentor' }),
+      User.countDocuments({ role: { $in: ['child', 'mentor'] } }),
+      User.countDocuments({ 
+        role: { $in: ['child', 'mentor'] },
+        lastActiveDate: { $gte: dayStart } 
+      }),
+      User.countDocuments({ 
+        role: { $in: ['child', 'mentor'] },
+        createdAt: { $gte: weekStart } 
+      }),
+      User.countDocuments({ 
+        role: { $in: ['child', 'mentor'] },
+        createdAt: { $gte: monthStart } 
+      }),
+      
       StorySession.countDocuments(),
-      StorySession.countDocuments({ status: 'active' }),
+      StorySession.countDocuments({ createdAt: { $gte: monthStart } }),
+      StorySession.countDocuments({ createdAt: { $gte: weekStart } }),
       StorySession.countDocuments({ status: 'completed' }),
+      
       StoryComment.countDocuments(),
-      User.countDocuments({
-        createdAt: { $gte: startOfMonth },
-      }),
-      StorySession.countDocuments({
-        createdAt: { $gte: startOfMonth },
-      }),
-      StorySession.countDocuments({
-        status: 'completed',
-        completedAt: { $gte: startOfMonth },
-      }),
-      User.countDocuments({
-        createdAt: { $gte: startOfLastMonth, $lt: endOfLastMonth },
-      }),
-      StorySession.countDocuments({
-        createdAt: { $gte: startOfLastMonth, $lt: endOfLastMonth },
-      }),
+      StoryComment.countDocuments({ createdAt: { $gte: weekStart } }),
+      StoryComment.countDocuments({ isResolved: false }),
+      
+      User.aggregate([
+        { $match: { role: 'child' } },
+        { $unwind: { path: '$purchaseHistory', preserveNullAndEmptyArrays: true } },
+        {
+          $group: {
+            _id: null,
+            totalRevenue: { $sum: '$purchaseHistory.amount' },
+            monthlyRevenue: {
+              $sum: {
+                $cond: [
+                  { $gte: ['$purchaseHistory.purchaseDate', monthStart] },
+                  '$purchaseHistory.amount',
+                  0
+                ]
+              }
+            }
+          }
+        }
+      ])
     ]);
 
-    // Calculate growth percentages
-    const calculateGrowth = (current: number, previous: number) => {
-      if (previous === 0) return current > 0 ? 100 : 0;
-      return Math.round(((current - previous) / previous) * 100);
-    };
-
-    const stats = {
-      totalUsers,
-      totalChildren,
-      totalMentors,
-      totalStories,
-      activeStories,
-      completedStories,
-      monthlyStats: {
-        newUsers: newUsersThisMonth,
-        storiesCreated: storiesThisMonth,
-        assessmentsCompleted: assessmentsThisMonth,
-        usersGrowth: calculateGrowth(newUsersThisMonth, newUsersLastMonth),
-        storiesGrowth: calculateGrowth(storiesThisMonth, storiesLastMonth),
-      },
-    };
+    const revenue = revenueData[0] || { totalRevenue: 0, monthlyRevenue: 0 };
 
     return NextResponse.json({
       success: true,
-      stats,
+      stats: {
+        users: {
+          total: totalUsers,
+          activeToday: activeUsersToday,
+          newThisWeek: newUsersThisWeek,
+          newThisMonth: newUsersThisMonth,
+        },
+        stories: {
+          total: totalStories,
+          thisMonth: storiesThisMonth,
+          thisWeek: storiesThisWeek,
+          completed: completedStories,
+          completionRate: totalStories > 0 ? Math.round((completedStories / totalStories) * 100) : 0,
+        },
+        comments: {
+          total: totalComments,
+          thisWeek: commentsThisWeek,
+          unresolved: unresolvedComments,
+        },
+        revenue: {
+          total: revenue.totalRevenue,
+          thisMonth: revenue.monthlyRevenue,
+        },
+      },
     });
+
   } catch (error) {
     console.error('Error fetching dashboard stats:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch dashboard stats' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch dashboard stats' }, { status: 500 });
   }
 }

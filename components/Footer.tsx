@@ -44,7 +44,7 @@ const Footer: React.FC = () => {
           <div className="md:col-span-1 mb-8 sm:mb-12">
             <div className="flex justify-center sm:justify-around items-center h-16 sm:h-20">
               <Link href="/">
-                         <MintoonsLogo variant="color" /> 
+                <MintoonsLogo variant="color" />
               </Link>
             </div>
             <p className="text-xs sm:text-sm text-gray-800 mb-2 sm:mb-4">
@@ -236,9 +236,15 @@ const Footer: React.FC = () => {
                   <div className="flex items-start mb-2 sm:mb-3">
                     <FiMapPin className="h-3 w-3 sm:h-4 sm:w-4 mr-2 mt-0.5 text-orange-600 flex-shrink-0" />
                     <div>
-                      <p className="text-xs sm:text-sm">H No. 3-12-28/87, Plot no 87,</p>
-                      <p className="text-xs sm:text-sm">Sy no 92, Mansoorabad,</p>
-                      <p className="text-xs sm:text-sm">Saroornagar, Ranga Reddy</p>
+                      <p className="text-xs sm:text-sm">
+                        H No. 3-12-28/87, Plot no 87,
+                      </p>
+                      <p className="text-xs sm:text-sm">
+                        Sy no 92, Mansoorabad,
+                      </p>
+                      <p className="text-xs sm:text-sm">
+                        Saroornagar, Ranga Reddy
+                      </p>
                       <p className="text-xs sm:text-sm">500 068, Telangana</p>
                     </div>
                   </div>

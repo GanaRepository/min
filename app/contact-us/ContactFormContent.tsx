@@ -151,7 +151,7 @@ export default function MintoonsContactPage() {
           </p>
           <div className="flex items-center justify-center space-x-3 text-gray-500 text-lg">
             <Heart className="w-6 h-6 animate-pulse text-indigo-600" />
-            <span className="font-medium">Get ready to create magic!</span>
+            <span className="">Get ready to create magic!</span>
             <Sparkles className="w-6 h-6 animate-spin text-blue-600" />
           </div>
         </div>
@@ -194,12 +194,12 @@ export default function MintoonsContactPage() {
               transition={{ delay: 0.2, duration: 0.8 }}
             >
               <Sparkles className="w-4 h-4 text-blue-400 mr-2" />
-              <span className="text-blue-200 font-medium text-xs sm:text-sm">
+              <span className="text-blue-200  text-xs sm:text-sm">
                 Creative Writing Education Platform
               </span>
             </motion.div>
 
-            <h1 className="text-3xl sm:text-5xl  font-black text-white mb-4 sm:mb-6 leading-tight sm:leading-none">
+            <h1 className="text-4xl font-black text-white mb-4 sm:mb-6 leading-tight sm:leading-none">
               How can we help you
               <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-400 to-blue-500 animate-[gradient-x_3s_ease_infinite]">
                 create magic?
@@ -216,13 +216,15 @@ export default function MintoonsContactPage() {
                 <div className="text-2xl sm:text-3xl text-blue-600 mb-1 ">
                   10K+
                 </div>
-                <div className="text-xs sm:text-sm text-gray-600 font-medium">
+                <div className="text-xs sm:text-sm text-gray-600 ">
                   Stories Created
                 </div>
               </div>
               <div className="text-center p-4 sm:p-6 bg-white/90 backdrop-blur-xl  border border-gray-200 hover:bg-white transition-all duration-300 hover:scale-105 shadow-lg">
-                <div className="text-2xl sm:text-3xl text-indigo-600 mb-1 ">95%</div>
-                <div className="text-xs sm:text-sm text-gray-600 font-medium">
+                <div className="text-2xl sm:text-3xl text-indigo-600 mb-1 ">
+                  95%
+                </div>
+                <div className="text-xs sm:text-sm text-gray-600 ">
                   Happy Writers
                 </div>
               </div>
@@ -231,7 +233,7 @@ export default function MintoonsContactPage() {
             <div className="bg-white rounded-xl p-6 sm:p-8 border border-gray-100 mb-6 sm:mb-8 shadow-xl relative overflow-hidden">
               {/* Background decoration */}
               <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-full -translate-y-16 translate-x-16 opacity-50"></div>
-              
+
               {/* Star rating at top */}
               <div className="flex items-center justify-between mb-4">
                 <div className="flex space-x-1">
@@ -246,20 +248,23 @@ export default function MintoonsContactPage() {
               </div>
 
               {/* Testimonial text */}
-              <blockquote className="text-gray-700 text-lg sm:text-xl font-medium leading-relaxed mb-6 relative z-10">
+              <blockquote className="text-gray-700 text-lg sm:text-xl  leading-relaxed mb-6 relative z-10">
                 "{testimonials[currentTestimonial].text}"
               </blockquote>
 
               {/* Author info with avatar placeholder */}
               <div className="flex items-center space-x-4">
                 <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white  text-lg">
-                  {testimonials[currentTestimonial].author.split(' ').map(n => n[0]).join('')}
+                  {testimonials[currentTestimonial].author
+                    .split(' ')
+                    .map((n) => n[0])
+                    .join('')}
                 </div>
                 <div>
                   <div className=" text-gray-800 text-base">
                     {testimonials[currentTestimonial].author}
                   </div>
-                  <div className="text-blue-600 text-sm font-medium">
+                  <div className="text-blue-600 text-sm ">
                     {testimonials[currentTestimonial].role}
                   </div>
                 </div>
@@ -271,8 +276,8 @@ export default function MintoonsContactPage() {
                   <div
                     key={index}
                     className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                      index === currentTestimonial 
-                        ? 'bg-blue-600 w-8' 
+                      index === currentTestimonial
+                        ? 'bg-blue-600 w-8'
                         : 'bg-gray-300 hover:bg-gray-400'
                     }`}
                   />
@@ -308,7 +313,7 @@ export default function MintoonsContactPage() {
 
               <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
                 <div className="group">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm  text-gray-700 mb-2">
                     Name *
                   </label>
                   <div className="relative">
@@ -326,7 +331,7 @@ export default function MintoonsContactPage() {
                 </div>
 
                 <div className="group">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm  text-gray-700 mb-2">
                     Email *
                   </label>
                   <div className="relative">
@@ -344,7 +349,7 @@ export default function MintoonsContactPage() {
                 </div>
 
                 <div className="group">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm  text-gray-700 mb-2">
                     Phone *
                   </label>
                   <div className="relative">
@@ -362,7 +367,7 @@ export default function MintoonsContactPage() {
                 </div>
 
                 <div className="group">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm  text-gray-700 mb-2">
                     Child&apos;s Age
                   </label>
                   <div className="relative">
@@ -379,7 +384,7 @@ export default function MintoonsContactPage() {
                 </div>
 
                 <div className="group">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm  text-gray-700 mb-2">
                     School
                   </label>
                   <div className="relative">
@@ -396,7 +401,7 @@ export default function MintoonsContactPage() {
                 </div>
 
                 <div className="group">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm  text-gray-700 mb-2">
                     Tell us more about your child&apos;s interests and how we
                     can help... *
                   </label>
@@ -417,7 +422,7 @@ export default function MintoonsContactPage() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 text-white py-4 px-8  transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed group relative overflow-hidden font-medium"
+                  className="w-full bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 text-white py-4 px-8  transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed group relative overflow-hidden "
                 >
                   <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   {isSubmitting ? (
