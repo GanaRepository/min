@@ -46,7 +46,7 @@
 //             lastActiveDate: new Date(),
 //           });
 
-//           // Return user object that matches NextAuth User interface
+//           // Return user object with EXPLICIT TYPE
 //           return {
 //             id: user._id.toString(),
 //             email: user.email,
@@ -58,7 +58,10 @@
 //             isActive: user.isActive,
 //             subscriptionTier: user.subscriptionTier || 'FREE',
 //             subscriptionStatus: user.subscriptionStatus || 'active',
-//           };
+//             // isVerified: user.isVerified || false, (removed)
+//             assignedMentor: user.assignedMentor?.toString(),
+//             createdBy: user.createdBy?.toString(),
+//           } as any; // FORCE IT
 //         } catch (error) {
 //           console.error('Authentication error:', error);
 //           throw error;
@@ -68,44 +71,52 @@
 //   ],
 //   session: {
 //     strategy: 'jwt',
-//     maxAge: 30 * 24 * 60 * 60, // 30 days
+//     maxAge: 30 * 24 * 60 * 60,
 //   },
 //   jwt: {
-//     maxAge: 30 * 24 * 60 * 60, // 30 days
+//     maxAge: 30 * 24 * 60 * 60,
 //   },
 //   callbacks: {
 //     async jwt({ token, user }) {
 //       if (user) {
-//         token.id = user.id;
-//         token.role = user.role;
-//         token.firstName = user.firstName;
-//         token.lastName = user.lastName;
-//         token.age = user.age;
-//         token.school = user.school;
-//         token.isActive = user.isActive;
-//         token.subscriptionTier = user.subscriptionTier;
-//         token.subscriptionStatus = user.subscriptionStatus;
+//         const u = user as any; // FORCE IT
+//         token.id = u.id;
+//         token.role = u.role;
+//         token.firstName = u.firstName;
+//         token.lastName = u.lastName;
+//         token.age = u.age;
+//         token.school = u.school;
+//         token.isActive = u.isActive;
+//         token.subscriptionTier = u.subscriptionTier;
+//         token.subscriptionStatus = u.subscriptionStatus;
+//   // token.isVerified = u.isVerified; (removed)
+//         token.assignedMentor = u.assignedMentor;
+//         token.createdBy = u.createdBy;
 //       }
 //       return token;
 //     },
 //     async session({ session, token }) {
 //       if (token && session.user) {
-//         session.user.id = token.id as string;
-//         session.user.role = token.role as any;
-//         session.user.firstName = token.firstName as string;
-//         session.user.lastName = token.lastName as string;
-//         session.user.age = token.age as number | undefined;
-//         session.user.school = token.school as string | undefined;
-//         session.user.isActive = token.isActive as boolean;
-//         session.user.subscriptionTier = token.subscriptionTier as string;
-//         session.user.subscriptionStatus = token.subscriptionStatus as string;
+//         (session.user as any).id = token.id || '';
+//         (session.user as any).role = token.role || 'child';
+//         (session.user as any).firstName = token.firstName || '';
+//         (session.user as any).lastName = token.lastName || '';
+//         (session.user as any).age = token.age;
+//         (session.user as any).school = token.school;
+//         (session.user as any).isActive = token.isActive ?? true;
+//         (session.user as any).subscriptionTier =
+//           token.subscriptionTier || 'FREE';
+//         (session.user as any).subscriptionStatus =
+//           token.subscriptionStatus || 'active';
+//   // (session.user as any).isVerified = token.isVerified ?? false; // REMOVED
+//         (session.user as any).assignedMentor = token.assignedMentor;
+//         (session.user as any).createdBy = token.createdBy;
 //       }
 //       return session;
 //     },
 //     async redirect({ url, baseUrl }) {
 //       console.log('🔄 Auth redirect called with:', { url, baseUrl });
 
-//       // If there's a callbackUrl in the URL, use it
 //       if (url.includes('callbackUrl=')) {
 //         const urlParams = new URLSearchParams(url.split('?')[1]);
 //         const callbackUrl = urlParams.get('callbackUrl');
@@ -116,14 +127,12 @@
 //         }
 //       }
 
-//       // If URL is relative, prepend baseUrl
 //       if (url.startsWith('/')) {
 //         const fullUrl = `${baseUrl}${url}`;
 //         console.log('✅ Using relative URL:', fullUrl);
 //         return fullUrl;
 //       }
 
-//       // If URL is on the same origin, allow it
 //       try {
 //         if (new URL(url).origin === baseUrl) {
 //           console.log('✅ Using same origin URL:', url);
@@ -133,7 +142,6 @@
 //         console.log('❌ URL parsing failed for:', url);
 //       }
 
-//       // Default redirect to create-stories for fresh element selection
 //       const defaultUrl = `${baseUrl}/create-stories`;
 //       console.log('✅ Using default redirect:', defaultUrl);
 //       return defaultUrl;
@@ -147,6 +155,7 @@
 //   debug: process.env.NODE_ENV === 'development',
 // };
 
+// utils/authOptions.ts - FIXED VERSION
 import { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import bcrypt from 'bcryptjs';
@@ -207,10 +216,9 @@ export const authOptions: NextAuthOptions = {
             isActive: user.isActive,
             subscriptionTier: user.subscriptionTier || 'FREE',
             subscriptionStatus: user.subscriptionStatus || 'active',
-            // isVerified: user.isVerified || false, (removed)
             assignedMentor: user.assignedMentor?.toString(),
             createdBy: user.createdBy?.toString(),
-          } as any; // FORCE IT
+          } as any;
         } catch (error) {
           console.error('Authentication error:', error);
           throw error;
@@ -228,7 +236,7 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        const u = user as any; // FORCE IT
+        const u = user as any;
         token.id = u.id;
         token.role = u.role;
         token.firstName = u.firstName;
@@ -238,7 +246,6 @@ export const authOptions: NextAuthOptions = {
         token.isActive = u.isActive;
         token.subscriptionTier = u.subscriptionTier;
         token.subscriptionStatus = u.subscriptionStatus;
-  // token.isVerified = u.isVerified; (removed)
         token.assignedMentor = u.assignedMentor;
         token.createdBy = u.createdBy;
       }
@@ -253,11 +260,8 @@ export const authOptions: NextAuthOptions = {
         (session.user as any).age = token.age;
         (session.user as any).school = token.school;
         (session.user as any).isActive = token.isActive ?? true;
-        (session.user as any).subscriptionTier =
-          token.subscriptionTier || 'FREE';
-        (session.user as any).subscriptionStatus =
-          token.subscriptionStatus || 'active';
-  // (session.user as any).isVerified = token.isVerified ?? false; // REMOVED
+        (session.user as any).subscriptionTier = token.subscriptionTier || 'FREE';
+        (session.user as any).subscriptionStatus = token.subscriptionStatus || 'active';
         (session.user as any).assignedMentor = token.assignedMentor;
         (session.user as any).createdBy = token.createdBy;
       }
@@ -266,6 +270,10 @@ export const authOptions: NextAuthOptions = {
     async redirect({ url, baseUrl }) {
       console.log('🔄 Auth redirect called with:', { url, baseUrl });
 
+      // FIXED: Don't force redirect to /create-stories
+      // Let user go where they intended to go
+      
+      // If there's a callbackUrl, use it
       if (url.includes('callbackUrl=')) {
         const urlParams = new URLSearchParams(url.split('?')[1]);
         const callbackUrl = urlParams.get('callbackUrl');
@@ -276,12 +284,14 @@ export const authOptions: NextAuthOptions = {
         }
       }
 
+      // If it's a relative URL, make it absolute
       if (url.startsWith('/')) {
         const fullUrl = `${baseUrl}${url}`;
         console.log('✅ Using relative URL:', fullUrl);
         return fullUrl;
       }
 
+      // If it's an absolute URL from same origin, use it
       try {
         if (new URL(url).origin === baseUrl) {
           console.log('✅ Using same origin URL:', url);
@@ -291,8 +301,10 @@ export const authOptions: NextAuthOptions = {
         console.log('❌ URL parsing failed for:', url);
       }
 
-      const defaultUrl = `${baseUrl}/create-stories`;
-      console.log('✅ Using default redirect:', defaultUrl);
+      // FIXED: Default to home page, not /create-stories
+      // This gives users choice instead of forcing them to create stories
+      const defaultUrl = `${baseUrl}/`;
+      console.log('✅ Using default redirect to home:', defaultUrl);
       return defaultUrl;
     },
   },

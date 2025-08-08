@@ -1,5 +1,5 @@
-// app/api/stories/upload/route.ts - Handle story uploads for assessment
-import { NextResponse } from 'next/server';
+// app/api/stories/upload/route.ts - FIXED VERSION
+import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/utils/authOptions';
 import { connectToDatabase } from '@/utils/db';
@@ -7,7 +7,7 @@ import { UsageManager } from '@/lib/usage-manager';
 import StorySession from '@/models/StorySession';
 import User from '@/models/User';
 
-export async function POST(request: Request) {
+export async function POST(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     
@@ -20,7 +20,7 @@ export async function POST(request: Request) {
 
     await connectToDatabase();
 
-    // Check if user can upload for assessment
+    // Check if user can upload assessment using NEW system
     const usageCheck = await UsageManager.canUploadAssessment(session.user.id);
     if (!usageCheck.allowed) {
       return NextResponse.json(
@@ -34,36 +34,17 @@ export async function POST(request: Request) {
       );
     }
 
-    const formData = await request.formData();
+    const formData = await req.formData();
     const title = formData.get('title') as string;
     const content = formData.get('content') as string;
     const file = formData.get('file') as File | null;
 
-    if (!title || !title.trim()) {
-      return NextResponse.json(
-        { error: 'Story title is required' },
-        { status: 400 }
-      );
-    }
-
     let storyContent = '';
 
-    // Handle file upload
+    // Handle file upload or direct content
     if (file) {
-      const fileType = file.type;
-      const fileName = file.name.toLowerCase();
-
-      if (fileType === 'text/plain' || fileName.endsWith('.txt')) {
+      if (file.type === 'text/plain') {
         storyContent = await file.text();
-      } else if (
-        fileType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' ||
-        fileName.endsWith('.docx')
-      ) {
-        // Handle .docx files (would need mammoth.js or similar)
-        return NextResponse.json(
-          { error: '.docx files not yet supported. Please paste text or upload .txt file.' },
-          { status: 400 }
-        );
       } else {
         return NextResponse.json(
           { error: 'Unsupported file type. Please upload .txt files or paste text directly.' },
@@ -118,7 +99,6 @@ export async function POST(request: Request) {
       .select('storyNumber')
       .lean() as Record<string, any> | null;
 
-    // lastSession will be null or an object, not an array
     const nextStoryNumber = lastSession && typeof lastSession.storyNumber === 'number' ? lastSession.storyNumber + 1 : 1;
 
     // Create story session for assessment
@@ -139,7 +119,7 @@ export async function POST(request: Request) {
       assessmentAttempts: 0, // Reset attempts for new upload
     });
 
-    // Increment user's assessment upload counter
+    // Increment user's assessment upload counter using NEW system
     await UsageManager.incrementAssessmentUpload(session.user.id);
 
     console.log(`📝 Story uploaded for assessment: ${storySession._id} by user ${user.email}`);
@@ -158,7 +138,7 @@ export async function POST(request: Request) {
     });
 
   } catch (error) {
-    console.error('Error uploading story:', error);
+    console.error('❌ Error uploading story:', error);
     return NextResponse.json(
       { 
         error: 'Failed to upload story',

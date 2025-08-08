@@ -1,4 +1,4 @@
-// config/limits.ts - Add these missing exports to your existing file
+// config/limits.ts - COMPLETE FIXED VERSION
 export interface UsageLimits {
   stories: number;
   assessments: number;
@@ -67,13 +67,15 @@ export const RATE_LIMITS = {
   },
 };
 
-// ADD THESE MISSING EXPORTS THAT YOUR usage-manager.ts NEEDS:
+// EXPORTS FOR USAGE MANAGER
 export const FREE_TIER_LIMITS = USAGE_LIMITS.FREE;
 
 export const STORY_PACK_BENEFITS = {
   storiesAdded: 5,
   assessmentsAdded: 5,
   attemptsAdded: 15,
+  competitionEntriesAdded: 0,
+  totalAssessmentAttemptsAdded: 15,
 };
 
 export function calculateUserLimits(
@@ -83,193 +85,58 @@ export function calculateUserLimits(
     storiesAdded: number;
     assessmentsAdded: number;
     attemptsAdded: number;
+    competitionEntriesAdded?: number;
+    totalAssessmentAttemptsAdded?: number;
     purchaseDate: Date;
   }>,
   currentMonthStart: Date
 ): UsageLimits {
-  const limits = { ...baseLimits };
-  
+  // Filter purchases for current month
   const currentMonthPurchases = purchases.filter(
-    (p) => p.type === 'story_pack' && p.purchaseDate >= currentMonthStart
+    p => p.purchaseDate >= currentMonthStart
   );
-  
-  currentMonthPurchases.forEach((purchase) => {
-    limits.stories += purchase.storiesAdded;
-    limits.assessments += purchase.assessmentsAdded;
-    limits.totalAssessmentAttempts += purchase.attemptsAdded;
-  });
-  
-  return limits;
+
+  // Calculate additional limits from purchases
+  const additionalLimits = currentMonthPurchases.reduce(
+    (acc, purchase) => {
+      acc.stories += purchase.storiesAdded || 0;
+      acc.assessments += purchase.assessmentsAdded || 0;
+      acc.competitionEntries += purchase.competitionEntriesAdded || 0;
+      acc.totalAssessmentAttempts += purchase.totalAssessmentAttemptsAdded || 0;
+      return acc;
+    },
+    { stories: 0, assessments: 0, competitionEntries: 0, totalAssessmentAttempts: 0 }
+  );
+
+  return {
+    stories: baseLimits.stories + additionalLimits.stories,
+    assessments: baseLimits.assessments + additionalLimits.assessments,
+    competitionEntries: baseLimits.competitionEntries + additionalLimits.competitionEntries,
+    totalAssessmentAttempts: baseLimits.totalAssessmentAttempts + additionalLimits.totalAssessmentAttempts,
+  };
 }
 
 export function validateUsageWithinLimits(
-  currentUsage: { stories: number; assessments: number; attempts: number; competition: number },
+  usage: UsageLimits,
   limits: UsageLimits
-): { valid: boolean; errors: string[] } {
-  const errors: string[] = [];
-  
-  if (currentUsage.stories >= limits.stories) {
-    errors.push(`Story creation limit reached (${limits.stories} max)`);
+): { valid: boolean; violations: string[] } {
+  const violations: string[] = [];
+
+  if (usage.stories > limits.stories) {
+    violations.push(`Stories: ${usage.stories}/${limits.stories}`);
   }
-  
-  if (currentUsage.assessments >= limits.assessments) {
-    errors.push(`Assessment upload limit reached (${limits.assessments} max)`);
+  if (usage.assessments > limits.assessments) {
+    violations.push(`Assessments: ${usage.assessments}/${limits.assessments}`);
   }
-  
-  if (currentUsage.attempts >= limits.totalAssessmentAttempts) {
-    errors.push(`Assessment attempt limit reached (${limits.totalAssessmentAttempts} max)`);
+  if (usage.competitionEntries > limits.competitionEntries) {
+    violations.push(`Competition entries: ${usage.competitionEntries}/${limits.competitionEntries}`);
   }
-  
-  if (currentUsage.competition >= limits.competitionEntries) {
-    errors.push(`Competition entry limit reached (${limits.competitionEntries} max)`);
+  if (usage.totalAssessmentAttempts > limits.totalAssessmentAttempts) {
+    violations.push(`Assessment attempts: ${usage.totalAssessmentAttempts}/${limits.totalAssessmentAttempts}`);
   }
-  
+
   return {
-    valid: errors.length === 0,
-    errors,
+    valid: violations.length === 0,
+    violations,
   };
-}
-
-export function getUserLimits(user: any): UsageLimits {
-  const baseLimits = { ...USAGE_LIMITS.FREE };
-  
-  if (user.purchaseHistory && user.purchaseHistory.length > 0) {
-    const thisMonth = new Date();
-    const currentMonthStart = new Date(thisMonth.getFullYear(), thisMonth.getMonth(), 1);
-    
-    const storyPacksPurchased = user.purchaseHistory.filter((purchase: any) => 
-      purchase.type === 'story_pack' && 
-      new Date(purchase.purchaseDate) >= currentMonthStart
-    ).length;
-    
-    if (storyPacksPurchased > 0) {
-      baseLimits.stories += storyPacksPurchased * 5;
-      baseLimits.assessments += storyPacksPurchased * 5;
-      baseLimits.totalAssessmentAttempts += storyPacksPurchased * 15;
-    }
-  }
-  
-  return baseLimits;
-}
-
-export function canPerformAction(
-  user: any, 
-  action: 'story-create' | 'story-upload' | 'competition-submit'
-): { allowed: boolean; used: number; limit: number; remaining: number } {
-  const limits = getUserLimits(user);
-  
-  let used = 0;
-  let limit = 0;
-  
-  switch (action) {
-    case 'story-create':
-      used = user.storiesCreatedThisMonth || 0;
-      limit = limits.stories;
-      break;
-      
-    case 'story-upload':
-      used = user.assessmentUploadsThisMonth || 0;
-      limit = limits.assessments;
-      break;
-      
-    case 'competition-submit':
-      used = user.competitionEntriesThisMonth || 0;
-      limit = limits.competitionEntries;
-      break;
-  }
-  
-  return {
-    allowed: used < limit,
-    used,
-    limit,
-    remaining: Math.max(0, limit - used)
-  };
-}
-
-export const PRICING = {
-  STORY_PACK: {
-    name: 'Story Pack',
-    price: STORY_PACK_PRICE,
-    currency: 'USD',
-    benefits: {
-      stories: 5,
-      assessments: 5,
-      attempts: 15,
-    },
-    description: '5 additional story creations + 5 AI assessments',
-    stripeProductId: process.env.STRIPE_STORY_PACK_PRODUCT_ID,
-    stripePriceId: process.env.STRIPE_STORY_PACK_PRICE_ID,
-  },
-  
-  STORY_PUBLICATION: {
-    name: 'Story Publication',
-    price: STORY_PUBLICATION_PRICE,
-    currency: 'USD',
-    benefits: {
-      public: true,
-      competition: true,
-      sharing: true,
-    },
-    description: 'Make your story public and competition eligible',
-    stripeProductId: process.env.STRIPE_PUBLICATION_PRODUCT_ID,
-    stripePriceId: process.env.STRIPE_PUBLICATION_PRICE_ID,
-  },
-};
-
-export function validateStoryLength(content: string, isCompetition = false): {
-  valid: boolean;
-  wordCount: number;
-  message?: string;
-} {
-  const words = content.trim().split(/\s+/).filter(word => word.length > 0);
-  const wordCount = words.length;
-  
-  if (isCompetition) {
-    if (wordCount < COMPETITION_LIMITS.MIN_WORD_COUNT) {
-      return {
-        valid: false,
-        wordCount,
-        message: `Competition entries must be at least ${COMPETITION_LIMITS.MIN_WORD_COUNT} words. Current: ${wordCount} words.`
-      };
-    }
-    
-    if (wordCount > COMPETITION_LIMITS.MAX_WORD_COUNT) {
-      return {
-        valid: false,
-        wordCount,
-        message: `Competition entries must not exceed ${COMPETITION_LIMITS.MAX_WORD_COUNT} words. Current: ${wordCount} words.`
-      };
-    }
-  }
-  
-  return { valid: true, wordCount };
-}
-
-export function validateFileUpload(file: File): {
-  valid: boolean;
-  message?: string;
-} {
-  if (file.size > UPLOAD_LIMITS.MAX_FILE_SIZE) {
-    return {
-      valid: false,
-      message: `File size must not exceed ${UPLOAD_LIMITS.MAX_FILE_SIZE / (1024 * 1024)}MB`
-    };
-  }
-  
-  const extension = '.' + file.name.split('.').pop()?.toLowerCase();
-  if (!UPLOAD_LIMITS.ALLOWED_EXTENSIONS.includes(extension)) {
-    return {
-      valid: false,
-      message: `File type not allowed. Supported: ${UPLOAD_LIMITS.ALLOWED_EXTENSIONS.join(', ')}`
-    };
-  }
-  
-  if (!UPLOAD_LIMITS.ALLOWED_MIME_TYPES.includes(file.type)) {
-    return {
-      valid: false,
-      message: 'Invalid file type detected'
-    };
-  }
-  
-  return { valid: true };
 }

@@ -1,7 +1,7 @@
-// app/api/cron/monthly-reset/route.ts - Monthly Usage Reset Cron Job
+// app/api/cron/monthly-reset/route.ts - FIXED VERSION
 import { NextRequest, NextResponse } from 'next/server';
 import { connectToDatabase } from '@/utils/db';
-import { resetMonthlyUsage } from '@/lib/rate-limiter';
+import { UsageManager } from '@/lib/usage-manager';
 import { sendMonthlyResetNotification } from '@/lib/mailer';
 
 export async function POST(req: NextRequest) {
@@ -18,8 +18,8 @@ export async function POST(req: NextRequest) {
 
     await connectToDatabase();
 
-    // Reset monthly usage for all users
-    const resetCount = await resetMonthlyUsage();
+    // Reset monthly usage for all users using NEW system
+    const resetResult = await UsageManager.resetMonthlyUsage();
 
     // Send monthly reset notification emails
     try {
@@ -29,12 +29,13 @@ export async function POST(req: NextRequest) {
       console.error('Failed to send monthly reset emails:', emailError);
     }
 
-    console.log(`✅ Monthly usage reset completed for ${resetCount} users`);
+    console.log(`✅ Monthly usage reset completed for ${resetResult.usersReset} users`);
 
     return NextResponse.json({
       success: true,
-      message: `Monthly usage reset completed for ${resetCount} users`,
-      resetCount,
+      message: `Monthly usage reset completed for ${resetResult.usersReset} users`,
+      resetCount: resetResult.usersReset,
+      errors: resetResult.errors,
       timestamp: new Date().toISOString(),
     });
 
@@ -49,6 +50,5 @@ export async function POST(req: NextRequest) {
 
 // Also handle GET for manual testing
 export async function GET(req: NextRequest) {
-  // Same logic as POST - for manual testing
   return POST(req);
 }

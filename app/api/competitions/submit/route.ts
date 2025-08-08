@@ -1,10 +1,10 @@
-// app/api/competitions/submit/route.ts - Submit Story to Competition
+// app/api/competitions/submit/route.ts - FIXED VERSION
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/utils/authOptions';
 import { connectToDatabase } from '@/utils/db';
 import { competitionManager } from '@/lib/competition-manager';
-import { checkMonthlyUsage } from '@/lib/rate-limiter';
+import { UsageManager } from '@/lib/usage-manager';
 
 export async function POST(req: NextRequest) {
   try {
@@ -25,17 +25,24 @@ export async function POST(req: NextRequest) {
 
     await connectToDatabase();
 
-    // Check monthly usage limits
-    const usageCheck = await checkMonthlyUsage(session.user.id, 'competition-submit');
+    // Check competition entry limits using NEW system
+    const usageCheck = await UsageManager.canEnterCompetition(session.user.id);
     if (!usageCheck.allowed) {
       return NextResponse.json(
-        { error: usageCheck.message },
+        { 
+          error: usageCheck.reason,
+          currentUsage: usageCheck.currentUsage,
+          limits: usageCheck.limits,
+        },
         { status: 429 }
       );
     }
 
     // Submit story to competition
     const submission = await competitionManager.submitStory(storyId, session.user.id);
+    
+    // Increment competition entry counter using NEW system
+    await UsageManager.incrementCompetitionEntry(session.user.id);
     
     return NextResponse.json({
       success: true,

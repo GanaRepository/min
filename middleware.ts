@@ -1,17 +1,16 @@
-// Updated middleware.ts - Use New Limits System
+// middleware.ts - FIXED VERSION
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { getToken } from 'next-auth/jwt';
-import { checkRateLimit, checkMonthlyUsage } from '@/lib/rate-limiter';
 
 // Define paths that are publicly accessible
 const publicPaths = [
   '/',
   '/about',
-  '/contact',
-  '/pricing', // Updated pricing page
-  '/competitions', // New competitions page
-  '/stories/public', // Public stories
+  '/contact-us',
+  '/pricing',
+  '/competitions',
+  '/stories/public',
   '/login',
   '/login/child',
   '/login/mentor',
@@ -38,23 +37,12 @@ function isPublicApiPath(path: string): boolean {
   return (
     path.startsWith('/api/auth/') ||
     path.startsWith('/api/contact') ||
-    path.startsWith('/api/stripe/webhook') || // Stripe webhooks must be public
-    path.startsWith('/api/cron/') || // Cron jobs
-    path.startsWith('/api/competitions/current') || // Public competition info
+    path.startsWith('/api/stripe/webhook') ||
+    path.startsWith('/api/cron/') ||
+    path.startsWith('/api/competitions/current') ||
     path.includes('favicon') ||
     path.startsWith('/_next/') ||
     path.startsWith('/api/_next/')
-  );
-}
-
-// Helper to check if path requires authentication
-function requiresAuth(path: string): boolean {
-  return (
-    path.startsWith('/children-dashboard') ||
-    path.startsWith('/mentor-dashboard') ||
-    path.startsWith('/admin-dashboard') ||
-    path.startsWith('/admin/') ||
-    (path.startsWith('/api/') && !isPublicApiPath(path))
   );
 }
 
@@ -101,76 +89,12 @@ export async function middleware(request: NextRequest) {
   
   const isAuthenticated = !!token;
   const userRole = token?.role;
-  const userId = token?.id;
 
   logMiddleware('info', `Auth Status`, {
     path,
     role: userRole,
     authenticated: isAuthenticated,
-    userId: userId ? `${userId.substring(0, 8)}...` : 'none',
   });
-
-  // ===== RATE LIMITING FOR AUTHENTICATED USERS =====
-  if (token?.id) {
-    // Rate limiting for story creation
-    if (path.startsWith('/create-stories') && request.method === 'GET') {
-      const usageCheck = await checkMonthlyUsage(token.id, 'story-create');
-      if (!usageCheck.allowed) {
-        logMiddleware(
-          'warn',
-          `Monthly limit exceeded: story creation for user ${token.id.substring(0, 8)}...`
-        );
-        return NextResponse.redirect(
-          new URL('/children-dashboard?error=story-limit', request.url)
-        );
-      }
-    }
-
-    // Rate limiting for API calls
-    if (path.startsWith('/api/stories/create-session')) {
-      const usageCheck = await checkMonthlyUsage(token.id, 'story-create');
-      if (!usageCheck.allowed) {
-        logMiddleware(
-          'warn',
-          `API rate limit exceeded: story creation for user ${token.id.substring(0, 8)}...`
-        );
-        return NextResponse.json(
-          { error: usageCheck.message },
-          { status: 429 }
-        );
-      }
-    }
-
-    // Rate limiting for assessment uploads
-    if (path.startsWith('/api/stories/upload')) {
-      const usageCheck = await checkMonthlyUsage(token.id, 'story-upload');
-      if (!usageCheck.allowed) {
-        logMiddleware(
-          'warn',
-          `API rate limit exceeded: story upload for user ${token.id.substring(0, 8)}...`
-        );
-        return NextResponse.json(
-          { error: usageCheck.message },
-          { status: 429 }
-        );
-      }
-    }
-
-    // Rate limiting for competition submissions
-    if (path.startsWith('/api/competitions/submit')) {
-      const usageCheck = await checkMonthlyUsage(token.id, 'competition-submit');
-      if (!usageCheck.allowed) {
-        logMiddleware(
-          'warn',
-          `API rate limit exceeded: competition submit for user ${token.id.substring(0, 8)}...`
-        );
-        return NextResponse.json(
-          { error: usageCheck.message },
-          { status: 429 }
-        );
-      }
-    }
-  }
 
   // ===== ADMIN ROUTES =====
   if (
@@ -256,12 +180,6 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     */
     '/((?!_next/static|_next/image|favicon.ico).*)',
   ],
 };
