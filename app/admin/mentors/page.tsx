@@ -128,10 +128,12 @@ export default function MentorsPage() {
             Manage all mentors and their student assignments
           </p>
         </div>
+       <Link href="/admin/mentors/create">
         <button className="bg-gradient-to-r from-purple-600 to-purple-700 text-white px-6 py-2.5 rounded-lg hover:from-purple-700 hover:to-purple-800 transition-all duration-200 flex items-center">
           <UserPlus size={20} className="mr-2" />
           Add New Mentor
         </button>
+      </Link>
       </div>
 
       {/* Search */}
@@ -241,10 +243,7 @@ export default function MentorsPage() {
           <p className="text-gray-500 mb-6">
             {searchTerm ? 'Try adjusting your search' : 'Start by adding your first mentor'}
           </p>
-          <button className="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors flex items-center mx-auto">
-            <UserPlus size={20} className="mr-2" />
-            Add First Mentor
-          </button>
+         
         </div>
       )}
 

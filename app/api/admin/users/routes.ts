@@ -96,7 +96,7 @@ export async function POST(request: NextRequest) {
       role,
       parentEmail: role === 'child' ? parentEmail : undefined,
       isActive: true,
-      isVerified: true,
+  // isVerified: true, (removed)
       preferences: {
         theme: 'light',
         language: 'en',

@@ -248,7 +248,7 @@ export interface IUser extends Document {
   school?: string;
   avatar?: string;
   isActive: boolean;
-  isVerified: boolean;
+  // isVerified: boolean; (removed)
 
   // LEGACY Subscription fields (keep for migration compatibility)
   subscriptionTier: 'FREE' | 'BASIC' | 'PREMIUM';
@@ -363,11 +363,7 @@ const UserSchema = new Schema<IUser>(
       type: Boolean,
       default: true,
     },
-    isVerified: {
-      type: Boolean,
-      required: true,
-      default: false,
-    },
+  // isVerified: { type: Boolean, required: true, default: false }, (removed)
 
     // LEGACY Subscription fields (keep for backward compatibility)
     subscriptionTier: {
@@ -544,8 +540,8 @@ const UserSchema = new Schema<IUser>(
 // Indexes
 UserSchema.index({ role: 1, isActive: 1 });
 UserSchema.index({ subscriptionTier: 1, subscriptionStatus: 1 });
-UserSchema.index({ email: 1, isVerified: 1 });
-UserSchema.index({ isActive: 1, isVerified: 1 });
+// UserSchema.index({ email: 1, isVerified: 1 }); (removed)
+// UserSchema.index({ isActive: 1, isVerified: 1 }); (removed)
 UserSchema.index({ lastMonthlyReset: 1 }); // NEW: For monthly reset queries
 
 export default (mongoose.models && mongoose.models.User)

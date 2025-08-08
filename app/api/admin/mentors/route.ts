@@ -146,7 +146,7 @@ export async function POST(request: NextRequest) {
       password: hashedPassword,
       role: 'mentor',
       isActive: true,
-      isVerified: true,
+  // isVerified: true, (removed)
       preferences: {
         theme: 'light',
         language: 'en',

@@ -30,7 +30,6 @@ export async function GET() {
       thisMonthUsers,
       lastMonthUsers,
       activeUsers,
-      verifiedUsers,
     ] = await Promise.all([
       User.countDocuments({ role: { $in: ['child', 'mentor'] } }),
       User.countDocuments({ 
@@ -44,10 +43,6 @@ export async function GET() {
       User.countDocuments({ 
         role: { $in: ['child', 'mentor'] },
         isActive: true 
-      }),
-      User.countDocuments({ 
-        role: { $in: ['child', 'mentor'] },
-        isVerified: true 
       }),
     ]);
 
@@ -140,7 +135,6 @@ export async function GET() {
           total: totalUsers,
           thisMonth: thisMonthUsers,
           active: activeUsers,
-          verified: verifiedUsers,
           growth: parseFloat(userGrowth as string),
         },
         stories: {

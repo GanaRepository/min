@@ -207,7 +207,7 @@ export const authOptions: NextAuthOptions = {
             isActive: user.isActive,
             subscriptionTier: user.subscriptionTier || 'FREE',
             subscriptionStatus: user.subscriptionStatus || 'active',
-            isVerified: user.isVerified || false,
+            // isVerified: user.isVerified || false, (removed)
             assignedMentor: user.assignedMentor?.toString(),
             createdBy: user.createdBy?.toString(),
           } as any; // FORCE IT
@@ -238,7 +238,7 @@ export const authOptions: NextAuthOptions = {
         token.isActive = u.isActive;
         token.subscriptionTier = u.subscriptionTier;
         token.subscriptionStatus = u.subscriptionStatus;
-        token.isVerified = u.isVerified;
+  // token.isVerified = u.isVerified; (removed)
         token.assignedMentor = u.assignedMentor;
         token.createdBy = u.createdBy;
       }
@@ -257,7 +257,7 @@ export const authOptions: NextAuthOptions = {
           token.subscriptionTier || 'FREE';
         (session.user as any).subscriptionStatus =
           token.subscriptionStatus || 'active';
-        (session.user as any).isVerified = token.isVerified ?? false; // THIS IS THE IMPORTANT ONE
+  // (session.user as any).isVerified = token.isVerified ?? false; // REMOVED
         (session.user as any).assignedMentor = token.assignedMentor;
         (session.user as any).createdBy = token.createdBy;
       }

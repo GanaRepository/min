@@ -40,13 +40,13 @@ export async function GET(request: NextRequest) {
       .lean();
 
     // Generate CSV
-    let csv = 'First Name,Last Name,Email,Role,Verified,Active,Created At,Last Active,Total Stories,Total Words,Revenue Generated\n';
+  let csv = 'First Name,Last Name,Email,Role,Active,Created At,Last Active,Total Stories,Total Words,Revenue Generated\n';
     
     users.forEach((user: any) => {
       const totalRevenue = user.purchaseHistory ? 
         user.purchaseHistory.reduce((sum: number, purchase: any) => sum + (purchase.amount || 0), 0) : 0;
         
-      csv += `"${user.firstName}","${user.lastName}","${user.email}","${user.role}",${user.isVerified},${user.isActive},"${new Date(user.createdAt).toLocaleDateString()}","${user.lastActiveDate ? new Date(user.lastActiveDate).toLocaleDateString() : 'Never'}",${user.totalStoriesCreated || 0},${user.totalWordsWritten || 0},${totalRevenue.toFixed(2)}\n`;
+  csv += `"${user.firstName}","${user.lastName}","${user.email}","${user.role}",${user.isActive},"${new Date(user.createdAt).toLocaleDateString()}","${user.lastActiveDate ? new Date(user.lastActiveDate).toLocaleDateString() : 'Never'}",${user.totalStoriesCreated || 0},${user.totalWordsWritten || 0},${totalRevenue.toFixed(2)}\n`;
     });
 
     return new Response(csv, {
