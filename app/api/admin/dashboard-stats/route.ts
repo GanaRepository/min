@@ -1,5 +1,6 @@
-//app/api/admin/dashboard-stats/route.ts
-// app/api/admin/dashboard-stats/route.ts
+// app/api/admin/dashboard-stats/route.ts - UPDATED to include ALL users
+export const dynamic = 'force-dynamic';
+
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/utils/authOptions';
@@ -7,8 +8,6 @@ import { connectToDatabase } from '@/utils/db';
 import User from '@/models/User';
 import StorySession from '@/models/StorySession';
 import StoryComment from '@/models/StoryComment';
-
-export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
@@ -20,51 +19,74 @@ export async function GET() {
     await connectToDatabase();
 
     const now = new Date();
-    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     const weekStart = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-    const dayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
 
+    // UPDATED: Count ALL users including admin
     const [
-      // User stats
+      // User statistics - INCLUDE ALL ROLES
       totalUsers,
+      childrenCount,
+      mentorsCount,
+      adminCount,
       activeUsersToday,
       newUsersThisWeek,
       newUsersThisMonth,
       
-      // Story stats
+      // Story statistics
       totalStories,
       storiesThisMonth,
       storiesThisWeek,
       completedStories,
       
-      // Comment stats
+      // Comment statistics
       totalComments,
       commentsThisWeek,
       unresolvedComments,
       
-      // Revenue stats
-      revenueData,
+      // Revenue data
+      revenueData
     ] = await Promise.all([
-      User.countDocuments({ role: { $in: ['child', 'mentor'] } }),
+      // UPDATED: Count ALL users including admin
       User.countDocuments({ 
-        role: { $in: ['child', 'mentor'] },
-        lastActiveDate: { $gte: dayStart } 
-      }),
-      User.countDocuments({ 
-        role: { $in: ['child', 'mentor'] },
-        createdAt: { $gte: weekStart } 
-      }),
-      User.countDocuments({ 
-        role: { $in: ['child', 'mentor'] },
-        createdAt: { $gte: monthStart } 
+        isActive: true 
       }),
       
-      StorySession.countDocuments(),
+      User.countDocuments({ 
+        role: 'child',
+        isActive: true 
+      }),
+      
+      User.countDocuments({ 
+        role: 'mentor',
+        isActive: true 
+      }),
+      
+      User.countDocuments({ 
+        role: 'admin',
+        isActive: true 
+      }),
+      
+      User.countDocuments({
+        isActive: true,
+        lastActiveDate: { $gte: todayStart }
+      }),
+      
+      User.countDocuments({
+        createdAt: { $gte: weekStart }
+      }),
+      
+      User.countDocuments({
+        createdAt: { $gte: monthStart }
+      }),
+
+      StorySession.countDocuments({}),
       StorySession.countDocuments({ createdAt: { $gte: monthStart } }),
       StorySession.countDocuments({ createdAt: { $gte: weekStart } }),
       StorySession.countDocuments({ status: 'completed' }),
-      
-      StoryComment.countDocuments(),
+
+      StoryComment.countDocuments({}),
       StoryComment.countDocuments({ createdAt: { $gte: weekStart } }),
       StoryComment.countDocuments({ isResolved: false }),
       
@@ -91,11 +113,24 @@ export async function GET() {
 
     const revenue = revenueData[0] || { totalRevenue: 0, monthlyRevenue: 0 };
 
+    console.log('Dashboard Stats Debug (All Users):', {
+      totalUsers,
+      childrenCount,
+      mentorsCount,
+      adminCount,
+      activeUsersToday,
+      newUsersThisWeek,
+      newUsersThisMonth
+    });
+
     return NextResponse.json({
       success: true,
       stats: {
         users: {
-          total: totalUsers,
+          total: totalUsers,           // NOW includes admin
+          children: childrenCount,     // Children count
+          mentors: mentorsCount,       // Mentors count
+          admins: adminCount,          // NEW: Admin count
           activeToday: activeUsersToday,
           newThisWeek: newUsersThisWeek,
           newThisMonth: newUsersThisMonth,
@@ -115,6 +150,7 @@ export async function GET() {
         revenue: {
           total: revenue.totalRevenue,
           thisMonth: revenue.monthlyRevenue,
+          growth: 0, // Calculate this based on previous month if needed
         },
       },
     });

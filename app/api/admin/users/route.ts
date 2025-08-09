@@ -1,6 +1,4 @@
-//app/api/admin/users/routes.ts
-
-// app/api/admin/users/route.ts (Fixed - was named incorrectly as routes.ts)
+// app/api/admin/users/route.ts - UPDATED to include ALL users including admin
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/utils/authOptions';
@@ -10,7 +8,7 @@ import bcrypt from 'bcryptjs';
 
 export const dynamic = 'force-dynamic';
 
-// GET all users
+// GET all users - UPDATED to include admin users
 export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
@@ -26,10 +24,13 @@ export async function GET(request: NextRequest) {
 
     await connectToDatabase();
 
-    let query: any = { role: { $in: ['child', 'mentor'] } };
+    // UPDATED: Include ALL roles (child, mentor, admin)
+    let query: any = {};
+    
     if (role && role !== 'all') {
       query.role = role;
     }
+    
     if (search) {
       query.$or = [
         { firstName: { $regex: search, $options: 'i' } },
@@ -37,6 +38,8 @@ export async function GET(request: NextRequest) {
         { email: { $regex: search, $options: 'i' } },
       ];
     }
+
+    console.log('Users API Query:', query); // Debug log
 
     const [users, totalUsers] = await Promise.all([
       User.find(query)
@@ -47,6 +50,9 @@ export async function GET(request: NextRequest) {
         .lean(),
       User.countDocuments(query),
     ]);
+
+    console.log('Users found:', users.length); // Debug log
+    console.log('Total users count:', totalUsers); // Debug log
 
     return NextResponse.json({
       success: true,
@@ -73,10 +79,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
     }
 
-    const { firstName, lastName, email, password, role, parentEmail } = await request.json();
+    const { firstName, lastName, email, password, role, parentEmail, age, school } = await request.json();
 
     if (!firstName || !lastName || !email || !password || !role) {
       return NextResponse.json({ error: 'All fields are required' }, { status: 400 });
+    }
+
+    if (role === 'child' && (!age || !school)) {
+      return NextResponse.json({ error: 'Age and school are required for children' }, { status: 400 });
     }
 
     await connectToDatabase();
@@ -88,40 +98,85 @@ export async function POST(request: NextRequest) {
 
     const hashedPassword = await bcrypt.hash(password, 12);
 
-    const user = new User({
+    const userData: any = {
       firstName,
       lastName,
       email: email.toLowerCase(),
       password: hashedPassword,
       role,
-      parentEmail: role === 'child' ? parentEmail : undefined,
       isActive: true,
-  // isVerified: true, (removed)
-      preferences: {
+      isVerified: true,
+    };
+
+    // Add role-specific fields
+    if (role === 'child') {
+      userData.age = age;
+      userData.school = school;
+      userData.parentEmail = parentEmail;
+      userData.subscriptionTier = 'FREE';
+      userData.subscriptionStatus = 'active';
+      userData.totalStoriesCreated = 0;
+      userData.storiesCreatedThisMonth = 0;
+      userData.totalWordsWritten = 0;
+      userData.writingStreak = 0;
+      userData.totalTimeWriting = 0;
+      userData.assessmentUploadsThisMonth = 0;
+      userData.competitionEntriesThisMonth = 0;
+      userData.assessmentAttempts = {};
+      userData.preferences = {
         theme: 'light',
         language: 'en',
         emailNotifications: true,
-        soundEffects: false,
-        autoSave: true,
-      },
-    });
+        soundEffects: true,
+        autoSave: true
+      };
+      userData.lastMonthlyReset = new Date();
+      userData.purchaseHistory = [];
+    } else if (role === 'admin') {
+      // Admin-specific fields
+      userData.adminLevel = 'super';
+      userData.canCreateMentors = true;
+      userData.canAssignStudentsToMentors = true;
+      userData.canViewAllAnalytics = true;
+      userData.canManageCompetitions = true;
+      userData.canProcessPayments = true;
+      userData.canModerateContent = true;
+      userData.platformStats = {
+        totalStudentsManaged: 0,
+        totalMentorsManaged: 0,
+        totalRevenueGenerated: 0,
+        totalCompetitionsRun: 0,
+        lastAnalyticsView: new Date(),
+      };
+      userData.adminActivity = {
+        mentorsCreated: 0,
+        studentsAssigned: 0,
+        competitionsManaged: 0,
+        reportsGenerated: 0,
+        lastLogin: new Date(),
+      };
+      userData.preferences = {
+        theme: 'dark',
+        language: 'en',
+        emailNotifications: true,
+        dashboardLayout: 'advanced',
+        showDetailedAnalytics: true,
+        autoRefreshStats: true,
+        defaultView: 'analytics',
+      };
+    }
 
-    await user.save();
+ const user = new User(userData);
+const savedUser = await user.save();
 
-    const userResponse = {
-      _id: user._id,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email,
-      role: user.role,
-      createdAt: user.createdAt,
-    };
+// Use select to exclude password field
+const userWithoutPassword = await User.findById(savedUser._id).select('-password').lean();
 
-    return NextResponse.json({
-      success: true,
-      user: userResponse,
-      message: 'User created successfully',
-    });
+return NextResponse.json({
+  success: true,
+  user: userWithoutPassword,
+  message: `${role} created successfully`,
+});
 
   } catch (error) {
     console.error('Error creating user:', error);

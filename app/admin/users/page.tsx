@@ -1,6 +1,4 @@
-//app/admin/users/page.tsx
-
-// app/admin/users/page.tsx (Fixed)
+// app/admin/users/page.tsx - UPDATED to include admin filter
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -17,6 +15,8 @@ import {
   Trash2,
   UserPlus,
   Download,
+  Crown,
+  UserCheck,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -89,22 +89,18 @@ export default function UsersPage() {
   };
 
   const deleteUser = async (userId: string, name: string) => {
-    if (!confirm(`Are you sure you want to delete ${name}? This action cannot be undone.`)) {
-      return;
-    }
+    if (!confirm(`Are you sure you want to delete ${name}?`)) return;
 
     try {
       const response = await fetch(`/api/admin/users/${userId}`, {
         method: 'DELETE',
       });
 
-      const data = await response.json();
-
-      if (data.success) {
-        setUsers(users.filter(user => user._id !== userId));
-        alert('User deleted successfully');
+      if (response.ok) {
+        fetchUsers();
       } else {
-        alert('Failed to delete user: ' + data.error);
+        const data = await response.json();
+        alert(data.error || 'Failed to delete user');
       }
     } catch (error) {
       console.error('Error deleting user:', error);
@@ -116,19 +112,18 @@ export default function UsersPage() {
     try {
       const params = new URLSearchParams();
       if (filterRole !== 'all') params.append('role', filterRole);
-      if (searchTerm) params.append('search', searchTerm);
       
       const response = await fetch(`/api/admin/users/export?${params}`);
-      const blob = await response.blob();
-      
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `users-export-${new Date().toISOString().split('T')[0]}.csv`;
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
+      if (response.ok) {
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `users-export-${new Date().toISOString().split('T')[0]}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+      }
     } catch (error) {
       console.error('Error exporting users:', error);
     }
@@ -136,10 +131,27 @@ export default function UsersPage() {
 
   const getRoleBadgeColor = (role: string) => {
     switch (role) {
-      case 'admin': return 'bg-red-100 text-red-800';
-      case 'mentor': return 'bg-purple-100 text-purple-800';
-      case 'child': return 'bg-green-100 text-green-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'admin':
+        return 'bg-red-100 text-red-800';
+      case 'mentor':
+        return 'bg-purple-100 text-purple-800';
+      case 'child':
+        return 'bg-blue-100 text-blue-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  const getRoleIcon = (role: string) => {
+    switch (role) {
+      case 'admin':
+        return <Crown size={16} className="text-red-600" />;
+      case 'mentor':
+        return <UserCheck size={16} className="text-purple-600" />;
+      case 'child':
+        return <BookOpen size={16} className="text-blue-600" />;
+      default:
+        return <Users size={16} className="text-gray-600" />;
     }
   };
 
@@ -215,7 +227,7 @@ export default function UsersPage() {
         <div className="bg-gray-800 rounded-xl p-6">
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-sm font-medium text-gray-400">Mentors</h3>
-            <Users size={20} className="text-purple-400" />
+            <UserCheck size={20} className="text-purple-400" />
           </div>
           <p className="text-2xl font-bold text-white">
             {users.filter(u => u.role === 'mentor').length}
@@ -224,50 +236,41 @@ export default function UsersPage() {
 
         <div className="bg-gray-800 rounded-xl p-6">
           <div className="flex items-center justify-between mb-2">
-            <h3 className="text-sm font-medium text-gray-400">Active Users</h3>
-            <Users size={20} className="text-emerald-400" />
+            <h3 className="text-sm font-medium text-gray-400">Admins</h3>
+            <Crown size={20} className="text-red-400" />
           </div>
           <p className="text-2xl font-bold text-white">
-            {users.filter(u => u.isActive).length}
+            {users.filter(u => u.role === 'admin').length}
           </p>
         </div>
       </div>
 
-      {/* Filters */}
+      {/* Search and Filters */}
       <div className="bg-gray-800 rounded-xl p-6">
-        <div className="flex flex-col lg:flex-row gap-4">
-          {/* Search */}
-          <div className="flex-1">
-            <div className="relative">
-              <Search size={20} className="absolute left-3 top-3 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search users by name or email..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-            </div>
+        <div className="flex flex-col sm:flex-row gap-4">
+          <div className="flex-1 relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+            <input
+              type="text"
+              placeholder="Search users by name or email..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-10 pr-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
           </div>
-
-          {/* Role Filter */}
-          <div className="flex items-center gap-2">
-            <Filter size={20} className="text-gray-400" />
-            <div className="flex bg-gray-700 rounded-lg p-1">
-              {['all', 'child', 'mentor', 'admin'].map((role) => (
-                <button
-                  key={role}
-                  onClick={() => setFilterRole(role)}
-                  className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
-                    filterRole === role
-                      ? 'bg-blue-600 text-white'
-                      : 'text-gray-300 hover:text-white'
-                  }`}
-                >
-                  {role.charAt(0).toUpperCase() + role.slice(1)}
-                  {role === 'all' ? ' Users' : 's'}
-                </button>
-              ))}
+          <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2">
+              <Filter size={20} className="text-gray-400" />
+              <select
+                value={filterRole}
+                onChange={(e) => setFilterRole(e.target.value)}
+                className="bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="all">All Roles</option>
+                <option value="child">Children</option>
+                <option value="mentor">Mentors</option>
+                <option value="admin">Admins</option>
+              </select>
             </div>
           </div>
         </div>
@@ -279,153 +282,140 @@ export default function UsersPage() {
           <table className="w-full">
             <thead className="bg-gray-700">
               <tr>
-                <th className="text-left py-3 px-4 text-sm font-medium text-gray-300">User</th>
-                <th className="text-left py-3 px-4 text-sm font-medium text-gray-300">Role</th>
-                <th className="text-left py-3 px-4 text-sm font-medium text-gray-300">Status</th>
-                <th className="text-left py-3 px-4 text-sm font-medium text-gray-300">Joined</th>
-                <th className="text-left py-3 px-4 text-sm font-medium text-gray-300">Last Active</th>
-                <th className="text-left py-3 px-4 text-sm font-medium text-gray-300">Actions</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                  User
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                  Role
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                  Status
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                  Joined
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                  Last Active
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                  Actions
+                </th>
               </tr>
             </thead>
-            <tbody>
-              {users.map((user) => (
-                <tr key={user._id} className="border-b border-gray-700/50 hover:bg-gray-700/20 transition-colors">
-                  {/* User */}
-                  <td className="py-3 px-4">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold">
-                        {user.firstName[0]}{user.lastName[0]}
+            <tbody className="divide-y divide-gray-700">
+              {users.length > 0 ? (
+                users.map((user) => (
+                  <motion.tr
+                    key={user._id}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="hover:bg-gray-700/50"
+                  >
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center">
+                        <div className="flex-shrink-0 h-10 w-10">
+                          <div className="h-10 w-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center">
+                            <span className="text-sm font-medium text-white">
+                              {user.firstName.charAt(0)}{user.lastName.charAt(0)}
+                            </span>
+                          </div>
+                        </div>
+                        <div className="ml-4">
+                          <div className="text-sm font-medium text-white">
+                            {user.firstName} {user.lastName}
+                          </div>
+                          <div className="text-sm text-gray-400">{user.email}</div>
+                        </div>
                       </div>
-                      <div>
-                        <h4 className="text-white font-medium">
-                          {user.firstName} {user.lastName}
-                        </h4>
-                        <p className="text-xs text-gray-400">{user.email}</p>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center space-x-2">
+                        {getRoleIcon(user.role)}
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getRoleBadgeColor(user.role)}`}>
+                          {user.role}
+                        </span>
                       </div>
-                    </div>
-                  </td>
-
-                  {/* Role */}
-                  <td className="py-3 px-4">
-                    <span className={`px-2 py-1 text-xs font-medium rounded-full ${getRoleBadgeColor(user.role)}`}>
-                      {user.role}
-                    </span>
-                  </td>
-
-                  {/* Status */}
-                  <td className="py-3 px-4">
-                    <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(user.isActive, user.isVerified)}`}>
-                      {getStatusText(user.isActive, user.isVerified)}
-                    </span>
-                  </td>
-
-                  {/* Joined */}
-                  <td className="py-3 px-4">
-                    <div className="text-white text-sm">
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(user.isActive, user.isVerified)}`}>
+                        {getStatusText(user.isActive, user.isVerified)}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
                       {new Date(user.createdAt).toLocaleDateString()}
-                    </div>
-                  </td>
-
-                  {/* Last Active */}
-                  <td className="py-3 px-4">
-                    <div className="text-gray-300 text-sm">
-                      {user.lastActiveDate 
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
+                      {user.lastActiveDate
                         ? new Date(user.lastActiveDate).toLocaleDateString()
-                        : 'Never'
-                      }
+                        : 'Never'}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                      <div className="flex items-center space-x-2">
+                        <Link href={`/admin/users/${user._id}`}>
+                          <button className="text-blue-400 hover:text-blue-300">
+                            <Eye size={16} />
+                          </button>
+                        </Link>
+                        <Link href={`/admin/users/${user._id}/edit`}>
+                          <button className="text-green-400 hover:text-green-300">
+                            <Edit size={16} />
+                          </button>
+                        </Link>
+                        {user.role !== 'admin' && (
+                          <button
+                            onClick={() => deleteUser(user._id, `${user.firstName} ${user.lastName}`)}
+                            className="text-red-400 hover:text-red-300"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        )}
+                      </div>
+                    </td>
+                  </motion.tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={6} className="px-6 py-8 text-center">
+                    <div className="text-gray-400">
+                      <Users size={48} className="mx-auto mb-4 opacity-50" />
+                      <p className="text-lg font-medium">No users found</p>
+                      <p className="text-sm">Users will appear here as they register</p>
                     </div>
                   </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
 
-                  {/* Actions */}
-                  <td className="py-3 px-4">
-                    <div className="flex items-center space-x-2">
-                      <Link href={`/admin/users/${user._id}`}>
-                        <button className="p-2 text-gray-400 hover:text-blue-400 hover:bg-gray-700 rounded-lg transition-colors">
-                          <Eye size={16} />
-                        </button>
-                      </Link>
-                      <Link href={`/admin/users/${user._id}/edit`}>
-                        <button className="p-2 text-gray-400 hover:text-green-400 hover:bg-gray-700 rounded-lg transition-colors">
-                          <Edit size={16} />
-                        </button>
-                      </Link>
-                      {user.role !== 'admin' && (
-                        <button
-                          onClick={() => deleteUser(user._id, `${user.firstName} ${user.lastName}`)}
-                         className="p-2 text-gray-400 hover:text-red-400 hover:bg-gray-700 rounded-lg transition-colors"
-                       >
-                         <Trash2 size={16} />
-                       </button>
-                     )}
-                   </div>
-                 </td>
-               </tr>
-             ))}
-           </tbody>
-         </table>
-       </div>
-
-       {/* Empty State */}
-       {users.length === 0 && !loading && (
-         <div className="text-center py-12">
-           <Users size={48} className="text-gray-600 mx-auto mb-4" />
-           <h3 className="text-xl font-medium text-gray-400 mb-2">No users found</h3>
-           <p className="text-gray-500">
-             {searchTerm || filterRole !== 'all' 
-               ? 'Try adjusting your search or filter criteria'
-               : 'Users will appear here as they register'
-             }
-           </p>
-         </div>
-       )}
-     </div>
-
-     {/* Pagination */}
-     {pagination && pagination.pages > 1 && (
-       <div className="flex items-center justify-center space-x-4">
-         <button
-           onClick={() => setPage(Math.max(1, page - 1))}
-           disabled={page === 1}
-           className="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-         >
-           Previous
-         </button>
-         
-         <div className="flex items-center space-x-2">
-           {Array.from({ length: Math.min(5, pagination.pages) }, (_, i) => {
-             const pageNum = Math.max(1, Math.min(pagination.pages - 4, page - 2)) + i;
-             return (
-               <button
-                 key={pageNum}
-                 onClick={() => setPage(pageNum)}
-                 className={`px-3 py-2 rounded-lg transition-colors ${
-                   page === pageNum
-                     ? 'bg-blue-600 text-white'
-                     : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                 }`}
-               >
-                 {pageNum}
-               </button>
-             );
-           })}
-         </div>
-
-         <button
-           onClick={() => setPage(Math.min(pagination.pages, page + 1))}
-           disabled={page === pagination.pages}
-           className="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-         >
-           Next
-         </button>
-       </div>
-     )}
-
-     {/* Summary */}
-     {pagination && (
-       <div className="text-center text-gray-400 text-sm">
-         Showing {((pagination.page - 1) * pagination.limit) + 1} to {Math.min(pagination.page * pagination.limit, pagination.total)} of {pagination.total} users
-       </div>
-     )}
-   </div>
- );
+        {/* Pagination */}
+        {pagination && pagination.pages > 1 && (
+          <div className="bg-gray-700 px-6 py-3 flex items-center justify-between border-t border-gray-600">
+            <div className="text-sm text-gray-400">
+              Showing {((pagination.page - 1) * pagination.limit) + 1} to {Math.min(pagination.page * pagination.limit, pagination.total)} of {pagination.total} users
+            </div>
+            <div className="flex items-center space-x-2">
+              <button
+                onClick={() => setPage(Math.max(1, page - 1))}
+                disabled={page === 1}
+                className="px-3 py-1 text-sm bg-gray-600 text-white rounded hover:bg-gray-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Previous
+              </button>
+              <span className="text-sm text-gray-400">
+                Page {pagination.page} of {pagination.pages}
+              </span>
+              <button
+                onClick={() => setPage(Math.min(pagination.pages, page + 1))}
+                disabled={page === pagination.pages}
+                className="px-3 py-1 text-sm bg-gray-600 text-white rounded hover:bg-gray-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 }

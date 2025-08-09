@@ -35,12 +35,12 @@ interface StoryDetails {
   submittedToCompetition: boolean;
   competitionScore?: number;
   competitionRank?: number;
-  child: {
-    _id: string;
-    firstName: string;
-    lastName: string;
-    email: string;
-  };
+ childId: {
+  _id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+};
   turns: Array<{
     turnNumber: number;
     type: 'child' | 'ai';
@@ -222,9 +222,9 @@ export default function ViewStory() {
            </div>
            <div>
              <p className="text-sm text-gray-400">Author</p>
-             <Link href={`/admin/users/${story.child._id}`}>
+             <Link href={`/admin/users/${story.childId._id}`}>
                <p className="text-white font-medium hover:text-blue-400 cursor-pointer">
-                 {story.child.firstName} {story.child.lastName}
+                 {story.childId.firstName} {story.childId.lastName}
                </p>
              </Link>
            </div>

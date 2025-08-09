@@ -32,12 +32,12 @@ interface Story {
   createdAt: string;
   updatedAt: string;
   completedAt?: string;
-  child: {
-    _id: string;
-    firstName: string;
-    lastName: string;
-    email: string;
-  };
+childId: {
+  _id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+};
   commentCount: number;
   unresolvedComments: number;
   isPublished?: boolean;
@@ -328,12 +328,12 @@ export default function StoriesPage() {
                   {/* Author */}
                   <td className="py-3 px-4">
                     <div>
-                      <Link href={`/admin/users/${story.child._id}`}>
+                      <Link href={`/admin/users/${story.childId._id}`}>
                         <p className="text-white font-medium hover:text-blue-400 cursor-pointer">
-                          {story.child.firstName} {story.child.lastName}
+                          {story.childId.firstName} {story.childId.lastName}
                         </p>
                       </Link>
-                      <p className="text-xs text-gray-400">{story.child.email}</p>
+                      <p className="text-xs text-gray-400">{story.childId.email}</p>
                     </div>
                   </td>
 

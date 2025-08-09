@@ -63,7 +63,7 @@ export async function GET() {
 
     recentStories.forEach(story => {
       if (story.childId && typeof story.childId === 'object' && 'firstName' in story.childId) {
-        const child = story.childId as { firstName: string; lastName: string };
+        const child = story.childId as unknown as { firstName: string; lastName: string };
         activities.push({
           type: 'story_completed',
           description: `${child.firstName} ${child.lastName} completed "${story.title}" (${story.totalWords || 0} words)`,
