@@ -68,7 +68,7 @@
 //             <div className="bg-gradient-to-r from-blue-600 to-green-600 p-4 rounded-full inline-block mb-4">
 //               <Crown size={32} className="text-white" />
 //             </div>
-//             <h1 className="text-3xl font-bold text-white mb-2">Admin Portal</h1>
+//             <h1 className="text-3xl  text-white mb-2">Admin Portal</h1>
 //             <p className="text-gray-400">Access Mintoons administration panel</p>
 //           </div>
 
@@ -87,7 +87,7 @@
 //           <form onSubmit={handleSubmit} className="space-y-6">
 //             {/* Email */}
 //             <div>
-//               <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
+//               <label htmlFor="email" className="block text-sm  text-gray-300 mb-2">
 //                 Email Address
 //               </label>
 //               <div className="relative">
@@ -106,7 +106,7 @@
 
 //             {/* Password */}
 //             <div>
-//               <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2">
+//               <label htmlFor="password" className="block text-sm  text-gray-300 mb-2">
 //                 Password
 //               </label>
 //               <div className="relative">
@@ -134,7 +134,7 @@
 //             <button
 //               type="submit"
 //               disabled={loading}
-//               className="w-full bg-gradient-to-r from-blue-600 to-green-600 text-white py-3 px-4 rounded-lg font-medium hover:from-blue-700 hover:to-green-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+//               className="w-full bg-gradient-to-r from-blue-600 to-green-600 text-white py-3 px-4 rounded-lg  hover:from-blue-700 hover:to-green-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
 //             >
 //               {loading ? (
 //                 <div className="flex items-center justify-center">
@@ -394,10 +394,10 @@ export default function AdminLogin() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.8 }}
             >
-              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-2">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl  text-white mb-2">
                 Admin Portal
               </h1>
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white/80 mb-4 italic">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl  text-white/80 mb-4 italic">
                 Command Center
               </h2>
               <p className="text-white/60 text-sm">
@@ -427,7 +427,7 @@ export default function AdminLogin() {
           >
             {/* Email field */}
             <div className="space-y-2">
-              <label className="text-white/80 text-sm font-medium">
+              <label className="text-white/80 text-sm ">
                 Admin Email
               </label>
               <div className="relative">
@@ -445,7 +445,7 @@ export default function AdminLogin() {
 
             {/* Password field */}
             <div className="space-y-2">
-              <label className="text-white/80 text-sm font-medium">
+              <label className="text-white/80 text-sm ">
                 Password
               </label>
               <div className="relative">
@@ -478,7 +478,7 @@ export default function AdminLogin() {
               whileTap={{ scale: 0.98 }}
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
+              className="w-full bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 text-white  py-3 px-6 rounded-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
             >
               {loading ? (
                 <div className="flex items-center justify-center space-x-2">
@@ -527,7 +527,7 @@ export default function AdminLogin() {
         >
           <div className="flex items-center space-x-2">
             <Shield className="w-5 h-5 text-blue-400" />
-            <span className="text-white/80 text-sm font-medium">Secure</span>
+            <span className="text-white/80 text-sm ">Secure</span>
           </div>
         </motion.div>
       </div>
@@ -547,7 +547,7 @@ export default function AdminLogin() {
         >
           <div className="flex items-center space-x-2">
             <Zap className="w-5 h-5 text-yellow-400" />
-            <span className="text-white/80 text-sm font-medium">Powered</span>
+            <span className="text-white/80 text-sm ">Powered</span>
           </div>
         </motion.div>
       </div>

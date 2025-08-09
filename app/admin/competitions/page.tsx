@@ -1,293 +1,247 @@
-//app/admin/competitions/page.tsx
-
-// app/admin/competitions/create/page.tsx
+// app/admin/competitions/page.tsx - COMPLETE REPLACEMENT
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import { ArrowLeft, Save, Calendar, Award, Settings } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { Trophy, Users, Calendar, TrendingUp, Eye, Award, Clock } from 'lucide-react';
 
-export default function CreateCompetitionPage() {
-  const { data: session, status } = useSession();
-  const router = useRouter();
+interface Competition {
+  _id: string;
+  month: string;
+  year: number;
+  phase: 'submission' | 'judging' | 'results';
+  totalSubmissions: number;
+  totalParticipants: number;
+  isActive: boolean;
+  winners?: Array<{
+    position: number;
+    childName: string;
+    title: string;
+    score: number;
+  }>;
+  daysLeft?: number;
+}
 
-  const [loading, setLoading] = useState(false);
-  const [errors, setErrors] = useState<{ [key: string]: string }>({});
-
-  const [formData, setFormData] = useState({
-    month: new Date().toISOString().slice(0, 7), // YYYY-MM format
-    year: new Date().getFullYear(),
-    theme: '',
-    description: '',
-    judgingCriteria: {
-      grammar: 20,
-      creativity: 25,
-      structure: 15,
-      characterDev: 15,
-      plotOriginality: 15,
-      vocabulary: 10,
-    },
-  });
+export default function AdminCompetitions() {
+  const [competitions, setCompetitions] = useState<Competition[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedCompetition, setSelectedCompetition] = useState<Competition | null>(null);
 
   useEffect(() => {
-    if (status === 'loading') return;
-    if (!session || session.user?.role !== 'admin') {
-      router.push('/admin/login');
-      return;
-    }
-  }, [session, status, router]);
+    fetchCompetitions();
+  }, []);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setErrors({});
-
-    // Validate judging criteria sums to 100
-    const totalCriteria = Object.values(formData.judgingCriteria).reduce(
-      (sum, val) => sum + val,
-      0
-    );
-    if (totalCriteria !== 100) {
-      setErrors({ judgingCriteria: 'Judging criteria must sum to 100%' });
-      setLoading(false);
-      return;
-    }
-
+  const fetchCompetitions = async () => {
     try {
-      const [year, month] = formData.month.split('-');
+      // Fetch current competition
+      const currentResponse = await fetch('/api/competitions/current');
+      const currentData = await currentResponse.json();
+      
+      // Fetch past competitions
+      const pastResponse = await fetch('/api/competitions/past');
+      const pastData = await pastResponse.json();
 
-      const response = await fetch('/api/admin/competitions/create', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          month: new Date(
-            parseInt(year),
-            parseInt(month) - 1
-          ).toLocaleDateString('en-US', { month: 'long' }),
-          year: parseInt(year),
-          theme: formData.theme,
-          description: formData.description,
-          judgingCriteria: Object.fromEntries(
-            Object.entries(formData.judgingCriteria).map(([key, value]) => [
-              key,
-              value / 100,
-            ])
-          ),
-        }),
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-        alert('Competition created successfully!');
-        router.push('/admin/competitions');
-      } else {
-        setErrors({ general: data.error || 'Failed to create competition' });
+      const allCompetitions = [];
+      if (currentData.competition) {
+        allCompetitions.push(currentData.competition);
       }
+      if (pastData.competitions) {
+        allCompetitions.push(...pastData.competitions);
+      }
+
+      setCompetitions(allCompetitions);
     } catch (error) {
-      console.error('Error creating competition:', error);
-      setErrors({ general: 'Failed to create competition' });
+      console.error('Error fetching competitions:', error);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleInputChange = (field: string, value: any) => {
-    if (field.includes('.')) {
-      const [parent, child] = field.split('.');
-      setFormData((prev) => ({
-        ...prev,
-        [parent]: {
-          ...(prev as any)[parent],
-          [child]: value,
-        },
-      }));
-    } else {
-      setFormData((prev) => ({
-        ...prev,
-        [field]: value,
-      }));
-    }
+  const currentCompetition = competitions.find(c => c.isActive);
 
-    if (errors[field]) {
-      setErrors((prev) => ({
-        ...prev,
-        [field]: '',
-      }));
-    }
-  };
-
-  const totalCriteria = Object.values(formData.judgingCriteria).reduce(
-    (sum, val) => sum + val,
-    0
-  );
+  if (loading) {
+    return <div className="p-6">Loading competitions...</div>;
+  }
 
   return (
-    <div className="space-y-6 px-2 sm:px-4 md:px-8 lg:px-12 xl:px-20 py-4 sm:py-6 md:py-8">
-      {/* Header */}
-      <div className="flex items-center space-x-4">
-        <Link href="/admin/competitions">
-          <button className="p-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg transition-colors">
-            <ArrowLeft size={20} />
-          </button>
-        </Link>
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-white">
-            Create Competition
-          </h1>
-          <p className="text-gray-400">
-            Set up a new monthly writing competition
-          </p>
-        </div>
+    <div className="p-6">
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-gray-900">Competition Management</h1>
+        <p className="text-gray-600">Automated monthly competitions - view results and analytics</p>
       </div>
 
-      {/* Form */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="bg-gray-800 rounded-xl p-6"
-      >
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* General Error */}
-          {errors.general && (
-            <div className="bg-red-900/50 border border-red-500/50 text-red-200 p-3 rounded-lg text-sm">
-              {errors.general}
+      {/* Current Competition Status */}
+      {currentCompetition && (
+        <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
+          <h2 className="text-lg font-semibold mb-4">Current Competition Status</h2>
+          <div className="grid grid-cols-4 gap-4">
+            <div className="bg-blue-50 p-4 rounded-lg">
+              <div className="text-2xl font-bold text-blue-600">
+                {currentCompetition.phase.toUpperCase()}
+              </div>
+              <div className="text-sm text-gray-600">Current Phase</div>
+            </div>
+            <div className="bg-green-50 p-4 rounded-lg">
+              <div className="text-2xl font-bold text-green-600">
+                {currentCompetition.totalSubmissions || 0}
+              </div>
+              <div className="text-sm text-gray-600">Total Submissions</div>
+            </div>
+            <div className="bg-purple-50 p-4 rounded-lg">
+              <div className="text-2xl font-bold text-purple-600">
+                {currentCompetition.totalParticipants || 0}
+              </div>
+              <div className="text-sm text-gray-600">Participants</div>
+            </div>
+            <div className="bg-yellow-50 p-4 rounded-lg">
+              <div className="text-2xl font-bold text-yellow-600">
+                {currentCompetition.daysLeft || 0}
+              </div>
+              <div className="text-sm text-gray-600">Days Left</div>
+            </div>
+          </div>
+          
+          {/* Winners display for current competition */}
+          {currentCompetition.phase === 'results' && currentCompetition.winners && (
+            <div className="mt-4 bg-yellow-50 p-4 rounded-lg">
+              <h3 className="font-semibold text-gray-800 mb-2">🏆 Current Winners</h3>
+              <div className="space-y-1">
+                {currentCompetition.winners.map((winner) => (
+                  <div key={winner.position} className="flex items-center gap-2 text-sm">
+                    <span className="text-lg">
+                      {winner.position === 1 ? '🥇' : winner.position === 2 ? '🥈' : '🥉'}
+                    </span>
+                    <span className="font-medium">{winner.childName}</span>
+                    <span className="text-gray-600">- "{winner.title}" ({winner.score}%)</span>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
+        </div>
+      )}
 
-          {/* Basic Info */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
-                Month & Year
-              </label>
-              <div className="relative">
-                <Calendar
-                  size={20}
-                  className="absolute left-3 top-3 text-gray-400"
-                />
-                <input
-                  type="month"
-                  required
-                  value={formData.month}
-                  onChange={(e) => handleInputChange('month', e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-            </div>
+      {/* Competition History Table */}
+      <div className="bg-white rounded-lg shadow-sm border">
+        <div className="p-4 border-b">
+          <h2 className="text-lg font-semibold">Competition History</h2>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Period</th>
+                <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Phase</th>
+                <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Submissions</th>
+                <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Participants</th>
+                <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Winner</th>
+                <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-200">
+              {competitions.map((competition) => (
+                <tr key={competition._id}>
+                  <td className="px-4 py-3 text-sm font-medium">
+                    {competition.month} {competition.year}
+                    {competition.isActive && (
+                      <span className="ml-2 px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">
+                        Current
+                      </span>
+                    )}
+                  </td>
+                  <td className="px-4 py-3 text-sm">
+                    <span className={`px-2 py-1 rounded-full text-xs ${
+                      competition.phase === 'results' ? 'bg-green-100 text-green-800' :
+                      competition.phase === 'judging' ? 'bg-yellow-100 text-yellow-800' :
+                      'bg-blue-100 text-blue-800'
+                    }`}>
+                      {competition.phase}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3 text-sm">{competition.totalSubmissions || 0}</td>
+                 <td className="px-4 py-3 text-sm">{competition.totalParticipants || 0}</td>
+                 <td className="px-4 py-3 text-sm">
+                   {competition.winners && competition.winners.length > 0 ? 
+                     `${competition.winners[0]?.childName} (${competition.winners[0]?.score}%)` : 
+                     'Pending'
+                   }
+                 </td>
+                 <td className="px-4 py-3 text-sm">
+                   <button 
+                     onClick={() => setSelectedCompetition(competition)}
+                     className="text-blue-600 hover:text-blue-800 flex items-center gap-1"
+                   >
+                     <Eye size={16} />
+                     View Details
+                   </button>
+                 </td>
+               </tr>
+             ))}
+           </tbody>
+         </table>
+       </div>
+     </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
-                Theme
-              </label>
-              <div className="relative">
-                <Award
-                  size={20}
-                  className="absolute left-3 top-3 text-gray-400"
-                />
-                <input
-                  type="text"
-                  required
-                  value={formData.theme}
-                  onChange={(e) => handleInputChange('theme', e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="e.g., Adventure Stories, Fantasy Tales"
-                />
-              </div>
-            </div>
-          </div>
+     {/* Competition Details Modal */}
+     {selectedCompetition && (
+       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+         <div className="bg-white rounded-lg p-6 max-w-2xl max-h-[80vh] overflow-y-auto">
+           <div className="flex justify-between items-center mb-4">
+             <h3 className="text-xl font-bold">
+               {selectedCompetition.month} {selectedCompetition.year} Competition
+             </h3>
+             <button
+               onClick={() => setSelectedCompetition(null)}
+               className="text-gray-500 hover:text-gray-700 text-xl"
+             >
+               ×
+             </button>
+           </div>
+           
+           <div className="space-y-4">
+             <div className="grid grid-cols-2 gap-4">
+               <div className="bg-gray-50 p-3 rounded">
+                 <div className="text-sm text-gray-600">Phase</div>
+                 <div className="font-semibold">{selectedCompetition.phase.toUpperCase()}</div>
+               </div>
+               <div className="bg-gray-50 p-3 rounded">
+                 <div className="text-sm text-gray-600">Status</div>
+                 <div className="font-semibold">
+                   {selectedCompetition.isActive ? 'Active' : 'Completed'}
+                 </div>
+               </div>
+               <div className="bg-gray-50 p-3 rounded">
+                 <div className="text-sm text-gray-600">Submissions</div>
+                 <div className="font-semibold">{selectedCompetition.totalSubmissions || 0}</div>
+               </div>
+               <div className="bg-gray-50 p-3 rounded">
+                 <div className="text-sm text-gray-600">Participants</div>
+                 <div className="font-semibold">{selectedCompetition.totalParticipants || 0}</div>
+               </div>
+             </div>
 
-          {/* Description */}
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
-              Description
-            </label>
-            <textarea
-              value={formData.description}
-              onChange={(e) => handleInputChange('description', e.target.value)}
-              rows={4}
-              className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Describe the competition theme and what participants should write about..."
-            />
-          </div>
-
-          {/* Judging Criteria */}
-          <div>
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-white flex items-center">
-                <Settings size={20} className="mr-2" />
-                Judging Criteria
-              </h3>
-              <div
-                className={`text-sm font-medium ${
-                  totalCriteria === 100 ? 'text-green-400' : 'text-red-400'
-                }`}
-              >
-                Total: {totalCriteria}%
-              </div>
-            </div>
-
-            {errors.judgingCriteria && (
-              <div className="bg-red-900/50 border border-red-500/50 text-red-200 p-3 rounded-lg text-sm mb-4">
-                {errors.judgingCriteria}
-              </div>
-            )}
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {Object.entries(formData.judgingCriteria).map(([key, value]) => (
-                <div key={key} className="bg-gray-700/50 rounded-lg p-4">
-                  <label className="block text-sm font-medium text-gray-300 mb-2 capitalize">
-                    {key
-                      .replace(/([A-Z])/g, ' $1')
-                      .replace(/^./, (str) => str.toUpperCase())}
-                  </label>
-                  <div className="flex items-center space-x-2">
-                    <input
-                      type="number"
-                      min="0"
-                      max="100"
-                      value={value}
-                      onChange={(e) =>
-                        handleInputChange(
-                          `judgingCriteria.${key}`,
-                          parseInt(e.target.value) || 0
-                        )
-                      }
-                      className="flex-1 px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                    <span className="text-gray-400">%</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Action Buttons */}
-          <div className="flex items-center justify-end space-x-4 pt-6 border-t border-gray-700">
-            <Link href="/admin/competitions">
-              <button
-                type="button"
-                className="px-6 py-2.5 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
-              >
-                Cancel
-              </button>
-            </Link>
-            <button
-              type="submit"
-              disabled={loading || totalCriteria !== 100}
-              className="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center disabled:opacity-50"
-            >
-              <Save size={16} className="mr-2" />
-              {loading ? 'Creating...' : 'Create Competition'}
-            </button>
-          </div>
-        </form>
-      </motion.div>
-    </div>
-  );
+             {selectedCompetition.winners && selectedCompetition.winners.length > 0 && (
+               <div>
+                 <h4 className="font-semibold mb-2">🏆 Winners</h4>
+                 <div className="space-y-2">
+                   {selectedCompetition.winners.map((winner) => (
+                     <div key={winner.position} className="flex items-center gap-3 p-3 bg-yellow-50 rounded">
+                       <span className="text-2xl">
+                         {winner.position === 1 ? '🥇' : winner.position === 2 ? '🥈' : '🥉'}
+                       </span>
+                       <div className="flex-1">
+                         <div className="font-medium">{winner.childName}</div>
+                         <div className="text-sm text-gray-600">"{winner.title}"</div>
+                       </div>
+                       <div className="font-bold text-lg">{winner.score}%</div>
+                     </div>
+                   ))}
+                 </div>
+               </div>
+             )}
+           </div>
+         </div>
+       </div>
+     )}
+   </div>
+ );
 }

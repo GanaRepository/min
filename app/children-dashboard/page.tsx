@@ -1,4 +1,4 @@
-// app/children-dashboard/page.tsx
+// app/children-dashboard/page.tsx - FIXED VERSION
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -49,15 +49,27 @@ interface Competition {
   year: number;
   phase: 'submission' | 'judging' | 'results';
   daysLeft: number;
-  userEntries: number;
-  maxEntries: number;
+  totalSubmissions: number;
   totalParticipants: number;
   winners?: Array<{
     position: number;
+    childId: string;
     childName: string;
     title: string;
     score: number;
   }>;
+  userStats?: {
+    entriesUsed: number;
+    entriesLimit: number;
+    canSubmit: boolean;
+    userEntries: Array<{
+      storyId: string;
+      title: string;
+      submittedAt: string;
+      score?: number;
+      rank?: number;
+    }>;
+  };
 }
 
 export default function ChildrenDashboard() {
@@ -67,8 +79,7 @@ export default function ChildrenDashboard() {
   const [loading, setLoading] = useState(true);
   const [usageStats, setUsageStats] = useState<UsageStats | null>(null);
   const [recentStories, setRecentStories] = useState<Story[]>([]);
-  const [currentCompetition, setCurrentCompetition] =
-    useState<Competition | null>(null);
+  const [currentCompetition, setCurrentCompetition] = useState<Competition | null>(null);
   const [purchaseHistory, setPurchaseHistory] = useState<any[]>([]);
 
   useEffect(() => {
@@ -106,9 +117,7 @@ export default function ChildrenDashboard() {
       }
 
       // Fetch purchase history
-      const purchasesResponse = await fetch(
-        '/api/user/purchase-history?limit=3'
-      );
+      const purchasesResponse = await fetch('/api/user/purchase-history?limit=3');
       if (purchasesResponse.ok) {
         const purchasesData = await purchasesResponse.json();
         setPurchaseHistory(purchasesData.purchases || []);
@@ -182,10 +191,7 @@ export default function ChildrenDashboard() {
                 </div>
                 <p className="text-white text-sm font-medium">Stories Left</p>
                 <p className="text-blue-200 text-xs">
-                  0/
-                  {usageStats.storiesRemaining +
-                    (3 - usageStats.storiesRemaining)}{' '}
-                  used
+                  {3 - usageStats.storiesRemaining}/3 used
                 </p>
               </div>
 
@@ -199,10 +205,7 @@ export default function ChildrenDashboard() {
                 </div>
                 <p className="text-white text-sm font-medium">Assessments</p>
                 <p className="text-green-200 text-xs">
-                  0/
-                  {usageStats.assessmentsRemaining +
-                    (3 - usageStats.assessmentsRemaining)}{' '}
-                  used
+                  {3 - usageStats.assessmentsRemaining}/3 used
                 </p>
               </div>
 
@@ -211,16 +214,17 @@ export default function ChildrenDashboard() {
                 <div className="flex items-center justify-between mb-2">
                   <Trophy className="text-purple-400" size={20} />
                   <span className="text-2xl font-bold text-purple-400">
-                    {currentCompetition?.userEntries || 0}
+                    {currentCompetition?.userStats?.entriesUsed || 0}
                   </span>
                 </div>
                 <p className="text-white text-sm font-medium">Comp. Entries</p>
                 <p className="text-purple-200 text-xs">
-                  0/{currentCompetition?.maxEntries || 3} used
+                  {currentCompetition?.userStats?.entriesUsed || 0}/
+                  {currentCompetition?.userStats?.entriesLimit || 3} used
                 </p>
               </div>
 
-              {/* Attempts/Stories Created */}
+              {/* Stories Created */}
               <div className="bg-orange-600/20 border border-orange-500/30 rounded-xl p-4">
                 <div className="flex items-center justify-between mb-2">
                   <BookOpen className="text-orange-400" size={20} />
@@ -228,8 +232,8 @@ export default function ChildrenDashboard() {
                     {recentStories.length}
                   </span>
                 </div>
-                <p className="text-white text-sm font-medium">Attempts</p>
-                <p className="text-orange-200 text-xs">0/9 used</p>
+                <p className="text-white text-sm font-medium">Stories</p>
+                <p className="text-orange-200 text-xs">Total created</p>
               </div>
             </motion.div>
           )}
@@ -375,80 +379,51 @@ export default function ChildrenDashboard() {
         <div className="space-y-6">
           {/* Competition Card */}
           {currentCompetition && (
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
-              className="bg-gradient-to-br from-purple-600/20 to-pink-600/20 border border-purple-500/30 rounded-xl p-6"
+              className="bg-gradient-to-r from-purple-600 to-blue-600 rounded-xl p-6 text-white"
             >
-              <div className="flex items-center gap-2 mb-4">
-                <Trophy className="text-purple-400" size={20} />
-                <h3 className="text-white font-bold">
-                  {currentCompetition.month} Competition
-                </h3>
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h3 className="text-xl font-semibold mb-1 flex items-center gap-2">
+                    <Trophy className="w-6 h-6" />
+                    {currentCompetition.month} Competition
+                  </h3>
+                  <p className="text-purple-100">
+                    {currentCompetition.phase === 'submission' ? '📝 Submissions Open' :
+                     currentCompetition.phase === 'judging' ? '⚖️ AI Judging' : '🏆 Results Available'}
+                  </p>
+                </div>
+                <div className="text-right">
+                  <div className="text-2xl font-bold">{currentCompetition.daysLeft || 0}</div>
+                  <div className="text-sm text-purple-100">days left</div>
+                </div>
               </div>
-
-              <div className="space-y-3 mb-4">
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-300">Phase:</span>
-                  <span className="text-purple-400 font-medium capitalize">
-                    {currentCompetition.phase}
-                  </span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-300">Your Entries:</span>
-                  <span className="text-white">
-                    {currentCompetition.userEntries}/
-                    {currentCompetition.maxEntries}
-                  </span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-300">Participants:</span>
-                  <span className="text-white">
-                    {currentCompetition.totalParticipants}
-                  </span>
-                </div>
-                {currentCompetition.daysLeft > 0 && (
-                  <div className="bg-yellow-600/20 border border-yellow-500/30 rounded-lg p-3">
-                    <div className="text-yellow-400 text-sm font-medium text-center">
-                      🎯 {currentCompetition.daysLeft} days left to submit!
-                    </div>
-                    <div className="text-yellow-200 text-xs text-center mt-1">
-                      Publish your stories to make them competition eligible
-                    </div>
+              
+              {currentCompetition.userStats && (
+                <div className="bg-white/20 rounded-lg p-3 mb-4">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm">Your entries:</span>
+                    <span className="font-semibold">
+                      {currentCompetition.userStats.entriesUsed}/{currentCompetition.userStats.entriesLimit}
+                    </span>
                   </div>
-                )}
-
-                {currentCompetition.phase === 'results' &&
-                  currentCompetition.winners && (
-                    <div className="bg-green-600/20 border border-green-500/30 rounded-lg p-3">
-                      <div className="text-green-400 text-sm font-medium mb-2">
-                        🏆 Winners:
-                      </div>
-                      {currentCompetition.winners.slice(0, 3).map((winner) => (
-                        <div
-                          key={winner.position}
-                          className="text-xs text-green-200 mb-1"
-                        >
-                          {winner.position === 1
-                            ? '🥇'
-                            : winner.position === 2
-                              ? '🥈'
-                              : '🥉'}
-                          {winner.childName} - "{winner.title}" ({winner.score}
-                          %)
-                        </div>
-                      ))}
+                  {currentCompetition.userStats.canSubmit && (
+                    <div className="text-xs text-purple-100 mt-1">
+                      You can submit {currentCompetition.userStats.entriesLimit - currentCompetition.userStats.entriesUsed} more stories
                     </div>
                   )}
-              </div>
-
+                </div>
+              )}
+              
               <Link
                 href="/children-dashboard/competitions"
-                className="w-full bg-purple-600 hover:bg-purple-700 text-white py-2 mt-4 rounded-lg flex items-center justify-center gap-2 transition-colors"
+                className="w-full bg-white/20 hover:bg-white/30 text-white py-2 rounded-lg flex items-center justify-center gap-2 transition-colors"
               >
                 <Trophy size={16} />
-                View Competition
+                {currentCompetition.phase === 'submission' ? 'Submit Stories' : 'View Competition'}
               </Link>
             </motion.div>
           )}

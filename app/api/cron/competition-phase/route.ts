@@ -1,7 +1,6 @@
-// app/api/cron/competition-phase/route.ts - Competition Phase Management Cron Job
 import { NextRequest, NextResponse } from 'next/server';
 import { connectToDatabase } from '@/utils/db';
-import { competitionManager } from '@/lib/competition-manager';
+import { CompetitionManager } from '@/lib/competition-manager';
 
 export async function POST(req: NextRequest) {
   try {
@@ -18,10 +17,10 @@ export async function POST(req: NextRequest) {
     await connectToDatabase();
 
     // Get current competition and check if phase needs to advance
-    const currentCompetition = await competitionManager.getCurrentCompetition();
+    const currentCompetition = await CompetitionManager.getCurrentCompetition();
 
     if (currentCompetition) {
-      const updatedCompetition = await competitionManager.advancePhase(
+      const updatedCompetition = await CompetitionManager.advancePhase(
         currentCompetition._id.toString()
       );
 
@@ -40,9 +39,7 @@ export async function POST(req: NextRequest) {
         timestamp: new Date().toISOString(),
       });
     } else {
-      // No current competition - maybe create one for this month
       console.log('ℹ️ No active competition found');
-
       return NextResponse.json({
         success: true,
         message: 'No active competition found',
@@ -58,7 +55,6 @@ export async function POST(req: NextRequest) {
   }
 }
 
-// Also handle GET for manual testing
 export async function GET(req: NextRequest) {
   return POST(req);
 }

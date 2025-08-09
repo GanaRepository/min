@@ -86,7 +86,7 @@ const LoginPage: React.FC = () => {
           <div className="inline-block mb-6 sm:mb-8 ">
             <div className="relative inline-flex items-center justify-center">
               <div className="absolute -inset-1 rounded-full bg-gradient-to-r from-green-500 to-teal-500 opacity-70 blur"></div>
-              <div className="relative px-4 sm:px-6 py-1.5 sm:py-2 bg-gray-800/90 backdrop-blur-xl rounded-full text-xs sm:text-sm font-medium text-green-300 border border-green-400/30">
+              <div className="relative px-4 sm:px-6 py-1.5 sm:py-2 bg-gray-800/90 backdrop-blur-xl rounded-full text-xs sm:text-sm  text-green-300 border border-green-400/30">
                 <Sparkles className="w-4 h-4 inline mr-2" />
                 Account Access
               </div>
@@ -94,7 +94,7 @@ const LoginPage: React.FC = () => {
           </div>
 
           {/* Main Heading */}
-          <h1 className="text-2xl sm:text-4xl md:text-5xl  font-bold mb-4 sm:mb-6 leading-tight">
+          <h1 className="text-2xl sm:text-4xl md:text-5xl   mb-4 sm:mb-6 leading-tight">
             Login to Your{' '}
             <span className="bg-gradient-to-r from-green-400 via-teal-300 to-cyan-400 bg-clip-text text-transparent">
               Creative Portal
@@ -138,7 +138,7 @@ const LoginPage: React.FC = () => {
                       </div>
 
                       {/* Title */}
-                      <h3 className="text-lg sm:text-2xl font-bold text-white mb-2 sm:mb-4 group-hover:text-green-300 transition-colors">
+                      <h3 className="text-lg sm:text-2xl  text-white mb-2 sm:mb-4 group-hover:text-green-300 transition-colors">
                         {option.title}
                       </h3>
 
@@ -149,7 +149,7 @@ const LoginPage: React.FC = () => {
 
                       {/* Button */}
                       <Link href={option.link} className="w-full">
-                        <Button className="w-full bg-gradient-to-r from-green-500 to-teal-600 hover:from-green-600 hover:to-teal-700 text-white font-semibold py-2.5 sm:py-3 px-4 sm:px-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 group border-0 text-xs sm:text-base">
+                        <Button className="w-full bg-gradient-to-r from-green-500 to-teal-600 hover:from-green-600 hover:to-teal-700 text-white  py-2.5 sm:py-3 px-4 sm:px-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 group border-0 text-xs sm:text-base">
                           <span className="flex items-center justify-center">
                             Access {option.title} Portal
                             <ArrowRight className="ml-2 w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform" />
@@ -168,7 +168,7 @@ const LoginPage: React.FC = () => {
                 Don&apos;t have an account yet?{' '}
                 <Link
                   href="/register"
-                  className="text-green-400 hover:text-green-300 font-semibold hover:underline transition-colors"
+                  className="text-green-400 hover:text-green-300  hover:underline transition-colors"
                 >
                   Sign up here
                 </Link>
