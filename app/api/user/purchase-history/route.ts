@@ -1,47 +1,42 @@
-// app/api/user/purchase-history/route.ts - User Purchase History
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/utils/authOptions';
 import { connectToDatabase } from '@/utils/db';
-import Purchase from '@/models/Purchase';
 import User from '@/models/User';
 
-export async function GET(req: NextRequest) {
+export async function GET(request: Request) {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    const { searchParams } = new URL(request.url);
+    const limit = parseInt(searchParams.get('limit') || '10');
+
     await connectToDatabase();
-
-    // Get user's purchase history
-    const purchases = await Purchase.find({
-      userId: session.user.id,
-    })
-    .sort({ purchaseDate: -1 })
-    .limit(50); // Limit to last 50 purchases
-
-    // Get user's purchase history from User model (legacy)
-    const user = await User.findById(session.user.id).select('purchaseHistory');
     
-    const formattedPurchases = purchases.map(purchase => ({
-      id: purchase._id,
-      type: purchase.type,
-      amount: purchase.amount,
-      status: purchase.status,
-      date: purchase.purchaseDate,
-      metadata: purchase.metadata,
-      stripePaymentId: purchase.stripePaymentIntentId,
-    }));
+    const user = await User.findById(session.user.id).select('purchaseHistory');
+
+    if (!user) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    }
+
+    const purchases = (user.purchaseHistory || [])
+      .sort((a, b) => new Date(b.purchaseDate).getTime() - new Date(a.purchaseDate).getTime())
+      .slice(0, limit)
+      .map(purchase => ({
+        id: purchase._id || purchase.id,
+        type: purchase.type,
+        amount: purchase.amount,
+        date: purchase.purchaseDate,
+        description: purchase.description || (purchase.type === 'story_pack' ? 'Story Pack Purchase' : 'Story Publication'),
+        stripeSessionId: purchase.stripeSessionId,
+      }));
 
     return NextResponse.json({
       success: true,
-      purchases: formattedPurchases,
-      totalSpent: purchases
-        .filter(p => p.status === 'completed')
-        .reduce((sum, p) => sum + p.amount, 0),
-      totalPurchases: purchases.length,
+      purchases
     });
 
   } catch (error) {

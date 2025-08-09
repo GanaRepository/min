@@ -10,7 +10,6 @@ export interface IStorySession extends Document {
   storyNumber: number;
   title: string;
   elements?: StoryElements;
-  storyMode: 'guided' | 'freeform';
   aiOpening?: string;
   currentTurn: number;
   totalWords: number;
@@ -147,12 +146,6 @@ const StorySessionSchema = new Schema<IStorySession>(
       },
       required: false,
       default: undefined,
-    },
-    storyMode: {
-      type: String,
-      enum: ['guided', 'freeform'],
-      required: true,
-      default: 'freeform',
     },
     aiOpening: {
       type: String,

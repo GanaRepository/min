@@ -57,7 +57,7 @@ export class AssessmentEngine {
       storyContent,
       {
         childAge: user?.age || 10,
-        isCollaborativeStory: storySession.storyMode !== 'freeform',
+        isCollaborativeStory: false, // Uploaded stories are not collaborative
         storyTitle: storySession.title,
         previousAttempts,
         expectedGenre: genre,

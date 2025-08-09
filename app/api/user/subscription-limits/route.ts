@@ -1,65 +1,60 @@
-// app/api/user/subscription-limits/route.ts
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/utils/authOptions';
-import StorySession from '@/models/StorySession';
-import User from '@/models/User';
-import { SUBSCRIPTION_TIERS } from '@/config/tiers';
+import { UsageManager } from '@/lib/usage-manager';
 
 export async function GET() {
   try {
     const session = await getServerSession(authOptions);
-    if (!session || session.user.role !== 'child') {
-      return NextResponse.json(
-        { canCreateStory: false, message: 'Access denied. Children only.' },
-        { status: 403 }
-      );
+    if (!session?.user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
-    const user = await User.findById(session.user.id);
-    if (!user) {
-      return NextResponse.json(
-        { canCreateStory: false, message: 'User not found.' },
-        { status: 404 }
-      );
-    }
-    // Get tier limit from config
-    const tier = user.tier?.toUpperCase() || 'FREE';
-    const limit = SUBSCRIPTION_TIERS[tier]?.storyLimit ?? 25;
-    const userStoryCount = await StorySession.countDocuments({
-      childId: session.user.id,
-      createdAt: { $gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) },
-    });
-    if (userStoryCount >= limit) {
-      let upgradePrompt = '';
-      if (tier === 'FREE') {
-        upgradePrompt =
-          'Upgrade to BASIC or PREMIUM for more stories per month.';
-      } else if (tier === 'BASIC') {
-        upgradePrompt = 'Upgrade to PREMIUM for the highest story limit.';
-      }
-      return NextResponse.json(
-        {
-          canCreateStory: false,
-          message: 'Monthly story limit reached.',
-          remaining: 0,
-          upgradePrompt,
-        },
-        { status: 200 }
-      );
-    }
-    return NextResponse.json(
-      {
-        canCreateStory: true,
-        message: 'You can create a story.',
-        remaining: limit - userStoryCount,
-        upgradePrompt: '',
+
+    // Get current usage and limits
+    const [storyCheck, assessmentCheck, competitionCheck] = await Promise.all([
+      UsageManager.canCreateStory(session.user.id),
+      UsageManager.canUploadAssessment(session.user.id),
+      UsageManager.canEnterCompetition(session.user.id),
+    ]);
+
+    const limits = {
+      stories: {
+        used: storyCheck.currentUsage?.stories || 0,
+        limit: storyCheck.limits?.stories || 3,
+        remaining: Math.max(0, (storyCheck.limits?.stories || 3) - (storyCheck.currentUsage?.stories || 0)),
+        canUse: storyCheck.allowed,
       },
-      { status: 200 }
-    );
+      assessments: {
+        used: assessmentCheck.currentUsage?.assessments || 0,
+        limit: assessmentCheck.limits?.assessments || 3,
+        remaining: Math.max(0, (assessmentCheck.limits?.assessments || 3) - (assessmentCheck.currentUsage?.assessments || 0)),
+        canUse: assessmentCheck.allowed,
+      },
+      competitions: {
+        used: competitionCheck.currentUsage?.competitionEntries || 0,
+        limit: competitionCheck.limits?.competitionEntries || 3,
+        remaining: Math.max(0, (competitionCheck.limits?.competitionEntries || 3) - (competitionCheck.currentUsage?.competitionEntries || 0)),
+        canUse: competitionCheck.allowed,
+      },
+      resetDate: getNextMonthFirstDay(),
+    };
+
+    return NextResponse.json({
+      success: true,
+      limits
+    });
+
   } catch (error) {
+    console.error('Error fetching subscription limits:', error);
     return NextResponse.json(
-      { canCreateStory: false, message: 'Error checking limits.' },
+      { error: 'Failed to fetch limits' },
       { status: 500 }
     );
   }
+}
+
+function getNextMonthFirstDay(): string {
+  const now = new Date();
+  const nextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+  return nextMonth.toISOString();
 }

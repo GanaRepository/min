@@ -13,39 +13,30 @@ export async function GET() {
 
     await connectToDatabase();
     
-    const user = await User.findById(session.user.id).select('preferences');
+    const user = await User.findById(session.user.id).select(
+      'firstName lastName email age school createdAt'
+    );
 
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    const defaultPreferences = {
-      notifications: {
-        email: true,
-        assessmentComplete: true,
-        competitionResults: true,
-        newFeatures: false,
-      },
-      writing: {
-        preferredGenre: '',
-        writingReminders: false,
-        reminderTime: '18:00',
-      },
-      privacy: {
-        shareStories: false,
-        publicProfile: false,
-      }
-    };
-
     return NextResponse.json({
       success: true,
-      preferences: user.preferences || defaultPreferences
+      user: {
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        age: user.age,
+        school: user.school,
+        createdAt: user.createdAt,
+      }
     });
 
   } catch (error) {
-    console.error('Error fetching preferences:', error);
+    console.error('Error fetching user profile:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch preferences' },
+      { error: 'Failed to fetch profile' },
       { status: 500 }
     );
   }
@@ -59,15 +50,26 @@ export async function PUT(request: Request) {
     }
 
     const body = await request.json();
-    const { preferences } = body;
+    const { firstName, lastName, school } = body;
+
+    if (!firstName || !lastName || !school) {
+      return NextResponse.json(
+        { error: 'Missing required fields' },
+        { status: 400 }
+      );
+    }
 
     await connectToDatabase();
     
     const updatedUser = await User.findByIdAndUpdate(
       session.user.id,
-      { preferences },
+      {
+        firstName: firstName.trim(),
+        lastName: lastName.trim(),
+        school: school.trim(),
+      },
       { new: true }
-    ).select('preferences');
+    ).select('firstName lastName email age school');
 
     if (!updatedUser) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
@@ -75,13 +77,13 @@ export async function PUT(request: Request) {
 
     return NextResponse.json({
       success: true,
-      preferences: updatedUser.preferences
+      user: updatedUser
     });
 
   } catch (error) {
-    console.error('Error updating preferences:', error);
+    console.error('Error updating user profile:', error);
     return NextResponse.json(
-      { error: 'Failed to update preferences' },
+      { error: 'Failed to update profile' },
       { status: 500 }
     );
   }

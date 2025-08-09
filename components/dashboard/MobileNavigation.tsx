@@ -1,9 +1,8 @@
-// components/dashboard/MobileNavigation.tsx
 'use client';
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Sparkles, BookOpen, TrendingUp, User } from 'lucide-react';
+import { Home, Sparkles, BookOpen, TrendingUp, Trophy, Upload } from 'lucide-react';
 
 interface MobileNavigationProps {
   className?: string;
@@ -12,9 +11,9 @@ interface MobileNavigationProps {
 const mobileNavItems = [
   { name: 'Home', href: '/children-dashboard', icon: Home },
   { name: 'Create', href: '/create-stories', icon: Sparkles },
+  { name: 'Upload', href: '/children-dashboard/upload-assessment', icon: Upload },
   { name: 'Stories', href: '/children-dashboard/my-stories', icon: BookOpen },
-  { name: 'Progress', href: '/children-dashboard/progress', icon: TrendingUp },
-  { name: 'Profile', href: '/children-dashboard/profile', icon: User },
+  { name: 'Compete', href: '/children-dashboard/competitions', icon: Trophy },
 ];
 
 export default function MobileNavigation({ className }: MobileNavigationProps) {
@@ -22,16 +21,18 @@ export default function MobileNavigation({ className }: MobileNavigationProps) {
 
   return (
     <nav
-      className={`fixed bottom-0 left-0 right-0 bg-gray-800/95 backdrop-blur-xl border-t border-gray-600/40 ${className}`}
+      className={`fixed bottom-0 left-0 right-0 bg-gray-800/95 backdrop-blur-xl border-t border-gray-600/40 z-30 ${className}`}
     >
       <div className="flex items-center justify-around py-2">
         {mobileNavItems.map((item) => {
-          const isActive = pathname === item.href;
+          const isActive = pathname === item.href || 
+            (item.href !== '/children-dashboard' && pathname.startsWith(item.href));
+          
           return (
             <Link
               key={item.name}
               href={item.href}
-              className={`flex flex-col items-center py-2 px-3 min-w-0 flex-1 ${
+              className={`flex flex-col items-center py-2 px-2 min-w-0 flex-1 transition-colors ${
                 isActive
                   ? 'text-green-400'
                   : 'text-gray-400 hover:text-gray-300'

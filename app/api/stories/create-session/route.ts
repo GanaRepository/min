@@ -11,7 +11,6 @@ import type { StoryElements } from '@/config/story-elements';
 
 interface StoryCreationRequest {
   elements?: StoryElements;
-  storyMode?: 'guided' | 'freeform';
   openingText?: string;
 }
 
@@ -55,9 +54,6 @@ export async function POST(request: Request) {
 
     const nextStoryNumber = lastSession && lastSession.storyNumber ? lastSession.storyNumber + 1 : 1;
 
-    // Default to freeform mode for new pay-per-use system
-    const storyMode = body.storyMode || 'freeform';
-    
     const title = body.elements 
       ? `${body.elements.character}'s ${body.elements.genre} Adventure`
       : `My Creative Story #${nextStoryNumber}`;
@@ -66,7 +62,6 @@ export async function POST(request: Request) {
       childId: session.user.id,
       storyNumber: nextStoryNumber,
       title,
-      storyMode,
       aiOpening: null,
       currentTurn: 1,
       totalWords: 0,
@@ -77,7 +72,7 @@ export async function POST(request: Request) {
       isUploadedForAssessment: false, // This is a created story, not uploaded
     };
 
-    if (storyMode === 'guided' && body.elements) {
+    if (body.elements) {
       sessionData.elements = body.elements;
     }
 
@@ -86,7 +81,7 @@ export async function POST(request: Request) {
     // Increment user's story creation counter using NEW system
     await UsageManager.incrementStoryCreation(session.user.id);
 
-    console.log(`✅ Created new ${storyMode} story session: ${newSession._id} for user ${user.email}`);
+    console.log(`✅ Created new story session: ${newSession._id} for user ${user.email}`);
 
     // Generate AI opening in background (don't await)
     generateAIOpeningInBackground(newSession._id.toString(), body.elements, body.openingText);
@@ -98,7 +93,6 @@ export async function POST(request: Request) {
         storyNumber: newSession.storyNumber,
         title: newSession.title,
         elements: newSession.elements || null,
-        storyMode: newSession.storyMode,
         currentTurn: newSession.currentTurn,
         totalWords: newSession.totalWords,
         childWords: newSession.childWords,

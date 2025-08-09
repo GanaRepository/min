@@ -51,73 +51,11 @@ Example structure: "Meet [character] in [setting]. Something interesting happens
 
   async generateContextualResponse(
     elements: StoryElements | null,
-    storyMode: 'guided' | 'freeform',
     previousTurns: TurnContext[],
     childInput: string,
     turnNumber: number
   ): Promise<string> {
-    if (storyMode === 'guided' && elements) {
-      return this.generateGuidedResponse(
-        elements,
-        previousTurns,
-        childInput,
-        turnNumber
-      );
-    } else {
-      return this.generateFreeformResponse(
-        previousTurns,
-        childInput,
-        turnNumber
-      );
-    }
-  }
-
-  private async generateGuidedResponse(
-    elements: StoryElements,
-    previousTurns: TurnContext[],
-    childInput: string,
-    turnNumber: number
-  ): Promise<string> {
-    const storyContext = previousTurns
-      .map(
-        (turn, index) =>
-          `Turn ${index + 1}:\nChild: ${turn.childInput}\nAI: ${turn.aiResponse}`
-      )
-      .join('\n\n');
-
-    const educationalGuidance = this.getEducationalGuidanceForTurn(turnNumber);
-
-    const prompt = `You are a supportive AI writing teacher helping a child write a ${elements.genre} story. 
-
-Current Story Context:
-${storyContext}
-
-Child's Latest Writing (Turn ${turnNumber}): "${childInput}"
-
-Your Teaching Goals:
-${educationalGuidance}
-
-Instructions:
-1. Acknowledge what the child wrote positively
-2. Continue the story naturally (2-3 sentences)
-3. Use encouraging teacher language
-4. Maintain the ${elements.mood} mood and ${elements.tone} tone
-5. End with a creative question to inspire the next turn
-6. Keep response under 80 words
-7. Include subtle educational elements (new vocabulary, story structure)
-
-Respond as a supportive teacher who celebrates creativity while guiding learning.`;
-
-    try {
-      const response = await smartAIProvider.generateResponse(prompt);
-      return response;
-    } catch (error) {
-      console.error(
-        `AI response generation failed for turn ${turnNumber}, using educational fallback:`,
-        error
-      );
-      return this.getEducationalFallbackResponse(turnNumber, childInput);
-    }
+    return this.generateFreeformResponse(previousTurns, childInput, turnNumber);
   }
 
   private async generateFreeformResponse(
@@ -193,11 +131,15 @@ Respond as a supportive teacher who celebrates their unique creativity.`;
     suggestedWords: string[];
     educationalInsights: string;
   }> {
+    // Fix: Use type guard for storyTheme and storyGenre
+    const storyTheme = typeof (storyElements as any).storyTheme === 'string' ? (storyElements as any).storyTheme : '';
+    const storyGenre = typeof (storyElements as any).storyGenre === 'string' ? (storyElements as any).storyGenre : '';
+
     const prompt = `You are an expert AI writing teacher conducting a comprehensive assessment of a child's creative story.
 
 STORY TO ASSESS:
-Genre: ${storyElements?.genre || storyStats.storyGenre}
-Theme: ${storyStats.storyTheme}
+Genre: ${storyGenre}
+Theme: ${storyTheme}
 Word Count: ${storyStats.totalWords}
 Story Turns: ${storyStats.turnCount}
 Story Mode: ${storyStats.storyMode}
@@ -256,18 +198,6 @@ Educational: [educational insights about their writing development]`;
       console.error('AI assessment generation failed:', error);
       return this.getDetailedFallbackAssessment(storyStats.totalWords);
     }
-  }
-
-  private getEducationalGuidanceForTurn(turnNumber: number): string {
-    const guidanceMap: Record<number, string> = {
-      1: 'Help them develop their opening with vivid descriptions and character introduction',
-      2: 'Encourage conflict or challenge introduction while building on their ideas',
-      3: "Guide them to develop the story's main problem or adventure",
-      4: 'Help them build tension and excitement in the story',
-      5: 'Support them in creating a climactic moment or turning point',
-      6: 'Assist them in crafting a satisfying conclusion that ties everything together',
-    };
-    return guidanceMap[turnNumber] || guidanceMap[6];
   }
 
   private getFreeformGuidanceForTurn(turnNumber: number): string {

@@ -7,7 +7,6 @@
 // import { collaborationEngine } from '@/lib/ai/collaboration';
 // import { checkRateLimit } from '@/lib/rate-limiter';
 // import { Types } from 'mongoose';
-// import type { StoryElements } from '@/config/story-elements';
 
 // interface AIRespondRequest {
 //   sessionId: string;
@@ -120,12 +119,8 @@
 //       .sort({ turnNumber: 1 })
 //       .lean();
 
-//     const storyMode = (storySession.storyMode as 'guided' | 'freeform') || 'guided';
-//     const elements = storySession.elements as StoryElements | null;
-
 //     const aiResponse = await collaborationEngine.generateContextualResponse(
-//       elements,
-//       storyMode,
+//       null,
 //       previousTurns.map((turn: any) => ({
 //         childInput: turn.childInput,
 //         aiResponse: turn.aiResponse,
@@ -145,7 +140,9 @@
 //       aiWordCount: aiWordCount,
 //     });
 
-//     const isStoryComplete = turnNumber >= 6;
+//     // Check if story is complete - different limits for guided vs freeform
+//     const maxTurns = 7;
+//     const isStoryComplete = turnNumber >= maxTurns;
 
 //     const updatedSession = await StorySession.findByIdAndUpdate(
 //       storySession._id,
@@ -174,7 +171,9 @@
 //     let assessment = null;
 //     if (isStoryComplete) {
 //       try {
-//         console.log('🎯 Story completed! Auto-generating detailed assessment...');
+//         console.log(
+//           '🎯 Story completed! Auto-generating detailed assessment...'
+//         );
 
 //         const allTurns = await Turn.find({ sessionId: actualSessionId })
 //           .sort({ turnNumber: 1 })
@@ -185,18 +184,18 @@
 //           .map((turn) => turn.childInput)
 //           .join(' ');
 
-//         const storyTheme = elements?.theme || 'Adventure';
-//         const storyGenre = elements?.genre || 'Fantasy';
+//         const storyTheme = null;
+//         const storyGenre = null;
 
 //         assessment = await collaborationEngine.generateAssessment(
 //           storyContent,
-//           elements,
+//           null,
 //           {
 //             totalWords: updatedSession.childWords,
 //             turnCount: allTurns.length,
-//             storyTheme,
-//             storyGenre,
-//             storyMode,
+//             storyTheme: typeof storyTheme === 'string' ? storyTheme : '',
+//             storyGenre: typeof storyGenre === 'string' ? storyGenre : '',
+//             storyMode: 'freeform',
 //           }
 //         );
 
@@ -227,7 +226,10 @@
 
 //         console.log('✅ Assessment saved to database successfully!');
 //       } catch (assessmentError) {
-//         console.error('❌ Failed to auto-generate assessment:', assessmentError);
+//         console.error(
+//           '❌ Failed to auto-generate assessment:',
+//           assessmentError
+//         );
 //       }
 //     }
 
@@ -248,7 +250,7 @@
 //         apiCallsUsed: updatedSession.apiCallsUsed,
 //         maxApiCalls: updatedSession.maxApiCalls,
 //         status: updatedSession.status,
-//         completed: isStoryComplete,
+//         isComplete: isStoryComplete,
 //       },
 //       ...(assessment && {
 //         assessment: {
@@ -258,7 +260,6 @@
 //           feedback: assessment.feedback,
 //         },
 //       }),
-
 //     });
 //   } catch (error) {
 //     console.error('❌ Error in ai-respond API:', error);
@@ -278,7 +279,6 @@ import Turn from '@/models/Turn';
 import { collaborationEngine } from '@/lib/ai/collaboration';
 import { checkRateLimit } from '@/lib/rate-limiter';
 import { Types } from 'mongoose';
-import type { StoryElements } from '@/config/story-elements';
 
 interface AIRespondRequest {
   sessionId: string;
@@ -391,13 +391,8 @@ export async function POST(request: Request) {
       .sort({ turnNumber: 1 })
       .lean();
 
-    const storyMode =
-      (storySession.storyMode as 'guided' | 'freeform') || 'guided';
-    const elements = storySession.elements as StoryElements | null;
-
     const aiResponse = await collaborationEngine.generateContextualResponse(
-      elements,
-      storyMode,
+      null,
       previousTurns.map((turn: any) => ({
         childInput: turn.childInput,
         aiResponse: turn.aiResponse,
@@ -418,7 +413,7 @@ export async function POST(request: Request) {
     });
 
     // Check if story is complete - different limits for guided vs freeform
-    const maxTurns = storyMode === 'guided' ? 6 : 7;
+    const maxTurns = 7;
     const isStoryComplete = turnNumber >= maxTurns;
 
     const updatedSession = await StorySession.findByIdAndUpdate(
@@ -461,18 +456,15 @@ export async function POST(request: Request) {
           .map((turn) => turn.childInput)
           .join(' ');
 
-        const storyTheme = elements?.theme || 'Adventure';
-        const storyGenre = elements?.genre || 'Fantasy';
-
         assessment = await collaborationEngine.generateAssessment(
           storyContent,
-          elements,
+          null,
           {
             totalWords: updatedSession.childWords,
             turnCount: allTurns.length,
-            storyTheme,
-            storyGenre,
-            storyMode,
+            storyTheme: '',
+            storyGenre: '',
+            storyMode: 'freeform',
           }
         );
 
