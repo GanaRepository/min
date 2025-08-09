@@ -137,7 +137,7 @@ export default function PricingPage() {
                 '16-category story assessment',
                 'Age-appropriate feedback (6-8, 9-12, 13+)',
                 'Monthly competition participation',
-                'Public story gallery access',
+                'Story Publication (Optional): $10/story',
                 'Progress tracking & analytics'
               ].map((feature, index) => (
                 <div key={index} className="flex items-center gap-2">
@@ -290,8 +290,8 @@ export default function PricingPage() {
 
             <div className="bg-gray-800/50  p-4 mb-6">
               <p className="text-gray-300 text-sm">
-                <strong>Competition Ready:</strong> Published stories can participate 
-                in monthly competitions with chances to win recognition and prizes!
+                <strong>Competition Ready: </strong>Competition entry is completely FREE! The $10 fee is only for publishing your 
+                story i.e. get printed in Physical Book Anthology Collections.
               </p>
             </div>
 
@@ -382,7 +382,7 @@ export default function PricingPage() {
             },
             {
               question: "How do competitions work?",
-              answer: "Every month, we run a competition with three phases: 25 days for submissions, 5 days for AI judging, and 1 day for results. Only published stories can compete (requires $10 publication fee), and children can submit up to 3 stories per competition."
+              answer: "Every month, we run a competition with three phases: 25 days for submissions, 5 days for AI judging, and 1 day for results. Children can submit up to 3 stories per competition and top 3 will be picked by our AI judge. Also, you can pay $10 per story in order to get your story published in Physical Book Anthology Collections."
             },
             {
               question: "Can I still access free features?",
