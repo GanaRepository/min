@@ -1,11 +1,174 @@
-// app/admin/login/page.tsx
+// // app/admin/login/page.tsx
+// 'use client';
+
+// import { useState, useEffect } from 'react';
+// import { signIn, getSession } from 'next-auth/react';
+// import { useRouter } from 'next/navigation';
+// import { Eye, EyeOff, Crown, Mail, Lock } from 'lucide-react';
+// import { motion } from 'framer-motion';
+
+// export default function AdminLogin() {
+//   const [email, setEmail] = useState('');
+//   const [password, setPassword] = useState('');
+//   const [showPassword, setShowPassword] = useState(false);
+//   const [loading, setLoading] = useState(false);
+//   const [error, setError] = useState('');
+//   const router = useRouter();
+
+//   useEffect(() => {
+//     const checkSession = async () => {
+//       const session = await getSession();
+//       if (session?.user?.role === 'admin') {
+//         router.push('/admin');
+//       }
+//     };
+//     checkSession();
+//   }, [router]);
+
+//   const handleSubmit = async (e: React.FormEvent) => {
+//     e.preventDefault();
+//     setLoading(true);
+//     setError('');
+
+//     try {
+//       const result = await signIn('credentials', {
+//         email,
+//         password,
+//         redirect: false,
+//       });
+
+//       if (result?.error) {
+//         setError('Invalid credentials. Admin access only.');
+//       } else {
+//         const session = await getSession();
+//         if (session?.user?.role === 'admin') {
+//           router.push('/admin');
+//         } else {
+//           setError('Admin access required');
+//         }
+//       }
+//     } catch (error) {
+//       setError('Login failed. Please try again.');
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   return (
+//     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex items-center justify-center p-4">
+//       <motion.div
+//         initial={{ opacity: 0, y: 20 }}
+//         animate={{ opacity: 1, y: 0 }}
+//         transition={{ duration: 0.5 }}
+//         className="max-w-md w-full"
+//       >
+//         <div className="bg-gray-800 rounded-2xl shadow-2xl p-8 border border-gray-700">
+//           {/* Header */}
+//           <div className="text-center mb-8">
+//             <div className="bg-gradient-to-r from-blue-600 to-green-600 p-4 rounded-full inline-block mb-4">
+//               <Crown size={32} className="text-white" />
+//             </div>
+//             <h1 className="text-3xl font-bold text-white mb-2">Admin Portal</h1>
+//             <p className="text-gray-400">Access Mintoons administration panel</p>
+//           </div>
+
+//           {/* Error Message */}
+//           {error && (
+//             <motion.div
+//               initial={{ opacity: 0, x: -10 }}
+//               animate={{ opacity: 1, x: 0 }}
+//               className="bg-red-900/50 border border-red-500/50 text-red-200 p-3 rounded-lg mb-6 text-sm"
+//             >
+//               {error}
+//             </motion.div>
+//           )}
+
+//           {/* Form */}
+//           <form onSubmit={handleSubmit} className="space-y-6">
+//             {/* Email */}
+//             <div>
+//               <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
+//                 Email Address
+//               </label>
+//               <div className="relative">
+//                 <Mail size={20} className="absolute left-3 top-3 text-gray-400" />
+//                 <input
+//                   id="email"
+//                   type="email"
+//                   required
+//                   value={email}
+//                   onChange={(e) => setEmail(e.target.value)}
+//                   className="w-full pl-10 pr-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+//                   placeholder="admin@mintoons.com"
+//                 />
+//               </div>
+//             </div>
+
+//             {/* Password */}
+//             <div>
+//               <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2">
+//                 Password
+//               </label>
+//               <div className="relative">
+//                 <Lock size={20} className="absolute left-3 top-3 text-gray-400" />
+//                 <input
+//                   id="password"
+//                   type={showPassword ? 'text' : 'password'}
+//                   required
+//                   value={password}
+//                   onChange={(e) => setPassword(e.target.value)}
+//                   className="w-full pl-10 pr-12 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+//                   placeholder="Enter your password"
+//                 />
+//                 <button
+//                   type="button"
+//                   onClick={() => setShowPassword(!showPassword)}
+//                   className="absolute right-3 top-3 text-gray-400 hover:text-gray-300"
+//                 >
+//                   {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+//                 </button>
+//               </div>
+//             </div>
+
+//             {/* Submit Button */}
+//             <button
+//               type="submit"
+//               disabled={loading}
+//               className="w-full bg-gradient-to-r from-blue-600 to-green-600 text-white py-3 px-4 rounded-lg font-medium hover:from-blue-700 hover:to-green-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+//             >
+//               {loading ? (
+//                 <div className="flex items-center justify-center">
+//                   <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+//                   Signing In...
+//                 </div>
+//               ) : (
+//                 'Sign In to Admin Panel'
+//               )}
+//             </button>
+//           </form>
+
+//           {/* Footer */}
+//           <div className="mt-8 text-center">
+//             <p className="text-gray-500 text-sm">
+//               Mintoons Administration Panel
+//             </p>
+//           </div>
+//         </div>
+//       </motion.div>
+//     </div>
+//   );
+// }
+
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { signIn, getSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { Eye, EyeOff, Crown, Mail, Lock } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { Eye, EyeOff, Crown, Mail, Lock, Sparkles, Shield, Zap } from 'lucide-react';
+import Image from 'next/image';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
 
 export default function AdminLogin() {
   const [email, setEmail] = useState('');
@@ -13,7 +176,29 @@ export default function AdminLogin() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [mounted, setMounted] = useState(false);
   const router = useRouter();
+  
+  const containerRef = useRef<HTMLDivElement>(null);
+  const starsRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll();
+  const backgroundY = useTransform(scrollYProgress, [0, 1], ['0%', '30%']);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    // Animations for stars and cosmic elements
+    const stars = starsRef.current?.children;
+    if (stars && typeof window !== 'undefined') {
+      Array.from(stars).forEach((star, i) => {
+        const element = star as HTMLElement;
+        element.style.animationDelay = `${i * 0.1}s`;
+        element.classList.add('animate-pulse');
+      });
+    }
+  }, [mounted]);
 
   useEffect(() => {
     const checkSession = async () => {
@@ -54,107 +239,314 @@ export default function AdminLogin() {
     }
   };
 
+  if (!mounted) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-green-900 flex items-center justify-center">
+        <div className="text-white text-xl">Loading...</div>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex items-center justify-center p-4">
+    <div
+      ref={containerRef}
+      className="min-h-screen bg-gradient-to-br from-gray-900/95 via-blue-900/95 to-green-900/95 overflow-hidden flex items-center justify-center relative px-2 sm:px-4"
+    >
+   
+      {/* Main container */}
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="max-w-md w-full"
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.8 }}
+        className="relative z-10 w-full max-w-6xl flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-16"
       >
-        <div className="bg-gray-800 rounded-2xl shadow-2xl p-8 border border-gray-700">
-          {/* Header */}
-          <div className="text-center mb-8">
-            <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-4 rounded-full inline-block mb-4">
-              <Crown size={32} className="text-white" />
+        {/* Left side - Admin illustration (responsive) */}
+        <motion.div
+          initial={{ opacity: 0, x: -50 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          className="flex-1 w-full flex flex-col items-center justify-center relative min-h-[350px] sm:min-h-[400px] md:min-h-[450px] lg:min-h-[500px]"
+        >
+          <div className="relative w-full h-full bg-white/5 backdrop-blur-sm border border-white/10 rounded-3xl p-4 sm:p-6 md:p-8 flex flex-col items-center justify-center overflow-hidden">
+            {/* Background image */}
+            <div className="absolute inset-0 w-full h-full z-0">
+              <Image
+                src="/kid1.jpg"
+                alt="Admin Portal Background"
+                fill
+                style={{ objectFit: 'cover', objectPosition: 'center' }}
+                className="rounded-3xl opacity-60"
+                priority
+              />
             </div>
-            <h1 className="text-3xl font-bold text-white mb-2">Admin Portal</h1>
-            <p className="text-gray-400">Access Mintoons administration panel</p>
+            {/* Admin crown and tech elements */}
+            <motion.div
+              animate={{
+                rotate: [0, 10, 0, -10, 0],
+              }}
+              transition={{
+                duration: 4,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+              className="relative flex flex-col items-center justify-center z-10"
+            >
+              <Crown className="w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 text-yellow-400/80 mb-4 sm:mb-6" />
+              <div className="absolute -top-4 -right-4">
+                <motion.div
+                  animate={{
+                    scale: [1, 1.2, 1],
+                    opacity: [0.5, 1, 0.5],
+                  }}
+                  transition={{
+                    duration: 2,
+                    repeat: Infinity,
+                  }}
+                >
+                  <Sparkles className="w-6 h-6 sm:w-8 sm:h-8 text-blue-400" />
+                </motion.div>
+              </div>
+              <div className="absolute -bottom-4 -left-4">
+                <motion.div
+                  animate={{
+                    scale: [1, 1.2, 1],
+                    opacity: [0.5, 1, 0.5],
+                  }}
+                  transition={{
+                    duration: 2,
+                    repeat: Infinity,
+                    delay: 1,
+                  }}
+                >
+                  <Shield className="w-6 h-6 sm:w-8 sm:h-8 text-green-400" />
+                </motion.div>
+              </div>
+            </motion.div>
+
+            {/* Tech glitch lines */}
+            {mounted &&
+              [...Array(12)].map((_, i) => (
+                <motion.div
+                  key={i}
+                  className="absolute left-0 h-0.5 bg-blue-400/60"
+                  style={{
+                    top: `${15 + i * 7}%`,
+                    width: `${30 + Math.random() * 60}%`,
+                  }}
+                  animate={{
+                    opacity: [0, 1, 0],
+                    scaleX: [0, 1, 0],
+                    x: [0, 20, 0],
+                  }}
+                  transition={{
+                    duration: 0.5,
+                    repeat: Infinity,
+                    delay: i * 0.1,
+                    repeatDelay: 3,
+                  }}
+                />
+              ))}
+
+            {/* Quote */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 1 }}
+              className="mt-6 sm:mt-10 text-center"
+            >
+              <p className="text-white text-xs sm:text-sm md:text-base italic mb-2">
+                &quot;The best way to predict the future is to invent it.&quot;
+              </p>
+              <p className="text-xs text-white">
+                - Alan Kay
+              </p>
+            </motion.div>
+          </div>
+        </motion.div>
+
+        {/* Right side - Login form */}
+        <motion.div
+          initial={{ opacity: 0, x: 50 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.8, delay: 0.4 }}
+          className="flex-1 w-full max-w-md"
+        >
+          {/* Back to main site */}
+          <Link href="/">
+            <Button
+              variant="outline"
+              className="mb-6 bg-white/10 border-white/20 text-white hover:bg-white/20"
+            >
+              ← Back to Mintoons
+            </Button>
+          </Link>
+
+          <div className="text-center mb-8">
+          
+
+            {/* Welcome text */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.8 }}
+            >
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-2">
+                Admin Portal
+              </h1>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white/80 mb-4 italic">
+                Command Center
+              </h2>
+              <p className="text-white/60 text-sm">
+                Access Mintoons administration panel
+              </p>
+            </motion.div>
           </div>
 
-          {/* Error Message */}
+          {/* Error message */}
           {error && (
             <motion.div
-              initial={{ opacity: 0, x: -10 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="bg-red-900/50 border border-red-500/50 text-red-200 p-3 rounded-lg mb-6 text-sm"
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-red-500/20 backdrop-blur-sm border border-red-500/30 text-red-200 p-3 rounded-xl mb-6 text-sm"
             >
               {error}
             </motion.div>
           )}
 
-          {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Email */}
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
-                Email Address
+          {/* Login form */}
+          <motion.form
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 1 }}
+            onSubmit={handleSubmit}
+            className="space-y-6"
+          >
+            {/* Email field */}
+            <div className="space-y-2">
+              <label className="text-white/80 text-sm font-medium">
+                Admin Email
               </label>
               <div className="relative">
-                <Mail size={20} className="absolute left-3 top-3 text-gray-400" />
+                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/40 w-5 h-5" />
                 <input
-                  id="email"
                   type="email"
-                  required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full pl-10 pr-4 py-3 bg-white/10  border border-white/20 rounded-xl text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
                   placeholder="admin@mintoons.com"
+                  required
                 />
               </div>
             </div>
 
-            {/* Password */}
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2">
+            {/* Password field */}
+            <div className="space-y-2">
+              <label className="text-white/80 text-sm font-medium">
                 Password
               </label>
               <div className="relative">
-                <Lock size={20} className="absolute left-3 top-3 text-gray-400" />
+                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/40 w-5 h-5" />
                 <input
-                  id="password"
                   type={showPassword ? 'text' : 'password'}
-                  required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-10 pr-12 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Enter your password"
+                  className="w-full pl-10 pr-12 py-3 bg-white/10  border border-white/20 rounded-xl text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
+                  placeholder="Enter your admin password"
+                  required
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-3 text-gray-400 hover:text-gray-300"
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white/40 hover:text-white/60 transition-colors"
                 >
-                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  {showPassword ? (
+                    <EyeOff className="w-5 h-5" />
+                  ) : (
+                    <Eye className="w-5 h-5" />
+                  )}
                 </button>
               </div>
             </div>
 
-            {/* Submit Button */}
-            <button
+            {/* Login button */}
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 px-4 rounded-lg font-medium hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+              className="w-full bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
             >
               {loading ? (
-                <div className="flex items-center justify-center">
-                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                  Signing In...
+                <div className="flex items-center justify-center space-x-2">
+                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  <span>Accessing Admin Panel...</span>
                 </div>
               ) : (
-                'Sign In to Admin Panel'
+                <div className="flex items-center justify-center space-x-2">
+                  <Crown className="w-5 h-5" />
+                  <span>Sign In to Admin Panel</span>
+                </div>
               )}
-            </button>
-          </form>
+            </motion.button>
+          </motion.form>
 
           {/* Footer */}
-          <div className="mt-8 text-center">
-            <p className="text-gray-500 text-sm">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6, delay: 1.2 }}
+            className="text-center mt-8"
+          >
+            <p className="text-white/40 text-sm">
               Mintoons Administration Panel
             </p>
-          </div>
-        </div>
+            <div className="flex items-center justify-center space-x-2 mt-2">
+              <Shield className="w-4 h-4 text-green-400" />
+              <span className="text-green-400 text-xs">Secure Connection</span>
+            </div>
+          </motion.div>
+        </motion.div>
       </motion.div>
+
+      {/* Floating admin badges */}
+      <div className="absolute top-10 left-10 hidden lg:block">
+        <motion.div
+          animate={{
+            y: [0, -10, 0],
+            rotate: [0, 5, 0],
+          }}
+          transition={{
+            duration: 3,
+            repeat: Infinity,
+          }}
+          className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-3"
+        >
+          <div className="flex items-center space-x-2">
+            <Shield className="w-5 h-5 text-blue-400" />
+            <span className="text-white/80 text-sm font-medium">Secure</span>
+          </div>
+        </motion.div>
+      </div>
+
+      <div className="absolute top-10 right-10 hidden lg:block">
+        <motion.div
+          animate={{
+            y: [0, -10, 0],
+            rotate: [0, -5, 0],
+          }}
+          transition={{
+            duration: 3,
+            repeat: Infinity,
+            delay: 1.5,
+          }}
+          className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-3"
+        >
+          <div className="flex items-center space-x-2">
+            <Zap className="w-5 h-5 text-yellow-400" />
+            <span className="text-white/80 text-sm font-medium">Powered</span>
+          </div>
+        </motion.div>
+      </div>
     </div>
   );
 }

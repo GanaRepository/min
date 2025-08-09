@@ -1,4 +1,3 @@
-// app/api/admin/comments/[id]/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/utils/authOptions';
@@ -7,7 +6,7 @@ import StoryComment from '@/models/StoryComment';
 
 export const dynamic = 'force-dynamic';
 
-// GET single comment
+// GET single comment with pagination info
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
@@ -21,6 +20,7 @@ export async function GET(
     const { id } = params;
     await connectToDatabase();
 
+    // Get the current comment
     const comment = await StoryComment.findById(id)
       .populate('authorId', 'firstName lastName email role')
       .populate({
@@ -37,7 +37,21 @@ export async function GET(
       return NextResponse.json({ error: 'Comment not found' }, { status: 404 });
     }
 
-    // Get replies if any (assuming you have a replies field or separate collection)
+    // Get pagination info (prev/next comments)
+    const allComments = (await StoryComment.find({})
+      .sort({ createdAt: -1 })
+      .select('_id')
+      .lean()) as Array<{ _id: any }>;
+
+    const currentIndex = allComments.findIndex(c => String(c._id) === id);
+    const pagination = currentIndex !== -1 ? {
+      current: (currentIndex + 1).toString(),
+      prev: currentIndex > 0 ? String(allComments[currentIndex - 1]._id) : null,
+      next: currentIndex < allComments.length - 1 ? String(allComments[currentIndex + 1]._id) : null,
+      total: allComments.length
+    } : null;
+
+    // Get replies if any
     const replies = await StoryComment.find({ 
       parentCommentId: id 
     })
@@ -51,6 +65,7 @@ export async function GET(
         ...comment,
         replies,
       },
+      pagination,
     });
   } catch (error) {
     console.error('Error fetching comment:', error);
@@ -58,7 +73,7 @@ export async function GET(
   }
 }
 
-// PATCH - Update comment
+// PATCH - Update comment (status, content, etc.)
 export async function PATCH(
   request: NextRequest,
   { params }: { params: { id: string } }
@@ -74,6 +89,28 @@ export async function PATCH(
 
     await connectToDatabase();
 
+    // Find the comment first to check ownership for content edits
+    const existingComment = await StoryComment.findById(id);
+    if (!existingComment) {
+      return NextResponse.json({ error: 'Comment not found' }, { status: 404 });
+    }
+
+    // If updating comment content, check if user is the author
+    if (updateData.comment !== undefined) {
+      if (existingComment.authorId.toString() !== session.user.id) {
+        return NextResponse.json({ 
+          error: 'You can only edit your own comments' 
+        }, { status: 403 });
+      }
+      
+      updateData.comment = updateData.comment.trim();
+      if (!updateData.comment) {
+        return NextResponse.json({ 
+          error: 'Comment content cannot be empty' 
+        }, { status: 400 });
+      }
+    }
+
     const updatedComment = await StoryComment.findByIdAndUpdate(
       id,
       {
@@ -82,10 +119,6 @@ export async function PATCH(
       },
       { new: true, runValidators: true }
     ).populate('authorId', 'firstName lastName email role');
-
-    if (!updatedComment) {
-      return NextResponse.json({ error: 'Comment not found' }, { status: 404 });
-    }
 
     return NextResponse.json({
       success: true,
@@ -117,7 +150,7 @@ export async function DELETE(
       return NextResponse.json({ error: 'Comment not found' }, { status: 404 });
     }
 
-    // Also delete any replies to this comment
+    // Delete any replies to this comment
     await StoryComment.deleteMany({ parentCommentId: id });
     
     // Delete the main comment

@@ -61,7 +61,6 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     { name: 'Comments', href: '/admin/comments', icon: MessageSquare },
     { name: 'Competitions', href: '/admin/competitions', icon: Award },
     { name: 'Revenue', href: '/admin/revenue', icon: DollarSign },
-    { name: 'Analytics', href: '/admin/analytics', icon: BarChart3 },
   ];
 
   const isActive = (path: string) => {
@@ -73,16 +72,15 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
   const handleLogout = async () => {
     try {
-      // Use NextAuth's signOut directly for admin - simpler and more reliable
-      // The redirect will be handled automatically
-      await signOut({ 
-        callbackUrl: '/admin/login',
-        redirect: true 
-      });
+      // Navigate to your custom logout page instead of using NextAuth signOut directly
+      router.push('/logout');
     } catch (error) {
       console.error('Logout error:', error);
-      // Fallback redirect
-      router.push('/admin/login');
+      // Fallback - use NextAuth signOut with home page redirect
+      await signOut({ 
+        callbackUrl: '/',
+        redirect: true 
+      });
     }
   };
 
