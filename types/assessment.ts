@@ -31,23 +31,23 @@ export interface StoryAssessment {
   plotDevelopmentScore: number;
   overallScore: number;
   readingLevel: string;
-  
+
   // Feedback
   feedback: string;
   strengths: string[];
   improvements: string[];
   educationalInsights: string;
-  
+
   // Integrity fields
   plagiarismScore: number;
   aiDetectionScore: number;
   integrityRisk: 'low' | 'medium' | 'high' | 'critical';
   integrityAnalysis: IntegrityAnalysis;
-  
+
   // Enhanced features
   recommendations?: AssessmentRecommendations;
   progressTracking?: ProgressTracking;
-  
+
   // Metadata
   assessmentVersion: string;
   assessmentDate: string;

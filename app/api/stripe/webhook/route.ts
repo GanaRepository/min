@@ -23,7 +23,10 @@ export async function POST(req: NextRequest) {
       event = stripe.webhooks.constructEvent(body, signature, endpointSecret);
     } catch (err: any) {
       console.error('❌ Webhook signature verification failed:', err.message);
-      return NextResponse.json({ error: 'Webhook signature verification failed' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Webhook signature verification failed' },
+        { status: 400 }
+      );
     }
 
     console.log(`📧 Stripe webhook received: ${event.type}`);
@@ -32,7 +35,9 @@ export async function POST(req: NextRequest) {
 
     switch (event.type) {
       case 'checkout.session.completed':
-        await handleCheckoutCompleted(event.data.object as Stripe.Checkout.Session);
+        await handleCheckoutCompleted(
+          event.data.object as Stripe.Checkout.Session
+        );
         break;
 
       case 'payment_intent.succeeded':
@@ -48,7 +53,6 @@ export async function POST(req: NextRequest) {
     }
 
     return NextResponse.json({ received: true });
-
   } catch (error) {
     console.error('❌ Webhook processing error:', error);
     return NextResponse.json(
@@ -65,9 +69,18 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     return;
   }
 
-  const { userId, productType, storyId, storiesAdded, assessmentsAdded, storyTitle } = metadata;
+  const {
+    userId,
+    productType,
+    storyId,
+    storiesAdded,
+    assessmentsAdded,
+    storyTitle,
+  } = metadata;
 
-  console.log(`💳 Processing completed checkout: ${productType} for user ${userId}`);
+  console.log(
+    `💳 Processing completed checkout: ${productType} for user ${userId}`
+  );
 
   try {
     // Create purchase record
@@ -106,8 +119,9 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
         },
       });
 
-      console.log(`✅ Story pack benefits added: +${storiesAdded} stories, +${assessmentsAdded} assessments`);
-
+      console.log(
+        `✅ Story pack benefits added: +${storiesAdded} stories, +${assessmentsAdded} assessments`
+      );
     } else if (productType === 'story_publication') {
       await StorySession.findByIdAndUpdate(storyId, {
         isPublished: true,
@@ -120,15 +134,16 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     }
 
     console.log(`✅ Checkout completed successfully for ${userId}`);
-
   } catch (error) {
     console.error('❌ Error processing checkout completion:', error);
   }
 }
 
 async function handlePaymentSucceeded(paymentIntent: Stripe.PaymentIntent) {
-  console.log(`💰 Payment succeeded: ${paymentIntent.id} - $${paymentIntent.amount / 100}`);
-  
+  console.log(
+    `💰 Payment succeeded: ${paymentIntent.id} - $${paymentIntent.amount / 100}`
+  );
+
   await Purchase.findOneAndUpdate(
     { stripePaymentIntentId: paymentIntent.id },
     { status: 'completed' }
@@ -136,8 +151,10 @@ async function handlePaymentSucceeded(paymentIntent: Stripe.PaymentIntent) {
 }
 
 async function handlePaymentFailed(paymentIntent: Stripe.PaymentIntent) {
-  console.log(`❌ Payment failed: ${paymentIntent.id} - ${paymentIntent.last_payment_error?.message}`);
-  
+  console.log(
+    `❌ Payment failed: ${paymentIntent.id} - ${paymentIntent.last_payment_error?.message}`
+  );
+
   const purchase = await Purchase.findOneAndUpdate(
     { stripePaymentIntentId: paymentIntent.id },
     { status: 'failed' },

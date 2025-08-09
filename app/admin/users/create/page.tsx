@@ -5,22 +5,15 @@ import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import {
-  ArrowLeft,
-  Save,
-  User,
-  Mail,
-  Lock,
-  Shield,
-} from 'lucide-react';
+import { ArrowLeft, Save, User, Mail, Lock, Shield } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function CreateUserPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
-  
+
   const [loading, setLoading] = useState(false);
-  const [errors, setErrors] = useState<{[key: string]: string}>({});
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const [formData, setFormData] = useState({
     firstName: '',
@@ -64,7 +57,8 @@ export default function CreateUserPage() {
           email: formData.email,
           password: formData.password,
           role: formData.role,
-          parentEmail: formData.role === 'child' ? formData.parentEmail : undefined,
+          parentEmail:
+            formData.role === 'child' ? formData.parentEmail : undefined,
         }),
       });
 
@@ -89,15 +83,15 @@ export default function CreateUserPage() {
   };
 
   const handleInputChange = (field: string, value: any) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
-    
+
     if (errors[field]) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
-        [field]: ''
+        [field]: '',
       }));
     }
   };
@@ -139,7 +133,10 @@ export default function CreateUserPage() {
               User Role
             </label>
             <div className="relative">
-              <Shield size={20} className="absolute left-3 top-3 text-gray-400" />
+              <Shield
+                size={20}
+                className="absolute left-3 top-3 text-gray-400"
+              />
               <select
                 value={formData.role}
                 onChange={(e) => handleInputChange('role', e.target.value)}
@@ -158,12 +155,17 @@ export default function CreateUserPage() {
                 First Name
               </label>
               <div className="relative">
-                <User size={20} className="absolute left-3 top-3 text-gray-400" />
+                <User
+                  size={20}
+                  className="absolute left-3 top-3 text-gray-400"
+                />
                 <input
                   type="text"
                   required
                   value={formData.firstName}
-                  onChange={(e) => handleInputChange('firstName', e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange('firstName', e.target.value)
+                  }
                   className={`w-full pl-10 pr-4 py-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                     errors.firstName ? 'border-red-500' : 'border-gray-600'
                   }`}
@@ -180,12 +182,17 @@ export default function CreateUserPage() {
                 Last Name
               </label>
               <div className="relative">
-                <User size={20} className="absolute left-3 top-3 text-gray-400" />
+                <User
+                  size={20}
+                  className="absolute left-3 top-3 text-gray-400"
+                />
                 <input
                   type="text"
                   required
                   value={formData.lastName}
-                  onChange={(e) => handleInputChange('lastName', e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange('lastName', e.target.value)
+                  }
                   className={`w-full pl-10 pr-4 py-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                     errors.lastName ? 'border-red-500' : 'border-gray-600'
                   }`}
@@ -228,12 +235,17 @@ export default function CreateUserPage() {
                 Parent Email Address
               </label>
               <div className="relative">
-                <Mail size={20} className="absolute left-3 top-3 text-gray-400" />
+                <Mail
+                  size={20}
+                  className="absolute left-3 top-3 text-gray-400"
+                />
                 <input
                   type="email"
                   required
                   value={formData.parentEmail}
-                  onChange={(e) => handleInputChange('parentEmail', e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange('parentEmail', e.target.value)
+                  }
                   className={`w-full pl-10 pr-4 py-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                     errors.parentEmail ? 'border-red-500' : 'border-gray-600'
                   }`}
@@ -241,7 +253,9 @@ export default function CreateUserPage() {
                 />
               </div>
               {errors.parentEmail && (
-                <p className="text-red-400 text-sm mt-1">{errors.parentEmail}</p>
+                <p className="text-red-400 text-sm mt-1">
+                  {errors.parentEmail}
+                </p>
               )}
             </div>
           )}
@@ -253,12 +267,17 @@ export default function CreateUserPage() {
                 Password
               </label>
               <div className="relative">
-                <Lock size={20} className="absolute left-3 top-3 text-gray-400" />
+                <Lock
+                  size={20}
+                  className="absolute left-3 top-3 text-gray-400"
+                />
                 <input
                   type="password"
                   required
                   value={formData.password}
-                  onChange={(e) => handleInputChange('password', e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange('password', e.target.value)
+                  }
                   className={`w-full pl-10 pr-4 py-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                     errors.password ? 'border-red-500' : 'border-gray-600'
                   }`}
@@ -276,21 +295,30 @@ export default function CreateUserPage() {
                 Confirm Password
               </label>
               <div className="relative">
-                <Lock size={20} className="absolute left-3 top-3 text-gray-400" />
+                <Lock
+                  size={20}
+                  className="absolute left-3 top-3 text-gray-400"
+                />
                 <input
                   type="password"
                   required
                   value={formData.confirmPassword}
-                  onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange('confirmPassword', e.target.value)
+                  }
                   className={`w-full pl-10 pr-4 py-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                    errors.confirmPassword ? 'border-red-500' : 'border-gray-600'
+                    errors.confirmPassword
+                      ? 'border-red-500'
+                      : 'border-gray-600'
                   }`}
                   placeholder="Confirm password"
                   minLength={6}
                 />
               </div>
               {errors.confirmPassword && (
-                <p className="text-red-400 text-sm mt-1">{errors.confirmPassword}</p>
+                <p className="text-red-400 text-sm mt-1">
+                  {errors.confirmPassword}
+                </p>
               )}
             </div>
           </div>

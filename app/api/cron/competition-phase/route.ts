@@ -8,7 +8,7 @@ export async function POST(req: NextRequest) {
     // Verify cron secret
     const authHeader = req.headers.get('authorization');
     const expectedToken = `Bearer ${process.env.CRON_SECRET_TOKEN}`;
-    
+
     if (authHeader !== expectedToken) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -19,12 +19,16 @@ export async function POST(req: NextRequest) {
 
     // Get current competition and check if phase needs to advance
     const currentCompetition = await competitionManager.getCurrentCompetition();
-    
+
     if (currentCompetition) {
-      const updatedCompetition = await competitionManager.advancePhase(currentCompetition._id.toString());
-      
-      console.log(`📊 Competition ${updatedCompetition.month} is in ${updatedCompetition.phase} phase`);
-      
+      const updatedCompetition = await competitionManager.advancePhase(
+        currentCompetition._id.toString()
+      );
+
+      console.log(
+        `📊 Competition ${updatedCompetition.month} is in ${updatedCompetition.phase} phase`
+      );
+
       return NextResponse.json({
         success: true,
         message: `Competition phase check completed`,
@@ -38,14 +42,13 @@ export async function POST(req: NextRequest) {
     } else {
       // No current competition - maybe create one for this month
       console.log('ℹ️ No active competition found');
-      
+
       return NextResponse.json({
         success: true,
         message: 'No active competition found',
         timestamp: new Date().toISOString(),
       });
     }
-
   } catch (error) {
     console.error('Competition phase check failed:', error);
     return NextResponse.json(

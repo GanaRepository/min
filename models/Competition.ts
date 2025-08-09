@@ -5,7 +5,7 @@ export interface ICompetitionSubmission extends Document {
   _id: mongoose.Types.ObjectId;
   userId: mongoose.Types.ObjectId;
   competitionId: mongoose.Types.ObjectId;
-  
+
   // Story Details
   title: string;
   fileName: string;
@@ -13,23 +13,23 @@ export interface ICompetitionSubmission extends Document {
   fileType: string;
   fileBuffer: Buffer;
   wordCount: number;
-  
+
   // Submission Info
   submittedAt: Date;
   status: 'submitted' | 'under_review' | 'judged' | 'winner' | 'disqualified';
-  
+
   // Publishing
   published: boolean;
   publicationFee: number; // $10
   paymentStatus: 'pending' | 'paid' | 'failed' | 'refunded';
   publishedAt?: Date;
-  
+
   // Competition Results
   competitionRank?: number; // 1, 2, 3, etc.
   competitionScore?: number; // 0-100
   judgedAt?: Date;
   aiJudgingNotes?: string;
-  
+
   // AI Analysis (when judged)
   grammarScore?: number;
   creativityScore?: number;
@@ -37,7 +37,7 @@ export interface ICompetitionSubmission extends Document {
   characterScore?: number;
   plotScore?: number;
   vocabularyScore?: number;
-  
+
   createdAt: Date;
   updatedAt: Date;
 }
@@ -56,7 +56,7 @@ const CompetitionSubmissionSchema = new Schema<ICompetitionSubmission>(
       required: true,
       index: true,
     },
-    
+
     // Story Details
     title: {
       type: String,
@@ -78,7 +78,10 @@ const CompetitionSubmissionSchema = new Schema<ICompetitionSubmission>(
     fileType: {
       type: String,
       required: true,
-      enum: ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
+      enum: [
+        'application/pdf',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      ],
     },
     fileBuffer: {
       type: Buffer,
@@ -91,7 +94,7 @@ const CompetitionSubmissionSchema = new Schema<ICompetitionSubmission>(
       min: 0,
       max: 2000,
     },
-    
+
     // Submission Info
     submittedAt: {
       type: Date,
@@ -105,7 +108,7 @@ const CompetitionSubmissionSchema = new Schema<ICompetitionSubmission>(
       required: true,
       index: true,
     },
-    
+
     // Publishing
     published: {
       type: Boolean,
@@ -127,7 +130,7 @@ const CompetitionSubmissionSchema = new Schema<ICompetitionSubmission>(
     publishedAt: {
       type: Date,
     },
-    
+
     // Competition Results
     competitionRank: {
       type: Number,
@@ -146,7 +149,7 @@ const CompetitionSubmissionSchema = new Schema<ICompetitionSubmission>(
       type: String,
       maxlength: 1000,
     },
-    
+
     // AI Analysis Scores
     grammarScore: {
       type: Number,
@@ -193,9 +196,12 @@ CompetitionSubmissionSchema.index({ status: 1, judgedAt: -1 });
 
 // Ensure a user can't submit the same title twice in the same competition
 CompetitionSubmissionSchema.index(
-  { userId: 1, competitionId: 1, title: 1 }, 
+  { userId: 1, competitionId: 1, title: 1 },
   { unique: true }
 );
 
 export default mongoose.models.CompetitionSubmission ||
-  mongoose.model<ICompetitionSubmission>('CompetitionSubmission', CompetitionSubmissionSchema);
+  mongoose.model<ICompetitionSubmission>(
+    'CompetitionSubmission',
+    CompetitionSubmissionSchema
+  );

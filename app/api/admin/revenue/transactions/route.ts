@@ -13,7 +13,10 @@ export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     if (!session || session.user.role !== 'admin') {
-      return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
+      return NextResponse.json(
+        { error: 'Admin access required' },
+        { status: 403 }
+      );
     }
 
     const { searchParams } = new URL(request.url);
@@ -29,35 +32,43 @@ export async function GET(request: NextRequest) {
     let purchaseMatch: any = {};
     if (startDate || endDate) {
       purchaseMatch['purchaseHistory.purchaseDate'] = {};
-      if (startDate) purchaseMatch['purchaseHistory.purchaseDate'].$gte = new Date(startDate);
-      if (endDate) purchaseMatch['purchaseHistory.purchaseDate'].$lte = new Date(endDate);
+      if (startDate)
+        purchaseMatch['purchaseHistory.purchaseDate'].$gte = new Date(
+          startDate
+        );
+      if (endDate)
+        purchaseMatch['purchaseHistory.purchaseDate'].$lte = new Date(endDate);
     }
 
     const transactions = await User.aggregate([
       { $match: matchConditions },
       { $unwind: '$purchaseHistory' },
-      ...(Object.keys(purchaseMatch).length > 0 ? [{ $match: purchaseMatch }] : []),
+      ...(Object.keys(purchaseMatch).length > 0
+        ? [{ $match: purchaseMatch }]
+        : []),
       {
         $project: {
           customer: {
             id: '$_id',
             name: { $concat: ['$firstName', ' ', '$lastName'] },
-            email: '$email'
+            email: '$email',
           },
-          transaction: '$purchaseHistory'
-        }
+          transaction: '$purchaseHistory',
+        },
       },
       { $sort: { 'transaction.purchaseDate': -1 } },
       { $skip: (page - 1) * limit },
-      { $limit: limit }
+      { $limit: limit },
     ]);
 
     // Get total count for pagination
     const totalTransactions = await User.aggregate([
       { $match: matchConditions },
       { $unwind: '$purchaseHistory' },
-      ...(Object.keys(purchaseMatch).length > 0 ? [{ $match: purchaseMatch }] : []),
-      { $count: 'total' }
+      ...(Object.keys(purchaseMatch).length > 0
+        ? [{ $match: purchaseMatch }]
+        : []),
+      { $count: 'total' },
     ]);
 
     const total = totalTransactions[0]?.total || 0;
@@ -72,9 +83,11 @@ export async function GET(request: NextRequest) {
         pages: Math.ceil(total / limit),
       },
     });
-
   } catch (error) {
     console.error('Error fetching transactions:', error);
-    return NextResponse.json({ error: 'Failed to fetch transactions' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to fetch transactions' },
+      { status: 500 }
+    );
   }
 }

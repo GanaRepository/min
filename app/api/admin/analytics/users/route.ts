@@ -12,7 +12,10 @@ export async function GET() {
   try {
     const session = await getServerSession(authOptions);
     if (!session || session.user.role !== 'admin') {
-      return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
+      return NextResponse.json(
+        { error: 'Admin access required' },
+        { status: 403 }
+      );
     }
 
     await connectToDatabase();
@@ -23,26 +26,30 @@ export async function GET() {
         $match: {
           role: { $in: ['child', 'mentor'] },
           createdAt: {
-            $gte: new Date(new Date().getFullYear(), new Date().getMonth() - 11, 1)
-          }
-        }
+            $gte: new Date(
+              new Date().getFullYear(),
+              new Date().getMonth() - 11,
+              1
+            ),
+          },
+        },
       },
       {
         $group: {
           _id: {
             year: { $year: '$createdAt' },
-            month: { $month: '$createdAt' }
+            month: { $month: '$createdAt' },
           },
           count: { $sum: 1 },
           children: {
-            $sum: { $cond: [{ $eq: ['$role', 'child'] }, 1, 0] }
+            $sum: { $cond: [{ $eq: ['$role', 'child'] }, 1, 0] },
           },
           mentors: {
-            $sum: { $cond: [{ $eq: ['$role', 'mentor'] }, 1, 0] }
-          }
-        }
+            $sum: { $cond: [{ $eq: ['$role', 'mentor'] }, 1, 0] },
+          },
+        },
       },
-      { $sort: { '_id.year': 1, '_id.month': 1 } }
+      { $sort: { '_id.year': 1, '_id.month': 1 } },
     ]);
 
     // User activity analysis
@@ -53,23 +60,42 @@ export async function GET() {
           _id: null,
           totalUsers: { $sum: 1 },
           activeUsers: {
-            $sum: { $cond: [{ $gt: ['$lastActiveDate', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)] }, 1, 0] }
+            $sum: {
+              $cond: [
+                {
+                  $gt: [
+                    '$lastActiveDate',
+                    new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+                  ],
+                },
+                1,
+                0,
+              ],
+            },
           },
           highUsageUsers: {
-            $sum: { $cond: [{ $gte: ['$totalStoriesCreated', 10] }, 1, 0] }
+            $sum: { $cond: [{ $gte: ['$totalStoriesCreated', 10] }, 1, 0] },
           },
           paidUsers: {
-            $sum: { $cond: [{ $gt: [{ $size: { $ifNull: ['$purchaseHistory', []] } }, 0] }, 1, 0] }
-          }
-        }
-      }
+            $sum: {
+              $cond: [
+                { $gt: [{ $size: { $ifNull: ['$purchaseHistory', []] } }, 0] },
+                1,
+                0,
+              ],
+            },
+          },
+        },
+      },
     ]);
 
     // Top users by engagement
     const topUsers = await User.find({ role: 'child' })
       .sort({ totalStoriesCreated: -1 })
       .limit(10)
-      .select('firstName lastName totalStoriesCreated totalWordsWritten createdAt')
+      .select(
+        'firstName lastName totalStoriesCreated totalWordsWritten createdAt'
+      )
       .lean();
 
     return NextResponse.json({
@@ -80,9 +106,11 @@ export async function GET() {
         topUsers,
       },
     });
-
   } catch (error) {
     console.error('Error fetching user analytics:', error);
-    return NextResponse.json({ error: 'Failed to fetch user analytics' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to fetch user analytics' },
+      { status: 500 }
+    );
   }
 }

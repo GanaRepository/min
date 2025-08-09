@@ -41,7 +41,7 @@ interface Pagination {
 export default function UsersPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
-  
+
   const [users, setUsers] = useState<User[]>([]);
   const [pagination, setPagination] = useState<Pagination | null>(null);
   const [loading, setLoading] = useState(true);
@@ -65,7 +65,7 @@ export default function UsersPage() {
         page: page.toString(),
         limit: '20',
       });
-      
+
       if (filterRole !== 'all') {
         params.append('role', filterRole);
       }
@@ -111,7 +111,7 @@ export default function UsersPage() {
     try {
       const params = new URLSearchParams();
       if (filterRole !== 'all') params.append('role', filterRole);
-      
+
       const response = await fetch(`/api/admin/users/export?${params}`);
       if (response.ok) {
         const blob = await response.blob();
@@ -180,9 +180,7 @@ export default function UsersPage() {
           <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">
             User Management
           </h1>
-          <p className="text-gray-400">
-            Manage all users in the platform
-          </p>
+          <p className="text-gray-400">Manage all users in the platform</p>
         </div>
         <div className="flex items-center space-x-2">
           <Link href="/admin/users/create">
@@ -208,7 +206,9 @@ export default function UsersPage() {
             <h3 className="text-sm font-medium text-gray-400">Total Users</h3>
             <Users size={20} className="text-blue-400" />
           </div>
-          <p className="text-2xl font-bold text-white">{pagination?.total || 0}</p>
+          <p className="text-2xl font-bold text-white">
+            {pagination?.total || 0}
+          </p>
         </div>
 
         <div className="bg-gray-800 rounded-xl p-6">
@@ -217,7 +217,7 @@ export default function UsersPage() {
             <BookOpen size={20} className="text-green-400" />
           </div>
           <p className="text-2xl font-bold text-white">
-            {users.filter(u => u.role === 'child').length}
+            {users.filter((u) => u.role === 'child').length}
           </p>
         </div>
 
@@ -227,7 +227,7 @@ export default function UsersPage() {
             <UserCheck size={20} className="text-purple-400" />
           </div>
           <p className="text-2xl font-bold text-white">
-            {users.filter(u => u.role === 'mentor').length}
+            {users.filter((u) => u.role === 'mentor').length}
           </p>
         </div>
 
@@ -237,7 +237,7 @@ export default function UsersPage() {
             <Crown size={20} className="text-red-400" />
           </div>
           <p className="text-2xl font-bold text-white">
-            {users.filter(u => u.role === 'admin').length}
+            {users.filter((u) => u.role === 'admin').length}
           </p>
         </div>
       </div>
@@ -246,7 +246,10 @@ export default function UsersPage() {
       <div className="bg-gray-800 rounded-xl p-6">
         <div className="flex flex-col sm:flex-row gap-4">
           <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+            <Search
+              className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+              size={20}
+            />
             <input
               type="text"
               placeholder="Search users by name or email..."
@@ -313,7 +316,8 @@ export default function UsersPage() {
                         <div className="flex-shrink-0 h-10 w-10">
                           <div className="h-10 w-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center">
                             <span className="text-sm font-medium text-white">
-                              {user.firstName.charAt(0)}{user.lastName.charAt(0)}
+                              {user.firstName.charAt(0)}
+                              {user.lastName.charAt(0)}
                             </span>
                           </div>
                         </div>
@@ -321,20 +325,26 @@ export default function UsersPage() {
                           <div className="text-sm font-medium text-white">
                             {user.firstName} {user.lastName}
                           </div>
-                          <div className="text-sm text-gray-400">{user.email}</div>
+                          <div className="text-sm text-gray-400">
+                            {user.email}
+                          </div>
                         </div>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center space-x-2">
                         {getRoleIcon(user.role)}
-                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getRoleBadgeColor(user.role)}`}>
+                        <span
+                          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getRoleBadgeColor(user.role)}`}
+                        >
                           {user.role}
                         </span>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(user.isActive)}`}>
+                      <span
+                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(user.isActive)}`}
+                      >
                         {getStatusText(user.isActive)}
                       </span>
                     </td>
@@ -360,7 +370,12 @@ export default function UsersPage() {
                         </Link>
                         {user.role !== 'admin' && (
                           <button
-                            onClick={() => deleteUser(user._id, `${user.firstName} ${user.lastName}`)}
+                            onClick={() =>
+                              deleteUser(
+                                user._id,
+                                `${user.firstName} ${user.lastName}`
+                              )
+                            }
                             className="text-red-400 hover:text-red-300"
                           >
                             <Trash2 size={16} />
@@ -376,7 +391,9 @@ export default function UsersPage() {
                     <div className="text-gray-400">
                       <Users size={48} className="mx-auto mb-4 opacity-50" />
                       <p className="text-lg font-medium">No users found</p>
-                      <p className="text-sm">Users will appear here as they register</p>
+                      <p className="text-sm">
+                        Users will appear here as they register
+                      </p>
                     </div>
                   </td>
                 </tr>
@@ -389,7 +406,9 @@ export default function UsersPage() {
         {pagination && pagination.pages > 1 && (
           <div className="bg-gray-700 px-6 py-3 flex items-center justify-between border-t border-gray-600">
             <div className="text-sm text-gray-400">
-              Showing {((pagination.page - 1) * pagination.limit) + 1} to {Math.min(pagination.page * pagination.limit, pagination.total)} of {pagination.total} users
+              Showing {(pagination.page - 1) * pagination.limit + 1} to{' '}
+              {Math.min(pagination.page * pagination.limit, pagination.total)}{' '}
+              of {pagination.total} users
             </div>
             <div className="flex items-center space-x-2">
               <button

@@ -12,7 +12,7 @@ export async function GET() {
     }
 
     await connectToDatabase();
-    
+
     const user = await User.findById(session.user.id).select(
       'firstName lastName email age school createdAt'
     );
@@ -30,9 +30,8 @@ export async function GET() {
         age: user.age,
         school: user.school,
         createdAt: user.createdAt,
-      }
+      },
     });
-
   } catch (error) {
     console.error('Error fetching user profile:', error);
     return NextResponse.json(
@@ -60,7 +59,7 @@ export async function PUT(request: Request) {
     }
 
     await connectToDatabase();
-    
+
     const updatedUser = await User.findByIdAndUpdate(
       session.user.id,
       {
@@ -77,9 +76,8 @@ export async function PUT(request: Request) {
 
     return NextResponse.json({
       success: true,
-      user: updatedUser
+      user: updatedUser,
     });
-
   } catch (error) {
     console.error('Error updating user profile:', error);
     return NextResponse.json(

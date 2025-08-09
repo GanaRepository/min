@@ -127,7 +127,7 @@ export default function MintoonsContactPage() {
           {[...Array(20)].map((_, i) => (
             <div
               key={i}
-              className="absolute w-3 h-3 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full opacity-20 animate-pulse"
+              className="absolute w-3 h-3 bg-gradient-to-r from-blue-500 to-indigo-600  opacity-20 animate-pulse"
               style={{
                 left: `${Math.random() * 100}%`,
                 top: `${Math.random() * 100}%`,
@@ -139,7 +139,7 @@ export default function MintoonsContactPage() {
         </div>
 
         <div className="text-center max-w-2xl mx-auto px-6 relative z-10">
-          <div className="w-32 h-32 bg-gradient-to-r from-blue-600 to-indigo-700 rounded-full flex items-center justify-center mx-auto mb-8 shadow-2xl animate-bounce">
+          <div className="w-32 h-32 bg-gradient-to-r from-blue-600 to-indigo-700  flex items-center justify-center mx-auto mb-8 shadow-2xl animate-bounce">
             <CheckCircle className="w-16 h-16 text-white" />
           </div>
           <h2 className="text-5xl text-gray-800 mb-6 ">
@@ -160,48 +160,25 @@ export default function MintoonsContactPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 text-white relative overflow-hidden">
-      {/* Background Pattern */}
-      {/* <div className="absolute inset-0 opacity-5">
-        <svg width="100%" height="100%" className="absolute inset-0">
-          <defs>
-            <pattern
-              id="grid"
-              width="40"
-              height="40"
-              patternUnits="userSpaceOnUse"
-            >
-              <path
-                d="M 40 0 L 0 0 0 40"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1"
-              />
-            </pattern>
-          </defs>
-          <rect width="100%" height="100%" fill="url(#grid)" />
-        </svg>
-      </div> */}
-
-      <div className="relative z-10 min-h-screen flex flex-col lg:flex-row mt-8 sm:mt-12 lg:mt-16">
-        <div className="w-full lg:w-1/2 flex items-center justify-center p-4 sm:p-8 lg:p-16">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 text-white relative overflow-hidden p-12">
+      <div className="relative z-10 min-h-screen flex flex-col lg:flex-row mt-8 sm:mt-12 lg:mt-16 max-w-7xl mx-auto">
+        <div className="w-full lg:w-1/2 flex items-center justify-center p-4 sm:p-8 lg:p-4">
           <div className="max-w-md sm:max-w-xl">
             {/* Floating badge */}
             <motion.div
-              className="mt-8 sm:mt-12 mb-8 sm:mb-12 inline-flex items-center px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-gradient-to-r from-blue-600/20 to-indigo-600/20 border border-blue-500/30 backdrop-blur-xl"
+              className="mt-8 rounded-full sm:mt-12 mb-8 sm:mb-12 inline-flex items-center px-3 sm:px-4 py-1.5 sm:py-2  bg-gradient-to-r from-blue-600/20 to-indigo-600/20 border border-blue-500/30 backdrop-blur-xl"
               initial={{ opacity: 0, x: -50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.2, duration: 0.8 }}
             >
               <Sparkles className="w-4 h-4 text-blue-400 mr-2" />
-              <span className="text-blue-200  text-xs sm:text-sm">
+              <span className="text-blue-200  text-xs sm:text-sm   ">
                 Creative Writing Education Platform
               </span>
             </motion.div>
-
-            <h1 className="text-4xl font-black text-white mb-4 sm:mb-6 leading-tight sm:leading-none">
-              How can we help you
-              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-400 to-blue-500 animate-[gradient-x_3s_ease_infinite]">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl leading-tight tracking-tight mb-6">
+              <span className="block text-white"> How can we help you</span>
+              <span className="block bg-gradient-to-r from-green-400 via-teal-300 to-cyan-400 bg-clip-text text-transparent">
                 create magic?
               </span>
             </h1>
@@ -230,9 +207,9 @@ export default function MintoonsContactPage() {
               </div>
             </div>
 
-            <div className="bg-white rounded-xl p-6 sm:p-8 border border-gray-100 mb-6 sm:mb-8 shadow-xl relative overflow-hidden">
+            <div className="bg-white  p-6 sm:p-8 border border-gray-100 mb-6 sm:mb-8 shadow-xl relative overflow-hidden">
               {/* Background decoration */}
-              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-full -translate-y-16 translate-x-16 opacity-50"></div>
+              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-50 to-indigo-50  -translate-y-16 translate-x-16 opacity-50"></div>
 
               {/* Star rating at top */}
               <div className="flex items-center justify-between mb-4">
@@ -254,7 +231,7 @@ export default function MintoonsContactPage() {
 
               {/* Author info with avatar placeholder */}
               <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white  text-lg">
+                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600  flex items-center justify-center text-white  text-lg">
                   {testimonials[currentTestimonial].author
                     .split(' ')
                     .map((n) => n[0])
@@ -275,7 +252,7 @@ export default function MintoonsContactPage() {
                 {testimonials.map((_, index) => (
                   <div
                     key={index}
-                    className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                    className={`w-2 h-2  transition-all duration-300 ${
                       index === currentTestimonial
                         ? 'bg-blue-600 w-8'
                         : 'bg-gray-300 hover:bg-gray-400'
@@ -298,7 +275,7 @@ export default function MintoonsContactPage() {
           </div>
         </div>
 
-        <div className="w-full lg:w-1/2 flex items-center justify-center p-4 sm:p-8 lg:p-16">
+        <div className="w-full lg:w-1/2 flex items-center justify-center p-4 sm:p-8 lg:p-4">
           <div className="w-full max-w-xs sm:max-w-lg">
             <div className="bg-white backdrop-blur-2xl  sm: p-4 sm:p-8 lg:p-10 border border-gray-200 shadow-2xl">
               <div className="text-center mb-6 sm:mb-8">
@@ -427,7 +404,7 @@ export default function MintoonsContactPage() {
                   <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   {isSubmitting ? (
                     <div className="flex items-center justify-center gap-3 relative z-10">
-                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                      <div className="w-5 h-5 border-2 border-white/30 border-t-white  animate-spin"></div>
                       <span>Submitting...</span>
                     </div>
                   ) : (

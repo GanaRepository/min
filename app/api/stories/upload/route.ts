@@ -11,7 +11,7 @@ import { AssessmentEngine } from '@/lib/ai/assessment-engine';
 export async function POST(request: NextRequest) {
   try {
     console.log('📝 Story upload request received');
-    
+
     const session = await getServerSession(authOptions);
     if (!session || session.user.role !== 'child') {
       console.log('❌ Unauthorized upload attempt');
@@ -28,9 +28,11 @@ export async function POST(request: NextRequest) {
     if (!canUpload.allowed) {
       console.log(`❌ Upload denied: ${canUpload.reason}`);
       return NextResponse.json(
-        { 
+        {
           error: typeof canUpload.reason === 'string' ? canUpload.reason : '',
-          upgradeRequired: typeof canUpload.reason === 'string' && canUpload.reason.includes('limit reached'),
+          upgradeRequired:
+            typeof canUpload.reason === 'string' &&
+            canUpload.reason.includes('limit reached'),
         },
         { status: 403 }
       );
@@ -55,14 +57,21 @@ export async function POST(request: NextRequest) {
     if (file && file.size > 0) {
       if (file.type !== 'text/plain' && !file.name.endsWith('.txt')) {
         return NextResponse.json(
-          { error: 'Only .txt files are supported. Please upload a plain text file or paste your story directly.' },
+          {
+            error:
+              'Only .txt files are supported. Please upload a plain text file or paste your story directly.',
+          },
           { status: 400 }
         );
       }
-      
-      if (file.size > 1024 * 1024) { // 1MB limit
+
+      if (file.size > 1024 * 1024) {
+        // 1MB limit
         return NextResponse.json(
-          { error: 'File size must be less than 1MB. Please upload a smaller file or paste text directly.' },
+          {
+            error:
+              'File size must be less than 1MB. Please upload a smaller file or paste text directly.',
+          },
           { status: 400 }
         );
       }
@@ -71,7 +80,10 @@ export async function POST(request: NextRequest) {
         storyContent = await file.text();
       } catch (error) {
         return NextResponse.json(
-          { error: 'Failed to read file. Please try uploading again or paste text directly.' },
+          {
+            error:
+              'Failed to read file. Please try uploading again or paste text directly.',
+          },
           { status: 400 }
         );
       }
@@ -96,7 +108,10 @@ export async function POST(request: NextRequest) {
     const wordCount = storyContent.trim().split(/\s+/).filter(Boolean).length;
     if (wordCount < 50) {
       return NextResponse.json(
-        { error: 'Story must be at least 50 words long for meaningful assessment' },
+        {
+          error:
+            'Story must be at least 50 words long for meaningful assessment',
+        },
         { status: 400 }
       );
     }
@@ -113,10 +128,7 @@ export async function POST(request: NextRequest) {
     // Get user for story number generation
     const user = await User.findById(session.user.id);
     if (!user) {
-      return NextResponse.json(
-        { error: 'User not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
     // Get next story number
@@ -127,7 +139,9 @@ export async function POST(request: NextRequest) {
 
     const nextStoryNumber = (lastSession?.storyNumber || 0) + 1;
 
-    console.log(`📚 Creating story session #${nextStoryNumber} for user ${user.email}`);
+    console.log(
+      `📚 Creating story session #${nextStoryNumber} for user ${user.email}`
+    );
 
     // Create story session for assessment
     const storySession = await StorySession.create({
@@ -152,7 +166,7 @@ export async function POST(request: NextRequest) {
     // Run advanced assessment
     try {
       console.log('🔍 Starting advanced assessment...');
-      
+
       const assessmentResult = await AssessmentEngine.assessUploadedStory(
         storyContent,
         title.trim(),
@@ -160,9 +174,15 @@ export async function POST(request: NextRequest) {
       );
 
       console.log('📊 Assessment completed successfully');
-      console.log(`🔍 Plagiarism Score: ${assessmentResult.integrityAnalysis.originalityScore}%`);
-      console.log(`🤖 AI Detection Score: ${assessmentResult.integrityAnalysis.aiDetectionResult.overallScore}%`);
-      console.log(`⚠️ Integrity Risk: ${assessmentResult.integrityAnalysis.integrityRisk}`);
+      console.log(
+        `🔍 Plagiarism Score: ${assessmentResult.integrityAnalysis.originalityScore}%`
+      );
+      console.log(
+        `🤖 AI Detection Score: ${assessmentResult.integrityAnalysis.aiDetectionResult.overallScore}%`
+      );
+      console.log(
+        `⚠️ Integrity Risk: ${assessmentResult.integrityAnalysis.integrityRisk}`
+      );
       console.log(`📈 Overall Score: ${assessmentResult.overallScore}%`);
 
       // Update story session with advanced assessment
@@ -174,8 +194,10 @@ export async function POST(request: NextRequest) {
             creativityScore: assessmentResult.categoryScores.creativity,
             vocabularyScore: assessmentResult.categoryScores.vocabulary,
             structureScore: assessmentResult.categoryScores.structure,
-            characterDevelopmentScore: assessmentResult.categoryScores.characterDevelopment,
-            plotDevelopmentScore: assessmentResult.categoryScores.plotDevelopment,
+            characterDevelopmentScore:
+              assessmentResult.categoryScores.characterDevelopment,
+            plotDevelopmentScore:
+              assessmentResult.categoryScores.plotDevelopment,
             overallScore: assessmentResult.overallScore,
             readingLevel: assessmentResult.categoryScores.readingLevel,
             feedback: assessmentResult.educationalFeedback.teacherComment,
@@ -183,47 +205,72 @@ export async function POST(request: NextRequest) {
             improvements: assessmentResult.educationalFeedback.improvements,
             vocabularyUsed: [], // Legacy field
             suggestedWords: [], // Legacy field
-            educationalInsights: assessmentResult.educationalFeedback.encouragement,
-            
+            educationalInsights:
+              assessmentResult.educationalFeedback.encouragement,
+
             // NEW: Advanced integrity fields
-            plagiarismScore: assessmentResult.integrityAnalysis.originalityScore,
-            aiDetectionScore: assessmentResult.integrityAnalysis.aiDetectionResult.overallScore,
+            plagiarismScore:
+              assessmentResult.integrityAnalysis.originalityScore,
+            aiDetectionScore:
+              assessmentResult.integrityAnalysis.aiDetectionResult.overallScore,
             integrityRisk: assessmentResult.integrityAnalysis.integrityRisk,
-            
+
             // Store detailed analysis for admin review
             integrityAnalysis: {
               plagiarismResult: {
-                score: assessmentResult.integrityAnalysis.plagiarismResult.overallScore,
-                riskLevel: assessmentResult.integrityAnalysis.plagiarismResult.riskLevel,
-                violationCount: assessmentResult.integrityAnalysis.plagiarismResult.violations?.length || 0,
-                detailedAnalysis: assessmentResult.integrityAnalysis.plagiarismResult.detailedAnalysis,
+                score:
+                  assessmentResult.integrityAnalysis.plagiarismResult
+                    .overallScore,
+                riskLevel:
+                  assessmentResult.integrityAnalysis.plagiarismResult.riskLevel,
+                violationCount:
+                  assessmentResult.integrityAnalysis.plagiarismResult.violations
+                    ?.length || 0,
+                detailedAnalysis:
+                  assessmentResult.integrityAnalysis.plagiarismResult
+                    .detailedAnalysis,
               },
               aiDetectionResult: {
-                score: assessmentResult.integrityAnalysis.aiDetectionResult.overallScore,
-                likelihood: assessmentResult.integrityAnalysis.aiDetectionResult.likelihood,
-                confidence: assessmentResult.integrityAnalysis.aiDetectionResult.confidence,
-                indicatorCount: assessmentResult.integrityAnalysis.aiDetectionResult.indicators?.length || 0,
-                detailedAnalysis: assessmentResult.integrityAnalysis.aiDetectionResult.detailedAnalysis,
+                score:
+                  assessmentResult.integrityAnalysis.aiDetectionResult
+                    .overallScore,
+                likelihood:
+                  assessmentResult.integrityAnalysis.aiDetectionResult
+                    .likelihood,
+                confidence:
+                  assessmentResult.integrityAnalysis.aiDetectionResult
+                    .confidence,
+                indicatorCount:
+                  assessmentResult.integrityAnalysis.aiDetectionResult
+                    .indicators?.length || 0,
+                detailedAnalysis:
+                  assessmentResult.integrityAnalysis.aiDetectionResult
+                    .detailedAnalysis,
               },
             },
-            
+
             // Educational enhancements
             recommendations: assessmentResult.recommendations,
             progressTracking: assessmentResult.progressTracking,
-            
+
             // Assessment metadata
             assessmentVersion: '2.0', // Mark as advanced assessment
             assessmentDate: new Date(),
           },
           overallScore: assessmentResult.overallScore,
-          status: assessmentResult.integrityAnalysis.integrityRisk === 'critical' ? 'flagged' : 'completed',
-        }
+          status:
+            assessmentResult.integrityAnalysis.integrityRisk === 'critical'
+              ? 'flagged'
+              : 'completed',
+        },
       });
 
       // Increment user's assessment upload counter
       await UsageManager.incrementAssessmentUpload(session.user.id);
 
-      console.log(`📝 Story uploaded and assessed successfully: ${storySession._id}`);
+      console.log(
+        `📝 Story uploaded and assessed successfully: ${storySession._id}`
+      );
 
       // Prepare response based on integrity risk
       const response = {
@@ -240,46 +287,63 @@ export async function POST(request: NextRequest) {
         assessment: {
           overallScore: assessmentResult.overallScore,
           integrityAnalysis: {
-            originalityScore: assessmentResult.integrityAnalysis.originalityScore,
-            plagiarismScore: assessmentResult.integrityAnalysis.plagiarismResult.overallScore,
-            aiDetectionScore: assessmentResult.integrityAnalysis.aiDetectionResult.overallScore,
+            originalityScore:
+              assessmentResult.integrityAnalysis.originalityScore,
+            plagiarismScore:
+              assessmentResult.integrityAnalysis.plagiarismResult.overallScore,
+            aiDetectionScore:
+              assessmentResult.integrityAnalysis.aiDetectionResult.overallScore,
             integrityRisk: assessmentResult.integrityAnalysis.integrityRisk,
           },
           educationalFeedback: assessmentResult.educationalFeedback,
           categoryScores: assessmentResult.categoryScores,
         },
-        message: assessmentResult.integrityAnalysis.integrityRisk === 'critical' 
-          ? 'Story uploaded but flagged for review due to integrity concerns.'
-          : 'Story uploaded and assessed successfully!',
+        message:
+          assessmentResult.integrityAnalysis.integrityRisk === 'critical'
+            ? 'Story uploaded but flagged for review due to integrity concerns.'
+            : 'Story uploaded and assessed successfully!',
       };
 
       // Add warnings property to response object using type assertion for all usages
       (response as any).warnings = [];
-      if (assessmentResult.integrityAnalysis.plagiarismResult.riskLevel !== 'low') {
-        (response as any).warnings.push('Potential plagiarism detected. Please ensure all content is original.');
+      if (
+        assessmentResult.integrityAnalysis.plagiarismResult.riskLevel !== 'low'
+      ) {
+        (response as any).warnings.push(
+          'Potential plagiarism detected. Please ensure all content is original.'
+        );
       }
-      if (assessmentResult.integrityAnalysis.aiDetectionResult.likelihood !== 'very_low' && 
-          assessmentResult.integrityAnalysis.aiDetectionResult.likelihood !== 'low') {
-        (response as any).warnings.push('Content may be AI-generated. Please submit only your own original writing.');
+      if (
+        assessmentResult.integrityAnalysis.aiDetectionResult.likelihood !==
+          'very_low' &&
+        assessmentResult.integrityAnalysis.aiDetectionResult.likelihood !==
+          'low'
+      ) {
+        (response as any).warnings.push(
+          'Content may be AI-generated. Please submit only your own original writing.'
+        );
       }
 
       return NextResponse.json(response);
-
     } catch (assessmentError) {
       console.error('❌ Assessment failed:', assessmentError);
-      
+
       // Still save the story but mark assessment as failed
       await StorySession.findByIdAndUpdate(storySession._id, {
         $set: {
           status: 'completed',
           assessment: {
             overallScore: 0,
-            feedback: 'Assessment temporarily unavailable. Please try again later.',
+            feedback:
+              'Assessment temporarily unavailable. Please try again later.',
             error: true,
-            errorMessage: assessmentError instanceof Error ? assessmentError.message : 'Unknown error',
+            errorMessage:
+              assessmentError instanceof Error
+                ? assessmentError.message
+                : 'Unknown error',
             assessmentDate: new Date(),
-          }
-        }
+          },
+        },
       });
 
       // Still increment usage since story was uploaded
@@ -295,17 +359,17 @@ export async function POST(request: NextRequest) {
           assessmentAttempts: 0,
           maxAttempts: 3,
         },
-        warning: 'Story saved successfully, but assessment failed. You can retry assessment from your dashboard.',
+        warning:
+          'Story saved successfully, but assessment failed. You can retry assessment from your dashboard.',
         error: 'Assessment service temporarily unavailable',
       });
     }
-
   } catch (error) {
     console.error('❌ Upload error:', error);
     return NextResponse.json(
-      { 
+      {
         error: 'Failed to upload story',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        details: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
     );

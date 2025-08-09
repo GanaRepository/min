@@ -107,7 +107,8 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
               <div className="flex items-center space-x-3">
                 <div className="w-8 h-8 bg-gradient-to-r from-purple-400 to-pink-500 rounded-full flex items-center justify-center">
                   <span className="text-white font-semibold text-sm">
-                    {session.user.firstName?.charAt(0) || session.user.name?.charAt(0)}
+                    {session.user.firstName?.charAt(0) ||
+                      session.user.name?.charAt(0)}
                   </span>
                 </div>
                 <span className="text-white text-sm">
@@ -133,7 +134,10 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
   // Regular dashboard layout with sidebar
   // Fix: Ensure user.name is always string or undefined, never null
-  const safeUser = { ...session.user, name: typeof session.user.name === 'string' ? session.user.name : undefined };
+  const safeUser = {
+    ...session.user,
+    name: typeof session.user.name === 'string' ? session.user.name : undefined,
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900">

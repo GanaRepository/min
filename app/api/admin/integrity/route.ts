@@ -26,29 +26,28 @@ export async function GET(request: NextRequest) {
     switch (action) {
       case 'overview':
         return await getIntegrityOverview();
-      
+
       case 'flagged':
         return await getFlaggedContent(limit, page);
-      
+
       case 'stats':
         return await getIntegrityStats();
-      
+
       case 'recent':
         return await getRecentAssessments(limit);
-      
+
       default:
         return NextResponse.json(
           { error: 'Invalid action parameter' },
           { status: 400 }
         );
     }
-
   } catch (error) {
     console.error('❌ Admin integrity API error:', error);
     return NextResponse.json(
-      { 
+      {
         error: 'Failed to fetch integrity data',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        details: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
     );
@@ -56,43 +55,44 @@ export async function GET(request: NextRequest) {
 }
 
 async function getIntegrityOverview() {
-  const [totalStories, flaggedContent, integrityStats, assessmentStats] = await Promise.all([
-    // Total stories with assessments
-    StorySession.countDocuments({
-      assessment: { $exists: true }
-    }),
-    
-    // Flagged content count
-    StorySession.countDocuments({
-      'assessment.integrityRisk': { $in: ['high', 'critical'] }
-    }),
-    
-    // Integrity statistics
-    StorySession.aggregate([
-      {
-        $match: {
-          assessment: { $exists: true },
-          'assessment.integrityRisk': { $exists: true }
-        }
-      },
-      {
-        $group: {
-          _id: '$assessment.integrityRisk',
-          count: { $sum: 1 }
-        }
-      }
-    ]),
-    
-    // Assessment statistics from engine
-    AssessmentEngine.getAssessmentStats()
-  ]);
+  const [totalStories, flaggedContent, integrityStats, assessmentStats] =
+    await Promise.all([
+      // Total stories with assessments
+      StorySession.countDocuments({
+        assessment: { $exists: true },
+      }),
+
+      // Flagged content count
+      StorySession.countDocuments({
+        'assessment.integrityRisk': { $in: ['high', 'critical'] },
+      }),
+
+      // Integrity statistics
+      StorySession.aggregate([
+        {
+          $match: {
+            assessment: { $exists: true },
+            'assessment.integrityRisk': { $exists: true },
+          },
+        },
+        {
+          $group: {
+            _id: '$assessment.integrityRisk',
+            count: { $sum: 1 },
+          },
+        },
+      ]),
+
+      // Assessment statistics from engine
+      AssessmentEngine.getAssessmentStats(),
+    ]);
 
   // FIXED: Process integrity stats to create riskDistribution
   const riskDistribution: { [key: string]: number } = {
     low: 0,
     medium: 0,
     high: 0,
-    critical: 0
+    critical: 0,
   };
 
   // Process the aggregated integrity stats
@@ -107,7 +107,8 @@ async function getIntegrityOverview() {
   const high = riskDistribution.high || 0;
   const critical = riskDistribution.critical || 0;
 
-  const flaggedPercentage = totalStories > 0 ? (flaggedContent / totalStories * 100).toFixed(1) : '0';
+  const flaggedPercentage =
+    totalStories > 0 ? ((flaggedContent / totalStories) * 100).toFixed(1) : '0';
 
   return NextResponse.json({
     success: true,
@@ -119,38 +120,43 @@ async function getIntegrityOverview() {
         low,
         medium,
         high,
-        critical
+        critical,
       },
       assessmentStats: {
         averageScore: Math.round(assessmentStats.averageScore || 0),
         totalAssessments: assessmentStats.totalAssessments || 0,
         aiDetectedCount: assessmentStats.aiDetectedCount || 0,
         plagiarismDetectedCount: assessmentStats.plagiarismDetectedCount || 0,
-      }
-    }
+      },
+    },
   });
 }
 
 async function getFlaggedContent(limit: number, page: number) {
   const skip = (page - 1) * limit;
-  
+
   const [flaggedStories, totalCount] = await Promise.all([
     StorySession.find({
-      'assessment.integrityRisk': { $in: ['high', 'critical'] }
+      'assessment.integrityRisk': { $in: ['high', 'critical'] },
     })
-    .populate('childId', 'firstName lastName email age')
-    .select('title storyNumber assessment.integrityRisk assessment.plagiarismScore assessment.aiDetectionScore assessment.assessmentDate childId createdAt')
-    .sort({ 'assessment.assessmentDate': -1 })
-    .skip(skip)
-    .limit(limit),
-    
+      .populate('childId', 'firstName lastName email age')
+      .select(
+        'title storyNumber assessment.integrityRisk assessment.plagiarismScore assessment.aiDetectionScore assessment.assessmentDate childId createdAt'
+      )
+      .sort({ 'assessment.assessmentDate': -1 })
+      .skip(skip)
+      .limit(limit),
+
     StorySession.countDocuments({
-      'assessment.integrityRisk': { $in: ['high', 'critical'] }
-    })
+      'assessment.integrityRisk': { $in: ['high', 'critical'] },
+    }),
   ]);
 
-  const processedStories = flaggedStories.map(story => {
-    const child = typeof story.childId === 'object' && story.childId !== null ? story.childId : {};
+  const processedStories = flaggedStories.map((story) => {
+    const child =
+      typeof story.childId === 'object' && story.childId !== null
+        ? story.childId
+        : {};
     // FIXED: Use type assertion for _id property on child
     const childId = (child as any)._id ? (child as any)._id.toString() : '';
 
@@ -183,7 +189,7 @@ async function getFlaggedContent(limit: number, page: number) {
       totalPages: Math.ceil(totalCount / limit),
       totalCount,
       hasMore: skip + flaggedStories.length < totalCount,
-    }
+    },
   });
 }
 
@@ -194,8 +200,8 @@ async function getIntegrityStats() {
       {
         $match: {
           assessment: { $exists: true },
-          'assessment.integrityRisk': { $exists: true }
-        }
+          'assessment.integrityRisk': { $exists: true },
+        },
       },
       {
         $group: {
@@ -204,16 +210,16 @@ async function getIntegrityStats() {
           avgPlagiarismScore: { $avg: '$assessment.plagiarismScore' },
           avgAIScore: { $avg: '$assessment.aiDetectionScore' },
           avgOverallScore: { $avg: '$assessment.overallScore' },
-        }
-      }
+        },
+      },
     ]),
 
     // Score distribution
     StorySession.aggregate([
       {
         $match: {
-          assessment: { $exists: true }
-        }
+          assessment: { $exists: true },
+        },
       },
       {
         $group: {
@@ -222,28 +228,46 @@ async function getIntegrityStats() {
             $push: {
               $switch: {
                 branches: [
-                  { case: { $lt: ['$assessment.plagiarismScore', 30] }, then: 'high_risk' },
-                  { case: { $lt: ['$assessment.plagiarismScore', 50] }, then: 'medium_risk' },
-                  { case: { $lt: ['$assessment.plagiarismScore', 70] }, then: 'low_risk' },
+                  {
+                    case: { $lt: ['$assessment.plagiarismScore', 30] },
+                    then: 'high_risk',
+                  },
+                  {
+                    case: { $lt: ['$assessment.plagiarismScore', 50] },
+                    then: 'medium_risk',
+                  },
+                  {
+                    case: { $lt: ['$assessment.plagiarismScore', 70] },
+                    then: 'low_risk',
+                  },
                 ],
-                default: 'very_low_risk'
-              }
-            }
+                default: 'very_low_risk',
+              },
+            },
           },
           aiDistribution: {
             $push: {
               $switch: {
                 branches: [
-                  { case: { $lt: ['$assessment.aiDetectionScore', 30] }, then: 'high_risk' },
-                  { case: { $lt: ['$assessment.aiDetectionScore', 50] }, then: 'medium_risk' },
-                  { case: { $lt: ['$assessment.aiDetectionScore', 70] }, then: 'low_risk' },
+                  {
+                    case: { $lt: ['$assessment.aiDetectionScore', 30] },
+                    then: 'high_risk',
+                  },
+                  {
+                    case: { $lt: ['$assessment.aiDetectionScore', 50] },
+                    then: 'medium_risk',
+                  },
+                  {
+                    case: { $lt: ['$assessment.aiDetectionScore', 70] },
+                    then: 'low_risk',
+                  },
                 ],
-                default: 'very_low_risk'
-              }
-            }
-          }
-        }
-      }
+                default: 'very_low_risk',
+              },
+            },
+          },
+        },
+      },
     ]),
 
     // Time-based trends (last 30 days)
@@ -251,17 +275,17 @@ async function getIntegrityStats() {
       {
         $match: {
           'assessment.assessmentDate': {
-            $gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
-          }
-        }
+            $gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+          },
+        },
       },
       {
         $group: {
           _id: {
             $dateToString: {
               format: '%Y-%m-%d',
-              date: '$assessment.assessmentDate'
-            }
+              date: '$assessment.assessmentDate',
+            },
           },
           totalAssessments: { $sum: 1 },
           flaggedCount: {
@@ -269,42 +293,46 @@ async function getIntegrityStats() {
               $cond: [
                 { $in: ['$assessment.integrityRisk', ['high', 'critical']] },
                 1,
-                0
-              ]
-            }
+                0,
+              ],
+            },
           },
           avgPlagiarismScore: { $avg: '$assessment.plagiarismScore' },
-          avgAIScore: { $avg: '$assessment.aiDetectionScore' }
-        }
+          avgAIScore: { $avg: '$assessment.aiDetectionScore' },
+        },
       },
       {
-        $sort: { _id: 1 }
-      }
-    ])
+        $sort: { _id: 1 },
+      },
+    ]),
   ]);
 
   return NextResponse.json({
     success: true,
     stats: {
       riskDistribution: riskStats,
-      scoreDistribution: scoreStats[0] || { plagiarismDistribution: [], aiDistribution: [] },
+      scoreDistribution: scoreStats[0] || {
+        plagiarismDistribution: [],
+        aiDistribution: [],
+      },
       timeTrends: timeStats,
-    }
+    },
   });
 }
 
 async function getRecentAssessments(limit: number) {
   const recentAssessments = await StorySession.find({
     assessment: { $exists: true },
-    'assessment.assessmentDate': { $exists: true }
+    'assessment.assessmentDate': { $exists: true },
   })
-  .populate('childId', 'firstName lastName email')
-  .select('title storyNumber assessment childId')
-  .sort({ 'assessment.assessmentDate': -1 })
-  .limit(limit);
+    .populate('childId', 'firstName lastName email')
+    .select('title storyNumber assessment childId')
+    .sort({ 'assessment.assessmentDate': -1 })
+    .limit(limit);
 
-  const processedAssessments = recentAssessments.map(story => {
-    const child = story.childId && typeof story.childId === 'object' ? story.childId : {};
+  const processedAssessments = recentAssessments.map((story) => {
+    const child =
+      story.childId && typeof story.childId === 'object' ? story.childId : {};
     return {
       id: story._id,
       title: story.title,
@@ -321,7 +349,7 @@ async function getRecentAssessments(limit: number) {
         aiDetectionScore: story.assessment?.aiDetectionScore,
         assessmentDate: story.assessment?.assessmentDate,
         version: story.assessment?.assessmentVersion || '1.0',
-      }
+      },
     };
   });
 
@@ -369,17 +397,13 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    return NextResponse.json(
-      { error: 'Invalid action' },
-      { status: 400 }
-    );
-
+    return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
   } catch (error) {
     console.error('❌ Admin integrity POST error:', error);
     return NextResponse.json(
-      { 
+      {
         error: 'Failed to process admin action',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        details: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
     );

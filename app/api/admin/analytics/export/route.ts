@@ -14,7 +14,10 @@ export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     if (!session || session.user.role !== 'admin') {
-      return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
+      return NextResponse.json(
+        { error: 'Admin access required' },
+        { status: 403 }
+      );
     }
 
     const { searchParams } = new URL(request.url);
@@ -23,7 +26,9 @@ export async function GET(request: NextRequest) {
     await connectToDatabase();
 
     const now = new Date();
-    const startDate = new Date(now.getTime() - parseInt(timeRange) * 24 * 60 * 60 * 1000);
+    const startDate = new Date(
+      now.getTime() - parseInt(timeRange) * 24 * 60 * 60 * 1000
+    );
 
     const [users, stories, comments] = await Promise.all([
       User.aggregate([
@@ -110,10 +115,12 @@ export async function GET(request: NextRequest) {
         'Content-Disposition': `attachment; filename="analytics-export-${timeRange}days-${now.toISOString().split('T')[0]}.csv"`,
       },
     });
-
   } catch (error) {
     console.error('Error exporting analytics:', error);
-    return NextResponse.json({ error: 'Failed to export analytics' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to export analytics' },
+      { status: 500 }
+    );
   }
 }
 
@@ -129,7 +136,8 @@ function generateAnalyticsCSV(data: any) {
   });
 
   csv += '\n\nSTORIES\n';
-  csv += 'Title,Author Name,Author Email,Status,Total Words,Created At,Completed At\n';
+  csv +=
+    'Title,Author Name,Author Email,Status,Total Words,Created At,Completed At\n';
   stories.forEach((story: any) => {
     const author = story.author[0];
     csv += `"${story.title}","${author?.firstName} ${author?.lastName}",${author?.email},${story.status},${story.totalWords},${story.createdAt},${story.completedAt || 'Not completed'}\n`;

@@ -20,7 +20,7 @@ export class AssessmentEngine {
     // Get story session and user data
     const [storySession, user] = await Promise.all([
       StorySession.findById(sessionId),
-      User.findById(userId)
+      User.findById(userId),
     ]);
 
     if (!storySession) {
@@ -31,10 +31,12 @@ export class AssessmentEngine {
     const previousSessions = await StorySession.find({
       childId: userId,
       assessment: { $exists: true },
-      'assessment.overallScore': { $exists: true }
-    }).sort({ createdAt: -1 }).limit(5);
+      'assessment.overallScore': { $exists: true },
+    })
+      .sort({ createdAt: -1 })
+      .limit(5);
 
-    const previousAttempts = previousSessions.map(session => ({
+    const previousAttempts = previousSessions.map((session) => ({
       assessmentDate: session.completedAt || session.createdAt,
       overallScore: session.assessment?.overallScore || 0,
       categoryScores: {
@@ -42,27 +44,34 @@ export class AssessmentEngine {
         creativity: session.assessment?.creativityScore || 0,
         vocabulary: session.assessment?.vocabularyScore || 0,
         structure: session.assessment?.structureScore || 0,
-        characterDevelopment: session.assessment?.characterDevelopmentScore || 0,
+        characterDevelopment:
+          session.assessment?.characterDevelopmentScore || 0,
         plotDevelopment: session.assessment?.plotDevelopmentScore || 0,
       },
     }));
 
     // Use the new unified assessment engine
     // Only allow valid genres and handle undefined elements
-    const allowedGenres = ['creative', 'fantasy', 'adventure', 'mystery'] as const;
+    const allowedGenres = [
+      'creative',
+      'fantasy',
+      'adventure',
+      'mystery',
+    ] as const;
     const elementGenre = storySession.elements?.genre;
-    const genre = elementGenre && allowedGenres.includes(elementGenre as any) ? elementGenre as typeof allowedGenres[number] : 'creative';
-    
-    const assessmentResult = await UnifiedAssessmentEngine.performCompleteAssessment(
-      storyContent,
-      {
+    const genre =
+      elementGenre && allowedGenres.includes(elementGenre as any)
+        ? (elementGenre as (typeof allowedGenres)[number])
+        : 'creative';
+
+    const assessmentResult =
+      await UnifiedAssessmentEngine.performCompleteAssessment(storyContent, {
         childAge: user?.age || 10,
         isCollaborativeStory: false, // Uploaded stories are not collaborative
         storyTitle: storySession.title,
         previousAttempts,
         expectedGenre: genre,
-      }
-    );
+      });
 
     return assessmentResult;
   }
@@ -78,15 +87,17 @@ export class AssessmentEngine {
     await connectToDatabase();
 
     const user = await User.findById(userId);
-    
+
     // Get previous assessments for progress tracking
     const previousSessions = await StorySession.find({
       childId: userId,
       assessment: { $exists: true },
-      'assessment.overallScore': { $exists: true }
-    }).sort({ createdAt: -1 }).limit(5);
+      'assessment.overallScore': { $exists: true },
+    })
+      .sort({ createdAt: -1 })
+      .limit(5);
 
-    const previousAttempts = previousSessions.map(session => ({
+    const previousAttempts = previousSessions.map((session) => ({
       assessmentDate: session.completedAt || session.createdAt,
       overallScore: session.assessment?.overallScore || 0,
       categoryScores: {
@@ -94,22 +105,21 @@ export class AssessmentEngine {
         creativity: session.assessment?.creativityScore || 0,
         vocabulary: session.assessment?.vocabularyScore || 0,
         structure: session.assessment?.structureScore || 0,
-        characterDevelopment: session.assessment?.characterDevelopmentScore || 0,
+        characterDevelopment:
+          session.assessment?.characterDevelopmentScore || 0,
         plotDevelopment: session.assessment?.plotDevelopmentScore || 0,
       },
     }));
 
     // Use the new unified assessment engine
-    const assessmentResult = await UnifiedAssessmentEngine.performCompleteAssessment(
-      storyContent,
-      {
+    const assessmentResult =
+      await UnifiedAssessmentEngine.performCompleteAssessment(storyContent, {
         childAge: user?.age || 10,
         isCollaborativeStory: false, // Uploaded stories are not collaborative
         storyTitle: title,
         previousAttempts,
         expectedGenre: 'creative',
-      }
-    );
+      });
 
     return assessmentResult;
   }
@@ -123,7 +133,8 @@ export class AssessmentEngine {
       creativityScore: assessmentResult.categoryScores.creativity,
       vocabularyScore: assessmentResult.categoryScores.vocabulary,
       structureScore: assessmentResult.categoryScores.structure,
-      characterDevelopmentScore: assessmentResult.categoryScores.characterDevelopment,
+      characterDevelopmentScore:
+        assessmentResult.categoryScores.characterDevelopment,
       plotDevelopmentScore: assessmentResult.categoryScores.plotDevelopment,
       overallScore: assessmentResult.overallScore,
       readingLevel: assessmentResult.categoryScores.readingLevel,
@@ -133,10 +144,11 @@ export class AssessmentEngine {
       vocabularyUsed: [], // Legacy field - kept empty
       suggestedWords: [], // Legacy field - kept empty
       educationalInsights: assessmentResult.educationalFeedback.encouragement,
-      
+
       // NEW: Advanced integrity analysis
       plagiarismScore: assessmentResult.integrityAnalysis.originalityScore,
-      aiDetectionScore: assessmentResult.integrityAnalysis.aiDetectionResult.overallScore,
+      aiDetectionScore:
+        assessmentResult.integrityAnalysis.aiDetectionResult.overallScore,
       integrityRisk: assessmentResult.integrityAnalysis.integrityRisk,
       integrityDetails: {
         plagiarism: assessmentResult.integrityAnalysis.plagiarismResult,
@@ -148,15 +160,29 @@ export class AssessmentEngine {
   }
 
   // Keep existing method for backward compatibility
-  static async generateDetailedAssessment(content: string, elements: any, stats: any) {
-    console.log('🔄 Using legacy assessment method - consider upgrading to assessStory()');
-    
+  static async generateDetailedAssessment(
+    content: string,
+    elements: any,
+    stats: any
+  ) {
+    console.log(
+      '🔄 Using legacy assessment method - consider upgrading to assessStory()'
+    );
+
     // Use advanced assessment but return in old format
-    const result = await UnifiedAssessmentEngine.performCompleteAssessment(content, {
-      childAge: 10, // Default age
-      isCollaborativeStory: false,
-      expectedGenre: (elements?.genre as 'creative' | 'fantasy' | 'adventure' | 'mystery') || 'creative',
-    });
+    const result = await UnifiedAssessmentEngine.performCompleteAssessment(
+      content,
+      {
+        childAge: 10, // Default age
+        isCollaborativeStory: false,
+        expectedGenre:
+          (elements?.genre as
+            | 'creative'
+            | 'fantasy'
+            | 'adventure'
+            | 'mystery') || 'creative',
+      }
+    );
 
     return this.convertToLegacyFormat(result);
   }
@@ -206,8 +232,8 @@ export class AssessmentEngine {
       {
         $match: {
           assessment: { $exists: true },
-          'assessment.overallScore': { $exists: true }
-        }
+          'assessment.overallScore': { $exists: true },
+        },
       },
       {
         $group: {
@@ -219,38 +245,32 @@ export class AssessmentEngine {
               $cond: [
                 { $in: ['$assessment.integrityRisk', ['high', 'critical']] },
                 1,
-                0
-              ]
-            }
+                0,
+              ],
+            },
           },
           aiDetectedCount: {
             $sum: {
-              $cond: [
-                { $lt: ['$assessment.aiDetectionScore', 70] },
-                1,
-                0
-              ]
-            }
+              $cond: [{ $lt: ['$assessment.aiDetectionScore', 70] }, 1, 0],
+            },
           },
           plagiarismDetectedCount: {
             $sum: {
-              $cond: [
-                { $lt: ['$assessment.plagiarismScore', 70] },
-                1,
-                0
-              ]
-            }
-          }
-        }
-      }
+              $cond: [{ $lt: ['$assessment.plagiarismScore', 70] }, 1, 0],
+            },
+          },
+        },
+      },
     ]);
 
-    return stats[0] || {
-      totalAssessments: 0,
-      averageScore: 0,
-      highRiskCount: 0,
-      aiDetectedCount: 0,
-      plagiarismDetectedCount: 0,
-    };
+    return (
+      stats[0] || {
+        totalAssessments: 0,
+        averageScore: 0,
+        highRiskCount: 0,
+        aiDetectedCount: 0,
+        plagiarismDetectedCount: 0,
+      }
+    );
   }
 }

@@ -12,15 +12,21 @@ export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     if (!session || session.user.role !== 'admin') {
-      return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
+      return NextResponse.json(
+        { error: 'Admin access required' },
+        { status: 403 }
+      );
     }
 
     const { storyIds, action } = await request.json();
 
     if (!storyIds || !Array.isArray(storyIds) || !action) {
-      return NextResponse.json({ 
-        error: 'Story IDs array and action are required' 
-      }, { status: 400 });
+      return NextResponse.json(
+        {
+          error: 'Story IDs array and action are required',
+        },
+        { status: 400 }
+      );
     }
 
     await connectToDatabase();
@@ -65,9 +71,11 @@ export async function POST(request: NextRequest) {
       message,
       modifiedCount: result.modifiedCount,
     });
-
   } catch (error) {
     console.error('Error bulk moderating stories:', error);
-    return NextResponse.json({ error: 'Failed to bulk moderate stories' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to bulk moderate stories' },
+      { status: 500 }
+    );
   }
 }

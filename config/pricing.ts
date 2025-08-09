@@ -29,12 +29,12 @@ export const PRICING_TIERS: Record<string, PricingTier> = {
       'Basic progress tracking',
     ],
   },
-  
+
   STORY_PACK: {
     id: 'story_pack',
     name: 'Story Pack',
     description: 'Unlock more stories and assessments for the month',
-    price: 15.00,
+    price: 15.0,
     currency: 'USD',
     type: 'one_time',
     benefits: [
@@ -49,12 +49,12 @@ export const PRICING_TIERS: Record<string, PricingTier> = {
     stripePriceId: process.env.STRIPE_STORY_PACK_PRICE_ID,
     popular: true,
   },
-  
+
   STORY_PUBLICATION: {
     id: 'story_publication',
     name: 'Story Publication',
     description: 'Make your story public and competition-ready',
-    price: 10.00,
+    price: 10.0,
     currency: 'USD',
     type: 'one_time',
     benefits: [
@@ -68,11 +68,11 @@ export const PRICING_TIERS: Record<string, PricingTier> = {
     stripeProductId: process.env.STRIPE_PUBLICATION_PRODUCT_ID,
     stripePriceId: process.env.STRIPE_PUBLICATION_PRICE_ID,
   },
-  
+
   PHYSICAL_BOOK: {
     id: 'physical_book',
     name: 'Physical Books',
-    description: 'Custom printed books with your child\'s stories',
+    description: "Custom printed books with your child's stories",
     price: 0, // Variable pricing
     currency: 'USD',
     type: 'one_time',
@@ -92,7 +92,7 @@ export const STRIPE_CONFIG = {
   publishableKey: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!,
   secretKey: process.env.STRIPE_SECRET_KEY!,
   webhookSecret: process.env.STRIPE_WEBHOOK_SECRET!,
-  
+
   // Product and Price IDs (set these in your .env file)
   products: {
     storyPack: {
@@ -104,7 +104,7 @@ export const STRIPE_CONFIG = {
       priceId: process.env.STRIPE_PUBLICATION_PRICE_ID!,
     },
   },
-  
+
   // Checkout session configuration
   checkoutSession: {
     mode: 'payment' as const,
@@ -144,13 +144,13 @@ export function validatePurchaseRequest(
   tier: PricingTier | null;
 } {
   const errors: string[] = [];
-  
+
   if (!userId) {
     errors.push('User ID is required');
   }
-  
+
   let tier: PricingTier | null = null;
-  
+
   if (productType === 'story_pack') {
     tier = PRICING_TIERS.STORY_PACK;
   } else if (productType === 'story_publication') {
@@ -161,7 +161,7 @@ export function validatePurchaseRequest(
   } else {
     errors.push('Invalid product type');
   }
-  
+
   return {
     valid: errors.length === 0,
     errors,

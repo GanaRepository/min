@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
     const usageCheck = await UsageManager.canEnterCompetition(session.user.id);
     if (!usageCheck.allowed) {
       return NextResponse.json(
-        { 
+        {
           error: usageCheck.reason,
           currentUsage: usageCheck.currentUsage,
           limits: usageCheck.limits,
@@ -39,17 +39,19 @@ export async function POST(req: NextRequest) {
     }
 
     // Submit story to competition
-    const submission = await competitionManager.submitStory(storyId, session.user.id);
-    
+    const submission = await competitionManager.submitStory(
+      storyId,
+      session.user.id
+    );
+
     // Increment competition entry counter using NEW system
     await UsageManager.incrementCompetitionEntry(session.user.id);
-    
+
     return NextResponse.json({
       success: true,
       message: 'Story submitted to competition successfully',
       submission,
     });
-
   } catch (error: any) {
     console.error('Error submitting to competition:', error);
     return NextResponse.json(

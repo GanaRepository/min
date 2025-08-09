@@ -115,7 +115,8 @@ const newAdmin = {
 };
 
 // MongoDB connection URI
-const uri = 'mongodb://ZenthoritDb:Abhi%40Zenthorit1@127.0.0.1:27017/ZenthoritDB?authSource=admin';
+const uri =
+  'mongodb://ZenthoritDb:Abhi%40Zenthorit1@127.0.0.1:27017/ZenthoritDB?authSource=admin';
 const dbName = 'ZenthoritDB';
 
 async function createAdmin() {
@@ -141,7 +142,7 @@ async function createAdmin() {
     // Hash password
     console.log('🔐 Hashing password...');
     const hashedPassword = await bcrypt.hash(newAdmin.password, 12);
-    
+
     // Create admin document
     const adminDoc = {
       ...newAdmin,
@@ -150,14 +151,14 @@ async function createAdmin() {
 
     // Insert admin
     const result = await usersCollection.insertOne(adminDoc);
-    
+
     console.log('\n🎉 PLATFORM ADMIN CREATED SUCCESSFULLY!');
-    console.log('=' .repeat(60));
+    console.log('='.repeat(60));
     console.log(`📧 Email: ${newAdmin.email}`);
     console.log(`🔑 Password: ${newAdmin.password}`);
     console.log(`🆔 Admin ID: ${result.insertedId}`);
     console.log(`👑 Role: Platform Administrator`);
-    console.log('=' .repeat(60));
+    console.log('='.repeat(60));
 
     console.log('\n👨‍💼 ADMIN RESPONSIBILITIES:');
     console.log('   📊 View student progress analytics');
@@ -195,7 +196,6 @@ async function createAdmin() {
     console.log('   4. Assign students to mentors');
     console.log('   5. Configure monthly competitions');
     console.log('   6. Set up Stripe for story pack sales');
-
   } catch (error) {
     console.error('❌ Error creating admin:', error);
   } finally {

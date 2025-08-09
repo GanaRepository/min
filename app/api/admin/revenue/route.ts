@@ -12,7 +12,10 @@ export async function GET() {
   try {
     const session = await getServerSession(authOptions);
     if (!session || session.user.role !== 'admin') {
-      return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
+      return NextResponse.json(
+        { error: 'Admin access required' },
+        { status: 403 }
+      );
     }
 
     await connectToDatabase();
@@ -25,7 +28,9 @@ export async function GET() {
     // Revenue analytics
     const revenueData = await User.aggregate([
       { $match: { role: 'child' } },
-      { $unwind: { path: '$purchaseHistory', preserveNullAndEmptyArrays: true } },
+      {
+        $unwind: { path: '$purchaseHistory', preserveNullAndEmptyArrays: true },
+      },
       {
         $group: {
           _id: null,
@@ -35,9 +40,9 @@ export async function GET() {
               $cond: [
                 { $gte: ['$purchaseHistory.purchaseDate', monthStart] },
                 '$purchaseHistory.amount',
-                0
-              ]
-            }
+                0,
+              ],
+            },
           },
           lastMonthRevenue: {
             $sum: {
@@ -45,34 +50,30 @@ export async function GET() {
                 {
                   $and: [
                     { $gte: ['$purchaseHistory.purchaseDate', lastMonthStart] },
-                    { $lt: ['$purchaseHistory.purchaseDate', lastMonthEnd] }
-                  ]
+                    { $lt: ['$purchaseHistory.purchaseDate', lastMonthEnd] },
+                  ],
                 },
                 '$purchaseHistory.amount',
-                0
-              ]
-            }
+                0,
+              ],
+            },
           },
           storyPacksSold: {
             $sum: {
-              $cond: [
-                { $eq: ['$purchaseHistory.type', 'story_pack'] },
-                1,
-                0
-              ]
-            }
+              $cond: [{ $eq: ['$purchaseHistory.type', 'story_pack'] }, 1, 0],
+            },
           },
           publicationsSold: {
             $sum: {
               $cond: [
                 { $eq: ['$purchaseHistory.type', 'story_publication'] },
                 1,
-                0
-              ]
-            }
+                0,
+              ],
+            },
           },
-        }
-      }
+        },
+      },
     ]);
 
     const revenue = revenueData[0] || {
@@ -84,9 +85,12 @@ export async function GET() {
     };
 
     // Revenue growth
-    const revenueGrowth = revenue.lastMonthRevenue > 0
-      ? ((revenue.thisMonthRevenue - revenue.lastMonthRevenue) / revenue.lastMonthRevenue * 100)
-      : 0;
+    const revenueGrowth =
+      revenue.lastMonthRevenue > 0
+        ? ((revenue.thisMonthRevenue - revenue.lastMonthRevenue) /
+            revenue.lastMonthRevenue) *
+          100
+        : 0;
 
     // Top paying users
     const topPayingUsers = await User.aggregate([
@@ -100,10 +104,10 @@ export async function GET() {
           email: { $first: '$email' },
           totalSpent: { $sum: '$purchaseHistory.amount' },
           purchaseCount: { $sum: 1 },
-        }
+        },
       },
       { $sort: { totalSpent: -1 } },
-      { $limit: 10 }
+      { $limit: 10 },
     ]);
 
     return NextResponse.json({
@@ -114,9 +118,11 @@ export async function GET() {
         topPayingUsers,
       },
     });
-
   } catch (error) {
     console.error('Error fetching revenue data:', error);
-    return NextResponse.json({ error: 'Failed to fetch revenue data' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to fetch revenue data' },
+      { status: 500 }
+    );
   }
 }

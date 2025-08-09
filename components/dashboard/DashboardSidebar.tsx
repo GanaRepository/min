@@ -61,7 +61,6 @@ const navigationItems = [
     icon: Trophy,
     description: 'Monthly contests',
   },
- 
 ];
 
 export default function DashboardSidebar({
@@ -84,9 +83,7 @@ export default function DashboardSidebar({
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-700/50">
           <div>
-            <h2 className="text-xl font-bold text-white">
-              Hi, {userName}! 👋
-            </h2>
+            <h2 className="text-xl font-bold text-white">Hi, {userName}! 👋</h2>
             {user.age && (
               <p className="text-sm text-gray-400">Age {user.age} Writer</p>
             )}
@@ -96,9 +93,11 @@ export default function DashboardSidebar({
         {/* Navigation */}
         <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
           {navigationItems.map((item, index) => {
-            const isActive = pathname === item.href || 
-              (item.href !== '/children-dashboard' && pathname.startsWith(item.href));
-            
+            const isActive =
+              pathname === item.href ||
+              (item.href !== '/children-dashboard' &&
+                pathname.startsWith(item.href));
+
             return (
               <motion.div
                 key={item.name}
@@ -121,7 +120,9 @@ export default function DashboardSidebar({
                     } transition-colors`}
                   />
                   <div className="flex-1">
-                    <div className={`font-medium ${isActive ? 'text-green-400' : ''}`}>
+                    <div
+                      className={`font-medium ${isActive ? 'text-green-400' : ''}`}
+                    >
                       {item.name}
                     </div>
                     <div className="text-xs text-gray-500 group-hover:text-gray-400">
@@ -140,7 +141,9 @@ export default function DashboardSidebar({
           <div className="bg-gradient-to-r from-green-600/20 to-blue-600/20 border border-green-500/30 rounded-xl p-4">
             <div className="text-center">
               <Clock className="w-6 h-6 text-green-400 mx-auto mb-2" />
-              <div className="text-sm text-white font-medium">Keep Writing!</div>
+              <div className="text-sm text-white font-medium">
+                Keep Writing!
+              </div>
               <div className="text-xs text-gray-400">Your stories matter</div>
             </div>
           </div>
@@ -150,7 +153,10 @@ export default function DashboardSidebar({
             onClick={handleLogout}
             className="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:text-white hover:bg-red-600/20 hover:border-red-500/30 transition-all group border border-transparent"
           >
-            <LogOut size={20} className="group-hover:text-red-400 transition-colors" />
+            <LogOut
+              size={20}
+              className="group-hover:text-red-400 transition-colors"
+            />
             <span className="font-medium">Sign Out</span>
           </button>
         </div>
@@ -184,7 +190,9 @@ export default function DashboardSidebar({
                     Hi, {userName}! 👋
                   </h2>
                   {user.age && (
-                    <p className="text-sm text-gray-400">Age {user.age} Writer</p>
+                    <p className="text-sm text-gray-400">
+                      Age {user.age} Writer
+                    </p>
                   )}
                 </div>
                 <button
@@ -198,9 +206,11 @@ export default function DashboardSidebar({
               {/* Navigation */}
               <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
                 {navigationItems.map((item, index) => {
-                  const isActive = pathname === item.href || 
-                    (item.href !== '/children-dashboard' && pathname.startsWith(item.href));
-                  
+                  const isActive =
+                    pathname === item.href ||
+                    (item.href !== '/children-dashboard' &&
+                      pathname.startsWith(item.href));
+
                   return (
                     <motion.div
                       key={item.name}
@@ -220,11 +230,15 @@ export default function DashboardSidebar({
                         <item.icon
                           size={20}
                           className={`${
-                            isActive ? 'text-green-400' : 'group-hover:text-white'
+                            isActive
+                              ? 'text-green-400'
+                              : 'group-hover:text-white'
                           } transition-colors`}
                         />
                         <div className="flex-1">
-                          <div className={`font-medium ${isActive ? 'text-green-400' : ''}`}>
+                          <div
+                            className={`font-medium ${isActive ? 'text-green-400' : ''}`}
+                          >
                             {item.name}
                           </div>
                           <div className="text-xs text-gray-500 group-hover:text-gray-400">
@@ -243,8 +257,12 @@ export default function DashboardSidebar({
                 <div className="bg-gradient-to-r from-green-600/20 to-blue-600/20 border border-green-500/30 rounded-xl p-4">
                   <div className="text-center">
                     <Clock className="w-6 h-6 text-green-400 mx-auto mb-2" />
-                    <div className="text-sm text-white font-medium">Keep Writing!</div>
-                    <div className="text-xs text-gray-400">Your stories matter</div>
+                    <div className="text-sm text-white font-medium">
+                      Keep Writing!
+                    </div>
+                    <div className="text-xs text-gray-400">
+                      Your stories matter
+                    </div>
                   </div>
                 </div>
 
@@ -253,7 +271,10 @@ export default function DashboardSidebar({
                   onClick={handleLogout}
                   className="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:text-white hover:bg-red-600/20 hover:border-red-500/30 transition-all group border border-transparent"
                 >
-                  <LogOut size={20} className="group-hover:text-red-400 transition-colors" />
+                  <LogOut
+                    size={20}
+                    className="group-hover:text-red-400 transition-colors"
+                  />
                   <span className="font-medium">Sign Out</span>
                 </button>
               </div>

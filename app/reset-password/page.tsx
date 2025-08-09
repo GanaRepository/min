@@ -362,10 +362,10 @@ function ResetPasswordContent() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.8 }}
             >
-              <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold text-white mb-1 sm:mb-2">
+              <h1 className="text-2xl sm:text-4xl md:text-5xl  text-white mb-1 sm:mb-2">
                 Create Your New
               </h1>
-              <h2 className="text-2xl sm:text-4xl md:text-5xl font-bold text-white/80 mb-2 sm:mb-4 italic">
+              <h2 className="text-2xl sm:text-4xl md:text-5xl  text-white/80 mb-2 sm:mb-4 italic">
                 Magic Key
               </h2>
               <p className="text-white/60 text-xs sm:text-sm">

@@ -17,7 +17,10 @@ export async function GET(
   try {
     const session = await getServerSession(authOptions);
     if (!session || session.user.role !== 'admin') {
-      return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
+      return NextResponse.json(
+        { error: 'Admin access required' },
+        { status: 403 }
+      );
     }
 
     const { id } = params;
@@ -28,7 +31,10 @@ export async function GET(
       .lean();
 
     if (!competition) {
-      return NextResponse.json({ error: 'Competition not found' }, { status: 404 });
+      return NextResponse.json(
+        { error: 'Competition not found' },
+        { status: 404 }
+      );
     }
 
     // Get competition entries
@@ -36,9 +42,9 @@ export async function GET(
       competitionId: id,
       isPublished: true,
     })
-    .populate('childId', 'firstName lastName email')
-    .select('title totalWords competitionScore competitionRank createdAt')
-    .sort({ competitionRank: 1 });
+      .populate('childId', 'firstName lastName email')
+      .select('title totalWords competitionScore competitionRank createdAt')
+      .sort({ competitionRank: 1 });
 
     return NextResponse.json({
       success: true,
@@ -48,10 +54,12 @@ export async function GET(
         totalEntries: entries.length,
       },
     });
-
   } catch (error) {
     console.error('Error fetching competition:', error);
-    return NextResponse.json({ error: 'Failed to fetch competition' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to fetch competition' },
+      { status: 500 }
+    );
   }
 }
 
@@ -63,7 +71,10 @@ export async function PATCH(
   try {
     const session = await getServerSession(authOptions);
     if (!session || session.user.role !== 'admin') {
-      return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
+      return NextResponse.json(
+        { error: 'Admin access required' },
+        { status: 403 }
+      );
     }
 
     const { id } = params;
@@ -78,7 +89,10 @@ export async function PATCH(
     );
 
     if (!updatedCompetition) {
-      return NextResponse.json({ error: 'Competition not found' }, { status: 404 });
+      return NextResponse.json(
+        { error: 'Competition not found' },
+        { status: 404 }
+      );
     }
 
     return NextResponse.json({
@@ -86,10 +100,12 @@ export async function PATCH(
       competition: updatedCompetition,
       message: 'Competition updated successfully',
     });
-
   } catch (error) {
     console.error('Error updating competition:', error);
-    return NextResponse.json({ error: 'Failed to update competition' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to update competition' },
+      { status: 500 }
+    );
   }
 }
 
@@ -101,7 +117,10 @@ export async function DELETE(
   try {
     const session = await getServerSession(authOptions);
     if (!session || session.user.role !== 'admin') {
-      return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
+      return NextResponse.json(
+        { error: 'Admin access required' },
+        { status: 403 }
+      );
     }
 
     const { id } = params;
@@ -109,7 +128,10 @@ export async function DELETE(
 
     const competition = await Competition.findById(id);
     if (!competition) {
-      return NextResponse.json({ error: 'Competition not found' }, { status: 404 });
+      return NextResponse.json(
+        { error: 'Competition not found' },
+        { status: 404 }
+      );
     }
 
     // Remove competition reference from stories
@@ -124,9 +146,11 @@ export async function DELETE(
       success: true,
       message: 'Competition deleted successfully',
     });
-
   } catch (error) {
     console.error('Error deleting competition:', error);
-    return NextResponse.json({ error: 'Failed to delete competition' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to delete competition' },
+      { status: 500 }
+    );
   }
 }

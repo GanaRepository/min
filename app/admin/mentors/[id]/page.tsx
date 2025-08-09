@@ -70,7 +70,7 @@ export default function ViewMentor() {
     try {
       const response = await fetch(`/api/admin/mentors/${mentorId}`);
       const data = await response.json();
-      
+
       if (data.success) {
         setMentor(data.mentor);
       } else {
@@ -85,7 +85,11 @@ export default function ViewMentor() {
   };
 
   const deleteMentor = async () => {
-    if (!confirm(`Are you sure you want to delete mentor ${mentor?.firstName} ${mentor?.lastName}? This will unassign all their students.`)) {
+    if (
+      !confirm(
+        `Are you sure you want to delete mentor ${mentor?.firstName} ${mentor?.lastName}? This will unassign all their students.`
+      )
+    ) {
       return;
     }
 
@@ -144,7 +148,7 @@ export default function ViewMentor() {
             <p className="text-gray-400">Mentor Details & Performance</p>
           </div>
         </div>
-        
+
         <div className="flex items-center space-x-2">
           <Link href={`/admin/mentors/${mentorId}/edit`}>
             <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center">
@@ -175,17 +179,19 @@ export default function ViewMentor() {
               <p className="text-white font-medium">{mentor.email}</p>
             </div>
           </div>
-          
+
           <div className="flex items-center space-x-3">
             <div className="bg-green-600 p-3 rounded-lg">
               <Users size={24} className="text-white" />
             </div>
             <div>
               <p className="text-sm text-gray-400">Assigned Students</p>
-              <p className="text-white font-medium">{mentor.assignedStudents}</p>
+              <p className="text-white font-medium">
+                {mentor.assignedStudents}
+              </p>
             </div>
           </div>
-          
+
           <div className="flex items-center space-x-3">
             <div className="bg-blue-600 p-3 rounded-lg">
               <BookOpen size={24} className="text-white" />
@@ -195,7 +201,7 @@ export default function ViewMentor() {
               <p className="text-white font-medium">{mentor.totalStories}</p>
             </div>
           </div>
-          
+
           <div className="flex items-center space-x-3">
             <div className="bg-orange-600 p-3 rounded-lg">
               <MessageSquare size={24} className="text-white" />
@@ -211,37 +217,54 @@ export default function ViewMentor() {
       {/* Mentor Profile */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="bg-gray-800 rounded-xl p-6">
-          <h3 className="text-lg font-semibold text-white mb-4">Profile Information</h3>
+          <h3 className="text-lg font-semibold text-white mb-4">
+            Profile Information
+          </h3>
           <div className="space-y-4">
             <div>
               <label className="text-sm text-gray-400">Bio</label>
-              <p className="text-white mt-1">{mentor.bio || 'No bio provided'}</p>
+              <p className="text-white mt-1">
+                {mentor.bio || 'No bio provided'}
+              </p>
             </div>
             <div>
               <label className="text-sm text-gray-400">Experience</label>
-              <p className="text-white mt-1">{mentor.experience || 'No experience details'}</p>
+              <p className="text-white mt-1">
+                {mentor.experience || 'No experience details'}
+              </p>
             </div>
             <div>
               <label className="text-sm text-gray-400">Specializations</label>
               <div className="flex flex-wrap gap-2 mt-1">
                 {mentor.specializations?.map((spec, index) => (
-                  <span key={index} className="px-2 py-1 bg-purple-100 text-purple-800 text-xs rounded-full">
+                  <span
+                    key={index}
+                    className="px-2 py-1 bg-purple-100 text-purple-800 text-xs rounded-full"
+                  >
                     {spec}
                   </span>
-                )) || <span className="text-gray-400 text-sm">None specified</span>}
+                )) || (
+                  <span className="text-gray-400 text-sm">None specified</span>
+                )}
               </div>
             </div>
           </div>
         </div>
 
         <div className="bg-gray-800 rounded-xl p-6">
-          <h3 className="text-lg font-semibold text-white mb-4">Account Status</h3>
+          <h3 className="text-lg font-semibold text-white mb-4">
+            Account Status
+          </h3>
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <span className="text-gray-400">Account Status</span>
-              <span className={`px-3 py-1 rounded-full text-sm ${
-                mentor.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-              }`}>
+              <span
+                className={`px-3 py-1 rounded-full text-sm ${
+                  mentor.isActive
+                    ? 'bg-green-100 text-green-800'
+                    : 'bg-red-100 text-red-800'
+                }`}
+              >
                 {mentor.isActive ? 'Active' : 'Inactive'}
               </span>
             </div>
@@ -259,10 +282,15 @@ export default function ViewMentor() {
       {/* Assigned Students */}
       {mentor.assignedChildren && mentor.assignedChildren.length > 0 && (
         <div className="bg-gray-800 rounded-xl p-6">
-          <h3 className="text-lg font-semibold text-white mb-4">Assigned Students</h3>
+          <h3 className="text-lg font-semibold text-white mb-4">
+            Assigned Students
+          </h3>
           <div className="space-y-3">
             {mentor.assignedChildren.map((student) => (
-              <div key={student._id} className="flex items-center justify-between p-3 bg-gray-700/50 rounded-lg">
+              <div
+                key={student._id}
+                className="flex items-center justify-between p-3 bg-gray-700/50 rounded-lg"
+              >
                 <div className="flex-1">
                   <Link href={`/admin/users/${student._id}`}>
                     <h4 className="text-white font-medium hover:text-blue-400 cursor-pointer">
@@ -272,9 +300,12 @@ export default function ViewMentor() {
                   <p className="text-xs text-gray-400 mt-1">{student.email}</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm text-white">{student.storiesCount} stories</p>
+                  <p className="text-sm text-white">
+                    {student.storiesCount} stories
+                  </p>
                   <p className="text-xs text-gray-400">
-                    Last active: {new Date(student.lastActive).toLocaleDateString()}
+                    Last active:{' '}
+                    {new Date(student.lastActive).toLocaleDateString()}
                   </p>
                 </div>
               </div>
@@ -286,10 +317,15 @@ export default function ViewMentor() {
       {/* Recent Activity */}
       {mentor.recentActivity && mentor.recentActivity.length > 0 && (
         <div className="bg-gray-800 rounded-xl p-6">
-          <h3 className="text-lg font-semibold text-white mb-4">Recent Activity</h3>
+          <h3 className="text-lg font-semibold text-white mb-4">
+            Recent Activity
+          </h3>
           <div className="space-y-3">
             {mentor.recentActivity.slice(0, 10).map((activity, index) => (
-              <div key={index} className="flex items-start space-x-3 p-3 bg-gray-700/50 rounded-lg">
+              <div
+                key={index}
+                className="flex items-start space-x-3 p-3 bg-gray-700/50 rounded-lg"
+              >
                 <div className="flex-shrink-0 w-2 h-2 bg-blue-400 rounded-full mt-2"></div>
                 <div className="flex-1">
                   <p className="text-white text-sm">{activity.description}</p>

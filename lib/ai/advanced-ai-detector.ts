@@ -41,32 +41,79 @@ export class AdvancedAIDetector {
     // Age-inappropriate advanced vocabulary
     advancedByAge: {
       '6-8': [
-        'subsequently', 'consequently', 'nevertheless', 'furthermore', 'moreover',
-        'specifically', 'particularly', 'significantly', 'substantially', 'comprehensive',
-        'sophisticated', 'fundamental', 'substantial', 'preliminary', 'subsequent'
+        'subsequently',
+        'consequently',
+        'nevertheless',
+        'furthermore',
+        'moreover',
+        'specifically',
+        'particularly',
+        'significantly',
+        'substantially',
+        'comprehensive',
+        'sophisticated',
+        'fundamental',
+        'substantial',
+        'preliminary',
+        'subsequent',
       ],
       '9-12': [
-        'epistemological', 'phenomenological', 'paradigmatic', 'quintessential',
-        'ubiquitous', 'multifaceted', 'juxtaposition', 'dichotomy', 'synthesis',
-        'methodology', 'theoretical', 'empirical', 'hypothetical', 'conceptual'
+        'epistemological',
+        'phenomenological',
+        'paradigmatic',
+        'quintessential',
+        'ubiquitous',
+        'multifaceted',
+        'juxtaposition',
+        'dichotomy',
+        'synthesis',
+        'methodology',
+        'theoretical',
+        'empirical',
+        'hypothetical',
+        'conceptual',
       ],
       '13+': [
-        'phenomenology', 'epistemology', 'ontological', 'hermeneutic', 'dialectical',
-        'deconstructionist', 'postmodern', 'metacognitive', 'heuristic', 'paradigmatic'
-      ]
+        'phenomenology',
+        'epistemology',
+        'ontological',
+        'hermeneutic',
+        'dialectical',
+        'deconstructionist',
+        'postmodern',
+        'metacognitive',
+        'heuristic',
+        'paradigmatic',
+      ],
     },
 
     // Academic/formal vocabulary rarely used by children
     academicVocabulary: [
-      'furthermore', 'moreover', 'consequently', 'nevertheless', 'nonetheless',
-      'specifically', 'particularly', 'significantly', 'substantially', 'comprehensive',
-      'methodology', 'theoretical', 'empirical', 'hypothetical', 'conceptual',
-      'fundamental', 'substantial', 'preliminary', 'subsequent', 'ultimately'
+      'furthermore',
+      'moreover',
+      'consequently',
+      'nevertheless',
+      'nonetheless',
+      'specifically',
+      'particularly',
+      'significantly',
+      'substantially',
+      'comprehensive',
+      'methodology',
+      'theoretical',
+      'empirical',
+      'hypothetical',
+      'conceptual',
+      'fundamental',
+      'substantial',
+      'preliminary',
+      'subsequent',
+      'ultimately',
     ],
   };
 
   static async detectAIContent(
-    content: string, 
+    content: string,
     metadata?: {
       childAge?: number;
       expectedGenre?: string;
@@ -97,14 +144,22 @@ export class AdvancedAIDetector {
   }> {
     const indicators: Array<any> = [];
     const age = metadata?.childAge || 10;
-    
+
     // Multi-layer AI detection analysis
     const analyses = {
       patternMatching: await this.analyzeAIPatterns(content, indicators),
-      vocabularyAnalysis: this.analyzeVocabularyAuthenticity(content, age, indicators),
+      vocabularyAnalysis: this.analyzeVocabularyAuthenticity(
+        content,
+        age,
+        indicators
+      ),
       stylometricAnalysis: this.analyzeWritingStyle(content, age, indicators),
       semanticConsistency: this.analyzeSemanticConsistency(content, indicators),
-      humanLikeCharacteristics: this.analyzeHumanCharacteristics(content, age, indicators),
+      humanLikeCharacteristics: this.analyzeHumanCharacteristics(
+        content,
+        age,
+        indicators
+      ),
     };
 
     // Calculate weighted overall score
@@ -117,21 +172,23 @@ export class AdvancedAIDetector {
     };
 
     const overallScore = Object.entries(analyses).reduce(
-      (sum, [key, score]) => sum + (score * weights[key as keyof typeof weights]), 0
+      (sum, [key, score]) => sum + score * weights[key as keyof typeof weights],
+      0
     );
 
     const { likelihood, confidence } = this.calculateLikelihoodAndConfidence(
-      overallScore, 
-      indicators, 
+      overallScore,
+      indicators,
       metadata
     );
 
-    const { recommendations, educationalFeedback } = this.generateEducationalResponse(
-      overallScore, 
-      likelihood, 
-      indicators, 
-      age
-    );
+    const { recommendations, educationalFeedback } =
+      this.generateEducationalResponse(
+        overallScore,
+        likelihood,
+        indicators,
+        age
+      );
 
     return {
       overallScore: Math.round(overallScore),
@@ -144,7 +201,10 @@ export class AdvancedAIDetector {
     };
   }
 
-  private static async analyzeAIPatterns(content: string, indicators: any[]): Promise<number> {
+  private static async analyzeAIPatterns(
+    content: string,
+    indicators: any[]
+  ): Promise<number> {
     let score = 100;
     let deductions = 0;
 
@@ -155,8 +215,9 @@ export class AdvancedAIDetector {
         if (matches) {
           matches.forEach((match) => {
             const severity = this.getPatternSeverity(category, match);
-            const deduction = severity === 'critical' ? 40 : severity === 'high' ? 25 : 15;
-            
+            const deduction =
+              severity === 'critical' ? 40 : severity === 'high' ? 25 : 15;
+
             indicators.push({
               type: 'pattern',
               severity,
@@ -165,7 +226,7 @@ export class AdvancedAIDetector {
               explanation: `Detected ${category} pattern: "${match}"`,
               location: this.findTextLocation(content, match),
             });
-            
+
             deductions += deduction;
           });
         }
@@ -175,19 +236,27 @@ export class AdvancedAIDetector {
     return Math.max(0, score - deductions);
   }
 
-  private static analyzeVocabularyAuthenticity(content: string, age: number, indicators: any[]): number {
+  private static analyzeVocabularyAuthenticity(
+    content: string,
+    age: number,
+    indicators: any[]
+  ): number {
     let score = 100;
-    const words = content.toLowerCase().split(/\W+/).filter(w => w.length > 3);
+    const words = content
+      .toLowerCase()
+      .split(/\W+/)
+      .filter((w) => w.length > 3);
     const ageGroup = age <= 8 ? '6-8' : age <= 12 ? '9-12' : '13+';
-    
+
     // Check age-inappropriate vocabulary
-    const inappropriateWords = this.vocabularyAnalysis.advancedByAge[ageGroup] || [];
+    const inappropriateWords =
+      this.vocabularyAnalysis.advancedByAge[ageGroup] || [];
     const academicWords = this.vocabularyAnalysis.academicVocabulary;
-    
-    inappropriateWords.forEach(word => {
+
+    inappropriateWords.forEach((word) => {
       if (words.includes(word.toLowerCase())) {
         const severity = age <= 8 ? 'critical' : age <= 12 ? 'high' : 'medium';
-        
+
         indicators.push({
           type: 'vocabulary',
           severity,
@@ -196,19 +265,19 @@ export class AdvancedAIDetector {
           explanation: `Word "${word}" is too advanced for age ${age}`,
           location: this.findTextLocation(content, word),
         });
-        
-        score -= (severity === 'critical' ? 30 : severity === 'high' ? 20 : 10);
+
+        score -= severity === 'critical' ? 30 : severity === 'high' ? 20 : 10;
       }
     });
 
     // Check for excessive academic vocabulary
-    const academicCount = words.filter(word => 
+    const academicCount = words.filter((word) =>
       academicWords.includes(word.toLowerCase())
     ).length;
-    
+
     const academicRatio = academicCount / words.length;
     const expectedRatio = age <= 8 ? 0.01 : age <= 12 ? 0.03 : 0.05;
-    
+
     if (academicRatio > expectedRatio * 2) {
       indicators.push({
         type: 'vocabulary',
@@ -223,13 +292,17 @@ export class AdvancedAIDetector {
     return Math.max(0, score);
   }
 
-  private static analyzeWritingStyle(content: string, age: number, indicators: any[]): number {
+  private static analyzeWritingStyle(
+    content: string,
+    age: number,
+    indicators: any[]
+  ): number {
     let score = 100;
-    
+
     // Analyze stylometric features
     const style = this.extractStylometricFeatures(content);
     const expectedStyle = this.getExpectedStyleForAge(age);
-    
+
     // Check sentence length consistency (AI tends to be very consistent)
     if (style.sentenceLengthVariance < 2 && style.sentenceCount > 8) {
       indicators.push({
@@ -237,7 +310,8 @@ export class AdvancedAIDetector {
         severity: 'medium',
         confidence: 75,
         evidence: `Uniform sentence lengths (σ=${style.sentenceLengthVariance.toFixed(1)})`,
-        explanation: 'Unnaturally consistent sentence structure suggests AI generation',
+        explanation:
+          'Unnaturally consistent sentence structure suggests AI generation',
       });
       score -= 20;
     }
@@ -251,7 +325,7 @@ export class AdvancedAIDetector {
         evidence: `Advanced punctuation usage`,
         explanation: `Punctuation complexity too high for age ${age}`,
       });
-      score -= (age <= 10 ? 25 : 15);
+      score -= age <= 10 ? 25 : 15;
     }
 
     // Check transition word usage
@@ -270,30 +344,41 @@ export class AdvancedAIDetector {
   }
 
   private static extractStylometricFeatures(content: string) {
-    const sentences = content.split(/[.!?]+/).filter(s => s.trim().length > 5);
-    const words = content.split(/\W+/).filter(w => w.length > 0);
-    
+    const sentences = content
+      .split(/[.!?]+/)
+      .filter((s) => s.trim().length > 5);
+    const words = content.split(/\W+/).filter((w) => w.length > 0);
+
     // Sentence length analysis
-    const sentenceLengths = sentences.map(s => s.trim().split(/\s+/).length);
-    const avgSentenceLength = sentenceLengths.reduce((a, b) => a + b, 0) / sentenceLengths.length;
+    const sentenceLengths = sentences.map((s) => s.trim().split(/\s+/).length);
+    const avgSentenceLength =
+      sentenceLengths.reduce((a, b) => a + b, 0) / sentenceLengths.length;
     const sentenceLengthVariance = this.calculateVariance(sentenceLengths);
-    
+
     // Punctuation sophistication
     const semicolons = (content.match(/;/g) || []).length;
     const colons = (content.match(/:/g) || []).length;
     const dashes = (content.match(/—|–/g) || []).length;
-    const punctuationSophistication = (semicolons + colons + dashes) / sentences.length;
-    
+    const punctuationSophistication =
+      (semicolons + colons + dashes) / sentences.length;
+
     // Transition word analysis
     const transitionWords = [
-      'however', 'furthermore', 'moreover', 'consequently', 'therefore',
-      'nevertheless', 'nonetheless', 'additionally', 'specifically'
+      'however',
+      'furthermore',
+      'moreover',
+      'consequently',
+      'therefore',
+      'nevertheless',
+      'nonetheless',
+      'additionally',
+      'specifically',
     ];
-    const transitionCount = transitionWords.filter(word => 
+    const transitionCount = transitionWords.filter((word) =>
       content.toLowerCase().includes(word)
     ).length;
     const transitionDensity = transitionCount / sentences.length;
-    
+
     return {
       sentenceCount: sentences.length,
       avgSentenceLength,
@@ -326,15 +411,20 @@ export class AdvancedAIDetector {
     }
   }
 
-  private static analyzeSemanticConsistency(content: string, indicators: any[]): number {
+  private static analyzeSemanticConsistency(
+    content: string,
+    indicators: any[]
+  ): number {
     let score = 100;
-    
+
     // Analyze semantic coherence and flow
-    const paragraphs = content.split(/\n\s*\n/).filter(p => p.trim().length > 50);
-    
+    const paragraphs = content
+      .split(/\n\s*\n/)
+      .filter((p) => p.trim().length > 50);
+
     if (paragraphs.length > 2) {
       const semanticShifts = this.detectSemanticShifts(paragraphs);
-      
+
       // AI often has abrupt semantic shifts or overly perfect flow
       if (semanticShifts.abruptShifts > paragraphs.length * 0.3) {
         indicators.push({
@@ -342,11 +432,12 @@ export class AdvancedAIDetector {
           severity: 'medium',
           confidence: 70,
           evidence: `${semanticShifts.abruptShifts} abrupt topic shifts`,
-          explanation: 'Unnatural transitions between ideas suggest AI generation',
+          explanation:
+            'Unnatural transitions between ideas suggest AI generation',
         });
         score -= 20;
       }
-      
+
       if (semanticShifts.overlyPerfectFlow) {
         indicators.push({
           type: 'semantic',
@@ -358,28 +449,30 @@ export class AdvancedAIDetector {
         score -= 15;
       }
     }
-    
+
     return Math.max(0, score);
   }
 
   private static detectSemanticShifts(paragraphs: string[]) {
     let abruptShifts = 0;
     let perfectTransitions = 0;
-    
+
     for (let i = 0; i < paragraphs.length - 1; i++) {
       const current = paragraphs[i];
       const next = paragraphs[i + 1];
-      
+
       // Simple semantic analysis
       const currentTopics = this.extractTopics(current);
       const nextTopics = this.extractTopics(next);
-      
-      const overlap = currentTopics.filter(topic => nextTopics.includes(topic)).length;
+
+      const overlap = currentTopics.filter((topic) =>
+        nextTopics.includes(topic)
+      ).length;
       const maxTopics = Math.max(currentTopics.length, nextTopics.length);
-      
+
       if (maxTopics > 0) {
         const similarity = overlap / maxTopics;
-        
+
         if (similarity < 0.2) {
           abruptShifts++;
         } else if (similarity > 0.8) {
@@ -387,29 +480,47 @@ export class AdvancedAIDetector {
         }
       }
     }
-    
+
     const overlyPerfectFlow = perfectTransitions > paragraphs.length * 0.6;
-    
+
     return { abruptShifts, overlyPerfectFlow };
   }
 
   private static extractTopics(text: string): string[] {
     // Simple topic extraction based on nouns and key concepts
     const words = text.toLowerCase().split(/\W+/);
-    const topics = words.filter(word => 
-      word.length > 4 && 
-      !['that', 'with', 'have', 'this', 'will', 'from', 'they', 'been', 'said', 'each', 'which', 'their'].includes(word)
+    const topics = words.filter(
+      (word) =>
+        word.length > 4 &&
+        ![
+          'that',
+          'with',
+          'have',
+          'this',
+          'will',
+          'from',
+          'they',
+          'been',
+          'said',
+          'each',
+          'which',
+          'their',
+        ].includes(word)
     );
-    
+
     return [...new Set(topics)];
   }
 
-  private static analyzeHumanCharacteristics(content: string, age: number, indicators: any[]): number {
+  private static analyzeHumanCharacteristics(
+    content: string,
+    age: number,
+    indicators: any[]
+  ): number {
     let score = 100;
-    
+
     // Look for characteristics that indicate human writing
     const humanTraits = this.detectHumanTraits(content, age);
-    
+
     // Lack of human characteristics is suspicious
     if (humanTraits.personalExperiences === 0 && content.length > 200) {
       indicators.push({
@@ -417,11 +528,12 @@ export class AdvancedAIDetector {
         severity: 'medium',
         confidence: 60,
         evidence: 'No personal experiences mentioned',
-        explanation: 'Children typically include personal references in creative writing',
+        explanation:
+          'Children typically include personal references in creative writing',
       });
       score -= 15;
     }
-    
+
     if (humanTraits.emotionalExpressions === 0 && content.length > 300) {
       indicators.push({
         type: 'behavioral',
@@ -432,7 +544,7 @@ export class AdvancedAIDetector {
       });
       score -= 15;
     }
-    
+
     // Perfect grammar/spelling can be suspicious for younger children
     if (age <= 10 && humanTraits.typicalErrors === 0 && content.length > 200) {
       indicators.push({
@@ -444,21 +556,41 @@ export class AdvancedAIDetector {
       });
       score -= 25;
     }
-    
+
     return Math.max(0, score);
   }
 
   private static detectHumanTraits(content: string, age: number) {
     const lowerContent = content.toLowerCase();
-    
+
     // Personal experience markers
-    const personalMarkers = ['i remember', 'my mom', 'my dad', 'my friend', 'at school', 'last week', 'yesterday'];
-    const personalExperiences = personalMarkers.filter(marker => lowerContent.includes(marker)).length;
-    
+    const personalMarkers = [
+      'i remember',
+      'my mom',
+      'my dad',
+      'my friend',
+      'at school',
+      'last week',
+      'yesterday',
+    ];
+    const personalExperiences = personalMarkers.filter((marker) =>
+      lowerContent.includes(marker)
+    ).length;
+
     // Emotional expression markers
-    const emotionalMarkers = ['excited', 'scared', 'happy', 'sad', 'angry', 'surprised', 'worried'];
-    const emotionalExpressions = emotionalMarkers.filter(marker => lowerContent.includes(marker)).length;
-    
+    const emotionalMarkers = [
+      'excited',
+      'scared',
+      'happy',
+      'sad',
+      'angry',
+      'surprised',
+      'worried',
+    ];
+    const emotionalExpressions = emotionalMarkers.filter((marker) =>
+      lowerContent.includes(marker)
+    ).length;
+
     // Typical spelling/grammar errors children make
     const typicalErrors = [
       /\balot\b/g, // a lot
@@ -471,7 +603,7 @@ export class AdvancedAIDetector {
       const matches = content.match(pattern);
       return count + (matches ? matches.length : 0);
     }, 0);
-    
+
     return {
       personalExperiences,
       emotionalExpressions,
@@ -481,102 +613,140 @@ export class AdvancedAIDetector {
 
   private static calculateVariance(numbers: number[]): number {
     const mean = numbers.reduce((a, b) => a + b, 0) / numbers.length;
-    const variance = numbers.reduce((acc, num) => acc + Math.pow(num - mean, 2), 0) / numbers.length;
+    const variance =
+      numbers.reduce((acc, num) => acc + Math.pow(num - mean, 2), 0) /
+      numbers.length;
     return Math.sqrt(variance);
   }
 
-  private static getPatternSeverity(category: string, match: string): 'low' | 'medium' | 'high' | 'critical' {
-    if (category === 'chatgptPatterns' && match.includes('as an ai')) return 'critical';
+  private static getPatternSeverity(
+    category: string,
+    match: string
+  ): 'low' | 'medium' | 'high' | 'critical' {
+    if (category === 'chatgptPatterns' && match.includes('as an ai'))
+      return 'critical';
     if (category === 'chatgptPatterns') return 'high';
     if (category === 'claudePatterns') return 'high';
     if (category === 'genericAIPatterns') return 'medium';
     return 'low';
   }
 
-  private static findTextLocation(content: string, searchText: string): { start: number; end: number } {
+  private static findTextLocation(
+    content: string,
+    searchText: string
+  ): { start: number; end: number } {
     const index = content.toLowerCase().indexOf(searchText.toLowerCase());
-    return index !== -1 ? { start: index, end: index + searchText.length } : { start: 0, end: 0 };
+    return index !== -1
+      ? { start: index, end: index + searchText.length }
+      : { start: 0, end: 0 };
   }
 
   private static calculateLikelihoodAndConfidence(
-    score: number, 
-    indicators: any[], 
+    score: number,
+    indicators: any[],
     metadata?: any
-  ): { likelihood: 'very_low' | 'low' | 'medium' | 'high' | 'very_high'; confidence: number } {
+  ): {
+    likelihood: 'very_low' | 'low' | 'medium' | 'high' | 'very_high';
+    confidence: number;
+  } {
     // Calculate confidence based on indicator strength
-    const criticalIndicators = indicators.filter(i => i.severity === 'critical').length;
-    const highIndicators = indicators.filter(i => i.severity === 'high').length;
-    
+    const criticalIndicators = indicators.filter(
+      (i) => i.severity === 'critical'
+    ).length;
+    const highIndicators = indicators.filter(
+      (i) => i.severity === 'high'
+    ).length;
+
     let confidence = 50; // Base confidence
     confidence += criticalIndicators * 20;
     confidence += highIndicators * 10;
     confidence += indicators.length * 3;
     confidence = Math.min(95, confidence);
-    
+
     // Determine likelihood
     let likelihood: 'very_low' | 'low' | 'medium' | 'high' | 'very_high';
-    
+
     if (score >= 90) likelihood = 'very_low';
     else if (score >= 75) likelihood = 'low';
     else if (score >= 50) likelihood = 'medium';
     else if (score >= 25) likelihood = 'high';
     else likelihood = 'very_high';
-    
+
     // Adjust based on critical indicators
     if (criticalIndicators > 0) {
       likelihood = 'very_high';
       confidence = Math.max(90, confidence);
     }
-    
+
     return { likelihood, confidence };
   }
 
   private static generateEducationalResponse(
-    score: number, 
-    likelihood: string, 
-    indicators: any[], 
+    score: number,
+    likelihood: string,
+    indicators: any[],
     age: number
   ) {
     const recommendations: string[] = [];
     const isYoung = age <= 8;
-    
+
     if (likelihood === 'very_high' || likelihood === 'high') {
       if (isYoung) {
-        recommendations.push("This story looks like it might be written by a computer. Let's write your own story!");
-        recommendations.push("Think about your favorite toys, games, or pets and write about them.");
+        recommendations.push(
+          "This story looks like it might be written by a computer. Let's write your own story!"
+        );
+        recommendations.push(
+          'Think about your favorite toys, games, or pets and write about them.'
+        );
       } else {
-        recommendations.push("This appears to be AI-generated content. Please write your own original story.");
-        recommendations.push("Use your personal experiences and imagination to create authentic content.");
+        recommendations.push(
+          'This appears to be AI-generated content. Please write your own original story.'
+        );
+        recommendations.push(
+          'Use your personal experiences and imagination to create authentic content.'
+        );
       }
     } else if (likelihood === 'medium') {
-      recommendations.push("Some parts of this story might be from AI. Try writing more personally.");
-      recommendations.push("Add details about things you've experienced or imagined yourself.");
+      recommendations.push(
+        'Some parts of this story might be from AI. Try writing more personally.'
+      );
+      recommendations.push(
+        "Add details about things you've experienced or imagined yourself."
+      );
     } else {
-      recommendations.push("Great original writing! Keep using your own voice and ideas.");
+      recommendations.push(
+        'Great original writing! Keep using your own voice and ideas.'
+      );
     }
-    
+
     // Specific feedback based on indicators
-    const patternIndicators = indicators.filter(i => i.type === 'pattern');
-    const vocabIndicators = indicators.filter(i => i.type === 'vocabulary');
-    
+    const patternIndicators = indicators.filter((i) => i.type === 'pattern');
+    const vocabIndicators = indicators.filter((i) => i.type === 'vocabulary');
+
     if (patternIndicators.length > 0) {
-      recommendations.push("Avoid using phrases that sound too formal or robotic.");
+      recommendations.push(
+        'Avoid using phrases that sound too formal or robotic.'
+      );
     }
     if (vocabIndicators.length > 0) {
-      recommendations.push("Try using simpler words that feel more natural for your age.");
+      recommendations.push(
+        'Try using simpler words that feel more natural for your age.'
+      );
     }
-    
+
     let educationalFeedback: string;
     if (likelihood === 'very_high' || likelihood === 'high') {
-      educationalFeedback = isYoung 
+      educationalFeedback = isYoung
         ? "Let's practice writing stories that come from your own imagination! Think about things that make you happy or excited."
         : "This content appears to be AI-generated. Let's focus on developing your authentic writing voice and personal storytelling skills.";
     } else if (likelihood === 'medium') {
-      educationalFeedback = "Your writing shows both original and potentially AI-influenced elements. Focus on writing more from your personal perspective and experiences.";
+      educationalFeedback =
+        'Your writing shows both original and potentially AI-influenced elements. Focus on writing more from your personal perspective and experiences.';
     } else {
-     educationalFeedback = "Excellent authentic writing! Your personal voice and creativity shine through. Keep developing your unique storytelling style.";
-   }
-   
-   return { recommendations, educationalFeedback };
- }
+      educationalFeedback =
+        'Excellent authentic writing! Your personal voice and creativity shine through. Keep developing your unique storytelling style.';
+    }
+
+    return { recommendations, educationalFeedback };
+  }
 }

@@ -128,7 +128,7 @@ export default function LogoutPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.4 }}
             >
-              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-2 sm:mb-4">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl  text-white mb-2 sm:mb-4">
                 Signing Out
               </h1>
               <p className="text-white/80 text-base sm:text-lg mb-4 sm:mb-8">

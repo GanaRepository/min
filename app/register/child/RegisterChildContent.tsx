@@ -281,7 +281,7 @@ const RegisterChildContent: React.FC = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.4 }}
-                className="text-2xl sm:text-4xl md:text-5xl font-bold text-white mb-4 sm:mb-8 leading-tight"
+                className="text-2xl sm:text-4xl md:text-5xl  text-white mb-4 sm:mb-8 leading-tight"
               >
                 Unleash Your Creative Magic
               </motion.h1>
@@ -590,7 +590,7 @@ const RegisterChildContent: React.FC = () => {
                   <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-green-400 to-blue-500 rounded-full mx-auto mb-3 sm:mb-4 flex items-center justify-center">
                     <BookOpen className="text-white w-5 h-5 sm:w-6 sm:h-6" />
                   </div>
-                  <h3 className="text-lg sm:text-2xl font-bold text-white mb-1 sm:mb-2">
+                  <h3 className="text-lg sm:text-2xl  text-white mb-1 sm:mb-2">
                     Mintoons
                   </h3>
                   <p className="text-gray-300 text-xs sm:text-sm leading-relaxed">

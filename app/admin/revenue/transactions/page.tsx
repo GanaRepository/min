@@ -40,7 +40,7 @@ interface Pagination {
 export default function TransactionsPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
-  
+
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [pagination, setPagination] = useState<Pagination | null>(null);
   const [loading, setLoading] = useState(true);
@@ -66,7 +66,7 @@ export default function TransactionsPage() {
         page: page.toString(),
         limit: '50',
       });
-      
+
       if (dateRange.startDate) {
         params.append('startDate', dateRange.startDate);
       }
@@ -93,10 +93,12 @@ export default function TransactionsPage() {
       const params = new URLSearchParams();
       if (dateRange.startDate) params.append('startDate', dateRange.startDate);
       if (dateRange.endDate) params.append('endDate', dateRange.endDate);
-      
-      const response = await fetch(`/api/admin/revenue/transactions/export?${params}`);
+
+      const response = await fetch(
+        `/api/admin/revenue/transactions/export?${params}`
+      );
       const blob = await response.blob();
-      
+
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
@@ -117,9 +119,12 @@ export default function TransactionsPage() {
 
   const getTransactionTypeColor = (type: string) => {
     switch (type) {
-      case 'story_pack': return 'bg-blue-100 text-blue-800';
-      case 'story_publication': return 'bg-purple-100 text-purple-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'story_pack':
+        return 'bg-blue-100 text-blue-800';
+      case 'story_publication':
+        return 'bg-purple-100 text-purple-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
@@ -145,7 +150,9 @@ export default function TransactionsPage() {
             <h1 className="text-2xl sm:text-3xl font-bold text-white">
               Transaction History
             </h1>
-            <p className="text-gray-400">Detailed transaction records and customer payments</p>
+            <p className="text-gray-400">
+              Detailed transaction records and customer payments
+            </p>
           </div>
         </div>
         <button
@@ -164,28 +171,35 @@ export default function TransactionsPage() {
             <Filter size={20} className="text-gray-400" />
             <span className="text-white font-medium">Date Range:</span>
           </div>
-          
+
           <div className="flex flex-col sm:flex-row gap-4 flex-1">
             <div className="flex items-center space-x-2">
               <Calendar size={16} className="text-gray-400" />
               <input
                 type="date"
                 value={dateRange.startDate}
-                onChange={(e) => setDateRange(prev => ({ ...prev, startDate: e.target.value }))}
+                onChange={(e) =>
+                  setDateRange((prev) => ({
+                    ...prev,
+                    startDate: e.target.value,
+                  }))
+                }
                 className="px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
-            
+
             <div className="flex items-center space-x-2">
               <span className="text-gray-400">to</span>
               <input
                 type="date"
                 value={dateRange.endDate}
-                onChange={(e) => setDateRange(prev => ({ ...prev, endDate: e.target.value }))}
+                onChange={(e) =>
+                  setDateRange((prev) => ({ ...prev, endDate: e.target.value }))
+                }
                 className="px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
-            
+
             <button
               onClick={applyDateFilter}
               className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
@@ -202,16 +216,29 @@ export default function TransactionsPage() {
           <table className="w-full">
             <thead className="bg-gray-700">
               <tr>
-                <th className="text-left py-3 px-4 text-sm font-medium text-gray-300">Customer</th>
-                <th className="text-left py-3 px-4 text-sm font-medium text-gray-300">Type</th>
-                <th className="text-left py-3 px-4 text-sm font-medium text-gray-300">Amount</th>
-                <th className="text-left py-3 px-4 text-sm font-medium text-gray-300">Date</th>
-                <th className="text-left py-3 px-4 text-sm font-medium text-gray-300">Details</th>
+                <th className="text-left py-3 px-4 text-sm font-medium text-gray-300">
+                  Customer
+                </th>
+                <th className="text-left py-3 px-4 text-sm font-medium text-gray-300">
+                  Type
+                </th>
+                <th className="text-left py-3 px-4 text-sm font-medium text-gray-300">
+                  Amount
+                </th>
+                <th className="text-left py-3 px-4 text-sm font-medium text-gray-300">
+                  Date
+                </th>
+                <th className="text-left py-3 px-4 text-sm font-medium text-gray-300">
+                  Details
+                </th>
               </tr>
             </thead>
             <tbody>
               {transactions.map((transaction) => (
-                <tr key={transaction._id} className="border-b border-gray-700/50 hover:bg-gray-700/20 transition-colors">
+                <tr
+                  key={transaction._id}
+                  className="border-b border-gray-700/50 hover:bg-gray-700/20 transition-colors"
+                >
                   {/* Customer */}
                   <td className="py-3 px-4">
                     <div className="flex items-center space-x-3">
@@ -224,15 +251,21 @@ export default function TransactionsPage() {
                             {transaction.customer.name}
                           </h4>
                         </Link>
-                        <p className="text-xs text-gray-400">{transaction.customer.email}</p>
+                        <p className="text-xs text-gray-400">
+                          {transaction.customer.email}
+                        </p>
                       </div>
                     </div>
                   </td>
 
                   {/* Type */}
                   <td className="py-3 px-4">
-                    <span className={`px-2 py-1 text-xs font-medium rounded-full ${getTransactionTypeColor(transaction.transaction.type)}`}>
-                      {transaction.transaction.type === 'story_pack' ? 'Story Pack' : 'Publication'}
+                    <span
+                      className={`px-2 py-1 text-xs font-medium rounded-full ${getTransactionTypeColor(transaction.transaction.type)}`}
+                    >
+                      {transaction.transaction.type === 'story_pack'
+                        ? 'Story Pack'
+                        : 'Publication'}
                     </span>
                   </td>
 
@@ -250,10 +283,14 @@ export default function TransactionsPage() {
                   <td className="py-3 px-4">
                     <div>
                       <p className="text-white">
-                        {new Date(transaction.transaction.purchaseDate).toLocaleDateString()}
+                        {new Date(
+                          transaction.transaction.purchaseDate
+                        ).toLocaleDateString()}
                       </p>
                       <p className="text-xs text-gray-400">
-                        {new Date(transaction.transaction.purchaseDate).toLocaleTimeString([], {
+                        {new Date(
+                          transaction.transaction.purchaseDate
+                        ).toLocaleTimeString([], {
                           hour: '2-digit',
                           minute: '2-digit',
                         })}
@@ -264,12 +301,21 @@ export default function TransactionsPage() {
                   {/* Details */}
                   <td className="py-3 px-4">
                     <div className="text-xs text-gray-400">
-                      {transaction.transaction.type === 'story_pack' && transaction.transaction.metadata && (
-                        <span>+{transaction.transaction.metadata.storiesAdded} stories, +{transaction.transaction.metadata.assessmentsAdded} assessments</span>
-                      )}
-                      {transaction.transaction.type === 'story_publication' && transaction.transaction.metadata?.storyTitle && (
-                        <span>"{transaction.transaction.metadata.storyTitle}"</span>
-                      )}
+                      {transaction.transaction.type === 'story_pack' &&
+                        transaction.transaction.metadata && (
+                          <span>
+                            +{transaction.transaction.metadata.storiesAdded}{' '}
+                            stories, +
+                            {transaction.transaction.metadata.assessmentsAdded}{' '}
+                            assessments
+                          </span>
+                        )}
+                      {transaction.transaction.type === 'story_publication' &&
+                        transaction.transaction.metadata?.storyTitle && (
+                          <span>
+                            "{transaction.transaction.metadata.storyTitle}"
+                          </span>
+                        )}
                     </div>
                   </td>
                 </tr>
@@ -282,12 +328,13 @@ export default function TransactionsPage() {
         {transactions.length === 0 && !loading && (
           <div className="text-center py-12">
             <DollarSign size={48} className="text-gray-600 mx-auto mb-4" />
-            <h3 className="text-xl font-medium text-gray-400 mb-2">No transactions found</h3>
+            <h3 className="text-xl font-medium text-gray-400 mb-2">
+              No transactions found
+            </h3>
             <p className="text-gray-500">
-              {dateRange.startDate || dateRange.endDate 
-                ? 'Try adjusting your date range' 
-                : 'Transactions will appear here as customers make purchases'
-              }
+              {dateRange.startDate || dateRange.endDate
+                ? 'Try adjusting your date range'
+                : 'Transactions will appear here as customers make purchases'}
             </p>
           </div>
         )}
@@ -303,10 +350,11 @@ export default function TransactionsPage() {
           >
             Previous
           </button>
-          
+
           <div className="flex items-center space-x-2">
             {Array.from({ length: Math.min(5, pagination.pages) }, (_, i) => {
-              const pageNum = Math.max(1, Math.min(pagination.pages - 4, page - 2)) + i;
+              const pageNum =
+                Math.max(1, Math.min(pagination.pages - 4, page - 2)) + i;
               return (
                 <button
                   key={pageNum}
@@ -336,7 +384,9 @@ export default function TransactionsPage() {
       {/* Summary */}
       {pagination && (
         <div className="text-center text-gray-400 text-sm">
-          Showing {((pagination.page - 1) * pagination.limit) + 1} to {Math.min(pagination.page * pagination.limit, pagination.total)} of {pagination.total} transactions
+          Showing {(pagination.page - 1) * pagination.limit + 1} to{' '}
+          {Math.min(pagination.page * pagination.limit, pagination.total)} of{' '}
+          {pagination.total} transactions
         </div>
       )}
     </div>

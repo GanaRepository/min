@@ -22,8 +22,8 @@ export const USAGE_LIMITS: Record<string, UsageLimits> = {
 };
 
 export const MAX_ASSESSMENT_ATTEMPTS = 3;
-export const STORY_PACK_PRICE = 15.00;
-export const STORY_PUBLICATION_PRICE = 10.00;
+export const STORY_PACK_PRICE = 15.0;
+export const STORY_PUBLICATION_PRICE = 10.0;
 
 export const COMPETITION_LIMITS = {
   MAX_ENTRIES_PER_CHILD: 3,
@@ -40,7 +40,7 @@ export const UPLOAD_LIMITS = {
   ALLOWED_MIME_TYPES: [
     'text/plain',
     'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-    'application/pdf'
+    'application/pdf',
   ],
 };
 
@@ -92,7 +92,7 @@ export function calculateUserLimits(
 ): UsageLimits {
   // Filter purchases for current month
   const currentMonthPurchases = purchases.filter(
-    p => p.purchaseDate >= currentMonthStart
+    (p) => p.purchaseDate >= currentMonthStart
   );
 
   // Calculate additional limits from purchases
@@ -104,14 +104,22 @@ export function calculateUserLimits(
       acc.totalAssessmentAttempts += purchase.totalAssessmentAttemptsAdded || 0;
       return acc;
     },
-    { stories: 0, assessments: 0, competitionEntries: 0, totalAssessmentAttempts: 0 }
+    {
+      stories: 0,
+      assessments: 0,
+      competitionEntries: 0,
+      totalAssessmentAttempts: 0,
+    }
   );
 
   return {
     stories: baseLimits.stories + additionalLimits.stories,
     assessments: baseLimits.assessments + additionalLimits.assessments,
-    competitionEntries: baseLimits.competitionEntries + additionalLimits.competitionEntries,
-    totalAssessmentAttempts: baseLimits.totalAssessmentAttempts + additionalLimits.totalAssessmentAttempts,
+    competitionEntries:
+      baseLimits.competitionEntries + additionalLimits.competitionEntries,
+    totalAssessmentAttempts:
+      baseLimits.totalAssessmentAttempts +
+      additionalLimits.totalAssessmentAttempts,
   };
 }
 
@@ -128,10 +136,14 @@ export function validateUsageWithinLimits(
     violations.push(`Assessments: ${usage.assessments}/${limits.assessments}`);
   }
   if (usage.competitionEntries > limits.competitionEntries) {
-    violations.push(`Competition entries: ${usage.competitionEntries}/${limits.competitionEntries}`);
+    violations.push(
+      `Competition entries: ${usage.competitionEntries}/${limits.competitionEntries}`
+    );
   }
   if (usage.totalAssessmentAttempts > limits.totalAssessmentAttempts) {
-    violations.push(`Assessment attempts: ${usage.totalAssessmentAttempts}/${limits.totalAssessmentAttempts}`);
+    violations.push(
+      `Assessment attempts: ${usage.totalAssessmentAttempts}/${limits.totalAssessmentAttempts}`
+    );
   }
 
   return {

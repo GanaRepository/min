@@ -73,7 +73,7 @@ export default function ViewComment() {
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
   const [deleting, setDeleting] = useState(false);
-  
+
   // Edit functionality states
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState('');
@@ -97,7 +97,7 @@ export default function ViewComment() {
       setLoading(true);
       const response = await fetch(`/api/admin/comments/${commentId}`);
       const data = await response.json();
-      
+
       if (data.success) {
         setComment(data.comment);
         setPagination(data.pagination || null);
@@ -126,7 +126,7 @@ export default function ViewComment() {
       const data = await response.json();
 
       if (data.success) {
-        setComment(prev => prev ? { ...prev, isResolved } : null);
+        setComment((prev) => (prev ? { ...prev, isResolved } : null));
         alert(`Comment marked as ${isResolved ? 'resolved' : 'unresolved'}`);
       } else {
         alert('Failed to update comment status');
@@ -149,7 +149,7 @@ export default function ViewComment() {
       alert('Comment cannot be empty');
       return;
     }
-    
+
     try {
       setSaving(true);
       const response = await fetch(`/api/admin/comments/${commentId}`, {
@@ -163,11 +163,15 @@ export default function ViewComment() {
       const data = await response.json();
 
       if (data.success) {
-        setComment(prev => prev ? { 
-          ...prev, 
-          comment: editValue.trim(),
-          updatedAt: new Date().toISOString()
-        } : null);
+        setComment((prev) =>
+          prev
+            ? {
+                ...prev,
+                comment: editValue.trim(),
+                updatedAt: new Date().toISOString(),
+              }
+            : null
+        );
         setIsEditing(false);
         alert('Comment updated successfully');
       } else {
@@ -187,7 +191,11 @@ export default function ViewComment() {
   };
 
   const deleteComment = async () => {
-    if (!confirm('Are you sure you want to delete this comment? This action cannot be undone.')) {
+    if (
+      !confirm(
+        'Are you sure you want to delete this comment? This action cannot be undone.'
+      )
+    ) {
       return;
     }
 
@@ -215,7 +223,7 @@ export default function ViewComment() {
 
   const navigateToComment = async (direction: 'prev' | 'next') => {
     if (!pagination) return;
-    
+
     const targetId = direction === 'prev' ? pagination.prev : pagination.next;
     if (!targetId) return;
 
@@ -225,22 +233,33 @@ export default function ViewComment() {
 
   const getRoleColor = (role: string) => {
     switch (role) {
-      case 'admin': return 'bg-red-100 text-red-800';
-      case 'mentor': return 'bg-purple-100 text-purple-800';
-      case 'child': return 'bg-blue-100 text-blue-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'admin':
+        return 'bg-red-100 text-red-800';
+      case 'mentor':
+        return 'bg-purple-100 text-purple-800';
+      case 'child':
+        return 'bg-blue-100 text-blue-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
   const getCommentTypeColor = (type: string) => {
     switch (type) {
-      case 'admin_feedback': return 'bg-red-100 text-red-800';
-      case 'grammar': return 'bg-yellow-100 text-yellow-800';
-      case 'creativity': return 'bg-purple-100 text-purple-800';
-      case 'structure': return 'bg-blue-100 text-blue-800';
-      case 'suggestion': return 'bg-green-100 text-green-800';
-      case 'general': return 'bg-gray-100 text-gray-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'admin_feedback':
+        return 'bg-red-100 text-red-800';
+      case 'grammar':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'creativity':
+        return 'bg-purple-100 text-purple-800';
+      case 'structure':
+        return 'bg-blue-100 text-blue-800';
+      case 'suggestion':
+        return 'bg-green-100 text-green-800';
+      case 'general':
+        return 'bg-gray-100 text-gray-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
@@ -279,7 +298,7 @@ export default function ViewComment() {
             <p className="text-gray-400">Manage and moderate comment</p>
           </div>
         </div>
-        
+
         <div className="flex items-center space-x-2">
           {/* Pagination Navigation */}
           {pagination && (
@@ -316,10 +335,18 @@ export default function ViewComment() {
                 : 'bg-green-600 text-white hover:bg-green-700'
             }`}
           >
-            {comment.isResolved ? <X size={16} className="mr-2" /> : <Check size={16} className="mr-2" />}
-            {updating ? 'Updating...' : comment.isResolved ? 'Mark Unresolved' : 'Mark Resolved'}
+            {comment.isResolved ? (
+              <X size={16} className="mr-2" />
+            ) : (
+              <Check size={16} className="mr-2" />
+            )}
+            {updating
+              ? 'Updating...'
+              : comment.isResolved
+                ? 'Mark Unresolved'
+                : 'Mark Resolved'}
           </button>
-          
+
           <button
             onClick={deleteComment}
             disabled={deleting}
@@ -347,7 +374,9 @@ export default function ViewComment() {
               <p className="text-white font-medium">
                 {comment.authorId.firstName} {comment.authorId.lastName}
               </p>
-              <span className={`inline-flex items-center px-2 py-1 text-xs rounded-full ${getRoleColor(comment.authorId.role)}`}>
+              <span
+                className={`inline-flex items-center px-2 py-1 text-xs rounded-full ${getRoleColor(comment.authorId.role)}`}
+              >
                 {comment.authorId.role}
               </span>
             </div>
@@ -357,7 +386,6 @@ export default function ViewComment() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-         
           className="bg-gray-800 rounded-xl p-4"
         >
           <div className="flex items-center space-x-3">
@@ -366,7 +394,9 @@ export default function ViewComment() {
             </div>
             <div>
               <p className="text-sm text-gray-400">Type</p>
-              <span className={`inline-flex items-center px-2 py-1 text-xs rounded-full ${getCommentTypeColor(comment.commentType)}`}>
+              <span
+                className={`inline-flex items-center px-2 py-1 text-xs rounded-full ${getCommentTypeColor(comment.commentType)}`}
+              >
                 {comment.commentType}
               </span>
             </div>
@@ -376,16 +406,23 @@ export default function ViewComment() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-        
           className="bg-gray-800 rounded-xl p-4"
         >
           <div className="flex items-center space-x-3">
-            <div className={`p-3 rounded-lg ${comment.isResolved ? 'bg-green-600' : 'bg-red-600'}`}>
-              {comment.isResolved ? <Check size={20} className="text-white" /> : <X size={20} className="text-white" />}
+            <div
+              className={`p-3 rounded-lg ${comment.isResolved ? 'bg-green-600' : 'bg-red-600'}`}
+            >
+              {comment.isResolved ? (
+                <Check size={20} className="text-white" />
+              ) : (
+                <X size={20} className="text-white" />
+              )}
             </div>
             <div>
               <p className="text-sm text-gray-400">Status</p>
-              <p className={`font-medium ${comment.isResolved ? 'text-green-400' : 'text-red-400'}`}>
+              <p
+                className={`font-medium ${comment.isResolved ? 'text-green-400' : 'text-red-400'}`}
+              >
                 {comment.isResolved ? 'Resolved' : 'Unresolved'}
               </p>
             </div>
@@ -395,7 +432,6 @@ export default function ViewComment() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-         
           className="bg-gray-800 rounded-xl p-4"
         >
           <div className="flex items-center space-x-3">
@@ -419,7 +455,6 @@ export default function ViewComment() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        
         className="bg-gray-800 rounded-xl p-6"
       >
         <div className="flex items-start justify-between mb-4">
@@ -429,18 +464,19 @@ export default function ViewComment() {
             </div>
             <div>
               <h3 className="text-white font-medium">Story Context</h3>
-              <Link 
+              <Link
                 href={`/admin/stories/${comment.storyId._id}`}
                 className="text-blue-400 hover:text-blue-300 transition-colors"
               >
                 {comment.storyId.title} (Story #{comment.storyId.storyNumber})
               </Link>
               <p className="text-gray-400 text-sm">
-                by {comment.storyId.childId.firstName} {comment.storyId.childId.lastName}
+                by {comment.storyId.childId.firstName}{' '}
+                {comment.storyId.childId.lastName}
               </p>
             </div>
           </div>
-          
+
           {canEdit && !isEditing && (
             <button
               onClick={handleEditClick}
@@ -461,7 +497,7 @@ export default function ViewComment() {
               </span>
             )}
           </div>
-          
+
           {/* Conditional rendering for edit mode */}
           {isEditing ? (
             <div className="space-y-3">
@@ -504,7 +540,6 @@ export default function ViewComment() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-         
           className="bg-gray-800 rounded-xl p-6"
         >
           <h3 className="text-white font-medium mb-4">
@@ -512,12 +547,17 @@ export default function ViewComment() {
           </h3>
           <div className="space-y-4">
             {comment.replies.map((reply, index) => (
-              <div key={reply._id} className="bg-gray-700/30 rounded-lg p-4 ml-6">
+              <div
+                key={reply._id}
+                className="bg-gray-700/30 rounded-lg p-4 ml-6"
+              >
                 <div className="flex items-center space-x-2 mb-2">
                   <span className="text-white font-medium">
                     {reply.authorId.firstName} {reply.authorId.lastName}
                   </span>
-                  <span className={`px-2 py-1 text-xs rounded-full ${getRoleColor(reply.authorId.role)}`}>
+                  <span
+                    className={`px-2 py-1 text-xs rounded-full ${getRoleColor(reply.authorId.role)}`}
+                  >
                     {reply.authorId.role}
                   </span>
                   <span className="text-gray-400 text-sm">

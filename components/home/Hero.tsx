@@ -114,20 +114,68 @@ export default function Home() {
   // Writing inspiration categories (replacing story elements)
   const writingCategories = {
     genres: [
-      { name: 'Fantasy Adventures', icon: '🧙‍♀️', description: 'Magical worlds and mystical creatures' },
-      { name: 'Space Exploration', icon: '🚀', description: 'Cosmic adventures and alien encounters' },
-      { name: 'Animal Stories', icon: '🐾', description: 'Tales of brave pets and wild creatures' },
-      { name: 'Mystery & Detective', icon: '🔍', description: 'Solve puzzles and uncover secrets' },
-      { name: 'Friendship Tales', icon: '👥', description: 'Stories about bonds and teamwork' },
-      { name: 'Time Travel', icon: '⏰', description: 'Journey through past and future' },
+      {
+        name: 'Fantasy Adventures',
+        icon: '🧙‍♀️',
+        description: 'Magical worlds and mystical creatures',
+      },
+      {
+        name: 'Space Exploration',
+        icon: '🚀',
+        description: 'Cosmic adventures and alien encounters',
+      },
+      {
+        name: 'Animal Stories',
+        icon: '🐾',
+        description: 'Tales of brave pets and wild creatures',
+      },
+      {
+        name: 'Mystery & Detective',
+        icon: '🔍',
+        description: 'Solve puzzles and uncover secrets',
+      },
+      {
+        name: 'Friendship Tales',
+        icon: '👥',
+        description: 'Stories about bonds and teamwork',
+      },
+      {
+        name: 'Time Travel',
+        icon: '⏰',
+        description: 'Journey through past and future',
+      },
     ],
     themes: [
-      { name: 'Courage & Bravery', icon: '⚡', description: 'Heroes facing their fears' },
-      { name: 'Friendship & Loyalty', icon: '💝', description: 'The power of true friendship' },
-      { name: 'Discovery & Wonder', icon: '🔭', description: 'Exploring new worlds and ideas' },
-      { name: 'Problem Solving', icon: '🧩', description: 'Creative solutions to challenges' },
-      { name: 'Growth & Learning', icon: '🌱', description: 'Characters who grow and change' },
-      { name: 'Magic & Wonder', icon: '✨', description: 'Extraordinary and magical elements' },
+      {
+        name: 'Courage & Bravery',
+        icon: '⚡',
+        description: 'Heroes facing their fears',
+      },
+      {
+        name: 'Friendship & Loyalty',
+        icon: '💝',
+        description: 'The power of true friendship',
+      },
+      {
+        name: 'Discovery & Wonder',
+        icon: '🔭',
+        description: 'Exploring new worlds and ideas',
+      },
+      {
+        name: 'Problem Solving',
+        icon: '🧩',
+        description: 'Creative solutions to challenges',
+      },
+      {
+        name: 'Growth & Learning',
+        icon: '🌱',
+        description: 'Characters who grow and change',
+      },
+      {
+        name: 'Magic & Wonder',
+        icon: '✨',
+        description: 'Extraordinary and magical elements',
+      },
     ],
   };
 
@@ -383,11 +431,17 @@ export default function Home() {
 
                 <p className="text-base sm:text-lg lg:text-xl text-gray-300 leading-relaxed">
                   A platform where children{' '}
-                  <span className="text-green-300 font-medium">write freely</span>{' '}
+                  <span className="text-green-300 font-medium">
+                    write freely
+                  </span>{' '}
                   with{' '}
-                  <span className="text-teal-300 font-medium">AI collaboration</span>{' '}
+                  <span className="text-teal-300 font-medium">
+                    AI collaboration
+                  </span>{' '}
                   and get{' '}
-                  <span className="text-cyan-300 font-medium">detailed feedback</span>{' '}
+                  <span className="text-cyan-300 font-medium">
+                    detailed feedback
+                  </span>{' '}
                   to improve their writing skills.
                 </p>
               </motion.div>
@@ -443,9 +497,7 @@ export default function Home() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, delay: 0.6 }}
             >
-              <motion.div
-                className="relative flex flex-col justify-center items-center h-full"
-              >
+              <motion.div className="relative flex flex-col justify-center items-center h-full">
                 {/* Glow Effect */}
                 <motion.div
                   className="absolute inset-0 bg-gradient-to-r from-green-500/30 to-teal-500/30 blur-xl"
@@ -533,9 +585,7 @@ export default function Home() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 1, delay: 1.4 }}
             >
-              <motion.div
-                className="relative flex flex-col justify-center items-center h-full"
-              >
+              <motion.div className="relative flex flex-col justify-center items-center h-full">
                 {/* Enhanced Glow Effect */}
                 <motion.div
                   className="absolute inset-0 bg-gradient-to-r from-green-500/30 to-teal-500/30 blur-xl"
@@ -618,7 +668,8 @@ export default function Home() {
                         animate={{ opacity: 1 }}
                         transition={{ delay: 1.2 }}
                       >
-                        Write freely with AI collaboration and get detailed feedback to improve your creative writing skills.
+                        Write freely with AI collaboration and get detailed
+                        feedback to improve your creative writing skills.
                       </motion.p>
 
                       {/* New Content Addition */}
@@ -628,7 +679,8 @@ export default function Home() {
                         animate={{ opacity: 1 }}
                         transition={{ delay: 1.5 }}
                       >
-                        3 free stories + 3 free assessments monthly. Join thousands of young writers worldwide!
+                        3 free stories + 3 free assessments monthly. Join
+                        thousands of young writers worldwide!
                       </motion.p>
 
                       {/* Mini Feature Icons */}
@@ -716,749 +768,761 @@ export default function Home() {
                   animate={{
                     rotate: [360, 0],
                   }}
-                  transition={{duration: 15,
-                   repeat: Infinity,
-                   ease: 'linear',
-                 }}
-                 style={{
-                   transformOrigin: '160px 160px',
-                 }}
-               >
-                 <BookOpen className="w-4 sm:w-5 h-4 sm:h-5 text-white" />
-               </motion.div>
+                  transition={{
+                    duration: 15,
+                    repeat: Infinity,
+                    ease: 'linear',
+                  }}
+                  style={{
+                    transformOrigin: '160px 160px',
+                  }}
+                >
+                  <BookOpen className="w-4 sm:w-5 h-4 sm:h-5 text-white" />
+                </motion.div>
 
-               <motion.div
-                 className="absolute top-1/2 -right-12 w-6 sm:w-8 h-6 sm:h-8 bg-gradient-to-r from-yellow-500 to-orange-600 rounded-full opacity-60 flex items-center justify-center"
-                 animate={{
-                   rotate: [0, 360],
-                   y: [0, -20, 0],
-                 }}
-                 transition={{
-                   duration: 8,
-                   repeat: Infinity,
-                   ease: 'linear',
-                 }}
-               >
-                 <Star className="w-3 sm:w-4 h-3 sm:h-4 text-white" />
-               </motion.div>
-             </motion.div>
-           </motion.div>
-         </div>
-       </div>
-     </section>
+                <motion.div
+                  className="absolute top-1/2 -right-12 w-6 sm:w-8 h-6 sm:h-8 bg-gradient-to-r from-yellow-500 to-orange-600 rounded-full opacity-60 flex items-center justify-center"
+                  animate={{
+                    rotate: [0, 360],
+                    y: [0, -20, 0],
+                  }}
+                  transition={{
+                    duration: 8,
+                    repeat: Infinity,
+                    ease: 'linear',
+                  }}
+                >
+                  <Star className="w-3 sm:w-4 h-3 sm:h-4 text-white" />
+                </motion.div>
+              </motion.div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
 
-     <DiamondSeparator />
+      <DiamondSeparator />
 
-     {/* Story Showcase Section */}
-     <section className="relative px-4 sm:px-6 lg:px-8 py-12">
-       <div className="max-w-6xl mx-auto">
-         <motion.div
-           className="text-center mb-16"
-           initial={{ opacity: 0, y: 50 }}
-           whileInView={{ opacity: 1, y: 0 }}
-           transition={{ duration: 0.8 }}
-           viewport={{ once: true }}
-         >
-           <h2 className="text-3xl sm:text-4xl lg:text-5xl mb-6">
-             Amazing Stories by{' '}
-             <span className="bg-gradient-to-r from-green-400 via-teal-400 to-cyan-400 bg-clip-text text-transparent">
-               Young Writers
-             </span>
-           </h2>
-           <p className="text-lg sm:text-xl text-gray-300 max-w-3xl mx-auto">
-             See what incredible stories children are creating with MINTOONS
-           </p>
-         </motion.div>
+      {/* Story Showcase Section */}
+      <section className="relative px-4 sm:px-6 lg:px-8 py-12">
+        <div className="max-w-6xl mx-auto">
+          <motion.div
+            className="text-center mb-16"
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl mb-6">
+              Amazing Stories by{' '}
+              <span className="bg-gradient-to-r from-green-400 via-teal-400 to-cyan-400 bg-clip-text text-transparent">
+                Young Writers
+              </span>
+            </h2>
+            <p className="text-lg sm:text-xl text-gray-300 max-w-3xl mx-auto">
+              See what incredible stories children are creating with MINTOONS
+            </p>
+          </motion.div>
 
-         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-           {storyShowcase.map((story, index) => (
-             <motion.div
-               key={index}
-               className="group relative"
-               initial={{ opacity: 0, y: 60 }}
-               whileInView={{ opacity: 1, y: 0 }}
-               transition={{ duration: 0.6, delay: index * 0.1 }}
-               viewport={{ once: true }}
-               whileHover={{ y: -8, transition: { duration: 0.3 } }}
-             >
-               <div className="relative h-full bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 shadow-xl overflow-hidden">
-                 {/* Story Card Header */}
-                 <div
-                   className={`relative h-48 bg-gradient-to-br ${story.gradient} overflow-hidden`}
-                 >
-                   {/* Genre Badge */}
-                   <div className="absolute top-4 left-4 px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-white text-xs font-medium">
-                     {story.genre}
-                   </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {storyShowcase.map((story, index) => (
+              <motion.div
+                key={index}
+                className="group relative"
+                initial={{ opacity: 0, y: 60 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+                viewport={{ once: true }}
+                whileHover={{ y: -8, transition: { duration: 0.3 } }}
+              >
+                <div className="relative h-full bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 shadow-xl overflow-hidden">
+                  {/* Story Card Header */}
+                  <div
+                    className={`relative h-48 bg-gradient-to-br ${story.gradient} overflow-hidden`}
+                  >
+                    {/* Genre Badge */}
+                    <div className="absolute top-4 left-4 px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-white text-xs font-medium">
+                      {story.genre}
+                    </div>
 
-                   {/* Rating Badge */}
-                   <div className="absolute top-4 right-4 flex items-center space-x-1 px-2 py-1 bg-white/20 backdrop-blur-sm rounded-full text-white text-xs">
-                     <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-                     <span>{story.rating}</span>
-                   </div>
+                    {/* Rating Badge */}
+                    <div className="absolute top-4 right-4 flex items-center space-x-1 px-2 py-1 bg-white/20 backdrop-blur-sm rounded-full text-white text-xs">
+                      <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+                      <span>{story.rating}</span>
+                    </div>
 
-                   {/* Story Icon/Emoji */}
-                   <div className="absolute inset-0 flex items-center justify-center">
-                     <motion.div
-                       className="text-6xl"
-                       whileHover={{ scale: 1.2, rotate: 10 }}
-                       transition={{ duration: 0.3 }}
-                     >
-                       {story.emoji}
-                     </motion.div>
-                   </div>
-                 </div>
+                    {/* Story Icon/Emoji */}
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <motion.div
+                        className="text-6xl"
+                        whileHover={{ scale: 1.2, rotate: 10 }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        {story.emoji}
+                      </motion.div>
+                    </div>
+                  </div>
 
-                 {/* Story Content */}
-                 <div className="p-6">
-                   <h3 className="text-xl text-white mb-3 group-hover:text-green-400 transition-colors">
-                     {story.title}
-                   </h3>
-                   <p className="text-gray-300 text-sm leading-relaxed mb-4 line-clamp-3">
-                     {story.description}
-                   </p>
+                  {/* Story Content */}
+                  <div className="p-6">
+                    <h3 className="text-xl text-white mb-3 group-hover:text-green-400 transition-colors">
+                      {story.title}
+                    </h3>
+                    <p className="text-gray-300 text-sm leading-relaxed mb-4 line-clamp-3">
+                      {story.description}
+                    </p>
 
-                   {/* Author Info */}
-                   <div className="flex items-center justify-between pt-4 border-t border-gray-600/30">
-                     <div className="flex items-center space-x-3">
-                       <div className="w-8 h-8 bg-gradient-to-r from-green-400 to-teal-500 rounded-full flex items-center justify-center">
-                         <span className="text-white text-xs">
-                           {story.author.split(',')[0].charAt(0)}
-                         </span>
-                       </div>
-                       <div>
-                         <p className="text-green-400 text-sm font-medium">
-                           {story.author}
-                         </p>
-                         <p className="text-gray-400 text-xs">
-                           {story.readTime}
-                         </p>
-                       </div>
-                     </div>
-                   </div>
-                 </div>
+                    {/* Author Info */}
+                    <div className="flex items-center justify-between pt-4 border-t border-gray-600/30">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-8 h-8 bg-gradient-to-r from-green-400 to-teal-500 rounded-full flex items-center justify-center">
+                          <span className="text-white text-xs">
+                            {story.author.split(',')[0].charAt(0)}
+                          </span>
+                        </div>
+                        <div>
+                          <p className="text-green-400 text-sm font-medium">
+                            {story.author}
+                          </p>
+                          <p className="text-gray-400 text-xs">
+                            {story.readTime}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
 
-                 {/* Hover Effect Overlay */}
-                 <motion.div
-                   className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent"
-                   initial={{ opacity: 0 }}
-                   whileHover={{ opacity: 1 }}
-                   transition={{ duration: 0.3 }}
-                 />
-               </div>
-             </motion.div>
-           ))}
-         </div>
+                  {/* Hover Effect Overlay */}
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent"
+                    initial={{ opacity: 0 }}
+                    whileHover={{ opacity: 1 }}
+                    transition={{ duration: 0.3 }}
+                  />
+                </div>
+              </motion.div>
+            ))}
+          </div>
 
-         {/* Explore All Stories Button */}
-         <motion.div
-           className="text-center mt-12"
-           initial={{ opacity: 0 }}
-           whileInView={{ opacity: 1 }}
-           transition={{ delay: 0.5 }}
-           viewport={{ once: true }}
-         >
-           <Link href="/register">
-             <motion.button
-               className="group relative px-8 py-4 bg-gradient-to-r from-purple-500 to-pink-600 rounded-xl text-lg text-white shadow-lg shadow-purple-500/25 overflow-hidden"
-               whileHover={{ scale: 1.05 }}
-               whileTap={{ scale: 0.95 }}
-             >
-               <span className="relative z-10 flex items-center">
-                 Register Now to Start Writing
-                 <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
-               </span>
-               <motion.div
-                 className="absolute inset-0 bg-gradient-to-r from-pink-600 to-purple-500"
-                 initial={{ x: '-100%' }}
-                 whileHover={{ x: '0%' }}
-                 transition={{ duration: 0.3 }}
-               />
-             </motion.button>
-           </Link>
-         </motion.div>
-       </div>
-     </section>
+          {/* Explore All Stories Button */}
+          <motion.div
+            className="text-center mt-12"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ delay: 0.5 }}
+            viewport={{ once: true }}
+          >
+            <Link href="/register">
+              <motion.button
+                className="group relative px-8 py-4 bg-gradient-to-r from-purple-500 to-pink-600 rounded-xl text-lg text-white shadow-lg shadow-purple-500/25 overflow-hidden"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <span className="relative z-10 flex items-center">
+                  Register Now to Start Writing
+                  <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                </span>
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-r from-pink-600 to-purple-500"
+                  initial={{ x: '-100%' }}
+                  whileHover={{ x: '0%' }}
+                  transition={{ duration: 0.3 }}
+                />
+              </motion.button>
+            </Link>
+          </motion.div>
+        </div>
+      </section>
 
-     <DiamondSeparator />
+      <DiamondSeparator />
 
-     {/* Writing Inspiration Section (Replacing Story Elements) */}
-     <section className="relative px-4 sm:px-6 lg:px-8 py-12">
-       <div className="max-w-7xl mx-auto">
-         <motion.div
-           className="text-center mb-16"
-           initial={{ opacity: 0, y: 50 }}
-           whileInView={{ opacity: 1, y: 0 }}
-           transition={{ duration: 0.8 }}
-           viewport={{ once: true }}
-         >
-           <h2 className="text-3xl sm:text-4xl lg:text-5xl mb-6">
-             Find Your{' '}
-             <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-               Writing Inspiration
-             </span>
-           </h2>
-           <p className="text-lg sm:text-xl text-gray-300 max-w-3xl mx-auto">
-             Explore different genres and themes to spark your creativity. Write about anything that excites you!
-           </p>
-         </motion.div>
+      {/* Writing Inspiration Section (Replacing Story Elements) */}
+      <section className="relative px-4 sm:px-6 lg:px-8 py-12">
+        <div className="max-w-7xl mx-auto">
+          <motion.div
+            className="text-center mb-16"
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl mb-6">
+              Find Your{' '}
+              <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+                Writing Inspiration
+              </span>
+            </h2>
+            <p className="text-lg sm:text-xl text-gray-300 max-w-3xl mx-auto">
+              Explore different genres and themes to spark your creativity.
+              Write about anything that excites you!
+            </p>
+          </motion.div>
 
-         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-           {/* Popular Genres */}
-           <motion.div
-             initial={{ opacity: 0, x: -50 }}
-             whileInView={{ opacity: 1, x: 0 }}
-             transition={{ duration: 0.8 }}
-             viewport={{ once: true }}
-           >
-             <div className="flex items-center space-x-3 mb-8">
-               <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
-                 <Sparkles className="w-6 h-6 text-white" />
-               </div>
-               <h3 className="text-2xl text-white">Popular Story Genres</h3>
-             </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            {/* Popular Genres */}
+            <motion.div
+              initial={{ opacity: 0, x: -50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+            >
+              <div className="flex items-center space-x-3 mb-8">
+                <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
+                  <Sparkles className="w-6 h-6 text-white" />
+                </div>
+                <h3 className="text-2xl text-white">Popular Story Genres</h3>
+              </div>
 
-             <div className="grid grid-cols-2 gap-4">
-               {writingCategories.genres.map((genre, index) => (
-                 <motion.div
-                   key={index}
-                   className="relative p-4 bg-gradient-to-r from-blue-500/20 to-purple-600/20 border border-blue-500/30 text-white cursor-pointer group overflow-hidden hover:border-blue-400/50 transition-all duration-300"
-                   whileHover={{ scale: 1.05, y: -2 }}
-                   initial={{ opacity: 0, y: 20 }}
-                   whileInView={{ opacity: 1, y: 0 }}
-                   transition={{ duration: 0.5, delay: index * 0.1 }}
-                   viewport={{ once: true }}
-                 >
-                   <div className="relative z-10 text-center space-y-2">
-                     <span className="text-2xl block">{genre.icon}</span>
-                     <span className="text-sm font-medium block">{genre.name}</span>
-                     <span className="text-xs text-gray-300 block">{genre.description}</span>
-                   </div>
-                   <motion.div
-                     className="absolute inset-0 bg-white/10"
-                     initial={{ opacity: 0 }}
-                     whileHover={{ opacity: 1 }}
-                     transition={{ duration: 0.3 }}
-                   />
-                 </motion.div>
-               ))}
-             </div>
-           </motion.div>
+              <div className="grid grid-cols-2 gap-4">
+                {writingCategories.genres.map((genre, index) => (
+                  <motion.div
+                    key={index}
+                    className="relative p-4 bg-gradient-to-r from-blue-500/20 to-purple-600/20 border border-blue-500/30 text-white cursor-pointer group overflow-hidden hover:border-blue-400/50 transition-all duration-300"
+                    whileHover={{ scale: 1.05, y: -2 }}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                    viewport={{ once: true }}
+                  >
+                    <div className="relative z-10 text-center space-y-2">
+                      <span className="text-2xl block">{genre.icon}</span>
+                      <span className="text-sm font-medium block">
+                        {genre.name}
+                      </span>
+                      <span className="text-xs text-gray-300 block">
+                        {genre.description}
+                      </span>
+                    </div>
+                    <motion.div
+                      className="absolute inset-0 bg-white/10"
+                      initial={{ opacity: 0 }}
+                      whileHover={{ opacity: 1 }}
+                      transition={{ duration: 0.3 }}
+                    />
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
 
-           {/* Story Themes */}
-           <motion.div
-             initial={{ opacity: 0, x: 50 }}
-             whileInView={{ opacity: 1, x: 0 }}
-             transition={{ duration: 0.8 }}
-             viewport={{ once: true }}
-           >
-             <div className="flex items-center space-x-3 mb-8">
-               <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-teal-600 rounded-xl flex items-center justify-center">
-                 <Heart className="w-6 h-6 text-white" />
-               </div>
-               <h3 className="text-2xl text-white">Story Themes</h3>
-             </div>
+            {/* Story Themes */}
+            <motion.div
+              initial={{ opacity: 0, x: 50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+            >
+              <div className="flex items-center space-x-3 mb-8">
+                <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-teal-600 rounded-xl flex items-center justify-center">
+                  <Heart className="w-6 h-6 text-white" />
+                </div>
+                <h3 className="text-2xl text-white">Story Themes</h3>
+              </div>
 
-             <div className="grid grid-cols-2 gap-4">
-               {writingCategories.themes.map((theme, index) => (
-                 <motion.div
-                   key={index}
-                   className="relative p-4 bg-gradient-to-r from-green-500/20 to-teal-600/20 border border-green-500/30 text-white cursor-pointer group overflow-hidden hover:border-green-400/50 transition-all duration-300"
-                   whileHover={{ scale: 1.05, y: -2 }}
-                   initial={{ opacity: 0, y: 20 }}
-                   whileInView={{ opacity: 1, y: 0 }}
-                   transition={{ duration: 0.5, delay: index * 0.1 }}
-                   viewport={{ once: true }}
-                 >
-                   <div className="relative z-10 text-center space-y-2">
-                     <span className="text-2xl block">{theme.icon}</span>
-                     <span className="text-sm font-medium block">{theme.name}</span>
-                     <span className="text-xs text-gray-300 block">{theme.description}</span>
-                   </div>
-                   <motion.div
-                     className="absolute inset-0 bg-white/10"
-                     initial={{ opacity: 0 }}
-                     whileHover={{ opacity: 1 }}
-                     transition={{ duration: 0.3 }}
-                   />
-                 </motion.div>
-               ))}
-             </div>
-           </motion.div>
-         </div>
+              <div className="grid grid-cols-2 gap-4">
+                {writingCategories.themes.map((theme, index) => (
+                  <motion.div
+                    key={index}
+                    className="relative p-4 bg-gradient-to-r from-green-500/20 to-teal-600/20 border border-green-500/30 text-white cursor-pointer group overflow-hidden hover:border-green-400/50 transition-all duration-300"
+                    whileHover={{ scale: 1.05, y: -2 }}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                    viewport={{ once: true }}
+                  >
+                    <div className="relative z-10 text-center space-y-2">
+                      <span className="text-2xl block">{theme.icon}</span>
+                      <span className="text-sm font-medium block">
+                        {theme.name}
+                      </span>
+                      <span className="text-xs text-gray-300 block">
+                        {theme.description}
+                      </span>
+                    </div>
+                    <motion.div
+                      className="absolute inset-0 bg-white/10"
+                      initial={{ opacity: 0 }}
+                      whileHover={{ opacity: 1 }}
+                      transition={{ duration: 0.3 }}
+                    />
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+          </div>
 
-         {/* Start Creating Button */}
-         <motion.div
-           className="text-center mt-12"
-           initial={{ opacity: 0 }}
-           whileInView={{ opacity: 1 }}
-           transition={{ delay: 0.5 }}
-           viewport={{ once: true }}
-         >
-           <Link href="/create-stories">
-             <motion.button
-               className="group relative px-10 py-4 bg-gradient-to-r from-purple-500 to-blue-600 rounded-xl text-lg text-white shadow-lg shadow-purple-500/25 overflow-hidden"
-               whileHover={{ scale: 1.05 }}
-               whileTap={{ scale: 0.95 }}
-             >
-               <span className="relative z-10 flex items-center">
-                 Start Creating Your Story
-                 <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
-               </span>
-               <motion.div
-                 className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-500"
-                 initial={{ x: '-100%' }}
-                 whileHover={{ x: '0%' }}
-                 transition={{ duration: 0.3 }}
-               />
-             </motion.button>
-           </Link>
-         </motion.div>
-       </div>
-     </section>
+          {/* Start Creating Button */}
+          <motion.div
+            className="text-center mt-12"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ delay: 0.5 }}
+            viewport={{ once: true }}
+          >
+            <Link href="/create-stories">
+              <motion.button
+                className="group relative px-10 py-4 bg-gradient-to-r from-purple-500 to-blue-600 rounded-xl text-lg text-white shadow-lg shadow-purple-500/25 overflow-hidden"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <span className="relative z-10 flex items-center">
+                  Start Creating Your Story
+                  <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                </span>
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-500"
+                  initial={{ x: '-100%' }}
+                  whileHover={{ x: '0%' }}
+                  transition={{ duration: 0.3 }}
+                />
+              </motion.button>
+            </Link>
+          </motion.div>
+        </div>
+      </section>
 
-     <DiamondSeparator />
+      <DiamondSeparator />
 
-     {/* Platform Features Section */}
-     <section className="relative px-4 sm:px-6 lg:px-8 py-12">
-       <div className="max-w-7xl mx-auto">
-         <motion.div
-           className="text-center mb-16"
-           initial={{ opacity: 0, y: 50 }}
-           whileInView={{ opacity: 1, y: 0 }}
-           transition={{ duration: 0.8 }}
-           viewport={{ once: true }}
-         >
-           <div className="inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-400/30 backdrop-blur-xl mb-4">
-             <Sparkles className="w-4 h-4 text-purple-400 mr-2" />
-             <span className="text-purple-200 font-medium text-sm">
-               Platform Features
-             </span>
-           </div>
-           <h2 className="text-3xl sm:text-4xl lg:text-5xl mb-6">
-             Everything Your Child Needs to{' '}
-             <span className="bg-gradient-to-r from-green-400 via-teal-400 to-cyan-400 bg-clip-text text-transparent">
-               Write & Improve
-             </span>
-           </h2>
-           <p className="text-lg sm:text-xl text-gray-300 max-w-3xl mx-auto">
-             Freeform creative writing with AI collaboration and advanced assessment feedback
-           </p>
-         </motion.div>
+      {/* Platform Features Section */}
+      <section className="relative px-4 sm:px-6 lg:px-8 py-12">
+        <div className="max-w-7xl mx-auto">
+          <motion.div
+            className="text-center mb-16"
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+          >
+            <div className="inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-400/30 backdrop-blur-xl mb-4">
+              <Sparkles className="w-4 h-4 text-purple-400 mr-2" />
+              <span className="text-purple-200 font-medium text-sm">
+                Platform Features
+              </span>
+            </div>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl mb-6">
+              Everything Your Child Needs to{' '}
+              <span className="bg-gradient-to-r from-green-400 via-teal-400 to-cyan-400 bg-clip-text text-transparent">
+                Write & Improve
+              </span>
+            </h2>
+            <p className="text-lg sm:text-xl text-gray-300 max-w-3xl mx-auto">
+              Freeform creative writing with AI collaboration and advanced
+              assessment feedback
+            </p>
+          </motion.div>
 
-         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-           {platformFeatures.map((feature, index) => (
-             <motion.div
-               key={index}
-               className="group relative"
-               initial={{ opacity: 0, y: 60 }}
-               whileInView={{ opacity: 1, y: 0 }}
-               transition={{ duration: 0.6, delay: index * 0.1 }}
-               viewport={{ once: true }}
-               whileHover={{ y: -8, transition: { duration: 0.3 } }}
-             >
-               <div
-                 className={`relative h-full p-8 bg-gradient-to-br ${feature.bgColor} backdrop-blur-xl border border-gray-600/40 shadow-xl overflow-hidden`}
-               >
-                 {/* Icon */}
-                 <div
-                   className={`w-16 h-16 bg-gradient-to-r ${feature.gradient} flex items-center justify-center mb-6 shadow-lg group-hover:scale-110 transition-transform duration-300`}
-                 >
-                   {React.cloneElement(feature.icon, {
-                     className: 'text-white',
-                   })}
-                 </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {platformFeatures.map((feature, index) => (
+              <motion.div
+                key={index}
+                className="group relative"
+                initial={{ opacity: 0, y: 60 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+                viewport={{ once: true }}
+                whileHover={{ y: -8, transition: { duration: 0.3 } }}
+              >
+                <div
+                  className={`relative h-full p-8 bg-gradient-to-br ${feature.bgColor} backdrop-blur-xl border border-gray-600/40 shadow-xl overflow-hidden`}
+                >
+                  {/* Icon */}
+                  <div
+                    className={`w-16 h-16 bg-gradient-to-r ${feature.gradient} flex items-center justify-center mb-6 shadow-lg group-hover:scale-110 transition-transform duration-300`}
+                  >
+                    {React.cloneElement(feature.icon, {
+                      className: 'text-white',
+                    })}
+                  </div>
 
-                 {/* Content */}
-                 <h3 className="text-xl text-white mb-4 group-hover:text-green-400 transition-colors">
-                   {feature.title}
-                 </h3>
-                 <p className="text-gray-300 text-sm leading-relaxed mb-6">
-                   {feature.description}
-                 </p>
+                  {/* Content */}
+                  <h3 className="text-xl text-white mb-4 group-hover:text-green-400 transition-colors">
+                    {feature.title}
+                  </h3>
+                  <p className="text-gray-300 text-sm leading-relaxed mb-6">
+                    {feature.description}
+                  </p>
 
-                 {/* Hover Effect */}
-                 <motion.div
-                   className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent"
-                   initial={{ opacity: 0 }}
-                   whileHover={{ opacity: 1 }}
-                   transition={{ duration: 0.3 }}
-                 />
-               </div>
-             </motion.div>
-           ))}
-         </div>
-       </div>
-     </section>
+                  {/* Hover Effect */}
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent"
+                    initial={{ opacity: 0 }}
+                    whileHover={{ opacity: 1 }}
+                    transition={{ duration: 0.3 }}
+                  />
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-     <DiamondSeparator />
+      <DiamondSeparator />
 
-     {/* Features Section with Images */}
-     <section className="relative px-4 sm:px-6 lg:px-8 py-12">
-       <div className="max-w-6xl mx-auto">
-         <motion.div
-           className="text-center mb-12"
-           initial={{ opacity: 0, y: 50 }}
-           whileInView={{ opacity: 1, y: 0 }}
-           transition={{ duration: 0.8 }}
-           viewport={{ once: true }}
-         >
-           <h2 className="text-2xl sm:text-3xl lg:text-4xl text-white pb-6">
-             Why Kids Love{' '}
-             <span className="bg-gradient-to-r from-green-400 to-teal-400 bg-clip-text text-transparent">
-               Mintoons
-             </span>
-           </h2>
-         </motion.div>
+      {/* Features Section with Images */}
+      <section className="relative px-4 sm:px-6 lg:px-8 py-12">
+        <div className="max-w-6xl mx-auto">
+          <motion.div
+            className="text-center mb-12"
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl text-white pb-6">
+              Why Kids Love{' '}
+              <span className="bg-gradient-to-r from-green-400 to-teal-400 bg-clip-text text-transparent">
+                Mintoons
+              </span>
+            </h2>
+          </motion.div>
 
-         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-           {features.map((feature, index) => (
-             <motion.div
-               key={index}
-               className="group relative"
-               initial={{ opacity: 0, y: 60 }}
-               whileInView={{ opacity: 1, y: 0 }}
-               transition={{ duration: 0.6, delay: index * 0.1 }}
-               viewport={{ once: true }}
-               whileHover={{ y: -8, transition: { duration: 0.3 } }}
-             >
-               <div className="relative h-full bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 shadow-xl overflow-hidden">
-                 {/* Feature Image */}
-                 <div className="relative h-40 sm:h-48 overflow-hidden">
-                   <Image
-                     src={feature.image}
-                     alt={feature.title}
-                     fill
-                     className="object-cover"
-                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
-                   />
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+            {features.map((feature, index) => (
+              <motion.div
+                key={index}
+                className="group relative"
+                initial={{ opacity: 0, y: 60 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+                viewport={{ once: true }}
+                whileHover={{ y: -8, transition: { duration: 0.3 } }}
+              >
+                <div className="relative h-full bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 shadow-xl overflow-hidden">
+                  {/* Feature Image */}
+                  <div className="relative h-40 sm:h-48 overflow-hidden">
+                    <Image
+                      src={feature.image}
+                      alt={feature.title}
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+                    />
 
-                   {/* Reduced Gradient Overlay */}
-                   <div
-                     className={`absolute inset-0 bg-gradient-to-br ${feature.gradient} opacity-30`}
-                   />
+                    {/* Reduced Gradient Overlay */}
+                    <div
+                      className={`absolute inset-0 bg-gradient-to-br ${feature.gradient} opacity-30`}
+                    />
 
-                   {/* Icon Overlay */}
-                   <div className="absolute inset-0 flex items-center justify-center">
-                     <motion.div
-                       className="text-white bg-black/20 backdrop-blur-sm rounded-full p-2 sm:p-3"
-                       whileHover={{ scale: 1.2, rotate: 10 }}
-                       transition={{ duration: 0.3 }}
-                     >
-                       {React.cloneElement(feature.icon, {
-                         className: 'w-6 sm:w-8 h-6 sm:h-8',
-                       })}
-                     </motion.div>
-                   </div>
-                 </div>
+                    {/* Icon Overlay */}
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <motion.div
+                        className="text-white bg-black/20 backdrop-blur-sm rounded-full p-2 sm:p-3"
+                        whileHover={{ scale: 1.2, rotate: 10 }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        {React.cloneElement(feature.icon, {
+                          className: 'w-6 sm:w-8 h-6 sm:h-8',
+                        })}
+                      </motion.div>
+                    </div>
+                  </div>
 
-                 {/* Content */}
-                 <div className="p-4 sm:p-6">
-                   <h3 className="text-lg sm:text-xl text-white mb-2 sm:mb-3">
-                     {feature.title}
-                   </h3>
+                  {/* Content */}
+                  <div className="p-4 sm:p-6">
+                    <h3 className="text-lg sm:text-xl text-white mb-2 sm:mb-3">
+                      {feature.title}
+                    </h3>
 
-                   <p className="text-gray-300 text-xs sm:text-sm leading-relaxed">
-                     {feature.description}
-                   </p>
-                 </div>
+                    <p className="text-gray-300 text-xs sm:text-sm leading-relaxed">
+                      {feature.description}
+                    </p>
+                  </div>
 
-                 <motion.div
-                   className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent"
-                   initial={{ opacity: 0 }}
-                   whileHover={{ opacity: 1 }}
-                   transition={{ duration: 0.3 }}
-                 />
-               </div>
-             </motion.div>
-           ))}
-         </div>
-       </div>
-     </section>
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent"
+                    initial={{ opacity: 0 }}
+                    whileHover={{ opacity: 1 }}
+                    transition={{ duration: 0.3 }}
+                  />
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-     <DiamondSeparator />
+      <DiamondSeparator />
 
-     {/* Values Section */}
-     <section className="relative z-10 px-4 sm:px-6 lg:px-8 py-12">
-       <div className="max-w-7xl mx-auto">
-         <motion.div
-           initial={{ opacity: 0, y: 20 }}
-           whileInView={{ opacity: 1, y: 0 }}
-           transition={{ duration: 0.6 }}
-           viewport={{ once: true }}
-           className="text-center mb-12 sm:mb-16"
-         >
-           <h2 className="text-3xl sm:text-4xl lg:text-5xl text-white mb-4">
-             Our Core Principles
-           </h2>
-           <p className="text-lg sm:text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
-             The foundational values that guide our educational approach and
-             commitment to developing children&apos;s creativity and writing
-             skills.
-           </p>
-         </motion.div>
+      {/* Values Section */}
+      <section className="relative z-10 px-4 sm:px-6 lg:px-8 py-12">
+        <div className="max-w-7xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+            className="text-center mb-12 sm:mb-16"
+          >
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl text-white mb-4">
+              Our Core Principles
+            </h2>
+            <p className="text-lg sm:text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
+              The foundational values that guide our educational approach and
+              commitment to developing children&apos;s creativity and writing
+              skills.
+            </p>
+          </motion.div>
 
-         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
-           {values.map((value, index) => (
-             <motion.div
-               key={index}
-               initial={{ opacity: 0, y: 30 }}
-               whileInView={{ opacity: 1, y: 0 }}
-               transition={{ duration: 0.6, delay: index * 0.1 }}
-               viewport={{ once: true }}
-               className="bg-white/10 backdrop-blur-xl p-6 sm:p-8 border border-white/20 hover:bg-white/15 transition-all duration-300 group"
-             >
-               <div
-                 className={`w-14 sm:w-16 h-14 sm:h-16 bg-gradient-to-r ${value.gradient} rounded-xl flex items-center justify-center mb-4 sm:mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg`}
-               >
-                 <value.icon className="w-6 sm:w-8 h-6 sm:h-8 text-white" />
-               </div>
-               <h3 className="text-xl sm:text-2xl text-white mb-2 sm:mb-4">
-                 {value.title}
-               </h3>
-               <p className="text-gray-300 text-sm leading-relaxed">
-                 {value.description}
-               </p>
-             </motion.div>
-           ))}
-         </div>
-       </div>
-     </section>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
+            {values.map((value, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+                viewport={{ once: true }}
+                className="bg-white/10 backdrop-blur-xl p-6 sm:p-8 border border-white/20 hover:bg-white/15 transition-all duration-300 group"
+              >
+                <div
+                  className={`w-14 sm:w-16 h-14 sm:h-16 bg-gradient-to-r ${value.gradient} rounded-xl flex items-center justify-center mb-4 sm:mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg`}
+                >
+                  <value.icon className="w-6 sm:w-8 h-6 sm:h-8 text-white" />
+                </div>
+                <h3 className="text-xl sm:text-2xl text-white mb-2 sm:mb-4">
+                  {value.title}
+                </h3>
+                <p className="text-gray-300 text-sm leading-relaxed">
+                  {value.description}
+                </p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-     <DiamondSeparator />
+      <DiamondSeparator />
 
-     {/* How It Works Section */}
-     <section className="relative px-4 sm:px-6 lg:px-8 py-12">
-       <div className="max-w-7xl mx-auto">
-         <motion.div
-           className="text-center mb-16"
-           initial={{ opacity: 0, y: 50 }}
-           whileInView={{ opacity: 1, y: 0 }}
-           transition={{ duration: 0.8 }}
-           viewport={{ once: true }}
-         >
-           <h2 className="text-4xl sm:text-5xl text-white mb-6">
-             How It{' '}
-             <span className="bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">
-               Works
-             </span>
-           </h2>
-           <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-             Our proven 5-step process guides young writers from initial idea
-             to published story with detailed feedback
-           </p>
-         </motion.div>
+      {/* How It Works Section */}
+      <section className="relative px-4 sm:px-6 lg:px-8 py-12">
+        <div className="max-w-7xl mx-auto">
+          <motion.div
+            className="text-center mb-16"
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-4xl sm:text-5xl text-white mb-6">
+              How It{' '}
+              <span className="bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">
+                Works
+              </span>
+            </h2>
+            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+              Our proven 5-step process guides young writers from initial idea
+              to published story with detailed feedback
+            </p>
+          </motion.div>
 
-         <div className="space-y-8">
-           {steps.map((step, index) => (
-             <motion.div
-               key={index}
-               className="relative"
-               initial={{ opacity: 0, x: index % 2 === 0 ? -100 : 100 }}
-               whileInView={{ opacity: 1, x: 0 }}
-               transition={{ duration: 0.8, delay: index * 0.2 }}
-               viewport={{ once: true }}
-             >
-               <div
-                 className={`grid grid-cols-1 lg:grid-cols-2 gap-8 items-center ${index % 2 === 1 ? 'lg:flex-row-reverse' : ''}`}
-               >
-                 {/* Content Side */}
-                 <div
-                   className={`space-y-6 ${index % 2 === 1 ? 'lg:order-2' : ''}`}
-                 >
-                   <div className="flex items-center space-x-4">
-                     <div
-                       className={`w-16 h-16 bg-gradient-to-r ${step.gradient} flex items-center justify-center shadow-lg`}
-                     >
-                       {step.icon}
-                     </div>
-                     <div className="text-6xl text-blue-100 dark:text-gray-700">
-                       {step.number}
-                     </div>
-                   </div>
+          <div className="space-y-8">
+            {steps.map((step, index) => (
+              <motion.div
+                key={index}
+                className="relative"
+                initial={{ opacity: 0, x: index % 2 === 0 ? -100 : 100 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8, delay: index * 0.2 }}
+                viewport={{ once: true }}
+              >
+                <div
+                  className={`grid grid-cols-1 lg:grid-cols-2 gap-8 items-center ${index % 2 === 1 ? 'lg:flex-row-reverse' : ''}`}
+                >
+                  {/* Content Side */}
+                  <div
+                    className={`space-y-6 ${index % 2 === 1 ? 'lg:order-2' : ''}`}
+                  >
+                    <div className="flex items-center space-x-4">
+                      <div
+                        className={`w-16 h-16 bg-gradient-to-r ${step.gradient} flex items-center justify-center shadow-lg`}
+                      >
+                        {step.icon}
+                      </div>
+                      <div className="text-6xl text-blue-100 dark:text-gray-700">
+                        {step.number}
+                      </div>
+                    </div>
 
-                   <h3 className="text-3xl text-white">{step.title}</h3>
+                    <h3 className="text-3xl text-white">{step.title}</h3>
 
-                   <p className="text-lg text-gray-300 leading-relaxed">
-                     {step.description}
-                   </p>
+                    <p className="text-lg text-gray-300 leading-relaxed">
+                      {step.description}
+                    </p>
 
-                   <div className="grid grid-cols-2 gap-3">
-                     {step.features.map((feature, featureIndex) => (
-                       <div
-                         key={featureIndex}
-                         className="flex items-center space-x-2 text-gray-300"
-                       >
-                         <CheckCircle className="w-4 h-4 text-green-400 flex-shrink-0" />
-                         <span className="text-sm">{feature}</span>
-                       </div>
-                     ))}
-                   </div>
-                 </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      {step.features.map((feature, featureIndex) => (
+                        <div
+                          key={featureIndex}
+                          className="flex items-center space-x-2 text-gray-300"
+                        >
+                          <CheckCircle className="w-4 h-4 text-green-400 flex-shrink-0" />
+                          <span className="text-sm">{feature}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
 
-                 {/* Visual Side - Updated with Images */}
-                 <div
-                   className={`relative ${index % 2 === 1 ? 'lg:order-1' : ''}`}
-                 >
-                   <motion.div
-                     className="relative h-80 bg-gradient-to-br from-gray-800/60 to-gray-900/60 backdrop-blur-xl border border-gray-600/40 overflow-hidden shadow-xl"
-                     whileHover={{ scale: 1.02, y: -10 }}
-                     transition={{ duration: 0.3 }}
-                   >
-                     {/* Background Image */}
-                     <div className="absolute inset-0">
-                       <Image
-                         src={step.image}
-                         alt={step.title}
-                         fill
-                         className="object-cover"
-                         sizes="(max-width: 768px) 100vw, 50vw"
-                       />
-                     </div>
+                  {/* Visual Side - Updated with Images */}
+                  <div
+                    className={`relative ${index % 2 === 1 ? 'lg:order-1' : ''}`}
+                  >
+                    <motion.div
+                      className="relative h-80 bg-gradient-to-br from-gray-800/60 to-gray-900/60 backdrop-blur-xl border border-gray-600/40 overflow-hidden shadow-xl"
+                      whileHover={{ scale: 1.02, y: -10 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      {/* Background Image */}
+                      <div className="absolute inset-0">
+                        <Image
+                          src={step.image}
+                          alt={step.title}
+                          fill
+                          className="object-cover"
+                          sizes="(max-width: 768px) 100vw, 50vw"
+                        />
+                      </div>
 
-                     {/* Animated Color Overlay (on top of image) */}
-                     <div
-                       className={`absolute inset-0 bg-gradient-to-br ${step.gradient} opacity-20`}
-                     />
+                      {/* Animated Color Overlay (on top of image) */}
+                      <div
+                        className={`absolute inset-0 bg-gradient-to-br ${step.gradient} opacity-20`}
+                      />
 
-                     {/* Floating elements */}
-                     <motion.div
-                       className="absolute top-4 right-4 w-8 h-8 bg-white/20 rounded-full"
-                       animate={{
-                         y: [0, -10, 0],
-                         opacity: [0.5, 1, 0.5],
-                       }}
-                       transition={{
-                         duration: 2,
-                         repeat: Infinity,
-                         delay: index * 0.5,
-                       }}
-                     />
-                   </motion.div>
-                 </div>
-               </div>
+                      {/* Floating elements */}
+                      <motion.div
+                        className="absolute top-4 right-4 w-8 h-8 bg-white/20 rounded-full"
+                        animate={{
+                          y: [0, -10, 0],
+                          opacity: [0.5, 1, 0.5],
+                        }}
+                        transition={{
+                          duration: 2,
+                          repeat: Infinity,
+                          delay: index * 0.5,
+                        }}
+                      />
+                    </motion.div>
+                  </div>
+                </div>
 
-               {/* Connecting Line */}
-               {index < steps.length - 1 && (
-                 <motion.div
-                   className="flex justify-center my-12"
-                   initial={{ opacity: 0 }}
-                   whileInView={{ opacity: 1 }}
-                   transition={{ delay: index * 0.2 + 0.5 }}
-                   viewport={{ once: true }}
-                 >
-                   <ArrowRight className="w-8 h-8 text-gray-600" />
-                 </motion.div>
-               )}
-             </motion.div>
-           ))}
-         </div>
-       </div>
-     </section>
+                {/* Connecting Line */}
+                {index < steps.length - 1 && (
+                  <motion.div
+                    className="flex justify-center my-12"
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    transition={{ delay: index * 0.2 + 0.5 }}
+                    viewport={{ once: true }}
+                  >
+                    <ArrowRight className="w-8 h-8 text-gray-600" />
+                  </motion.div>
+                )}
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-     {/* CTA Section */}
-     <section className="relative px-4 sm:px-6 lg:px-8 py-12">
-       <div className="max-w-8xl mx-auto">
-         <motion.div
-           className="bg-gradient-to-br from-gray-800/80 to-gray-900/80 backdrop-blur-xl p-8 sm:p-10 lg:p-12 text-center border border-gray-600/40 shadow-xl relative overflow-hidden"
-           initial={{ opacity: 0, y: 50 }}
-           whileInView={{ opacity: 1, y: 0 }}
-           transition={{ duration: 0.8 }}
-           viewport={{ once: true }}
-         >
-           <div className="absolute inset-0 bg-gradient-to-br from-green-500/10 to-teal-500/10">
-             <Image
-               src="/kid1.jpg"
-               alt="Background"
-               fill
-               className="opacity-20 object-center object-cover"
-             />
-           </div>
+      {/* CTA Section */}
+      <section className="relative px-4 sm:px-6 lg:px-8 py-12">
+        <div className="max-w-8xl mx-auto">
+          <motion.div
+            className="bg-gradient-to-br from-gray-800/80 to-gray-900/80 backdrop-blur-xl p-8 sm:p-10 lg:p-12 text-center border border-gray-600/40 shadow-xl relative overflow-hidden"
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+          >
+            <div className="absolute inset-0 bg-gradient-to-br from-green-500/10 to-teal-500/10">
+              <Image
+                src="/kid1.jpg"
+                alt="Background"
+                fill
+                className="opacity-20 object-center object-cover"
+              />
+            </div>
 
-           <div className="relative z-10">
-             <motion.div
-               className="inline-flex p-3 sm:p-4 rounded-full bg-gradient-to-r from-green-500 to-teal-600 mb-4 sm:mb-6 shadow-lg"
-               animate={{
-                 rotate: [0, 360],
-                 scale: [1, 1.1, 1],
-               }}
-               transition={{
-                 duration: 4,
-                 repeat: Infinity,
-               }}
-             >
-               <Lightbulb className="w-5 sm:w-6 h-5 sm:h-6 text-white" />
-             </motion.div>
+            <div className="relative z-10">
+              <motion.div
+                className="inline-flex p-3 sm:p-4 rounded-full bg-gradient-to-r from-green-500 to-teal-600 mb-4 sm:mb-6 shadow-lg"
+                animate={{
+                  rotate: [0, 360],
+                  scale: [1, 1.1, 1],
+                }}
+                transition={{
+                  duration: 4,
+                  repeat: Infinity,
+                }}
+              >
+                <Lightbulb className="w-5 sm:w-6 h-5 sm:h-6 text-white" />
+              </motion.div>
 
-             <h2 className="text-2xl sm:text-3xl lg:text-4xl text-white mb-4">
-               Ready to Start Your{' '}
-               <span className="bg-gradient-to-r from-green-400 to-teal-400 bg-clip-text text-transparent">
-                 Creative Writing Journey?
-               </span>
-             </h2>
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl text-white mb-4">
+                Ready to Start Your{' '}
+                <span className="bg-gradient-to-r from-green-400 to-teal-400 bg-clip-text text-transparent">
+                  Creative Writing Journey?
+                </span>
+              </h2>
 
-             <p className="text-base sm:text-lg lg:text-xl text-gray-300 mb-6 sm:mb-8 leading-relaxed max-w-3xl mx-auto">
-               Join thousands of young writers creating amazing stories with{' '}
-               <span className="text-green-300 font-medium">
-                 complete creative freedom
-               </span>{' '}
-               and{' '}
-               <span className="text-teal-300 font-medium">
-                 AI-powered feedback
-               </span>{' '}
-               to improve their skills. Start with 3 free stories and 3 free assessments!
-             </p>
+              <p className="text-base sm:text-lg lg:text-xl text-gray-300 mb-6 sm:mb-8 leading-relaxed max-w-3xl mx-auto">
+                Join thousands of young writers creating amazing stories with{' '}
+                <span className="text-green-300 font-medium">
+                  complete creative freedom
+                </span>{' '}
+                and{' '}
+                <span className="text-teal-300 font-medium">
+                  AI-powered feedback
+                </span>{' '}
+                to improve their skills. Start with 3 free stories and 3 free
+                assessments!
+              </p>
 
-             <motion.div
-               whileHover={{ scale: 1.05 }}
-               whileTap={{ scale: 0.95 }}
-             >
-               <Link href="/create-stories">
-                 <button className="group relative px-8 sm:px-10 py-3 sm:py-4 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-xl text-base sm:text-lg text-white shadow-lg shadow-cyan-500/25 overflow-hidden">
-                   <span className="relative z-10 flex items-center justify-center">
-                     <Zap className="w-4 sm:w-5 h-4 sm:h-5 mr-2 sm:mr-3" />
-                     Start Writing Your First Story →
-                   </span>
-                   <motion.div
-                     className="absolute inset-0 bg-gradient-to-r from-blue-600 to-cyan-500"
-                     initial={{ x: '-100%' }}
-                     whileHover={{ x: '0%' }}
-                     transition={{ duration: 0.3 }}
-                   />
-                 </button>
-               </Link>
-             </motion.div>
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Link href="/create-stories">
+                  <button className="group relative px-8 sm:px-10 py-3 sm:py-4 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-xl text-base sm:text-lg text-white shadow-lg shadow-cyan-500/25 overflow-hidden">
+                    <span className="relative z-10 flex items-center justify-center">
+                      <Zap className="w-4 sm:w-5 h-4 sm:h-5 mr-2 sm:mr-3" />
+                      Start Writing Your First Story →
+                    </span>
+                    <motion.div
+                      className="absolute inset-0 bg-gradient-to-r from-blue-600 to-cyan-500"
+                      initial={{ x: '-100%' }}
+                      whileHover={{ x: '0%' }}
+                      transition={{ duration: 0.3 }}
+                    />
+                  </button>
+                </Link>
+              </motion.div>
 
-             {/* Added pricing info */}
-             <motion.div
-               className="mt-6 pt-6 border-t border-gray-600/30"
-               initial={{ opacity: 0 }}
-               animate={{ opacity: 1 }}
-               transition={{ delay: 1 }}
-             >
-               <div className="flex flex-wrap justify-center items-center gap-6 text-sm text-gray-400">
-                 <div className="flex items-center space-x-2">
-                   <CheckCircle className="w-4 h-4 text-green-400" />
-                   <span>3 Free Stories Monthly</span>
-                 </div>
-                 <div className="flex items-center space-x-2">
-                   <CheckCircle className="w-4 h-4 text-green-400" />
-                   <span>3 Free AI Assessments</span>
-                 </div>
-                 <div className="flex items-center space-x-2">
-                   <CheckCircle className="w-4 h-4 text-green-400" />
-                   <span>Competition Entries</span>
-                 </div>
-                 <div className="flex items-center space-x-2">
-                   <CheckCircle className="w-4 h-4 text-green-400" />
-                   <span>No Credit Card Required</span>
-                 </div>
-               </div>
-             </motion.div>
-           </div>
-         </motion.div>
-       </div>
-     </section>
-   </div>
- );
+              {/* Added pricing info */}
+              <motion.div
+                className="mt-6 pt-6 border-t border-gray-600/30"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 1 }}
+              >
+                <div className="flex flex-wrap justify-center items-center gap-6 text-sm text-gray-400">
+                  <div className="flex items-center space-x-2">
+                    <CheckCircle className="w-4 h-4 text-green-400" />
+                    <span>3 Free Stories Monthly</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <CheckCircle className="w-4 h-4 text-green-400" />
+                    <span>3 Free AI Assessments</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <CheckCircle className="w-4 h-4 text-green-400" />
+                    <span>Competition Entries</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <CheckCircle className="w-4 h-4 text-green-400" />
+                    <span>No Credit Card Required</span>
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+    </div>
+  );
 }

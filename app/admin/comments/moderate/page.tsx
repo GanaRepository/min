@@ -38,9 +38,11 @@ interface Comment {
 export default function ModerationPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
-  
+
   const [comments, setComments] = useState<Comment[]>([]);
-  const [selectedComments, setSelectedComments] = useState<Set<string>>(new Set());
+  const [selectedComments, setSelectedComments] = useState<Set<string>>(
+    new Set()
+  );
   const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState(false);
   const [filters, setFilters] = useState({
@@ -72,17 +74,26 @@ export default function ModerationPage() {
 
       if (data.success) {
         let filteredComments = data.comments;
-        
+
         // Apply search filter
         if (filters.search) {
-          filteredComments = filteredComments.filter((comment: Comment) =>
-            comment.content.toLowerCase().includes(filters.search.toLowerCase()) ||
-            comment.authorId.firstName.toLowerCase().includes(filters.search.toLowerCase()) ||
-            comment.authorId.lastName.toLowerCase().includes(filters.search.toLowerCase()) ||
-            comment.storyId.title.toLowerCase().includes(filters.search.toLowerCase())
+          filteredComments = filteredComments.filter(
+            (comment: Comment) =>
+              comment.content
+                .toLowerCase()
+                .includes(filters.search.toLowerCase()) ||
+              comment.authorId.firstName
+                .toLowerCase()
+                .includes(filters.search.toLowerCase()) ||
+              comment.authorId.lastName
+                .toLowerCase()
+                .includes(filters.search.toLowerCase()) ||
+              comment.storyId.title
+                .toLowerCase()
+                .includes(filters.search.toLowerCase())
           );
         }
-        
+
         setComments(filteredComments);
       }
     } catch (error) {
@@ -99,7 +110,11 @@ export default function ModerationPage() {
     }
 
     const actionText = action === 'delete' ? 'delete' : `mark as ${action}d`;
-    if (!confirm(`Are you sure you want to ${actionText} ${selectedComments.size} comment(s)?`)) {
+    if (
+      !confirm(
+        `Are you sure you want to ${actionText} ${selectedComments.size} comment(s)?`
+      )
+    ) {
       return;
     }
 
@@ -147,17 +162,22 @@ export default function ModerationPage() {
     if (selectedComments.size === comments.length) {
       setSelectedComments(new Set());
     } else {
-      setSelectedComments(new Set(comments.map(c => c._id)));
+      setSelectedComments(new Set(comments.map((c) => c._id)));
     }
   };
 
   const getCommentTypeColor = (type: string) => {
     switch (type) {
-      case 'praise': return 'bg-green-100 text-green-800';
-      case 'suggestion': return 'bg-blue-100 text-blue-800';
-      case 'correction': return 'bg-orange-100 text-orange-800';
-      case 'question': return 'bg-purple-100 text-purple-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'praise':
+        return 'bg-green-100 text-green-800';
+      case 'suggestion':
+        return 'bg-blue-100 text-blue-800';
+      case 'correction':
+        return 'bg-orange-100 text-orange-800';
+      case 'question':
+        return 'bg-purple-100 text-purple-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
@@ -174,7 +194,9 @@ export default function ModerationPage() {
           <h1 className="text-2xl sm:text-3xl font-bold text-white">
             Bulk Comment Moderation
           </h1>
-          <p className="text-gray-400">Review and moderate multiple comments at once</p>
+          <p className="text-gray-400">
+            Review and moderate multiple comments at once
+          </p>
         </div>
       </div>
 
@@ -184,12 +206,17 @@ export default function ModerationPage() {
           {/* Search */}
           <div className="lg:col-span-2">
             <div className="relative">
-              <Search size={20} className="absolute left-3 top-3 text-gray-400" />
+              <Search
+                size={20}
+                className="absolute left-3 top-3 text-gray-400"
+              />
               <input
                 type="text"
                 placeholder="Search comments, authors, or stories..."
                 value={filters.search}
-                onChange={(e) => setFilters(prev => ({ ...prev, search: e.target.value }))}
+                onChange={(e) =>
+                  setFilters((prev) => ({ ...prev, search: e.target.value }))
+                }
                 className="w-full pl-10 pr-4 py-2.5 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
@@ -199,7 +226,9 @@ export default function ModerationPage() {
           <div>
             <select
               value={filters.resolved}
-              onChange={(e) => setFilters(prev => ({ ...prev, resolved: e.target.value }))}
+              onChange={(e) =>
+                setFilters((prev) => ({ ...prev, resolved: e.target.value }))
+              }
               className="w-full px-3 py-2.5 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="false">Unresolved</option>
@@ -212,7 +241,9 @@ export default function ModerationPage() {
           <div>
             <select
               value={filters.type}
-              onChange={(e) => setFilters(prev => ({ ...prev, type: e.target.value }))}
+              onChange={(e) =>
+                setFilters((prev) => ({ ...prev, type: e.target.value }))
+              }
               className="w-full px-3 py-2.5 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="all">All Types</option>
@@ -273,7 +304,9 @@ export default function ModerationPage() {
           <label className="flex items-center">
             <input
               type="checkbox"
-              checked={comments.length > 0 && selectedComments.size === comments.length}
+              checked={
+                comments.length > 0 && selectedComments.size === comments.length
+              }
               onChange={selectAll}
               className="mr-3 rounded"
             />
@@ -281,7 +314,7 @@ export default function ModerationPage() {
               Select All ({comments.length} comments)
             </span>
           </label>
-          
+
           <div className="text-gray-400 text-sm">
             Click comments to select for bulk actions
           </div>
@@ -314,43 +347,47 @@ export default function ModerationPage() {
                     className="mt-1"
                     onClick={(e) => e.stopPropagation()}
                   />
-                  
+
                   <div className="flex-1">
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center space-x-3">
                         <h4 className="text-white font-medium">
-                          {comment.authorId.firstName} {comment.authorId.lastName}
+                          {comment.authorId.firstName}{' '}
+                          {comment.authorId.lastName}
                         </h4>
                         <span className="text-xs text-gray-400">
                           ({comment.authorId.role})
                         </span>
-                        <span className={`px-2 py-1 text-xs rounded-full ${getCommentTypeColor(comment.commentType)}`}>
+                        <span
+                          className={`px-2 py-1 text-xs rounded-full ${getCommentTypeColor(comment.commentType)}`}
+                        >
                           {comment.commentType}
                         </span>
                       </div>
-                      
-                      <span className={`px-2 py-1 text-xs rounded-full ${
-                        comment.isResolved 
-                          ? 'bg-green-100 text-green-800' 
-                          : 'bg-red-100 text-red-800'
-                      }`}>
+
+                      <span
+                        className={`px-2 py-1 text-xs rounded-full ${
+                          comment.isResolved
+                            ? 'bg-green-100 text-green-800'
+                            : 'bg-red-100 text-red-800'
+                        }`}
+                      >
                         {comment.isResolved ? 'Resolved' : 'Unresolved'}
                       </span>
                     </div>
-                    
+
                     <p className="text-gray-300 mb-2">{comment.content}</p>
-                    
+
                     <div className="flex items-center justify-between text-sm text-gray-400">
                       <div>
-                        Story: <Link href={`/admin/stories/${comment.storyId._id}`}>
+                        Story:{' '}
+                        <Link href={`/admin/stories/${comment.storyId._id}`}>
                           <span className="text-blue-400 hover:underline cursor-pointer">
                             "{comment.storyId.title}"
                           </span>
                         </Link>
                       </div>
-                      <div>
-                        {new Date(comment.createdAt).toLocaleString()}
-                      </div>
+                      <div>{new Date(comment.createdAt).toLocaleString()}</div>
                     </div>
                   </div>
                 </div>
@@ -360,7 +397,9 @@ export default function ModerationPage() {
         ) : (
           <div className="text-center py-12">
             <MessageSquare size={48} className="text-gray-600 mx-auto mb-4" />
-            <h3 className="text-xl font-medium text-gray-400 mb-2">No comments found</h3>
+            <h3 className="text-xl font-medium text-gray-400 mb-2">
+              No comments found
+            </h3>
             <p className="text-gray-500">
               Try adjusting your filters or search terms
             </p>

@@ -13,7 +13,10 @@ export function checkRateLimit(
   action: string,
   userTier: string = 'FREE'
 ): { allowed: boolean; retryAfter?: number; message?: string } {
-  const limits: Record<string, { windowMs: number; maxRequests: number; message: string }> = {
+  const limits: Record<
+    string,
+    { windowMs: number; maxRequests: number; message: string }
+  > = {
     'assessment-attempt': {
       windowMs: 5 * 60 * 1000, // 5 minutes between attempts
       maxRequests: 1,

@@ -35,12 +35,12 @@ export interface IStorySession extends Document {
     vocabularyUsed?: string[];
     suggestedWords?: string[];
     educationalInsights?: string;
-    
+
     // NEW: Advanced integrity analysis
     plagiarismScore?: number; // 0-100, higher = more original
     aiDetectionScore?: number; // 0-100, higher = more human-like
     integrityRisk?: 'low' | 'medium' | 'high' | 'critical';
-    
+
     // Detailed integrity analysis for admin review
     integrityAnalysis?: {
       plagiarismResult?: {
@@ -57,21 +57,21 @@ export interface IStorySession extends Document {
         detailedAnalysis: any;
       };
     };
-    
+
     // Educational enhancements
     recommendations?: {
       immediate?: string[];
       longTerm?: string[];
       practiceExercises?: string[];
     };
-    
+
     progressTracking?: {
       improvementSince?: Date;
       scoreChange?: number;
       strengthsGained?: string[];
       areasImproved?: string[];
     };
-    
+
     // Assessment metadata
     assessmentVersion?: string; // '1.0' = legacy, '2.0' = advanced
     assessmentDate?: Date;
@@ -101,8 +101,6 @@ export interface IStorySession extends Document {
     score?: number;
     phase: 'submission' | 'judging' | 'results';
   }>;
-
-  
 
   // Legacy assessment fields (top-level for compatibility)
   overallScore?: number;
@@ -209,57 +207,57 @@ const StorySessionSchema = new Schema<IStorySession>(
       vocabularyUsed: [{ type: String, trim: true }],
       suggestedWords: [{ type: String, trim: true }],
       educationalInsights: { type: String, trim: true },
-      
+
       // NEW: Advanced integrity analysis fields
       plagiarismScore: { type: Number, min: 0, max: 100 },
       aiDetectionScore: { type: Number, min: 0, max: 100 },
-      integrityRisk: { 
-        type: String, 
-        enum: ['low', 'medium', 'high', 'critical'] 
+      integrityRisk: {
+        type: String,
+        enum: ['low', 'medium', 'high', 'critical'],
       },
-      
+
       // Detailed integrity analysis for admin review
       integrityAnalysis: {
         plagiarismResult: {
           score: { type: Number, min: 0, max: 100 },
-          riskLevel: { 
-            type: String, 
-            enum: ['low', 'medium', 'high', 'critical'] 
+          riskLevel: {
+            type: String,
+            enum: ['low', 'medium', 'high', 'critical'],
           },
           violationCount: { type: Number, min: 0 },
           detailedAnalysis: Schema.Types.Mixed,
         },
         aiDetectionResult: {
           score: { type: Number, min: 0, max: 100 },
-          likelihood: { 
-            type: String, 
-            enum: ['very_low', 'low', 'medium', 'high', 'very_high'] 
+          likelihood: {
+            type: String,
+            enum: ['very_low', 'low', 'medium', 'high', 'very_high'],
           },
           confidence: { type: Number, min: 0, max: 100 },
           indicatorCount: { type: Number, min: 0 },
           detailedAnalysis: Schema.Types.Mixed,
         },
       },
-      
+
       // Educational enhancements
       recommendations: {
         immediate: [{ type: String, trim: true }],
         longTerm: [{ type: String, trim: true }],
         practiceExercises: [{ type: String, trim: true }],
       },
-      
+
       progressTracking: {
         improvementSince: Date,
         scoreChange: Number,
         strengthsGained: [{ type: String, trim: true }],
         areasImproved: [{ type: String, trim: true }],
       },
-      
+
       // Assessment metadata
-      assessmentVersion: { 
-        type: String, 
+      assessmentVersion: {
+        type: String,
         default: '2.0',
-        enum: ['1.0', '2.0'] 
+        enum: ['1.0', '2.0'],
       },
       assessmentDate: { type: Date, default: Date.now },
       isReassessment: { type: Boolean, default: false },
@@ -335,33 +333,33 @@ const StorySessionSchema = new Schema<IStorySession>(
     ],
 
     // Legacy assessment fields (top-level for backward compatibility)
-    overallScore: { 
-      type: Number, 
-      min: 0, 
-      max: 100 
+    overallScore: {
+      type: Number,
+      min: 0,
+      max: 100,
     },
-    grammarScore: { 
-      type: Number, 
-      min: 0, 
-      max: 100 
+    grammarScore: {
+      type: Number,
+      min: 0,
+      max: 100,
     },
-    creativityScore: { 
-      type: Number, 
-      min: 0, 
-      max: 100 
+    creativityScore: {
+      type: Number,
+      min: 0,
+      max: 100,
     },
-    feedback: { 
-      type: String, 
-      trim: true 
+    feedback: {
+      type: String,
+      trim: true,
     },
-    completedAt: { 
-      type: Date 
+    completedAt: {
+      type: Date,
     },
-    pausedAt: { 
-      type: Date 
+    pausedAt: {
+      type: Date,
     },
-    resumedAt: { 
-      type: Date 
+    resumedAt: {
+      type: Date,
     },
     draft: {
       type: Schema.Types.Mixed,
@@ -383,20 +381,20 @@ StorySessionSchema.index({ isPublished: 1, competitionEligible: 1 });
 StorySessionSchema.index({ 'assessment.assessmentVersion': 1 }); // Track assessment versions
 
 // Compound indexes for complex queries
-StorySessionSchema.index({ 
-  childId: 1, 
-  'assessment.integrityRisk': 1, 
-  createdAt: -1 
+StorySessionSchema.index({
+  childId: 1,
+  'assessment.integrityRisk': 1,
+  createdAt: -1,
 }); // User's flagged content
 
-StorySessionSchema.index({ 
-  status: 1, 
-  'assessment.plagiarismScore': 1, 
-  'assessment.aiDetectionScore': 1 
+StorySessionSchema.index({
+  status: 1,
+  'assessment.plagiarismScore': 1,
+  'assessment.aiDetectionScore': 1,
 }); // Admin integrity monitoring
 
 // Pre-save middleware to sync legacy fields
-StorySessionSchema.pre('save', function(next) {
+StorySessionSchema.pre('save', function (next) {
   if (this.assessment) {
     // Sync top-level fields with assessment object
     this.overallScore = this.assessment.overallScore;
@@ -408,9 +406,9 @@ StorySessionSchema.pre('save', function(next) {
 });
 
 // Virtual for integrity status
-StorySessionSchema.virtual('integrityStatus').get(function() {
+StorySessionSchema.virtual('integrityStatus').get(function () {
   if (!this.assessment) return 'not_assessed';
-  
+
   const risk = this.assessment.integrityRisk;
   if (risk === 'critical') return 'flagged';
   if (risk === 'high') return 'suspicious';
@@ -419,14 +417,14 @@ StorySessionSchema.virtual('integrityStatus').get(function() {
 });
 
 // Method to check if story can be reassessed
-StorySessionSchema.methods.canReassess = function() {
+StorySessionSchema.methods.canReassess = function () {
   return this.status === 'completed' && this.assessmentAttempts < 3;
 };
 
 // Method to get assessment summary
-StorySessionSchema.methods.getAssessmentSummary = function() {
+StorySessionSchema.methods.getAssessmentSummary = function () {
   if (!this.assessment) return null;
-  
+
   return {
     overallScore: this.assessment.overallScore || 0,
     integrityScore: this.assessment.plagiarismScore || 0,
@@ -439,32 +437,32 @@ StorySessionSchema.methods.getAssessmentSummary = function() {
 };
 
 // Static method to find flagged content
-StorySessionSchema.statics.findFlaggedContent = function(limit = 50) {
+StorySessionSchema.statics.findFlaggedContent = function (limit = 50) {
   return this.find({
-    'assessment.integrityRisk': { $in: ['high', 'critical'] }
+    'assessment.integrityRisk': { $in: ['high', 'critical'] },
   })
-  .populate('childId', 'firstName lastName email')
-  .sort({ 'assessment.assessmentDate': -1 })
-  .limit(limit);
+    .populate('childId', 'firstName lastName email')
+    .sort({ 'assessment.assessmentDate': -1 })
+    .limit(limit);
 };
 
 // Static method to get integrity statistics
-StorySessionSchema.statics.getIntegrityStats = function() {
+StorySessionSchema.statics.getIntegrityStats = function () {
   return this.aggregate([
     {
       $match: {
         assessment: { $exists: true },
-        'assessment.integrityRisk': { $exists: true }
-      }
+        'assessment.integrityRisk': { $exists: true },
+      },
     },
     {
       $group: {
         _id: '$assessment.integrityRisk',
         count: { $sum: 1 },
         avgPlagiarismScore: { $avg: '$assessment.plagiarismScore' },
-        avgAIScore: { $avg: '$assessment.aiDetectionScore' }
-      }
-    }
+        avgAIScore: { $avg: '$assessment.aiDetectionScore' },
+      },
+    },
   ]);
 };
 
@@ -474,4 +472,7 @@ if (mongoose.models.StorySession) {
   console.log('🔄 Cleared cached StorySession model');
 }
 
-export default mongoose.model<IStorySession>('StorySession', StorySessionSchema);
+export default mongoose.model<IStorySession>(
+  'StorySession',
+  StorySessionSchema
+);

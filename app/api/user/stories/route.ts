@@ -27,15 +27,15 @@ export async function GET(req: NextRequest) {
 
     // Build query filters based on actual schema
     const query: any = { childId: session.user.id };
-    
+
     if (published === 'true') {
       query.isPublished = true;
     }
-    
+
     if (competitionEligible === 'true') {
       query.competitionEligible = true;
     }
-    
+
     if (isUploadedForAssessment === 'true') {
       query.isUploadedForAssessment = true;
     }
@@ -48,7 +48,7 @@ export async function GET(req: NextRequest) {
     if (notSubmitted === 'true') {
       query.$or = [
         { competitionEntries: { $exists: false } },
-        { competitionEntries: { $size: 0 } }
+        { competitionEntries: { $size: 0 } },
       ];
     }
 
@@ -61,9 +61,12 @@ export async function GET(req: NextRequest) {
     // Format stories data based on actual schema fields
     const formattedStories = stories.map((story: any) => {
       // Check if story is submitted to competition
-      const hasCompetitionEntry = story.competitionEntries && story.competitionEntries.length > 0;
-      const latestCompetitionEntry = hasCompetitionEntry ? story.competitionEntries[story.competitionEntries.length - 1] : null;
-      
+      const hasCompetitionEntry =
+        story.competitionEntries && story.competitionEntries.length > 0;
+      const latestCompetitionEntry = hasCompetitionEntry
+        ? story.competitionEntries[story.competitionEntries.length - 1]
+        : null;
+
       return {
         _id: story._id,
         title: story.title || 'Untitled',
@@ -71,31 +74,32 @@ export async function GET(req: NextRequest) {
         storyNumber: story.storyNumber || 0,
         totalWords: story.totalWords || story.childWords || 0,
         childWords: story.childWords || 0,
-        
+
         // Assessment fields
         isUploadedForAssessment: story.isUploadedForAssessment || false,
         assessmentAttempts: story.assessmentAttempts || 0,
         assessment: story.assessment || null,
-        
+
         // Publication fields
         isPublished: story.isPublished || false,
         publicationDate: story.publicationDate || null,
         competitionEligible: story.competitionEligible || false,
-        
+
         // Competition fields (using actual schema)
         competitionEntries: story.competitionEntries || [],
         submittedToCompetition: hasCompetitionEntry,
         competitionSubmissionDate: latestCompetitionEntry?.submittedAt || null,
         competitionId: latestCompetitionEntry?.competitionId || null,
-        
+
         // Timestamps
         createdAt: story.createdAt,
         updatedAt: story.updatedAt,
-        
+
         // Legacy fields for backward compatibility
         overallScore: story.assessment?.overallScore || story.overallScore || 0,
         grammarScore: story.assessment?.grammarScore || story.grammarScore || 0,
-        creativityScore: story.assessment?.creativityScore || story.creativityScore || 0,
+        creativityScore:
+          story.assessment?.creativityScore || story.creativityScore || 0,
         feedback: story.assessment?.feedback || story.feedback || '',
       };
     });
@@ -114,13 +118,15 @@ export async function GET(req: NextRequest) {
       },
       stats: {
         total: formattedStories.length,
-        completed: formattedStories.filter(s => s.status === 'completed').length,
-        active: formattedStories.filter(s => s.status === 'active').length,
-        published: formattedStories.filter(s => s.isPublished).length,
-        submittedToCompetition: formattedStories.filter(s => s.submittedToCompetition).length,
+        completed: formattedStories.filter((s) => s.status === 'completed')
+          .length,
+        active: formattedStories.filter((s) => s.status === 'active').length,
+        published: formattedStories.filter((s) => s.isPublished).length,
+        submittedToCompetition: formattedStories.filter(
+          (s) => s.submittedToCompetition
+        ).length,
       },
     });
-
   } catch (error) {
     console.error('Error fetching user stories:', error);
     return NextResponse.json(

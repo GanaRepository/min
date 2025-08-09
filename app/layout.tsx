@@ -36,7 +36,6 @@
 //   );
 // }
 
-
 // app/layout.tsx
 'use client';
 
@@ -57,12 +56,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  
+
   // Don't show footer on dashboard pages
-  const isDashboardPage = pathname?.startsWith('/children-dashboard') || 
-                         pathname?.startsWith('/mentor-dashboard') || 
-                         pathname?.startsWith('/parent-dashboard') ||
-                         pathname?.startsWith('/admin');
+  const isDashboardPage =
+    pathname?.startsWith('/children-dashboard') ||
+    pathname?.startsWith('/mentor-dashboard') ||
+    pathname?.startsWith('/parent-dashboard') ||
+    pathname?.startsWith('/admin');
 
   return (
     <html lang="en" className="scroll-smooth">

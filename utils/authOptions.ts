@@ -260,8 +260,10 @@ export const authOptions: NextAuthOptions = {
         (session.user as any).age = token.age;
         (session.user as any).school = token.school;
         (session.user as any).isActive = token.isActive ?? true;
-        (session.user as any).subscriptionTier = token.subscriptionTier || 'FREE';
-        (session.user as any).subscriptionStatus = token.subscriptionStatus || 'active';
+        (session.user as any).subscriptionTier =
+          token.subscriptionTier || 'FREE';
+        (session.user as any).subscriptionStatus =
+          token.subscriptionStatus || 'active';
         (session.user as any).assignedMentor = token.assignedMentor;
         (session.user as any).createdBy = token.createdBy;
       }
@@ -272,7 +274,7 @@ export const authOptions: NextAuthOptions = {
 
       // FIXED: Don't force redirect to /create-stories
       // Let user go where they intended to go
-      
+
       // If there's a callbackUrl, use it
       if (url.includes('callbackUrl=')) {
         const urlParams = new URLSearchParams(url.split('?')[1]);

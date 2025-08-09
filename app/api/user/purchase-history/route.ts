@@ -15,7 +15,7 @@ export async function GET(request: Request) {
     const limit = parseInt(searchParams.get('limit') || '10');
 
     await connectToDatabase();
-    
+
     const user = await User.findById(session.user.id).select('purchaseHistory');
 
     if (!user) {
@@ -23,22 +23,29 @@ export async function GET(request: Request) {
     }
 
     const purchases = (user.purchaseHistory || [])
-      .sort((a: any, b: any) => new Date(b.purchaseDate || b.date).getTime() - new Date(a.purchaseDate || a.date).getTime())
+      .sort(
+        (a: any, b: any) =>
+          new Date(b.purchaseDate || b.date).getTime() -
+          new Date(a.purchaseDate || a.date).getTime()
+      )
       .slice(0, limit)
       .map((purchase: any) => ({
         id: purchase._id?.toString() || purchase.id,
         type: purchase.type,
         amount: purchase.amount,
         date: purchase.purchaseDate || purchase.date,
-        description: purchase.description || (purchase.type === 'story_pack' ? 'Story Pack Purchase' : 'Story Publication'),
+        description:
+          purchase.description ||
+          (purchase.type === 'story_pack'
+            ? 'Story Pack Purchase'
+            : 'Story Publication'),
         stripeSessionId: purchase.stripeSessionId,
       }));
 
     return NextResponse.json({
       success: true,
-      purchases
+      purchases,
     });
-
   } catch (error) {
     console.error('Error fetching purchase history:', error);
     return NextResponse.json(

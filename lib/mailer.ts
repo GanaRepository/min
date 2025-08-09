@@ -67,47 +67,47 @@
 //             ✨ Mintoons ✨
 //           </div>
 //         </div>
-        
+
 //         <h2 style="color: #7c3aed; text-align: center; font-family: 'Comic Sans MS', Arial, sans-serif; font-size: 28px;">
 //           🔐 Reset Your Magic Key
 //         </h2>
-        
+
 //         <div style="background: rgba(124, 58, 237, 0.1); padding: 20px; border-radius: 10px; margin: 20px 0; border-left: 5px solid #7c3aed;">
 //           <p style="font-size: 18px; color: #374151; margin: 0;">
 //             ${salutation},
 //           </p>
 //         </div>
-        
+
 //         <p style="font-size: 16px; color: #374151; line-height: 1.6;">
 //           Don't worry! Even the greatest storytellers sometimes forget their magic keys. We received a request to reset your password for your Mintoons account.
 //         </p>
-        
+
 //         <p style="font-size: 16px; color: #374151; line-height: 1.6;">
 //           ${roleSpecificText}
 //         </p>
-        
+
 //         <div style="text-align: center; margin: 30px 0;">
 //           <a href="${resetUrl}" style="background: linear-gradient(45deg, #7c3aed, #ec4899); color: white; padding: 15px 30px; text-decoration: none; font-size: 18px; border-radius: 25px; display: inline-block; box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3); transition: transform 0.2s;">
 //             🔑 Reset My Magic Key
 //           </a>
 //         </div>
-        
+
 //         <div style="background: #fef3ff; padding: 15px; border-radius: 10px; margin: 20px 0;">
 //           <p style="font-size: 14px; color: #7c2d12; margin: 0;">
 //             ⏰ This magic link will expire in 15 minutes for security. If you need a new link, just visit the forgot password page again!
 //           </p>
 //         </div>
-        
+
 //         <p style="font-size: 14px; color: #6b7280; word-wrap: break-word; background: #f9fafb; padding: 10px; border-radius: 8px;">
 //           If the button doesn't work, copy and paste this link: <br/>
 //           <a href="${resetUrl}" style="color: #7c3aed; word-break: break-all;">${resetUrl}</a>
 //         </p>
-        
+
 //         <p style="font-size: 16px; color: #374151;">
 //           Keep creating amazing stories! 📚✨<br/>
 //           The Mintoons Team
 //         </p>
-        
+
 //         <hr style="border: 1px solid #e5e7eb; margin: 30px 0;" />
 //         <p style="font-size: 12px; color: #9ca3af; text-align: center;">
 //           If you didn't request this, you can safely ignore this email. Your account remains secure! 🛡️
@@ -180,21 +180,21 @@
 //             ✨ Mintoons ✨
 //           </div>
 //         </div>
-        
+
 //         <h2 style="color: #7c3aed; text-align: center; font-family: 'Comic Sans MS', Arial, sans-serif; font-size: 28px;">
-//           🎉 Welcome, ${firstName}! 
+//           🎉 Welcome, ${firstName}!
 //         </h2>
-        
+
 //         <div style="background: rgba(124, 58, 237, 0.1); padding: 20px; border-radius: 10px; margin: 20px 0; text-align: center;">
 //           <p style="font-size: 20px; color: #7c3aed; margin: 0; font-weight: bold;">
 //             🚀 Your magical storytelling adventure starts NOW! ✨
 //           </p>
 //         </div>
-        
+
 //         <p style="font-size: 16px; color: #374151; line-height: 1.6;">
 //           Amazing! You've just joined the most exciting creative writing platform for young storytellers. Get ready to unleash your imagination! 🌟
 //         </p>
-        
+
 //         <div style="background: #fef3ff; padding: 20px; border-radius: 10px; margin: 20px 0;">
 //           <h3 style="color: #7c3aed; margin-top: 0;">🎭 What magical things can you do now?</h3>
 //           <ul style="font-size: 16px; color: #374151; line-height: 1.8;">
@@ -205,24 +205,24 @@
 //             <li>⭐ <strong>Track Progress:</strong> See how your writing skills grow</li>
 //           </ul>
 //         </div>
-        
+
 //         <div style="text-align: center; margin: 30px 0;">
 //           <a href="${process.env.NEXTAUTH_URL}/login/child" style="background: linear-gradient(45deg, #7c3aed, #ec4899); color: white; padding: 15px 30px; text-decoration: none; font-size: 18px; border-radius: 25px; display: inline-block; box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);">
 //             🚀 Start My First Story!
 //           </a>
 //         </div>
-        
+
 //         <div style="background: #f0f9ff; padding: 15px; border-radius: 10px; margin: 20px 0; border-left: 5px solid #3b82f6;">
 //           <p style="margin: 0; font-size: 14px; color: #1e40af;">
 //             💡 <strong>Pro Tip:</strong> Start with the story creation wizard to choose your adventure type, characters, and setting!
 //           </p>
 //         </div>
-        
+
 //         <p style="font-size: 16px; color: #374151; text-align: center;">
 //           Ready to become the next great storyteller? Let's create some magic! ✨📖<br/>
 //           <span style="color: #7c3aed; font-weight: bold;">The Mintoons Team</span>
 //         </p>
-        
+
 //         <hr style="border: 1px solid #e5e7eb; margin: 30px 0;" />
 //         <p style="font-size: 12px; color: #9ca3af; text-align: center;">
 //           Welcome to the Mintoons family! 🏠✨
@@ -271,8 +271,6 @@
 //   }
 // };
 
-
-
 // /**
 //  * Send contact form confirmation email AND notify admin
 //  * @param email Contact's email address
@@ -300,26 +298,26 @@
 //             ✨ Mintoons ✨
 //           </div>
 //         </div>
-        
+
 //         <h2 style="color: #7c3aed; text-align: center; font-size: 28px;">
 //           📧 Message Received!
 //         </h2>
-        
+
 //         <p style="font-size: 16px; color: #374151; line-height: 1.6;">
 //           Dear ${firstName},
 //         </p>
-        
+
 //         <p style="font-size: 16px; color: #374151; line-height: 1.6;">
 //           Thank you for reaching out to Mintoons! We've received your message and our magical support team is reviewing your inquiry.
 //         </p>
-        
+
 //         <div style="background: #fef3ff; padding: 20px; border-radius: 10px; margin: 20px 0;">
 //           <p style="font-size: 16px; color: #374151; margin: 0;">
 //             🚀 <strong>What happens next?</strong><br/>
 //             Our team will respond within 1-2 business days. For urgent matters, feel free to contact us directly!
 //           </p>
 //         </div>
-        
+
 //         <div style="background: #f0f9ff; padding: 20px; border-radius: 10px; margin: 20px 0;">
 //           <h3 style="color: #3b82f6; margin-top: 0;">🌟 While you wait, explore:</h3>
 //           <ul style="font-size: 16px; color: #374151; line-height: 1.8;">
@@ -328,12 +326,12 @@
 //             <li><a href="${process.env.NEXTAUTH_URL}" style="color: #7c3aed;">Home</a> - Explore our platform</li>
 //           </ul>
 //         </div>
-        
+
 //         <p style="font-size: 16px; color: #374151; text-align: center;">
 //           Thanks for being part of the Mintoons community! ✨<br/>
 //           <span style="color: #7c3aed; font-weight: bold;">The Mintoons Support Team</span>
 //         </p>
-        
+
 //         <hr style="border: 1px solid #e5e7eb; margin: 30px 0;" />
 //         <p style="font-size: 12px; color: #9ca3af; text-align: center;">
 //           © ${new Date().getFullYear()} Mintoons - Empowering Young Storytellers
@@ -448,7 +446,6 @@
 
 // // Add competition-related mailer services
 
-
 // /**
 //  * Send competition announcement email to admin
 //  */
@@ -463,8 +460,6 @@
 //   const html = `<p>A new competition for ${month} ${year} has been created and is now active. Competition ID: ${competitionId}</p>`;
 //   return transporter.sendMail({ from: `"Mintoons" <${process.env.EMAIL_USER}>`, to: adminEmail, subject, html });
 // };
-
-
 
 // /**
 //  * Send phase change notification to admin
@@ -498,15 +493,15 @@
 //  */
 // export const sendMonthlyResetNotification = async (): Promise<number> => {
 //   const transporter = createTransporter();
-  
+
 //   try {
 //     await connectToDatabase();
-    
+
 //     // Get all active children with email notifications enabled
-//     const children = await User.find({ 
-//       role: 'child', 
+//     const children = await User.find({
+//       role: 'child',
 //       isActive: true,
-//       'preferences.emailNotifications': true 
+//       'preferences.emailNotifications': true
 //     }).select('firstName lastName email totalStoriesCreated');
 
 //     let emailsSent = 0;
@@ -525,17 +520,17 @@
 //                 ✨ Stories Platform ✨
 //               </div>
 //             </div>
-            
+
 //             <h2 style="color: #3b82f6; text-align: center; font-size: 28px;">
 //               🔄 Welcome to ${monthName}!
 //             </h2>
-            
+
 //             <div style="background: rgba(59, 130, 246, 0.1); padding: 20px; border-radius: 10px; margin: 20px 0; text-align: center;">
 //               <p style="font-size: 20px; color: #1e40af; margin: 0; font-weight: bold;">
 //                 🎉 Your writing limits have been reset! 🎉
 //               </p>
 //             </div>
-            
+
 //             <div style="background: #fef3ff; padding: 20px; border-radius: 10px; margin: 20px 0;">
 //               <h3 style="color: #8b5cf6; margin-top: 0;">📚 Your Fresh ${monthName} Limits:</h3>
 //               <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px;">
@@ -553,7 +548,7 @@
 //                 </div>
 //               </div>
 //             </div>
-            
+
 //             <div style="text-align: center; margin: 30px 0;">
 //               <a href="${process.env.NEXTAUTH_URL}/children-dashboard" style="background: linear-gradient(45deg, #3b82f6, #8b5cf6); color: white; padding: 15px 30px; text-decoration: none; font-size: 18px; border-radius: 25px; display: inline-block; margin-right: 10px;">
 //                 🏠 View Dashboard
@@ -562,18 +557,18 @@
 //                 ✍️ Start Writing
 //               </a>
 //             </div>
-            
+
 //             <div style="background: #fff7ed; padding: 15px; border-radius: 10px; margin: 20px 0; border-left: 5px solid #f59e0b;">
 //               <p style="margin: 0; font-size: 14px; color: #92400e;">
 //                 🏆 <strong>Don't forget:</strong> Check out this month's writing competition! Submit your published stories for a chance to win recognition and prizes.
 //               </p>
 //             </div>
-            
+
 //             <p style="font-size: 16px; color: #374151; text-align: center;">
 //               Let's make this your most creative month yet! 🌟📖<br/>
 //               <span style="color: #3b82f6; font-weight: bold;">The Stories Platform Team</span>
 //             </p>
-            
+
 //             <hr style="border: 1px solid #e5e7eb; margin: 30px 0;" />
 //             <p style="font-size: 12px; color: #9ca3af; text-align: center;">
 //               Keep writing, keep growing! ✨
@@ -644,18 +639,18 @@
 //               🏆 Competition Entry 🏆
 //             </div>
 //           </div>
-          
+
 //           <h2 style="color: #8b5cf6; text-align: center; font-size: 28px;">
 //             🎉 Submission Confirmed!
 //           </h2>
-          
+
 //           <div style="background: rgba(139, 92, 246, 0.1); padding: 20px; border-radius: 10px; margin: 20px 0; text-align: center;">
 //             <p style="font-size: 18px; color: #6b21a8; margin: 0;">
 //               <strong>Congratulations, ${user.firstName}!</strong><br/>
 //               Your story has been successfully submitted to the competition!
 //             </p>
 //           </div>
-          
+
 //           <div style="background: #f8fafc; padding: 20px; border-radius: 10px; margin: 20px 0;">
 //             <h3 style="color: #374151; margin-top: 0;">📖 Submission Details:</h3>
 //             <ul style="color: #4b5563; line-height: 1.8;">
@@ -665,7 +660,7 @@
 //               <li><strong>Submission Deadline:</strong> ${submissionDeadline}</li>
 //             </ul>
 //           </div>
-          
+
 //           <div style="background: #fef3ff; padding: 20px; border-radius: 10px; margin: 20px 0;">
 //             <h3 style="color: #8b5cf6; margin-top: 0;">🚀 What Happens Next?</h3>
 //             <div style="color: #374151; line-height: 1.6;">
@@ -673,19 +668,19 @@
 //               <p><strong>🏆 Results (Day 31):</strong> Winners will be announced with Olympic-style recognition! Top 3 stories receive special badges and certificates.</p>
 //             </div>
 //           </div>
-          
+
 //           <div style="text-align: center; margin: 30px 0;">
 //             <a href="${process.env.NEXTAUTH_URL}/competitions" style="background: linear-gradient(45deg, #8b5cf6, #f59e0b); color: white; padding: 15px 30px; text-decoration: none; font-size: 18px; border-radius: 25px; display: inline-block;">
 //               🏆 View Competition
 //             </a>
 //           </div>
-          
+
 //           <div style="background: #ecfdf5; padding: 15px; border-radius: 10px; margin: 20px 0; border-left: 5px solid #10b981;">
 //             <p style="margin: 0; font-size: 14px; color: #065f46;">
 //               💡 <strong>Good luck!</strong> You can submit up to 3 stories per competition. Keep writing and creating amazing stories!
 //             </p>
 //           </div>
-          
+
 //           <p style="font-size: 16px; color: #374151; text-align: center;">
 //             We're excited to see your creativity shine! 🌟<br/>
 //             <span style="color: #8b5cf6; font-weight: bold;">The Stories Platform Team</span>
@@ -1084,19 +1079,21 @@ export const sendContactFormConfirmationEmail = async (
  */
 export const sendMonthlyResetNotification = async (): Promise<number> => {
   const transporter = createTransporter();
-  
+
   try {
     await connectToDatabase();
-    
-    const children = await User.find({ 
-      role: 'child', 
+
+    const children = await User.find({
+      role: 'child',
       isActive: true,
-      'preferences.emailNotifications': true 
+      'preferences.emailNotifications': true,
     }).select('firstName lastName email totalStoriesCreated');
 
     let emailsSent = 0;
     const currentDate = new Date();
-    const monthName = currentDate.toLocaleDateString('en-US', { month: 'long' });
+    const monthName = currentDate.toLocaleDateString('en-US', {
+      month: 'long',
+    });
 
     for (const child of children) {
       const mailOptions = {
@@ -1187,61 +1184,71 @@ export const sendMonthlyResetNotification = async (): Promise<number> => {
            ${getEmailFooter()}
          </div>
        `,
-     };
+      };
 
-     try {
-       await transporter.sendMail(mailOptions);
-       emailsSent++;
-       console.log(`📧 Premium monthly reset email sent to ${child.firstName} (${child.email})`);
-     } catch (emailError) {
-       console.error(`Failed to send monthly reset email to ${child.email}:`, emailError);
-     }
+      try {
+        await transporter.sendMail(mailOptions);
+        emailsSent++;
+        console.log(
+          `📧 Premium monthly reset email sent to ${child.firstName} (${child.email})`
+        );
+      } catch (emailError) {
+        console.error(
+          `Failed to send monthly reset email to ${child.email}:`,
+          emailError
+        );
+      }
 
-     await new Promise(resolve => setTimeout(resolve, 100));
-   }
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    }
 
-   console.log(`📧 Premium monthly reset notifications sent to ${emailsSent} children`);
-   return emailsSent;
-
- } catch (error) {
-   console.error('Error sending premium monthly reset notifications:', error);
-   throw error;
- }
+    console.log(
+      `📧 Premium monthly reset notifications sent to ${emailsSent} children`
+    );
+    return emailsSent;
+  } catch (error) {
+    console.error('Error sending premium monthly reset notifications:', error);
+    throw error;
+  }
 };
 
 /**
-* Send premium competition submission confirmation
-*/
+ * Send premium competition submission confirmation
+ */
 export const sendCompetitionSubmissionConfirmation = async (
- childId: string,
- storyId: string,
- competitionId: string
+  childId: string,
+  storyId: string,
+  competitionId: string
 ): Promise<nodemailer.SentMessageInfo> => {
- const transporter = createTransporter();
+  const transporter = createTransporter();
 
- try {
-   await connectToDatabase();
+  try {
+    await connectToDatabase();
 
-   const [user, story, competition] = await Promise.all([
-     User.findById(childId).select('firstName lastName email preferences'),
-     StorySession.findById(storyId).select('title'),
-     Competition.findById(competitionId).select('month year phase submissionEnd')
-   ]);
+    const [user, story, competition] = await Promise.all([
+      User.findById(childId).select('firstName lastName email preferences'),
+      StorySession.findById(storyId).select('title'),
+      Competition.findById(competitionId).select(
+        'month year phase submissionEnd'
+      ),
+    ]);
 
-   if (!user || !story || !competition) {
-     throw new Error('User, story, or competition not found');
-   }
-   if (!user.preferences?.emailNotifications) {
-     throw new Error('User has disabled email notifications');
-   }
+    if (!user || !story || !competition) {
+      throw new Error('User, story, or competition not found');
+    }
+    if (!user.preferences?.emailNotifications) {
+      throw new Error('User has disabled email notifications');
+    }
 
-   const submissionDeadline = new Date(competition.submissionEnd).toLocaleDateString();
+    const submissionDeadline = new Date(
+      competition.submissionEnd
+    ).toLocaleDateString();
 
-   const mailOptions = {
-     from: `"Mintoons Competition" <${process.env.EMAIL_USER}>`,
-     to: user.email,
-     subject: `🏆 Story Submitted Successfully - "${story.title}"`,
-     html: `
+    const mailOptions = {
+      from: `"Mintoons Competition" <${process.env.EMAIL_USER}>`,
+      to: user.email,
+      subject: `🏆 Story Submitted Successfully - "${story.title}"`,
+      html: `
        <div style="font-family: 'Segoe UI', sans-serif; max-width: 650px; margin: 0 auto; background: #ffffff; border-radius: 20px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.1);">
          ${getEmailHeader()}
          
@@ -1358,33 +1365,37 @@ export const sendCompetitionSubmissionConfirmation = async (
          ${getEmailFooter()}
        </div>
      `,
-   };
+    };
 
-   const info = await transporter.sendMail(mailOptions);
-   console.log(`📧 Premium competition submission confirmation sent to ${user.firstName} (${user.email})`);
-   return info;
-
- } catch (error) {
-   console.error('Error sending premium competition submission confirmation:', error);
-   throw error;
- }
+    const info = await transporter.sendMail(mailOptions);
+    console.log(
+      `📧 Premium competition submission confirmation sent to ${user.firstName} (${user.email})`
+    );
+    return info;
+  } catch (error) {
+    console.error(
+      'Error sending premium competition submission confirmation:',
+      error
+    );
+    throw error;
+  }
 };
 
 /**
-* Send mentor registration notification (admin only)
-*/
+ * Send mentor registration notification (admin only)
+ */
 export const sendMentorRegistrationNotification = async (
- email: string,
- firstName: string,
- lastName: string
+  email: string,
+  firstName: string,
+  lastName: string
 ): Promise<nodemailer.SentMessageInfo> => {
- const transporter = createTransporter();
+  const transporter = createTransporter();
 
- const adminMailOptions = {
-   from: `"Mintoons Platform" <${process.env.EMAIL_USER}>`,
-   to: process.env.ADMIN_EMAIL || process.env.EMAIL_USER,
-   subject: `👨‍🏫 New Mentor Application - ${firstName} ${lastName}`,
-   html: `
+  const adminMailOptions = {
+    from: `"Mintoons Platform" <${process.env.EMAIL_USER}>`,
+    to: process.env.ADMIN_EMAIL || process.env.EMAIL_USER,
+    subject: `👨‍🏫 New Mentor Application - ${firstName} ${lastName}`,
+    html: `
      <div style="font-family: 'Segoe UI', sans-serif; max-width: 600px; margin: auto; background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
        <div style="background: linear-gradient(135deg, #059669 0%, #047857 100%); padding: 25px; color: white; text-align: center;">
          <h2 style="margin: 0; font-size: 24px; font-weight: 600;">👨‍🏫 New Mentor Application</h2>
@@ -1419,32 +1430,35 @@ export const sendMentorRegistrationNotification = async (
        </div>
      </div>
    `,
- };
+  };
 
- try {
-   const adminInfo = await transporter.sendMail(adminMailOptions);
-   console.log('Premium mentor registration notification sent successfully');
-   return adminInfo;
- } catch (error) {
-   console.error('Error sending premium mentor registration notification:', error);
-   throw error;
- }
+  try {
+    const adminInfo = await transporter.sendMail(adminMailOptions);
+    console.log('Premium mentor registration notification sent successfully');
+    return adminInfo;
+  } catch (error) {
+    console.error(
+      'Error sending premium mentor registration notification:',
+      error
+    );
+    throw error;
+  }
 };
 
 // Competition-related mailers (admin notifications - keep simple)
 export const sendCompetitionAnnouncement = async (
- competitionId: string,
- month: string,
- year: number
+  competitionId: string,
+  month: string,
+  year: number
 ): Promise<nodemailer.SentMessageInfo> => {
- const transporter = createTransporter();
- const adminEmail = process.env.ADMIN_EMAIL || process.env.EMAIL_USER || '';
- 
- const mailOptions = {
-   from: `"Mintoons System" <${process.env.EMAIL_USER}>`,
-   to: adminEmail,
-   subject: `🏆 New Competition Created: ${month} ${year}`,
-   html: `
+  const transporter = createTransporter();
+  const adminEmail = process.env.ADMIN_EMAIL || process.env.EMAIL_USER || '';
+
+  const mailOptions = {
+    from: `"Mintoons System" <${process.env.EMAIL_USER}>`,
+    to: adminEmail,
+    subject: `🏆 New Competition Created: ${month} ${year}`,
+    html: `
      <div style="font-family: 'Segoe UI', sans-serif; max-width: 500px; margin: auto; background: white; border-radius: 10px; padding: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
        <h3 style="color: #f59e0b; margin: 0 0 15px 0;">🏆 New Competition Created</h3>
        <p style="margin: 0; color: #374151;">
@@ -1455,23 +1469,23 @@ export const sendCompetitionAnnouncement = async (
        </div>
      </div>
    `,
- };
- 
- return transporter.sendMail(mailOptions);
+  };
+
+  return transporter.sendMail(mailOptions);
 };
 
 export const sendCompetitionPhaseChange = async (
- competitionId: string,
- phase: string
+  competitionId: string,
+  phase: string
 ): Promise<nodemailer.SentMessageInfo> => {
- const transporter = createTransporter();
- const adminEmail = process.env.ADMIN_EMAIL || process.env.EMAIL_USER || '';
- 
- const mailOptions = {
-   from: `"Mintoons System" <${process.env.EMAIL_USER}>`,
-   to: adminEmail,
-   subject: `📅 Competition Phase Changed: ${phase}`,
-   html: `
+  const transporter = createTransporter();
+  const adminEmail = process.env.ADMIN_EMAIL || process.env.EMAIL_USER || '';
+
+  const mailOptions = {
+    from: `"Mintoons System" <${process.env.EMAIL_USER}>`,
+    to: adminEmail,
+    subject: `📅 Competition Phase Changed: ${phase}`,
+    html: `
      <div style="font-family: 'Segoe UI', sans-serif; max-width: 500px; margin: auto; background: white; border-radius: 10px; padding: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
        <h3 style="color: #8b5cf6; margin: 0 0 15px 0;">📅 Competition Phase Update</h3>
        <p style="margin: 0; color: #374151;">
@@ -1479,22 +1493,22 @@ export const sendCompetitionPhaseChange = async (
        </p>
      </div>
    `,
- };
- 
- return transporter.sendMail(mailOptions);
+  };
+
+  return transporter.sendMail(mailOptions);
 };
 
 export const sendCompetitionResults = async (
- competitionId: string
+  competitionId: string
 ): Promise<nodemailer.SentMessageInfo> => {
- const transporter = createTransporter();
- const adminEmail = process.env.ADMIN_EMAIL || process.env.EMAIL_USER || '';
- 
- const mailOptions = {
-   from: `"Mintoons System" <${process.env.EMAIL_USER}>`,
-   to: adminEmail,
-   subject: `🎉 Competition Results Announced`,
-   html: `
+  const transporter = createTransporter();
+  const adminEmail = process.env.ADMIN_EMAIL || process.env.EMAIL_USER || '';
+
+  const mailOptions = {
+    from: `"Mintoons System" <${process.env.EMAIL_USER}>`,
+    to: adminEmail,
+    subject: `🎉 Competition Results Announced`,
+    html: `
      <div style="font-family: 'Segoe UI', sans-serif; max-width: 500px; margin: auto; background: white; border-radius: 10px; padding: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
        <h3 style="color: #059669; margin: 0 0 15px 0;">🎉 Competition Results</h3>
        <p style="margin: 0; color: #374151;">
@@ -1502,7 +1516,7 @@ export const sendCompetitionResults = async (
        </p>
      </div>
    `,
- };
- 
- return transporter.sendMail(mailOptions);
+  };
+
+  return transporter.sendMail(mailOptions);
 };

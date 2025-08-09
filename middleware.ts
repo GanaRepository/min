@@ -65,7 +65,11 @@ export async function middleware(request: NextRequest) {
   const { pathname: path } = request.nextUrl;
 
   // Skip middleware for static files and Next.js internals
-  if (isStaticFile(path) || path.startsWith('/_next/') || path.startsWith('/favicon')) {
+  if (
+    isStaticFile(path) ||
+    path.startsWith('/_next/') ||
+    path.startsWith('/favicon')
+  ) {
     return NextResponse.next();
   }
 
@@ -82,11 +86,11 @@ export async function middleware(request: NextRequest) {
   }
 
   // Get session token
-  const token = await getToken({ 
-    req: request, 
-    secret: process.env.NEXTAUTH_SECRET 
+  const token = await getToken({
+    req: request,
+    secret: process.env.NEXTAUTH_SECRET,
   });
-  
+
   const isAuthenticated = !!token;
   const userRole = token?.role;
 
@@ -108,7 +112,10 @@ export async function middleware(request: NextRequest) {
     }
 
     if (userRole !== 'admin') {
-      logMiddleware('warn', `Non-admin access attempt to admin area by ${userRole}: ${path}`);
+      logMiddleware(
+        'warn',
+        `Non-admin access attempt to admin area by ${userRole}: ${path}`
+      );
       return NextResponse.redirect(new URL('/unauthorized', request.url));
     }
 
@@ -117,17 +124,17 @@ export async function middleware(request: NextRequest) {
   }
 
   // ===== MENTOR ROUTES =====
-  if (
-    path.startsWith('/mentor-dashboard') ||
-    path.startsWith('/api/mentor/')
-  ) {
+  if (path.startsWith('/mentor-dashboard') || path.startsWith('/api/mentor/')) {
     if (!isAuthenticated) {
       logMiddleware('warn', `Unauthenticated mentor access attempt: ${path}`);
       return NextResponse.redirect(new URL('/login/mentor', request.url));
     }
 
     if (userRole !== 'mentor' && userRole !== 'admin') {
-      logMiddleware('warn', `Non-mentor access attempt to mentor area by ${userRole}: ${path}`);
+      logMiddleware(
+        'warn',
+        `Non-mentor access attempt to mentor area by ${userRole}: ${path}`
+      );
       return NextResponse.redirect(new URL('/unauthorized', request.url));
     }
 
@@ -151,7 +158,10 @@ export async function middleware(request: NextRequest) {
     }
 
     if (userRole !== 'child' && userRole !== 'admin') {
-      logMiddleware('warn', `Non-child access attempt to child area by ${userRole}: ${path}`);
+      logMiddleware(
+        'warn',
+        `Non-child access attempt to child area by ${userRole}: ${path}`
+      );
       return NextResponse.redirect(new URL('/unauthorized', request.url));
     }
 
@@ -179,7 +189,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    '/((?!_next/static|_next/image|favicon.ico).*)',
-  ],
+  matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'],
 };

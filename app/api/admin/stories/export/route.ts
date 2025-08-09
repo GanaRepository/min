@@ -11,7 +11,10 @@ export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     if (!session || session.user.role !== 'admin') {
-      return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
+      return NextResponse.json(
+        { error: 'Admin access required' },
+        { status: 403 }
+      );
     }
 
     const { searchParams } = new URL(request.url);
@@ -34,8 +37,9 @@ export async function GET(request: NextRequest) {
       .lean();
 
     // Generate CSV
-    let csv = 'Title,Author Name,Author Email,Status,Total Words,Child Words,API Calls Used,Created Date,Completed Date,Published,Competition\n';
-    
+    let csv =
+      'Title,Author Name,Author Email,Status,Total Words,Child Words,API Calls Used,Created Date,Completed Date,Published,Competition\n';
+
     stories.forEach((story: any) => {
       const author = story.childId;
       csv += `"${story.title}","${author.firstName} ${author.lastName}","${author.email}","${story.status}",${story.totalWords || 0},${story.childWords || 0},${story.apiCallsUsed || 0},"${new Date(story.createdAt).toLocaleDateString()}","${story.completedAt ? new Date(story.completedAt).toLocaleDateString() : 'Not completed'}",${story.isPublished ? 'Yes' : 'No'},${story.submittedToCompetition ? 'Yes' : 'No'}\n`;
@@ -50,6 +54,9 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error('Error exporting stories:', error);
-    return NextResponse.json({ error: 'Failed to export stories' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to export stories' },
+      { status: 500 }
+    );
   }
 }

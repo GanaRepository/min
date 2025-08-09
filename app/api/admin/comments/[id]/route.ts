@@ -14,7 +14,10 @@ export async function GET(
   try {
     const session = await getServerSession(authOptions);
     if (!session || session.user.role !== 'admin') {
-      return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
+      return NextResponse.json(
+        { error: 'Admin access required' },
+        { status: 403 }
+      );
     }
 
     const { id } = params;
@@ -28,8 +31,8 @@ export async function GET(
         select: 'title storyNumber',
         populate: {
           path: 'childId',
-          select: 'firstName lastName'
-        }
+          select: 'firstName lastName',
+        },
       })
       .lean();
 
@@ -43,21 +46,30 @@ export async function GET(
       .select('_id')
       .lean()) as Array<{ _id: any }>;
 
-    const currentIndex = allComments.findIndex(c => String(c._id) === id);
-    const pagination = currentIndex !== -1 ? {
-      current: (currentIndex + 1).toString(),
-      prev: currentIndex > 0 ? String(allComments[currentIndex - 1]._id) : null,
-      next: currentIndex < allComments.length - 1 ? String(allComments[currentIndex + 1]._id) : null,
-      total: allComments.length
-    } : null;
+    const currentIndex = allComments.findIndex((c) => String(c._id) === id);
+    const pagination =
+      currentIndex !== -1
+        ? {
+            current: (currentIndex + 1).toString(),
+            prev:
+              currentIndex > 0
+                ? String(allComments[currentIndex - 1]._id)
+                : null,
+            next:
+              currentIndex < allComments.length - 1
+                ? String(allComments[currentIndex + 1]._id)
+                : null,
+            total: allComments.length,
+          }
+        : null;
 
     // Get replies if any
-    const replies = await StoryComment.find({ 
-      parentCommentId: id 
+    const replies = await StoryComment.find({
+      parentCommentId: id,
     })
-    .populate('authorId', 'firstName lastName role')
-    .sort({ createdAt: 1 })
-    .lean();
+      .populate('authorId', 'firstName lastName role')
+      .sort({ createdAt: 1 })
+      .lean();
 
     return NextResponse.json({
       success: true,
@@ -69,7 +81,10 @@ export async function GET(
     });
   } catch (error) {
     console.error('Error fetching comment:', error);
-    return NextResponse.json({ error: 'Failed to fetch comment' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to fetch comment' },
+      { status: 500 }
+    );
   }
 }
 
@@ -81,7 +96,10 @@ export async function PATCH(
   try {
     const session = await getServerSession(authOptions);
     if (!session || session.user.role !== 'admin') {
-      return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
+      return NextResponse.json(
+        { error: 'Admin access required' },
+        { status: 403 }
+      );
     }
 
     const { id } = params;
@@ -98,16 +116,22 @@ export async function PATCH(
     // If updating comment content, check if user is the author
     if (updateData.comment !== undefined) {
       if (existingComment.authorId.toString() !== session.user.id) {
-        return NextResponse.json({ 
-          error: 'You can only edit your own comments' 
-        }, { status: 403 });
+        return NextResponse.json(
+          {
+            error: 'You can only edit your own comments',
+          },
+          { status: 403 }
+        );
       }
-      
+
       updateData.comment = updateData.comment.trim();
       if (!updateData.comment) {
-        return NextResponse.json({ 
-          error: 'Comment content cannot be empty' 
-        }, { status: 400 });
+        return NextResponse.json(
+          {
+            error: 'Comment content cannot be empty',
+          },
+          { status: 400 }
+        );
       }
     }
 
@@ -127,7 +151,10 @@ export async function PATCH(
     });
   } catch (error) {
     console.error('Error updating comment:', error);
-    return NextResponse.json({ error: 'Failed to update comment' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to update comment' },
+      { status: 500 }
+    );
   }
 }
 
@@ -139,7 +166,10 @@ export async function DELETE(
   try {
     const session = await getServerSession(authOptions);
     if (!session || session.user.role !== 'admin') {
-      return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
+      return NextResponse.json(
+        { error: 'Admin access required' },
+        { status: 403 }
+      );
     }
 
     const { id } = params;
@@ -152,7 +182,7 @@ export async function DELETE(
 
     // Delete any replies to this comment
     await StoryComment.deleteMany({ parentCommentId: id });
-    
+
     // Delete the main comment
     await StoryComment.findByIdAndDelete(id);
 
@@ -162,6 +192,9 @@ export async function DELETE(
     });
   } catch (error) {
     console.error('Error deleting comment:', error);
-    return NextResponse.json({ error: 'Failed to delete comment' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to delete comment' },
+      { status: 500 }
+    );
   }
 }

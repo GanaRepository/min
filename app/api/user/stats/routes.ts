@@ -14,26 +14,38 @@ export async function GET() {
     await connectToDatabase();
 
     const stories = await StorySession.find({ childId: session.user.id });
-    const assessedStories = stories.filter(s => s.assessment?.overallScore);
-    const publishedStories = stories.filter(s => s.isPublished);
-    const competitionEntries = stories.filter(s => s.competitionEntries && s.competitionEntries.length > 0);
+    const assessedStories = stories.filter((s) => s.assessment?.overallScore);
+    const publishedStories = stories.filter((s) => s.isPublished);
+    const competitionEntries = stories.filter(
+      (s) => s.competitionEntries && s.competitionEntries.length > 0
+    );
 
     const stats = {
       totalStories: stories.length,
       totalWords: stories.reduce((sum, s) => sum + (s.childWords || 0), 0),
-      averageScore: assessedStories.length > 0 
-        ? Math.round(assessedStories.reduce((sum, s) => sum + s.assessment.overallScore, 0) / assessedStories.length)
-        : 0,
+      averageScore:
+        assessedStories.length > 0
+          ? Math.round(
+              assessedStories.reduce(
+                (sum, s) => sum + s.assessment.overallScore,
+                0
+              ) / assessedStories.length
+            )
+          : 0,
       publishedStories: publishedStories.length,
-      competitionEntries: competitionEntries.reduce((sum, s) => sum + s.competitionEntries.length, 0),
-      achievements: assessedStories.filter(s => s.assessment.overallScore >= 90).length, // Stories with 90%+ scores
+      competitionEntries: competitionEntries.reduce(
+        (sum, s) => sum + s.competitionEntries.length,
+        0
+      ),
+      achievements: assessedStories.filter(
+        (s) => s.assessment.overallScore >= 90
+      ).length, // Stories with 90%+ scores
     };
 
     return NextResponse.json({
       success: true,
-      stats
+      stats,
     });
-
   } catch (error) {
     console.error('Error fetching user stats:', error);
     return NextResponse.json(

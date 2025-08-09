@@ -20,18 +20,25 @@ export async function POST(req: NextRequest) {
     // Verify admin access
     const { searchParams } = new URL(req.url);
     const adminKey = searchParams.get('admin_key');
-    
+
     if (!adminKey || adminKey !== process.env.ADMIN_SETUP_KEY) {
       console.error('❌ Unauthorized access attempt to create products');
-      return NextResponse.json({ error: 'Unauthorized - Invalid admin key' }, { status: 401 });
+      return NextResponse.json(
+        { error: 'Unauthorized - Invalid admin key' },
+        { status: 401 }
+      );
     }
 
     console.log('🔄 Setting up Stripe products...');
 
     // Check if products already exist to avoid duplicates
     const existingProducts = await stripe.products.list({ limit: 100 });
-    const storyPackExists = existingProducts.data.find(p => p.metadata?.type === 'story_pack');
-    const publicationExists = existingProducts.data.find(p => p.metadata?.type === 'story_publication');
+    const storyPackExists = existingProducts.data.find(
+      (p) => p.metadata?.type === 'story_pack'
+    );
+    const publicationExists = existingProducts.data.find(
+      (p) => p.metadata?.type === 'story_publication'
+    );
 
     let storyPackProduct, storyPackPrice, publicationProduct, publicationPrice;
 
@@ -39,12 +46,15 @@ export async function POST(req: NextRequest) {
     if (storyPackExists) {
       console.log('ℹ️ Story Pack product already exists, using existing one');
       storyPackProduct = storyPackExists;
-      const existingPrices = await stripe.prices.list({ product: storyPackProduct.id });
+      const existingPrices = await stripe.prices.list({
+        product: storyPackProduct.id,
+      });
       storyPackPrice = existingPrices.data[0];
     } else {
       storyPackProduct = await stripe.products.create({
         name: 'Story Pack - 5 Stories + 5 Assessments',
-        description: 'Unlock 5 additional story creations and 5 assessment uploads for the current month',
+        description:
+          'Unlock 5 additional story creations and 5 assessment uploads for the current month',
         images: [`${process.env.NEXTAUTH_URL}/images/story-pack-icon.png`],
         metadata: {
           type: 'story_pack',
@@ -71,14 +81,19 @@ export async function POST(req: NextRequest) {
 
     // Create Story Publication Product (if it doesn't exist)
     if (publicationExists) {
-      console.log('ℹ️ Story Publication product already exists, using existing one');
+      console.log(
+        'ℹ️ Story Publication product already exists, using existing one'
+      );
       publicationProduct = publicationExists;
-      const existingPrices = await stripe.prices.list({ product: publicationProduct.id });
+      const existingPrices = await stripe.prices.list({
+        product: publicationProduct.id,
+      });
       publicationPrice = existingPrices.data[0];
     } else {
       publicationProduct = await stripe.products.create({
         name: 'Story Publication Fee',
-        description: 'Publish your story publicly and make it eligible for monthly competitions',
+        description:
+          'Publish your story publicly and make it eligible for monthly competitions',
         images: [`${process.env.NEXTAUTH_URL}/images/publication-icon.png`],
         metadata: {
           type: 'story_publication',
@@ -136,14 +151,13 @@ export async function POST(req: NextRequest) {
         '4. Test payments using Stripe test cards',
       ],
     });
-
   } catch (error: any) {
     console.error('❌ Stripe setup error:', error);
-    
+
     // More detailed error handling
     let errorMessage = 'Failed to create Stripe products';
     let errorDetails = error.message || 'Unknown error';
-    
+
     if (error.type === 'StripeInvalidRequestError') {
       errorMessage = 'Invalid Stripe request - check your API keys';
     } else if (error.type === 'StripeAPIError') {
@@ -153,11 +167,11 @@ export async function POST(req: NextRequest) {
     }
 
     return NextResponse.json(
-      { 
+      {
         error: errorMessage,
         details: errorDetails,
         type: error.type || 'unknown',
-        help: 'Check your Stripe API keys and try again'
+        help: 'Check your Stripe API keys and try again',
       },
       { status: 500 }
     );

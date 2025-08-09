@@ -67,7 +67,7 @@ export default function AdminDashboard() {
     try {
       const response = await fetch('/api/admin/dashboard-stats');
       const data = await response.json();
-      
+
       if (data.success) {
         setStats(data.stats);
       }
@@ -106,7 +106,7 @@ export default function AdminDashboard() {
     {
       title: 'Revenue',
       value: `$${(stats?.revenue.total || 0).toLocaleString()}`,
-      change: `${(stats?.revenue.growth ?? 0) >= 0 ? '+' : ''}${((stats?.revenue.growth ?? 0).toFixed(1))}%`,
+      change: `${(stats?.revenue.growth ?? 0) >= 0 ? '+' : ''}${(stats?.revenue.growth ?? 0).toFixed(1)}%`,
       icon: DollarSign,
       color: 'from-emerald-500 to-emerald-600',
       href: '/admin/revenue',
@@ -160,12 +160,14 @@ export default function AdminDashboard() {
         </p>
         <div className="mt-4 flex items-center text-blue-100">
           <Calendar className="w-4 h-4 mr-2" />
-          <span className="text-sm">{new Date().toLocaleDateString('en-US', { 
-            weekday: 'long', 
-            year: 'numeric', 
-            month: 'long', 
-            day: 'numeric' 
-          })}</span>
+          <span className="text-sm">
+            {new Date().toLocaleDateString('en-US', {
+              weekday: 'long',
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+            })}
+          </span>
         </div>
       </div>
 
@@ -183,14 +185,20 @@ export default function AdminDashboard() {
               <Link href={card.href}>
                 <div className="bg-gray-800 rounded-xl p-6 hover:bg-gray-750 transition-all duration-200 cursor-pointer group">
                   <div className="flex items-center justify-between mb-4">
-                    <div className={`w-12 h-12 bg-gradient-to-r ${card.color} rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-200`}>
+                    <div
+                      className={`w-12 h-12 bg-gradient-to-r ${card.color} rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-200`}
+                    >
                       <Icon className="w-6 h-6 text-white" />
                     </div>
                     <ArrowUpRight className="w-4 h-4 text-gray-400 group-hover:text-white transition-colors" />
                   </div>
                   <div>
-                    <p className="text-gray-400 text-sm font-medium">{card.title}</p>
-                    <p className="text-2xl font-bold text-white mt-1">{card.value}</p>
+                    <p className="text-gray-400 text-sm font-medium">
+                      {card.title}
+                    </p>
+                    <p className="text-2xl font-bold text-white mt-1">
+                      {card.value}
+                    </p>
                     <p className="text-gray-500 text-xs mt-2">{card.change}</p>
                   </div>
                 </div>
@@ -205,10 +213,12 @@ export default function AdminDashboard() {
         {/* Recent Activity */}
         <div className="lg:col-span-2 bg-gray-800 rounded-xl p-6">
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-lg font-semibold text-white">Platform Activity</h3>
+            <h3 className="text-lg font-semibold text-white">
+              Platform Activity
+            </h3>
             <Activity className="w-5 h-5 text-gray-400" />
           </div>
-          
+
           <div className="space-y-4">
             <div className="flex items-center justify-between p-4 bg-gray-700/50 rounded-lg">
               <div className="flex items-center space-x-3">
@@ -217,11 +227,15 @@ export default function AdminDashboard() {
                 </div>
                 <div>
                   <p className="text-white font-medium">Active Users Today</p>
-                  <p className="text-gray-400 text-sm">{stats?.users.activeToday || 0} users online</p>
+                  <p className="text-gray-400 text-sm">
+                    {stats?.users.activeToday || 0} users online
+                  </p>
                 </div>
               </div>
               <div className="text-right">
-                <p className="text-white font-semibold">{stats?.users.activeToday || 0}</p>
+                <p className="text-white font-semibold">
+                  {stats?.users.activeToday || 0}
+                </p>
                 <p className="text-green-400 text-xs">+12% vs yesterday</p>
               </div>
             </div>
@@ -233,11 +247,15 @@ export default function AdminDashboard() {
                 </div>
                 <div>
                   <p className="text-white font-medium">Stories This Week</p>
-                  <p className="text-gray-400 text-sm">{stats?.stories.thisWeek || 0} new stories</p>
+                  <p className="text-gray-400 text-sm">
+                    {stats?.stories.thisWeek || 0} new stories
+                  </p>
                 </div>
               </div>
               <div className="text-right">
-                <p className="text-white font-semibold">{stats?.stories.thisWeek || 0}</p>
+                <p className="text-white font-semibold">
+                  {stats?.stories.thisWeek || 0}
+                </p>
                 <p className="text-green-400 text-xs">+8% vs last week</p>
               </div>
             </div>
@@ -253,7 +271,9 @@ export default function AdminDashboard() {
                 </div>
               </div>
               <div className="text-right">
-                <p className="text-white font-semibold">{stats?.comments.unresolved || 0}</p>
+                <p className="text-white font-semibold">
+                  {stats?.comments.unresolved || 0}
+                </p>
                 {(stats?.comments.unresolved || 0) > 0 && (
                   <p className="text-orange-400 text-xs">Requires attention</p>
                 )}
@@ -264,19 +284,27 @@ export default function AdminDashboard() {
 
         {/* Quick Actions */}
         <div className="bg-gray-800 rounded-xl p-6">
-          <h3 className="text-lg font-semibold text-white mb-6">Quick Actions</h3>
-          
+          <h3 className="text-lg font-semibold text-white mb-6">
+            Quick Actions
+          </h3>
+
           <div className="space-y-3">
             {quickActions.map((action) => {
               const Icon = action.icon;
               return (
                 <Link key={action.title} href={action.href}>
-                  <div className={`${action.color} p-4 rounded-lg transition-colors duration-200`}>
+                  <div
+                    className={`${action.color} p-4 rounded-lg transition-colors duration-200`}
+                  >
                     <div className="flex items-center space-x-3">
                       <Icon className="w-5 h-5 text-white" />
                       <div>
-                        <p className="text-white font-medium text-sm">{action.title}</p>
-                        <p className="text-white/80 text-xs">{action.description}</p>
+                        <p className="text-white font-medium text-sm">
+                          {action.title}
+                        </p>
+                        <p className="text-white/80 text-xs">
+                          {action.description}
+                        </p>
                       </div>
                     </div>
                   </div>

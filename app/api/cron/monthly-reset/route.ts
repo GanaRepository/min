@@ -9,7 +9,7 @@ export async function POST(req: NextRequest) {
     // Verify cron secret
     const authHeader = req.headers.get('authorization');
     const expectedToken = `Bearer ${process.env.CRON_SECRET_TOKEN}`;
-    
+
     if (authHeader !== expectedToken) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -29,7 +29,9 @@ export async function POST(req: NextRequest) {
       console.error('Failed to send monthly reset emails:', emailError);
     }
 
-    console.log(`✅ Monthly usage reset completed for ${resetResult.usersReset} users`);
+    console.log(
+      `✅ Monthly usage reset completed for ${resetResult.usersReset} users`
+    );
 
     return NextResponse.json({
       success: true,
@@ -38,7 +40,6 @@ export async function POST(req: NextRequest) {
       errors: resetResult.errors,
       timestamp: new Date().toISOString(),
     });
-
   } catch (error) {
     console.error('Monthly reset failed:', error);
     return NextResponse.json(

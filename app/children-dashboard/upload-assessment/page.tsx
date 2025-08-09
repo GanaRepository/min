@@ -29,7 +29,7 @@ export default function UploadAssessmentPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const { toast } = useToast();
-  
+
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [file, setFile] = useState<File | null>(null);
@@ -78,7 +78,7 @@ export default function UploadAssessmentPage() {
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
-    
+
     const files = e.dataTransfer.files;
     if (files && files[0]) {
       handleFileSelect(files[0]);
@@ -89,7 +89,10 @@ export default function UploadAssessmentPage() {
     if (!selectedFile) return;
 
     // Validate file type
-    const allowedTypes = ['text/plain', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+    const allowedTypes = [
+      'text/plain',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    ];
     if (!allowedTypes.includes(selectedFile.type)) {
       toast({
         title: '❌ Invalid File Type',
@@ -115,7 +118,7 @@ export default function UploadAssessmentPage() {
     try {
       const text = await selectedFile.text();
       setContent(text);
-      
+
       // Auto-generate title from filename if no title set
       if (!title.trim()) {
         const fileName = selectedFile.name.replace(/\.[^/.]+$/, '');
@@ -132,7 +135,7 @@ export default function UploadAssessmentPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!title.trim()) {
       toast({
         title: '❌ Title Required',
@@ -201,7 +204,8 @@ export default function UploadAssessmentPage() {
       console.error('Upload error:', error);
       toast({
         title: '❌ Upload Failed',
-        description: error instanceof Error ? error.message : 'Please try again',
+        description:
+          error instanceof Error ? error.message : 'Please try again',
         variant: 'destructive',
       });
     } finally {
@@ -227,7 +231,6 @@ export default function UploadAssessmentPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 py-20">
       <div className="max-w-4xl mx-auto px-6">
-        
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -241,12 +244,13 @@ export default function UploadAssessmentPage() {
             <ArrowLeft size={20} />
             Back to Dashboard
           </button>
-          
+
           <h1 className="text-4xl font-bold text-white mb-4">
             Upload Story for Assessment
           </h1>
           <p className="text-gray-300 text-lg">
-            Get detailed AI feedback on your writing with advanced plagiarism detection and integrity analysis
+            Get detailed AI feedback on your writing with advanced plagiarism
+            detection and integrity analysis
           </p>
         </motion.div>
 
@@ -265,15 +269,16 @@ export default function UploadAssessmentPage() {
               </div>
               <div className="text-blue-300 text-sm">Assessments Left</div>
             </div>
-            
+
             <div className="bg-green-600/20 border border-green-500/30 rounded-xl p-4 text-center">
               <Target className="w-6 h-6 text-green-400 mx-auto mb-2" />
               <div className="text-xl font-bold text-white">
-                {usageStats.maxAssessmentAttempts - usageStats.totalAssessmentAttempts}
+                {usageStats.maxAssessmentAttempts -
+                  usageStats.totalAssessmentAttempts}
               </div>
               <div className="text-green-300 text-sm">Attempts Left</div>
             </div>
-            
+
             <div className="bg-purple-600/20 border border-purple-500/30 rounded-xl p-4 text-center">
               <Award className="w-6 h-6 text-purple-400 mx-auto mb-2" />
               <div className="text-xl font-bold text-white">3</div>
@@ -290,9 +295,12 @@ export default function UploadAssessmentPage() {
             className="bg-yellow-600/20 border border-yellow-500/30 rounded-xl p-8 text-center"
           >
             <AlertCircle className="w-12 h-12 text-yellow-400 mx-auto mb-4" />
-            <h2 className="text-2xl font-bold text-white mb-4">No Assessments Remaining</h2>
+            <h2 className="text-2xl font-bold text-white mb-4">
+              No Assessments Remaining
+            </h2>
             <p className="text-gray-300 mb-6">
-              You've used all your assessments for this month. Upgrade to continue getting AI feedback!
+              You've used all your assessments for this month. Upgrade to
+              continue getting AI feedback!
             </p>
             <button
               onClick={() => router.push('/pricing')}
@@ -304,7 +312,6 @@ export default function UploadAssessmentPage() {
         ) : (
           <form onSubmit={handleSubmit}>
             <div className="space-y-8">
-              
               {/* Title Input */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -323,7 +330,9 @@ export default function UploadAssessmentPage() {
                   maxLength={100}
                   className="w-full p-4 bg-gray-700/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
                 />
-                <p className="text-sm text-gray-400 mt-2">{title.length}/100 characters</p>
+                <p className="text-sm text-gray-400 mt-2">
+                  {title.length}/100 characters
+                </p>
               </motion.div>
 
               {/* File Upload */}
@@ -336,7 +345,7 @@ export default function UploadAssessmentPage() {
                 <label className="block text-white font-medium mb-3">
                   Upload Story File
                 </label>
-                
+
                 {!file ? (
                   <div
                     className={`border-2 border-dashed rounded-xl p-8 text-center transition-colors ${
@@ -359,7 +368,10 @@ export default function UploadAssessmentPage() {
                     <input
                       type="file"
                       accept=".txt,.docx"
-                      onChange={(e) => e.target.files?.[0] && handleFileSelect(e.target.files[0])}
+                      onChange={(e) =>
+                        e.target.files?.[0] &&
+                        handleFileSelect(e.target.files[0])
+                      }
                       className="hidden"
                       id="file-upload"
                     />
@@ -407,19 +419,29 @@ export default function UploadAssessmentPage() {
                 <textarea
                   value={content}
                   onChange={(e) => setContent(e.target.value)}
-                  placeholder={file ? "File content loaded automatically..." : "Paste your story text here..."}
+                  placeholder={
+                    file
+                      ? 'File content loaded automatically...'
+                      : 'Paste your story text here...'
+                  }
                   rows={12}
                   className="w-full p-4 bg-gray-700/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 resize-none focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
                 />
-                
+
                 <div className="flex justify-between items-center mt-3">
-                  <div className={`text-sm ${
-                    wordCount < 50 ? 'text-red-400' : 
-                    wordCount > 5000 ? 'text-red-400' : 'text-green-400'
-                  }`}>
-                    {wordCount} words {wordCount < 50 && '(minimum 50)'} {wordCount > 5000 && '(maximum 5,000)'}
+                  <div
+                    className={`text-sm ${
+                      wordCount < 50
+                        ? 'text-red-400'
+                        : wordCount > 5000
+                          ? 'text-red-400'
+                          : 'text-green-400'
+                    }`}
+                  >
+                    {wordCount} words {wordCount < 50 && '(minimum 50)'}{' '}
+                    {wordCount > 5000 && '(maximum 5,000)'}
                   </div>
-                  
+
                   {wordCount >= 50 && wordCount <= 5000 && (
                     <div className="flex items-center gap-1 text-green-400 text-sm">
                       <CheckCircle size={16} />
@@ -440,24 +462,36 @@ export default function UploadAssessmentPage() {
                   <Brain className="text-purple-400" />
                   Advanced AI Assessment Features
                 </h3>
-                
+
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="text-center">
                     <Shield className="w-8 h-8 text-blue-400 mx-auto mb-2" />
-                    <h4 className="text-white font-medium mb-1">Plagiarism Detection</h4>
-                    <p className="text-gray-300 text-sm">Advanced similarity checking</p>
+                    <h4 className="text-white font-medium mb-1">
+                      Plagiarism Detection
+                    </h4>
+                    <p className="text-gray-300 text-sm">
+                      Advanced similarity checking
+                    </p>
                   </div>
-                  
+
                   <div className="text-center">
                     <Brain className="w-8 h-8 text-purple-400 mx-auto mb-2" />
-                    <h4 className="text-white font-medium mb-1">AI Content Analysis</h4>
-                    <p className="text-gray-300 text-sm">Originality verification</p>
+                    <h4 className="text-white font-medium mb-1">
+                      AI Content Analysis
+                    </h4>
+                    <p className="text-gray-300 text-sm">
+                      Originality verification
+                    </p>
                   </div>
-                  
+
                   <div className="text-center">
                     <Target className="w-8 h-8 text-green-400 mx-auto mb-2" />
-                    <h4 className="text-white font-medium mb-1">Detailed Feedback</h4>
-                    <p className="text-gray-300 text-sm">16+ writing categories</p>
+                    <h4 className="text-white font-medium mb-1">
+                      Detailed Feedback
+                    </h4>
+                    <p className="text-gray-300 text-sm">
+                      16+ writing categories
+                    </p>
                   </div>
                 </div>
               </motion.div>
@@ -471,9 +505,19 @@ export default function UploadAssessmentPage() {
               >
                 <button
                   type="submit"
-                  disabled={uploading || !title.trim() || !content.trim() || wordCount < 50 || wordCount > 5000}
+                  disabled={
+                    uploading ||
+                    !title.trim() ||
+                    !content.trim() ||
+                    wordCount < 50 ||
+                    wordCount > 5000
+                  }
                   className={`px-8 py-4 rounded-xl font-bold text-lg transition-all ${
-                    uploading || !title.trim() || !content.trim() || wordCount < 50 || wordCount > 5000
+                    uploading ||
+                    !title.trim() ||
+                    !content.trim() ||
+                    wordCount < 50 ||
+                    wordCount > 5000
                       ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
                       : 'bg-gradient-to-r from-green-600 to-blue-600 text-white hover:from-green-700 hover:to-blue-700 transform hover:scale-105'
                   }`}
@@ -490,7 +534,7 @@ export default function UploadAssessmentPage() {
                     </div>
                   )}
                 </button>
-                
+
                 {uploading && (
                   <p className="text-gray-400 text-sm mt-3">
                     Running plagiarism detection and AI analysis...

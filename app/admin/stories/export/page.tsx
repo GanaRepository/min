@@ -40,7 +40,7 @@ interface ExportConfig {
 export default function StoriesExportPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
-  
+
   const [loading, setLoading] = useState(false);
   const [exportConfig, setExportConfig] = useState<ExportConfig>({
     format: 'csv',
@@ -60,7 +60,7 @@ export default function StoriesExportPage() {
       metadata: true,
       progress: true,
       competition: false,
-    }
+    },
   });
 
   useEffect(() => {
@@ -73,10 +73,10 @@ export default function StoriesExportPage() {
 
   const handleExport = async () => {
     setLoading(true);
-    
+
     try {
       const params = new URLSearchParams();
-      
+
       // Add filters
       if (exportConfig.filters.status !== 'all') {
         params.append('status', exportConfig.filters.status);
@@ -87,34 +87,42 @@ export default function StoriesExportPage() {
       if (exportConfig.dateRange.endDate) {
         params.append('endDate', exportConfig.dateRange.endDate);
       }
-      
+
       // Add field selections
-      params.append('includeContent', exportConfig.filters.includeContent.toString());
-      params.append('includeComments', exportConfig.filters.includeComments.toString());
-      params.append('includeAuthorInfo', exportConfig.filters.includeAuthorInfo.toString());
+      params.append(
+        'includeContent',
+        exportConfig.filters.includeContent.toString()
+      );
+      params.append(
+        'includeComments',
+        exportConfig.filters.includeComments.toString()
+      );
+      params.append(
+        'includeAuthorInfo',
+        exportConfig.filters.includeAuthorInfo.toString()
+      );
       params.append('format', exportConfig.format);
 
       const response = await fetch(`/api/admin/stories/export?${params}`);
-      
+
       if (!response.ok) {
         throw new Error('Export failed');
       }
-      
+
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      
+
       const extension = exportConfig.format === 'json' ? 'json' : 'csv';
       a.download = `stories-bulk-export-${new Date().toISOString().split('T')[0]}.${extension}`;
-      
+
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
-      
+
       alert('Export completed successfully!');
-      
     } catch (error) {
       console.error('Error exporting stories:', error);
       alert('Export failed. Please try again.');
@@ -123,19 +131,23 @@ export default function StoriesExportPage() {
     }
   };
 
-  const handleConfigChange = (section: keyof ExportConfig, field: string, value: any) => {
+  const handleConfigChange = (
+    section: keyof ExportConfig,
+    field: string,
+    value: any
+  ) => {
     if (section === 'format') {
-      setExportConfig(prev => ({
+      setExportConfig((prev) => ({
         ...prev,
-        format: value
+        format: value,
       }));
     } else {
-      setExportConfig(prev => ({
+      setExportConfig((prev) => ({
         ...prev,
         [section]: {
           ...prev[section],
-          [field]: value
-        }
+          [field]: value,
+        },
       }));
     }
   };
@@ -153,7 +165,9 @@ export default function StoriesExportPage() {
           <h1 className="text-2xl sm:text-3xl font-bold text-white">
             Bulk Story Export
           </h1>
-          <p className="text-gray-400">Configure and export story data in bulk</p>
+          <p className="text-gray-400">
+            Configure and export story data in bulk
+          </p>
         </div>
       </div>
 
@@ -177,27 +191,35 @@ export default function StoriesExportPage() {
                   name="format"
                   value="csv"
                   checked={exportConfig.format === 'csv'}
-                  onChange={(e) => handleConfigChange('format', '', e.target.value)}
+                  onChange={(e) =>
+                    handleConfigChange('format', '', e.target.value)
+                  }
                   className="mr-3"
                 />
                 <div>
                   <div className="text-white font-medium">CSV Format</div>
-                  <div className="text-gray-400 text-sm">Comma-separated values, Excel compatible</div>
+                  <div className="text-gray-400 text-sm">
+                    Comma-separated values, Excel compatible
+                  </div>
                 </div>
               </label>
-              
+
               <label className="flex items-center p-4 bg-gray-700/50 rounded-lg cursor-pointer hover:bg-gray-700 transition-colors">
                 <input
                   type="radio"
                   name="format"
                   value="json"
                   checked={exportConfig.format === 'json'}
-                  onChange={(e) => handleConfigChange('format', '', e.target.value)}
+                  onChange={(e) =>
+                    handleConfigChange('format', '', e.target.value)
+                  }
                   className="mr-3"
                 />
                 <div>
                   <div className="text-white font-medium">JSON Format</div>
-                  <div className="text-gray-400 text-sm">Structured data, developer friendly</div>
+                  <div className="text-gray-400 text-sm">
+                    Structured data, developer friendly
+                  </div>
                 </div>
               </label>
             </div>
@@ -216,20 +238,28 @@ export default function StoriesExportPage() {
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm text-gray-400 mb-2">Start Date</label>
+                <label className="block text-sm text-gray-400 mb-2">
+                  Start Date
+                </label>
                 <input
                   type="date"
                   value={exportConfig.dateRange.startDate}
-                  onChange={(e) => handleConfigChange('dateRange', 'startDate', e.target.value)}
+                  onChange={(e) =>
+                    handleConfigChange('dateRange', 'startDate', e.target.value)
+                  }
                   className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <div>
-                <label className="block text-sm text-gray-400 mb-2">End Date</label>
+                <label className="block text-sm text-gray-400 mb-2">
+                  End Date
+                </label>
                 <input
                   type="date"
                   value={exportConfig.dateRange.endDate}
-                  onChange={(e) => handleConfigChange('dateRange', 'endDate', e.target.value)}
+                  onChange={(e) =>
+                    handleConfigChange('dateRange', 'endDate', e.target.value)
+                  }
                   className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
@@ -247,14 +277,18 @@ export default function StoriesExportPage() {
               <Filter size={20} className="mr-2" />
               Content Filters
             </h3>
-            
+
             <div className="space-y-4">
               {/* Status Filter */}
               <div>
-                <label className="block text-sm text-gray-400 mb-2">Story Status</label>
+                <label className="block text-sm text-gray-400 mb-2">
+                  Story Status
+                </label>
                 <select
                   value={exportConfig.filters.status}
-                  onChange={(e) => handleConfigChange('filters', 'status', e.target.value)}
+                  onChange={(e) =>
+                    handleConfigChange('filters', 'status', e.target.value)
+                  }
                   className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="all">All Stories</option>
@@ -270,37 +304,61 @@ export default function StoriesExportPage() {
                   <input
                     type="checkbox"
                     checked={exportConfig.filters.includeAuthorInfo}
-                    onChange={(e) => handleConfigChange('filters', 'includeAuthorInfo', e.target.checked)}
+                    onChange={(e) =>
+                      handleConfigChange(
+                        'filters',
+                        'includeAuthorInfo',
+                        e.target.checked
+                      )
+                    }
                     className="mr-3 rounded"
                   />
                   <span className="text-white">Include Author Information</span>
                 </label>
-                
+
                 <label className="flex items-center">
                   <input
                     type="checkbox"
                     checked={exportConfig.filters.includeStats}
-                    onChange={(e) => handleConfigChange('filters', 'includeStats', e.target.checked)}
+                    onChange={(e) =>
+                      handleConfigChange(
+                        'filters',
+                        'includeStats',
+                        e.target.checked
+                      )
+                    }
                     className="mr-3 rounded"
                   />
                   <span className="text-white">Include Story Statistics</span>
                 </label>
-                
+
                 <label className="flex items-center">
                   <input
                     type="checkbox"
                     checked={exportConfig.filters.includeContent}
-                    onChange={(e) => handleConfigChange('filters', 'includeContent', e.target.checked)}
+                    onChange={(e) =>
+                      handleConfigChange(
+                        'filters',
+                        'includeContent',
+                        e.target.checked
+                      )
+                    }
                     className="mr-3 rounded"
                   />
                   <span className="text-white">Include Story Content</span>
                 </label>
-                
+
                 <label className="flex items-center">
                   <input
                     type="checkbox"
                     checked={exportConfig.filters.includeComments}
-                    onChange={(e) => handleConfigChange('filters', 'includeComments', e.target.checked)}
+                    onChange={(e) =>
+                      handleConfigChange(
+                        'filters',
+                        'includeComments',
+                        e.target.checked
+                      )
+                    }
                     className="mr-3 rounded"
                   />
                   <span className="text-white">Include Comments</span>
@@ -322,43 +380,56 @@ export default function StoriesExportPage() {
               <BookOpen size={20} className="mr-2" />
               Export Summary
             </h3>
-            
+
             <div className="space-y-3">
               <div className="flex justify-between items-center p-3 bg-gray-700/50 rounded-lg">
                 <span className="text-gray-400">Format:</span>
-                <span className="text-white font-medium uppercase">{exportConfig.format}</span>
+                <span className="text-white font-medium uppercase">
+                  {exportConfig.format}
+                </span>
               </div>
-              
+
               <div className="flex justify-between items-center p-3 bg-gray-700/50 rounded-lg">
                 <span className="text-gray-400">Status Filter:</span>
                 <span className="text-white font-medium capitalize">
-                  {exportConfig.filters.status === 'all' ? 'All Stories' : exportConfig.filters.status}
+                  {exportConfig.filters.status === 'all'
+                    ? 'All Stories'
+                    : exportConfig.filters.status}
                 </span>
               </div>
-              
+
               {exportConfig.dateRange.startDate && (
                 <div className="flex justify-between items-center p-3 bg-gray-700/50 rounded-lg">
                   <span className="text-gray-400">Date Range:</span>
                   <span className="text-white font-medium text-sm">
-                    {exportConfig.dateRange.startDate} - {exportConfig.dateRange.endDate || 'Now'}
+                    {exportConfig.dateRange.startDate} -{' '}
+                    {exportConfig.dateRange.endDate || 'Now'}
                   </span>
                 </div>
               )}
-              
+
               <div className="p-3 bg-gray-700/50 rounded-lg">
                 <span className="text-gray-400 block mb-2">Included Data:</span>
                 <div className="flex flex-wrap gap-2">
                   {exportConfig.filters.includeAuthorInfo && (
-                    <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">Author Info</span>
+                    <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
+                      Author Info
+                    </span>
                   )}
                   {exportConfig.filters.includeStats && (
-                    <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">Statistics</span>
+                    <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">
+                      Statistics
+                    </span>
                   )}
                   {exportConfig.filters.includeContent && (
-                    <span className="px-2 py-1 bg-purple-100 text-purple-800 text-xs rounded-full">Content</span>
+                    <span className="px-2 py-1 bg-purple-100 text-purple-800 text-xs rounded-full">
+                      Content
+                    </span>
                   )}
                   {exportConfig.filters.includeComments && (
-                    <span className="px-2 py-1 bg-orange-100 text-orange-800 text-xs rounded-full">Comments</span>
+                    <span className="px-2 py-1 bg-orange-100 text-orange-800 text-xs rounded-full">
+                      Comments
+                    </span>
                   )}
                 </div>
               </div>
@@ -372,14 +443,17 @@ export default function StoriesExportPage() {
             transition={{ delay: 0.4 }}
             className="bg-gray-800 rounded-xl p-6"
           >
-            <h3 className="text-lg font-semibold text-white mb-4">Ready to Export</h3>
-            
+            <h3 className="text-lg font-semibold text-white mb-4">
+              Ready to Export
+            </h3>
+
             <div className="bg-blue-900/20 border border-blue-500/30 rounded-lg p-4 mb-6">
               <p className="text-blue-300 text-sm">
-                📊 Your export will include all stories matching your criteria. Large exports may take a few minutes to process.
+                📊 Your export will include all stories matching your criteria.
+                Large exports may take a few minutes to process.
               </p>
             </div>
-            
+
             <button
               onClick={handleExport}
               disabled={loading}

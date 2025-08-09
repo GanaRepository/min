@@ -12,31 +12,31 @@
 //    */
 //   static async getCurrentCompetition() {
 //     await connectToDatabase();
-    
+
 //     const now = new Date();
 //     const currentMonth = now.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
 //     const [monthName, year] = currentMonth.split(' ');
-    
+
 //     let competition = await Competition.findOne({
 //       month: monthName,
 //       year: parseInt(year),
 //       isActive: true,
 //     });
-    
+
 //     if (!competition) {
 //       competition = await this.createMonthlyCompetition(parseInt(year), now.getMonth() + 1);
 //     }
-    
+
 //     return competition;
 //   }
-  
+
 //   /**
 //    * Create new monthly competition
 //    */
 //   static async createMonthlyCompetition(year: number, month: number) {
 //     const now = new Date();
 //     const monthName = new Date(year, month - 1, 1).toLocaleDateString('en-US', { month: 'long' });
-    
+
 //     // Create admin user reference (first admin in system)
 //     const adminUser = await User.findOne({ role: 'admin' });
 //     if (!adminUser) {
@@ -77,7 +77,7 @@
 //     });
 
 //     const savedCompetition = await competition.save();
-    
+
 //     console.log(`✅ Created ${monthName} ${year} competition:`, savedCompetition._id);
 //     return savedCompetition;
 //   }
@@ -161,7 +161,7 @@
 //   static async advancePhase(competitionId?: string) {
 //     await connectToDatabase();
 
-//     const competition = competitionId 
+//     const competition = competitionId
 //       ? await Competition.findById(competitionId)
 //       : await this.getCurrentCompetition();
 
@@ -176,10 +176,10 @@
 //         if (now >= competition.submissionEnd) {
 //           competition.phase = 'judging';
 //           await competition.save();
-          
+
 //           // Start AI judging process
 //           await this.startAIJudging(competition._id.toString());
-          
+
 //           console.log(`🤖 Competition ${competition.month} moved to JUDGING phase`);
 //         }
 //         break;
@@ -188,10 +188,10 @@
 //         if (now >= competition.judgingEnd) {
 //           competition.phase = 'results';
 //           await competition.save();
-          
+
 //           // Finalize results and determine winners
 //           await this.finalizeResults(competition._id.toString());
-          
+
 //           console.log(`🏆 Competition ${competition.month} moved to RESULTS phase`);
 //         }
 //         break;
@@ -201,7 +201,7 @@
 //           competition.isActive = false;
 //           competition.isArchived = true;
 //           await competition.save();
-          
+
 //           console.log(`📁 Competition ${competition.month} ARCHIVED`);
 //         }
 //         break;
@@ -227,12 +227,12 @@
 //     for (const story of submittedStories) {
 //       // Calculate AI score based on multiple criteria
 //       const judgedScore = await this.calculateAIScore(story);
-      
+
 //       // Update story with AI judgment
 //       await StorySession.findOneAndUpdate(
-//         { 
-//           _id: story._id, 
-//           'competitionEntries.competitionId': competitionId 
+//         {
+//           _id: story._id,
+//           'competitionEntries.competitionId': competitionId
 //         },
 //         {
 //           $set: {
@@ -264,11 +264,11 @@
 //     };
 
 //     const totalScore = Math.round(
-//       scores.creativity + 
-//       scores.grammar + 
-//       scores.vocabulary + 
-//       scores.plotStructure + 
-//       scores.characterDevelopment + 
+//       scores.creativity +
+//       scores.grammar +
+//       scores.vocabulary +
+//       scores.plotStructure +
+//       scores.characterDevelopment +
 //       scores.originalThinking
 //     );
 
@@ -282,7 +282,7 @@
 //    */
 //   static generateJudgingFeedback(scores: any, wordCount: number): string {
 //     let feedback = `Story Length: ${wordCount} words\n\n`;
-    
+
 //     if (scores.creativity > 20) {
 //       feedback += "🌟 Exceptional creativity and imagination!\n";
 //     } else if (scores.creativity > 15) {
@@ -363,9 +363,9 @@
 //     // Update story sessions with rankings
 //     for (let i = 0; i < rankedEntries.length; i++) {
 //       await StorySession.findOneAndUpdate(
-//         { 
-//           _id: rankedEntries[i].storyId, 
-//           'competitionEntries.competitionId': competitionId 
+//         {
+//           _id: rankedEntries[i].storyId,
+//           'competitionEntries.competitionId': competitionId
 //         },
 //         {
 //           $set: {
@@ -375,7 +375,7 @@
 //       );
 //     }
 
-//     console.log(`🏆 Competition ${competition.month} results finalized:`, 
+//     console.log(`🏆 Competition ${competition.month} results finalized:`,
 //       winners.map(w => `${w.position}. ${w.childName} (${w.score})`));
 
 //     return { winners, totalParticipants: rankedEntries.length };
@@ -387,7 +387,7 @@
 //   static async getCompetitionStats(competitionId?: string) {
 //     await connectToDatabase();
 
-//     const competition = competitionId 
+//     const competition = competitionId
 //       ? await Competition.findById(competitionId)
 //       : await this.getCurrentCompetition();
 
@@ -463,25 +463,25 @@
 
 //     const competition = await this.getCurrentCompetition();
 //     if (!competition || competition.phase !== 'submission') {
-//       return { 
-//         allowed: false, 
-//         reason: 'No active competition or submission phase ended', 
+//       return {
+//         allowed: false,
+//         reason: 'No active competition or submission phase ended',
 //         entriesUsed: user.competitionEntriesThisMonth,
 //         entriesLimit: 3
 //       };
 //     }
 
 //     if (user.competitionEntriesThisMonth >= 3) {
-//       return { 
-//         allowed: false, 
-//         reason: 'Maximum 3 entries per month reached', 
+//       return {
+//         allowed: false,
+//         reason: 'Maximum 3 entries per month reached',
 //         entriesUsed: user.competitionEntriesThisMonth,
 //         entriesLimit: 3
 //       };
 //     }
 
-//     return { 
-//       allowed: true, 
+//     return {
+//       allowed: true,
 //       entriesUsed: user.competitionEntriesThisMonth,
 //       entriesLimit: 3
 //     };
@@ -525,7 +525,11 @@ import { connectToDatabase } from '@/utils/db';
 import Competition from '@/models/Competition';
 import StorySession from '@/models/StorySession';
 import User from '@/models/User';
-import { COMPETITION_CONFIG, getCompetitionSchedule, getCurrentCompetitionPhase } from '@/config/competition';
+import {
+  COMPETITION_CONFIG,
+  getCompetitionSchedule,
+  getCurrentCompetitionPhase,
+} from '@/config/competition';
 import { sendCompetitionSubmissionConfirmation } from '@/lib/mailer';
 
 export class CompetitionManager {
@@ -540,7 +544,7 @@ export class CompetitionManager {
     currentPhase: string;
   }> {
     await connectToDatabase();
-    
+
     const user = await User.findById(userId);
     if (!user) {
       return {
@@ -551,7 +555,7 @@ export class CompetitionManager {
         currentPhase: 'unknown',
       };
     }
-    
+
     const competition = await this.getCurrentCompetition();
     if (!competition) {
       return {
@@ -562,7 +566,7 @@ export class CompetitionManager {
         currentPhase: 'none',
       };
     }
-    
+
     // Check if in submission phase
     if (competition.phase !== 'submission') {
       return {
@@ -573,11 +577,11 @@ export class CompetitionManager {
         currentPhase: competition.phase,
       };
     }
-    
+
     // Check monthly entries limit
     const entriesUsed = user.competitionEntriesThisMonth || 0;
     const maxEntries = 3;
-    
+
     if (entriesUsed >= maxEntries) {
       return {
         canSubmit: false,
@@ -587,7 +591,7 @@ export class CompetitionManager {
         currentPhase: competition.phase,
       };
     }
-    
+
     return {
       canSubmit: true,
       entriesUsed,
@@ -595,119 +599,130 @@ export class CompetitionManager {
       currentPhase: competition.phase,
     };
   }
-  
+
   /**
    * Get user's competition entries for current month
    */
   static async getUserCompetitionEntries(userId: string) {
     await connectToDatabase();
-    
+
     const competition = await this.getCurrentCompetition();
     if (!competition) return [];
-    
+
     const entries = await StorySession.find({
       childId: userId,
       competitionId: competition._id,
       isPublished: true,
     }).select('title storyNumber createdAt competitionScore competitionRank');
-    
+
     return entries;
   }
-  
+
   /**
    * Submit story to competition
    */
   static async submitStory(storyId: string, userId: string) {
     await connectToDatabase();
-    
+
     const [story, competition] = await Promise.all([
       StorySession.findById(storyId),
       this.getCurrentCompetition(),
     ]);
-    
+
     if (!story) {
       throw new Error('Story not found');
     }
-    
+
     if (!competition) {
       throw new Error('No active competition');
     }
-    
+
     if (story.childId.toString() !== userId) {
       throw new Error('Not authorized to submit this story');
     }
-    
+
     if (!story.isPublished) {
-      throw new Error('Story must be published before submitting to competition');
+      throw new Error(
+        'Story must be published before submitting to competition'
+      );
     }
-    
+
     if (story.competitionId) {
       throw new Error('Story already submitted to a competition');
     }
-    
+
     // Update story with competition info
     await StorySession.findByIdAndUpdate(storyId, {
       competitionId: competition._id,
       submittedToCompetition: true,
       competitionSubmissionDate: new Date(),
     });
-    
+
     // Increment user's competition entries
     await User.findByIdAndUpdate(userId, {
       $inc: { competitionEntriesThisMonth: 1 },
       $set: { lastActiveDate: new Date() },
     });
-    
+
     // Send confirmation email
     try {
-      await sendCompetitionSubmissionConfirmation(userId, storyId, competition._id.toString());
+      await sendCompetitionSubmissionConfirmation(
+        userId,
+        storyId,
+        competition._id.toString()
+      );
     } catch (emailError) {
       console.error('Failed to send competition submission email:', emailError);
       // Don't fail the entire submission for email issues
     }
-    
+
     return {
       success: true,
       competitionId: competition._id,
       submissionDate: new Date(),
     };
   }
-  
+
   /**
    * Get current competition
    */
   static async getCurrentCompetition() {
     await connectToDatabase();
-    
+
     const now = new Date();
     const currentMonth = now.toLocaleDateString('en-US', { month: 'long' });
     const currentYear = now.getFullYear();
-    
+
     let competition = await Competition.findOne({
       month: currentMonth,
       year: currentYear,
       isActive: true,
     });
-    
+
     if (!competition) {
-      competition = await this.createMonthlyCompetition(currentYear, now.getMonth() + 1);
+      competition = await this.createMonthlyCompetition(
+        currentYear,
+        now.getMonth() + 1
+      );
     }
-    
+
     return competition;
   }
-  
+
   /**
    * Create new monthly competition
    */
   static async createMonthlyCompetition(year: number, month: number) {
     const schedule = getCompetitionSchedule(year, month);
-    const monthName = new Date(year, month - 1, 1).toLocaleDateString('en-US', { month: 'long' });
-    
+    const monthName = new Date(year, month - 1, 1).toLocaleDateString('en-US', {
+      month: 'long',
+    });
+
     const adminUser = await User.findOne({ role: 'admin' });
     if (!adminUser) {
       throw new Error('No admin user found to create competition');
     }
-    
+
     const competition = new Competition({
       month: monthName,
       year: year,
@@ -723,54 +738,54 @@ export class CompetitionManager {
       winners: [],
       judgingCriteria: COMPETITION_CONFIG.judgingCriteria,
     });
-    
+
     await competition.save();
     return competition;
   }
-  
+
   /**
    * Get competition statistics
    */
   static async getCompetitionStats(competitionId?: string) {
     await connectToDatabase();
-    
-    const competition = competitionId 
+
+    const competition = competitionId
       ? await Competition.findById(competitionId)
       : await this.getCurrentCompetition();
-      
+
     if (!competition) return null;
-    
+
     const totalEntries = await StorySession.countDocuments({
       competitionId: competition._id,
       isPublished: true,
     });
-    
+
     const uniqueParticipants = await StorySession.distinct('childId', {
       competitionId: competition._id,
       isPublished: true,
     });
-    
+
     return {
       ...competition.toObject(),
       totalEntries,
       uniqueParticipants: uniqueParticipants.length,
     };
   }
-  
+
   /**
    * Advance competition phase
    */
   static async advancePhase(competitionId: string) {
     await connectToDatabase();
-    
+
     const competition = await Competition.findById(competitionId);
     if (!competition) {
       throw new Error('Competition not found');
     }
-    
+
     const now = new Date();
     let newPhase = competition.phase;
-    
+
     // Determine new phase based on schedule
     if (now > competition.resultsDate) {
       newPhase = 'ended';
@@ -779,23 +794,25 @@ export class CompetitionManager {
       newPhase = 'results';
     } else if (now > competition.submissionEnd) {
       newPhase = 'judging';
-      
+
       // Start AI judging process
       if (competition.phase === 'submission') {
         await this.runAIJudging(competitionId);
       }
     }
-    
+
     if (newPhase !== competition.phase) {
       competition.phase = newPhase;
       await competition.save();
-      
-      console.log(`Competition ${competition.month} ${competition.year} advanced to ${newPhase} phase`);
+
+      console.log(
+        `Competition ${competition.month} ${competition.year} advanced to ${newPhase} phase`
+      );
     }
-    
+
     return competition;
   }
-  
+
   /**
    * Run AI judging for competition
    */
@@ -804,20 +821,23 @@ export class CompetitionManager {
       competitionId: competitionId,
       isPublished: true,
     });
-    
+
     // Simple scoring algorithm (can be enhanced with actual AI)
-    const scoredEntries = entries.map((entry) => {
-      const wordCount = entry.totalWords || 0;
-      const score = Math.min(100, Math.max(0, 
-        (wordCount / 1000) * 100 + Math.random() * 10
-      ));
-      
-      return {
-        ...entry.toObject(),
-        competitionScore: Math.round(score),
-      };
-    }).sort((a, b) => b.competitionScore - a.competitionScore);
-    
+    const scoredEntries = entries
+      .map((entry) => {
+        const wordCount = entry.totalWords || 0;
+        const score = Math.min(
+          100,
+          Math.max(0, (wordCount / 1000) * 100 + Math.random() * 10)
+        );
+
+        return {
+          ...entry.toObject(),
+          competitionScore: Math.round(score),
+        };
+      })
+      .sort((a, b) => b.competitionScore - a.competitionScore);
+
     // Update entries with scores and ranks
     for (let i = 0; i < scoredEntries.length; i++) {
       await StorySession.findByIdAndUpdate(scoredEntries[i]._id, {
@@ -825,7 +845,7 @@ export class CompetitionManager {
         competitionRank: i + 1,
       });
     }
-    
+
     // Update competition with winners
     const winners = scoredEntries.slice(0, 3).map((entry, index) => ({
       storyId: entry._id,
@@ -833,13 +853,15 @@ export class CompetitionManager {
       rank: index + 1,
       score: entry.competitionScore,
     }));
-    
+
     await Competition.findByIdAndUpdate(competitionId, {
       winners,
       judgingCompleted: true,
     });
-    
-    console.log(`AI judging completed for competition ${competitionId}. ${entries.length} entries judged.`);
+
+    console.log(
+      `AI judging completed for competition ${competitionId}. ${entries.length} entries judged.`
+    );
   }
 }
 

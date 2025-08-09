@@ -12,7 +12,7 @@ export async function GET() {
     }
 
     await connectToDatabase();
-    
+
     const user = await User.findById(session.user.id).select('preferences');
 
     if (!user) {
@@ -34,14 +34,13 @@ export async function GET() {
       privacy: {
         shareStories: false,
         publicProfile: false,
-      }
+      },
     };
 
     return NextResponse.json({
       success: true,
-      preferences: user.preferences || defaultPreferences
+      preferences: user.preferences || defaultPreferences,
     });
-
   } catch (error) {
     console.error('Error fetching preferences:', error);
     return NextResponse.json(
@@ -62,7 +61,7 @@ export async function PUT(request: Request) {
     const { preferences } = body;
 
     await connectToDatabase();
-    
+
     const updatedUser = await User.findByIdAndUpdate(
       session.user.id,
       { preferences },
@@ -75,9 +74,8 @@ export async function PUT(request: Request) {
 
     return NextResponse.json({
       success: true,
-      preferences: updatedUser.preferences
+      preferences: updatedUser.preferences,
     });
-
   } catch (error) {
     console.error('Error updating preferences:', error);
     return NextResponse.json(

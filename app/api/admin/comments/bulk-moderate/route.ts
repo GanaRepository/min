@@ -12,15 +12,21 @@ export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     if (!session || session.user.role !== 'admin') {
-      return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
+      return NextResponse.json(
+        { error: 'Admin access required' },
+        { status: 403 }
+      );
     }
 
     const { commentIds, action } = await request.json();
 
     if (!commentIds || !Array.isArray(commentIds) || !action) {
-      return NextResponse.json({ 
-        error: 'Comment IDs array and action are required' 
-      }, { status: 400 });
+      return NextResponse.json(
+        {
+          error: 'Comment IDs array and action are required',
+        },
+        { status: 400 }
+      );
     }
 
     await connectToDatabase();
@@ -57,9 +63,11 @@ export async function POST(request: NextRequest) {
       message,
       modifiedCount: result.modifiedCount,
     });
-
   } catch (error) {
     console.error('Error bulk moderating comments:', error);
-    return NextResponse.json({ error: 'Failed to bulk moderate comments' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to bulk moderate comments' },
+      { status: 500 }
+    );
   }
 }

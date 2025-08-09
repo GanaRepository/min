@@ -18,7 +18,10 @@ export async function GET(
   try {
     const session = await getServerSession(authOptions);
     if (!session || session.user.role !== 'admin') {
-      return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
+      return NextResponse.json(
+        { error: 'Admin access required' },
+        { status: 403 }
+      );
     }
 
     const { id } = params;
@@ -30,16 +33,19 @@ export async function GET(
     }
 
     // Get mentor's assigned children with their story counts
-    const assignments = await MentorAssignment.find({ mentorId: id, isActive: true })
+    const assignments = await MentorAssignment.find({
+      mentorId: id,
+      isActive: true,
+    })
       .populate('childId', 'firstName lastName email')
       .lean();
 
     const assignedChildren = await Promise.all(
       assignments.map(async (assignment) => {
-        const storiesCount = await StorySession.countDocuments({ 
-          childId: assignment.childId._id 
+        const storiesCount = await StorySession.countDocuments({
+          childId: assignment.childId._id,
         });
-        
+
         const child = assignment.childId as any;
         return {
           _id: child._id,
@@ -56,9 +62,9 @@ export async function GET(
     const totalComments = await StoryComment.countDocuments({ authorId: id });
 
     // Get total stories by assigned students
-    const studentIds = assignments.map(a => a.childId._id);
-    const totalStories = await StorySession.countDocuments({ 
-      childId: { $in: studentIds } 
+    const studentIds = assignments.map((a) => a.childId._id);
+    const totalStories = await StorySession.countDocuments({
+      childId: { $in: studentIds },
     });
 
     // Get recent activity
@@ -87,7 +93,10 @@ export async function GET(
     });
   } catch (error) {
     console.error('Error fetching mentor:', error);
-    return NextResponse.json({ error: 'Failed to fetch mentor' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to fetch mentor' },
+      { status: 500 }
+    );
   }
 }
 
@@ -99,7 +108,10 @@ export async function PATCH(
   try {
     const session = await getServerSession(authOptions);
     if (!session || session.user.role !== 'admin') {
-      return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
+      return NextResponse.json(
+        { error: 'Admin access required' },
+        { status: 403 }
+      );
     }
 
     const { id } = params;
@@ -109,13 +121,16 @@ export async function PATCH(
 
     // Validate email uniqueness if email is being updated
     if (updateData.email) {
-      const existingUser = await User.findOne({ 
+      const existingUser = await User.findOne({
         email: updateData.email.toLowerCase(),
-        _id: { $ne: id } 
+        _id: { $ne: id },
       });
       if (existingUser) {
         return NextResponse.json(
-          { error: 'Email already exists', errors: { email: 'This email is already in use' } },
+          {
+            error: 'Email already exists',
+            errors: { email: 'This email is already in use' },
+          },
           { status: 400 }
         );
       }
@@ -142,7 +157,10 @@ export async function PATCH(
     });
   } catch (error) {
     console.error('Error updating mentor:', error);
-    return NextResponse.json({ error: 'Failed to update mentor' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to update mentor' },
+      { status: 500 }
+    );
   }
 }
 
@@ -154,7 +172,10 @@ export async function DELETE(
   try {
     const session = await getServerSession(authOptions);
     if (!session || session.user.role !== 'admin') {
-      return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
+      return NextResponse.json(
+        { error: 'Admin access required' },
+        { status: 403 }
+      );
     }
 
     const { id } = params;
@@ -176,10 +197,14 @@ export async function DELETE(
 
     return NextResponse.json({
       success: true,
-      message: 'Mentor deleted successfully. All student assignments have been deactivated.',
+      message:
+        'Mentor deleted successfully. All student assignments have been deactivated.',
     });
   } catch (error) {
     console.error('Error deleting mentor:', error);
-    return NextResponse.json({ error: 'Failed to delete mentor' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to delete mentor' },
+      { status: 500 }
+    );
   }
 }

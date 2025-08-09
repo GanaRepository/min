@@ -1,4 +1,3 @@
-
 // app/api/admin/users/export/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
@@ -12,7 +11,10 @@ export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     if (!session || session.user.role !== 'admin') {
-      return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
+      return NextResponse.json(
+        { error: 'Admin access required' },
+        { status: 403 }
+      );
     }
 
     const { searchParams } = new URL(request.url);
@@ -23,11 +25,11 @@ export async function GET(request: NextRequest) {
     await connectToDatabase();
 
     let query: any = { role: { $in: ['child', 'mentor'] } };
-    
+
     if (role && role !== 'all') {
       query.role = role;
     }
-    
+
     if (startDate || endDate) {
       query.createdAt = {};
       if (startDate) query.createdAt.$gte = new Date(startDate);
@@ -40,13 +42,18 @@ export async function GET(request: NextRequest) {
       .lean();
 
     // Generate CSV
-  let csv = 'First Name,Last Name,Email,Role,Active,Created At,Last Active,Total Stories,Total Words,Revenue Generated\n';
-    
+    let csv =
+      'First Name,Last Name,Email,Role,Active,Created At,Last Active,Total Stories,Total Words,Revenue Generated\n';
+
     users.forEach((user: any) => {
-      const totalRevenue = user.purchaseHistory ? 
-        user.purchaseHistory.reduce((sum: number, purchase: any) => sum + (purchase.amount || 0), 0) : 0;
-        
-  csv += `"${user.firstName}","${user.lastName}","${user.email}","${user.role}",${user.isActive},"${new Date(user.createdAt).toLocaleDateString()}","${user.lastActiveDate ? new Date(user.lastActiveDate).toLocaleDateString() : 'Never'}",${user.totalStoriesCreated || 0},${user.totalWordsWritten || 0},${totalRevenue.toFixed(2)}\n`;
+      const totalRevenue = user.purchaseHistory
+        ? user.purchaseHistory.reduce(
+            (sum: number, purchase: any) => sum + (purchase.amount || 0),
+            0
+          )
+        : 0;
+
+      csv += `"${user.firstName}","${user.lastName}","${user.email}","${user.role}",${user.isActive},"${new Date(user.createdAt).toLocaleDateString()}","${user.lastActiveDate ? new Date(user.lastActiveDate).toLocaleDateString() : 'Never'}",${user.totalStoriesCreated || 0},${user.totalWordsWritten || 0},${totalRevenue.toFixed(2)}\n`;
     });
 
     return new Response(csv, {
@@ -56,9 +63,11 @@ export async function GET(request: NextRequest) {
         'Content-Disposition': `attachment; filename="users-export-${new Date().toISOString().split('T')[0]}.csv"`,
       },
     });
-
   } catch (error) {
     console.error('Error exporting users:', error);
-    return NextResponse.json({ error: 'Failed to export users' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to export users' },
+      { status: 500 }
+    );
   }
 }

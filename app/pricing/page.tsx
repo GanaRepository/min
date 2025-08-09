@@ -25,14 +25,17 @@ export default function PricingPage() {
   const router = useRouter();
   const [loading, setLoading] = useState<string | null>(null);
 
-  const handlePurchase = async (productType: 'story_pack' | 'story_publication', storyId?: string) => {
+  const handlePurchase = async (
+    productType: 'story_pack' | 'story_publication',
+    storyId?: string
+  ) => {
     if (!session) {
       router.push('/login/child');
       return;
     }
 
     setLoading(productType);
-    
+
     try {
       const response = await fetch('/api/stripe/checkout', {
         method: 'POST',
@@ -47,7 +50,7 @@ export default function PricingPage() {
       });
 
       const data = await response.json();
-      
+
       if (data.success && data.checkoutUrl) {
         // Redirect to Stripe Checkout
         window.location.href = data.checkoutUrl;
@@ -72,14 +75,12 @@ export default function PricingPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <h1 className="text-4xl  text-white mb-6">
-              Simple, Fair Pricing
-            </h1>
+            <h1 className="text-4xl  text-white mb-6">Simple, Fair Pricing</h1>
             <p className="text-xl text-gray-300  max-w-3xl mx-auto">
-              Pay only for what you use. Start free, upgrade when you need more. 
-              No subscriptions, no hidden fees, just transparent pricing for young writers.
+              Pay only for what you use. Start free, upgrade when you need more.
+              No subscriptions, no hidden fees, just transparent pricing for
+              young writers.
             </p>
-  
           </motion.div>
         </div>
       </div>
@@ -96,7 +97,7 @@ export default function PricingPage() {
             <Zap className="text-green-400" size={32} />
             <h2 className="text-3xl  text-white">Free Tier</h2>
           </div>
-          
+
           <p className="text-gray-300 mb-8 text-lg">
             Perfect for getting started with creative writing
           </p>
@@ -107,7 +108,9 @@ export default function PricingPage() {
                 <BookOpen className="text-green-400" size={24} />
               </div>
               <h3 className="text-white font-medium mb-2">3 Story Creations</h3>
-              <p className="text-gray-400">Write 3 original stories per month</p>
+              <p className="text-gray-400">
+                Write 3 original stories per month
+              </p>
             </div>
 
             <div className="text-center">
@@ -115,15 +118,21 @@ export default function PricingPage() {
                 <FileText className="text-blue-400" size={24} />
               </div>
               <h3 className="text-white font-medium mb-2">3 AI Assessments</h3>
-              <p className="text-gray-400">Upload existing stories for professional feedback</p>
+              <p className="text-gray-400">
+                Upload existing stories for professional feedback
+              </p>
             </div>
 
             <div className="text-center">
               <div className="bg-purple-500/20 rounded-full p-4 w-16 h-16 flex items-center justify-center mx-auto mb-4">
                 <Trophy className="text-purple-400" size={24} />
               </div>
-              <h3 className="text-white font-medium mb-2">3 Competition Entries</h3>
-              <p className="text-gray-400">Participate in monthly competitions</p>
+              <h3 className="text-white font-medium mb-2">
+                3 Competition Entries
+              </h3>
+              <p className="text-gray-400">
+                Participate in monthly competitions
+              </p>
             </div>
           </div>
 
@@ -138,7 +147,7 @@ export default function PricingPage() {
                 'Age-appropriate feedback (6-8, 9-12, 13+)',
                 'Monthly competition participation',
                 'Story Publication (Optional): $10/story',
-                'Progress tracking & analytics'
+                'Progress tracking & analytics',
               ].map((feature, index) => (
                 <div key={index} className="flex items-center gap-2">
                   <Check className="text-green-400" size={16} />
@@ -147,8 +156,6 @@ export default function PricingPage() {
               ))}
             </div>
           </div>
-
-
         </motion.div>
       </div>
 
@@ -159,7 +166,8 @@ export default function PricingPage() {
             Need More? Pay Only When You Need It
           </h2>
           <p className="text-gray-300 text-lg">
-            No monthly commitments. Purchase additional resources as your creativity grows.
+            No monthly commitments. Purchase additional resources as your
+            creativity grows.
           </p>
         </div>
 
@@ -191,7 +199,9 @@ export default function PricingPage() {
                 <div className="bg-blue-500/20 rounded-full p-2">
                   <BookOpen className="text-blue-400" size={16} />
                 </div>
-                <span className="text-white">+5 Additional Story Creations</span>
+                <span className="text-white">
+                  +5 Additional Story Creations
+                </span>
               </div>
               <div className="flex items-center gap-3">
                 <div className="bg-green-500/20 rounded-full p-2">
@@ -203,7 +213,9 @@ export default function PricingPage() {
                 <div className="bg-purple-500/20 rounded-full p-2">
                   <Award className="text-purple-400" size={16} />
                 </div>
-                <span className="text-white">+15 Total Assessment Attempts</span>
+                <span className="text-white">
+                  +15 Total Assessment Attempts
+                </span>
               </div>
               <div className="flex items-center gap-3">
                 <div className="bg-yellow-500/20 rounded-full p-2">
@@ -215,8 +227,8 @@ export default function PricingPage() {
 
             <div className="bg-gray-800/50  p-4 mb-6">
               <p className="text-gray-300 text-sm">
-                <strong>Great Value:</strong> That's only $1.88 per story creation! 
-                Perfect for children who love to write regularly.
+                <strong>Great Value:</strong> That's only $1.88 per story
+                creation! Perfect for children who love to write regularly.
               </p>
             </div>
 
@@ -290,13 +302,18 @@ export default function PricingPage() {
 
             <div className="bg-gray-800/50  p-4 mb-6">
               <p className="text-gray-300 text-sm">
-                <strong>Competition Ready: </strong>Competition entry is completely FREE! The $10 fee is only for publishing your 
-                story i.e. get printed in Physical Book Anthology Collections.
+                <strong>Competition Ready: </strong>Competition entry is
+                completely FREE! The $10 fee is only for publishing your story
+                i.e. get printed in Physical Book Anthology Collections.
               </p>
             </div>
 
             <button
-              onClick={() => router.push(session ? '/children-dashboard/my-stories' : '/login/child')}
+              onClick={() =>
+                router.push(
+                  session ? '/children-dashboard/my-stories' : '/login/child'
+                )
+              }
               className="w-full bg-purple-600 hover:bg-purple-700 text-white py-3 px-6 border-2 border-purple-500 transition-colors font-medium text-lg flex items-center justify-center gap-2"
             >
               <BookOpen size={20} />
@@ -318,17 +335,18 @@ export default function PricingPage() {
             <BookOpen className="text-yellow-400" size={32} />
             <h2 className="text-3xl  text-white">Physical Books</h2>
           </div>
-          
+
           <p className="text-gray-300 mb-8 text-lg max-w-3xl mx-auto">
-            Turn your digital stories into beautiful physical books! Perfect for gifts, 
-            school libraries, or building your personal collection.
+            Turn your digital stories into beautiful physical books! Perfect for
+            gifts, school libraries, or building your personal collection.
           </p>
 
           <div className="grid md:grid-cols-3 gap-6 mb-8">
             <div className="bg-gray-800/50  p-6">
               <h3 className="text-white font-medium mb-3">Individual Books</h3>
               <p className="text-gray-300 text-sm mb-4">
-                Custom printed book featuring your child's story with professional layout and cover design.
+                Custom printed book featuring your child's story with
+                professional layout and cover design.
               </p>
               <p className="text-yellow-400 ">Contact for Quote</p>
             </div>
@@ -336,15 +354,19 @@ export default function PricingPage() {
             <div className="bg-gray-800/50  p-6">
               <h3 className="text-white font-medium mb-3">Class Collections</h3>
               <p className="text-gray-300 text-sm mb-4">
-                Compilation books featuring stories from an entire classroom. Great for schools!
+                Compilation books featuring stories from an entire classroom.
+                Great for schools!
               </p>
               <p className="text-yellow-400 ">Bulk Discounts Available</p>
             </div>
 
             <div className="bg-gray-800/50  p-6">
-              <h3 className="text-white font-medium mb-3">Competition Winners</h3>
+              <h3 className="text-white font-medium mb-3">
+                Competition Winners
+              </h3>
               <p className="text-gray-300 text-sm mb-4">
-                Annual anthology featuring the best stories from our monthly competitions.
+                Annual anthology featuring the best stories from our monthly
+                competitions.
               </p>
               <p className="text-yellow-400 ">Special Pricing</p>
             </div>
@@ -362,32 +384,38 @@ export default function PricingPage() {
       {/* FAQ Section */}
       <div className="max-w-4xl mx-auto px-6 ">
         <div className="text-center mb-12">
-          <h2 className="text-3xl  text-white mb-4">Frequently Asked Questions</h2>
+          <h2 className="text-3xl  text-white mb-4">
+            Frequently Asked Questions
+          </h2>
         </div>
 
         <div className="space-y-6 pb-12">
           {[
-         
             {
-              question: "Do purchased story packs expire?",
-              answer: "Story packs expire at the end of each month, just like free tier limits. This encourages regular writing practice and keeps the platform fresh with new content monthly."
+              question: 'Do purchased story packs expire?',
+              answer:
+                'Story packs expire at the end of each month, just like free tier limits. This encourages regular writing practice and keeps the platform fresh with new content monthly.',
             },
             {
-              question: "Can I get refunds for unused stories?",
-              answer: "Since story packs are designed for immediate use and expire monthly, we don't offer refunds for unused stories. However, if there's a technical issue preventing you from using purchased content, please contact our support team."
+              question: 'Can I get refunds for unused stories?',
+              answer:
+                "Since story packs are designed for immediate use and expire monthly, we don't offer refunds for unused stories. However, if there's a technical issue preventing you from using purchased content, please contact our support team.",
             },
             {
-              question: "Is the AI assessment really as good as a teacher?",
-              answer: "Our AI provides comprehensive feedback across 16 categories including grammar, creativity, and critical thinking. While it can't replace human creativity, it offers consistent, encouraging, and detailed feedback that helps children improve their writing skills."
+              question: 'Is the AI assessment really as good as a teacher?',
+              answer:
+                "Our AI provides comprehensive feedback across 16 categories including grammar, creativity, and critical thinking. While it can't replace human creativity, it offers consistent, encouraging, and detailed feedback that helps children improve their writing skills.",
             },
             {
-              question: "How do competitions work?",
-              answer: "Every month, we run a competition with three phases: 25 days for submissions, 5 days for AI judging, and 1 day for results. Children can submit up to 3 stories per competition and top 3 will be picked by our AI judge. Also, you can pay $10 per story in order to get your story published in Physical Book Anthology Collections."
+              question: 'How do competitions work?',
+              answer:
+                'Every month, we run a competition with three phases: 25 days for submissions, 5 days for AI judging, and 1 day for results. Children can submit up to 3 stories per competition and top 3 will be picked by our AI judge. Also, you can pay $10 per story in order to get your story published in Physical Book Anthology Collections.',
             },
             {
-              question: "Can I still access free features?",
-              answer: "Absolutely! Every child gets 3 free story creations, 3 AI assessments, and 3 competition entries every month. The free tier includes all core features - payments are only for additional usage."
-            }
+              question: 'Can I still access free features?',
+              answer:
+                'Absolutely! Every child gets 3 free story creations, 3 AI assessments, and 3 competition entries every month. The free tier includes all core features - payments are only for additional usage.',
+            },
           ].map((faq, index) => (
             <motion.div
               key={index}

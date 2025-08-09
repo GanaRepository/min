@@ -80,7 +80,7 @@ export default function ViewUser() {
     try {
       const response = await fetch(`/api/admin/users/${userId}`);
       const data = await response.json();
-      
+
       if (data.success) {
         setUser(data.user);
       } else {
@@ -95,7 +95,11 @@ export default function ViewUser() {
   };
 
   const deleteUser = async () => {
-    if (!confirm(`Are you sure you want to delete ${user?.firstName} ${user?.lastName}? This action cannot be undone.`)) {
+    if (
+      !confirm(
+        `Are you sure you want to delete ${user?.firstName} ${user?.lastName}? This action cannot be undone.`
+      )
+    ) {
       return;
     }
 
@@ -137,7 +141,10 @@ export default function ViewUser() {
     );
   }
 
-  const totalRevenue = user.purchaseHistory.reduce((sum, purchase) => sum + purchase.amount, 0);
+  const totalRevenue = user.purchaseHistory.reduce(
+    (sum, purchase) => sum + purchase.amount,
+    0
+  );
 
   return (
     <div className="space-y-6 px-2 sm:px-4 md:px-8 lg:px-12 xl:px-20 py-4 sm:py-6 md:py-8">
@@ -156,7 +163,7 @@ export default function ViewUser() {
             <p className="text-gray-400">User Details & Activity</p>
           </div>
         </div>
-        
+
         <div className="flex items-center space-x-2">
           <Link href={`/admin/users/${userId}/edit`}>
             <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center">
@@ -189,7 +196,7 @@ export default function ViewUser() {
               <p className="text-white font-medium capitalize">{user.role}</p>
             </div>
           </div>
-          
+
           <div className="flex items-center space-x-3">
             <div className="bg-green-600 p-3 rounded-lg">
               <Mail size={24} className="text-white" />
@@ -199,7 +206,7 @@ export default function ViewUser() {
               <p className="text-white font-medium">{user.email}</p>
             </div>
           </div>
-          
+
           <div className="flex items-center space-x-3">
             <div className="bg-purple-600 p-3 rounded-lg">
               <Calendar size={24} className="text-white" />
@@ -211,9 +218,11 @@ export default function ViewUser() {
               </p>
             </div>
           </div>
-          
+
           <div className="flex items-center space-x-3">
-            <div className={`${user.isActive ? 'bg-green-600' : 'bg-red-600'} p-3 rounded-lg`}>
+            <div
+              className={`${user.isActive ? 'bg-green-600' : 'bg-red-600'} p-3 rounded-lg`}
+            >
               <Activity size={24} className="text-white" />
             </div>
             <div>
@@ -231,40 +240,54 @@ export default function ViewUser() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {/* Monthly Usage */}
           <div className="bg-gray-800 rounded-xl p-6">
-            <h3 className="text-lg font-semibold text-white mb-4">Monthly Usage</h3>
+            <h3 className="text-lg font-semibold text-white mb-4">
+              Monthly Usage
+            </h3>
             <div className="space-y-3">
               <div className="flex justify-between">
                 <span className="text-gray-400">Stories:</span>
-                <span className="text-blue-400 font-medium">{user.storiesCreatedThisMonth}/3</span>
+                <span className="text-blue-400 font-medium">
+                  {user.storiesCreatedThisMonth}/3
+                </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-400">Assessments:</span>
-                <span className="text-green-400 font-medium">{user.assessmentUploadsThisMonth}/3</span>
+                <span className="text-green-400 font-medium">
+                  {user.assessmentUploadsThisMonth}/3
+                </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-400">Competitions:</span>
-                <span className="text-yellow-400 font-medium">{user.competitionEntriesThisMonth}/3</span>
+                <span className="text-yellow-400 font-medium">
+                  {user.competitionEntriesThisMonth}/3
+                </span>
               </div>
             </div>
           </div>
 
           {/* Total Stats */}
           <div className="bg-gray-800 rounded-xl p-6">
-            <h3 className="text-lg font-semibold text-white mb-4">Total Stats</h3>
+            <h3 className="text-lg font-semibold text-white mb-4">
+              Total Stats
+            </h3>
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center">
                   <BookOpen size={16} className="text-blue-400 mr-2" />
                   <span className="text-gray-400">Stories:</span>
                 </div>
-                <span className="text-white font-medium">{user.totalStoriesCreated}</span>
+                <span className="text-white font-medium">
+                  {user.totalStoriesCreated}
+                </span>
               </div>
               <div className="flex items-center justify-between">
                 <div className="flex items-center">
                   <Target size={16} className="text-green-400 mr-2" />
                   <span className="text-gray-400">Words:</span>
                 </div>
-                <span className="text-white font-medium">{user.totalWordsWritten.toLocaleString()}</span>
+                <span className="text-white font-medium">
+                  {user.totalWordsWritten.toLocaleString()}
+                </span>
               </div>
             </div>
           </div>
@@ -272,17 +295,22 @@ export default function ViewUser() {
           {/* Revenue Generated */}
           {totalRevenue > 0 && (
             <div className="bg-gray-800 rounded-xl p-6">
-              <h3 className="text-lg font-semibold text-white mb-4">Revenue Generated</h3>
+              <h3 className="text-lg font-semibold text-white mb-4">
+                Revenue Generated
+              </h3>
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
                     <DollarSign size={16} className="text-emerald-400 mr-2" />
                     <span className="text-gray-400">Total:</span>
                   </div>
-                  <span className="text-emerald-400 font-bold text-xl">${totalRevenue.toFixed(2)}</span>
+                  <span className="text-emerald-400 font-bold text-xl">
+                    ${totalRevenue.toFixed(2)}
+                  </span>
                 </div>
                 <div className="text-xs text-gray-500">
-                  {user.purchaseHistory.length} purchase{user.purchaseHistory.length !== 1 ? 's' : ''}
+                  {user.purchaseHistory.length} purchase
+                  {user.purchaseHistory.length !== 1 ? 's' : ''}
                 </div>
               </div>
             </div>
@@ -291,16 +319,21 @@ export default function ViewUser() {
           {/* Assigned Mentor */}
           {user.assignedMentor && (
             <div className="bg-gray-800 rounded-xl p-6">
-              <h3 className="text-lg font-semibold text-white mb-4">Assigned Mentor</h3>
+              <h3 className="text-lg font-semibold text-white mb-4">
+                Assigned Mentor
+              </h3>
               <div className="flex items-center space-x-3">
                 <div className="bg-purple-600 p-2 rounded-lg">
                   <Star size={16} className="text-white" />
                 </div>
                 <div>
                   <p className="text-white font-medium">
-                    {user.assignedMentor.firstName} {user.assignedMentor.lastName}
+                    {user.assignedMentor.firstName}{' '}
+                    {user.assignedMentor.lastName}
                   </p>
-                  <p className="text-xs text-gray-400">{user.assignedMentor.email}</p>
+                  <p className="text-xs text-gray-400">
+                    {user.assignedMentor.email}
+                  </p>
                 </div>
               </div>
             </div>
@@ -311,27 +344,41 @@ export default function ViewUser() {
       {/* Purchase History */}
       {user.role === 'child' && user.purchaseHistory.length > 0 && (
         <div className="bg-gray-800 rounded-xl p-6">
-          <h3 className="text-lg font-semibold text-white mb-4">Purchase History</h3>
+          <h3 className="text-lg font-semibold text-white mb-4">
+            Purchase History
+          </h3>
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
                 <tr className="border-b border-gray-700">
-                  <th className="text-left py-2 text-sm font-medium text-gray-300">Type</th>
-                  <th className="text-left py-2 text-sm font-medium text-gray-300">Amount</th>
-                  <th className="text-left py-2 text-sm font-medium text-gray-300">Date</th>
-                  <th className="text-left py-2 text-sm font-medium text-gray-300">Details</th>
+                  <th className="text-left py-2 text-sm font-medium text-gray-300">
+                    Type
+                  </th>
+                  <th className="text-left py-2 text-sm font-medium text-gray-300">
+                    Amount
+                  </th>
+                  <th className="text-left py-2 text-sm font-medium text-gray-300">
+                    Date
+                  </th>
+                  <th className="text-left py-2 text-sm font-medium text-gray-300">
+                    Details
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {user.purchaseHistory.map((purchase, index) => (
                   <tr key={index} className="border-b border-gray-700/50">
                     <td className="py-3">
-                      <span className={`px-2 py-1 text-xs rounded-full ${
-                        purchase.type === 'story_pack' 
-                          ? 'bg-blue-100 text-blue-800'
-                          : 'bg-purple-100 text-purple-800'
-                      }`}>
-                        {purchase.type === 'story_pack' ? 'Story Pack' : 'Publication'}
+                      <span
+                        className={`px-2 py-1 text-xs rounded-full ${
+                          purchase.type === 'story_pack'
+                            ? 'bg-blue-100 text-blue-800'
+                            : 'bg-purple-100 text-purple-800'
+                        }`}
+                      >
+                        {purchase.type === 'story_pack'
+                          ? 'Story Pack'
+                          : 'Publication'}
                       </span>
                     </td>
                     <td className="py-3 text-emerald-400 font-medium">
@@ -342,11 +389,15 @@ export default function ViewUser() {
                     </td>
                     <td className="py-3 text-xs text-gray-400">
                       {purchase.type === 'story_pack' && purchase.metadata && (
-                        <span>+{purchase.metadata.storiesAdded} stories, +{purchase.metadata.assessmentsAdded} assessments</span>
+                        <span>
+                          +{purchase.metadata.storiesAdded} stories, +
+                          {purchase.metadata.assessmentsAdded} assessments
+                        </span>
                       )}
-                      {purchase.type === 'story_publication' && purchase.metadata?.storyTitle && (
-                        <span>"{purchase.metadata.storyTitle}"</span>
-                      )}
+                      {purchase.type === 'story_publication' &&
+                        purchase.metadata?.storyTitle && (
+                          <span>"{purchase.metadata.storyTitle}"</span>
+                        )}
                     </td>
                   </tr>
                 ))}
@@ -357,36 +408,46 @@ export default function ViewUser() {
       )}
 
       {/* Recent Stories */}
-      {user.role === 'child' && user.recentStories && user.recentStories.length > 0 && (
-        <div className="bg-gray-800 rounded-xl p-6">
-          <h3 className="text-lg font-semibold text-white mb-4">Recent Stories</h3>
-          <div className="space-y-3">
-            {user.recentStories.slice(0, 5).map((story) => (
-              <div key={story._id} className="flex items-center justify-between p-3 bg-gray-700/50 rounded-lg">
-                <div className="flex-1">
-                  <Link href={`/admin/stories/${story._id}`}>
-                    <h4 className="text-white font-medium hover:text-blue-400 cursor-pointer">
-                      {story.title}
-                    </h4>
-                  </Link>
-                  <p className="text-xs text-gray-400 mt-1">
-                    {story.totalWords} words • {new Date(story.createdAt).toLocaleDateString()}
-                  </p>
+      {user.role === 'child' &&
+        user.recentStories &&
+        user.recentStories.length > 0 && (
+          <div className="bg-gray-800 rounded-xl p-6">
+            <h3 className="text-lg font-semibold text-white mb-4">
+              Recent Stories
+            </h3>
+            <div className="space-y-3">
+              {user.recentStories.slice(0, 5).map((story) => (
+                <div
+                  key={story._id}
+                  className="flex items-center justify-between p-3 bg-gray-700/50 rounded-lg"
+                >
+                  <div className="flex-1">
+                    <Link href={`/admin/stories/${story._id}`}>
+                      <h4 className="text-white font-medium hover:text-blue-400 cursor-pointer">
+                        {story.title}
+                      </h4>
+                    </Link>
+                    <p className="text-xs text-gray-400 mt-1">
+                      {story.totalWords} words •{' '}
+                      {new Date(story.createdAt).toLocaleDateString()}
+                    </p>
+                  </div>
+                  <span
+                    className={`px-2 py-1 text-xs rounded-full ${
+                      story.status === 'completed'
+                        ? 'bg-green-100 text-green-800'
+                        : story.status === 'active'
+                          ? 'bg-blue-100 text-blue-800'
+                          : 'bg-gray-100 text-gray-800'
+                    }`}
+                  >
+                    {story.status}
+                  </span>
                 </div>
-                <span className={`px-2 py-1 text-xs rounded-full ${
-                  story.status === 'completed' 
-                    ? 'bg-green-100 text-green-800'
-                    : story.status === 'active'
-                    ? 'bg-blue-100 text-blue-800'
-                    : 'bg-gray-100 text-gray-800'
-                }`}>
-                  {story.status}
-                </span>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
-      )}
+        )}
     </div>
   );
 }

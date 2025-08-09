@@ -21,7 +21,7 @@ import {
 export default function UploadStoryPage() {
   const { data: session } = useSession();
   const router = useRouter();
-  
+
   const [file, setFile] = useState<File | null>(null);
   const [title, setTitle] = useState('');
   const [uploading, setUploading] = useState(false);
@@ -31,19 +31,22 @@ export default function UploadStoryPage() {
     const selectedFile = event.target.files?.[0];
     if (selectedFile) {
       // Validate file type
-      if (!selectedFile.type.includes('pdf') && !selectedFile.name.endsWith('.docx')) {
+      if (
+        !selectedFile.type.includes('pdf') &&
+        !selectedFile.name.endsWith('.docx')
+      ) {
         alert('Please upload only PDF or DOCX files');
         return;
       }
-      
+
       // Validate file size (10MB max)
       if (selectedFile.size > 10 * 1024 * 1024) {
         alert('File size must be less than 10MB');
         return;
       }
-      
+
       setFile(selectedFile);
-      
+
       // Auto-generate title from filename if empty
       if (!title) {
         const fileName = selectedFile.name.replace(/\.[^/.]+$/, ''); // Remove extension
@@ -65,7 +68,7 @@ export default function UploadStoryPage() {
       formData.append('file', file);
       formData.append('title', title.trim());
       formData.append('uploadType', 'story'); // Not assessment
-      
+
       const response = await fetch('/api/stories/upload', {
         method: 'POST',
         body: formData,
@@ -81,7 +84,6 @@ export default function UploadStoryPage() {
       } else {
         alert(`Upload failed: ${data.message}`);
       }
-
     } catch (error) {
       console.error('Upload error:', error);
       alert('Upload failed. Please try again.');
@@ -101,7 +103,9 @@ export default function UploadStoryPage() {
           <div className="bg-green-600 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6">
             <CheckCircle className="w-12 h-12 text-white" />
           </div>
-          <h1 className="text-3xl font-bold text-white mb-4">Story Uploaded Successfully! 🎉</h1>
+          <h1 className="text-3xl font-bold text-white mb-4">
+            Story Uploaded Successfully! 🎉
+          </h1>
           <p className="text-gray-300 text-lg mb-6">
             Your story "{title}" has been uploaded and is ready for publishing.
           </p>
@@ -113,7 +117,9 @@ export default function UploadStoryPage() {
               <li>• Your story will appear in your portfolio</li>
             </ul>
           </div>
-          <p className="text-gray-400">Redirecting to dashboard in 3 seconds...</p>
+          <p className="text-gray-400">
+            Redirecting to dashboard in 3 seconds...
+          </p>
         </motion.div>
       </div>
     );
@@ -141,7 +147,8 @@ export default function UploadStoryPage() {
           Upload Your Story
         </h1>
         <p className="text-gray-300">
-          Share your creative writing with the world! Upload your completed story for publishing and competition entry.
+          Share your creative writing with the world! Upload your completed
+          story for publishing and competition entry.
         </p>
       </motion.div>
 
@@ -152,7 +159,6 @@ export default function UploadStoryPage() {
         transition={{ delay: 0.1 }}
         className="bg-gray-800/60 border border-gray-600/40 rounded-xl p-8"
       >
-        
         {/* Story Title */}
         <div className="mb-6">
           <label className="block text-gray-300 font-medium mb-3">
@@ -176,7 +182,7 @@ export default function UploadStoryPage() {
           <label className="block text-gray-300 font-medium mb-3">
             Upload Story File <span className="text-red-400">*</span>
           </label>
-          
+
           <div className="border-2 border-dashed border-gray-600 rounded-lg p-8 text-center hover:border-gray-500 transition-colors">
             <input
               type="file"
@@ -193,14 +199,20 @@ export default function UploadStoryPage() {
                   <p className="text-gray-400 text-sm">
                     {(file.size / 1024 / 1024).toFixed(2)} MB
                   </p>
-                  <p className="text-blue-400 text-sm mt-2">Click to change file</p>
+                  <p className="text-blue-400 text-sm mt-2">
+                    Click to change file
+                  </p>
                 </div>
               ) : (
                 <div className="text-gray-400">
                   <Upload className="w-12 h-12 mx-auto mb-3" />
-                  <p className="font-medium text-lg">Click to upload your story</p>
+                  <p className="font-medium text-lg">
+                    Click to upload your story
+                  </p>
                   <p className="text-sm">PDF or DOCX files only</p>
-                  <p className="text-xs text-gray-500 mt-1">Maximum file size: 10MB</p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Maximum file size: 10MB
+                  </p>
                 </div>
               )}
             </label>
@@ -211,7 +223,9 @@ export default function UploadStoryPage() {
         <div className="mb-6 bg-blue-600/20 border border-blue-500/30 rounded-lg p-4">
           <div className="flex items-center gap-2 mb-3">
             <Info className="w-5 h-5 text-blue-400" />
-            <span className="text-blue-400 font-medium">Story Requirements</span>
+            <span className="text-blue-400 font-medium">
+              Story Requirements
+            </span>
           </div>
           <ul className="text-gray-300 text-sm space-y-1">
             <li>• Story must be 100-2000 words</li>
@@ -225,7 +239,9 @@ export default function UploadStoryPage() {
         <div className="mb-6 bg-yellow-600/20 border border-yellow-500/30 rounded-lg p-4">
           <div className="flex items-center gap-2 mb-3">
             <DollarSign className="w-5 h-5 text-yellow-400" />
-            <span className="text-yellow-400 font-medium">Publishing & Competition</span>
+            <span className="text-yellow-400 font-medium">
+              Publishing & Competition
+            </span>
           </div>
           <div className="text-gray-300 text-sm space-y-2">
             <div className="flex items-center justify-between">
@@ -242,7 +258,9 @@ export default function UploadStoryPage() {
         <div className="mb-8 bg-purple-600/20 border border-purple-500/30 rounded-lg p-4">
           <div className="flex items-center gap-2 mb-3">
             <Trophy className="w-5 h-5 text-purple-400" />
-            <span className="text-purple-400 font-medium">Competition Benefits</span>
+            <span className="text-purple-400 font-medium">
+              Competition Benefits
+            </span>
           </div>
           <div className="text-gray-300 text-sm space-y-1">
             <div>• Submit up to 3 stories per month (FREE participation)</div>
@@ -273,7 +291,8 @@ export default function UploadStoryPage() {
 
         {/* Note */}
         <p className="text-gray-400 text-sm text-center mt-4">
-          After uploading, you'll need to pay the $10 publication fee to make your story live and competition-eligible.
+          After uploading, you'll need to pay the $10 publication fee to make
+          your story live and competition-eligible.
         </p>
       </motion.div>
 

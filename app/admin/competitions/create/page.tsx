@@ -7,13 +7,7 @@ import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import {
-  ArrowLeft,
-  Save,
-  Calendar,
-  Award,
-  Settings,
-} from 'lucide-react';
+import { ArrowLeft, Save, Calendar, Award, Settings } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface JudgingCriteria {
@@ -28,9 +22,9 @@ interface JudgingCriteria {
 export default function CreateCompetitionPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
-  
+
   const [loading, setLoading] = useState(false);
-  const [errors, setErrors] = useState<{[key: string]: string}>({});
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const [formData, setFormData] = useState({
     month: new Date().toISOString().slice(0, 7), // YYYY-MM format
@@ -61,7 +55,10 @@ export default function CreateCompetitionPage() {
     setErrors({});
 
     // Validate judging criteria sums to 100
-    const totalCriteria = Object.values(formData.judgingCriteria).reduce((sum, val) => sum + val, 0);
+    const totalCriteria = Object.values(formData.judgingCriteria).reduce(
+      (sum, val) => sum + val,
+      0
+    );
     if (totalCriteria !== 100) {
       setErrors({ judgingCriteria: 'Judging criteria must sum to 100%' });
       setLoading(false);
@@ -70,19 +67,25 @@ export default function CreateCompetitionPage() {
 
     try {
       const [year, month] = formData.month.split('-');
-      
+
       const response = await fetch('/api/admin/competitions/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          month: new Date(parseInt(year), parseInt(month) - 1).toLocaleDateString('en-US', { month: 'long' }),
+          month: new Date(
+            parseInt(year),
+            parseInt(month) - 1
+          ).toLocaleDateString('en-US', { month: 'long' }),
           year: parseInt(year),
           theme: formData.theme,
           description: formData.description,
           judgingCriteria: Object.fromEntries(
-            Object.entries(formData.judgingCriteria).map(([key, value]) => [key, value / 100])
+            Object.entries(formData.judgingCriteria).map(([key, value]) => [
+              key,
+              value / 100,
+            ])
           ),
         }),
       });
@@ -106,29 +109,32 @@ export default function CreateCompetitionPage() {
   const handleInputChange = (field: string, value: any) => {
     if (field.includes('.')) {
       const [parent, child] = field.split('.');
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
         [parent]: {
           ...(prev[parent as keyof typeof prev] as any),
-          [child]: value
-        }
+          [child]: value,
+        },
       }));
     } else {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        [field]: value
+        [field]: value,
       }));
     }
-    
+
     if (errors[field]) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
-        [field]: ''
+        [field]: '',
       }));
     }
   };
 
-  const totalCriteria = Object.values(formData.judgingCriteria).reduce((sum, val) => sum + val, 0);
+  const totalCriteria = Object.values(formData.judgingCriteria).reduce(
+    (sum, val) => sum + val,
+    0
+  );
 
   return (
     <div className="space-y-6 px-2 sm:px-4 md:px-8 lg:px-12 xl:px-20 py-4 sm:py-6 md:py-8">
@@ -143,7 +149,9 @@ export default function CreateCompetitionPage() {
           <h1 className="text-2xl sm:text-3xl font-bold text-white">
             Create Competition
           </h1>
-          <p className="text-gray-400">Set up a new monthly writing competition</p>
+          <p className="text-gray-400">
+            Set up a new monthly writing competition
+          </p>
         </div>
       </div>
 
@@ -168,7 +176,10 @@ export default function CreateCompetitionPage() {
                 Month & Year
               </label>
               <div className="relative">
-                <Calendar size={20} className="absolute left-3 top-3 text-gray-400" />
+                <Calendar
+                  size={20}
+                  className="absolute left-3 top-3 text-gray-400"
+                />
                 <input
                   type="month"
                   required
@@ -184,7 +195,10 @@ export default function CreateCompetitionPage() {
                 Theme
               </label>
               <div className="relative">
-                <Award size={20} className="absolute left-3 top-3 text-gray-400" />
+                <Award
+                  size={20}
+                  className="absolute left-3 top-3 text-gray-400"
+                />
                 <input
                   type="text"
                   required
@@ -218,13 +232,15 @@ export default function CreateCompetitionPage() {
                 <Settings size={20} className="mr-2" />
                 Judging Criteria
               </h3>
-              <div className={`text-sm font-medium ${
-                totalCriteria === 100 ? 'text-green-400' : 'text-red-400'
-              }`}>
+              <div
+                className={`text-sm font-medium ${
+                  totalCriteria === 100 ? 'text-green-400' : 'text-red-400'
+                }`}
+              >
                 Total: {totalCriteria}%
               </div>
             </div>
-            
+
             {errors.judgingCriteria && (
               <div className="bg-red-900/50 border border-red-500/50 text-red-200 p-3 rounded-lg text-sm mb-4">
                 {errors.judgingCriteria}
@@ -235,7 +251,9 @@ export default function CreateCompetitionPage() {
               {Object.entries(formData.judgingCriteria).map(([key, value]) => (
                 <div key={key} className="bg-gray-700/50 rounded-lg p-4">
                   <label className="block text-sm font-medium text-gray-300 mb-2 capitalize">
-                    {key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
+                    {key
+                      .replace(/([A-Z])/g, ' $1')
+                      .replace(/^./, (str) => str.toUpperCase())}
                   </label>
                   <div className="flex items-center space-x-2">
                     <input
@@ -243,7 +261,12 @@ export default function CreateCompetitionPage() {
                       min="0"
                       max="100"
                       value={value}
-                      onChange={(e) => handleInputChange(`judgingCriteria.${key}`, parseInt(e.target.value) || 0)}
+                      onChange={(e) =>
+                        handleInputChange(
+                          `judgingCriteria.${key}`,
+                          parseInt(e.target.value) || 0
+                        )
+                      }
                       className="flex-1 px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                     <span className="text-gray-400">%</span>

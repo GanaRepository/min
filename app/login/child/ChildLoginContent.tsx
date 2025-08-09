@@ -320,10 +320,10 @@ function ChildLoginContent() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.8 }}
               >
-                <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-2">
+                <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl  text-white mb-2">
                   Welcome back to
                 </h1>
-                <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white/80 mb-4 italic">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl  text-white/80 mb-4 italic">
                   Mintoons
                 </h2>
                 <p className="text-white/60 text-xs sm:text-sm">

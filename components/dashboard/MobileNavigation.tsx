@@ -2,7 +2,14 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Sparkles, BookOpen, TrendingUp, Trophy, Upload } from 'lucide-react';
+import {
+  Home,
+  Sparkles,
+  BookOpen,
+  TrendingUp,
+  Trophy,
+  Upload,
+} from 'lucide-react';
 
 interface MobileNavigationProps {
   className?: string;
@@ -11,7 +18,11 @@ interface MobileNavigationProps {
 const mobileNavItems = [
   { name: 'Home', href: '/children-dashboard', icon: Home },
   { name: 'Create', href: '/create-stories', icon: Sparkles },
-  { name: 'Upload', href: '/children-dashboard/upload-assessment', icon: Upload },
+  {
+    name: 'Upload',
+    href: '/children-dashboard/upload-assessment',
+    icon: Upload,
+  },
   { name: 'Stories', href: '/children-dashboard/my-stories', icon: BookOpen },
   { name: 'Compete', href: '/children-dashboard/competitions', icon: Trophy },
 ];
@@ -25,9 +36,11 @@ export default function MobileNavigation({ className }: MobileNavigationProps) {
     >
       <div className="flex items-center justify-around py-2">
         {mobileNavItems.map((item) => {
-          const isActive = pathname === item.href || 
-            (item.href !== '/children-dashboard' && pathname.startsWith(item.href));
-          
+          const isActive =
+            pathname === item.href ||
+            (item.href !== '/children-dashboard' &&
+              pathname.startsWith(item.href));
+
           return (
             <Link
               key={item.name}

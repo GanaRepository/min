@@ -64,15 +64,49 @@ interface StoryDetails {
   }>;
 }
 
-type CommentType = 'general' | 'grammar' | 'creativity' | 'structure' | 'suggestion' | 'admin_feedback';
+type CommentType =
+  | 'general'
+  | 'grammar'
+  | 'creativity'
+  | 'structure'
+  | 'suggestion'
+  | 'admin_feedback';
 
-const commentTypeOptions: { value: CommentType; label: string; description: string }[] = [
-  { value: 'general', label: 'General', description: 'General feedback and comments' },
-  { value: 'grammar', label: 'Grammar', description: 'Grammar and language corrections' },
-  { value: 'creativity', label: 'Creativity', description: 'Creative writing feedback' },
-  { value: 'structure', label: 'Structure', description: 'Story structure and organization' },
-  { value: 'suggestion', label: 'Suggestion', description: 'Suggestions for improvement' },
-  { value: 'admin_feedback', label: 'Admin Feedback', description: 'Administrative feedback and notes' },
+const commentTypeOptions: {
+  value: CommentType;
+  label: string;
+  description: string;
+}[] = [
+  {
+    value: 'general',
+    label: 'General',
+    description: 'General feedback and comments',
+  },
+  {
+    value: 'grammar',
+    label: 'Grammar',
+    description: 'Grammar and language corrections',
+  },
+  {
+    value: 'creativity',
+    label: 'Creativity',
+    description: 'Creative writing feedback',
+  },
+  {
+    value: 'structure',
+    label: 'Structure',
+    description: 'Story structure and organization',
+  },
+  {
+    value: 'suggestion',
+    label: 'Suggestion',
+    description: 'Suggestions for improvement',
+  },
+  {
+    value: 'admin_feedback',
+    label: 'Admin Feedback',
+    description: 'Administrative feedback and notes',
+  },
 ];
 
 export default function ViewStory() {
@@ -84,7 +118,9 @@ export default function ViewStory() {
   const [story, setStory] = useState<StoryDetails | null>(null);
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState(false);
-  const [activeTab, setActiveTab] = useState<'content' | 'comments' | 'details'>('content');
+  const [activeTab, setActiveTab] = useState<
+    'content' | 'comments' | 'details'
+  >('content');
   const [newComment, setNewComment] = useState('');
   const [commentType, setCommentType] = useState<CommentType>('general');
   const [addingComment, setAddingComment] = useState(false);
@@ -103,7 +139,7 @@ export default function ViewStory() {
     try {
       const response = await fetch(`/api/admin/stories/${storyId}`);
       const data = await response.json();
-      
+
       if (data.success) {
         setStory(data.story);
       } else {
@@ -118,7 +154,11 @@ export default function ViewStory() {
   };
 
   const deleteStory = async () => {
-    if (!confirm(`Are you sure you want to delete "${story?.title}"? This action cannot be undone.`)) {
+    if (
+      !confirm(
+        `Are you sure you want to delete "${story?.title}"? This action cannot be undone.`
+      )
+    ) {
       return;
     }
 
@@ -146,7 +186,7 @@ export default function ViewStory() {
 
   const addComment = async () => {
     if (!newComment.trim()) return;
-    
+
     try {
       setAddingComment(true);
       const response = await fetch(`/api/stories/${storyId}/comments`, {
@@ -154,10 +194,10 @@ export default function ViewStory() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           comment: newComment,
-          commentType: commentType
-        })
+          commentType: commentType,
+        }),
       });
-      
+
       const data = await response.json();
       if (data.success) {
         // Refresh the story to get updated comments
@@ -180,7 +220,7 @@ export default function ViewStory() {
     try {
       const response = await fetch(`/api/stories/export/${storyId}/txt`);
       const blob = await response.blob();
-      
+
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
@@ -213,34 +253,50 @@ export default function ViewStory() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'completed': return 'bg-green-100 text-green-800';
-      case 'active': return 'bg-blue-100 text-blue-800';
-      case 'paused': return 'bg-yellow-100 text-yellow-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'completed':
+        return 'bg-green-100 text-green-800';
+      case 'active':
+        return 'bg-blue-100 text-blue-800';
+      case 'paused':
+        return 'bg-yellow-100 text-yellow-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
   const getRoleColor = (role: string) => {
     switch (role) {
-      case 'admin': return 'bg-red-100 text-red-800';
-      case 'mentor': return 'bg-purple-100 text-purple-800';
-      case 'child': return 'bg-blue-100 text-blue-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'admin':
+        return 'bg-red-100 text-red-800';
+      case 'mentor':
+        return 'bg-purple-100 text-purple-800';
+      case 'child':
+        return 'bg-blue-100 text-blue-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
   const getCommentTypeColor = (type: string) => {
     switch (type) {
-      case 'admin_feedback': return 'bg-red-100 text-red-800';
-      case 'grammar': return 'bg-yellow-100 text-yellow-800';
-      case 'creativity': return 'bg-purple-100 text-purple-800';
-      case 'structure': return 'bg-blue-100 text-blue-800';
-      case 'suggestion': return 'bg-green-100 text-green-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'admin_feedback':
+        return 'bg-red-100 text-red-800';
+      case 'grammar':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'creativity':
+        return 'bg-purple-100 text-purple-800';
+      case 'structure':
+        return 'bg-blue-100 text-blue-800';
+      case 'suggestion':
+        return 'bg-green-100 text-green-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
-  const selectedCommentType = commentTypeOptions.find(option => option.value === commentType);
+  const selectedCommentType = commentTypeOptions.find(
+    (option) => option.value === commentType
+  );
 
   return (
     <div className="space-y-6 px-2 sm:px-4 md:px-8 lg:px-12 xl:px-20 py-4 sm:py-6 md:py-8">
@@ -259,7 +315,7 @@ export default function ViewStory() {
             <p className="text-gray-400">Story #{story.storyNumber} Details</p>
           </div>
         </div>
-        
+
         <div className="flex items-center space-x-2">
           <button
             onClick={exportStory}
@@ -301,7 +357,7 @@ export default function ViewStory() {
               </Link>
             </div>
           </div>
-          
+
           <div className="flex items-center space-x-3">
             <div className="bg-green-600 p-3 rounded-lg">
               <BookOpen size={24} className="text-white" />
@@ -311,19 +367,21 @@ export default function ViewStory() {
               <p className="text-white font-medium">{story.totalWords} words</p>
             </div>
           </div>
-          
+
           <div className="flex items-center space-x-3">
             <div className="bg-purple-600 p-3 rounded-lg">
               <MessageSquare size={24} className="text-white" />
             </div>
             <div>
               <p className="text-sm text-gray-400">Status</p>
-              <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(story.status)}`}>
+              <span
+                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(story.status)}`}
+              >
                 {story.status}
               </span>
             </div>
           </div>
-          
+
           <div className="flex items-center space-x-3">
             <div className="bg-yellow-600 p-3 rounded-lg">
               <Calendar size={24} className="text-white" />
@@ -344,7 +402,7 @@ export default function ViewStory() {
           {[
             { key: 'content', label: 'Story Content', icon: BookOpen },
             { key: 'comments', label: 'Comments', icon: MessageSquare },
-            { key: 'details', label: 'Details', icon: Eye }
+            { key: 'details', label: 'Details', icon: Eye },
           ].map((tab) => (
             <button
               key={tab.key}
@@ -370,29 +428,45 @@ export default function ViewStory() {
           {/* Content Tab */}
           {activeTab === 'content' && (
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-white">Story Content</h3>
+              <h3 className="text-lg font-semibold text-white">
+                Story Content
+              </h3>
               {story.turns.length > 0 ? (
                 <div className="space-y-4">
                   {story.turns.map((turn, index) => (
-                    <div key={index} className={`p-4 rounded-lg ${
-                      turn.type === 'child' ? 'bg-blue-900/20 border-l-4 border-blue-500' : 'bg-gray-700/30'
-                    }`}>
+                    <div
+                      key={index}
+                      className={`p-4 rounded-lg ${
+                        turn.type === 'child'
+                          ? 'bg-blue-900/20 border-l-4 border-blue-500'
+                          : 'bg-gray-700/30'
+                      }`}
+                    >
                       <div className="flex items-center justify-between mb-2">
-                        <span className={`text-xs font-medium px-2 py-1 rounded ${
-                          turn.type === 'child' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800'
-                        }`}>
-                          {turn.type === 'child' ? 'Child' : 'AI'} - Turn {turn.turnNumber}
+                        <span
+                          className={`text-xs font-medium px-2 py-1 rounded ${
+                            turn.type === 'child'
+                              ? 'bg-blue-100 text-blue-800'
+                              : 'bg-gray-100 text-gray-800'
+                          }`}
+                        >
+                          {turn.type === 'child' ? 'Child' : 'AI'} - Turn{' '}
+                          {turn.turnNumber}
                         </span>
                         <span className="text-xs text-gray-400">
                           {new Date(turn.createdAt).toLocaleString()}
                         </span>
                       </div>
-                      <p className="text-gray-300 whitespace-pre-wrap">{turn.content}</p>
+                      <p className="text-gray-300 whitespace-pre-wrap">
+                        {turn.content}
+                      </p>
                     </div>
                   ))}
                 </div>
               ) : (
-                <p className="text-gray-400">No content available for this story.</p>
+                <p className="text-gray-400">
+                  No content available for this story.
+                </p>
               )}
             </div>
           )}
@@ -401,35 +475,49 @@ export default function ViewStory() {
           {activeTab === 'comments' && (
             <div className="space-y-6">
               <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold text-white">Comments & Feedback</h3>
+                <h3 className="text-lg font-semibold text-white">
+                  Comments & Feedback
+                </h3>
                 <span className="text-sm text-gray-400">
-                  {story.comments.length} comment{story.comments.length !== 1 ? 's' : ''}
+                  {story.comments.length} comment
+                  {story.comments.length !== 1 ? 's' : ''}
                 </span>
               </div>
 
               {/* Add Comment Form */}
               <div className="bg-gray-700/30 rounded-lg p-4">
-                <h4 className="text-white font-medium mb-3">Add Admin Comment</h4>
-                
+                <h4 className="text-white font-medium mb-3">
+                  Add Admin Comment
+                </h4>
+
                 {/* Comment Type Selector */}
                 <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-400 mb-2">Comment Type</label>
+                  <label className="block text-sm font-medium text-gray-400 mb-2">
+                    Comment Type
+                  </label>
                   <div className="relative">
                     <button
-                      onClick={() => setShowCommentTypeDropdown(!showCommentTypeDropdown)}
+                      onClick={() =>
+                        setShowCommentTypeDropdown(!showCommentTypeDropdown)
+                      }
                       className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center justify-between"
                     >
                       <div className="flex items-center space-x-2">
-                        <span className={`px-2 py-1 text-xs rounded-full ${getCommentTypeColor(commentType)}`}>
+                        <span
+                          className={`px-2 py-1 text-xs rounded-full ${getCommentTypeColor(commentType)}`}
+                        >
                           {selectedCommentType?.label}
                         </span>
                         <span className="text-gray-400 text-sm">
                           {selectedCommentType?.description}
                         </span>
                       </div>
-                      <ChevronDown size={16} className={`transition-transform ${showCommentTypeDropdown ? 'rotate-180' : ''}`} />
+                      <ChevronDown
+                        size={16}
+                        className={`transition-transform ${showCommentTypeDropdown ? 'rotate-180' : ''}`}
+                      />
                     </button>
-                    
+
                     {showCommentTypeDropdown && (
                       <div className="absolute z-10 w-full mt-1 bg-gray-700 border border-gray-600 rounded-lg shadow-lg">
                         {commentTypeOptions.map((option) => (
@@ -442,7 +530,9 @@ export default function ViewStory() {
                             className="w-full text-left px-3 py-2 hover:bg-gray-600 first:rounded-t-lg last:rounded-b-lg transition-colors"
                           >
                             <div className="flex items-center space-x-2">
-                              <span className={`px-2 py-1 text-xs rounded-full ${getCommentTypeColor(option.value)}`}>
+                              <span
+                                className={`px-2 py-1 text-xs rounded-full ${getCommentTypeColor(option.value)}`}
+                              >
                                 {option.label}
                               </span>
                               <span className="text-gray-400 text-sm">
@@ -489,19 +579,27 @@ export default function ViewStory() {
                         <div className="flex items-center space-x-3">
                           <div className="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center">
                             <span className="text-xs font-medium text-white">
-                              {comment.authorId.firstName[0]}{comment.authorId.lastName[0]}
+                              {comment.authorId.firstName[0]}
+                              {comment.authorId.lastName[0]}
                             </span>
                           </div>
                           <div>
                             <div className="flex items-center space-x-2">
                               <h4 className="text-white font-medium text-sm">
-                                {comment.authorId.firstName} {comment.authorId.lastName}
+                                {comment.authorId.firstName}{' '}
+                                {comment.authorId.lastName}
                               </h4>
-                              <span className={`px-2 py-1 text-xs rounded-full ${getRoleColor(comment.authorId.role)}`}>
+                              <span
+                                className={`px-2 py-1 text-xs rounded-full ${getRoleColor(comment.authorId.role)}`}
+                              >
                                 {comment.authorId.role}
                               </span>
-                              <span className={`px-2 py-1 text-xs rounded-full ${getCommentTypeColor(comment.commentType)}`}>
-                                {commentTypeOptions.find(opt => opt.value === comment.commentType)?.label || comment.commentType}
+                              <span
+                                className={`px-2 py-1 text-xs rounded-full ${getCommentTypeColor(comment.commentType)}`}
+                              >
+                                {commentTypeOptions.find(
+                                  (opt) => opt.value === comment.commentType
+                                )?.label || comment.commentType}
                               </span>
                             </div>
                           </div>
@@ -510,13 +608,20 @@ export default function ViewStory() {
                           {new Date(comment.createdAt).toLocaleString()}
                         </span>
                       </div>
-                      <p className="text-gray-300 whitespace-pre-wrap">{comment.comment}</p>
+                      <p className="text-gray-300 whitespace-pre-wrap">
+                        {comment.comment}
+                      </p>
                     </motion.div>
                   ))
                 ) : (
                   <div className="text-center py-8">
-                    <MessageSquare size={48} className="text-gray-600 mx-auto mb-4" />
-                    <p className="text-gray-400">No comments yet. Be the first to add feedback!</p>
+                    <MessageSquare
+                      size={48}
+                      className="text-gray-600 mx-auto mb-4"
+                    />
+                    <p className="text-gray-400">
+                      No comments yet. Be the first to add feedback!
+                    </p>
                   </div>
                 )}
               </div>
@@ -526,63 +631,87 @@ export default function ViewStory() {
           {/* Details Tab */}
           {activeTab === 'details' && (
             <div className="space-y-6">
-              <h3 className="text-lg font-semibold text-white">Story Details</h3>
-              
+              <h3 className="text-lg font-semibold text-white">
+                Story Details
+              </h3>
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-4">
                   <div>
                     <label className="text-sm text-gray-400">Story ID</label>
                     <p className="text-white font-mono text-sm">{story._id}</p>
                   </div>
-                  
+
                   <div>
-                    <label className="text-sm text-gray-400">API Calls Used</label>
-                    <p className="text-white">{story.apiCallsUsed} / {story.maxApiCalls}</p>
+                    <label className="text-sm text-gray-400">
+                      API Calls Used
+                    </label>
+                    <p className="text-white">
+                      {story.apiCallsUsed} / {story.maxApiCalls}
+                    </p>
                     <div className="w-full bg-gray-700 rounded-full h-2 mt-1">
-                      <div 
+                      <div
                         className="bg-blue-500 h-2 rounded-full"
-                        style={{ width: `${Math.min((story.apiCallsUsed / story.maxApiCalls) * 100, 100)}%` }}
+                        style={{
+                          width: `${Math.min((story.apiCallsUsed / story.maxApiCalls) * 100, 100)}%`,
+                        }}
                       ></div>
                     </div>
                   </div>
-                  
+
                   <div>
                     <label className="text-sm text-gray-400">Total Words</label>
                     <p className="text-white">{story.totalWords}</p>
                   </div>
-                  
+
                   <div>
                     <label className="text-sm text-gray-400">Child Words</label>
                     <p className="text-white">{story.childWords}</p>
                   </div>
                 </div>
-                
+
                 <div className="space-y-4">
                   <div>
                     <label className="text-sm text-gray-400">Created</label>
-                    <p className="text-white">{new Date(story.createdAt).toLocaleString()}</p>
+                    <p className="text-white">
+                      {new Date(story.createdAt).toLocaleString()}
+                    </p>
                   </div>
-                  
+
                   <div>
-                    <label className="text-sm text-gray-400">Last Updated</label>
-                    <p className="text-white">{new Date(story.updatedAt).toLocaleString()}</p>
+                    <label className="text-sm text-gray-400">
+                      Last Updated
+                    </label>
+                    <p className="text-white">
+                      {new Date(story.updatedAt).toLocaleString()}
+                    </p>
                   </div>
-                  
+
                   {story.completedAt && (
                     <div>
                       <label className="text-sm text-gray-400">Completed</label>
-                      <p className="text-white">{new Date(story.completedAt).toLocaleString()}</p>
+                      <p className="text-white">
+                        {new Date(story.completedAt).toLocaleString()}
+                      </p>
                     </div>
                   )}
-                  
+
                   <div>
-                    <label className="text-sm text-gray-400">Publication Status</label>
-                    <p className="text-white">{story.isPublished ? 'Published' : 'Not Published'}</p>
+                    <label className="text-sm text-gray-400">
+                      Publication Status
+                    </label>
+                    <p className="text-white">
+                      {story.isPublished ? 'Published' : 'Not Published'}
+                    </p>
                   </div>
-                  
+
                   <div>
                     <label className="text-sm text-gray-400">Competition</label>
-                    <p className="text-white">{story.submittedToCompetition ? 'Submitted' : 'Not Submitted'}</p>
+                    <p className="text-white">
+                      {story.submittedToCompetition
+                        ? 'Submitted'
+                        : 'Not Submitted'}
+                    </p>
                   </div>
                 </div>
               </div>

@@ -164,7 +164,16 @@
 import { useState, useEffect, useRef } from 'react';
 import { signIn, getSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { Eye, EyeOff, Crown, Mail, Lock, Sparkles, Shield, Zap } from 'lucide-react';
+import {
+  Eye,
+  EyeOff,
+  Crown,
+  Mail,
+  Lock,
+  Sparkles,
+  Shield,
+  Zap,
+} from 'lucide-react';
 import Image from 'next/image';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import Link from 'next/link';
@@ -178,7 +187,7 @@ export default function AdminLogin() {
   const [error, setError] = useState('');
   const [mounted, setMounted] = useState(false);
   const router = useRouter();
-  
+
   const containerRef = useRef<HTMLDivElement>(null);
   const starsRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll();
@@ -252,7 +261,6 @@ export default function AdminLogin() {
       ref={containerRef}
       className="min-h-screen bg-gradient-to-br from-gray-900/95 via-blue-900/95 to-green-900/95 overflow-hidden flex items-center justify-center relative px-2 sm:px-4"
     >
-   
       {/* Main container */}
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
@@ -287,7 +295,7 @@ export default function AdminLogin() {
               transition={{
                 duration: 4,
                 repeat: Infinity,
-                ease: "easeInOut"
+                ease: 'easeInOut',
               }}
               className="relative flex flex-col items-center justify-center z-10"
             >
@@ -357,9 +365,7 @@ export default function AdminLogin() {
               <p className="text-white text-xs sm:text-sm md:text-base italic mb-2">
                 &quot;The best way to predict the future is to invent it.&quot;
               </p>
-              <p className="text-xs text-white">
-                - Alan Kay
-              </p>
+              <p className="text-xs text-white">- Alan Kay</p>
             </motion.div>
           </div>
         </motion.div>
@@ -382,8 +388,6 @@ export default function AdminLogin() {
           </Link>
 
           <div className="text-center mb-8">
-          
-
             {/* Welcome text */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}

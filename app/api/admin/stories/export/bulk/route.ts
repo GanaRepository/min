@@ -13,7 +13,10 @@ export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     if (!session || session.user?.role !== 'admin') {
-      return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
+      return NextResponse.json(
+        { error: 'Admin access required' },
+        { status: 403 }
+      );
     }
 
     const { searchParams } = new URL(request.url);
@@ -69,9 +72,11 @@ export async function GET(request: NextRequest) {
 
         // Add content if requested
         if (includeContent) {
-          const turns = await Turn.find({ sessionId: story._id }).sort({ turnNumber: 1 }).lean();
+          const turns = await Turn.find({ sessionId: story._id })
+            .sort({ turnNumber: 1 })
+            .lean();
           Object.assign(baseData, {
-            content: turns.map(turn => turn.content).join('\n\n'),
+            content: turns.map((turn) => turn.content).join('\n\n'),
             turnCount: turns.length,
           });
         }
@@ -108,8 +113,17 @@ export async function GET(request: NextRequest) {
     }
 
     // Generate CSV
-    const headers = ['ID', 'Title', 'Status', 'Total Words', 'API Calls Used', 'Created At', 'Completed At', 'Published'];
-    
+    const headers = [
+      'ID',
+      'Title',
+      'Status',
+      'Total Words',
+      'API Calls Used',
+      'Created At',
+      'Completed At',
+      'Published',
+    ];
+
     if (includeAuthorInfo) {
       headers.push('Author Name', 'Author Email');
     }
@@ -121,7 +135,7 @@ export async function GET(request: NextRequest) {
     }
 
     let csv = headers.join(',') + '\n';
-    
+
     storyData.forEach((story: any) => {
       const row = [
         story.id,
@@ -130,7 +144,9 @@ export async function GET(request: NextRequest) {
         story.totalWords,
         story.apiCallsUsed,
         new Date(story.createdAt).toLocaleDateString(),
-        story.completedAt ? new Date(story.completedAt).toLocaleDateString() : 'Not completed',
+        story.completedAt
+          ? new Date(story.completedAt).toLocaleDateString()
+          : 'Not completed',
         story.isPublished ? 'Yes' : 'No',
       ];
 
@@ -138,7 +154,10 @@ export async function GET(request: NextRequest) {
         row.push(`"${story.authorName || 'N/A'}"`, story.authorEmail || 'N/A');
       }
       if (includeContent) {
-        row.push(`"${(story.content || '').replace(/"/g, '""')}"`, story.turnCount || 0);
+        row.push(
+          `"${(story.content || '').replace(/"/g, '""')}"`,
+          story.turnCount || 0
+        );
       }
       if (includeComments) {
         row.push(story.commentCount || 0);
@@ -154,9 +173,11 @@ export async function GET(request: NextRequest) {
         'Content-Disposition': `attachment; filename="stories-bulk-export-${new Date().toISOString().split('T')[0]}.csv"`,
       },
     });
-
   } catch (error) {
     console.error('Error exporting stories:', error);
-    return NextResponse.json({ error: 'Failed to export stories' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to export stories' },
+      { status: 500 }
+    );
   }
 }

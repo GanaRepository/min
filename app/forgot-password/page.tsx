@@ -320,10 +320,10 @@ const ForgotPasswordPage: React.FC = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.8 }}
               >
-                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-2">
+                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl  text-white mb-2">
                   Forgot Your
                 </h1>
-                <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white/80 mb-4 italic">
+                <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl  text-white/80 mb-4 italic">
                   Magic Key?
                 </h2>
                 <p className="text-white/60 text-sm">

@@ -13,7 +13,10 @@ export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     if (!session || session.user?.role !== 'admin') {
-      return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
+      return NextResponse.json(
+        { error: 'Admin access required' },
+        { status: 403 }
+      );
     }
 
     const { searchParams } = new URL(request.url);
@@ -26,11 +29,11 @@ export async function GET(request: NextRequest) {
 
     // UPDATED: Include ALL roles (child, mentor, admin)
     let query: any = {};
-    
+
     if (role && role !== 'all') {
       query.role = role;
     }
-    
+
     if (search) {
       query.$or = [
         { firstName: { $regex: search, $options: 'i' } },
@@ -64,10 +67,12 @@ export async function GET(request: NextRequest) {
         pages: Math.ceil(totalUsers / limit),
       },
     });
-
   } catch (error) {
     console.error('Error fetching users:', error);
-    return NextResponse.json({ error: 'Failed to fetch users' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to fetch users' },
+      { status: 500 }
+    );
   }
 }
 
@@ -76,24 +81,45 @@ export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     if (!session || session.user?.role !== 'admin') {
-      return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
+      return NextResponse.json(
+        { error: 'Admin access required' },
+        { status: 403 }
+      );
     }
 
-    const { firstName, lastName, email, password, role, parentEmail, age, school } = await request.json();
+    const {
+      firstName,
+      lastName,
+      email,
+      password,
+      role,
+      parentEmail,
+      age,
+      school,
+    } = await request.json();
 
     if (!firstName || !lastName || !email || !password || !role) {
-      return NextResponse.json({ error: 'All fields are required' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'All fields are required' },
+        { status: 400 }
+      );
     }
 
     if (role === 'child' && (!age || !school)) {
-      return NextResponse.json({ error: 'Age and school are required for children' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Age and school are required for children' },
+        { status: 400 }
+      );
     }
 
     await connectToDatabase();
 
     const existingUser = await User.findOne({ email: email.toLowerCase() });
     if (existingUser) {
-      return NextResponse.json({ error: 'User with this email already exists' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'User with this email already exists' },
+        { status: 400 }
+      );
     }
 
     const hashedPassword = await bcrypt.hash(password, 12);
@@ -128,7 +154,7 @@ export async function POST(request: NextRequest) {
         language: 'en',
         emailNotifications: true,
         soundEffects: true,
-        autoSave: true
+        autoSave: true,
       };
       userData.lastMonthlyReset = new Date();
       userData.purchaseHistory = [];
@@ -166,20 +192,24 @@ export async function POST(request: NextRequest) {
       };
     }
 
- const user = new User(userData);
-const savedUser = await user.save();
+    const user = new User(userData);
+    const savedUser = await user.save();
 
-// Use select to exclude password field
-const userWithoutPassword = await User.findById(savedUser._id).select('-password').lean();
+    // Use select to exclude password field
+    const userWithoutPassword = await User.findById(savedUser._id)
+      .select('-password')
+      .lean();
 
-return NextResponse.json({
-  success: true,
-  user: userWithoutPassword,
-  message: `${role} created successfully`,
-});
-
+    return NextResponse.json({
+      success: true,
+      user: userWithoutPassword,
+      message: `${role} created successfully`,
+    });
   } catch (error) {
     console.error('Error creating user:', error);
-    return NextResponse.json({ error: 'Failed to create user' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to create user' },
+      { status: 500 }
+    );
   }
 }

@@ -16,7 +16,10 @@ export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     if (!session || session.user.role !== 'admin') {
-      return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
+      return NextResponse.json(
+        { error: 'Admin access required' },
+        { status: 403 }
+      );
     }
 
     const { searchParams } = new URL(request.url);
@@ -43,7 +46,16 @@ export async function GET(request: NextRequest) {
             from: 'mentorassignments',
             let: { mentorId: '$_id' },
             pipeline: [
-              { $match: { $expr: { $and: [{ $eq: ['$mentorId', '$$mentorId'] }, { $eq: ['$isActive', true] }] } } },
+              {
+                $match: {
+                  $expr: {
+                    $and: [
+                      { $eq: ['$mentorId', '$$mentorId'] },
+                      { $eq: ['$isActive', true] },
+                    ],
+                  },
+                },
+              },
             ],
             as: 'activeAssignments',
           },
@@ -79,9 +91,13 @@ export async function GET(request: NextRequest) {
     // Get total stories for each mentor (stories by their assigned students)
     const mentorsWithStats = await Promise.all(
       mentors.map(async (mentor) => {
-        const assignments = await MentorAssignment.find({ mentorId: mentor._id }).select('childId');
+        const assignments = await MentorAssignment.find({
+          mentorId: mentor._id,
+        }).select('childId');
         const studentIds = assignments.map((a) => a.childId);
-        const totalStories = await StorySession.countDocuments({ childId: { $in: studentIds } });
+        const totalStories = await StorySession.countDocuments({
+          childId: { $in: studentIds },
+        });
 
         return {
           ...mentor,
@@ -102,7 +118,10 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error('Error fetching mentors:', error);
-    return NextResponse.json({ error: 'Failed to fetch mentors' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to fetch mentors' },
+      { status: 500 }
+    );
   }
 }
 
@@ -111,7 +130,10 @@ export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     if (!session || session.user.role !== 'admin') {
-      return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
+      return NextResponse.json(
+        { error: 'Admin access required' },
+        { status: 403 }
+      );
     }
 
     const { firstName, lastName, email, password } = await request.json();
@@ -146,7 +168,7 @@ export async function POST(request: NextRequest) {
       password: hashedPassword,
       role: 'mentor',
       isActive: true,
-  // isVerified: true, (removed)
+      // isVerified: true, (removed)
       preferences: {
         theme: 'light',
         language: 'en',
@@ -172,6 +194,9 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error('Error creating mentor:', error);
-    return NextResponse.json({ error: 'Failed to create mentor' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to create mentor' },
+      { status: 500 }
+    );
   }
 }

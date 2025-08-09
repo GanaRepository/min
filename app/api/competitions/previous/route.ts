@@ -15,11 +15,13 @@ export async function GET(req: NextRequest) {
       isActive: false,
       isArchived: true,
     })
-    .sort({ year: -1, month: -1 })
-    .limit(limit)
-    .skip((page - 1) * limit)
-    .populate('winners.childId', 'firstName lastName')
-    .select('month year phase totalSubmissions totalParticipants winners createdAt');
+      .sort({ year: -1, month: -1 })
+      .limit(limit)
+      .skip((page - 1) * limit)
+      .populate('winners.childId', 'firstName lastName')
+      .select(
+        'month year phase totalSubmissions totalParticipants winners createdAt'
+      );
 
     const totalCount = await Competition.countDocuments({
       isActive: false,
@@ -37,7 +39,6 @@ export async function GET(req: NextRequest) {
         hasPrev: page > 1,
       },
     });
-
   } catch (error) {
     console.error('Error fetching previous competitions:', error);
     return NextResponse.json(

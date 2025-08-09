@@ -5,13 +5,7 @@ import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
-import {
-  ArrowLeft,
-  Save,
-  BookOpen,
-  User,
-  BarChart3,
-} from 'lucide-react';
+import { ArrowLeft, Save, BookOpen, User, BarChart3 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface EditStoryData {
@@ -34,7 +28,7 @@ export default function EditStory() {
   const [story, setStory] = useState<EditStoryData | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [errors, setErrors] = useState<{[key: string]: string}>({});
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const [formData, setFormData] = useState({
     title: '',
@@ -59,7 +53,7 @@ export default function EditStory() {
     try {
       const response = await fetch(`/api/admin/stories/${storyId}`);
       const data = await response.json();
-      
+
       if (data.success) {
         setStory(data.story);
         setFormData({
@@ -117,14 +111,14 @@ export default function EditStory() {
   };
 
   const handleInputChange = (field: string, value: any) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
     if (errors[field]) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
-        [field]: ''
+        [field]: '',
       }));
     }
   };
@@ -175,7 +169,10 @@ export default function EditStory() {
               Story Title
             </label>
             <div className="relative">
-              <BookOpen size={20} className="absolute left-3 top-3 text-gray-400" />
+              <BookOpen
+                size={20}
+                className="absolute left-3 top-3 text-gray-400"
+              />
               <input
                 type="text"
                 required
@@ -214,24 +211,36 @@ export default function EditStory() {
               Max AI Calls
             </label>
             <div className="relative">
-              <BarChart3 size={20} className="absolute left-3 top-3 text-gray-400" />
+              <BarChart3
+                size={20}
+                className="absolute left-3 top-3 text-gray-400"
+              />
               <input
                 type="number"
                 min="1"
                 max="200"
                 value={formData.maxApiCalls}
-                onChange={(e) => handleInputChange('maxApiCalls', parseInt(e.target.value) || 50)}
+                onChange={(e) =>
+                  handleInputChange(
+                    'maxApiCalls',
+                    parseInt(e.target.value) || 50
+                  )
+                }
                 className="w-full pl-10 pr-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Maximum AI calls allowed"
               />
             </div>
-            <p className="text-gray-400 text-sm mt-1">Number of AI interactions allowed for this story</p>
+            <p className="text-gray-400 text-sm mt-1">
+              Number of AI interactions allowed for this story
+            </p>
           </div>
 
           {/* Competition Settings */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-white">Competition Settings</h3>
-            
+            <h3 className="text-lg font-semibold text-white">
+              Competition Settings
+            </h3>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">
@@ -242,7 +251,12 @@ export default function EditStory() {
                   min="0"
                   max="100"
                   value={formData.competitionScore}
-                  onChange={(e) => handleInputChange('competitionScore', parseInt(e.target.value) || 0)}
+                  onChange={(e) =>
+                    handleInputChange(
+                      'competitionScore',
+                      parseInt(e.target.value) || 0
+                    )
+                  }
                   className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="Competition score (0-100)"
                 />
@@ -256,7 +270,12 @@ export default function EditStory() {
                   type="number"
                   min="0"
                   value={formData.competitionRank}
-                  onChange={(e) => handleInputChange('competitionRank', parseInt(e.target.value) || 0)}
+                  onChange={(e) =>
+                    handleInputChange(
+                      'competitionRank',
+                      parseInt(e.target.value) || 0
+                    )
+                  }
                   className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="Competition rank"
                 />
@@ -271,12 +290,16 @@ export default function EditStory() {
                 <input
                   type="checkbox"
                   checked={formData.isPublished}
-                  onChange={(e) => handleInputChange('isPublished', e.target.checked)}
+                  onChange={(e) =>
+                    handleInputChange('isPublished', e.target.checked)
+                  }
                   className="w-5 h-5 bg-gray-700 border-gray-600 rounded focus:ring-blue-500 focus:ring-2"
                 />
                 <span className="text-white font-medium">Published</span>
               </label>
-              <p className="text-gray-400 text-sm mt-1">Story is publicly visible</p>
+              <p className="text-gray-400 text-sm mt-1">
+                Story is publicly visible
+              </p>
             </div>
 
             <div>
@@ -284,12 +307,21 @@ export default function EditStory() {
                 <input
                   type="checkbox"
                   checked={formData.submittedToCompetition}
-                  onChange={(e) => handleInputChange('submittedToCompetition', e.target.checked)}
+                  onChange={(e) =>
+                    handleInputChange(
+                      'submittedToCompetition',
+                      e.target.checked
+                    )
+                  }
                   className="w-5 h-5 bg-gray-700 border-gray-600 rounded focus:ring-blue-500 focus:ring-2"
                 />
-                <span className="text-white font-medium">Competition Entry</span>
+                <span className="text-white font-medium">
+                  Competition Entry
+                </span>
               </label>
-              <p className="text-gray-400 text-sm mt-1">Story is entered in competition</p>
+              <p className="text-gray-400 text-sm mt-1">
+                Story is entered in competition
+              </p>
             </div>
           </div>
 

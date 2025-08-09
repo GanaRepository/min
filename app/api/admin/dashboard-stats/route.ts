@@ -13,13 +13,20 @@ export async function GET() {
   try {
     const session = await getServerSession(authOptions);
     if (!session || session.user.role !== 'admin') {
-      return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
+      return NextResponse.json(
+        { error: 'Admin access required' },
+        { status: 403 }
+      );
     }
 
     await connectToDatabase();
 
     const now = new Date();
-    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const todayStart = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate()
+    );
     const weekStart = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
     const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
 
@@ -33,52 +40,52 @@ export async function GET() {
       activeUsersToday,
       newUsersThisWeek,
       newUsersThisMonth,
-      
+
       // Story statistics
       totalStories,
       storiesThisMonth,
       storiesThisWeek,
       completedStories,
-      
+
       // Comment statistics
       totalComments,
       commentsThisWeek,
       unresolvedComments,
-      
+
       // Revenue data
-      revenueData
+      revenueData,
     ] = await Promise.all([
       // UPDATED: Count ALL users including admin
-      User.countDocuments({ 
-        isActive: true 
-      }),
-      
-      User.countDocuments({ 
-        role: 'child',
-        isActive: true 
-      }),
-      
-      User.countDocuments({ 
-        role: 'mentor',
-        isActive: true 
-      }),
-      
-      User.countDocuments({ 
-        role: 'admin',
-        isActive: true 
-      }),
-      
       User.countDocuments({
         isActive: true,
-        lastActiveDate: { $gte: todayStart }
       }),
-      
+
       User.countDocuments({
-        createdAt: { $gte: weekStart }
+        role: 'child',
+        isActive: true,
       }),
-      
+
       User.countDocuments({
-        createdAt: { $gte: monthStart }
+        role: 'mentor',
+        isActive: true,
+      }),
+
+      User.countDocuments({
+        role: 'admin',
+        isActive: true,
+      }),
+
+      User.countDocuments({
+        isActive: true,
+        lastActiveDate: { $gte: todayStart },
+      }),
+
+      User.countDocuments({
+        createdAt: { $gte: weekStart },
+      }),
+
+      User.countDocuments({
+        createdAt: { $gte: monthStart },
       }),
 
       StorySession.countDocuments({}),
@@ -89,10 +96,15 @@ export async function GET() {
       StoryComment.countDocuments({}),
       StoryComment.countDocuments({ createdAt: { $gte: weekStart } }),
       StoryComment.countDocuments({ isResolved: false }),
-      
+
       User.aggregate([
         { $match: { role: 'child' } },
-        { $unwind: { path: '$purchaseHistory', preserveNullAndEmptyArrays: true } },
+        {
+          $unwind: {
+            path: '$purchaseHistory',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
         {
           $group: {
             _id: null,
@@ -102,13 +114,13 @@ export async function GET() {
                 $cond: [
                   { $gte: ['$purchaseHistory.purchaseDate', monthStart] },
                   '$purchaseHistory.amount',
-                  0
-                ]
-              }
-            }
-          }
-        }
-      ])
+                  0,
+                ],
+              },
+            },
+          },
+        },
+      ]),
     ]);
 
     const revenue = revenueData[0] || { totalRevenue: 0, monthlyRevenue: 0 };
@@ -120,17 +132,17 @@ export async function GET() {
       adminCount,
       activeUsersToday,
       newUsersThisWeek,
-      newUsersThisMonth
+      newUsersThisMonth,
     });
 
     return NextResponse.json({
       success: true,
       stats: {
         users: {
-          total: totalUsers,           // NOW includes admin
-          children: childrenCount,     // Children count
-          mentors: mentorsCount,       // Mentors count
-          admins: adminCount,          // NEW: Admin count
+          total: totalUsers, // NOW includes admin
+          children: childrenCount, // Children count
+          mentors: mentorsCount, // Mentors count
+          admins: adminCount, // NEW: Admin count
           activeToday: activeUsersToday,
           newThisWeek: newUsersThisWeek,
           newThisMonth: newUsersThisMonth,
@@ -140,7 +152,10 @@ export async function GET() {
           thisMonth: storiesThisMonth,
           thisWeek: storiesThisWeek,
           completed: completedStories,
-          completionRate: totalStories > 0 ? Math.round((completedStories / totalStories) * 100) : 0,
+          completionRate:
+            totalStories > 0
+              ? Math.round((completedStories / totalStories) * 100)
+              : 0,
         },
         comments: {
           total: totalComments,
@@ -154,9 +169,11 @@ export async function GET() {
         },
       },
     });
-
   } catch (error) {
     console.error('Error fetching dashboard stats:', error);
-    return NextResponse.json({ error: 'Failed to fetch dashboard stats' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to fetch dashboard stats' },
+      { status: 500 }
+    );
   }
 }

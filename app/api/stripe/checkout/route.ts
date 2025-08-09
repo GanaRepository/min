@@ -16,7 +16,10 @@ export async function POST(req: NextRequest) {
     // Check environment variables first
     if (!process.env.STRIPE_SECRET_KEY) {
       console.error('❌ STRIPE_SECRET_KEY not configured');
-      return NextResponse.json({ error: 'Stripe not configured' }, { status: 500 });
+      return NextResponse.json(
+        { error: 'Stripe not configured' },
+        { status: 500 }
+      );
     }
 
     const session = await getServerSession(authOptions);
@@ -53,7 +56,10 @@ export async function POST(req: NextRequest) {
     switch (productType) {
       case 'story_pack':
         if (!process.env.STRIPE_STORY_PACK_PRICE_ID) {
-          return NextResponse.json({ error: 'Story pack not configured' }, { status: 500 });
+          return NextResponse.json(
+            { error: 'Story pack not configured' },
+            { status: 500 }
+          );
         }
         priceId = process.env.STRIPE_STORY_PACK_PRICE_ID;
         productName = 'Story Pack - 5 Stories + 5 Assessments';
@@ -64,9 +70,12 @@ export async function POST(req: NextRequest) {
 
       case 'story_publication':
         if (!process.env.STRIPE_PUBLICATION_PRICE_ID) {
-          return NextResponse.json({ error: 'Publication not configured' }, { status: 500 });
+          return NextResponse.json(
+            { error: 'Publication not configured' },
+            { status: 500 }
+          );
         }
-        
+
         if (!storyId) {
           return NextResponse.json(
             { error: 'Story ID required for publication' },
@@ -118,19 +127,23 @@ export async function POST(req: NextRequest) {
       success_url: `${process.env.NEXTAUTH_URL}/children-dashboard?purchase=success&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${process.env.NEXTAUTH_URL}/pricing?purchase=cancelled`,
       billing_address_collection: 'required',
-      shipping_address_collection: productType === 'story_publication' ? {
-        allowed_countries: ['US', 'CA', 'GB', 'AU'],
-      } : undefined,
+      shipping_address_collection:
+        productType === 'story_publication'
+          ? {
+              allowed_countries: ['US', 'CA', 'GB', 'AU'],
+            }
+          : undefined,
     });
 
-    console.log(`✅ Stripe checkout session created: ${checkoutSession.id} for ${productName}`);
+    console.log(
+      `✅ Stripe checkout session created: ${checkoutSession.id} for ${productName}`
+    );
 
     return NextResponse.json({
       success: true,
       checkoutUrl: checkoutSession.url,
       sessionId: checkoutSession.id,
     });
-
   } catch (error) {
     console.error('❌ Stripe checkout error:', error);
     return NextResponse.json(

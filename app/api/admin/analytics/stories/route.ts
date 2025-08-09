@@ -12,7 +12,10 @@ export async function GET() {
   try {
     const session = await getServerSession(authOptions);
     if (!session || session.user.role !== 'admin') {
-      return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
+      return NextResponse.json(
+        { error: 'Admin access required' },
+        { status: 403 }
+      );
     }
 
     await connectToDatabase();
@@ -22,26 +25,30 @@ export async function GET() {
       {
         $match: {
           createdAt: {
-            $gte: new Date(new Date().getFullYear(), new Date().getMonth() - 11, 1)
-          }
-        }
+            $gte: new Date(
+              new Date().getFullYear(),
+              new Date().getMonth() - 11,
+              1
+            ),
+          },
+        },
       },
       {
         $group: {
           _id: {
             year: { $year: '$createdAt' },
-            month: { $month: '$createdAt' }
+            month: { $month: '$createdAt' },
           },
           total: { $sum: 1 },
           completed: {
-            $sum: { $cond: [{ $eq: ['$status', 'completed'] }, 1, 0] }
+            $sum: { $cond: [{ $eq: ['$status', 'completed'] }, 1, 0] },
           },
           active: {
-            $sum: { $cond: [{ $eq: ['$status', 'active'] }, 1, 0] }
-          }
-        }
+            $sum: { $cond: [{ $eq: ['$status', 'active'] }, 1, 0] },
+          },
+        },
       },
-      { $sort: { '_id.year': 1, '_id.month': 1 } }
+      { $sort: { '_id.year': 1, '_id.month': 1 } },
     ]);
 
     // Word count analysis
@@ -53,9 +60,9 @@ export async function GET() {
           avgWords: { $avg: '$totalWords' },
           minWords: { $min: '$totalWords' },
           maxWords: { $max: '$totalWords' },
-          totalWords: { $sum: '$totalWords' }
-        }
-      }
+          totalWords: { $sum: '$totalWords' },
+        },
+      },
     ]);
 
     // Most popular story elements
@@ -63,21 +70,21 @@ export async function GET() {
       { $match: { elements: { $exists: true } } },
       {
         $project: {
-          elementsArray: { $objectToArray: '$elements' }
-        }
+          elementsArray: { $objectToArray: '$elements' },
+        },
       },
       { $unwind: '$elementsArray' },
       {
         $group: {
           _id: {
             type: '$elementsArray.k',
-            value: '$elementsArray.v'
+            value: '$elementsArray.v',
           },
-          count: { $sum: 1 }
-        }
+          count: { $sum: 1 },
+        },
       },
       { $sort: { count: -1 } },
-      { $limit: 20 }
+      { $limit: 20 },
     ]);
 
     // Top stories by engagement
@@ -97,9 +104,11 @@ export async function GET() {
         topStories,
       },
     });
-
   } catch (error) {
     console.error('Error fetching story analytics:', error);
-    return NextResponse.json({ error: 'Failed to fetch story analytics' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to fetch story analytics' },
+      { status: 500 }
+    );
   }
 }

@@ -44,9 +44,8 @@ export async function GET() {
 
     return NextResponse.json({
       success: true,
-      limits
+      limits,
     });
-
   } catch (error) {
     console.error('Error fetching subscription limits:', error);
     return NextResponse.json(

@@ -11,7 +11,10 @@ export async function GET() {
   try {
     const session = await getServerSession(authOptions);
     if (!session || session.user?.role !== 'admin') {
-      return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
+      return NextResponse.json(
+        { error: 'Admin access required' },
+        { status: 403 }
+      );
     }
 
     await connectToDatabase();
@@ -23,46 +26,56 @@ export async function GET() {
       {
         $match: {
           'purchaseHistory.purchaseDate': {
-            $gte: new Date(new Date().getFullYear(), new Date().getMonth() - 11, 1)
-          }
-        }
+            $gte: new Date(
+              new Date().getFullYear(),
+              new Date().getMonth() - 11,
+              1
+            ),
+          },
+        },
       },
       {
         $group: {
           _id: {
             year: { $year: '$purchaseHistory.purchaseDate' },
             month: { $month: '$purchaseHistory.purchaseDate' },
-            type: '$purchaseHistory.type'
+            type: '$purchaseHistory.type',
           },
           revenue: { $sum: '$purchaseHistory.amount' },
-          count: { $sum: 1 }
-        }
+          count: { $sum: 1 },
+        },
       },
-      { $sort: { '_id.year': 1, '_id.month': 1 } }
+      { $sort: { '_id.year': 1, '_id.month': 1 } },
     ]);
 
     // Customer lifetime value
     const customerLTV = await User.aggregate([
       { $match: { role: 'child' } },
-      { $unwind: { path: '$purchaseHistory', preserveNullAndEmptyArrays: true } },
+      {
+        $unwind: { path: '$purchaseHistory', preserveNullAndEmptyArrays: true },
+      },
       {
         $group: {
           _id: '$_id',
           totalSpent: { $sum: { $ifNull: ['$purchaseHistory.amount', 0] } },
-          purchaseCount: { $sum: { $cond: [{ $ne: ['$purchaseHistory', null] }, 1, 0] } },
+          purchaseCount: {
+            $sum: { $cond: [{ $ne: ['$purchaseHistory', null] }, 1, 0] },
+          },
           firstPurchase: { $min: '$purchaseHistory.purchaseDate' },
-          lastPurchase: { $max: '$purchaseHistory.purchaseDate' }
-        }
+          lastPurchase: { $max: '$purchaseHistory.purchaseDate' },
+        },
       },
       {
         $group: {
           _id: null,
           avgLTV: { $avg: '$totalSpent' },
           avgPurchases: { $avg: '$purchaseCount' },
-          payingCustomers: { $sum: { $cond: [{ $gt: ['$purchaseCount', 0] }, 1, 0] } },
-          totalCustomers: { $sum: 1 }
-        }
-      }
+          payingCustomers: {
+            $sum: { $cond: [{ $gt: ['$purchaseCount', 0] }, 1, 0] },
+          },
+          totalCustomers: { $sum: 1 },
+        },
+      },
     ]);
 
     return NextResponse.json({
@@ -72,9 +85,11 @@ export async function GET() {
         customerLTV: customerLTV[0] || {},
       },
     });
-
   } catch (error) {
     console.error('Error fetching revenue stats:', error);
-    return NextResponse.json({ error: 'Failed to fetch revenue stats' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to fetch revenue stats' },
+      { status: 500 }
+    );
   }
 }

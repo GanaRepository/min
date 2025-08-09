@@ -18,7 +18,7 @@ export async function GET(
 
     const storySession = await StorySession.findOne({
       _id: params.sessionId,
-      childId: session.user.id
+      childId: session.user.id,
     });
 
     if (!storySession) {
@@ -26,7 +26,10 @@ export async function GET(
     }
 
     if (!storySession.assessment) {
-      return NextResponse.json({ error: 'No assessment found' }, { status: 404 });
+      return NextResponse.json(
+        { error: 'No assessment found' },
+        { status: 404 }
+      );
     }
 
     return NextResponse.json({
@@ -48,14 +51,17 @@ export async function GET(
           creativityScore: storySession.assessment.creativityScore || 0,
           vocabularyScore: storySession.assessment.vocabularyScore || 0,
           structureScore: storySession.assessment.structureScore || 0,
-          characterDevelopmentScore: storySession.assessment.characterDevelopmentScore || 0,
-          plotDevelopmentScore: storySession.assessment.plotDevelopmentScore || 0,
+          characterDevelopmentScore:
+            storySession.assessment.characterDevelopmentScore || 0,
+          plotDevelopmentScore:
+            storySession.assessment.plotDevelopmentScore || 0,
           overallScore: storySession.assessment.overallScore || 0,
           readingLevel: storySession.assessment.readingLevel || 'Not assessed',
           feedback: storySession.assessment.feedback || '',
           strengths: storySession.assessment.strengths || [],
           improvements: storySession.assessment.improvements || [],
-          educationalInsights: storySession.assessment.educationalInsights || '',
+          educationalInsights:
+            storySession.assessment.educationalInsights || '',
           plagiarismScore: storySession.assessment.plagiarismScore || 0,
           aiDetectionScore: storySession.assessment.aiDetectionScore || 0,
           integrityRisk: storySession.assessment.integrityRisk || 'low',
@@ -63,14 +69,16 @@ export async function GET(
             originalityScore: 100,
             plagiarismScore: 0,
             aiDetectionScore: 0,
-            integrityRisk: 'low'
+            integrityRisk: 'low',
           },
-          assessmentDate: storySession.assessment.assessmentDate || storySession.lastAssessedAt || new Date().toISOString(),
+          assessmentDate:
+            storySession.assessment.assessmentDate ||
+            storySession.lastAssessedAt ||
+            new Date().toISOString(),
           assessmentVersion: storySession.assessment.assessmentVersion || '2.0',
         },
-      }
+      },
     });
-
   } catch (error) {
     console.error('Error fetching story assessment:', error);
     return NextResponse.json(

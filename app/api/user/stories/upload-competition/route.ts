@@ -21,7 +21,9 @@ export async function POST(request: NextRequest) {
     await connectToDatabase();
 
     // Check competition eligibility
-    const competitionCheck = await UsageManager.canEnterCompetition(session.user.id);
+    const competitionCheck = await UsageManager.canEnterCompetition(
+      session.user.id
+    );
     if (!competitionCheck.allowed) {
       return NextResponse.json(
         { error: competitionCheck.reason },
@@ -61,8 +63,9 @@ export async function POST(request: NextRequest) {
           { status: 400 }
         );
       }
-      
-      if (file.size > 1024 * 1024) { // 1MB limit
+
+      if (file.size > 1024 * 1024) {
+        // 1MB limit
         return NextResponse.json(
           { error: 'File size must be less than 1MB' },
           { status: 400 }
@@ -113,10 +116,7 @@ export async function POST(request: NextRequest) {
     // Get user for story number generation
     const user = await User.findById(session.user.id);
     if (!user) {
-      return NextResponse.json(
-        { error: 'User not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
     // Get next story number
@@ -140,18 +140,20 @@ export async function POST(request: NextRequest) {
       status: 'completed',
       aiOpening: storyContent, // Store the uploaded content
       completedAt: new Date(),
-      
+
       // Publication fields
       isPublished: true, // Auto-publish for competition
       publicationDate: new Date(),
       competitionEligible: true,
-      
+
       // Competition entry using actual schema structure
-      competitionEntries: [{
-        competitionId: currentCompetition._id,
-        submittedAt: new Date(),
-        phase: 'submission'
-      }]
+      competitionEntries: [
+        {
+          competitionId: currentCompetition._id,
+          submittedAt: new Date(),
+          phase: 'submission',
+        },
+      ],
     });
 
     // Increment competition entry counter
@@ -169,13 +171,12 @@ export async function POST(request: NextRequest) {
       },
       message: 'Story uploaded and submitted to competition successfully!',
     });
-
   } catch (error) {
     console.error('Competition upload error:', error);
     return NextResponse.json(
-      { 
+      {
         error: 'Failed to upload story for competition',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        details: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
     );

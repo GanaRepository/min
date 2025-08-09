@@ -15,7 +15,10 @@ export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     if (!session || session.user?.role !== 'admin') {
-      return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
+      return NextResponse.json(
+        { error: 'Admin access required' },
+        { status: 403 }
+      );
     }
 
     const { searchParams } = new URL(request.url);
@@ -39,10 +42,10 @@ export async function GET(request: NextRequest) {
         $or: [
           { email: { $regex: author, $options: 'i' } },
           { firstName: { $regex: author, $options: 'i' } },
-          { lastName: { $regex: author, $options: 'i' } }
-        ]
+          { lastName: { $regex: author, $options: 'i' } },
+        ],
       }).select('_id');
-      query.childId = { $in: authorUsers.map(u => u._id) };
+      query.childId = { $in: authorUsers.map((u) => u._id) };
     }
 
     console.log('Stories API Query:', query); // Debug log
@@ -63,7 +66,10 @@ export async function GET(request: NextRequest) {
       stories.map(async (story) => {
         const [commentCount, unresolvedComments] = await Promise.all([
           StoryComment.countDocuments({ storyId: story._id }),
-          StoryComment.countDocuments({ storyId: story._id, isResolved: false }),
+          StoryComment.countDocuments({
+            storyId: story._id,
+            isResolved: false,
+          }),
         ]);
 
         return {
@@ -89,8 +95,10 @@ export async function GET(request: NextRequest) {
       StorySession.countDocuments({ status: 'completed' }),
       StorySession.countDocuments({ status: 'active' }),
       StorySession.countDocuments({ status: 'paused' }),
-      StoryComment.distinct('storyId').then(ids => ids.length),
-      StoryComment.distinct('storyId', { isResolved: false }).then(ids => ids.length),
+      StoryComment.distinct('storyId').then((ids) => ids.length),
+      StoryComment.distinct('storyId', { isResolved: false }).then(
+        (ids) => ids.length
+      ),
       StoryComment.countDocuments({}),
       StoryComment.countDocuments({ isResolved: false }),
     ]);
@@ -118,9 +126,11 @@ export async function GET(request: NextRequest) {
         pages: Math.ceil(totalStories / limit),
       },
     });
-
   } catch (error) {
     console.error('Error fetching stories:', error);
-    return NextResponse.json({ error: 'Failed to fetch stories' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to fetch stories' },
+      { status: 500 }
+    );
   }
 }

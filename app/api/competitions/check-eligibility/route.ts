@@ -12,14 +12,15 @@ export async function GET() {
     }
 
     const eligibility = await competitionManager.canUserSubmit(session.user.id);
-    const userEntries = await competitionManager.getUserCompetitionEntries(session.user.id);
-    
+    const userEntries = await competitionManager.getUserCompetitionEntries(
+      session.user.id
+    );
+
     return NextResponse.json({
       success: true,
       ...eligibility,
       userEntries,
     });
-
   } catch (error) {
     console.error('Error checking competition eligibility:', error);
     return NextResponse.json(

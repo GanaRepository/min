@@ -19,7 +19,7 @@ export async function GET(
 
     const story = await StorySession.findOne({
       _id: params.storyId,
-      childId: session.user.id
+      childId: session.user.id,
     });
 
     if (!story) {
@@ -32,12 +32,13 @@ export async function GET(
       content = story.aiOpening;
     } else {
       // Get turns for collaborative stories
-      const turns = await Turn.find({ sessionId: params.storyId })
-        .sort({ turnNumber: 1 });
-      
+      const turns = await Turn.find({ sessionId: params.storyId }).sort({
+        turnNumber: 1,
+      });
+
       content = turns
-        .map(turn => turn.childInput || turn.aiResponse || '')
-        .filter(text => text.trim())
+        .map((turn) => turn.childInput || turn.aiResponse || '')
+        .filter((text) => text.trim())
         .join('\n\n');
     }
 
@@ -61,9 +62,8 @@ export async function GET(
 
     return NextResponse.json({
       success: true,
-      story: storyData
+      story: storyData,
     });
-
   } catch (error) {
     console.error('Error fetching story:', error);
     return NextResponse.json(

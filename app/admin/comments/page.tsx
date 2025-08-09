@@ -47,7 +47,7 @@ interface Pagination {
 export default function CommentsPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
-  
+
   const [comments, setComments] = useState<Comment[]>([]);
   const [pagination, setPagination] = useState<Pagination | null>(null);
   const [loading, setLoading] = useState(true);
@@ -71,7 +71,7 @@ export default function CommentsPage() {
         page: page.toString(),
         limit: '20',
       });
-      
+
       if (resolvedFilter !== 'all') {
         params.append('resolved', resolvedFilter);
       }
@@ -93,7 +93,10 @@ export default function CommentsPage() {
     }
   };
 
-  const updateCommentStatus = async (commentId: string, isResolved: boolean) => {
+  const updateCommentStatus = async (
+    commentId: string,
+    isResolved: boolean
+  ) => {
     try {
       const response = await fetch(`/api/admin/comments/${commentId}`, {
         method: 'PATCH',
@@ -106,9 +109,11 @@ export default function CommentsPage() {
       const data = await response.json();
 
       if (data.success) {
-        setComments(comments.map(comment => 
-          comment._id === commentId ? { ...comment, isResolved } : comment
-        ));
+        setComments(
+          comments.map((comment) =>
+            comment._id === commentId ? { ...comment, isResolved } : comment
+          )
+        );
       } else {
         alert('Failed to update comment status');
       }
@@ -120,20 +125,29 @@ export default function CommentsPage() {
 
   const getCommentTypeColor = (type: string) => {
     switch (type) {
-      case 'praise': return 'bg-green-100 text-green-800';
-      case 'suggestion': return 'bg-blue-100 text-blue-800';
-      case 'correction': return 'bg-orange-100 text-orange-800';
-      case 'question': return 'bg-purple-100 text-purple-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'praise':
+        return 'bg-green-100 text-green-800';
+      case 'suggestion':
+        return 'bg-blue-100 text-blue-800';
+      case 'correction':
+        return 'bg-orange-100 text-orange-800';
+      case 'question':
+        return 'bg-purple-100 text-purple-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
   const getRoleColor = (role: string) => {
     switch (role) {
-      case 'admin': return 'bg-red-100 text-red-800';
-      case 'mentor': return 'bg-purple-100 text-purple-800';
-      case 'child': return 'bg-green-100 text-green-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'admin':
+        return 'bg-red-100 text-red-800';
+      case 'mentor':
+        return 'bg-purple-100 text-purple-800';
+      case 'child':
+        return 'bg-green-100 text-green-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
@@ -174,7 +188,11 @@ export default function CommentsPage() {
                       : 'text-gray-300 hover:text-white'
                   }`}
                 >
-                  {status === 'all' ? 'All' : status === 'true' ? 'Resolved' : 'Unresolved'}
+                  {status === 'all'
+                    ? 'All'
+                    : status === 'true'
+                      ? 'Resolved'
+                      : 'Unresolved'}
                 </button>
               ))}
             </div>
@@ -183,19 +201,21 @@ export default function CommentsPage() {
           {/* Type Filter */}
           <div className="flex items-center gap-2">
             <div className="flex bg-gray-700 rounded-lg p-1">
-              {['all', 'praise', 'suggestion', 'correction', 'question'].map((type) => (
-                <button
-                  key={type}
-                  onClick={() => setTypeFilter(type)}
-                  className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
-                    typeFilter === type
-                      ? 'bg-purple-600 text-white'
-                      : 'text-gray-300 hover:text-white'
-                  }`}
-                >
-                  {type.charAt(0).toUpperCase() + type.slice(1)}
-                </button>
-              ))}
+              {['all', 'praise', 'suggestion', 'correction', 'question'].map(
+                (type) => (
+                  <button
+                    key={type}
+                    onClick={() => setTypeFilter(type)}
+                    className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
+                      typeFilter === type
+                        ? 'bg-purple-600 text-white'
+                        : 'text-gray-300 hover:text-white'
+                    }`}
+                  >
+                    {type.charAt(0).toUpperCase() + type.slice(1)}
+                  </button>
+                )
+              )}
             </div>
           </div>
         </div>
@@ -216,7 +236,8 @@ export default function CommentsPage() {
                 <div className="flex items-center space-x-3 mb-3">
                   <div className="w-10 h-10 bg-gray-600 rounded-full flex items-center justify-center">
                     <span className="text-sm font-medium text-white">
-                      {comment.authorId.firstName[0]}{comment.authorId.lastName[0]}
+                      {comment.authorId.firstName[0]}
+                      {comment.authorId.lastName[0]}
                     </span>
                   </div>
                   <div>
@@ -224,17 +245,23 @@ export default function CommentsPage() {
                       <h4 className="text-white font-medium">
                         {comment.authorId.firstName} {comment.authorId.lastName}
                       </h4>
-                      <span className={`px-2 py-1 text-xs rounded-full ${getRoleColor(comment.authorId.role)}`}>
+                      <span
+                        className={`px-2 py-1 text-xs rounded-full ${getRoleColor(comment.authorId.role)}`}
+                      >
                         {comment.authorId.role}
                       </span>
-                      <span className={`px-2 py-1 text-xs rounded-full ${getCommentTypeColor(comment.commentType)}`}>
+                      <span
+                        className={`px-2 py-1 text-xs rounded-full ${getCommentTypeColor(comment.commentType)}`}
+                      >
                         {comment.commentType}
                       </span>
                     </div>
-                    <p className="text-gray-400 text-sm">{comment.authorId.email}</p>
+                    <p className="text-gray-400 text-sm">
+                      {comment.authorId.email}
+                    </p>
                   </div>
                 </div>
-                
+
                 <div className="bg-gray-700/50 rounded-lg p-4 mb-4">
                   <p className="text-white">{comment.content}</p>
                 </div>
@@ -258,21 +285,23 @@ export default function CommentsPage() {
 
               {/* Actions */}
               <div className="flex flex-col items-end space-y-2 ml-6">
-                <span className={`px-3 py-1 text-sm rounded-full ${
-                  comment.isResolved 
-                    ? 'bg-green-100 text-green-800' 
-                    : 'bg-red-100 text-red-800'
-                }`}>
+                <span
+                  className={`px-3 py-1 text-sm rounded-full ${
+                    comment.isResolved
+                      ? 'bg-green-100 text-green-800'
+                      : 'bg-red-100 text-red-800'
+                  }`}
+                >
                   {comment.isResolved ? 'Resolved' : 'Unresolved'}
                 </span>
-                
+
                 <div className="flex items-center space-x-2">
                   <Link href={`/admin/comments/${comment._id}`}>
                     <button className="p-2 text-gray-400 hover:text-blue-400 hover:bg-gray-700 rounded-lg transition-colors">
                       <Eye size={16} />
                     </button>
                   </Link>
-                  
+
                   {!comment.isResolved ? (
                     <button
                       onClick={() => updateCommentStatus(comment._id, true)}
@@ -301,12 +330,13 @@ export default function CommentsPage() {
       {comments.length === 0 && !loading && (
         <div className="text-center py-12">
           <MessageSquare size={48} className="text-gray-600 mx-auto mb-4" />
-          <h3 className="text-xl font-medium text-gray-400 mb-2">No comments found</h3>
+          <h3 className="text-xl font-medium text-gray-400 mb-2">
+            No comments found
+          </h3>
           <p className="text-gray-500">
             {resolvedFilter !== 'all' || typeFilter !== 'all'
               ? 'Try adjusting your filters'
-              : 'Comments will appear here as users and mentors interact'
-            }
+              : 'Comments will appear here as users and mentors interact'}
           </p>
         </div>
       )}
@@ -321,10 +351,11 @@ export default function CommentsPage() {
           >
             Previous
           </button>
-          
+
           <div className="flex items-center space-x-2">
             {Array.from({ length: Math.min(5, pagination.pages) }, (_, i) => {
-              const pageNum = Math.max(1, Math.min(pagination.pages - 4, page - 2)) + i;
+              const pageNum =
+                Math.max(1, Math.min(pagination.pages - 4, page - 2)) + i;
               return (
                 <button
                   key={pageNum}

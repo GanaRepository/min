@@ -17,7 +17,10 @@ export async function GET(
   try {
     const session = await getServerSession(authOptions);
     if (!session || session.user.role !== 'admin') {
-      return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
+      return NextResponse.json(
+        { error: 'Admin access required' },
+        { status: 403 }
+      );
     }
 
     const { id } = params;
@@ -48,7 +51,10 @@ export async function GET(
     });
   } catch (error) {
     console.error('Error fetching story:', error);
-    return NextResponse.json({ error: 'Failed to fetch story' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to fetch story' },
+      { status: 500 }
+    );
   }
 }
 
@@ -60,7 +66,10 @@ export async function PATCH(
   try {
     const session = await getServerSession(authOptions);
     if (!session || session.user.role !== 'admin') {
-      return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
+      return NextResponse.json(
+        { error: 'Admin access required' },
+        { status: 403 }
+      );
     }
 
     const { id } = params;
@@ -88,7 +97,10 @@ export async function PATCH(
     });
   } catch (error) {
     console.error('Error updating story:', error);
-    return NextResponse.json({ error: 'Failed to update story' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to update story' },
+      { status: 500 }
+    );
   }
 }
 
@@ -100,7 +112,10 @@ export async function DELETE(
   try {
     const session = await getServerSession(authOptions);
     if (!session || session.user.role !== 'admin') {
-      return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
+      return NextResponse.json(
+        { error: 'Admin access required' },
+        { status: 403 }
+      );
     }
 
     const { id } = params;
@@ -124,6 +139,9 @@ export async function DELETE(
     });
   } catch (error) {
     console.error('Error deleting story:', error);
-    return NextResponse.json({ error: 'Failed to delete story' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to delete story' },
+      { status: 500 }
+    );
   }
 }

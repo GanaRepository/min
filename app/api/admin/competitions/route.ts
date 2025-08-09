@@ -11,7 +11,10 @@ export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     if (!session || session.user?.role !== 'admin') {
-      return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
+      return NextResponse.json(
+        { error: 'Admin access required' },
+        { status: 403 }
+      );
     }
 
     const { searchParams } = new URL(request.url);
@@ -40,9 +43,11 @@ export async function GET(request: NextRequest) {
         pages: Math.ceil(totalCompetitions / limit),
       },
     });
-
   } catch (error) {
     console.error('Error fetching competitions:', error);
-    return NextResponse.json({ error: 'Failed to fetch competitions' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to fetch competitions' },
+      { status: 500 }
+    );
   }
 }

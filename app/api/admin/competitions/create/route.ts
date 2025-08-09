@@ -11,29 +11,39 @@ export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     if (!session || session.user?.role !== 'admin') {
-      return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
+      return NextResponse.json(
+        { error: 'Admin access required' },
+        { status: 403 }
+      );
     }
 
-    const { month, year, theme, description, judgingCriteria } = await request.json();
+    const { month, year, theme, description, judgingCriteria } =
+      await request.json();
 
     if (!month || !year) {
-      return NextResponse.json({ 
-        error: 'Month and year are required' 
-      }, { status: 400 });
+      return NextResponse.json(
+        {
+          error: 'Month and year are required',
+        },
+        { status: 400 }
+      );
     }
 
     await connectToDatabase();
 
     // Check if competition already exists
-    const existingCompetition = await Competition.findOne({ 
+    const existingCompetition = await Competition.findOne({
       month: month,
-      year: parseInt(year.toString())
+      year: parseInt(year.toString()),
     });
-    
+
     if (existingCompetition) {
-      return NextResponse.json({ 
-        error: 'Competition already exists for this month/year' 
-      }, { status: 400 });
+      return NextResponse.json(
+        {
+          error: 'Competition already exists for this month/year',
+        },
+        { status: 400 }
+      );
     }
 
     const competition = new Competition({
@@ -67,11 +77,13 @@ export async function POST(request: NextRequest) {
       competition,
       message: `Competition for ${month} ${year} created successfully`,
     });
-
   } catch (error) {
     console.error('Error creating competition:', error);
-    return NextResponse.json({ 
-      error: 'Failed to create competition' 
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        error: 'Failed to create competition',
+      },
+      { status: 500 }
+    );
   }
 }

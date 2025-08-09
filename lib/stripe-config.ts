@@ -28,7 +28,9 @@ export function verifyWebhookSignature(
       process.env.STRIPE_WEBHOOK_SECRET!
     );
   } catch (error) {
-    throw new Error(`Webhook signature verification failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    throw new Error(
+      `Webhook signature verification failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+    );
   }
 }
 

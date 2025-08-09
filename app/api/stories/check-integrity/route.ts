@@ -43,7 +43,10 @@ export async function POST(request: NextRequest) {
     try {
       if (checkType === 'plagiarism' || checkType === 'both') {
         console.log('🔍 Running plagiarism check...');
-        const plagiarismResult = await AssessmentEngine.checkPlagiarismOnly(content, childAge);
+        const plagiarismResult = await AssessmentEngine.checkPlagiarismOnly(
+          content,
+          childAge
+        );
         results.plagiarism = {
           score: plagiarismResult.score,
           riskLevel: plagiarismResult.riskLevel,
@@ -54,7 +57,10 @@ export async function POST(request: NextRequest) {
 
       if (checkType === 'ai' || checkType === 'both') {
         console.log('🤖 Running AI detection...');
-        const aiResult = await AssessmentEngine.checkAIContentOnly(content, childAge);
+        const aiResult = await AssessmentEngine.checkAIContentOnly(
+          content,
+          childAge
+        );
         results.aiDetection = {
           score: aiResult.score,
           likelihood: aiResult.likelihood,
@@ -69,13 +75,25 @@ export async function POST(request: NextRequest) {
       let overallRisk = 'low';
 
       if (results.plagiarism && results.aiDetection) {
-        overallIntegrityScore = Math.min(results.plagiarism.score, results.aiDetection.score);
-        
-        if (results.plagiarism.riskLevel === 'critical' || results.aiDetection.likelihood === 'very_high') {
+        overallIntegrityScore = Math.min(
+          results.plagiarism.score,
+          results.aiDetection.score
+        );
+
+        if (
+          results.plagiarism.riskLevel === 'critical' ||
+          results.aiDetection.likelihood === 'very_high'
+        ) {
           overallRisk = 'critical';
-        } else if (results.plagiarism.riskLevel === 'high' || results.aiDetection.likelihood === 'high') {
+        } else if (
+          results.plagiarism.riskLevel === 'high' ||
+          results.aiDetection.likelihood === 'high'
+        ) {
           overallRisk = 'high';
-        } else if (results.plagiarism.riskLevel === 'medium' || results.aiDetection.likelihood === 'medium') {
+        } else if (
+          results.plagiarism.riskLevel === 'medium' ||
+          results.aiDetection.likelihood === 'medium'
+        ) {
           overallRisk = 'medium';
         }
       } else if (results.plagiarism) {
@@ -83,25 +101,43 @@ export async function POST(request: NextRequest) {
         overallRisk = results.plagiarism.riskLevel;
       } else if (results.aiDetection) {
         overallIntegrityScore = results.aiDetection.score;
-        overallRisk = results.aiDetection.likelihood === 'very_high' ? 'critical' : 
-                     results.aiDetection.likelihood === 'high' ? 'high' :
-                     results.aiDetection.likelihood === 'medium' ? 'medium' : 'low';
+        overallRisk =
+          results.aiDetection.likelihood === 'very_high'
+            ? 'critical'
+            : results.aiDetection.likelihood === 'high'
+              ? 'high'
+              : results.aiDetection.likelihood === 'medium'
+                ? 'medium'
+                : 'low';
       }
 
       // Generate recommendations
       const recommendations = [];
       if (overallIntegrityScore < 70) {
-        recommendations.push("Review your content to ensure it's completely original");
-        recommendations.push("Write in your own words based on your experiences and imagination");
+        recommendations.push(
+          "Review your content to ensure it's completely original"
+        );
+        recommendations.push(
+          'Write in your own words based on your experiences and imagination'
+        );
       }
       if (results.plagiarism?.riskLevel !== 'low') {
-        recommendations.push("Avoid copying text from books, websites, or other sources");
+        recommendations.push(
+          'Avoid copying text from books, websites, or other sources'
+        );
       }
-      if (results.aiDetection?.likelihood !== 'very_low' && results.aiDetection?.likelihood !== 'low') {
-        recommendations.push("Make sure you're writing your own original content, not using AI tools");
+      if (
+        results.aiDetection?.likelihood !== 'very_low' &&
+        results.aiDetection?.likelihood !== 'low'
+      ) {
+        recommendations.push(
+          "Make sure you're writing your own original content, not using AI tools"
+        );
       }
 
-      console.log(`✅ Integrity check completed - Score: ${overallIntegrityScore}%, Risk: ${overallRisk}`);
+      console.log(
+        `✅ Integrity check completed - Score: ${overallIntegrityScore}%, Risk: ${overallRisk}`
+      );
 
       return NextResponse.json({
         success: true,
@@ -112,33 +148,36 @@ export async function POST(request: NextRequest) {
             riskLevel: overallRisk,
             isOriginal: overallIntegrityScore >= 80 && overallRisk === 'low',
             recommendations,
-          }
+          },
         },
         wordCount,
         checkType,
-        message: overallIntegrityScore >= 80 && overallRisk === 'low' 
-          ? 'Content appears to be original!'
-          : 'Content may have integrity issues. Please review the suggestions.',
+        message:
+          overallIntegrityScore >= 80 && overallRisk === 'low'
+            ? 'Content appears to be original!'
+            : 'Content may have integrity issues. Please review the suggestions.',
       });
-
     } catch (checkError) {
       console.error('❌ Integrity check failed:', checkError);
-      
-      return NextResponse.json({
-        success: false,
-        error: 'Integrity check temporarily unavailable',
-        details: checkError instanceof Error ? checkError.message : 'Unknown error',
-        wordCount,
-        checkType,
-      }, { status: 500 });
-    }
 
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Integrity check temporarily unavailable',
+          details:
+            checkError instanceof Error ? checkError.message : 'Unknown error',
+          wordCount,
+          checkType,
+        },
+        { status: 500 }
+      );
+    }
   } catch (error) {
     console.error('❌ Integrity check endpoint error:', error);
     return NextResponse.json(
-      { 
+      {
         error: 'Failed to process integrity check',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        details: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
     );

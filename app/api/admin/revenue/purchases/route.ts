@@ -12,7 +12,10 @@ export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     if (!session || session.user.role !== 'admin') {
-      return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
+      return NextResponse.json(
+        { error: 'Admin access required' },
+        { status: 403 }
+      );
     }
 
     const { searchParams } = new URL(request.url);
@@ -23,29 +26,33 @@ export async function GET(request: NextRequest) {
     await connectToDatabase();
 
     const matchStage: any = { role: 'child' };
-    
+
     const purchases = await User.aggregate([
       { $match: matchStage },
       { $unwind: '$purchaseHistory' },
-      ...(type && type !== 'all' ? [{ $match: { 'purchaseHistory.type': type } }] : []),
+      ...(type && type !== 'all'
+        ? [{ $match: { 'purchaseHistory.type': type } }]
+        : []),
       {
         $project: {
           firstName: 1,
           lastName: 1,
           email: 1,
-          purchase: '$purchaseHistory'
-        }
+          purchase: '$purchaseHistory',
+        },
       },
       { $sort: { 'purchase.purchaseDate': -1 } },
       { $skip: (page - 1) * limit },
-      { $limit: limit }
+      { $limit: limit },
     ]);
 
     const totalPurchases = await User.aggregate([
       { $match: matchStage },
       { $unwind: '$purchaseHistory' },
-      ...(type && type !== 'all' ? [{ $match: { 'purchaseHistory.type': type } }] : []),
-      { $count: 'total' }
+      ...(type && type !== 'all'
+        ? [{ $match: { 'purchaseHistory.type': type } }]
+        : []),
+      { $count: 'total' },
     ]);
 
     const total = totalPurchases[0]?.total || 0;
@@ -60,9 +67,11 @@ export async function GET(request: NextRequest) {
         pages: Math.ceil(total / limit),
       },
     });
-
   } catch (error) {
     console.error('Error fetching purchases:', error);
-    return NextResponse.json({ error: 'Failed to fetch purchases' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to fetch purchases' },
+      { status: 500 }
+    );
   }
 }

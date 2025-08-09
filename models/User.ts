@@ -541,6 +541,6 @@ UserSchema.index({ subscriptionTier: 1, subscriptionStatus: 1 });
 // ...removed isVerified indexes...
 UserSchema.index({ lastMonthlyReset: 1 }); // NEW: For monthly reset queries
 
-export default (mongoose.models && mongoose.models.User)
-  ? mongoose.models.User as mongoose.Model<IUser>
+export default mongoose.models && mongoose.models.User
+  ? (mongoose.models.User as mongoose.Model<IUser>)
   : mongoose.model<IUser>('User', UserSchema);

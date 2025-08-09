@@ -32,12 +32,12 @@ interface Story {
   createdAt: string;
   updatedAt: string;
   completedAt?: string;
-childId: {
-  _id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-};
+  childId: {
+    _id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+  };
   commentCount: number;
   unresolvedComments: number;
   isPublished?: boolean;
@@ -71,8 +71,12 @@ export default function StoriesPage() {
   const [stats, setStats] = useState<StoryStats | null>(null);
   const [pagination, setPagination] = useState<Pagination | null>(null);
   const [loading, setLoading] = useState(true);
-  const [statusFilter, setStatusFilter] = useState(searchParams.get('status') || 'all');
-  const [authorFilter, setAuthorFilter] = useState(searchParams.get('author') || '');
+  const [statusFilter, setStatusFilter] = useState(
+    searchParams.get('status') || 'all'
+  );
+  const [authorFilter, setAuthorFilter] = useState(
+    searchParams.get('author') || ''
+  );
   const [page, setPage] = useState(parseInt(searchParams.get('page') || '1'));
 
   const fetchStories = useCallback(async () => {
@@ -82,7 +86,7 @@ export default function StoriesPage() {
         page: page.toString(),
         limit: '20',
       });
-      
+
       if (statusFilter && statusFilter !== 'all') {
         params.append('status', statusFilter);
       }
@@ -115,7 +119,11 @@ export default function StoriesPage() {
   }, [session, status, router, fetchStories]);
 
   const deleteStory = async (storyId: string, title: string) => {
-    if (!confirm(`Are you sure you want to delete "${title}"? This action cannot be undone.`)) {
+    if (
+      !confirm(
+        `Are you sure you want to delete "${title}"? This action cannot be undone.`
+      )
+    ) {
       return;
     }
 
@@ -127,7 +135,7 @@ export default function StoriesPage() {
       const data = await response.json();
 
       if (data.success) {
-        setStories(stories.filter(story => story._id !== storyId));
+        setStories(stories.filter((story) => story._id !== storyId));
         alert('Story deleted successfully');
       } else {
         alert('Failed to delete story: ' + data.error);
@@ -143,10 +151,10 @@ export default function StoriesPage() {
       const params = new URLSearchParams();
       if (statusFilter !== 'all') params.append('status', statusFilter);
       if (authorFilter) params.append('author', authorFilter);
-      
+
       const response = await fetch(`/api/admin/stories/export?${params}`);
       const blob = await response.blob();
-      
+
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
@@ -162,10 +170,14 @@ export default function StoriesPage() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'completed': return 'bg-green-100 text-green-800';
-      case 'active': return 'bg-blue-100 text-blue-800';
-      case 'paused': return 'bg-yellow-100 text-yellow-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'completed':
+        return 'bg-green-100 text-green-800';
+      case 'active':
+        return 'bg-blue-100 text-blue-800';
+      case 'paused':
+        return 'bg-yellow-100 text-yellow-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
@@ -203,37 +215,52 @@ export default function StoriesPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <div className="bg-gray-800 rounded-xl p-6">
             <div className="flex items-center justify-between mb-2">
-              <h3 className="text-sm font-medium text-gray-400">Total Stories</h3>
+              <h3 className="text-sm font-medium text-gray-400">
+                Total Stories
+              </h3>
               <BookOpen size={20} className="text-blue-400" />
             </div>
-            <p className="text-2xl font-bold text-white">{stats.totalStories}</p>
+            <p className="text-2xl font-bold text-white">
+              {stats.totalStories}
+            </p>
           </div>
-          
+
           <div className="bg-gray-800 rounded-xl p-6">
             <div className="flex items-center justify-between mb-2">
               <h3 className="text-sm font-medium text-gray-400">Completed</h3>
               <BarChart3 size={20} className="text-green-400" />
             </div>
-            <p className="text-2xl font-bold text-white">{stats.completedStories}</p>
+            <p className="text-2xl font-bold text-white">
+              {stats.completedStories}
+            </p>
             <p className="text-xs text-gray-500 mt-1">
-              {stats.totalStories > 0 ? Math.round((stats.completedStories / stats.totalStories) * 100) : 0}% completion rate
+              {stats.totalStories > 0
+                ? Math.round(
+                    (stats.completedStories / stats.totalStories) * 100
+                  )
+                : 0}
+              % completion rate
             </p>
           </div>
-          
+
           <div className="bg-gray-800 rounded-xl p-6">
             <div className="flex items-center justify-between mb-2">
               <h3 className="text-sm font-medium text-gray-400">Active</h3>
               <BookOpen size={20} className="text-blue-400" />
             </div>
-            <p className="text-2xl font-bold text-white">{stats.activeStories}</p>
+            <p className="text-2xl font-bold text-white">
+              {stats.activeStories}
+            </p>
           </div>
-          
+
           <div className="bg-gray-800 rounded-xl p-6">
             <div className="flex items-center justify-between mb-2">
               <h3 className="text-sm font-medium text-gray-400">Comments</h3>
               <MessageSquare size={20} className="text-purple-400" />
             </div>
-            <p className="text-2xl font-bold text-white">{stats.totalComments}</p>
+            <p className="text-2xl font-bold text-white">
+              {stats.totalComments}
+            </p>
             {stats.totalUnresolvedComments > 0 && (
               <p className="text-xs text-red-400 mt-1">
                 {stats.totalUnresolvedComments} unresolved
@@ -289,18 +316,35 @@ export default function StoriesPage() {
           <table className="w-full">
             <thead className="bg-gray-700">
               <tr>
-                <th className="text-left py-3 px-4 text-sm font-medium text-gray-300">Story</th>
-                <th className="text-left py-3 px-4 text-sm font-medium text-gray-300">Author</th>
-                <th className="text-left py-3 px-4 text-sm font-medium text-gray-300">Status</th>
-                <th className="text-left py-3 px-4 text-sm font-medium text-gray-300">Progress</th>
-                <th className="text-left py-3 px-4 text-sm font-medium text-gray-300">Comments</th>
-                <th className="text-left py-3 px-4 text-sm font-medium text-gray-300">Created</th>
-                <th className="text-left py-3 px-4 text-sm font-medium text-gray-300">Actions</th>
+                <th className="text-left py-3 px-4 text-sm font-medium text-gray-300">
+                  Story
+                </th>
+                <th className="text-left py-3 px-4 text-sm font-medium text-gray-300">
+                  Author
+                </th>
+                <th className="text-left py-3 px-4 text-sm font-medium text-gray-300">
+                  Status
+                </th>
+                <th className="text-left py-3 px-4 text-sm font-medium text-gray-300">
+                  Progress
+                </th>
+                <th className="text-left py-3 px-4 text-sm font-medium text-gray-300">
+                  Comments
+                </th>
+                <th className="text-left py-3 px-4 text-sm font-medium text-gray-300">
+                  Created
+                </th>
+                <th className="text-left py-3 px-4 text-sm font-medium text-gray-300">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody>
               {stories.map((story) => (
-                <tr key={story._id} className="border-b border-gray-700/50 hover:bg-gray-700/20 transition-colors">
+                <tr
+                  key={story._id}
+                  className="border-b border-gray-700/50 hover:bg-gray-700/20 transition-colors"
+                >
                   {/* Story Title */}
                   <td className="py-3 px-4">
                     <div>
@@ -310,7 +354,9 @@ export default function StoriesPage() {
                         </h4>
                       </Link>
                       <div className="flex items-center space-x-2 mt-1">
-                        <p className="text-xs text-gray-400">#{story.storyNumber}</p>
+                        <p className="text-xs text-gray-400">
+                          #{story.storyNumber}
+                        </p>
                         {story.isPublished && (
                           <span className="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full">
                             Published
@@ -333,13 +379,17 @@ export default function StoriesPage() {
                           {story.childId.firstName} {story.childId.lastName}
                         </p>
                       </Link>
-                      <p className="text-xs text-gray-400">{story.childId.email}</p>
+                      <p className="text-xs text-gray-400">
+                        {story.childId.email}
+                      </p>
                     </div>
                   </td>
 
                   {/* Status */}
                   <td className="py-3 px-4">
-                    <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(story.status)}`}>
+                    <span
+                      className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(story.status)}`}
+                    >
                       {story.status}
                     </span>
                   </td>
@@ -353,13 +403,17 @@ export default function StoriesPage() {
                       </div>
                       <div className="flex justify-between text-xs">
                         <span className="text-gray-400">AI Calls:</span>
-                        <span className="text-white">{story.apiCallsUsed}/{story.maxApiCalls}</span>
+                        <span className="text-white">
+                          {story.apiCallsUsed}/{story.maxApiCalls}
+                        </span>
                       </div>
                       {/* Progress bar */}
                       <div className="w-full bg-gray-600 rounded-full h-1">
-                        <div 
+                        <div
                           className="bg-blue-500 h-1 rounded-full"
-                          style={{ width: `${Math.min((story.apiCallsUsed / story.maxApiCalls) * 100, 100)}%` }}
+                          style={{
+                            width: `${Math.min((story.apiCallsUsed / story.maxApiCalls) * 100, 100)}%`,
+                          }}
                         ></div>
                       </div>
                     </div>
@@ -423,12 +477,13 @@ export default function StoriesPage() {
         {stories.length === 0 && !loading && (
           <div className="text-center py-12">
             <BookOpen size={48} className="text-gray-600 mx-auto mb-4" />
-            <h3 className="text-xl font-medium text-gray-400 mb-2">No stories found</h3>
+            <h3 className="text-xl font-medium text-gray-400 mb-2">
+              No stories found
+            </h3>
             <p className="text-gray-500">
-              {statusFilter !== 'all' || authorFilter 
-                ? 'Try adjusting your filters' 
-                : 'Stories will appear here as users create them'
-              }
+              {statusFilter !== 'all' || authorFilter
+                ? 'Try adjusting your filters'
+                : 'Stories will appear here as users create them'}
             </p>
           </div>
         )}
@@ -444,10 +499,11 @@ export default function StoriesPage() {
           >
             Previous
           </button>
-          
+
           <div className="flex items-center space-x-2">
             {Array.from({ length: Math.min(5, pagination.pages) }, (_, i) => {
-              const pageNum = Math.max(1, Math.min(pagination.pages - 4, page - 2)) + i;
+              const pageNum =
+                Math.max(1, Math.min(pagination.pages - 4, page - 2)) + i;
               return (
                 <button
                   key={pageNum}
@@ -477,7 +533,9 @@ export default function StoriesPage() {
       {/* Summary */}
       {pagination && (
         <div className="text-center text-gray-400 text-sm">
-          Showing {((pagination.page - 1) * pagination.limit) + 1} to {Math.min(pagination.page * pagination.limit, pagination.total)} of {pagination.total} stories
+          Showing {(pagination.page - 1) * pagination.limit + 1} to{' '}
+          {Math.min(pagination.page * pagination.limit, pagination.total)} of{' '}
+          {pagination.total} stories
         </div>
       )}
     </div>

@@ -13,7 +13,10 @@ export async function GET() {
   try {
     const session = await getServerSession(authOptions);
     if (!session || session.user.role !== 'admin') {
-      return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
+      return NextResponse.json(
+        { error: 'Admin access required' },
+        { status: 403 }
+      );
     }
 
     await connectToDatabase();
@@ -41,24 +44,26 @@ export async function GET() {
     ] = await Promise.all([
       // FIXED: All user counts exclude admin
       User.countDocuments({ role: { $in: ['child', 'mentor'] } }),
-      User.countDocuments({ 
+      User.countDocuments({
         role: { $in: ['child', 'mentor'] },
-        createdAt: { $gte: monthStart } 
+        createdAt: { $gte: monthStart },
       }),
-      User.countDocuments({ 
+      User.countDocuments({
         role: { $in: ['child', 'mentor'] },
-        createdAt: { $gte: lastMonthStart, $lt: lastMonthEnd } 
+        createdAt: { $gte: lastMonthStart, $lt: lastMonthEnd },
       }),
-      User.countDocuments({ 
+      User.countDocuments({
         role: { $in: ['child', 'mentor'] },
-        lastActiveDate: { $gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) } 
+        lastActiveDate: {
+          $gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+        },
       }),
 
       // Story Analytics
       StorySession.countDocuments({}),
       StorySession.countDocuments({ createdAt: { $gte: monthStart } }),
-      StorySession.countDocuments({ 
-        createdAt: { $gte: lastMonthStart, $lt: lastMonthEnd } 
+      StorySession.countDocuments({
+        createdAt: { $gte: lastMonthStart, $lt: lastMonthEnd },
       }),
       StorySession.countDocuments({ status: 'completed' }),
       StorySession.countDocuments({ isPublished: true }),
@@ -71,7 +76,12 @@ export async function GET() {
       // Revenue Analytics - only from children (they buy story packs)
       User.aggregate([
         { $match: { role: 'child' } },
-        { $unwind: { path: '$purchaseHistory', preserveNullAndEmptyArrays: true } },
+        {
+          $unwind: {
+            path: '$purchaseHistory',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
         {
           $group: {
             _id: null,
@@ -81,27 +91,29 @@ export async function GET() {
                 $cond: [
                   { $gte: ['$purchaseHistory.purchaseDate', monthStart] },
                   '$purchaseHistory.amount',
-                  0
-                ]
-              }
+                  0,
+                ],
+              },
             },
             lastMonthRevenue: {
               $sum: {
                 $cond: [
                   {
                     $and: [
-                      { $gte: ['$purchaseHistory.purchaseDate', lastMonthStart] },
-                      { $lt: ['$purchaseHistory.purchaseDate', lastMonthEnd] }
-                    ]
+                      {
+                        $gte: ['$purchaseHistory.purchaseDate', lastMonthStart],
+                      },
+                      { $lt: ['$purchaseHistory.purchaseDate', lastMonthEnd] },
+                    ],
                   },
                   '$purchaseHistory.amount',
-                  0
-                ]
-              }
+                  0,
+                ],
+              },
             },
-          }
-        }
-      ])
+          },
+        },
+      ]),
     ]);
 
     const revenue = revenueData[0] || {
@@ -111,17 +123,29 @@ export async function GET() {
     };
 
     // Growth calculations
-    const userGrowth = lastMonthUsers > 0 
-      ? ((thisMonthUsers - lastMonthUsers) / lastMonthUsers * 100).toFixed(1)
-      : 0;
-    
-    const storyGrowth = lastMonthStories > 0
-      ? ((thisMonthStories - lastMonthStories) / lastMonthStories * 100).toFixed(1)
-      : 0;
+    const userGrowth =
+      lastMonthUsers > 0
+        ? (((thisMonthUsers - lastMonthUsers) / lastMonthUsers) * 100).toFixed(
+            1
+          )
+        : 0;
 
-    const revenueGrowth = revenue.lastMonthRevenue > 0
-      ? ((revenue.thisMonthRevenue - revenue.lastMonthRevenue) / revenue.lastMonthRevenue * 100).toFixed(1)
-      : 0;
+    const storyGrowth =
+      lastMonthStories > 0
+        ? (
+            ((thisMonthStories - lastMonthStories) / lastMonthStories) *
+            100
+          ).toFixed(1)
+        : 0;
+
+    const revenueGrowth =
+      revenue.lastMonthRevenue > 0
+        ? (
+            ((revenue.thisMonthRevenue - revenue.lastMonthRevenue) /
+              revenue.lastMonthRevenue) *
+            100
+          ).toFixed(1)
+        : 0;
 
     return NextResponse.json({
       success: true,
@@ -151,9 +175,11 @@ export async function GET() {
         },
       },
     });
-
   } catch (error) {
     console.error('Error fetching analytics:', error);
-    return NextResponse.json({ error: 'Failed to fetch analytics' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to fetch analytics' },
+      { status: 500 }
+    );
   }
 }

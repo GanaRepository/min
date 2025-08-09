@@ -42,7 +42,7 @@ interface Pagination {
 export default function MentorsPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
-  
+
   const [mentors, setMentors] = useState<Mentor[]>([]);
   const [pagination, setPagination] = useState<Pagination | null>(null);
   const [loading, setLoading] = useState(true);
@@ -65,7 +65,7 @@ export default function MentorsPage() {
         page: page.toString(),
         limit: '20',
       });
-      
+
       if (searchTerm.trim()) {
         params.append('search', searchTerm.trim());
       }
@@ -85,7 +85,11 @@ export default function MentorsPage() {
   };
 
   const deleteMentor = async (mentorId: string, name: string) => {
-    if (!confirm(`Are you sure you want to delete mentor "${name}"? This will unassign all their students.`)) {
+    if (
+      !confirm(
+        `Are you sure you want to delete mentor "${name}"? This will unassign all their students.`
+      )
+    ) {
       return;
     }
 
@@ -97,7 +101,7 @@ export default function MentorsPage() {
       const data = await response.json();
 
       if (data.success) {
-        setMentors(mentors.filter(mentor => mentor._id !== mentorId));
+        setMentors(mentors.filter((mentor) => mentor._id !== mentorId));
         alert('Mentor deleted successfully');
       } else {
         alert('Failed to delete mentor: ' + data.error);
@@ -128,12 +132,12 @@ export default function MentorsPage() {
             Manage all mentors and their student assignments
           </p>
         </div>
-       <Link href="/admin/mentors/create">
-        <button className="bg-gradient-to-r from-purple-600 to-purple-700 text-white px-6 py-2.5 rounded-lg hover:from-purple-700 hover:to-purple-800 transition-all duration-200 flex items-center">
-          <UserPlus size={20} className="mr-2" />
-          Add New Mentor
-        </button>
-      </Link>
+        <Link href="/admin/mentors/create">
+          <button className="bg-gradient-to-r from-purple-600 to-purple-700 text-white px-6 py-2.5 rounded-lg hover:from-purple-700 hover:to-purple-800 transition-all duration-200 flex items-center">
+            <UserPlus size={20} className="mr-2" />
+            Add New Mentor
+          </button>
+        </Link>
       </div>
 
       {/* Search */}
@@ -164,7 +168,8 @@ export default function MentorsPage() {
               <div className="flex items-center space-x-3">
                 <div className="w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center">
                   <span className="text-white font-bold text-lg">
-                    {mentor.firstName[0]}{mentor.lastName[0]}
+                    {mentor.firstName[0]}
+                    {mentor.lastName[0]}
                   </span>
                 </div>
                 <div>
@@ -175,9 +180,11 @@ export default function MentorsPage() {
                 </div>
               </div>
               <div className="flex items-center space-x-1">
-                <div className={`w-3 h-3 rounded-full ${
-                  mentor.isActive ? 'bg-green-500' : 'bg-red-500'
-                }`}></div>
+                <div
+                  className={`w-3 h-3 rounded-full ${
+                    mentor.isActive ? 'bg-green-500' : 'bg-red-500'
+                  }`}
+                ></div>
               </div>
             </div>
 
@@ -187,21 +194,27 @@ export default function MentorsPage() {
                 <div className="flex items-center justify-center mb-1">
                   <Users size={16} className="text-blue-400" />
                 </div>
-                <p className="text-2xl font-bold text-white">{mentor.assignedStudents}</p>
+                <p className="text-2xl font-bold text-white">
+                  {mentor.assignedStudents}
+                </p>
                 <p className="text-xs text-gray-400">Students</p>
               </div>
               <div className="text-center">
                 <div className="flex items-center justify-center mb-1">
                   <BookOpen size={16} className="text-green-400" />
                 </div>
-                <p className="text-2xl font-bold text-white">{mentor.totalStories}</p>
+                <p className="text-2xl font-bold text-white">
+                  {mentor.totalStories}
+                </p>
                 <p className="text-xs text-gray-400">Stories</p>
               </div>
               <div className="text-center">
                 <div className="flex items-center justify-center mb-1">
                   <MessageSquare size={16} className="text-orange-400" />
                 </div>
-                <p className="text-2xl font-bold text-white">{mentor.totalComments}</p>
+                <p className="text-2xl font-bold text-white">
+                  {mentor.totalComments}
+                </p>
                 <p className="text-xs text-gray-400">Comments</p>
               </div>
             </div>
@@ -224,7 +237,12 @@ export default function MentorsPage() {
                   </button>
                 </Link>
                 <button
-                  onClick={() => deleteMentor(mentor._id, `${mentor.firstName} ${mentor.lastName}`)}
+                  onClick={() =>
+                    deleteMentor(
+                      mentor._id,
+                      `${mentor.firstName} ${mentor.lastName}`
+                    )
+                  }
                   className="p-2 text-gray-400 hover:text-red-400 hover:bg-gray-600 rounded-lg transition-colors"
                 >
                   <Trash2 size={16} />
@@ -239,11 +257,14 @@ export default function MentorsPage() {
       {mentors.length === 0 && !loading && (
         <div className="text-center py-12">
           <Users size={48} className="text-gray-600 mx-auto mb-4" />
-          <h3 className="text-xl font-medium text-gray-400 mb-2">No mentors found</h3>
+          <h3 className="text-xl font-medium text-gray-400 mb-2">
+            No mentors found
+          </h3>
           <p className="text-gray-500 mb-6">
-            {searchTerm ? 'Try adjusting your search' : 'Start by adding your first mentor'}
+            {searchTerm
+              ? 'Try adjusting your search'
+              : 'Start by adding your first mentor'}
           </p>
-         
         </div>
       )}
 
@@ -257,10 +278,11 @@ export default function MentorsPage() {
           >
             Previous
           </button>
-          
+
           <div className="flex items-center space-x-2">
             {Array.from({ length: Math.min(5, pagination.pages) }, (_, i) => {
-              const pageNum = Math.max(1, Math.min(pagination.pages - 4, page - 2)) + i;
+              const pageNum =
+                Math.max(1, Math.min(pagination.pages - 4, page - 2)) + i;
               return (
                 <button
                   key={pageNum}

@@ -10,11 +10,16 @@ export async function GET() {
   try {
     const session = await getServerSession(authOptions);
     if (!session || session.user.role !== 'admin') {
-      return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
+      return NextResponse.json(
+        { error: 'Admin access required' },
+        { status: 403 }
+      );
     }
 
     const competition = await competitionManager.getCurrentCompetition();
-    const stats = competition ? await competitionManager.getCompetitionStats(competition._id.toString()) : null;
+    const stats = competition
+      ? await competitionManager.getCompetitionStats(competition._id.toString())
+      : null;
 
     return NextResponse.json({
       success: true,
@@ -22,6 +27,9 @@ export async function GET() {
     });
   } catch (error) {
     console.error('Error fetching current competition:', error);
-    return NextResponse.json({ error: 'Failed to fetch current competition' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to fetch current competition' },
+      { status: 500 }
+    );
   }
 }

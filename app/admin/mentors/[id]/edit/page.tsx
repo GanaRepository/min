@@ -5,14 +5,7 @@ import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
-import {
-  ArrowLeft,
-  Save,
-  User,
-  Mail,
-  FileText,
-  Tag,
-} from 'lucide-react';
+import { ArrowLeft, Save, User, Mail, FileText, Tag } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface EditMentorData {
@@ -35,7 +28,7 @@ export default function EditMentor() {
   const [mentor, setMentor] = useState<EditMentorData | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [errors, setErrors] = useState<{[key: string]: string}>({});
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const [formData, setFormData] = useState({
     firstName: '',
@@ -62,7 +55,7 @@ export default function EditMentor() {
     try {
       const response = await fetch(`/api/admin/mentors/${mentorId}`);
       const data = await response.json();
-      
+
       if (data.success) {
         setMentor(data.mentor);
         setFormData({
@@ -121,32 +114,35 @@ export default function EditMentor() {
   };
 
   const handleInputChange = (field: string, value: any) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
     if (errors[field]) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
-        [field]: ''
+        [field]: '',
       }));
     }
   };
 
   const addSpecialization = () => {
-    if (newSpecialization.trim() && !formData.specializations.includes(newSpecialization.trim())) {
-      setFormData(prev => ({
+    if (
+      newSpecialization.trim() &&
+      !formData.specializations.includes(newSpecialization.trim())
+    ) {
+      setFormData((prev) => ({
         ...prev,
-        specializations: [...prev.specializations, newSpecialization.trim()]
+        specializations: [...prev.specializations, newSpecialization.trim()],
       }));
       setNewSpecialization('');
     }
   };
 
   const removeSpecialization = (index: number) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      specializations: prev.specializations.filter((_, i) => i !== index)
+      specializations: prev.specializations.filter((_, i) => i !== index),
     }));
   };
 
@@ -179,7 +175,9 @@ export default function EditMentor() {
           <h1 className="text-2xl sm:text-3xl font-bold text-white">
             Edit Mentor
           </h1>
-          <p className="text-gray-400">Modify mentor information and settings</p>
+          <p className="text-gray-400">
+            Modify mentor information and settings
+          </p>
         </div>
       </div>
 
@@ -197,12 +195,17 @@ export default function EditMentor() {
                 First Name
               </label>
               <div className="relative">
-                <User size={20} className="absolute left-3 top-3 text-gray-400" />
+                <User
+                  size={20}
+                  className="absolute left-3 top-3 text-gray-400"
+                />
                 <input
                   type="text"
                   required
                   value={formData.firstName}
-                  onChange={(e) => handleInputChange('firstName', e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange('firstName', e.target.value)
+                  }
                   className={`w-full pl-10 pr-4 py-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                     errors.firstName ? 'border-red-500' : 'border-gray-600'
                   }`}
@@ -219,12 +222,17 @@ export default function EditMentor() {
                 Last Name
               </label>
               <div className="relative">
-                <User size={20} className="absolute left-3 top-3 text-gray-400" />
+                <User
+                  size={20}
+                  className="absolute left-3 top-3 text-gray-400"
+                />
                 <input
                   type="text"
                   required
                   value={formData.lastName}
-                  onChange={(e) => handleInputChange('lastName', e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange('lastName', e.target.value)
+                  }
                   className={`w-full pl-10 pr-4 py-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                     errors.lastName ? 'border-red-500' : 'border-gray-600'
                   }`}
@@ -266,7 +274,10 @@ export default function EditMentor() {
               Bio
             </label>
             <div className="relative">
-              <FileText size={20} className="absolute left-3 top-3 text-gray-400" />
+              <FileText
+                size={20}
+                className="absolute left-3 top-3 text-gray-400"
+              />
               <textarea
                 value={formData.bio}
                 onChange={(e) => handleInputChange('bio', e.target.value)}
@@ -283,10 +294,15 @@ export default function EditMentor() {
               Experience
             </label>
             <div className="relative">
-              <FileText size={20} className="absolute left-3 top-3 text-gray-400" />
+              <FileText
+                size={20}
+                className="absolute left-3 top-3 text-gray-400"
+              />
               <textarea
                 value={formData.experience}
-                onChange={(e) => handleInputChange('experience', e.target.value)}
+                onChange={(e) =>
+                  handleInputChange('experience', e.target.value)
+                }
                 rows={4}
                 className="w-full pl-10 pr-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Enter mentor experience and qualifications..."
@@ -301,12 +317,18 @@ export default function EditMentor() {
             </label>
             <div className="flex gap-2 mb-3">
               <div className="relative flex-1">
-                <Tag size={20} className="absolute left-3 top-3 text-gray-400" />
+                <Tag
+                  size={20}
+                  className="absolute left-3 top-3 text-gray-400"
+                />
                 <input
                   type="text"
                   value={newSpecialization}
                   onChange={(e) => setNewSpecialization(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addSpecialization())}
+                  onKeyPress={(e) =>
+                    e.key === 'Enter' &&
+                    (e.preventDefault(), addSpecialization())
+                  }
                   className="w-full pl-10 pr-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="Add specialization..."
                 />
@@ -321,7 +343,10 @@ export default function EditMentor() {
             </div>
             <div className="flex flex-wrap gap-2">
               {formData.specializations.map((spec, index) => (
-                <span key={index} className="px-3 py-1 bg-purple-100 text-purple-800 text-sm rounded-full flex items-center">
+                <span
+                  key={index}
+                  className="px-3 py-1 bg-purple-100 text-purple-800 text-sm rounded-full flex items-center"
+                >
                   {spec}
                   <button
                     type="button"
@@ -342,12 +367,16 @@ export default function EditMentor() {
                 <input
                   type="checkbox"
                   checked={formData.isActive}
-                  onChange={(e) => handleInputChange('isActive', e.target.checked)}
+                  onChange={(e) =>
+                    handleInputChange('isActive', e.target.checked)
+                  }
                   className="w-5 h-5 bg-gray-700 border-gray-600 rounded focus:ring-blue-500 focus:ring-2"
                 />
                 <span className="text-white font-medium">Account Active</span>
               </label>
-              <p className="text-gray-400 text-sm mt-1">Mentor can log in and access students</p>
+              <p className="text-gray-400 text-sm mt-1">
+                Mentor can log in and access students
+              </p>
             </div>
 
             {/* Email Verified removed */}

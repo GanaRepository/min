@@ -34,7 +34,7 @@ interface Assessment {
   strengths: string[];
   improvements: string[];
   educationalInsights: string;
-  
+
   // Advanced integrity fields
   plagiarismScore: number;
   aiDetectionScore: number;
@@ -75,7 +75,11 @@ interface StorySession {
   assessment: Assessment;
 }
 
-export default function AssessmentPage({ params }: { params: { sessionId: string } }) {
+export default function AssessmentPage({
+  params,
+}: {
+  params: { sessionId: string };
+}) {
   const { data: session } = useSession();
   const router = useRouter();
   const [storySession, setStorySession] = useState<StorySession | null>(null);
@@ -93,8 +97,10 @@ export default function AssessmentPage({ params }: { params: { sessionId: string
   const fetchStoryAndAssessment = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`/api/stories/session/${params.sessionId}/assessment`);
-      
+      const response = await fetch(
+        `/api/stories/session/${params.sessionId}/assessment`
+      );
+
       if (response.ok) {
         const data = await response.json();
         setStorySession(data.storySession);
@@ -114,9 +120,12 @@ export default function AssessmentPage({ params }: { params: { sessionId: string
 
     setReassessing(true);
     try {
-      const response = await fetch(`/api/stories/assessment/${params.sessionId}`, {
-        method: 'POST',
-      });
+      const response = await fetch(
+        `/api/stories/assessment/${params.sessionId}`,
+        {
+          method: 'POST',
+        }
+      );
 
       if (response.ok) {
         const data = await response.json();
@@ -140,11 +149,16 @@ export default function AssessmentPage({ params }: { params: { sessionId: string
 
   const getIntegrityIcon = (risk: string) => {
     switch (risk) {
-      case 'low': return <CheckCircle className="w-5 h-5 text-green-400" />;
-      case 'medium': return <AlertTriangle className="w-5 h-5 text-yellow-400" />;
-      case 'high': return <AlertTriangle className="w-5 h-5 text-orange-400" />;
-      case 'critical': return <AlertTriangle className="w-5 h-5 text-red-400" />;
-      default: return <Shield className="w-5 h-5 text-gray-400" />;
+      case 'low':
+        return <CheckCircle className="w-5 h-5 text-green-400" />;
+      case 'medium':
+        return <AlertTriangle className="w-5 h-5 text-yellow-400" />;
+      case 'high':
+        return <AlertTriangle className="w-5 h-5 text-orange-400" />;
+      case 'critical':
+        return <AlertTriangle className="w-5 h-5 text-red-400" />;
+      default:
+        return <Shield className="w-5 h-5 text-gray-400" />;
     }
   };
 
@@ -177,7 +191,6 @@ export default function AssessmentPage({ params }: { params: { sessionId: string
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 py-20">
       <div className="max-w-4xl mx-auto px-6">
-        
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -191,7 +204,7 @@ export default function AssessmentPage({ params }: { params: { sessionId: string
             <ArrowLeft size={20} />
             Back to My Stories
           </button>
-          
+
           <div className="text-center">
             <h1 className="text-4xl font-bold text-white mb-2">
               📊 Story Assessment
@@ -200,72 +213,86 @@ export default function AssessmentPage({ params }: { params: { sessionId: string
               {storySession.title} • {storySession.childWords} words
             </p>
             <div className="text-gray-400 text-sm mt-2">
-              Assessment #{storySession.assessmentAttempts} • 
+              Assessment #{storySession.assessmentAttempts} •
               {new Date(assessment.assessmentDate).toLocaleDateString()}
             </div>
           </div>
         </motion.div>
 
         <div className="space-y-8">
-          
           {/* Integrity Analysis */}
-          {assessment.integrityAnalysis && assessment.integrityAnalysis.integrityRisk !== 'low' && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className={`border rounded-xl p-6 ${
-                assessment.integrityAnalysis.integrityRisk === 'critical'
-                  ? 'bg-red-600/20 border-red-500/30'
-                  : assessment.integrityAnalysis.integrityRisk === 'high'
-                  ? 'bg-orange-600/20 border-orange-500/30'
-                  : 'bg-yellow-600/20 border-yellow-500/30'
-              }`}
-            >
-              <div className="flex items-start gap-3">
-                {getIntegrityIcon(assessment.integrityAnalysis.integrityRisk)}
-                <div className="flex-1">
-                  <h3 className={`font-bold text-lg mb-4 ${
-                    assessment.integrityAnalysis.integrityRisk === 'critical' ? 'text-red-300' :
-                    assessment.integrityAnalysis.integrityRisk === 'high' ? 'text-orange-300' :
-                    'text-yellow-300'
-                  }`}>
-                    Integrity Analysis
-                  </h3>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-4">
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-white mb-1">
-                        {assessment.integrityAnalysis.originalityScore}%
-                      </div>
-                      <div className="text-gray-300 text-sm">Originality Score</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-white mb-1">
-                        {100 - assessment.integrityAnalysis.plagiarismScore}%
-                      </div>
-                      <div className="text-gray-300 text-sm">Unique Content</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-white mb-1">
-                        {100 - assessment.integrityAnalysis.aiDetectionScore}%
-                      </div>
-                      <div className="text-gray-300 text-sm">Human-like Writing</div>
-                    </div>
-                  </div>
+          {assessment.integrityAnalysis &&
+            assessment.integrityAnalysis.integrityRisk !== 'low' && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
+                className={`border rounded-xl p-6 ${
+                  assessment.integrityAnalysis.integrityRisk === 'critical'
+                    ? 'bg-red-600/20 border-red-500/30'
+                    : assessment.integrityAnalysis.integrityRisk === 'high'
+                      ? 'bg-orange-600/20 border-orange-500/30'
+                      : 'bg-yellow-600/20 border-yellow-500/30'
+                }`}
+              >
+                <div className="flex items-start gap-3">
+                  {getIntegrityIcon(assessment.integrityAnalysis.integrityRisk)}
+                  <div className="flex-1">
+                    <h3
+                      className={`font-bold text-lg mb-4 ${
+                        assessment.integrityAnalysis.integrityRisk ===
+                        'critical'
+                          ? 'text-red-300'
+                          : assessment.integrityAnalysis.integrityRisk ===
+                              'high'
+                            ? 'text-orange-300'
+                            : 'text-yellow-300'
+                      }`}
+                    >
+                      Integrity Analysis
+                    </h3>
 
-                  {assessment.integrityAnalysis.integrityRisk === 'critical' && (
-                    <div className="bg-red-700/30 rounded-lg p-4">
-                      <p className="text-red-200">
-                        ⚠️ This story has been flagged for manual review due to integrity concerns. 
-                        Please ensure all content is your original work.
-                      </p>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-4">
+                      <div className="text-center">
+                        <div className="text-2xl font-bold text-white mb-1">
+                          {assessment.integrityAnalysis.originalityScore}%
+                        </div>
+                        <div className="text-gray-300 text-sm">
+                          Originality Score
+                        </div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-2xl font-bold text-white mb-1">
+                          {100 - assessment.integrityAnalysis.plagiarismScore}%
+                        </div>
+                        <div className="text-gray-300 text-sm">
+                          Unique Content
+                        </div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-2xl font-bold text-white mb-1">
+                          {100 - assessment.integrityAnalysis.aiDetectionScore}%
+                        </div>
+                        <div className="text-gray-300 text-sm">
+                          Human-like Writing
+                        </div>
+                      </div>
                     </div>
-                  )}
+
+                    {assessment.integrityAnalysis.integrityRisk ===
+                      'critical' && (
+                      <div className="bg-red-700/30 rounded-lg p-4">
+                        <p className="text-red-200">
+                          ⚠️ This story has been flagged for manual review due
+                          to integrity concerns. Please ensure all content is
+                          your original work.
+                        </p>
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
-            </motion.div>
-          )}
+              </motion.div>
+            )}
 
           {/* Overall Score */}
           <motion.div
@@ -278,10 +305,21 @@ export default function AssessmentPage({ params }: { params: { sessionId: string
               <Award className="w-10 h-10 text-blue-400" />
               <h2 className="text-3xl font-bold text-white">Overall Score</h2>
             </div>
-            <div className={`text-7xl font-bold mb-4 ${getScoreColor(assessment.overallScore)}`}>
-              {assessment.overallScore >= 90 ? '🌟' : assessment.overallScore >= 80 ? '⭐' : assessment.overallScore >= 70 ? '✨' : '💫'} {assessment.overallScore}%
+            <div
+              className={`text-7xl font-bold mb-4 ${getScoreColor(assessment.overallScore)}`}
+            >
+              {assessment.overallScore >= 90
+                ? '🌟'
+                : assessment.overallScore >= 80
+                  ? '⭐'
+                  : assessment.overallScore >= 70
+                    ? '✨'
+                    : '💫'}{' '}
+              {assessment.overallScore}%
             </div>
-            <div className="text-gray-300 text-xl">{assessment.readingLevel} Level</div>
+            <div className="text-gray-300 text-xl">
+              {assessment.readingLevel} Level
+            </div>
           </motion.div>
 
           {/* Category Scores */}
@@ -295,15 +333,39 @@ export default function AssessmentPage({ params }: { params: { sessionId: string
               <Target className="w-6 h-6 text-purple-400" />
               Detailed Category Scores
             </h3>
-            
+
             <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
               {[
-                { label: 'Grammar', score: assessment.grammarScore, icon: BookOpen },
-                { label: 'Creativity', score: assessment.creativityScore, icon: Sparkles },
-                { label: 'Vocabulary', score: assessment.vocabularyScore, icon: Target },
-                { label: 'Structure', score: assessment.structureScore, icon: Award },
-                { label: 'Characters', score: assessment.characterDevelopmentScore, icon: Star },
-                { label: 'Plot', score: assessment.plotDevelopmentScore, icon: TrendingUp },
+                {
+                  label: 'Grammar',
+                  score: assessment.grammarScore,
+                  icon: BookOpen,
+                },
+                {
+                  label: 'Creativity',
+                  score: assessment.creativityScore,
+                  icon: Sparkles,
+                },
+                {
+                  label: 'Vocabulary',
+                  score: assessment.vocabularyScore,
+                  icon: Target,
+                },
+                {
+                  label: 'Structure',
+                  score: assessment.structureScore,
+                  icon: Award,
+                },
+                {
+                  label: 'Characters',
+                  score: assessment.characterDevelopmentScore,
+                  icon: Star,
+                },
+                {
+                  label: 'Plot',
+                  score: assessment.plotDevelopmentScore,
+                  icon: TrendingUp,
+                },
               ].map((category, index) => (
                 <motion.div
                   key={category.label}
@@ -313,19 +375,24 @@ export default function AssessmentPage({ params }: { params: { sessionId: string
                   className="bg-gray-700/50 rounded-lg p-4 text-center"
                 >
                   <category.icon className="w-8 h-8 mx-auto mb-3 text-blue-400" />
-                  <div className={`text-2xl font-bold mb-2 ${getScoreColor(category.score)}`}>
+                  <div
+                    className={`text-2xl font-bold mb-2 ${getScoreColor(category.score)}`}
+                  >
                     {category.score}%
                   </div>
                   <div className="text-gray-400">{category.label}</div>
-                  
+
                   <div className="mt-3">
                     <div className="w-full bg-gray-600 rounded-full h-2">
                       <div
                         className={`h-2 rounded-full ${
-                          category.score >= 90 ? 'bg-green-500' :
-                          category.score >= 80 ? 'bg-blue-500' :
-                          category.score >= 70 ? 'bg-yellow-500' :
-                          'bg-orange-500'
+                          category.score >= 90
+                            ? 'bg-green-500'
+                            : category.score >= 80
+                              ? 'bg-blue-500'
+                              : category.score >= 70
+                                ? 'bg-yellow-500'
+                                : 'bg-orange-500'
                         }`}
                         style={{ width: `${category.score}%` }}
                       />
@@ -338,7 +405,6 @@ export default function AssessmentPage({ params }: { params: { sessionId: string
 
           {/* Feedback Sections */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            
             {/* Strengths */}
             {assessment.strengths && assessment.strengths.length > 0 && (
               <motion.div
@@ -353,7 +419,10 @@ export default function AssessmentPage({ params }: { params: { sessionId: string
                 </h3>
                 <ul className="space-y-3">
                   {assessment.strengths.map((strength, index) => (
-                    <li key={index} className="text-green-300 flex items-start gap-2">
+                    <li
+                      key={index}
+                      className="text-green-300 flex items-start gap-2"
+                    >
                       <span className="text-green-400 mt-1">✓</span>
                       {strength}
                     </li>
@@ -376,7 +445,10 @@ export default function AssessmentPage({ params }: { params: { sessionId: string
                 </h3>
                 <ul className="space-y-3">
                   {assessment.improvements.map((improvement, index) => (
-                    <li key={index} className="text-blue-300 flex items-start gap-2">
+                    <li
+                      key={index}
+                      className="text-blue-300 flex items-start gap-2"
+                    >
                       <span className="text-blue-400 mt-1">→</span>
                       {improvement}
                     </li>

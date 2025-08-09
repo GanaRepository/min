@@ -77,9 +77,9 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     } catch (error) {
       console.error('Logout error:', error);
       // Fallback - use NextAuth signOut with home page redirect
-      await signOut({ 
+      await signOut({
         callbackUrl: '/',
-        redirect: true 
+        redirect: true,
       });
     }
   };
@@ -110,7 +110,9 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   if (!session || session.user?.role !== 'admin') {
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <div className="text-white text-xl">Unauthorized access. Redirecting...</div>
+        <div className="text-white text-xl">
+          Unauthorized access. Redirecting...
+        </div>
       </div>
     );
   }
@@ -135,11 +137,13 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       {/* Layout Container */}
       <div className="flex flex-col lg:flex-row min-h-screen">
         {/* Sidebar */}
-        <div className={`w-64 bg-gray-800 border-r border-gray-700 flex-shrink-0 ${
-          sidebarOpen 
-            ? 'fixed inset-y-0 left-0 z-40 lg:relative lg:translate-x-0' 
-            : 'hidden lg:block'
-        } transition-all duration-300 ease-in-out`}>
+        <div
+          className={`w-64 bg-gray-800 border-r border-gray-700 flex-shrink-0 ${
+            sidebarOpen
+              ? 'fixed inset-y-0 left-0 z-40 lg:relative lg:translate-x-0'
+              : 'hidden lg:block'
+          } transition-all duration-300 ease-in-out`}
+        >
           {/* Sidebar Header */}
           <div className="p-6 border-b border-gray-700">
             <div className="flex items-center space-x-2">
@@ -216,7 +220,8 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
                 <h2 className="text-xl font-semibold text-white">
-                  {navigation.find(item => isActive(item.href))?.name || 'Dashboard'}
+                  {navigation.find((item) => isActive(item.href))?.name ||
+                    'Dashboard'}
                 </h2>
               </div>
               <div className="flex items-center space-x-4">
