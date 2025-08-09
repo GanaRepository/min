@@ -10,7 +10,8 @@ export interface IStoryComment extends Document {
     | 'grammar'
     | 'creativity'
     | 'structure'
-    | 'suggestion';
+    | 'suggestion'
+    | 'admin_feedback';
   isResolved: boolean;
   resolvedAt?: Date;
   resolvedBy?: mongoose.Types.ObjectId;
@@ -48,7 +49,7 @@ const StoryCommentSchema = new Schema<IStoryComment>(
     },
     commentType: {
       type: String,
-      enum: ['general', 'suggestion'],
+      enum: ['general', 'grammar', 'creativity', 'structure', 'suggestion', 'admin_feedback'],
       default: 'general',
     },
     isResolved: {

@@ -1,5 +1,4 @@
-//app/api/admin/analytics/route.ts
-// app/api/admin/analytics/route.ts
+// app/api/admin/analytics/route.ts - COMPLETE FIXED VERSION
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/utils/authOptions';
@@ -24,13 +23,23 @@ export async function GET() {
     const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
     const lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0);
 
-    // User Analytics
+    // FIXED: Consistently exclude admin users from ALL counts
     const [
       totalUsers,
       thisMonthUsers,
       lastMonthUsers,
       activeUsers,
+      totalStories,
+      thisMonthStories,
+      lastMonthStories,
+      completedStories,
+      publishedStories,
+      totalComments,
+      thisMonthComments,
+      unresolvedComments,
+      revenueData,
     ] = await Promise.all([
+      // FIXED: All user counts exclude admin
       User.countDocuments({ role: { $in: ['child', 'mentor'] } }),
       User.countDocuments({ 
         role: { $in: ['child', 'mentor'] },
@@ -42,71 +51,57 @@ export async function GET() {
       }),
       User.countDocuments({ 
         role: { $in: ['child', 'mentor'] },
-        isActive: true 
+        lastActiveDate: { $gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) } 
       }),
-    ]);
 
-    // Story Analytics
-    const [
-      totalStories,
-      thisMonthStories,
-      lastMonthStories,
-      completedStories,
-      publishedStories,
-    ] = await Promise.all([
-      StorySession.countDocuments(),
+      // Story Analytics
+      StorySession.countDocuments({}),
       StorySession.countDocuments({ createdAt: { $gte: monthStart } }),
       StorySession.countDocuments({ 
         createdAt: { $gte: lastMonthStart, $lt: lastMonthEnd } 
       }),
       StorySession.countDocuments({ status: 'completed' }),
       StorySession.countDocuments({ isPublished: true }),
-    ]);
 
-    // Comment Analytics
-    const [
-      totalComments,
-      thisMonthComments,
-      unresolvedComments,
-    ] = await Promise.all([
-      StoryComment.countDocuments(),
+      // Comment Analytics
+      StoryComment.countDocuments({}),
       StoryComment.countDocuments({ createdAt: { $gte: monthStart } }),
       StoryComment.countDocuments({ isResolved: false }),
-    ]);
 
-    // Revenue Analytics
-    const revenueData = await User.aggregate([
-      { $match: { role: 'child' } },
-      { $unwind: { path: '$purchaseHistory', preserveNullAndEmptyArrays: true } },
-      {
-        $group: {
-          _id: null,
-          totalRevenue: { $sum: '$purchaseHistory.amount' },
-          thisMonthRevenue: {
-            $sum: {
-              $cond: [
-                { $gte: ['$purchaseHistory.purchaseDate', monthStart] },
-                '$purchaseHistory.amount',
-                0
-              ]
-            }
-          },
-          lastMonthRevenue: {
-            $sum: {
-              $cond: [
-                {
-                  $and: [
-                    { $gte: ['$purchaseHistory.purchaseDate', lastMonthStart] },
-                    { $lt: ['$purchaseHistory.purchaseDate', lastMonthEnd] }
-                  ]
-                },
-                '$purchaseHistory.amount',
-                0
-              ]
-            }
-          },
+      // Revenue Analytics - only from children (they buy story packs)
+      User.aggregate([
+        { $match: { role: 'child' } },
+        { $unwind: { path: '$purchaseHistory', preserveNullAndEmptyArrays: true } },
+        {
+          $group: {
+            _id: null,
+            totalRevenue: { $sum: '$purchaseHistory.amount' },
+            thisMonthRevenue: {
+              $sum: {
+                $cond: [
+                  { $gte: ['$purchaseHistory.purchaseDate', monthStart] },
+                  '$purchaseHistory.amount',
+                  0
+                ]
+              }
+            },
+            lastMonthRevenue: {
+              $sum: {
+                $cond: [
+                  {
+                    $and: [
+                      { $gte: ['$purchaseHistory.purchaseDate', lastMonthStart] },
+                      { $lt: ['$purchaseHistory.purchaseDate', lastMonthEnd] }
+                    ]
+                  },
+                  '$purchaseHistory.amount',
+                  0
+                ]
+              }
+            },
+          }
         }
-      }
+      ])
     ]);
 
     const revenue = revenueData[0] || {
@@ -132,7 +127,7 @@ export async function GET() {
       success: true,
       analytics: {
         users: {
-          total: totalUsers,
+          total: totalUsers, // FIXED: Now consistently excludes admin
           thisMonth: thisMonthUsers,
           active: activeUsers,
           growth: parseFloat(userGrowth as string),

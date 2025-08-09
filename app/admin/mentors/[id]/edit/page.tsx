@@ -21,7 +21,6 @@ interface EditMentorData {
   lastName: string;
   email: string;
   isActive: boolean;
-  isVerified: boolean;
   bio: string;
   experience: string;
   specializations: string[];
@@ -43,7 +42,6 @@ export default function EditMentor() {
     lastName: '',
     email: '',
     isActive: true,
-    isVerified: true,
     bio: '',
     experience: '',
     specializations: [] as string[],
@@ -72,7 +70,7 @@ export default function EditMentor() {
           lastName: data.mentor.lastName,
           email: data.mentor.email,
           isActive: data.mentor.isActive,
-          isVerified: data.mentor.isVerified,
+          // removed isVerified
           bio: data.mentor.bio || '',
           experience: data.mentor.experience || '',
           specializations: data.mentor.specializations || [],
@@ -352,18 +350,7 @@ export default function EditMentor() {
               <p className="text-gray-400 text-sm mt-1">Mentor can log in and access students</p>
             </div>
 
-            <div>
-              <label className="flex items-center space-x-3">
-                <input
-                  type="checkbox"
-                  checked={formData.isVerified}
-                  onChange={(e) => handleInputChange('isVerified', e.target.checked)}
-                  className="w-5 h-5 bg-gray-700 border-gray-600 rounded focus:ring-blue-500 focus:ring-2"
-                />
-                <span className="text-white font-medium">Email Verified</span>
-              </label>
-              <p className="text-gray-400 text-sm mt-1">Mentor has verified their email address</p>
-            </div>
+            {/* Email Verified removed */}
           </div>
 
           {/* Action Buttons */}

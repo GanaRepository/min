@@ -23,7 +23,6 @@ interface EditUserData {
   email: string;
   role: string;
   isActive: boolean;
-  isVerified: boolean;
   storiesCreatedThisMonth: number;
   assessmentUploadsThisMonth: number;
   competitionEntriesThisMonth: number;
@@ -47,7 +46,7 @@ export default function EditUser() {
     email: '',
     role: '',
     isActive: true,
-    isVerified: true,
+  // removed isVerified
     storiesCreatedThisMonth: 0,
     assessmentUploadsThisMonth: 0,
     competitionEntriesThisMonth: 0,
@@ -75,7 +74,7 @@ export default function EditUser() {
           email: data.user.email,
           role: data.user.role,
           isActive: data.user.isActive,
-          isVerified: data.user.isVerified,
+          // removed isVerified
           storiesCreatedThisMonth: data.user.storiesCreatedThisMonth || 0,
           assessmentUploadsThisMonth: data.user.assessmentUploadsThisMonth || 0,
           competitionEntriesThisMonth: data.user.competitionEntriesThisMonth || 0,
@@ -292,21 +291,7 @@ export default function EditUser() {
              <p className="text-gray-400 text-sm mt-1">User can log in and use the platform</p>
            </div>
 
-           <div>
-             <label className="flex items-center space-x-3">
-               <input
-                 type="checkbox"
-                 checked={formData.isVerified}
-                 onChange={(e) => handleInputChange('isVerified', e.target.checked)}
-                 className="w-5 h-5 bg-gray-700 border-gray-600 rounded focus:ring-blue-500 focus:ring-2"
-               />
-               <div className="flex items-center">
-                 <Shield size={20} className="text-blue-400 mr-2" />
-                 <span className="text-white font-medium">Email Verified</span>
-               </div>
-             </label>
-             <p className="text-gray-400 text-sm mt-1">User has verified their email address</p>
-           </div>
+           {/* Email Verified removed */}
          </div>
 
          {/* Monthly Usage Overrides (Child Only) */}

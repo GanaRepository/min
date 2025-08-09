@@ -26,7 +26,6 @@ interface User {
   lastName: string;
   email: string;
   role: string;
-  isVerified: boolean;
   isActive: boolean;
   createdAt: string;
   lastActiveDate?: string;
@@ -155,15 +154,13 @@ export default function UsersPage() {
     }
   };
 
-  const getStatusColor = (isActive: boolean, isVerified: boolean) => {
+  const getStatusColor = (isActive: boolean) => {
     if (!isActive) return 'bg-red-100 text-red-800';
-    if (!isVerified) return 'bg-yellow-100 text-yellow-800';
     return 'bg-green-100 text-green-800';
   };
 
-  const getStatusText = (isActive: boolean, isVerified: boolean) => {
+  const getStatusText = (isActive: boolean) => {
     if (!isActive) return 'Inactive';
-    if (!isVerified) return 'Unverified';
     return 'Active';
   };
 
@@ -337,8 +334,8 @@ export default function UsersPage() {
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(user.isActive, user.isVerified)}`}>
-                        {getStatusText(user.isActive, user.isVerified)}
+                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(user.isActive)}`}>
+                        {getStatusText(user.isActive)}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">

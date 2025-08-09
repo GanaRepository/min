@@ -26,7 +26,6 @@ interface MentorDetails {
   email: string;
   createdAt: string;
   isActive: boolean;
-  isVerified: boolean;
   assignedStudents: number;
   totalComments: number;
   totalStories: number;
@@ -246,14 +245,7 @@ export default function ViewMentor() {
                 {mentor.isActive ? 'Active' : 'Inactive'}
               </span>
             </div>
-            <div className="flex items-center justify-between">
-              <span className="text-gray-400">Email Verified</span>
-              <span className={`px-3 py-1 rounded-full text-sm ${
-                mentor.isVerified ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-              }`}>
-                {mentor.isVerified ? 'Verified' : 'Unverified'}
-              </span>
-            </div>
+            {/* Email Verified removed */}
             <div className="flex items-center justify-between">
               <span className="text-gray-400">Joined Date</span>
               <span className="text-white">
