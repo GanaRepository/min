@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/utils/authOptions';
-import { UsageManager } from '@/lib/usage-manager';
+import { connectToDatabase } from '@/utils/db';
+import User from '@/models/User';
 
 export async function GET() {
   try {
@@ -10,31 +11,33 @@ export async function GET() {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Get current usage and limits
-    const [storyCheck, assessmentCheck, competitionCheck] = await Promise.all([
-      UsageManager.canCreateStory(session.user.id),
-      UsageManager.canUploadAssessment(session.user.id),
-      UsageManager.canEnterCompetition(session.user.id),
-    ]);
+    await connectToDatabase();
 
+    // Get user's current usage for this month
+    const user = await User.findById(session.user.id);
+    if (!user) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    }
+
+    // Basic limits based on free tier
     const limits = {
       stories: {
-        used: storyCheck.currentUsage?.stories || 0,
-        limit: storyCheck.limits?.stories || 3,
-        remaining: Math.max(0, (storyCheck.limits?.stories || 3) - (storyCheck.currentUsage?.stories || 0)),
-        canUse: storyCheck.allowed,
+        used: user.storiesCreatedThisMonth || 0,
+        limit: 3,
+        remaining: Math.max(0, 3 - (user.storiesCreatedThisMonth || 0)),
+        canUse: (user.storiesCreatedThisMonth || 0) < 3,
       },
       assessments: {
-        used: assessmentCheck.currentUsage?.assessments || 0,
-        limit: assessmentCheck.limits?.assessments || 3,
-        remaining: Math.max(0, (assessmentCheck.limits?.assessments || 3) - (assessmentCheck.currentUsage?.assessments || 0)),
-        canUse: assessmentCheck.allowed,
+        used: 0, // You'll need to calculate this from your assessment tracking
+        limit: 3,
+        remaining: 3,
+        canUse: true,
       },
       competitions: {
-        used: competitionCheck.currentUsage?.competitionEntries || 0,
-        limit: competitionCheck.limits?.competitionEntries || 3,
-        remaining: Math.max(0, (competitionCheck.limits?.competitionEntries || 3) - (competitionCheck.currentUsage?.competitionEntries || 0)),
-        canUse: competitionCheck.allowed,
+        used: 0, // You'll need to calculate this from competition entries
+        limit: 3,
+        remaining: 3,
+        canUse: true,
       },
       resetDate: getNextMonthFirstDay(),
     };

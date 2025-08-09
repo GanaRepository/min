@@ -7,7 +7,7 @@ import StorySession from '@/models/StorySession';
 export async function GET(request: Request) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session?.user) {
+    if (!session?.user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -39,33 +39,40 @@ export async function GET(request: Request) {
       childId: session.user.id
     }).sort({ createdAt: -1 });
 
-    const assessedStories = stories.filter(s => s.assessment?.overallScore);
-    const allTimeAssessed = allTimeStories.filter(s => s.assessment?.overallScore);
+    const assessedStories = stories.filter(s => 
+      s.assessment?.overallScore !== undefined && 
+      s.assessment.overallScore !== null
+    );
+    
+    const allTimeAssessed = allTimeStories.filter(s => 
+      s.assessment?.overallScore !== undefined && 
+      s.assessment.overallScore !== null
+    );
 
     const progress = {
       overview: {
         totalStoriesCreated: allTimeStories.length,
-        totalWordsWritten: allTimeStories.reduce((sum, s) => sum + (s.childWords || 0), 0),
+        totalWordsWritten: allTimeStories.reduce((sum, s) => sum + (Number(s.childWords) || 0), 0),
         averageWordsPerStory: allTimeStories.length > 0 
-          ? Math.round(allTimeStories.reduce((sum, s) => sum + (s.childWords || 0), 0) / allTimeStories.length)
+          ? Math.round(allTimeStories.reduce((sum, s) => sum + (Number(s.childWords) || 0), 0) / allTimeStories.length)
           : 0,
         writingStreak: calculateWritingStreak(allTimeStories),
         completionRate: allTimeStories.length > 0 
           ? Math.round((allTimeStories.filter(s => s.status === 'completed').length / allTimeStories.length) * 100)
           : 0,
         bestScore: allTimeAssessed.length > 0 
-          ? Math.max(...allTimeAssessed.map(s => s.assessment.overallScore))
+          ? Math.max(...allTimeAssessed.map(s => Number(s.assessment!.overallScore)))
           : 0,
         averageScore: allTimeAssessed.length > 0 
-          ? Math.round(allTimeAssessed.reduce((sum, s) => sum + s.assessment.overallScore, 0) / allTimeAssessed.length)
+          ? Math.round(allTimeAssessed.reduce((sum, s) => sum + Number(s.assessment!.overallScore), 0) / allTimeAssessed.length)
           : 0,
       },
       timeframe: {
         period: timeframe,
         storiesCreated: stories.length,
-        wordsWritten: stories.reduce((sum, s) => sum + (s.childWords || 0), 0),
+        wordsWritten: stories.reduce((sum, s) => sum + (Number(s.childWords) || 0), 0),
         averageScore: assessedStories.length > 0 
-          ? Math.round(assessedStories.reduce((sum, s) => sum + s.assessment.overallScore, 0) / assessedStories.length)
+          ? Math.round(assessedStories.reduce((sum, s) => sum + Number(s.assessment!.overallScore), 0) / assessedStories.length)
           : 0,
         daysActive: calculateActiveDays(stories),
       },
@@ -73,8 +80,8 @@ export async function GET(request: Request) {
       recent: stories.slice(0, 5).map(s => ({
         date: s.createdAt,
         title: s.title,
-        words: s.childWords || 0,
-        score: s.assessment?.overallScore || null,
+        words: Number(s.childWords) || 0,
+        score: s.assessment?.overallScore ? Number(s.assessment.overallScore) : null,
       })),
       achievements: calculateAchievements(allTimeStories, allTimeAssessed),
     };
@@ -103,7 +110,7 @@ function calculateWritingStreak(stories: any[]): number {
   let streak = 0;
   let currentDate = new Date(today);
 
-  for (let i = 0; i < 30; i++) { // Check last 30 days
+  for (let i = 0; i < 30; i++) {
     const dayStories = sortedStories.filter(story => {
       const storyDate = new Date(story.createdAt);
       storyDate.setHours(0, 0, 0, 0);
@@ -113,7 +120,7 @@ function calculateWritingStreak(stories: any[]): number {
     if (dayStories.length > 0) {
       streak++;
     } else if (streak > 0) {
-      break; // Streak broken
+      break;
     }
 
     currentDate.setDate(currentDate.getDate() - 1);
@@ -146,17 +153,25 @@ function calculateSkillProgress(assessedStories: any[]) {
   const older = assessedStories.slice(3, 6);
 
   const currentAvg = {
-    grammar: Math.round(recent.reduce((sum, s) => sum + (s.assessment?.grammarScore || 0), 0) / recent.length),
-    creativity: Math.round(recent.reduce((sum, s) => sum + (s.assessment?.creativityScore || 0), 0) / recent.length),
-    vocabulary: Math.round(recent.reduce((sum, s) => sum + (s.assessment?.vocabularyScore || 0), 0) / recent.length),
-    structure: Math.round(recent.reduce((sum, s) => sum + (s.assessment?.structureScore || 0), 0) / recent.length),
+    grammar: recent.length > 0 
+      ? Math.round(recent.reduce((sum, s) => sum + (Number(s.assessment?.grammarScore) || 0), 0) / recent.length)
+      : 0,
+    creativity: recent.length > 0 
+      ? Math.round(recent.reduce((sum, s) => sum + (Number(s.assessment?.creativityScore) || 0), 0) / recent.length)
+      : 0,
+    vocabulary: recent.length > 0 
+      ? Math.round(recent.reduce((sum, s) => sum + (Number(s.assessment?.vocabularyScore) || 0), 0) / recent.length)
+      : 0,
+    structure: recent.length > 0 
+      ? Math.round(recent.reduce((sum, s) => sum + (Number(s.assessment?.structureScore) || 0), 0) / recent.length)
+      : 0,
   };
 
   const olderAvg = older.length > 0 ? {
-    grammar: Math.round(older.reduce((sum, s) => sum + (s.assessment?.grammarScore || 0), 0) / older.length),
-    creativity: Math.round(older.reduce((sum, s) => sum + (s.assessment?.creativityScore || 0), 0) / older.length),
-    vocabulary: Math.round(older.reduce((sum, s) => sum + (s.assessment?.vocabularyScore || 0), 0) / older.length),
-    structure: Math.round(older.reduce((sum, s) => sum + (s.assessment?.structureScore || 0), 0) / older.length),
+    grammar: Math.round(older.reduce((sum, s) => sum + (Number(s.assessment?.grammarScore) || 0), 0) / older.length),
+    creativity: Math.round(older.reduce((sum, s) => sum + (Number(s.assessment?.creativityScore) || 0), 0) / older.length),
+    vocabulary: Math.round(older.reduce((sum, s) => sum + (Number(s.assessment?.vocabularyScore) || 0), 0) / older.length),
+    structure: Math.round(older.reduce((sum, s) => sum + (Number(s.assessment?.structureScore) || 0), 0) / older.length),
   } : currentAvg;
 
   return {
@@ -182,7 +197,6 @@ function calculateSkillProgress(assessedStories: any[]) {
 function calculateAchievements(allStories: any[], assessedStories: any[]) {
   const achievements = [];
 
-  // Writing milestones
   if (allStories.length >= 1) {
     achievements.push({
       id: 'first_story',
@@ -203,8 +217,7 @@ function calculateAchievements(allStories: any[], assessedStories: any[]) {
     });
   }
 
-  // Quality milestones
-  const highScoreStories = assessedStories.filter(s => s.assessment?.overallScore >= 90);
+  const highScoreStories = assessedStories.filter(s => Number(s.assessment?.overallScore) >= 90);
   if (highScoreStories.length >= 1) {
     achievements.push({
       id: 'high_score',

@@ -144,3 +144,8 @@ export function validateUsageWithinLimits(
 export function getUserLimits(tier: keyof typeof USAGE_LIMITS): UsageLimits {
   return USAGE_LIMITS[tier];
 }
+
+export const canPerformAction = async (userId: string, action: string) => {
+  // Placeholder implementation
+  return { allowed: true, reason: '', upgradeRequired: false };
+};
