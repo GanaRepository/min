@@ -1,15 +1,13 @@
-// 4. Fix app/api/stripe/webhook/route.ts - Fix emailService import
+// app/api/stripe/webhook/route.ts (FIXED)
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { connectToDatabase } from '@/utils/db';
 import User from '@/models/User';
 import StorySession from '@/models/StorySession';
 import Purchase from '@/models/Purchase';
-// Fix the import - use the specific function instead of emailService
-import { sendCompetitionSubmissionConfirmation } from '@/lib/mailer';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2025-07-30.basil', // Fix API version
+  apiVersion: '2025-07-30.basil',
 });
 
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET!;
@@ -24,7 +22,7 @@ export async function POST(req: NextRequest) {
     try {
       event = stripe.webhooks.constructEvent(body, signature, endpointSecret);
     } catch (err: any) {
-      console.error('Webhook signature verification failed:', err.message);
+      console.error('❌ Webhook signature verification failed:', err.message);
       return NextResponse.json({ error: 'Webhook signature verification failed' }, { status: 400 });
     }
 
@@ -46,13 +44,13 @@ export async function POST(req: NextRequest) {
         break;
 
       default:
-        console.log(`Unhandled webhook event type: ${event.type}`);
+        console.log(`ℹ️ Unhandled webhook event type: ${event.type}`);
     }
 
     return NextResponse.json({ received: true });
 
   } catch (error) {
-    console.error('Webhook processing error:', error);
+    console.error('❌ Webhook processing error:', error);
     return NextResponse.json(
       { error: 'Webhook processing failed' },
       { status: 500 }
@@ -62,7 +60,10 @@ export async function POST(req: NextRequest) {
 
 async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   const { metadata } = session;
-  if (!metadata) return;
+  if (!metadata) {
+    console.error('❌ No metadata in checkout session');
+    return;
+  }
 
   const { userId, productType, storyId, storiesAdded, assessmentsAdded, storyTitle } = metadata;
 
@@ -87,13 +88,12 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
 
     await purchaseRecord.save();
 
-    // Update user and records based on product type
+    // Update user based on product type
     if (productType === 'story_pack') {
-      // Add story pack benefits to user
       await User.findByIdAndUpdate(userId, {
         $inc: {
-          storiesCreatedThisMonth: -parseInt(storiesAdded), // Add to available count
-          assessmentUploadsThisMonth: -parseInt(assessmentsAdded), // Add to available count
+          'limits.stories': parseInt(storiesAdded || '5'),
+          'limits.assessments': parseInt(assessmentsAdded || '5'),
         },
         $push: {
           purchaseHistory: {
@@ -101,18 +101,14 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
             amount: session.amount_total ? session.amount_total / 100 : 15,
             stripePaymentId: session.payment_intent as string,
             purchaseDate: new Date(),
-            itemsAdded: parseInt(storiesAdded),
+            itemsAdded: parseInt(storiesAdded || '5'),
           },
         },
       });
 
       console.log(`✅ Story pack benefits added: +${storiesAdded} stories, +${assessmentsAdded} assessments`);
 
-      // Send purchase confirmation email (implement if needed)
-      console.log(`📧 Should send story pack purchase confirmation to user ${userId}`);
-
     } else if (productType === 'story_publication') {
-      // Publish the story
       await StorySession.findByIdAndUpdate(storyId, {
         isPublished: true,
         publicationDate: new Date(),
@@ -121,23 +117,18 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
       });
 
       console.log(`✅ Story "${storyTitle}" published successfully`);
-
-      // Send publication confirmation email (implement if needed)
-      console.log(`📧 Should send publication confirmation to user ${userId}`);
     }
 
     console.log(`✅ Checkout completed successfully for ${userId}`);
 
   } catch (error) {
-    console.error('Error processing checkout completion:', error);
-    // Log error but don't throw - we don't want to cause webhook retries for our internal errors
+    console.error('❌ Error processing checkout completion:', error);
   }
 }
 
 async function handlePaymentSucceeded(paymentIntent: Stripe.PaymentIntent) {
-  console.log(`💰 Payment succeeded: ${paymentIntent.id} - ${paymentIntent.amount / 100}`);
+  console.log(`💰 Payment succeeded: ${paymentIntent.id} - $${paymentIntent.amount / 100}`);
   
-  // Update purchase record status if exists
   await Purchase.findOneAndUpdate(
     { stripePaymentIntentId: paymentIntent.id },
     { status: 'completed' }
@@ -147,7 +138,6 @@ async function handlePaymentSucceeded(paymentIntent: Stripe.PaymentIntent) {
 async function handlePaymentFailed(paymentIntent: Stripe.PaymentIntent) {
   console.log(`❌ Payment failed: ${paymentIntent.id} - ${paymentIntent.last_payment_error?.message}`);
   
-  // Update purchase record status and send notification
   const purchase = await Purchase.findOneAndUpdate(
     { stripePaymentIntentId: paymentIntent.id },
     { status: 'failed' },
@@ -155,10 +145,11 @@ async function handlePaymentFailed(paymentIntent: Stripe.PaymentIntent) {
   );
 
   if (purchase) {
-    // Send payment failure notification email
     const user = await User.findById(purchase.userId);
     if (user) {
       console.log(`📧 Should send payment failure email to ${user.email}`);
     }
   }
 }
+
+export const runtime = 'nodejs';

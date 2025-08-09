@@ -1,187 +1,182 @@
-// models/Competition.ts - Monthly competition management
+// models/CompetitionSubmission.ts
 import mongoose, { Schema, Document } from 'mongoose';
 
-export interface ICompetition extends Document {
+export interface ICompetitionSubmission extends Document {
   _id: mongoose.Types.ObjectId;
-  month: string; // "March 2024"
-  year: number;
-  phase: 'submission' | 'judging' | 'results';
-
-  // Competition Timeline
-  submissionStart: Date; // Day 1
-  submissionEnd: Date; // Day 25
-  judgingStart: Date; // Day 26
-  judgingEnd: Date; // Day 30
-  resultsDate: Date; // Day 31
-
-  // Competition Settings
-  maxEntriesPerChild: number; // 3
-  totalSubmissions: number;
-  totalParticipants: number;
-
-  // Winners (Olympic-style podium)
-  winners: Array<{
-    position: number; // 1, 2, 3
-    childId: mongoose.Types.ObjectId;
-    storyId: mongoose.Types.ObjectId;
-    score: number;
-    title: string;
-    childName: string;
-    aiJudgingNotes?: string;
-  }>;
-
-  // Competition Status
-  isActive: boolean;
-  isArchived: boolean;
-
-  // AI Judging Criteria Weights
-  judgingCriteria: {
-    grammar: number; // 20%
-    creativity: number; // 25%
-    structure: number; // 15%
-    characterDev: number; // 15%
-    plotOriginality: number; // 15%
-    vocabulary: number; // 10%
-  };
-
-  // Metadata
-  createdBy: mongoose.Types.ObjectId; // Admin who created
+  userId: mongoose.Types.ObjectId;
+  competitionId: mongoose.Types.ObjectId;
+  
+  // Story Details
+  title: string;
+  fileName: string;
+  fileSize: number;
+  fileType: string;
+  fileBuffer: Buffer;
+  wordCount: number;
+  
+  // Submission Info
+  submittedAt: Date;
+  status: 'submitted' | 'under_review' | 'judged' | 'winner' | 'disqualified';
+  
+  // Publishing
+  published: boolean;
+  publicationFee: number; // $10
+  paymentStatus: 'pending' | 'paid' | 'failed' | 'refunded';
+  publishedAt?: Date;
+  
+  // Competition Results
+  competitionRank?: number; // 1, 2, 3, etc.
+  competitionScore?: number; // 0-100
+  judgedAt?: Date;
+  aiJudgingNotes?: string;
+  
+  // AI Analysis (when judged)
+  grammarScore?: number;
+  creativityScore?: number;
+  structureScore?: number;
+  characterScore?: number;
+  plotScore?: number;
+  vocabularyScore?: number;
+  
   createdAt: Date;
   updatedAt: Date;
 }
 
-const CompetitionSchema = new Schema<ICompetition>(
+const CompetitionSubmissionSchema = new Schema<ICompetitionSubmission>(
   {
-    month: {
+    userId: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+      index: true,
+    },
+    competitionId: {
+      type: Schema.Types.ObjectId,
+      ref: 'Competition',
+      required: true,
+      index: true,
+    },
+    
+    // Story Details
+    title: {
+      type: String,
+      required: true,
+      trim: true,
+      maxlength: 100,
+    },
+    fileName: {
       type: String,
       required: true,
       trim: true,
     },
-    year: {
+    fileSize: {
       type: Number,
       required: true,
-      min: 2024,
+      min: 0,
+      max: 10 * 1024 * 1024, // 10MB max
     },
-    phase: {
+    fileType: {
       type: String,
-      enum: ['submission', 'judging', 'results'],
       required: true,
-      default: 'submission',
-      index: true,
+      enum: ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
     },
-
-    // Timeline
-    submissionStart: {
-      type: Date,
+    fileBuffer: {
+      type: Buffer,
       required: true,
     },
-    submissionEnd: {
-      type: Date,
-      required: true,
-    },
-    judgingStart: {
-      type: Date,
-      required: true,
-    },
-    judgingEnd: {
-      type: Date,
-      required: true,
-    },
-    resultsDate: {
-      type: Date,
-      required: true,
-    },
-
-    // Settings
-    maxEntriesPerChild: {
-      type: Number,
-      required: true,
-      default: 3,
-      min: 1,
-      max: 10,
-    },
-    totalSubmissions: {
+    wordCount: {
       type: Number,
       required: true,
       default: 0,
       min: 0,
+      max: 2000,
     },
-    totalParticipants: {
-      type: Number,
+    
+    // Submission Info
+    submittedAt: {
+      type: Date,
       required: true,
-      default: 0,
-      min: 0,
+      default: Date.now,
     },
-
-    // Winners
-    winners: [
-      {
-        position: {
-          type: Number,
-          required: true,
-          min: 1,
-          max: 3,
-        },
-        childId: {
-          type: Schema.Types.ObjectId,
-          ref: 'User',
-          required: true,
-        },
-        storyId: {
-          type: Schema.Types.ObjectId,
-          ref: 'StorySession',
-          required: true,
-        },
-        score: {
-          type: Number,
-          required: true,
-          min: 0,
-          max: 100,
-        },
-        title: {
-          type: String,
-          required: true,
-          trim: true,
-        },
-        childName: {
-          type: String,
-          required: true,
-          trim: true,
-        },
-        aiJudgingNotes: {
-          type: String,
-          trim: true,
-        },
-      },
-    ],
-
-    // Status
-    isActive: {
-      type: Boolean,
+    status: {
+      type: String,
+      enum: ['submitted', 'under_review', 'judged', 'winner', 'disqualified'],
+      default: 'submitted',
       required: true,
-      default: true,
       index: true,
     },
-    isArchived: {
+    
+    // Publishing
+    published: {
       type: Boolean,
-      required: true,
       default: false,
+      index: true,
     },
-
-    // AI Judging Weights
-    judgingCriteria: {
-      grammar: { type: Number, default: 0.2 },
-      creativity: { type: Number, default: 0.25 },
-      structure: { type: Number, default: 0.15 },
-      characterDev: { type: Number, default: 0.15 },
-      plotOriginality: { type: Number, default: 0.15 },
-      vocabulary: { type: Number, default: 0.1 },
-    },
-
-    createdBy: {
-      type: Schema.Types.ObjectId,
-      ref: 'User',
+    publicationFee: {
+      type: Number,
       required: true,
+      default: 10,
+    },
+    paymentStatus: {
+      type: String,
+      enum: ['pending', 'paid', 'failed', 'refunded'],
+      default: 'pending',
+      required: true,
+      index: true,
+    },
+    publishedAt: {
+      type: Date,
+    },
+    
+    // Competition Results
+    competitionRank: {
+      type: Number,
+      min: 1,
+      index: true,
+    },
+    competitionScore: {
+      type: Number,
+      min: 0,
+      max: 100,
+    },
+    judgedAt: {
+      type: Date,
+    },
+    aiJudgingNotes: {
+      type: String,
+      maxlength: 1000,
+    },
+    
+    // AI Analysis Scores
+    grammarScore: {
+      type: Number,
+      min: 0,
+      max: 100,
+    },
+    creativityScore: {
+      type: Number,
+      min: 0,
+      max: 100,
+    },
+    structureScore: {
+      type: Number,
+      min: 0,
+      max: 100,
+    },
+    characterScore: {
+      type: Number,
+      min: 0,
+      max: 100,
+    },
+    plotScore: {
+      type: Number,
+      min: 0,
+      max: 100,
+    },
+    vocabularyScore: {
+      type: Number,
+      min: 0,
+      max: 100,
     },
   },
   {
@@ -189,10 +184,18 @@ const CompetitionSchema = new Schema<ICompetition>(
   }
 );
 
-// Indexes
-CompetitionSchema.index({ year: 1, month: 1 }, { unique: true });
-CompetitionSchema.index({ phase: 1, isActive: 1 });
-CompetitionSchema.index({ submissionEnd: 1, judgingEnd: 1, resultsDate: 1 });
+// Indexes for efficient queries
+CompetitionSubmissionSchema.index({ userId: 1, competitionId: 1 });
+CompetitionSubmissionSchema.index({ competitionId: 1, competitionRank: 1 });
+CompetitionSubmissionSchema.index({ competitionId: 1, competitionScore: -1 });
+CompetitionSubmissionSchema.index({ submittedAt: -1 });
+CompetitionSubmissionSchema.index({ status: 1, judgedAt: -1 });
 
-export default mongoose.models.Competition ||
-  mongoose.model<ICompetition>('Competition', CompetitionSchema);
+// Ensure a user can't submit the same title twice in the same competition
+CompetitionSubmissionSchema.index(
+  { userId: 1, competitionId: 1, title: 1 }, 
+  { unique: true }
+);
+
+export default mongoose.models.CompetitionSubmission ||
+  mongoose.model<ICompetitionSubmission>('CompetitionSubmission', CompetitionSubmissionSchema);

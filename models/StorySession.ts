@@ -102,6 +102,8 @@ export interface IStorySession extends Document {
     phase: 'submission' | 'judging' | 'results';
   }>;
 
+  
+
   // Legacy assessment fields (top-level for compatibility)
   overallScore?: number;
   grammarScore?: number;

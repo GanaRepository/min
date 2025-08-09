@@ -1,4 +1,4 @@
-// app/api/stripe/checkout/route.ts - Stripe Checkout Session Creation
+// app/api/stripe/checkout/route.ts (FIXED)
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/utils/authOptions';
@@ -13,6 +13,12 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 
 export async function POST(req: NextRequest) {
   try {
+    // Check environment variables first
+    if (!process.env.STRIPE_SECRET_KEY) {
+      console.error('❌ STRIPE_SECRET_KEY not configured');
+      return NextResponse.json({ error: 'Stripe not configured' }, { status: 500 });
+    }
+
     const session = await getServerSession(authOptions);
     if (!session?.user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -39,14 +45,17 @@ export async function POST(req: NextRequest) {
     // Configure product based on type
     let priceId: string;
     let productName: string;
-    let metadata: any = {
+    let metadata: Record<string, string> = {
       userId,
       productType,
     };
 
     switch (productType) {
       case 'story_pack':
-        priceId = process.env.STRIPE_STORY_PACK_PRICE_ID!;
+        if (!process.env.STRIPE_STORY_PACK_PRICE_ID) {
+          return NextResponse.json({ error: 'Story pack not configured' }, { status: 500 });
+        }
+        priceId = process.env.STRIPE_STORY_PACK_PRICE_ID;
         productName = 'Story Pack - 5 Stories + 5 Assessments';
         metadata.storiesAdded = '5';
         metadata.assessmentsAdded = '5';
@@ -54,6 +63,10 @@ export async function POST(req: NextRequest) {
         break;
 
       case 'story_publication':
+        if (!process.env.STRIPE_PUBLICATION_PRICE_ID) {
+          return NextResponse.json({ error: 'Publication not configured' }, { status: 500 });
+        }
+        
         if (!storyId) {
           return NextResponse.json(
             { error: 'Story ID required for publication' },
@@ -77,7 +90,7 @@ export async function POST(req: NextRequest) {
           );
         }
 
-        priceId = process.env.STRIPE_PUBLICATION_PRICE_ID!;
+        priceId = process.env.STRIPE_PUBLICATION_PRICE_ID;
         productName = `Publish "${story.title}"`;
         metadata.storyId = storyId;
         metadata.storyTitle = story.title;
@@ -119,7 +132,7 @@ export async function POST(req: NextRequest) {
     });
 
   } catch (error) {
-    console.error('Stripe checkout error:', error);
+    console.error('❌ Stripe checkout error:', error);
     return NextResponse.json(
       { error: 'Failed to create checkout session' },
       { status: 500 }

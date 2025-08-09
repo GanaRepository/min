@@ -1,87 +1,11 @@
-// // app/api/user/stories/route.ts
-// import { NextResponse } from 'next/server';
-// import { getServerSession } from 'next-auth';
-// import { authOptions } from '@/utils/authOptions';
-// import { connectToDatabase } from '@/utils/db';
-// import StorySession from '@/models/StorySession';
-// import mongoose from 'mongoose';
-
-// export const dynamic = 'force-dynamic';
-
-// export async function GET() {
-//   try {
-//     const session = await getServerSession(authOptions);
-
-//     if (!session || session.user.role !== 'child') {
-//       return NextResponse.json(
-//         { error: 'Access denied. Children only.' },
-//         { status: 403 }
-//       );
-//     }
-
-//     await connectToDatabase();
-
-//     const userId = new mongoose.Types.ObjectId(session.user.id);
-
-//     // Get all story sessions for the user
-//     const storySessions = await StorySession.find({ childId: userId })
-//       .sort({ updatedAt: -1 })
-//       .lean();
-
-//     // Transform the data for frontend
-//     const stories = storySessions.map((session) => ({
-//       _id: session._id,
-//       storyNumber: session.storyNumber,
-//       title: session.title,
-//       elements: session.elements,
-//       status: session.status,
-//       currentTurn: session.currentTurn,
-//       totalWords: session.totalWords,
-//       childWords: session.childWords,
-//       apiCallsUsed: session.apiCallsUsed,
-//       maxApiCalls: session.maxApiCalls,
-//       createdAt: session.createdAt,
-//       updatedAt: session.updatedAt,
-//       // Use real assessment scores if available
-//       ...(session.status === 'completed' && {
-//         overallScore:
-//           session.assessment?.overallScore ?? session.overallScore ?? 0,
-//         grammarScore:
-//           session.assessment?.grammarScore ?? session.grammarScore ?? 0,
-//         creativityScore:
-//           session.assessment?.creativityScore ?? session.creativityScore ?? 0,
-//         feedback: session.assessment?.feedback ?? session.feedback ?? '',
-//         publishedAt: session.updatedAt,
-//       }),
-//     }));
-
-//     return NextResponse.json({
-//       success: true,
-//       stories,
-//       stats: {
-//         total: stories.length,
-//         completed: stories.filter((s) => s.status === 'completed').length,
-//         active: stories.filter((s) => s.status === 'active').length,
-//         paused: stories.filter((s) => s.status === 'paused').length,
-//         totalWords: stories.reduce((sum, s) => sum + (s.childWords || 0), 0),
-//       },
-//     });
-//   } catch (error) {
-//     console.error('Error fetching user stories:', error);
-//     return NextResponse.json(
-//       { error: 'Failed to fetch stories' },
-//       { status: 500 }
-//     );
-//   }
-// }
-
-
-// app/api/user/stories/route.ts - Get User's Stories with Filtering
+// app/api/user/stories/route.ts - FIXED VERSION BASED ON ACTUAL SCHEMA
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/utils/authOptions';
 import { connectToDatabase } from '@/utils/db';
 import StorySession from '@/models/StorySession';
+
+export const dynamic = 'force-dynamic';
 
 export async function GET(req: NextRequest) {
   try {
@@ -93,50 +17,86 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const limit = parseInt(searchParams.get('limit') || '20');
     const page = parseInt(searchParams.get('page') || '1');
-    const published = searchParams.get('published') === 'true';
-    const competitionEligible = searchParams.get('competitionEligible') === 'true';
-    const isUploadedForAssessment = searchParams.get('assessment') === 'true';
+    const published = searchParams.get('published');
+    const competitionEligible = searchParams.get('competitionEligible');
+    const isUploadedForAssessment = searchParams.get('assessment');
+    const competition = searchParams.get('competition');
+    const notSubmitted = searchParams.get('notSubmitted');
 
     await connectToDatabase();
 
-    // Build query filters
+    // Build query filters based on actual schema
     const query: any = { childId: session.user.id };
     
-    if (published !== undefined) {
-      query.isPublished = published;
+    if (published === 'true') {
+      query.isPublished = true;
     }
     
-    if (competitionEligible) {
+    if (competitionEligible === 'true') {
       query.competitionEligible = true;
     }
     
-    if (isUploadedForAssessment !== undefined) {
-      query.isUploadedForAssessment = isUploadedForAssessment;
+    if (isUploadedForAssessment === 'true') {
+      query.isUploadedForAssessment = true;
+    }
+
+    // Competition filters using the actual competitionEntries array
+    if (competition === 'true') {
+      query.competitionEntries = { $exists: true, $not: { $size: 0 } };
+    }
+
+    if (notSubmitted === 'true') {
+      query.$or = [
+        { competitionEntries: { $exists: false } },
+        { competitionEntries: { $size: 0 } }
+      ];
     }
 
     const stories = await StorySession.find(query)
       .sort({ createdAt: -1 })
       .limit(limit)
       .skip((page - 1) * limit)
-      .select('title status isUploadedForAssessment assessmentScore assessmentAttempts isPublished competitionEligible createdAt collaborativeContent freeformContent competitionEntries');
+      .lean();
 
-    // Add word count and format data
-    const formattedStories = stories.map(story => {
-      const content = story.collaborativeContent || story.freeformContent || '';
-      const wordCount: number = content.trim().split(/\s+/).filter((word: string) => word.length > 0).length;
+    // Format stories data based on actual schema fields
+    const formattedStories = stories.map((story: any) => {
+      // Check if story is submitted to competition
+      const hasCompetitionEntry = story.competitionEntries && story.competitionEntries.length > 0;
+      const latestCompetitionEntry = hasCompetitionEntry ? story.competitionEntries[story.competitionEntries.length - 1] : null;
       
       return {
         _id: story._id,
-        title: story.title,
-        status: story.status,
-        isUploadedForAssessment: story.isUploadedForAssessment,
-        assessmentScore: story.assessmentScore,
+        title: story.title || 'Untitled',
+        status: story.status || 'active',
+        storyNumber: story.storyNumber || 0,
+        totalWords: story.totalWords || story.childWords || 0,
+        childWords: story.childWords || 0,
+        
+        // Assessment fields
+        isUploadedForAssessment: story.isUploadedForAssessment || false,
         assessmentAttempts: story.assessmentAttempts || 0,
+        assessment: story.assessment || null,
+        
+        // Publication fields
         isPublished: story.isPublished || false,
+        publicationDate: story.publicationDate || null,
         competitionEligible: story.competitionEligible || false,
-        createdAt: story.createdAt,
-        wordCount,
+        
+        // Competition fields (using actual schema)
         competitionEntries: story.competitionEntries || [],
+        submittedToCompetition: hasCompetitionEntry,
+        competitionSubmissionDate: latestCompetitionEntry?.submittedAt || null,
+        competitionId: latestCompetitionEntry?.competitionId || null,
+        
+        // Timestamps
+        createdAt: story.createdAt,
+        updatedAt: story.updatedAt,
+        
+        // Legacy fields for backward compatibility
+        overallScore: story.assessment?.overallScore || story.overallScore || 0,
+        grammarScore: story.assessment?.grammarScore || story.grammarScore || 0,
+        creativityScore: story.assessment?.creativityScore || story.creativityScore || 0,
+        feedback: story.assessment?.feedback || story.feedback || '',
       };
     });
 
@@ -151,6 +111,13 @@ export async function GET(req: NextRequest) {
         totalItems: totalCount,
         hasNext: page * limit < totalCount,
         hasPrev: page > 1,
+      },
+      stats: {
+        total: formattedStories.length,
+        completed: formattedStories.filter(s => s.status === 'completed').length,
+        active: formattedStories.filter(s => s.status === 'active').length,
+        published: formattedStories.filter(s => s.isPublished).length,
+        submittedToCompetition: formattedStories.filter(s => s.submittedToCompetition).length,
       },
     });
 
