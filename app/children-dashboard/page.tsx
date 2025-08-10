@@ -247,7 +247,7 @@ export default function ChildrenDashboard() {
           >
             {/* Create New Story */}
             <Link
-              href="/create-stories"
+              href="/create-stories/#freestyle"
               className="group bg-green-600/10 hover:bg-green-600/20 border border-green-500/30 hover:border-green-500/50 rounded-xl p-6 transition-all duration-300"
             >
               <div className="flex items-center gap-4">
@@ -267,7 +267,7 @@ export default function ChildrenDashboard() {
 
             {/* Upload for Assessment */}
             <Link
-              href="/children-dashboard/upload-assessment"
+              href="/create-stories/#assessment"
               className="group bg-blue-600/10 hover:bg-blue-600/20 border border-blue-500/30 hover:border-blue-500/50 rounded-xl p-6 transition-all duration-300"
             >
               <div className="flex items-center gap-4">

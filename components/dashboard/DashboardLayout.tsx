@@ -60,7 +60,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
   if (isStoryWritingPage) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900">
+      <div className=" bg-gradient-to-br from-gray-900 via-gray-800 to-green-900">
         {/* Background Pattern */}
         <div className="absolute inset-0 opacity-5">
           <svg width="100%" height="100%" className="absolute inset-0">

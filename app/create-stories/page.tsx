@@ -956,6 +956,7 @@ function CreateStoriesContent() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 className="group"
+                id="freestyle"
               >
                 <div className="bg-gradient-to-br from-blue-500/10 to-cyan-500/10 backdrop-blur-xl border border-blue-500/30 p-8 hover:scale-105 transition-all duration-300 h-full">
                   <div className="text-center">
@@ -1031,6 +1032,7 @@ function CreateStoriesContent() {
                 viewport={{ once: true }}
                 transition={{ delay: 0.2 }}
                 className="group"
+                id="assessment"
               >
                 <div className="bg-gradient-to-br from-green-500/10 to-teal-500/10 backdrop-blur-xl border border-green-500/30 p-8 hover:scale-105 transition-all duration-300 h-full">
                   <div className="text-center">

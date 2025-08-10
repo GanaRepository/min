@@ -35,14 +35,14 @@ const navigationItems = [
     description: 'Your creative home',
   },
   {
-    name: 'Create Stories',
-    href: '/create-stories',
+    name: 'Create Stories Freestyle',
+    href: '/create-stories/#freestyle',
     icon: Sparkles,
     description: 'Freestyle story writing',
   },
   {
-    name: 'Upload Assessment',
-    href: '/children-dashboard/upload-assessment',
+    name: 'Upload Stories For Assessment',
+    href: '/create-stories/#assessment',
     icon: Upload,
     description: 'Submit for AI feedback',
   },
