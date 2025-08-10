@@ -1,45 +1,30 @@
-// app/api/stories/assessment/[sessionId]/route.ts - REPLACE YOUR EXISTING FILE
 import { NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/utils/authOptions';
 import { connectToDatabase } from '@/utils/db';
 import StorySession from '@/models/StorySession';
 import Turn from '@/models/Turn';
-import { UsageManager } from '@/lib/usage-manager';
 import { AssessmentEngine } from '@/lib/ai/assessment-engine';
+import { UsageManager } from '@/lib/usage-manager';
+import type { NextRequest } from 'next/server';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/utils/authOptions';
 import mongoose from 'mongoose';
 
-interface AssessmentRouteProps {
-  params: { sessionId: string };
-}
-
-export async function POST(request: Request, { params }: AssessmentRouteProps) {
+export async function POST(
+  req: NextRequest,
+  { params }: { params: { sessionId: string } }
+) {
   try {
-    const session = await getServerSession(authOptions);
+    await connectToDatabase();
+    const { sessionId } = params;
 
+    console.log('🔍 Assessment request for sessionId:', sessionId);
+
+    const session = await getServerSession(authOptions);
     if (!session || session.user.role !== 'child') {
+      console.log('❌ Unauthorized assessment attempt');
       return NextResponse.json(
         { error: 'Access denied. Children only.' },
         { status: 403 }
-      );
-    }
-
-    await connectToDatabase();
-
-    // Check if user can attempt assessment - FIXED METHOD NAME
-    const usageCheck = await UsageManager.canAttemptAssessment(
-      session.user.id,
-      params.sessionId
-    );
-    if (!usageCheck.allowed) {
-      return NextResponse.json(
-        {
-          error: usageCheck.reason,
-          needsUpgrade: usageCheck.upgradeRequired,
-          currentUsage: usageCheck.currentUsage,
-          limits: usageCheck.limits,
-        },
-        { status: 429 }
       );
     }
 
@@ -47,53 +32,80 @@ export async function POST(request: Request, { params }: AssessmentRouteProps) {
     let storySession = null;
     let actualSessionId = null;
 
-    if (mongoose.Types.ObjectId.isValid(params.sessionId)) {
+    if (mongoose.Types.ObjectId.isValid(sessionId)) {
       storySession = await StorySession.findOne({
-        _id: params.sessionId,
+        _id: sessionId,
         childId: session.user.id,
       });
-      actualSessionId = params.sessionId;
-    } else if (!isNaN(Number(params.sessionId))) {
+      actualSessionId = sessionId;
+    } else if (!isNaN(Number(sessionId))) {
       storySession = await StorySession.findOne({
-        storyNumber: Number(params.sessionId),
+        storyNumber: Number(sessionId),
         childId: session.user.id,
       });
       actualSessionId = storySession?._id?.toString();
     }
 
     if (!storySession || !actualSessionId) {
-      return NextResponse.json({ error: 'Story not found' }, { status: 404 });
+      console.log('❌ Story session not found:', sessionId);
+      return NextResponse.json({ error: 'Session not found' }, { status: 404 });
     }
 
-    // Check if story is completed
+    // Only allow assessment if story is completed
     if (storySession.status !== 'completed') {
+      console.log('❌ Story not completed:', storySession.status);
       return NextResponse.json(
         {
-          error:
-            'Story not completed. Please finish writing before requesting assessment.',
+          error: 'Story not completed. Please finish writing before requesting assessment.',
         },
         { status: 400 }
       );
     }
 
-    // Check if already has assessment and if re-assessment is allowed
-    const isReassessment = !!storySession.assessment?.overallScore;
+    // Check if this is a re-assessment request
+    // FIXED: Use optional chaining and type assertion
+    const isReassessment = !!(storySession as any).assessment?.overallScore;
+
     if (isReassessment) {
-      const currentAttempts = storySession.assessmentAttempts || 0;
+      console.log('🔄 Re-assessment requested for session:', actualSessionId);
+
+      // Check assessment attempts limit
+      const currentAttempts = (storySession as any).assessmentAttempts || 0;
       if (currentAttempts >= 3) {
         return NextResponse.json(
-          { error: 'Maximum assessment attempts (3) reached for this story.' },
+          { 
+            error: 'Maximum assessment attempts (3) reached. Create a new story or upload an improved version to continue.',
+            maxAttemptsReached: true
+          },
           { status: 400 }
         );
+      }
+
+      // FIXED: Use type assertion and safer checks for lastModifiedAt
+      const lastAssessedAt = (storySession as any).lastAssessedAt;
+      const lastModifiedAt = (storySession as any).lastModifiedAt;
+      
+      // For reassessment, check if story has been modified since last assessment
+      if (lastAssessedAt && lastModifiedAt) {
+        if (new Date(lastModifiedAt) <= new Date(lastAssessedAt)) {
+          return NextResponse.json(
+            { 
+              error: 'Please modify your story based on the feedback before requesting reassessment.',
+              requiresModification: true
+            },
+            { status: 400 }
+          );
+        }
       }
     }
 
     // Get story content based on story type
     let storyContent = '';
 
-    if (storySession.isUploadedForAssessment && storySession.aiOpening) {
+    // FIXED: Use type assertion for isUploadedForAssessment and aiOpening
+    if ((storySession as any).isUploadedForAssessment && (storySession as any).aiOpening) {
       // For uploaded stories, content is in aiOpening
-      storyContent = storySession.aiOpening;
+      storyContent = (storySession as any).aiOpening;
       console.log('📄 Processing uploaded story content');
     } else {
       // For collaborative stories, get all turns
@@ -106,8 +118,7 @@ export async function POST(request: Request, { params }: AssessmentRouteProps) {
       if (turns.length === 0) {
         return NextResponse.json(
           {
-            error:
-              'No story content found. Please write some content before requesting assessment.',
+            error: 'No story content found. Please write some content before requesting assessment.',
           },
           { status: 400 }
         );
@@ -115,8 +126,8 @@ export async function POST(request: Request, { params }: AssessmentRouteProps) {
 
       // For collaborative stories, use only child inputs
       const childInputs = turns
-        .filter((turn) => turn.childInput?.trim())
-        .map((turn) => turn.childInput.trim());
+        .filter((turn: any) => turn.childInput?.trim())
+        .map((turn: any) => turn.childInput.trim());
 
       if (childInputs.length === 0) {
         return NextResponse.json(
@@ -141,8 +152,7 @@ export async function POST(request: Request, { params }: AssessmentRouteProps) {
     if (wordCount < 50) {
       return NextResponse.json(
         {
-          error:
-            'Story must be at least 50 words long for meaningful assessment.',
+          error: 'Story must be at least 50 words long for meaningful assessment.',
         },
         { status: 400 }
       );
@@ -150,10 +160,7 @@ export async function POST(request: Request, { params }: AssessmentRouteProps) {
 
     try {
       // Generate assessment using advanced AI engine
-      console.log(
-        '🎯 Generating advanced AI assessment for story:',
-        storySession.title
-      );
+      console.log('🎯 Generating advanced AI assessment for story:', storySession.title);
 
       const assessment = await AssessmentEngine.assessStory(
         storyContent,
@@ -163,15 +170,9 @@ export async function POST(request: Request, { params }: AssessmentRouteProps) {
 
       console.log('✅ Assessment completed successfully');
       console.log(`📈 Overall Score: ${assessment.overallScore}%`);
-      console.log(
-        `🔍 Plagiarism Score: ${assessment.integrityAnalysis.originalityScore}%`
-      );
-      console.log(
-        `🤖 AI Detection Score: ${assessment.integrityAnalysis.aiDetectionResult.overallScore}%`
-      );
-      console.log(
-        `⚠️ Integrity Risk: ${assessment.integrityAnalysis.integrityRisk}`
-      );
+      console.log(`🔍 Plagiarism Score: ${assessment.integrityAnalysis.originalityScore}%`);
+      console.log(`🤖 AI Detection Score: ${assessment.integrityAnalysis.aiDetectionResult.overallScore}%`);
+      console.log(`⚠️ Integrity Risk: ${assessment.integrityAnalysis.integrityRisk}`);
 
       // Prepare assessment data for storage
       const assessmentData = {
@@ -180,74 +181,35 @@ export async function POST(request: Request, { params }: AssessmentRouteProps) {
         creativityScore: assessment.categoryScores.creativity,
         vocabularyScore: assessment.categoryScores.vocabulary,
         structureScore: assessment.categoryScores.structure,
-        characterDevelopmentScore:
-          assessment.categoryScores.characterDevelopment,
+        characterDevelopmentScore: assessment.categoryScores.characterDevelopment,
         plotDevelopmentScore: assessment.categoryScores.plotDevelopment,
         overallScore: assessment.overallScore,
         readingLevel: assessment.categoryScores.readingLevel,
         feedback: assessment.educationalFeedback.teacherComment,
         strengths: assessment.educationalFeedback.strengths,
         improvements: assessment.educationalFeedback.improvements,
-        vocabularyUsed: [], // Legacy field
-        suggestedWords: [], // Legacy field
+        vocabularyUsed: [],
+        suggestedWords: [],
         educationalInsights: assessment.educationalFeedback.encouragement,
 
-        // NEW: Advanced integrity fields
-        plagiarismScore: assessment.integrityAnalysis.originalityScore,
-        aiDetectionScore:
-          assessment.integrityAnalysis.aiDetectionResult.overallScore,
-        integrityRisk: assessment.integrityAnalysis.integrityRisk,
-
-        // Store detailed analysis for admin review
-        integrityAnalysis: {
-          plagiarismResult: {
-            score: assessment.integrityAnalysis.plagiarismResult.overallScore,
-            riskLevel: assessment.integrityAnalysis.plagiarismResult.riskLevel,
-            violationCount:
-              assessment.integrityAnalysis.plagiarismResult.violations
-                ?.length || 0,
-            detailedAnalysis:
-              assessment.integrityAnalysis.plagiarismResult.detailedAnalysis,
-          },
-          aiDetectionResult: {
-            score: assessment.integrityAnalysis.aiDetectionResult.overallScore,
-            likelihood:
-              assessment.integrityAnalysis.aiDetectionResult.likelihood,
-            confidence:
-              assessment.integrityAnalysis.aiDetectionResult.confidence,
-            indicatorCount:
-              assessment.integrityAnalysis.aiDetectionResult.indicators
-                ?.length || 0,
-            detailedAnalysis:
-              assessment.integrityAnalysis.aiDetectionResult.detailedAnalysis,
-          },
-        },
-
-        // Educational enhancements
+        // Advanced fields
+        integrityAnalysis: assessment.integrityAnalysis,
         recommendations: assessment.recommendations,
         progressTracking: assessment.progressTracking,
-
-        // Assessment metadata
-        assessmentVersion: '2.0', // Mark as advanced assessment
-        assessmentDate: new Date(),
-        isReassessment,
+        assessmentVersion: '2.0',
+        assessmentDate: new Date().toISOString(),
       };
 
-      // Update story session with assessment
+      // Update story session with new assessment
       const updatedSession = await StorySession.findByIdAndUpdate(
         actualSessionId,
         {
           $set: {
             assessment: assessmentData,
-            // Legacy fields for backward compatibility
             overallScore: assessment.overallScore,
             grammarScore: assessment.categoryScores.grammar,
             creativityScore: assessment.categoryScores.creativity,
-            feedback: assessment.educationalFeedback.teacherComment,
-            status:
-              assessment.integrityAnalysis.integrityRisk === 'critical'
-                ? 'flagged'
-                : 'completed',
+            status: assessment.integrityAnalysis.integrityRisk === 'critical' ? 'flagged' : 'completed',
             lastAssessedAt: new Date(),
           },
           $inc: { assessmentAttempts: 1 },
@@ -255,11 +217,16 @@ export async function POST(request: Request, { params }: AssessmentRouteProps) {
         { new: true }
       );
 
+      // FIXED: Check if updatedSession is null
+      if (!updatedSession) {
+        return NextResponse.json(
+          { error: 'Failed to update story session' },
+          { status: 500 }
+        );
+      }
+
       // Increment user's assessment attempt counter
-      await UsageManager.incrementAssessmentAttempt(
-        session.user.id,
-        actualSessionId
-      );
+      await UsageManager.incrementAssessmentAttempt(session.user.id, actualSessionId);
 
       console.log('✅ Assessment generated and saved successfully!');
 
@@ -272,223 +239,60 @@ export async function POST(request: Request, { params }: AssessmentRouteProps) {
           creativityScore: assessment.categoryScores.creativity,
           vocabularyScore: assessment.categoryScores.vocabulary,
           structureScore: assessment.categoryScores.structure,
-          characterDevelopmentScore:
-            assessment.categoryScores.characterDevelopment,
+          characterDevelopmentScore: assessment.categoryScores.characterDevelopment,
           plotDevelopmentScore: assessment.categoryScores.plotDevelopment,
           overallScore: assessment.overallScore,
           readingLevel: assessment.categoryScores.readingLevel,
           feedback: assessment.educationalFeedback.teacherComment,
           strengths: assessment.educationalFeedback.strengths,
           improvements: assessment.educationalFeedback.improvements,
-          vocabularyUsed: [], // Legacy
-          suggestedWords: [], // Legacy
+          vocabularyUsed: [],
+          suggestedWords: [],
           educationalInsights: assessment.educationalFeedback.encouragement,
 
           // NEW: Advanced fields
           plagiarismScore: assessment.integrityAnalysis.originalityScore,
-          aiDetectionScore:
-            assessment.integrityAnalysis.aiDetectionResult.overallScore,
+          aiDetectionScore: assessment.integrityAnalysis.aiDetectionResult.overallScore,
           integrityRisk: assessment.integrityAnalysis.integrityRisk,
           integrityAnalysis: {
             originalityScore: assessment.integrityAnalysis.originalityScore,
-            plagiarismScore:
-              assessment.integrityAnalysis.plagiarismResult.overallScore,
-            aiDetectionScore:
-              assessment.integrityAnalysis.aiDetectionResult.overallScore,
+            plagiarismScore: assessment.integrityAnalysis.plagiarismResult.overallScore,
+            aiDetectionScore: assessment.integrityAnalysis.aiDetectionResult.overallScore,
             integrityRisk: assessment.integrityAnalysis.integrityRisk,
-            plagiarismRiskLevel:
-              assessment.integrityAnalysis.plagiarismResult.riskLevel,
-            aiDetectionLikelihood:
-              assessment.integrityAnalysis.aiDetectionResult.likelihood,
+            plagiarismRiskLevel: assessment.integrityAnalysis.plagiarismResult.riskLevel,
+            aiDetectionLikelihood: assessment.integrityAnalysis.aiDetectionResult.likelihood,
           },
           recommendations: assessment.recommendations,
           progressTracking: assessment.progressTracking,
           assessmentVersion: '2.0',
         },
-        message:
-          assessment.integrityAnalysis.integrityRisk === 'critical'
-            ? 'Assessment completed but story flagged for review due to integrity concerns.'
+        message: assessment.integrityAnalysis.integrityRisk === 'critical'
+          ? 'Assessment completed but story flagged for review due to integrity concerns.'
+          : isReassessment 
+            ? 'Story reassessed successfully! Compare with previous feedback.'
             : 'Assessment completed successfully!',
-        attemptsRemaining: 3 - (updatedSession?.assessmentAttempts || 0),
+        storySession: updatedSession,
+        isReassessment,
+        attemptsRemaining: 3 - ((updatedSession as any).assessmentAttempts || 0),
       };
 
-      // Add warnings for integrity issues
-      if (assessment.integrityAnalysis.integrityRisk !== 'low') {
-        (response as any).warnings = [];
-        if (assessment.integrityAnalysis.plagiarismResult.riskLevel !== 'low') {
-          (response as any).warnings.push({
-            type: 'plagiarism',
-            message:
-              'Potential plagiarism detected. Please ensure all content is original.',
-            severity: assessment.integrityAnalysis.plagiarismResult.riskLevel,
-            score: assessment.integrityAnalysis.plagiarismResult.overallScore,
-          });
-        }
-        if (
-          assessment.integrityAnalysis.aiDetectionResult.likelihood !==
-            'very_low' &&
-          assessment.integrityAnalysis.aiDetectionResult.likelihood !== 'low'
-        ) {
-          (response as any).warnings.push({
-            type: 'ai_content',
-            message:
-              'Content may be AI-generated. Please submit only your own original writing.',
-            severity: assessment.integrityAnalysis.aiDetectionResult.likelihood,
-            score: assessment.integrityAnalysis.aiDetectionResult.overallScore,
-          });
-        }
-      }
-
       return NextResponse.json(response);
-    } catch (assessmentError) {
-      console.error('❌ Assessment generation failed:', assessmentError);
 
-      // Save error state to session
-      await StorySession.findByIdAndUpdate(actualSessionId, {
-        $set: {
-          assessment: {
-            overallScore: 0,
-            feedback:
-              'Assessment temporarily unavailable. Please try again later.',
-            error: true,
-            errorMessage:
-              assessmentError instanceof Error
-                ? assessmentError.message
-                : 'Unknown error',
-            assessmentDate: new Date(),
-          },
-        },
-        $inc: { assessmentAttempts: 1 },
-      });
-
+    } catch (error) {
+      console.error('❌ Assessment generation failed:', error);
       return NextResponse.json(
-        {
-          error: 'Assessment generation failed',
-          details:
-            assessmentError instanceof Error
-              ? assessmentError.message
-              : 'Unknown error',
-          retryable: true,
-          attemptsRemaining: Math.max(
-            0,
-            3 - ((storySession.assessmentAttempts || 0) + 1)
-          ),
+        { 
+          error: 'Failed to generate assessment. Please try again.',
+          details: error instanceof Error ? error.message : 'Unknown error'
         },
         { status: 500 }
       );
     }
+
   } catch (error) {
-    console.error('Error generating assessment:', error);
+    console.error('❌ Assessment request failed:', error);
     return NextResponse.json(
-      {
-        error: 'Failed to generate assessment',
-        details: error instanceof Error ? error.message : 'Unknown error',
-      },
-      { status: 500 }
-    );
-  }
-}
-
-// GET endpoint to retrieve existing assessment
-export async function GET(request: Request, { params }: AssessmentRouteProps) {
-  try {
-    const session = await getServerSession(authOptions);
-
-    if (!session || session.user.role !== 'child') {
-      return NextResponse.json(
-        { error: 'Access denied. Children only.' },
-        { status: 403 }
-      );
-    }
-
-    await connectToDatabase();
-
-    // Find the story session
-    let storySession = null;
-
-    if (mongoose.Types.ObjectId.isValid(params.sessionId)) {
-      storySession = await StorySession.findOne({
-        _id: params.sessionId,
-        childId: session.user.id,
-      });
-    } else if (!isNaN(Number(params.sessionId))) {
-      storySession = await StorySession.findOne({
-        storyNumber: Number(params.sessionId),
-        childId: session.user.id,
-      });
-    }
-
-    if (!storySession) {
-      return NextResponse.json({ error: 'Session not found' }, { status: 404 });
-    }
-
-    if (!storySession.assessment) {
-      return NextResponse.json(
-        {
-          error: 'No assessment available for this story',
-          canAssess:
-            storySession.status === 'completed' &&
-            (storySession.assessmentAttempts || 0) < 3,
-          attemptsRemaining: Math.max(
-            0,
-            3 - (storySession.assessmentAttempts || 0)
-          ),
-        },
-        { status: 404 }
-      );
-    }
-
-    // Return existing assessment in legacy format for compatibility
-    const response = {
-      success: true,
-      assessment: {
-        grammarScore: storySession.assessment.grammarScore || 0,
-        creativityScore: storySession.assessment.creativityScore || 0,
-        vocabularyScore: storySession.assessment.vocabularyScore || 0,
-        structureScore: storySession.assessment.structureScore || 0,
-        characterDevelopmentScore:
-          storySession.assessment.characterDevelopmentScore || 0,
-        plotDevelopmentScore: storySession.assessment.plotDevelopmentScore || 0,
-        overallScore: storySession.assessment.overallScore || 0,
-        readingLevel: storySession.assessment.readingLevel || 'Not assessed',
-        feedback: storySession.assessment.feedback || '',
-        strengths: storySession.assessment.strengths || [],
-        improvements: storySession.assessment.improvements || [],
-        vocabularyUsed: storySession.assessment.vocabularyUsed || [],
-        suggestedWords: storySession.assessment.suggestedWords || [],
-        educationalInsights: storySession.assessment.educationalInsights || '',
-
-        // NEW: Advanced fields if available
-        plagiarismScore: storySession.assessment.plagiarismScore || 0,
-        aiDetectionScore: storySession.assessment.aiDetectionScore || 0,
-        integrityRisk: storySession.assessment.integrityRisk || 'unknown',
-        integrityAnalysis: storySession.assessment.integrityAnalysis || null,
-        recommendations: storySession.assessment.recommendations || null,
-        progressTracking: storySession.assessment.progressTracking || null,
-        assessmentVersion: storySession.assessment.assessmentVersion || '1.0',
-      },
-      storyInfo: {
-        id: storySession._id,
-        title: storySession.title,
-        storyNumber: storySession.storyNumber,
-        status: storySession.status,
-        wordCount: storySession.totalWords || 0,
-        userWordCount: storySession.childWords || 0,
-        attemptsRemaining: Math.max(
-          0,
-          3 - (storySession.assessmentAttempts || 0)
-        ),
-      },
-    };
-
-    return NextResponse.json(response);
-  } catch (error) {
-    console.error('❌ Get assessment error:', error);
-    return NextResponse.json(
-      {
-        error: 'Failed to retrieve assessment',
-        details: error instanceof Error ? error.message : 'Unknown error',
-      },
+      { error: 'Internal server error' },
       { status: 500 }
     );
   }

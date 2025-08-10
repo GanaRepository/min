@@ -131,15 +131,9 @@
 //     suggestedWords: string[];
 //     educationalInsights: string;
 //   }> {
-//     // Fix: Use type guard for storyTheme and storyGenre
-//     const storyTheme =
-//       typeof (storyElements as any).storyTheme === 'string'
-//         ? (storyElements as any).storyTheme
-//         : '';
-//     const storyGenre =
-//       typeof (storyElements as any).storyGenre === 'string'
-//         ? (storyElements as any).storyGenre
-//         : '';
+//     // FIX: Get theme and genre from storyStats parameter, not storyElements
+//     const storyTheme = storyStats.storyTheme || 'Adventure';
+//     const storyGenre = storyStats.storyGenre || 'Fantasy';
 
 //     const prompt = `You are an expert AI writing teacher conducting a comprehensive assessment of a child's creative story.
 
@@ -740,7 +734,6 @@
 
 // export const collaborationEngine = new AICollaborationEngine();
 
-
 // lib/ai/collaboration.ts
 import { smartAIProvider } from './smart-provider-manager';
 import type { StoryElements } from '@/config/story-elements';
@@ -798,14 +791,6 @@ Example structure: "Meet [character] in [setting]. Something interesting happens
     childInput: string,
     turnNumber: number
   ): Promise<string> {
-    return this.generateFreeformResponse(previousTurns, childInput, turnNumber);
-  }
-
-  private async generateFreeformResponse(
-    previousTurns: TurnContext[],
-    childInput: string,
-    turnNumber: number
-  ): Promise<string> {
     const storyContext = previousTurns
       .map(
         (turn, index) =>
@@ -813,6 +798,15 @@ Example structure: "Meet [character] in [setting]. Something interesting happens
       )
       .join('\n\n');
 
+    return this.generateFreeformResponse(childInput, storyContext, turnNumber);
+  }
+
+  // FIXED: Made public and updated parameter signature
+  async generateFreeformResponse(
+    childInput: string,
+    storyContext: string,
+    turnNumber: number
+  ): Promise<string> {
     const educationalGuidance = this.getFreeformGuidanceForTurn(turnNumber);
 
     const prompt = `You are a supportive AI writing teacher helping a child with their creative freeform story.

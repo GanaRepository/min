@@ -8,12 +8,9 @@ import {
   Home,
   Sparkles,
   BookOpen,
-  TrendingUp,
-  User,
   Upload,
   Trophy,
   X,
-  Clock,
   LogOut,
 } from 'lucide-react';
 
@@ -109,23 +106,14 @@ export default function DashboardSidebar({
                   href={item.href}
                   className={`flex items-center space-x-3 px-4 py-3 rounded-xl transition-all group ${
                     isActive
-                      ? 'bg-green-600/20 text-green-400 border border-green-500/30'
+                      ? 'bg-gradient-to-r from-green-600/20 to-blue-600/20 border border-green-500/30 text-white'
                       : 'text-gray-300 hover:text-white hover:bg-gray-800/50'
                   }`}
                 >
-                  <item.icon
-                    size={20}
-                    className={`${
-                      isActive ? 'text-green-400' : 'group-hover:text-white'
-                    } transition-colors`}
-                  />
+                  <item.icon size={20} />
                   <div className="flex-1">
-                    <div
-                      className={`font-medium ${isActive ? 'text-green-400' : ''}`}
-                    >
-                      {item.name}
-                    </div>
-                    <div className="text-xs text-gray-500 group-hover:text-gray-400">
+                    <div className="font-medium">{item.name}</div>
+                    <div className="text-xs text-gray-400">
                       {item.description}
                     </div>
                   </div>
@@ -135,64 +123,42 @@ export default function DashboardSidebar({
           })}
         </nav>
 
-        {/* Footer with Logout */}
-        <div className="p-4 space-y-4 border-t border-gray-700/50">
-          {/* Keep Writing Card */}
-          <div className="bg-gradient-to-r from-green-600/20 to-blue-600/20 border border-green-500/30 rounded-xl p-4">
-            <div className="text-center">
-              <Clock className="w-6 h-6 text-green-400 mx-auto mb-2" />
-              <div className="text-sm text-white font-medium">
-                Keep Writing!
-              </div>
-              <div className="text-xs text-gray-400">Your stories matter</div>
-            </div>
-          </div>
-
-          {/* Logout Button */}
+        {/* Logout Button */}
+        <div className="p-4 border-t border-gray-700/50">
           <button
             onClick={handleLogout}
-            className="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:text-white hover:bg-red-600/20 hover:border-red-500/30 transition-all group border border-transparent"
+            className="flex items-center space-x-3 px-4 py-3 w-full text-gray-300 hover:text-white hover:bg-red-600/20 rounded-xl transition-all group"
           >
-            <LogOut
-              size={20}
-              className="group-hover:text-red-400 transition-colors"
-            />
+            <LogOut size={20} />
             <span className="font-medium">Sign Out</span>
           </button>
         </div>
       </div>
 
-      {/* Mobile Sidebar - Only When Open */}
+      {/* Mobile Sidebar - Overlay */}
       <AnimatePresence>
         {isOpen && (
           <>
-            {/* Mobile Backdrop */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
+              className="lg:hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-40"
               onClick={onClose}
-              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden"
             />
-
-            {/* Mobile Sidebar */}
             <motion.div
-              initial={{ x: -320 }}
+              initial={{ x: '-100%' }}
               animate={{ x: 0 }}
-              exit={{ x: -320 }}
+              exit={{ x: '-100%' }}
               transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-              className="fixed left-0 top-0 h-full w-80 bg-gray-900/95 backdrop-blur-xl border-r border-gray-700/50 z-50 lg:hidden flex flex-col"
+              className="lg:hidden fixed left-0 top-0 h-full w-64 bg-gray-900/95 backdrop-blur-xl border-r border-gray-700/50 z-50 flex flex-col"
             >
-              {/* Header */}
+              {/* Mobile Header */}
               <div className="flex items-center justify-between p-6 border-b border-gray-700/50">
                 <div>
-                  <h2 className="text-xl font-bold text-white">
-                    Hi, {userName}! 👋
-                  </h2>
+                  <h2 className="text-xl font-bold text-white">Hi, {userName}! 👋</h2>
                   {user.age && (
-                    <p className="text-sm text-gray-400">
-                      Age {user.age} Writer
-                    </p>
+                    <p className="text-sm text-gray-400">Age {user.age} Writer</p>
                   )}
                 </div>
                 <button
@@ -203,7 +169,7 @@ export default function DashboardSidebar({
                 </button>
               </div>
 
-              {/* Navigation */}
+              {/* Mobile Navigation */}
               <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
                 {navigationItems.map((item, index) => {
                   const isActive =
@@ -223,25 +189,14 @@ export default function DashboardSidebar({
                         onClick={onClose}
                         className={`flex items-center space-x-3 px-4 py-3 rounded-xl transition-all group ${
                           isActive
-                            ? 'bg-green-600/20 text-green-400 border border-green-500/30'
+                            ? 'bg-gradient-to-r from-green-600/20 to-blue-600/20 border border-green-500/30 text-white'
                             : 'text-gray-300 hover:text-white hover:bg-gray-800/50'
                         }`}
                       >
-                        <item.icon
-                          size={20}
-                          className={`${
-                            isActive
-                              ? 'text-green-400'
-                              : 'group-hover:text-white'
-                          } transition-colors`}
-                        />
+                        <item.icon size={20} />
                         <div className="flex-1">
-                          <div
-                            className={`font-medium ${isActive ? 'text-green-400' : ''}`}
-                          >
-                            {item.name}
-                          </div>
-                          <div className="text-xs text-gray-500 group-hover:text-gray-400">
+                          <div className="font-medium">{item.name}</div>
+                          <div className="text-xs text-gray-400">
                             {item.description}
                           </div>
                         </div>
@@ -251,30 +206,13 @@ export default function DashboardSidebar({
                 })}
               </nav>
 
-              {/* Footer with Logout */}
-              <div className="p-4 space-y-4 border-t border-gray-700/50">
-                {/* Keep Writing Card */}
-                <div className="bg-gradient-to-r from-green-600/20 to-blue-600/20 border border-green-500/30 rounded-xl p-4">
-                  <div className="text-center">
-                    <Clock className="w-6 h-6 text-green-400 mx-auto mb-2" />
-                    <div className="text-sm text-white font-medium">
-                      Keep Writing!
-                    </div>
-                    <div className="text-xs text-gray-400">
-                      Your stories matter
-                    </div>
-                  </div>
-                </div>
-
-                {/* Logout Button */}
+              {/* Mobile Logout Button */}
+              <div className="p-4 border-t border-gray-700/50">
                 <button
                   onClick={handleLogout}
-                  className="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:text-white hover:bg-red-600/20 hover:border-red-500/30 transition-all group border border-transparent"
+                  className="flex items-center space-x-3 px-4 py-3 w-full text-gray-300 hover:text-white hover:bg-red-600/20 rounded-xl transition-all group"
                 >
-                  <LogOut
-                    size={20}
-                    className="group-hover:text-red-400 transition-colors"
-                  />
+                  <LogOut size={20} />
                   <span className="font-medium">Sign Out</span>
                 </button>
               </div>
