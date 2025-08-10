@@ -1,4 +1,4 @@
-// app/api/user/stories/route.ts - PROPERLY TYPED VERSION
+// app/api/user/stories/route.ts - FINAL FIX
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/utils/authOptions';
@@ -20,7 +20,6 @@ export async function GET(request: Request) {
     console.log('=== STORIES API DEBUG ===');
     console.log('User ID:', session.user.id);
     console.log('User ID type:', typeof session.user.id);
-    console.log('User email:', session.user.email);
 
     const { searchParams } = new URL(request.url);
     const limit = parseInt(searchParams.get('limit') || '10');
@@ -37,55 +36,42 @@ export async function GET(request: Request) {
     }
 
     let stories: any[] = [];
-    let successfulQuery: any = null;
+    let totalCount = 0;
 
-    // Try string ID first
-    try {
-      console.log('Trying string ID query...');
-      const stringResult = await db.collection('storysessions')
-        .find({ childId: session.user.id })
-        .sort({ createdAt: -1 })
-        .limit(limit)
-        .skip(skip)
-        .toArray();
-      
-      console.log('String query result count:', stringResult.length);
-      
-      if (stringResult.length > 0) {
-        stories = stringResult;
-        successfulQuery = { childId: session.user.id };
-        console.log('✅ Found stories with string ID');
-      }
-    } catch (error) {
-      console.log('String query failed:', error);
-    }
-
-    // Try ObjectId if string didn't work and ID is valid ObjectId
-    if (stories.length === 0 && mongoose.Types.ObjectId.isValid(session.user.id)) {
+    // Since we know from debug that childIds are ObjectIds, convert user ID to ObjectId
+    if (mongoose.Types.ObjectId.isValid(session.user.id)) {
       try {
-        console.log('Trying ObjectId query...');
         const objectId = new mongoose.Types.ObjectId(session.user.id);
-        const objectIdResult = await db.collection('storysessions')
+        console.log('Using ObjectId query:', objectId);
+        
+        // Get stories
+        stories = await db.collection('storysessions')
           .find({ childId: objectId })
           .sort({ createdAt: -1 })
           .limit(limit)
           .skip(skip)
           .toArray();
         
-        console.log('ObjectId query result count:', objectIdResult.length);
+        // Get total count
+        totalCount = await db.collection('storysessions').countDocuments({ childId: objectId });
         
-        if (objectIdResult.length > 0) {
-          stories = objectIdResult;
-          successfulQuery = { childId: objectId };
-          console.log('✅ Found stories with ObjectId');
-        }
+        console.log('✅ Found stories:', stories.length);
+        console.log('✅ Total count:', totalCount);
+        
       } catch (error) {
-        console.log('ObjectId query failed:', error);
+        console.error('ObjectId query failed:', error);
+        return NextResponse.json(
+          { error: 'Failed to query stories' },
+          { status: 500 }
+        );
       }
+    } else {
+      console.error('Invalid user ID for ObjectId conversion:', session.user.id);
+      return NextResponse.json(
+        { error: 'Invalid user ID format' },
+        { status: 400 }
+      );
     }
-
-    console.log('Final stories found:', stories.length);
-    console.log('Successful query:', successfulQuery);
 
     // Format stories for frontend
     const formattedStories = stories.map((story: any) => {
@@ -124,12 +110,6 @@ export async function GET(request: Request) {
       };
     });
 
-    // Get total count using the successful query
-    let totalCount = 0;
-    if (successfulQuery) {
-      totalCount = await db.collection('storysessions').countDocuments(successfulQuery);
-    }
-
     const response = {
       success: true,
       stories: formattedStories,
@@ -146,19 +126,12 @@ export async function GET(request: Request) {
         active: formattedStories.filter((s) => s.status === 'active').length,
         published: formattedStories.filter((s) => s.isPublished).length,
         submittedToCompetition: formattedStories.filter((s) => s.submittedToCompetition).length,
-      },
-      debug: {
-        userId: session.user.id,
-        userIdType: typeof session.user.id,
-        successfulQuery: successfulQuery ? 'found' : 'none',
-        totalCount: totalCount,
-        foundStories: formattedStories.length
       }
     };
 
     console.log('=== API RESPONSE ===');
     console.log('Stories returned:', response.stories.length);
-    console.log('Debug info:', response.debug);
+    console.log('Total items:', response.pagination.totalItems);
 
     return NextResponse.json(response);
 
