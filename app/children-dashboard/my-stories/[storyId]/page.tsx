@@ -601,7 +601,7 @@ export default function StoryDetailPage({
                       <div className="flex items-center gap-2 mb-2">
                         {getIntegrityIcon(story.assessment.integrityAnalysis.integrityRisk)}
                         <span className={`font-bold ${getIntegrityColor(story.assessment.integrityAnalysis.integrityRisk)}`}>
-                          Risk Level: {story.assessment.integrityAnalysis.integrityRisk.toUpperCase()}
+                          Risk Level: {(story.assessment.integrityAnalysis?.integrityRisk ? story.assessment.integrityAnalysis.integrityRisk.toUpperCase() : 'UNKNOWN')}
                         </span>
                       </div>
                     </div>

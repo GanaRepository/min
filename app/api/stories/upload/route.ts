@@ -137,7 +137,9 @@ export async function POST(request: NextRequest) {
       .select('storyNumber')
       .lean();
 
-    const nextStoryNumber = (lastSession?.storyNumber || 0) + 1;
+    // Fix: Use type assertion and fallback for storyNumber
+    const lastStoryNumber = (lastSession as any)?.storyNumber ?? 0;
+    const nextStoryNumber = lastStoryNumber + 1;
 
     console.log(
       `📚 Creating story session #${nextStoryNumber} for user ${user.email}`
@@ -159,9 +161,12 @@ export async function POST(request: NextRequest) {
       aiOpening: storyContent, // Store the uploaded content here
       completedAt: new Date(),
       assessmentAttempts: 0, // Reset attempts for new upload
-    });
+  });
 
-    console.log(`✅ Story session created: ${storySession._id}`);
+  // Increment assessment upload counter - FIXED
+  await UsageManager.incrementAssessmentUpload(session.user.id);
+
+  console.log(`✅ Story session created: ${storySession._id}`);
 
     // Run advanced assessment
     try {
@@ -278,7 +283,7 @@ export async function POST(request: NextRequest) {
         story: {
           id: storySession._id,
           title: storySession.title,
-          storyNumber: storySession.storyNumber,
+          storyNumber: (storySession as any)?.storyNumber ?? 0,
           wordCount,
           assessmentAttempts: 0,
           maxAttempts: 3,
@@ -354,7 +359,7 @@ export async function POST(request: NextRequest) {
         story: {
           id: storySession._id,
           title: storySession.title,
-          storyNumber: storySession.storyNumber,
+          storyNumber: (storySession as any)?.storyNumber ?? 0,
           wordCount,
           assessmentAttempts: 0,
           maxAttempts: 3,

@@ -365,14 +365,14 @@ export default function ChildrenDashboard() {
             </div>
             <div className="flex items-end gap-2">
               <span className="text-3xl font-bold text-white">
-                {safeUsageStats.stories.used}
+                {safeUsageStats?.stories?.used ?? 0}
               </span>
-              <span className="text-blue-300">/ {safeUsageStats.stories.limit}</span>
+              <span className="text-blue-300">/ {safeUsageStats?.stories?.limit ?? 3} used</span>
             </div>
             <div className="w-full bg-blue-800/30 rounded-full h-2 mt-3">
               <div
                 className="bg-blue-400 h-2 rounded-full transition-all"
-                style={{ width: `${Math.min((safeUsageStats.stories.used / safeUsageStats.stories.limit) * 100, 100)}%` }}
+                style={{ width: `${Math.min(((safeUsageStats?.stories?.used ?? 0) / (safeUsageStats?.stories?.limit ?? 3)) * 100, 100)}%` }}
               ></div>
             </div>
           </div>
@@ -384,14 +384,14 @@ export default function ChildrenDashboard() {
             </div>
             <div className="flex items-end gap-2">
               <span className="text-3xl font-bold text-white">
-                {safeUsageStats.assessments.used}
+                {safeUsageStats?.assessments?.used ?? 0}
               </span>
-              <span className="text-green-300">/ {safeUsageStats.assessments.limit}</span>
+              <span className="text-green-300">/ {safeUsageStats?.assessments?.limit ?? 3} used</span>
             </div>
             <div className="w-full bg-green-800/30 rounded-full h-2 mt-3">
               <div
                 className="bg-green-400 h-2 rounded-full transition-all"
-                style={{ width: `${Math.min((safeUsageStats.assessments.used / safeUsageStats.assessments.limit) * 100, 100)}%` }}
+                style={{ width: `${Math.min(((safeUsageStats?.assessments?.used ?? 0) / (safeUsageStats?.assessments?.limit ?? 3)) * 100, 100)}%` }}
               ></div>
             </div>
           </div>
@@ -403,14 +403,14 @@ export default function ChildrenDashboard() {
             </div>
             <div className="flex items-end gap-2">
               <span className="text-3xl font-bold text-white">
-                {safeUsageStats.competitions.used}
+                {safeUsageStats?.competitions?.used ?? 0}
               </span>
-              <span className="text-purple-300">/ {safeUsageStats.competitions.limit}</span>
+              <span className="text-purple-300">/ {safeUsageStats?.competitions?.limit ?? 3} used</span>
             </div>
             <div className="w-full bg-purple-800/30 rounded-full h-2 mt-3">
               <div
                 className="bg-purple-400 h-2 rounded-full transition-all"
-                style={{ width: `${Math.min((safeUsageStats.competitions.used / safeUsageStats.competitions.limit) * 100, 100)}%` }}
+                style={{ width: `${Math.min(((safeUsageStats?.competitions?.used ?? 0) / (safeUsageStats?.competitions?.limit ?? 3)) * 100, 100)}%` }}
               ></div>
             </div>
           </div>
@@ -709,3 +709,4 @@ export default function ChildrenDashboard() {
     </div>
   );
 }
+
