@@ -1,4 +1,4 @@
-// app/my-stories/page.tsx - COMPLETE VERSION WITH CLEAR LABELS
+// app/children-dashboard/my-stories/page.tsx - COMPLETE UPDATED VERSION
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -21,6 +21,10 @@ import {
   XCircle,
   Plus,
   Eye,
+  DollarSign,
+  Award,
+  FileText,
+  Zap,
 } from 'lucide-react';
 
 interface Story {
@@ -34,6 +38,12 @@ interface Story {
   submittedToCompetition: boolean;
   storyNumber: number;
   isUploadedForAssessment: boolean;
+  competitionEntries?: Array<{
+    competitionId: string;
+    submittedAt: string;
+    rank?: number;
+    score?: number;
+  }>;
   assessment?: {
     overallScore: number;
     grammarScore: number;
@@ -44,7 +54,7 @@ interface Story {
   };
 }
 
-type FilterType = 'all' | 'active' | 'completed' | 'uploaded' | 'published';
+type FilterType = 'all' | 'active' | 'completed' | 'uploaded' | 'published' | 'competition';
 type ViewType = 'grid' | 'list';
 
 export default function MyStories() {
@@ -58,6 +68,7 @@ export default function MyStories() {
   const [activeFilter, setActiveFilter] = useState<FilterType>('all');
   const [viewType, setViewType] = useState<ViewType>('grid');
   const [error, setError] = useState<string | null>(null);
+  const [publishingStory, setPublishingStory] = useState<string | null>(null);
 
   useEffect(() => {
     if (status === 'loading') return;
@@ -117,6 +128,11 @@ export default function MyStories() {
       case 'published':
         filtered = filtered.filter(story => story.isPublished);
         break;
+      case 'competition':
+        filtered = filtered.filter(story => 
+          story.competitionEntries && story.competitionEntries.length > 0
+        );
+        break;
       default:
         // 'all' - no additional filtering
         break;
@@ -125,318 +141,388 @@ export default function MyStories() {
     setFilteredStories(filtered);
   };
 
+  const getStoryTypeLabel = (story: Story) => {
+    if (story.competitionEntries && story.competitionEntries.length > 0) {
+      return { label: "COMPETITION STORY", icon: Trophy, color: "purple" };
+    }
+    if (story.isUploadedForAssessment) {
+      return { label: "UPLOADED STORY", icon: Upload, color: "blue" };
+    }
+    return { label: "FREESTYLE STORY", icon: Sparkles, color: "green" };
+  };
+
   const getIntegrityIcon = (integrityRisk?: string) => {
     switch (integrityRisk) {
       case 'low':
-        return <CheckCircle className="text-green-400" size={16} />;
+        return <CheckCircle className="w-5 h-5 text-green-400" />;
       case 'medium':
-        return <AlertTriangle className="text-yellow-400" size={16} />;
+        return <AlertTriangle className="w-5 h-5 text-yellow-400" />;
       case 'high':
+        return <AlertTriangle className="w-5 h-5 text-orange-400" />;
       case 'critical':
-        return <XCircle className="text-red-400" size={16} />;
+        return <XCircle className="w-5 h-5 text-red-400" />;
       default:
-        return <CheckCircle className="text-gray-400" size={16} />;
+        return <CheckCircle className="w-5 h-5 text-gray-400" />;
     }
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    });
+  const handlePublishStory = async (storyId: string, storyTitle: string) => {
+    if (!session?.user?.id) return;
+    
+    setPublishingStory(storyId);
+    
+    try {
+      const response = await fetch('/api/stripe/checkout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          productType: 'story_publication',
+          storyId: storyId,
+          userId: session.user.id
+        })
+      });
+
+      const data = await response.json();
+      
+      if (data.success && data.checkoutUrl) {
+        // Redirect to Stripe checkout
+        window.location.href = data.checkoutUrl;
+      } else {
+        throw new Error(data.error || 'Failed to create checkout session');
+      }
+    } catch (error) {
+      console.error('Error initiating publication:', error);
+      alert('Failed to start publication process. Please try again.');
+    } finally {
+      setPublishingStory(null);
+    }
   };
 
-  const filters: { type: FilterType; label: string; icon: any }[] = [
-    { type: 'all', label: 'All', icon: BookOpen },
-    { type: 'active', label: 'Active', icon: Star },
-    { type: 'completed', label: 'Completed', icon: CheckCircle },
-    { type: 'uploaded', label: 'Uploaded', icon: Upload },
-    { type: 'published', label: 'Published', icon: Trophy },
+  const getScoreColor = (score: number) => {
+    if (score >= 90) return 'text-green-400';
+    if (score >= 80) return 'text-blue-400';
+    if (score >= 70) return 'text-yellow-400';
+    return 'text-orange-400';
+  };
+
+  const filters = [
+    { key: 'all', label: 'All Stories', count: stories.length },
+    { key: 'active', label: 'In Progress', count: stories.filter(s => s.status === 'active').length },
+    { key: 'completed', label: 'Completed', count: stories.filter(s => s.status === 'completed').length },
+    { key: 'uploaded', label: 'Uploaded', count: stories.filter(s => s.isUploadedForAssessment).length },
+    { key: 'published', label: 'Published', count: stories.filter(s => s.isPublished).length },
+    { key: 'competition', label: 'Competition', count: stories.filter(s => (s.competitionEntries ?? []).length > 0).length },
   ];
 
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-border-green-400 mx-auto mb-4"></div>
-         <p className="text-gray-300">Loading your stories...</p>
-       </div>
-     </div>
-   );
- }
+        <div className="text-white text-xl">Loading your stories...</div>
+      </div>
+    );
+  }
 
- return (
-   <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900">
- 
-     {/* Main Content */}
-     <div className="relative z-10 p-6 max-w-7xl mx-auto">
-       {/* Header */}
-       <div className="flex items-center justify-between mb-8">
-         <div className="flex items-center space-x-4">
-           <Link href="/children-dashboard">
-             <motion.button
-               whileHover={{ x: -2 }}
-               className="flex items-center space-x-2 text-gray-300 hover:text-white transition-colors"
-             >
-               <ArrowLeft size={20} />
-             
-             </motion.button>
-           </Link>
-           <div>
-             <h1 className="text-3xl lg:text-4xl font-bold text-white flex items-center">
-               <BookOpen className="mr-3" size={32} />
-               My Stories
-             </h1>
-             <p className="text-gray-300 mt-1">
-               {stories.length} stories in your collection
-             </p>
-           </div>
-         </div>
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 py-20">
+      <div className="max-w-7xl mx-auto px-6">
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-8"
+        >
+          <button
+            onClick={() => router.push('/children-dashboard')}
+            className="flex items-center gap-2 text-gray-400 hover:text-white mb-6 transition-colors"
+          >
+            <ArrowLeft size={20} />
+            Back to Dashboard
+          </button>
 
-         <div className="flex items-center space-x-4">
-           <Link href="/create-stories/#freestyle">
-             <button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center space-x-2">
-               <Plus size={20} />
-               <span>Create New Story</span>
-             </button>
-           </Link>
-           <Link href="/create-stories/#assessment">
-             <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center space-x-2">
-               <Upload size={20} />
-               <span>Upload Assessment</span>
-             </button>
-           </Link>
-         </div>
-       </div>
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+            <div>
+              <h1 className="text-4xl font-bold text-white mb-2 flex items-center gap-3">
+                <BookOpen size={40} className="text-blue-400" />
+                My Stories
+              </h1>
+              <p className="text-gray-300">
+                Manage your creative writing collection and track your progress
+              </p>
+            </div>
 
-       {/* Search and Filters */}
-       <div className="bg-gray-800/50 border border-gray-600/40 rounded-xl p-6 mb-6">
-         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
-           {/* Search */}
-           <div className="relative flex-1 max-w-md">
-             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-             <input
-               type="text"
-               placeholder="Search stories by title..."
-               value={searchTerm}
-               onChange={(e) => setSearchTerm(e.target.value)}
-               className="w-full pl-10 pr-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-             />
-           </div>
+            <Link
+              href="/create-stories"
+              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-3 rounded-xl flex items-center gap-2 transition-all font-medium w-fit"
+            >
+              <Plus size={20} />
+              Create New Story
+            </Link>
+          </div>
+        </motion.div>
 
-           {/* Filters */}
-           <div className="flex items-center space-x-2">
-             {filters.map((filter) => {
-               const Icon = filter.icon;
-               return (
-                 <button
-                   key={filter.type}
-                   onClick={() => setActiveFilter(filter.type)}
-                   className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center space-x-2 ${
-                     activeFilter === filter.type
-                       ? 'bg-green-600 text-white'
-                       : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                   }`}
-                 >
-                   <Icon size={16} />
-                   <span className="hidden sm:inline">{filter.label}</span>
-                 </button>
-               );
-             })}
-           </div>
+        {/* Stats Cards */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8"
+        >
+          <div className="bg-blue-500/20 border border-blue-500/30 rounded-lg p-4 text-center">
+            <div className="text-2xl font-bold text-blue-400">{stories.length}</div>
+            <div className="text-sm text-blue-300">Total Stories</div>
+          </div>
+          <div className="bg-green-500/20 border border-green-500/30 rounded-lg p-4 text-center">
+            <div className="text-2xl font-bold text-green-400">
+              {stories.filter(s => s.isPublished).length}
+            </div>
+            <div className="text-sm text-green-300">Published</div>
+          </div>
+          <div className="bg-purple-500/20 border border-purple-500/30 rounded-lg p-4 text-center">
+            <div className="text-2xl font-bold text-purple-400">
+              {stories.filter(s => (s.competitionEntries ?? []).length > 0).length}
+            </div>
+            <div className="text-sm text-purple-300">In Competition</div>
+          </div>
+          <div className="bg-orange-500/20 border border-orange-500/30 rounded-lg p-4 text-center">
+            <div className="text-2xl font-bold text-orange-400">
+              {stories.reduce((total, story) => total + (story.totalWords || 0), 0).toLocaleString()}
+            </div>
+            <div className="text-sm text-orange-300">Total Words</div>
+          </div>
+        </motion.div>
 
-           {/* View Toggle */}
-           <div className="flex items-center bg-gray-700 rounded-lg p-1">
-             <button
-               onClick={() => setViewType('grid')}
-               className={`p-2 rounded ${
-                 viewType === 'grid' ? 'bg-green-600 text-white' : 'text-gray-400 hover:text-white'
-               }`}
-             >
-               <Grid3X3 size={16} />
-             </button>
-             <button
-               onClick={() => setViewType('list')}
-               className={`p-2 rounded ${
-                 viewType === 'list' ? 'bg-green-600 text-white' : 'text-gray-400 hover:text-white'
-               }`}
-             >
-               <List size={16} />
-             </button>
-           </div>
-         </div>
-       </div>
+        {/* Controls */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="mb-8"
+        >
+          {/* Search */}
+          <div className="relative mb-6">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+            <input
+              type="text"
+              placeholder="Search your stories..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full bg-gray-800/50 border border-gray-700/50 rounded-xl pl-10 pr-4 py-3 text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none"
+            />
+          </div>
 
-       {/* Stories Display */}
-       {error ? (
-         <div className="text-center py-12">
-           <XCircle className="mx-auto h-12 w-12 text-red-400 mb-4" />
-           <h3 className="text-lg font-medium text-white mb-2">Error Loading Stories</h3>
-           <p className="text-gray-400 mb-6">{error}</p>
-           <button
-             onClick={fetchStories}
-             className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition-colors"
-           >
-             Try Again
-           </button>
-         </div>
-       ) : filteredStories.length === 0 ? (
-         <div className="text-center py-12">
-           <BookOpen className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-           <h3 className="text-lg font-medium text-white mb-2">
-             {searchTerm || activeFilter !== 'all' ? 'No Matching Stories' : 'No Stories Yet'}
-           </h3>
-           <p className="text-gray-400 mb-6">
-             {searchTerm || activeFilter !== 'all'
-               ? 'Try adjusting your search or filter criteria.'
-               : 'Start your writing journey by creating your first story!'}
-           </p>
-           {searchTerm || activeFilter !== 'all' ? (
-             <button
-               onClick={() => {
-                 setSearchTerm('');
-                 setActiveFilter('all');
-               }}
-               className="bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-medium transition-colors mr-4"
-             >
-               Clear Filters
-             </button>
-           ) : null}
-           <Link href="/create-stories">
-             <button className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
-               <Plus className="w-4 h-4 inline mr-2" />
-               Create Story
-             </button>
-           </Link>
-         </div>
-       ) : (
-         <motion.div
-           initial={{ opacity: 0, y: 20 }}
-           animate={{ opacity: 1, y: 0 }}
-           className={
-             viewType === 'grid'
-               ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'
-               : 'space-y-4'
-           }
-         >
-           {filteredStories.map((story, index) => (
-             <motion.div
-               key={story._id}
-               initial={{ opacity: 0, y: 20 }}
-               animate={{ opacity: 1, y: 0 }}
-               transition={{ delay: index * 0.1 }}
-               whileHover={{ scale: viewType === 'grid' ? 1.02 : 1.01 }}
-               className={`bg-gray-800/50 border border-gray-600/40 rounded-xl p-6 hover:border-gray-500/60 transition-all duration-200 ${
-                 story.isUploadedForAssessment 
-                   ? 'border-l-4 border-l-blue-500' 
-                   : 'border-l-4 border-l-green-500'
-               } ${viewType === 'list' ? 'flex items-center space-x-6' : ''}`}
-             >
-               <div className={viewType === 'list' ? 'flex-1' : ''}>
-                 {/* ✅ CLEAR STORY TYPE HEADER */}
-                 <div className="mb-4">
-                   {story.isUploadedForAssessment ? (
-                     <div className="flex items-center bg-blue-500/20 px-4 py-2 rounded-lg border border-blue-500/30">
-                       <Upload className="text-blue-400 mr-3" size={20} />
-                       <div>
-                         <span className="text-blue-400 text-base font-bold block">UPLOADED STORY</span>
-                         <span className="text-blue-300 text-xs">Submitted for AI Assessment</span>
-                       </div>
-                     </div>
-                   ) : (
-                     <div className="flex items-center bg-green-500/20 px-4 py-2 rounded-lg border border-green-500/30">
-                       <Sparkles className="text-green-400 mr-3" size={20} />
-                       <div>
-                         <span className="text-green-400 text-base font-bold block">FREESTYLE STORY</span>
-                         <span className="text-green-300 text-xs">Created with AI Assistance</span>
-                       </div>
-                     </div>
-                   )}
-                 </div>
+          {/* Filters */}
+          <div className="flex flex-wrap gap-2 mb-4">
+            {filters.map((filter) => (
+              <button
+                key={filter.key}
+                onClick={() => setActiveFilter(filter.key as FilterType)}
+                className={`px-4 py-2 rounded-lg transition-all ${
+                  activeFilter === filter.key
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-gray-800/50 text-gray-300 hover:bg-gray-700/50'
+                }`}
+              >
+                {filter.label} ({filter.count})
+              </button>
+            ))}
+          </div>
 
-                 {/* Story Header */}
-                 <div className="flex items-start justify-between mb-4">
-                   <div className="flex-1">
-                     <h3 className="text-xl font-semibold text-white mb-2">
-                       {story.title || `Story #${story.storyNumber}`}
-                     </h3>
-                   </div>
+          {/* View Toggle */}
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setViewType('grid')}
+              className={`p-2 rounded-lg transition-all ${
+                viewType === 'grid'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-800/50 text-gray-300 hover:bg-gray-700/50'
+              }`}
+            >
+              <Grid3X3 size={20} />
+            </button>
+            <button
+              onClick={() => setViewType('list')}
+              className={`p-2 rounded-lg transition-all ${
+                viewType === 'list'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-800/50 text-gray-300 hover:bg-gray-700/50'
+              }`}
+            >
+              <List size={20} />
+            </button>
+          </div>
+        </motion.div>
 
-                   <div className="flex items-center space-x-2 ml-4">
-                     {story.isPublished && (
-                       <Star className="text-yellow-400" size={16} />
-                     )}
-                     {story.submittedToCompetition && (
-                       <Trophy className="text-purple-400" size={16} />
-                     )}
-                     {story.assessment?.integrityAnalysis && 
-                       getIntegrityIcon(story.assessment.integrityAnalysis.integrityRisk)
-                     }
-                   </div>
-                 </div>
+        {/* Stories Grid/List */}
+        {error && (
+          <div className="bg-red-500/20 border border-red-500/30 rounded-lg p-4 mb-6">
+            <p className="text-red-300">{error}</p>
+          </div>
+        )}
 
-                 {/* Story Stats */}
-                 <div className="grid grid-cols-2 gap-4 mb-4">
-                   <div>
-                     <p className="text-gray-400 text-sm">Words</p>
-                     <p className="text-white font-medium">
-                       {story.totalWords || story.childWords || 0}
-                     </p>
-                   </div>
-                   <div>
-                     <p className="text-gray-400 text-sm">Created</p>
-                     <p className="text-white font-medium">
-                       {formatDate(story.createdAt)}
-                     </p>
-                   </div>
-                 </div>
+        {filteredStories.length === 0 ? (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3 }}
+            className="text-center py-12"
+          >
+            <BookOpen size={64} className="mx-auto text-gray-500 mb-4" />
+            <h3 className="text-xl font-semibold text-gray-300 mb-2">
+              {searchTerm || activeFilter !== 'all' ? 'No stories match your criteria' : 'No stories yet'}
+            </h3>
+            <p className="text-gray-400 mb-6">
+              {searchTerm || activeFilter !== 'all' 
+                ? 'Try adjusting your search or filters'
+                : 'Start your creative writing journey by creating your first story!'
+              }
+            </p>
+            {!searchTerm && activeFilter === 'all' && (
+              <Link
+                href="/create-stories"
+                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl inline-flex items-center gap-2 transition-colors"
+              >
+                <Plus size={20} />
+                Create Your First Story
+              </Link>
+            )}
+          </motion.div>
+        ) : (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3 }}
+            className={
+              viewType === 'grid'
+                ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'
+                : 'space-y-4'
+            }
+          >
+            {filteredStories.map((story, index) => {
+              const storyType = getStoryTypeLabel(story);
+              const TypeIcon = storyType.icon;
 
-                 {/* Assessment Score */}
-                 {story.assessment && (
-                   <div className="mb-4">
-                     <div className="flex items-center justify-between text-sm mb-2">
-                       <span className="text-gray-400">Assessment Score</span>
-                       <span className="text-green-400 font-medium">
-                         {story.assessment.overallScore}%
-                       </span>
-                     </div>
-                     <div className="w-full bg-gray-600 rounded-full h-2">
-                       <div
-                         className="bg-gradient-to-r from-green-500 to-blue-500 h-2 rounded-full"
-                         style={{ width: `${story.assessment.overallScore}%` }}
-                       ></div>
-                     </div>
-                   </div>
-                 )}
+              return (
+                <motion.div
+                  key={story._id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                  className={`bg-gray-800/50 border border-gray-700/50 rounded-xl p-6 hover:border-gray-600/50 transition-all ${
+                    viewType === 'list' ? 'flex items-center justify-between' : ''
+                  }`}
+                >
+                  <div className={viewType === 'list' ? 'flex-1' : ''}>
+                    {/* Story Type Badge */}
+                    <div className="flex items-center justify-between mb-3">
+                      <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium
+                        ${storyType.color === 'purple' ? 'bg-purple-500/20 text-purple-300 border border-purple-500/30' :
+                          storyType.color === 'blue' ? 'bg-blue-500/20 text-blue-300 border border-blue-500/30' :
+                          'bg-green-500/20 text-green-300 border border-green-500/30'
+                        }`}>
+                        <TypeIcon size={14} />
+                        {storyType.label}
+                      </div>
+                      
+                      {story.assessment?.integrityAnalysis && (
+                        <div className="flex items-center gap-1">
+                          {getIntegrityIcon(story.assessment.integrityAnalysis.integrityRisk)}
+                        </div>
+                      )}
+                    </div>
 
-                 {/* Status and Actions */}
-                 <div className="flex items-center justify-between">
-                   <span
-                     className={`px-3 py-1 rounded-full text-sm font-medium ${
-                       story.status === 'completed'
-                         ? 'bg-green-500/20 text-green-400'
-                         : 'bg-blue-500/20 text-blue-400'
-                     }`}
-                   >
-                     {story.status === 'completed' ? 'Completed' : 'In Progress'}
-                   </span>
+                    {/* Title */}
+                    <h3 className="text-xl font-semibold text-white mb-2 line-clamp-2">
+                      {story.title}
+                    </h3>
 
-                   <div className="flex items-center space-x-2">
-                     <Link href={`/children-dashboard/my-stories/${story._id}`}>
-                       <button className="bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded-lg text-sm transition-colors flex items-center space-x-1">
-                         <Eye size={14} />
-                         <span>View</span>
-                       </button>
-                     </Link>
-                   </div>
-                 </div>
-               </div>
-             </motion.div>
-           ))}
-         </motion.div>
-       )}
-     </div>
-   </div>
- );
+                    {/* Meta Info */}
+                    <div className="flex items-center gap-4 text-sm text-gray-400 mb-3">
+                      <span>📝 {story.childWords} words</span>
+                      <span>📅 {new Date(story.createdAt).toLocaleDateString()}</span>
+                      <span className={`capitalize ${
+                        story.status === 'completed' ? 'text-green-400' :
+                        story.status === 'active' ? 'text-blue-400' : 'text-gray-400'
+                      }`}>
+                        {story.status}
+                      </span>
+                    </div>
+
+                    {/* Assessment Score */}
+                    {story.assessment && (
+                      <div className="flex items-center gap-2 mb-3">
+                        <Star className="w-4 h-4 text-yellow-400" />
+                        <span className={`font-medium ${getScoreColor(story.assessment.overallScore)}`}>
+                          {story.assessment.overallScore}% Overall
+                        </span>
+                        <span className="text-gray-400 text-sm">
+                          (G: {story.assessment.grammarScore}%, C: {story.assessment.creativityScore}%)
+                        </span>
+                      </div>
+                    )}
+
+                    {/* Status Badges */}
+                    <div className="flex items-center gap-2 mb-4">
+                      {story.isPublished && (
+                        <span className="bg-green-500/20 text-green-300 px-2 py-1 rounded text-xs font-medium border border-green-500/30">
+                          📚 Published
+                        </span>
+                      )}
+                      {story.competitionEntries && story.competitionEntries.length > 0 && (
+                        <span className="bg-purple-500/20 text-purple-300 px-2 py-1 rounded text-xs font-medium border border-purple-500/30">
+                          🏆 In Competition
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Actions */}
+                  <div className={`flex gap-2 ${viewType === 'list' ? 'flex-col' : 'flex-wrap'}`}>
+                    <Link
+                      href={`/children-dashboard/my-stories/${story._id}`}
+                      className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-sm font-medium flex items-center gap-1 transition-colors"
+                    >
+                      <Eye size={16} />
+                      View
+                    </Link>
+
+                    {!story.isPublished && story.status === 'completed' && (
+                      <button
+                        onClick={() => handlePublishStory(story._id, story.title)}
+                        disabled={publishingStory === story._id}
+                        className="bg-green-600 hover:bg-green-700 disabled:bg-green-400 text-white px-3 py-2 rounded-lg text-sm font-medium flex items-center gap-1 transition-colors"
+                      >
+                        {publishingStory === story._id ? (
+                          <>
+                            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                            Publishing...
+                          </>
+                        ) : (
+                          <>
+                            <DollarSign size={16} />
+                            Publish $10
+                          </>
+                        )}
+                      </button>
+                    )}
+
+                    {story.status === 'active' && (
+                      <Link
+                        href={`/children-dashboard/story/${story._id}`}
+                        className="bg-orange-600 hover:bg-orange-700 text-white px-3 py-2 rounded-lg text-sm font-medium flex items-center gap-1 transition-colors"
+                      >
+                        <Zap size={16} />
+                        Continue
+                      </Link>
+                    )}
+                  </div>
+                </motion.div>
+              );
+            })}
+          </motion.div>
+        )}
+      </div>
+    </div>
+  );
 }
