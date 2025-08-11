@@ -1,4 +1,3 @@
-// app/children-dashboard/competitions/page.tsx - COMPLETE FIXED VERSION
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -87,7 +86,8 @@ export default function CompetitionsPage() {
 
   useEffect(() => {
     fetchCompetitionData();
-    // Set up auto-refresh every 30 seconds to check for real-time updates
+    
+    // Auto-refresh every 30 seconds for real-time updates
     const interval = setInterval(fetchCompetitionData, 30000);
     return () => clearInterval(interval);
   }, []);
@@ -101,18 +101,8 @@ export default function CompetitionsPage() {
       if (currentResponse.ok) {
         const currentData = await currentResponse.json();
         setCurrentCompetition(currentData.competition);
-      }
-
-      // Fetch past competitions
-      const pastResponse = await fetch('/api/competitions/past');
-      if (pastResponse.ok) {
-        const pastData = await pastResponse.json();
-        setPastCompetitions(pastData.competitions || []);
-      }
-
-      // Fetch eligible stories if in submission phase
-      if (currentResponse.ok) {
-        const currentData = await currentResponse.json();
+        
+        // Fetch eligible stories if in submission phase
         if (currentData.competition?.phase === 'submission') {
           const storiesResponse = await fetch('/api/stories/eligible-for-competition');
           if (storiesResponse.ok) {
@@ -120,6 +110,13 @@ export default function CompetitionsPage() {
             setEligibleStories(storiesData.stories || []);
           }
         }
+      }
+
+      // Fetch past competitions
+      const pastResponse = await fetch('/api/competitions/past');
+      if (pastResponse.ok) {
+        const pastData = await pastResponse.json();
+        setPastCompetitions(pastData.competitions || []);
       }
 
     } catch (error) {
@@ -205,22 +202,54 @@ export default function CompetitionsPage() {
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (file) {
-      if (file.type !== 'text/plain' && !file.name.endsWith('.txt')) {
-        setUploadError('Please upload a .txt file');
-        return;
-      }
-      if (file.size > 1024 * 1024) {
-        setUploadError('File size must be less than 1MB');
-        return;
-      }
-      setUploadFile(file);
-      setUploadError('');
-      
-      if (!uploadTitle) {
-        const fileName = file.name.replace(/\.[^/.]+$/, '');
-        setUploadTitle(fileName.replace(/[-_]/g, ' '));
-      }
+    if (!file) return;
+
+    // Reset previous errors
+    setUploadError('');
+
+    // Check file size first (5MB = 5 * 1024 * 1024 bytes)
+    const maxSizeInBytes = 5 * 1024 * 1024; // 5MB
+    if (file.size > maxSizeInBytes) {
+      setUploadError(`File size too large. Maximum allowed size is 5MB. Your file is ${(file.size / (1024 * 1024)).toFixed(2)}MB.`);
+      event.target.value = ''; // Reset input
+      return;
+    }
+
+    // Check file extension - allow common document formats
+    const fileName = file.name.toLowerCase();
+    const allowedExtensions = ['.txt', '.doc', '.docx', '.pdf', '.rtf', '.odt'];
+    const fileExtension = '.' + fileName.split('.').pop();
+    
+    if (!allowedExtensions.includes(fileExtension)) {
+      setUploadError(`File type not supported. Allowed formats: ${allowedExtensions.join(', ')}`);
+      event.target.value = ''; // Reset input
+      return;
+    }
+
+    // Check MIME types for common document formats
+    const allowedMimeTypes = [
+      'text/plain',
+      'application/pdf',
+      'application/msword',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'application/rtf',
+      'text/rtf',
+      'application/vnd.oasis.opendocument.text'
+    ];
+
+    if (file.type && !allowedMimeTypes.includes(file.type)) {
+      setUploadError(`Invalid file type. Please upload a valid document file.`);
+      event.target.value = ''; // Reset input
+      return;
+    }
+
+    // If all checks pass, set the file
+    setUploadFile(file);
+    
+    // Auto-fill title if not provided
+    if (!uploadTitle.trim()) {
+      const fileNameWithoutExt = file.name.replace(/\.[^/.]+$/, '');
+      setUploadTitle(fileNameWithoutExt.replace(/[-_]/g, ' '));
     }
   };
 
@@ -677,105 +706,118 @@ export default function CompetitionsPage() {
 
             <div className="mb-4">
               <label className="block text-gray-300 font-medium mb-2">
-                Upload File (.txt only)
+                Upload Story File
               </label>
               <div className="border-2 border-dashed border-gray-600 rounded-lg p-6 text-center">
                 <input
                   type="file"
                   onChange={handleFileSelect}
-                  accept=".txt"
+                  accept=".pdf,.docx,.txt"
                   className="hidden"
                   id="competition-file-upload"
                 />
                 <label htmlFor="competition-file-upload" className="cursor-pointer">
-                {uploadFile ? (
-                  <div className="text-green-400">
-                    <FileText className="w-8 h-8 mx-auto mb-2" />
-                    <p className="font-medium">{uploadFile.name}</p>
-                    <p className="text-sm text-gray-400">
-                      {(uploadFile.size / 1024).toFixed(1)} KB
-                    </p>
-                  </div>
-                ) : (
-                  <div className="text-gray-400">
-                    <Upload className="w-8 h-8 mx-auto mb-2" />
-                    <p>Click to upload .txt file</p>
-                    <p className="text-sm">Maximum size: 1MB</p>
-                  </div>
-                )}
-               </label>
-             </div>
-           </div>
+                  {uploadFile ? (
+                    <div className="text-green-400">
+                      <FileText className="w-8 h-8 mx-auto mb-2" />
+                      <p className="font-medium">{uploadFile.name}</p>
+                      <p className="text-sm text-gray-400">
+                        {(uploadFile.size / 1024 / 1024).toFixed(2)} MB
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="text-gray-400">
+                      <Upload className="w-8 h-8 mx-auto mb-2" />
+                      <p>Click to upload your story document</p>
+                      <p className="text-sm">PDF, DOCX, or TXT files only</p>
+                      <p className="text-sm">Maximum size: 10MB</p>
+                    </div>
+                  )}
+                </label>
+              </div>
+            </div>
 
-           <div className="mb-4">
-             <label className="block text-gray-300 font-medium mb-2">
-               Or paste your story content:
-             </label>
-             <textarea
-               value={uploadContent}
-               onChange={(e) => setUploadContent(e.target.value)}
-               placeholder="Paste your story here..."
-               className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 h-32 resize-none"
-             />
-           </div>
+            <div className="mb-4">
+              <label className="block text-gray-300 font-medium mb-2">
+                Or paste your story content:
+              </label>
+              <textarea
+                value={uploadContent}
+                onChange={(e) => setUploadContent(e.target.value)}
+                placeholder="Paste your story here..."
+                className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 h-32 resize-none"
+              />
+            </div>
 
-           <div className="mb-6 bg-blue-600/20 border border-blue-500/30 rounded-lg p-4">
-             <h4 className="text-blue-400 font-medium mb-2">Competition Requirements:</h4>
-             <ul className="text-gray-300 text-sm space-y-1">
-               <li>• Story must be 100-2000 words</li>
-               <li>• Original content only (no plagiarism)</li>
-               <li>• Appropriate for young audiences</li>
-               <li>• File format: .txt only or paste content</li>
-               <li>• Up to 3 submissions per month</li>
-             </ul>
-           </div>
+            <div className="mb-6 bg-blue-600/20 border border-blue-500/30 rounded-lg p-4">
+              <h4 className="text-blue-400 font-medium mb-2">Competition Requirements:</h4>
+              <ul className="text-gray-300 text-sm space-y-1">
+                <li>• Story must be 100-2000 words</li>
+                <li>• Original content only (no plagiarism)</li>
+                <li>• Appropriate for young audiences</li>
+                <li>• File formats: PDF, DOCX, or TXT files</li>
+                <li>• Maximum file size: 10MB</li>
+                <li>• Up to 3 submissions per month</li>
+              </ul>
+            </div>
 
-           {uploadError && (
-             <div className="mb-4 text-red-400 text-sm">{uploadError}</div>
-           )}
+            {uploadError && (
+              <div className="mb-4 bg-red-600/20 border border-red-500/30 rounded-lg p-3">
+                <div className="flex items-center gap-2">
+                  <AlertTriangle className="text-red-400 flex-shrink-0" size={16} />
+                  <span className="text-red-300 text-sm">{uploadError}</span>
+                </div>
+              </div>
+            )}
 
-           <div className="flex gap-3">
-             <button
-               onClick={() => setShowUploadModal(false)}
-               className="flex-1 bg-gray-600 hover:bg-gray-700 text-white py-3 px-4 rounded-lg font-medium transition-colors"
-             >
-               Cancel
-             </button>
-             <button
-               onClick={handleFileUpload}
-               disabled={uploading}
-               className="flex-1 bg-green-600 hover:bg-green-700 disabled:bg-green-400 text-white py-3 px-4 rounded-lg font-medium transition-colors"
-             >
-               {uploading ? 'Uploading...' : 'Upload & Submit'}
-             </button>
-           </div>
-         </div>
-       </div>
-     )}
+            <div className="flex gap-3">
+              <button
+                onClick={() => {
+                  setShowUploadModal(false);
+                  setUploadError('');
+                  setUploadFile(null);
+                  setUploadTitle('');
+                  setUploadContent('');
+                }}
+                className="flex-1 bg-gray-600 hover:bg-gray-700 text-white py-3 px-4 rounded-lg font-medium transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleFileUpload}
+                disabled={uploading || (!uploadFile && !uploadContent.trim()) || !uploadTitle.trim()}
+                className="flex-1 bg-green-600 hover:bg-green-700 disabled:bg-gray-500 disabled:cursor-not-allowed text-white py-3 px-4 rounded-lg font-medium transition-colors"
+              >
+                {uploading ? 'Uploading...' : 'Upload & Submit'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
-     {/* Certificate Modal */}
-     {showCertificate && certificateData && (
-       <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
-         <div className="bg-white rounded-xl p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-           <div className="flex items-center justify-between mb-6">
-             <h3 className="text-2xl font-bold text-gray-800">Your Competition Certificate</h3>
-             <button
-               onClick={() => setShowCertificate(false)}
-               className="text-gray-600 hover:text-gray-800"
-             >
-               <X size={24} />
-             </button>
-           </div>
-           
-           <DigitalCertificate 
-             winnerData={certificateData}
-             onDownload={() => {
-               console.log('Certificate downloaded!');
-             }}
-           />
-         </div>
-       </div>
-     )}
-   </div>
- );
+      {/* Certificate Modal */}
+      {showCertificate && certificateData && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-2xl font-bold text-gray-800">Your Competition Certificate</h3>
+              <button
+                onClick={() => setShowCertificate(false)}
+                className="text-gray-600 hover:text-gray-800"
+              >
+                <X size={24} />
+              </button>
+            </div>
+            
+            <DigitalCertificate 
+              winnerData={certificateData}
+              onDownload={() => {
+                console.log('Certificate downloaded!');
+              }}
+            />
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }

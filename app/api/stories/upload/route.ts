@@ -55,29 +55,43 @@ export async function POST(request: NextRequest) {
 
     // Handle file upload or direct content
     if (file && file.size > 0) {
-      if (file.type !== 'text/plain' && !file.name.endsWith('.txt')) {
+      // CHANGED: Add PDF and DOCX support to existing validation
+      if (
+        file.type !== 'text/plain' && 
+        !file.name.endsWith('.txt') &&
+        !file.type.includes('pdf') &&
+        !file.name.endsWith('.docx')
+      ) {
         return NextResponse.json(
           {
             error:
-              'Only .txt files are supported. Please upload a plain text file or paste your story directly.',
+              'Please upload .txt, .pdf, or .docx files only.',
           },
           { status: 400 }
         );
       }
 
-      if (file.size > 1024 * 1024) {
-        // 1MB limit
+      // CHANGED: Increase file size limit from 1MB to 10MB for PDF/DOCX
+      const maxSize = file.type === 'text/plain' || file.name.endsWith('.txt') ? 1024 * 1024 : 10 * 1024 * 1024;
+      if (file.size > maxSize) {
         return NextResponse.json(
           {
-            error:
-              'File size must be less than 1MB. Please upload a smaller file or paste text directly.',
+            error: file.type === 'text/plain' || file.name.endsWith('.txt')
+              ? 'File size must be less than 1MB for .txt files.'
+              : 'File size must be less than 10MB for .pdf/.docx files.',
           },
           { status: 400 }
         );
       }
 
       try {
-        storyContent = await file.text();
+        // CHANGED: Only read text for .txt files, placeholder for others
+        if (file.type === 'text/plain' || file.name.endsWith('.txt')) {
+          storyContent = await file.text();
+        } else {
+          // For PDF/DOCX, store placeholder - you can add text extraction later
+          storyContent = `[File uploaded: ${file.name} - Processing required]`;
+        }
       } catch (error) {
         return NextResponse.json(
           {

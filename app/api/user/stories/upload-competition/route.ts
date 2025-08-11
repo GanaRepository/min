@@ -1,4 +1,4 @@
-// app/api/stories/upload-competition/route.ts - BASED ON ACTUAL SCHEMA
+// app/api/user/stories/upload-competition/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/utils/authOptions';
@@ -57,26 +57,20 @@ export async function POST(request: NextRequest) {
 
     // Handle file upload or direct content
     if (file && file.size > 0) {
-      if (file.type !== 'text/plain' && !file.name.endsWith('.txt')) {
+      // Accept all file types - PDF, DOCX, TXT
+      if (file.size > 10 * 1024 * 1024) {
         return NextResponse.json(
-          { error: 'Only .txt files are supported' },
-          { status: 400 }
-        );
-      }
-
-      if (file.size > 1024 * 1024) {
-        // 1MB limit
-        return NextResponse.json(
-          { error: 'File size must be less than 1MB' },
+          { error: 'File size must be less than 10MB' },
           { status: 400 }
         );
       }
 
       try {
+        // Read all file types as text for now
         storyContent = await file.text();
       } catch (error) {
         return NextResponse.json(
-          { error: 'Failed to read file' },
+          { error: 'Failed to read file. Please try uploading again.' },
           { status: 400 }
         );
       }
@@ -123,11 +117,11 @@ export async function POST(request: NextRequest) {
     const lastSession = await StorySession.findOne({ childId: session.user.id })
       .sort({ storyNumber: -1 })
       .select('storyNumber')
-      .lean();
+      .lean() as { storyNumber?: number } | null;
 
     const nextStoryNumber = (lastSession?.storyNumber || 0) + 1;
 
-    // Create story session for competition using actual schema
+    // Create story session for competition
     const storySession = await StorySession.create({
       childId: session.user.id,
       storyNumber: nextStoryNumber,
@@ -141,12 +135,11 @@ export async function POST(request: NextRequest) {
       aiOpening: storyContent, // Store the uploaded content
       completedAt: new Date(),
 
-      // Publication fields
-      isPublished: true, // Auto-publish for competition
-      publicationDate: new Date(),
-      competitionEligible: true,
+      // Publication fields - Don't auto-publish, let user pay $10
+      isPublished: false, // User must pay $10 to publish in anthology
+      competitionEligible: true, // Free competition eligibility
 
-      // Competition entry using actual schema structure
+      // Competition entry
       competitionEntries: [
         {
           competitionId: currentCompetition._id,
@@ -168,8 +161,10 @@ export async function POST(request: NextRequest) {
         wordCount,
         submittedToCompetition: true,
         competitionId: currentCompetition._id,
+        isPublished: false,
+        competitionEligible: true,
       },
-      message: 'Story uploaded and submitted to competition successfully!',
+      message: 'Story uploaded and submitted to competition successfully! You can pay $10 to publish it in our anthology.',
     });
   } catch (error) {
     console.error('Competition upload error:', error);
