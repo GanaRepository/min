@@ -156,7 +156,7 @@ export default function ChildrenDashboard() {
       }
 
       // Fetch recent stories
-      const storiesResponse = await fetch('/api/user/stories?limit=6');
+      const storiesResponse = await fetch('/api/user/stories?limit=2');
       if (storiesResponse.ok) {
         const storiesData = await storiesResponse.json();
         console.log('Stories API response:', storiesData);

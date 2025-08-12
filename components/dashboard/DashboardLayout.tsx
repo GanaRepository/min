@@ -61,27 +61,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   if (isStoryWritingPage) {
     return (
       <div className=" bg-gradient-to-br from-gray-900 via-gray-800 to-green-900">
-        {/* Background Pattern */}
-        <div className="absolute inset-0 opacity-5">
-          <svg width="100%" height="100%" className="absolute inset-0">
-            <defs>
-              <pattern
-                id="grid"
-                width="40"
-                height="40"
-                patternUnits="userSpaceOnUse"
-              >
-                <path
-                  d="M 40 0 L 0 0 0 40"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1"
-                />
-              </pattern>
-            </defs>
-            <rect width="100%" height="100%" fill="url(#grid)" />
-          </svg>
-        </div>
+    
 
         {/* Story Writing Header */}
         <header className="sticky top-0 z-30 bg-gray-800/80 backdrop-blur-xl border-b border-gray-600/40">

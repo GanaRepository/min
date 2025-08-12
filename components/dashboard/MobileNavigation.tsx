@@ -15,16 +15,37 @@ interface MobileNavigationProps {
   className?: string;
 }
 
-const mobileNavItems = [
-  { name: 'Home', href: '/children-dashboard', icon: Home },
-  { name: 'Create', href: '/create-stories', icon: Sparkles },
+const mobileNavItems =  [
   {
-    name: 'Upload',
-    href: '/children-dashboard/upload-assessment',
-    icon: Upload,
+    name: 'Dashboard',
+    href: '/children-dashboard',
+    icon: Home,
+    description: 'Your creative home',
   },
-  { name: 'Stories', href: '/children-dashboard/my-stories', icon: BookOpen },
-  { name: 'Compete', href: '/children-dashboard/competitions', icon: Trophy },
+  {
+    name: 'Create Stories Freestyle',
+    href: '/create-stories/#freestyle',
+    icon: Sparkles,
+    description: 'Freestyle story writing',
+  },
+  {
+    name: 'Upload Stories For Assessment',
+    href: '/create-stories/#assessment',
+    icon: Upload,
+    description: 'Submit for AI feedback',
+  },
+  {
+    name: 'My Stories',
+    href: '/children-dashboard/my-stories',
+    icon: BookOpen,
+    description: 'View your stories',
+  },
+  {
+    name: 'Competitions',
+    href: '/children-dashboard/competitions',
+    icon: Trophy,
+    description: 'Monthly contests',
+  },
 ];
 
 export default function MobileNavigation({ className }: MobileNavigationProps) {

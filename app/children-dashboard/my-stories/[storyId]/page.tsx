@@ -28,6 +28,7 @@ import {
   Calendar,
   BarChart3,
 } from 'lucide-react';
+import { DownloadStoryButtons } from '@/components/DownloadStoryButtons';
 
 interface Assessment {
   overallScore: number;
@@ -115,6 +116,11 @@ export default function StoryDetailPage({
   useEffect(() => {
     if (!session) {
       router.push('/login/child');
+      return;
+    }
+    // If session exists, route to /create-stories if currently on /login/child
+    if (window.location.pathname === '/login/child') {
+      router.push('/create-stories');
       return;
     }
     fetchStory();
@@ -382,13 +388,33 @@ export default function StoryDetailPage({
                 </button>
               )}
 
-              <button
-                onClick={() => setShowContent(!showContent)}
-                className="bg-gray-700 hover:bg-gray-600 text-white px-6 py-3 rounded-xl font-medium flex items-center gap-2 transition-all"
-              >
-                <Eye size={20} />
-                {showContent ? 'Hide Content' : 'Show Content'}
-              </button>
+       {/* Download Buttons for Word/PDF */}
+            <div className="flex items-center justify-center mt-8">
+              <DownloadStoryButtons
+                story={{
+                  title: story.title,
+                  content: story.content ?? '',
+                  totalWords: story.totalWords,
+                  authorName: session?.user?.name || 'Unknown',
+                  publishedAt: story.updatedAt || story.createdAt || '',
+                  elements: {
+                    genre: story.elements?.genre ?? '',
+                    character: story.elements?.character ?? '',
+                    setting: story.elements?.setting ?? '',
+                    theme: story.elements?.theme ?? '',
+                    mood: story.elements?.mood ?? '',
+                    tone: story.elements?.tone ?? '',
+                  },
+                  scores: story.assessment
+                    ? {
+                        grammar: story.assessment.grammarScore,
+                        creativity: story.assessment.creativityScore,
+                        overall: story.assessment.overallScore,
+                      }
+                    : undefined,
+                }}
+              />
+            </div>
             </div>
           </div>
         </motion.div>
