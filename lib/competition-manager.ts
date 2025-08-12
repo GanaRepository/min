@@ -1136,12 +1136,11 @@ export class CompetitionManager {
     if (!competition) return [];
 
     // Get stories that are published and not already submitted to current competition
-    const stories = await StorySession.find({
-      childId: userId,
-      isPublished: true,
-      competitionEligible: true,
-      'competitionEntries.competitionId': { $ne: competition._id }
-    }).select('title totalWords childWords createdAt').lean();
+      const stories = await StorySession.find({
+        childId: userId,
+        status: 'completed',
+        'competitionEntries.competitionId': { $ne: competition._id }
+      }).select('title totalWords childWords createdAt').lean();
 
     return stories.map((story: any) => ({
       _id: story._id,
@@ -1191,9 +1190,7 @@ export class CompetitionManager {
       submissionEnd: competition.submissionEnd,
       judgingStart: competition.judgingStart,
       judgingEnd: competition.judgingEnd,
-      resultsDate: competition.resultsDate,
-      createdAt: competition.createdAt,
-      updatedAt: competition.updatedAt
+      // Remove isPublished check. Publishing is not required for competition submission.
     };
   }
 }

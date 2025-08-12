@@ -320,13 +320,13 @@ export default function CompetitionsPage() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex items-center gap-4 mb-8"
+          className="flex items-center gap-4 mb-8 pt-12"
         >
           <Link href="/children-dashboard" className="text-gray-100 hover:text-white transition-colors">
             <ArrowLeft size={24} />
           </Link>
           <div>
-            <h1 className="text-4xl font-bold text-white mb-2">Writing Competitions</h1>
+            <h1 className="text-4xl font-bold text-white mb-2 ">Writing Competitions</h1>
             <p className="text-gray-300 text-lg">Showcase your stories and compete with young writers worldwide!</p>
           </div>
         </motion.div>

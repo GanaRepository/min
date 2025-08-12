@@ -172,7 +172,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         />
 
         {/* Page Content with proper spacing */}
-        <main className="relative z-10 pt-20 pb-20 lg:pb-4">
+      <main className="relative z-10 pb-20 lg:pb-4">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
