@@ -1,4 +1,4 @@
-// config/limits.ts - COMPLETE FIXED VERSION
+// config/limits.ts - UPDATED FOR MINTOONS REQUIREMENTS
 export interface UsageLimits {
   stories: number;
   assessments: number;
@@ -10,32 +10,33 @@ export const USAGE_LIMITS: Record<string, UsageLimits> = {
   FREE: {
     stories: 3,
     assessments: 3,
-    competitionEntries: 3,
+    competitionEntries: 1, // UPDATED: Only 1 competition entry (best story)
     totalAssessmentAttempts: 9,
   },
   STORY_PACK: {
-    stories: 8,
-    assessments: 8,
-    competitionEntries: 3,
-    totalAssessmentAttempts: 24,
+    stories: 8, // 3 + 5 additional
+    assessments: 8, // 3 + 5 additional
+    competitionEntries: 1, // UNCHANGED: Still only 1 competition entry
+    totalAssessmentAttempts: 24, // 9 + 15 additional
   },
 };
 
-export const MAX_ASSESSMENT_ATTEMPTS = 3;
+// REMOVED: MAX_ASSESSMENT_ATTEMPTS per story (now using total pool)
 export const STORY_PACK_PRICE = 15.0;
-export const STORY_PUBLICATION_PRICE = 10.0;
+export const STORY_PUBLICATION_PRICE = 0.0; // FREE (1 per month)
+export const STORY_PURCHASE_PRICE = 10.0; // Physical anthology
 
 export const COMPETITION_LIMITS = {
-  MAX_ENTRIES_PER_CHILD: 3,
+  MAX_ENTRIES_PER_CHILD: 1, // UPDATED: Only 1 entry per month (best story)
   SUBMISSION_DAYS: 25,
   JUDGING_DAYS: 5,
   RESULTS_DAY: 31,
-  MIN_WORD_COUNT: 100,
+  MIN_WORD_COUNT: 350, // UPDATED: Competition minimum
   MAX_WORD_COUNT: 2000,
 };
 
 export const UPLOAD_LIMITS = {
-  MAX_FILE_SIZE: 1024 * 1024,
+  MAX_FILE_SIZE: 10 * 1024 * 1024, // UPDATED: 10MB for all file types
   ALLOWED_EXTENSIONS: ['.txt', '.docx', '.pdf'],
   ALLOWED_MIME_TYPES: [
     'text/plain',
@@ -46,35 +47,38 @@ export const UPLOAD_LIMITS = {
 
 export const RATE_LIMITS = {
   STORY_CREATION: {
-    windowMs: 30 * 24 * 60 * 60 * 1000,
-    maxRequests: 3,
+    windowMs: 30 * 24 * 60 * 60 * 1000, // 30 days
+    maxRequests: 8, // Max with story pack
   },
   ASSESSMENT_UPLOAD: {
-    windowMs: 30 * 24 * 60 * 60 * 1000,
-    maxRequests: 3,
+    windowMs: 30 * 24 * 60 * 60 * 1000, // 30 days
+    maxRequests: 8, // Max with story pack
   },
   ASSESSMENT_ATTEMPT: {
-    windowMs: 5 * 60 * 1000,
-    maxRequests: 1,
+    windowMs: 5 * 60 * 1000, // 5 minutes
+    maxRequests: 1, // Prevent spam
   },
   STORY_PUBLICATION: {
-    windowMs: 60 * 1000,
-    maxRequests: 1,
+    windowMs: 30 * 24 * 60 * 60 * 1000, // 30 days
+    maxRequests: 1, // Only 1 free publication per month
+  },
+  STORY_PURCHASE: {
+    windowMs: 60 * 1000, // 1 minute
+    maxRequests: 10, // Multiple purchases allowed
   },
   COMPETITION_SUBMISSION: {
-    windowMs: 10 * 60 * 1000,
-    maxRequests: 1,
+    windowMs: 30 * 24 * 60 * 60 * 1000, // 30 days
+    maxRequests: 1, // UPDATED: Only 1 competition entry
   },
 };
 
 export const FREE_TIER_LIMITS = USAGE_LIMITS.FREE;
 
 export const STORY_PACK_BENEFITS = {
-  storiesAdded: 5,
-  assessmentsAdded: 5,
-  attemptsAdded: 15,
-  competitionEntriesAdded: 0,
-  totalAssessmentAttemptsAdded: 15,
+  storiesAdded: 5, // 3 → 8 total
+  assessmentsAdded: 5, // 3 → 8 total
+  totalAssessmentAttemptsAdded: 15, // 9 → 24 total
+  competitionEntriesAdded: 0, // Competition stays at 1
 };
 
 export function calculateUserLimits(
@@ -83,7 +87,6 @@ export function calculateUserLimits(
     type: string;
     storiesAdded: number;
     assessmentsAdded: number;
-    attemptsAdded: number;
     competitionEntriesAdded?: number;
     totalAssessmentAttemptsAdded?: number;
     purchaseDate: Date;
@@ -115,11 +118,8 @@ export function calculateUserLimits(
   return {
     stories: baseLimits.stories + additionalLimits.stories,
     assessments: baseLimits.assessments + additionalLimits.assessments,
-    competitionEntries:
-      baseLimits.competitionEntries + additionalLimits.competitionEntries,
-    totalAssessmentAttempts:
-      baseLimits.totalAssessmentAttempts +
-      additionalLimits.totalAssessmentAttempts,
+    competitionEntries: baseLimits.competitionEntries + additionalLimits.competitionEntries,
+    totalAssessmentAttempts: baseLimits.totalAssessmentAttempts + additionalLimits.totalAssessmentAttempts,
   };
 }
 

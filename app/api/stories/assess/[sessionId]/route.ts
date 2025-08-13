@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 import { connectToDatabase } from '@/utils/db';
 import StorySession from '@/models/StorySession';
 import Turn from '@/models/Turn';
-import { AssessmentEngine } from '@/lib/ai/assessment-engine';
+import { AIAssessmentEngine } from '@/lib/ai/ai-assessment-engine';
 import type { NextRequest } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/utils/authOptions';
@@ -138,7 +138,7 @@ export async function POST(
       // Use advanced assessment engine
       console.log('🚀 Running advanced assessment...');
 
-      const assessment = await AssessmentEngine.assessStory(
+      const assessment = await AIAssessmentEngine.assessStory(
         storyContent,
         actualSessionId,
         userSession.user.id

@@ -1,4 +1,4 @@
-// lib/usage-manager.ts - COMPLETE FIXED VERSION
+// lib/usage-manager.ts - UPDATED FOR MINTOONS REQUIREMENTS
 import { connectToDatabase } from '@/utils/db';
 import User from '@/models/User';
 import StorySession from '@/models/StorySession';
@@ -14,7 +14,6 @@ import type { IUser } from '@/models/User';
 export interface UserUsage {
   stories: number;
   assessments: number;
-  attempts: number;
   competition: number;
   totalAssessmentAttempts: number;
 }
@@ -42,7 +41,7 @@ export class UsageManager {
     const now = new Date();
     const currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
 
-    // Get assessment attempts for current month
+    // Get assessment attempts for current month (SIMPLIFIED - NO PER-STORY LIMITS)
     const assessmentStories = await StorySession.find({
       childId: userId,
       isUploadedForAssessment: true,
@@ -57,7 +56,6 @@ export class UsageManager {
     return {
       stories: user.storiesCreatedThisMonth || 0,
       assessments: user.assessmentUploadsThisMonth || 0,
-      attempts: totalAssessmentAttempts,
       competition: user.competitionEntriesThisMonth || 0,
       totalAssessmentAttempts: totalAssessmentAttempts,
     };
@@ -84,10 +82,8 @@ export class UsageManager {
         type: p.type,
         storiesAdded: p.metadata?.storiesAdded || 0,
         assessmentsAdded: p.metadata?.assessmentsAdded || 0,
-        attemptsAdded: p.metadata?.attemptsAdded || 0,
         competitionEntriesAdded: p.metadata?.competitionEntriesAdded || 0,
-        totalAssessmentAttemptsAdded:
-          p.metadata?.totalAssessmentAttemptsAdded || 0,
+        totalAssessmentAttemptsAdded: p.metadata?.totalAssessmentAttemptsAdded || 0,
         purchaseDate: p.purchaseDate,
       })) || [],
       currentMonthStart
@@ -139,59 +135,30 @@ export class UsageManager {
   }
 
   /**
-   * Check if user can attempt assessment for a specific story
+   * Check if user can attempt assessment (SIMPLIFIED - NO PER-STORY LIMITS)
    */
-  static async canAttemptAssessment(
-    userId: string,
-    storyId: string
-  ): Promise<UsageCheckResult> {
+  static async canAttemptAssessment(userId: string): Promise<UsageCheckResult> {
     const [currentUsage, limits] = await Promise.all([
       this.getCurrentUsage(userId),
       this.getUserLimits(userId),
     ]);
 
-    // Check story-specific attempts
-    const story = await StorySession.findById(storyId);
-    if (!story) {
-      return {
-        allowed: false,
-        reason: 'Story not found',
-        currentUsage,
-        limits,
-        upgradeRequired: false,
-      };
-    }
-
-    const storyAttempts = story.assessmentAttempts || 0;
-    const maxAttemptsPerStory = 3;
-
-    if (storyAttempts >= maxAttemptsPerStory) {
-      return {
-        allowed: false,
-        reason: `Maximum ${maxAttemptsPerStory} attempts reached for this story`,
-        currentUsage,
-        limits,
-        upgradeRequired: false,
-      };
-    }
-
-    // Check total monthly attempts
-    const totalAllowed =
-      currentUsage.totalAssessmentAttempts < limits.totalAssessmentAttempts;
+    // ONLY check total monthly attempts (no per-story limit)
+    const allowed = currentUsage.totalAssessmentAttempts < limits.totalAssessmentAttempts;
 
     return {
-      allowed: totalAllowed,
-      reason: totalAllowed
-        ? `Can attempt assessment (${currentUsage.totalAssessmentAttempts}/${limits.totalAssessmentAttempts} total, ${storyAttempts}/${maxAttemptsPerStory} for this story)`
-        : `Total assessment attempts limit reached (${currentUsage.totalAssessmentAttempts}/${limits.totalAssessmentAttempts}). Upgrade to Story Pack for more attempts!`,
+      allowed,
+      reason: allowed
+        ? `Can attempt assessment (${currentUsage.totalAssessmentAttempts}/${limits.totalAssessmentAttempts} used)`
+        : `Assessment attempts limit reached (${currentUsage.totalAssessmentAttempts}/${limits.totalAssessmentAttempts}). Upgrade to Story Pack for 15 more attempts!`,
       currentUsage,
       limits,
-      upgradeRequired: !totalAllowed,
+      upgradeRequired: !allowed,
     };
   }
 
   /**
-   * Check if user can enter competition
+   * Check if user can enter competition (UPDATED: Only 1 entry)
    */
   static async canEnterCompetition(userId: string): Promise<UsageCheckResult> {
     const [currentUsage, limits] = await Promise.all([
@@ -205,7 +172,7 @@ export class UsageManager {
       allowed,
       reason: allowed
         ? `Can enter competition (${currentUsage.competition}/${limits.competitionEntries})`
-        : `Competition entry limit reached (${currentUsage.competition}/${limits.competitionEntries}). You can enter ${limits.competitionEntries} competitions per month.`,
+        : `Competition entry limit reached (${currentUsage.competition}/${limits.competitionEntries}). You can submit 1 best story per month.`,
       currentUsage,
       limits,
       upgradeRequired: false, // Competition entries are not part of story pack
@@ -283,7 +250,7 @@ export class UsageManager {
   }
 
   /**
-   * Validate and enforce limits before any action
+   * Validate and enforce limits before any action (SIMPLIFIED)
    */
   static async enforceLimit(
     userId: string,
@@ -291,8 +258,7 @@ export class UsageManager {
       | 'create_story'
       | 'upload_assessment'
       | 'attempt_assessment'
-      | 'enter_competition',
-    storyId?: string
+      | 'enter_competition'
   ): Promise<{ allowed: boolean; message: string; needsUpgrade: boolean }> {
     let result: UsageCheckResult;
 
@@ -304,14 +270,7 @@ export class UsageManager {
         result = await this.canUploadAssessment(userId);
         break;
       case 'attempt_assessment':
-        if (!storyId) {
-          return {
-            allowed: false,
-            message: 'Story ID required for assessment',
-            needsUpgrade: false,
-          };
-        }
-        result = await this.canAttemptAssessment(userId, storyId);
+        result = await this.canAttemptAssessment(userId);
         break;
       case 'enter_competition':
         result = await this.canEnterCompetition(userId);

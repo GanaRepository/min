@@ -6,7 +6,7 @@ import { connectToDatabase } from '@/utils/db';
 import StorySession from '@/models/StorySession';
 import User from '@/models/User';
 import { UsageManager } from '@/lib/usage-manager';
-import { AssessmentEngine } from '@/lib/ai/assessment-engine';
+import { AIAssessmentEngine } from '@/lib/ai/ai-assessment-engine';
 
 export async function POST(request: NextRequest) {
   try {
@@ -186,7 +186,7 @@ export async function POST(request: NextRequest) {
     try {
       console.log('🔍 Starting advanced assessment...');
 
-      const assessmentResult = await AssessmentEngine.assessUploadedStory(
+      const assessmentResult = await AIAssessmentEngine.assessUploadedStory(
         storyContent,
         title.trim(),
         session.user.id

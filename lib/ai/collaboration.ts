@@ -1,743 +1,7 @@
-// // lib/ai/collaboration.ts
-// import { smartAIProvider } from './smart-provider-manager';
-// import type { StoryElements } from '@/config/story-elements';
-// import { AssessmentEngine } from './assessment-engine';
-// import StorySession from '@/models/StorySession';
-// import Turn from '@/models/Turn';
-// import { connectToDatabase } from '@/utils/db';
-
-// interface TurnContext {
-//   childInput: string;
-//   aiResponse: string;
-// }
-
-// export class AICollaborationEngine {
-//   async generateOpeningPrompt(elements: StoryElements): Promise<string> {
-//     const prompt = `You are a supportive AI writing teacher for children. Create an engaging story opening that:
-
-// Story Elements:
-// - Genre: ${elements.genre}
-// - Character: ${elements.character}  
-// - Setting: ${elements.setting}
-// - Theme: ${elements.theme}
-// - Mood: ${elements.mood}
-// - Tone: ${elements.tone}
-
-// Instructions:
-// 1. Write 2-3 sentences introducing the character and setting
-// 2. Establish the ${elements.mood} mood with ${elements.tone} tone
-// 3. End with an engaging question to encourage the child to continue
-// 4. Use age-appropriate language (grades 3-8)
-// 5. Be encouraging and educational
-// 6. Keep it under 80 words
-
-// Example structure: "Meet [character] in [setting]. Something interesting happens. What do you think happens next?"`;
-
-//     try {
-//       const response = await smartAIProvider.generateResponse(prompt);
-//       return response;
-//     } catch (error) {
-//       console.error(
-//         'AI opening generation failed, using educational fallback:',
-//         error
-//       );
-//       return this.getEducationalFallbackOpening(elements);
-//     }
-//   }
-
-//   async generateFreeformOpening(): Promise<string> {
-//     return 'Welcome to your creative writing adventure! What story would you like to tell today? Start with any idea, character, or situation that excites you.';
-//   }
-
-//   async generateContextualResponse(
-//     elements: StoryElements | null,
-//     previousTurns: TurnContext[],
-//     childInput: string,
-//     turnNumber: number
-//   ): Promise<string> {
-//     return this.generateFreeformResponse(previousTurns, childInput, turnNumber);
-//   }
-
-//   private async generateFreeformResponse(
-//     previousTurns: TurnContext[],
-//     childInput: string,
-//     turnNumber: number
-//   ): Promise<string> {
-//     const storyContext = previousTurns
-//       .map(
-//         (turn, index) =>
-//           `Turn ${index + 1}:\nChild: ${turn.childInput}\nAI: ${turn.aiResponse}`
-//       )
-//       .join('\n\n');
-
-//     const educationalGuidance = this.getFreeformGuidanceForTurn(turnNumber);
-
-//     const prompt = `You are a supportive AI writing teacher helping a child with their creative freeform story.
-
-// Current Story Context:
-// ${storyContext}
-
-// Child's Latest Writing (Turn ${turnNumber}): "${childInput}"
-
-// Your Teaching Goals:
-// ${educationalGuidance}
-
-// Instructions:
-// 1. Acknowledge what the child wrote positively
-// 2. Continue their unique story naturally (2-3 sentences)  
-// 3. Use encouraging teacher language
-// 4. Maintain whatever mood and tone they have established
-// 5. End with a creative question to inspire the next turn
-// 6. Keep response under 80 words
-// 7. Support their creative vision while providing gentle guidance
-
-// Respond as a supportive teacher who celebrates their unique creativity.`;
-
-//     try {
-//       const response = await smartAIProvider.generateResponse(prompt);
-//       return response;
-//     } catch (error) {
-//       console.error(
-//         `AI freeform response generation failed for turn ${turnNumber}, using educational fallback:`,
-//         error
-//       );
-//       return this.getEducationalFallbackResponse(turnNumber, childInput);
-//     }
-//   }
-
-//   async generateAssessment(
-//     storyContent: string,
-//     storyElements: StoryElements | null,
-//     storyStats: {
-//       totalWords: number;
-//       turnCount: number;
-//       storyTheme: string;
-//       storyGenre: string;
-//       storyMode: 'guided' | 'freeform';
-//     }
-//   ): Promise<{
-//     grammarScore: number;
-//     creativityScore: number;
-//     overallScore: number;
-//     readingLevel: string;
-//     vocabularyScore: number;
-//     structureScore: number;
-//     characterDevelopmentScore: number;
-//     plotDevelopmentScore: number;
-//     feedback: string;
-//     strengths: string[];
-//     improvements: string[];
-//     vocabularyUsed: string[];
-//     suggestedWords: string[];
-//     educationalInsights: string;
-//   }> {
-//     // FIX: Get theme and genre from storyStats parameter, not storyElements
-//     const storyTheme = storyStats.storyTheme || 'Adventure';
-//     const storyGenre = storyStats.storyGenre || 'Fantasy';
-
-//     const prompt = `You are an expert AI writing teacher conducting a comprehensive assessment of a child's creative story.
-
-// STORY TO ASSESS:
-// Genre: ${storyGenre}
-// Theme: ${storyTheme}
-// Word Count: ${storyStats.totalWords}
-// Story Turns: ${storyStats.turnCount}
-// Story Mode: ${storyStats.storyMode}
-
-// FULL STORY TEXT:
-// "${storyContent}"
-
-// PROVIDE DETAILED ANALYSIS WITH SCORES (0-100) FOR:
-
-// 1. GRAMMAR & MECHANICS (0-100): Sentence structure, punctuation, spelling, capitalization
-// 2. CREATIVITY & IMAGINATION (0-100): Originality, creative thinking, unique ideas, imagination
-// 3. VOCABULARY USAGE (0-100): Word choice variety, descriptive language, age-appropriate vocabulary
-// 4. STORY STRUCTURE (0-100): Beginning/middle/end, plot flow, logical sequence
-// 5. CHARACTER DEVELOPMENT (0-100): Character personality, growth, believability
-// 6. PLOT DEVELOPMENT (0-100): Story progression, conflict resolution, engagement
-// 7. OVERALL SCORE (0-100): Weighted average considering all aspects
-
-// ADDITIONAL ANALYSIS:
-// - Reading Level (Beginner/Elementary/Intermediate/Advanced)
-// - Top 5 Strengths (specific examples from the story)
-// - Top 3 Areas for Improvement (constructive suggestions)
-// - Advanced Vocabulary Words Used (list 5-8 impressive words from story)
-// - Suggested Vocabulary (list 5 new words to learn)
-// - Educational Insights (learning opportunities identified)
-
-// FEEDBACK STYLE:
-// - Encouraging and positive tone
-// - Specific examples from their story
-// - Constructive improvement suggestions
-// - Age-appropriate language
-// - Celebrate creativity while guiding learning
-
-// FORMAT RESPONSE EXACTLY AS:
-// Grammar: [score]
-// Creativity: [score]
-// Vocabulary: [score]
-// Structure: [score]
-// Character: [score]
-// Plot: [score]
-// Overall: [score]
-// Reading Level: [level]
-// Feedback: [3-4 sentences of encouraging detailed feedback with specific story examples]
-// Strengths: [strength1]|[strength2]|[strength3]|[strength4]|[strength5]
-// Improvements: [improvement1]|[improvement2]|[improvement3]
-// VocabularyUsed: [word1]|[word2]|[word3]|[word4]|[word5]
-// SuggestedWords: [word1]|[word2]|[word3]|[word4]|[word5]
-// Educational: [educational insights about their writing development]`;
-
-//     try {
-//       const response = await smartAIProvider.generateResponse(prompt);
-//       return this.parseDetailedAssessmentResponse(
-//         response,
-//         storyStats.totalWords
-//       );
-//     } catch (error) {
-//       console.error('AI assessment generation failed:', error);
-//       return this.getDetailedFallbackAssessment(storyStats.totalWords);
-//     }
-//   }
-
-//   private getFreeformGuidanceForTurn(turnNumber: number): string {
-//     const guidanceMap: Record<number, string> = {
-//       1: 'Help them expand on their creative opening with vivid details and character development',
-//       2: 'Encourage them to introduce challenges or interesting developments that build on their unique ideas',
-//       3: 'Guide them to develop whatever main conflict or adventure they have established',
-//       4: 'Help them build on the momentum and excitement of their story',
-//       5: 'Support them in creating a climactic moment that fits their story direction',
-//       6: 'Assist them in crafting a satisfying conclusion for their unique tale',
-//     };
-//     return guidanceMap[turnNumber] || guidanceMap[6];
-//   }
-
-//   private getEducationalFallbackOpening(elements: StoryElements): string {
-//     const openings = [
-//       `Meet a brave ${elements.character.toLowerCase()} in the amazing ${elements.setting.toLowerCase()}! Something ${elements.mood.toLowerCase()} is about to happen in this ${elements.genre.toLowerCase()} adventure. What do you think your ${elements.character.toLowerCase()} discovers first?`,
-//       `Welcome to ${elements.setting.toLowerCase()}, where a ${elements.character.toLowerCase()} begins an incredible ${elements.genre.toLowerCase()} journey! The atmosphere feels ${elements.mood.toLowerCase()} and full of possibilities. How does your story begin?`,
-//       `In a ${elements.mood.toLowerCase()} ${elements.setting.toLowerCase()}, our ${elements.character.toLowerCase()} hero starts a ${elements.genre.toLowerCase()} tale about ${elements.theme.toLowerCase()}. What exciting thing happens first in your adventure?`,
-//     ];
-//     return openings[Math.floor(Math.random() * openings.length)];
-//   }
-
-//   private getEducationalFallbackResponse(
-//     turnNumber: number,
-//     childInput: string
-//   ): string {
-//     const responses = [
-//       `Wonderful writing! I love how you're developing this story. Your creativity really shows in how you described that scene. What exciting challenge does your character face next?`,
-//       `Excellent work! You're building such an engaging adventure. I can picture everything you've written so clearly. What happens when your character tries to solve this problem?`,
-//       `Amazing storytelling! You've created such vivid details that make me want to know more. How does your brave character handle this new situation?`,
-//       `Fantastic imagination! Your story is taking such interesting turns. I'm excited to see where you take us next. What does your character do now?`,
-//       `Outstanding creativity! You're weaving together all the story elements beautifully. What final challenge awaits your character in this adventure?`,
-//       `Incredible conclusion building! You're bringing all the pieces together so well. How does your hero's journey end?`,
-//     ];
-//     return responses[Math.min(turnNumber - 1, responses.length - 1)];
-//   }
-
-//   private parseDetailedAssessmentResponse(
-//     aiResponse: string,
-//     totalWords: number
-//   ): {
-//     grammarScore: number;
-//     creativityScore: number;
-//     vocabularyScore: number;
-//     structureScore: number;
-//     characterDevelopmentScore: number;
-//     plotDevelopmentScore: number;
-//     overallScore: number;
-//     readingLevel: string;
-//     feedback: string;
-//     strengths: string[];
-//     improvements: string[];
-//     vocabularyUsed: string[];
-//     suggestedWords: string[];
-//     educationalInsights: string;
-//   } {
-//     try {
-//       const lines = aiResponse.split('\n');
-//       let grammarScore = 85;
-//       let creativityScore = 88;
-//       let vocabularyScore = 82;
-//       let structureScore = 80;
-//       let characterDevelopmentScore = 78;
-//       let plotDevelopmentScore = 83;
-//       let overallScore = 83;
-//       let readingLevel = 'Elementary';
-//       let feedback = `Great job on your creative story! Your ${totalWords}-word adventure shows wonderful imagination and storytelling skills. Keep practicing your writing - you're doing amazing work!`;
-//       let strengths: string[] = [];
-//       let improvements: string[] = [];
-//       let vocabularyUsed: string[] = [];
-//       let suggestedWords: string[] = [];
-//       let educationalInsights =
-//         'Continue developing your storytelling abilities through regular practice and reading.';
-
-//       for (const line of lines) {
-//         if (line.toLowerCase().includes('grammar:')) {
-//           const score =
-//             parseInt(line.replace(/grammar:/i, '').trim()) || grammarScore;
-//           grammarScore = Math.max(70, Math.min(100, score));
-//         } else if (line.toLowerCase().includes('creativity:')) {
-//           const score =
-//             parseInt(line.replace(/creativity:/i, '').trim()) ||
-//             creativityScore;
-//           creativityScore = Math.max(70, Math.min(100, score));
-//         } else if (line.toLowerCase().includes('vocabulary:')) {
-//           const score =
-//             parseInt(line.replace(/vocabulary:/i, '').trim()) ||
-//             vocabularyScore;
-//           vocabularyScore = Math.max(70, Math.min(100, score));
-//         } else if (line.toLowerCase().includes('structure:')) {
-//           const score =
-//             parseInt(line.replace(/structure:/i, '').trim()) || structureScore;
-//           structureScore = Math.max(70, Math.min(100, score));
-//         } else if (line.toLowerCase().includes('character:')) {
-//           const score =
-//             parseInt(line.replace(/character:/i, '').trim()) ||
-//             characterDevelopmentScore;
-//           characterDevelopmentScore = Math.max(70, Math.min(100, score));
-//         } else if (line.toLowerCase().includes('plot:')) {
-//           const score =
-//             parseInt(line.replace(/plot:/i, '').trim()) || plotDevelopmentScore;
-//           plotDevelopmentScore = Math.max(70, Math.min(100, score));
-//         } else if (line.toLowerCase().includes('overall:')) {
-//           const score =
-//             parseInt(line.replace(/overall:/i, '').trim()) || overallScore;
-//           overallScore = Math.max(70, Math.min(100, score));
-//         } else if (line.toLowerCase().includes('reading level:')) {
-//           readingLevel =
-//             line.replace(/reading level:/i, '').trim() || readingLevel;
-//         } else if (line.toLowerCase().includes('feedback:')) {
-//           feedback = line.replace(/feedback:/i, '').trim() || feedback;
-//         } else if (line.toLowerCase().includes('strengths:')) {
-//           const strengthsText = line.replace(/strengths:/i, '').trim();
-//           strengths = strengthsText
-//             .split('|')
-//             .map((s) => s.trim())
-//             .filter((s) => s);
-//         } else if (line.toLowerCase().includes('improvements:')) {
-//           const improvementsText = line.replace(/improvements:/i, '').trim();
-//           improvements = improvementsText
-//             .split('|')
-//             .map((s) => s.trim())
-//             .filter((s) => s);
-//         } else if (line.toLowerCase().includes('vocabularyused:')) {
-//           const vocabText = line.replace(/vocabularyused:/i, '').trim();
-//           vocabularyUsed = vocabText
-//             .split('|')
-//             .map((s) => s.trim())
-//             .filter((s) => s);
-//         } else if (line.toLowerCase().includes('suggestedwords:')) {
-//           const suggestedText = line.replace(/suggestedwords:/i, '').trim();
-//           suggestedWords = suggestedText
-//             .split('|')
-//             .map((s) => s.trim())
-//             .filter((s) => s);
-//         } else if (line.toLowerCase().includes('educational:')) {
-//           educationalInsights = line.replace(/educational:/i, '').trim();
-//         }
-//       }
-
-//       return {
-//         grammarScore: Math.max(70, Math.min(100, grammarScore)),
-//         creativityScore: Math.max(70, Math.min(100, creativityScore)),
-//         vocabularyScore: Math.max(70, Math.min(100, vocabularyScore)),
-//         structureScore: Math.max(70, Math.min(100, structureScore)),
-//         characterDevelopmentScore: Math.max(
-//           70,
-//           Math.min(100, characterDevelopmentScore)
-//         ),
-//         plotDevelopmentScore: Math.max(70, Math.min(100, plotDevelopmentScore)),
-//         overallScore: Math.max(70, Math.min(100, overallScore)),
-//         readingLevel,
-//         feedback,
-//         strengths:
-//           strengths.length > 0
-//             ? strengths
-//             : [
-//                 'Creative imagination',
-//                 'Good story ideas',
-//                 'Engaging plot',
-//                 'Character development',
-//                 'Descriptive writing',
-//               ],
-//         improvements:
-//           improvements.length > 0
-//             ? improvements
-//             : [
-//                 'Add more dialogue',
-//                 'Use more descriptive adjectives',
-//                 'Vary sentence lengths',
-//               ],
-//         vocabularyUsed:
-//           vocabularyUsed.length > 0
-//             ? vocabularyUsed
-//             : ['adventure', 'mysterious', 'brave', 'discovered', 'amazing'],
-//         suggestedWords:
-//           suggestedWords.length > 0
-//             ? suggestedWords
-//             : [
-//                 'magnificent',
-//                 'extraordinary',
-//                 'perilous',
-//                 'astonishing',
-//                 'triumphant',
-//               ],
-//         educationalInsights,
-//       };
-//     } catch (error) {
-//       console.error('Error parsing detailed assessment response:', error);
-//       return this.getDetailedFallbackAssessment(totalWords);
-//     }
-//   }
-
-//   private getDetailedFallbackAssessment(totalWords: number): {
-//     grammarScore: number;
-//     creativityScore: number;
-//     vocabularyScore: number;
-//     structureScore: number;
-//     characterDevelopmentScore: number;
-//     plotDevelopmentScore: number;
-//     overallScore: number;
-//     readingLevel: string;
-//     feedback: string;
-//     strengths: string[];
-//     improvements: string[];
-//     vocabularyUsed: string[];
-//     suggestedWords: string[];
-//     educationalInsights: string;
-//   } {
-//     const grammarScore = Math.floor(Math.random() * 15) + 80;
-//     const creativityScore = Math.floor(Math.random() * 20) + 85;
-//     const vocabularyScore = Math.floor(Math.random() * 15) + 75;
-//     const structureScore = Math.floor(Math.random() * 15) + 78;
-//     const characterDevelopmentScore = Math.floor(Math.random() * 20) + 75;
-//     const plotDevelopmentScore = Math.floor(Math.random() * 15) + 80;
-//     const overallScore = Math.floor(
-//       (grammarScore +
-//         creativityScore +
-//         vocabularyScore +
-//         structureScore +
-//         characterDevelopmentScore +
-//         plotDevelopmentScore) /
-//         6
-//     );
-
-//     const readingLevel =
-//       totalWords < 100
-//         ? 'Beginner'
-//         : totalWords < 200
-//           ? 'Elementary'
-//           : 'Intermediate';
-
-//     const feedbackOptions = [
-//       `Excellent work on your ${totalWords}-word story! Your creativity and imagination really shine through in every paragraph. I particularly enjoyed how you developed your characters and built up the excitement. Your storytelling abilities are impressive, particularly in how you handled the story structure and pacing. The way you used descriptive language really helped me visualize the scenes. Consider experimenting with different sentence lengths to add variety to your writing style!`,
-//       `Outstanding storytelling! Your ${totalWords}-word story is filled with creativity and shows great understanding of story elements. I was particularly impressed by your character development and the creative conflicts you created. Keep working on expanding your vocabulary to make your descriptions even more vivid!`,
-//       `Wonderful imagination at work! Your ${totalWords}-word story demonstrates strong writing skills and creative thinking. The plot development was engaging and your use of descriptive details really brought the story to life. Try incorporating more sensory details to help readers feel like they're experiencing the adventure alongside your characters!`,
-//     ];
-
-//     return {
-//       grammarScore,
-//       creativityScore,
-//       vocabularyScore,
-//       structureScore,
-//       characterDevelopmentScore,
-//       plotDevelopmentScore,
-//       overallScore,
-//       readingLevel,
-//       feedback:
-//         feedbackOptions[Math.floor(Math.random() * feedbackOptions.length)],
-//       strengths: [
-//         'Creative imagination',
-//         'Good story ideas',
-//         'Engaging plot',
-//         'Character development',
-//         'Descriptive writing',
-//       ],
-//       improvements: [
-//         'Add more dialogue',
-//         'Use more descriptive adjectives',
-//         'Vary sentence lengths',
-//       ],
-//       vocabularyUsed: [
-//         'adventure',
-//         'mysterious',
-//         'brave',
-//         'discovered',
-//         'amazing',
-//       ],
-//       suggestedWords: [
-//         'magnificent',
-//         'extraordinary',
-//         'perilous',
-//         'astonishing',
-//         'triumphant',
-//       ],
-//       educationalInsights:
-//         'Your writing shows strong development in narrative structure and creative expression. Continue practicing descriptive writing and character development to enhance your storytelling abilities.',
-//     };
-//   }
-
-//   async generateAssessmentLegacy(
-//     storyContent: string,
-//     totalWords: number,
-//     childAge?: number
-//   ): Promise<{
-//     grammarScore: number;
-//     creativityScore: number;
-//     overallScore: number;
-//     feedback: string;
-//   }> {
-//     const detailedAssessment = await this.generateAssessment(
-//       storyContent,
-//       null,
-//       {
-//         totalWords,
-//         turnCount: 6,
-//         storyTheme: 'Adventure',
-//         storyGenre: 'Fantasy',
-//         storyMode: 'freeform',
-//       }
-//     );
-
-//     return {
-//       grammarScore: detailedAssessment.grammarScore,
-//       creativityScore: detailedAssessment.creativityScore,
-//       overallScore: detailedAssessment.overallScore,
-//       feedback: detailedAssessment.feedback,
-//     };
-//   }
-
-//   /**
-//    * Complete collaborative story and run advanced assessment
-//    */
-//   static async completeAndAssessCollaborativeStory(
-//     sessionId: string,
-//     userId: string
-//   ) {
-//     await connectToDatabase();
-
-//     const session = await StorySession.findOne({
-//       _id: sessionId,
-//       childId: userId,
-//       status: 'active',
-//     });
-
-//     if (!session) {
-//       throw new Error('Active story session not found');
-//     }
-
-//     // Get all turns for the session
-//     const turns = await Turn.find({ sessionId }).sort({ turnNumber: 1 });
-
-//     if (turns.length === 0) {
-//       throw new Error('No story content found');
-//     }
-
-//     // Extract user contributions only for assessment
-//     const userTurns = turns
-//       .filter((turn) => turn.childInput?.trim())
-//       .map((turn) => turn.childInput.trim());
-
-//     const fullStory = turns
-//       .map((turn) => turn.childInput || turn.aiResponse || '')
-//       .filter((content) => content.trim())
-//       .join('\n\n');
-
-//     if (userTurns.length === 0) {
-//       throw new Error('No user content found for assessment');
-//     }
-
-//     const userContent = userTurns.join('\n\n');
-//     const wordCount = userContent.split(/\s+/).filter(Boolean).length;
-
-//     if (wordCount < 50) {
-//       throw new Error('User content must be at least 50 words for assessment');
-//     }
-
-//     console.log(
-//       `📊 Assessing collaborative story: ${wordCount} user words from ${userTurns.length} turns`
-//     );
-
-//     // Run advanced assessment on user contributions only
-//     const assessmentResult = await AssessmentEngine.assessStory(
-//       userContent, // Assess only user's writing
-//       sessionId,
-//       userId
-//     );
-
-//     // Update session with assessment and completion
-//     await StorySession.findByIdAndUpdate(sessionId, {
-//       $set: {
-//         status:
-//           assessmentResult.integrityAnalysis.integrityRisk === 'critical'
-//             ? 'flagged'
-//             : 'completed',
-//         completedAt: new Date(),
-//         totalWords: fullStory.split(/\s+/).filter(Boolean).length,
-//         childWords: wordCount,
-
-//         assessment: {
-//           // Legacy fields for backward compatibility
-//           grammarScore: assessmentResult.categoryScores.grammar,
-//           creativityScore: assessmentResult.categoryScores.creativity,
-//           vocabularyScore: assessmentResult.categoryScores.vocabulary,
-//           structureScore: assessmentResult.categoryScores.structure,
-//           characterDevelopmentScore:
-//             assessmentResult.categoryScores.characterDevelopment,
-//           plotDevelopmentScore: assessmentResult.categoryScores.plotDevelopment,
-//           overallScore: assessmentResult.overallScore,
-//           readingLevel: assessmentResult.categoryScores.readingLevel,
-//           feedback: assessmentResult.educationalFeedback.teacherComment,
-//           strengths: assessmentResult.educationalFeedback.strengths,
-//           improvements: assessmentResult.educationalFeedback.improvements,
-//           vocabularyUsed: [], // Legacy field
-//           suggestedWords: [], // Legacy field
-//           educationalInsights:
-//             assessmentResult.educationalFeedback.encouragement,
-
-//           // NEW: Advanced integrity fields
-//           plagiarismScore: assessmentResult.integrityAnalysis.originalityScore,
-//           aiDetectionScore:
-//             assessmentResult.integrityAnalysis.aiDetectionResult.overallScore,
-//           integrityRisk: assessmentResult.integrityAnalysis.integrityRisk,
-
-//           // Store detailed analysis
-//           integrityAnalysis: {
-//             plagiarismResult: {
-//               score:
-//                 assessmentResult.integrityAnalysis.plagiarismResult
-//                   .overallScore,
-//               riskLevel:
-//                 assessmentResult.integrityAnalysis.plagiarismResult.riskLevel,
-//               violationCount:
-//                 assessmentResult.integrityAnalysis.plagiarismResult.violations
-//                   ?.length || 0,
-//               detailedAnalysis:
-//                 assessmentResult.integrityAnalysis.plagiarismResult
-//                   .detailedAnalysis,
-//             },
-//             aiDetectionResult: {
-//               score:
-//                 assessmentResult.integrityAnalysis.aiDetectionResult
-//                   .overallScore,
-//               likelihood:
-//                 assessmentResult.integrityAnalysis.aiDetectionResult.likelihood,
-//               confidence:
-//                 assessmentResult.integrityAnalysis.aiDetectionResult.confidence,
-//               indicatorCount:
-//                 assessmentResult.integrityAnalysis.aiDetectionResult.indicators
-//                   ?.length || 0,
-//               detailedAnalysis:
-//                 assessmentResult.integrityAnalysis.aiDetectionResult
-//                   .detailedAnalysis,
-//             },
-//           },
-
-//           // Educational enhancements
-//           recommendations: assessmentResult.recommendations,
-//           progressTracking: assessmentResult.progressTracking,
-
-//           // Assessment metadata
-//           assessmentVersion: '2.0',
-//           assessmentDate: new Date(),
-//           isReassessment: false,
-//         },
-
-//         // Sync top-level fields
-//         overallScore: assessmentResult.overallScore,
-//         grammarScore: assessmentResult.categoryScores.grammar,
-//         creativityScore: assessmentResult.categoryScores.creativity,
-//         feedback: assessmentResult.educationalFeedback.teacherComment,
-//         assessmentAttempts: 1,
-//         lastAssessedAt: new Date(),
-//       },
-//     });
-
-//     console.log(`✅ Collaborative story completed and assessed: ${sessionId}`);
-//     console.log(
-//       `📊 User assessment: ${assessmentResult.overallScore}% overall`
-//     );
-//     console.log(
-//       `🔍 Integrity: ${assessmentResult.integrityAnalysis.originalityScore}% originality, ${assessmentResult.integrityAnalysis.integrityRisk} risk`
-//     );
-
-//     return {
-//       sessionId,
-//       fullStory,
-//       userContent,
-//       assessment: assessmentResult,
-//       wordCount: {
-//         total: fullStory.split(/\s+/).filter(Boolean).length,
-//         userOnly: wordCount,
-//       },
-//       turnStats: {
-//         totalTurns: turns.length,
-//         userTurns: userTurns.length,
-//       },
-//     };
-//   }
-
-//   /**
-//    * Get assessment for completed collaborative story
-//    */
-//   static async getCollaborativeStoryAssessment(
-//     sessionId: string,
-//     userId: string
-//   ) {
-//     await connectToDatabase();
-
-//     const session = await StorySession.findOne({
-//       _id: sessionId,
-//       childId: userId,
-//       status: { $in: ['completed', 'flagged'] },
-//     });
-
-//     if (!session) {
-//       throw new Error('Completed story session not found');
-//     }
-
-//     if (!session.assessment) {
-//       throw new Error('Story not yet assessed');
-//     }
-
-//     // Use type guard for canReassess in collaboration.ts
-//     const canReassess =
-//       typeof (session as any).canReassess === 'function'
-//         ? (session as any).canReassess()
-//         : false;
-
-//     // Use type guard for integrityStatus in collaboration.ts
-//     const integrityStatus =
-//       typeof (session as any).integrityStatus === 'string'
-//         ? (session as any).integrityStatus
-//         : 'unknown';
-
-//     return {
-//       sessionId,
-//       assessment: session.assessment,
-//       storyInfo: {
-//         title: session.title,
-//         storyNumber: session.storyNumber,
-//         totalWords: session.totalWords,
-//         userWords: session.childWords,
-//         completedAt: session.completedAt,
-//         assessmentAttempts: session.assessmentAttempts,
-//         maxAttempts: 3,
-//         canReassess,
-//       },
-//       integrityStatus,
-//     };
-//   }
-// }
-
-// export const collaborationEngine = new AICollaborationEngine();
-
-// lib/ai/collaboration.ts
+// lib/ai/collaboration.ts - UPDATED WITH ADVANCED DETECTION
 import { smartAIProvider } from './smart-provider-manager';
-import type { StoryElements } from '@/config/story-elements';
-import { AssessmentEngine } from './assessment-engine';
+import { AIAssessmentEngine } from './ai-assessment-engine'; 
+import { AIDetector } from './ai-detector';
 import StorySession from '@/models/StorySession';
 import Turn from '@/models/Turn';
 import { connectToDatabase } from '@/utils/db';
@@ -748,65 +12,23 @@ interface TurnContext {
 }
 
 export class AICollaborationEngine {
-  async generateOpeningPrompt(elements: StoryElements): Promise<string> {
-    const prompt = `You are a supportive AI writing teacher for children. Create an engaging story opening that:
-
-Story Elements:
-- Genre: ${elements.genre}
-- Character: ${elements.character}  
-- Setting: ${elements.setting}
-- Theme: ${elements.theme}
-- Mood: ${elements.mood}
-- Tone: ${elements.tone}
-
-Instructions:
-1. Write 2-3 sentences introducing the character and setting
-2. Establish the ${elements.mood} mood with ${elements.tone} tone
-3. End with an engaging question to encourage the child to continue
-4. Use age-appropriate language (grades 3-8)
-5. Be encouraging and educational
-6. Keep it under 80 words
-
-Example structure: "Meet [character] in [setting]. Something interesting happens. What do you think happens next?"`;
-
-    try {
-      const response = await smartAIProvider.generateResponse(prompt);
-      return response;
-    } catch (error) {
-      console.error(
-        'AI opening generation failed, using educational fallback:',
-        error
-      );
-      return this.getEducationalFallbackOpening(elements);
-    }
-  }
-
+  // REMOVED: All guided story methods - only freeform now
+  
   async generateFreeformOpening(): Promise<string> {
     return 'Welcome to your creative writing adventure! What story would you like to tell today? Start with any idea, character, or situation that excites you.';
   }
 
-  async generateContextualResponse(
-    elements: StoryElements | null,
-    previousTurns: TurnContext[],
-    childInput: string,
-    turnNumber: number
-  ): Promise<string> {
-    const storyContext = previousTurns
-      .map(
-        (turn, index) =>
-          `Turn ${index + 1}:\nChild: ${turn.childInput}\nAI: ${turn.aiResponse}`
-      )
-      .join('\n\n');
-
-    return this.generateFreeformResponse(childInput, storyContext, turnNumber);
-  }
-
-  // FIXED: Made public and updated parameter signature
+  // SIMPLIFIED: Only freeform collaborative responses
   async generateFreeformResponse(
     childInput: string,
     storyContext: string,
     turnNumber: number
   ): Promise<string> {
+    // Don't generate response for 7th turn - assessment time
+    if (turnNumber >= 7) {
+      return 'Amazing work on your story! You\'ve written 7 parts and created something wonderful. Let\'s see how your story measures up with a detailed assessment of your creative writing!';
+    }
+
     const educationalGuidance = this.getFreeformGuidanceForTurn(turnNumber);
 
     const prompt = `You are a supportive AI writing teacher helping a child with their creative freeform story.
@@ -842,100 +64,7 @@ Respond as a supportive teacher who celebrates their unique creativity.`;
     }
   }
 
-  async generateAssessment(
-    storyContent: string,
-    storyElements: StoryElements | null,
-    storyStats: {
-      totalWords: number;
-      turnCount: number;
-      storyTheme: string;
-      storyGenre: string;
-      storyMode: 'guided' | 'freeform';
-    }
-  ): Promise<{
-    grammarScore: number;
-    creativityScore: number;
-    overallScore: number;
-    readingLevel: string;
-    vocabularyScore: number;
-    structureScore: number;
-    characterDevelopmentScore: number;
-    plotDevelopmentScore: number;
-    feedback: string;
-    strengths: string[];
-    improvements: string[];
-    vocabularyUsed: string[];
-    suggestedWords: string[];
-    educationalInsights: string;
-  }> {
-    // FIX: Get theme and genre from storyStats parameter, not storyElements
-    const storyTheme = storyStats.storyTheme || 'Adventure';
-    const storyGenre = storyStats.storyGenre || 'Fantasy';
-
-    const prompt = `You are an expert AI writing teacher conducting a comprehensive assessment of a child's creative story.
-
-STORY TO ASSESS:
-Genre: ${storyGenre}
-Theme: ${storyTheme}
-Word Count: ${storyStats.totalWords}
-Story Turns: ${storyStats.turnCount}
-Story Mode: ${storyStats.storyMode}
-
-FULL STORY TEXT:
-"${storyContent}"
-
-PROVIDE DETAILED ANALYSIS WITH SCORES (0-100) FOR:
-
-1. GRAMMAR & MECHANICS (0-100): Sentence structure, punctuation, spelling, capitalization
-2. CREATIVITY & IMAGINATION (0-100): Originality, creative thinking, unique ideas, imagination
-3. VOCABULARY USAGE (0-100): Word choice variety, descriptive language, age-appropriate vocabulary
-4. STORY STRUCTURE (0-100): Beginning/middle/end, plot flow, logical sequence
-5. CHARACTER DEVELOPMENT (0-100): Character personality, growth, believability
-6. PLOT DEVELOPMENT (0-100): Story progression, conflict resolution, engagement
-7. OVERALL SCORE (0-100): Weighted average considering all aspects
-
-ADDITIONAL ANALYSIS:
-- Reading Level (Beginner/Elementary/Intermediate/Advanced)
-- Top 5 Strengths (specific examples from the story)
-- Top 3 Areas for Improvement (constructive suggestions)
-- Advanced Vocabulary Words Used (list 5-8 impressive words from story)
-- Suggested Vocabulary (list 5 new words to learn)
-- Educational Insights (learning opportunities identified)
-
-FEEDBACK STYLE:
-- Encouraging and positive tone
-- Specific examples from their story
-- Constructive improvement suggestions
-- Age-appropriate language
-- Celebrate creativity while guiding learning
-
-FORMAT RESPONSE EXACTLY AS:
-Grammar: [score]
-Creativity: [score]
-Vocabulary: [score]
-Structure: [score]
-Character: [score]
-Plot: [score]
-Overall: [score]
-Reading Level: [level]
-Feedback: [3-4 sentences of encouraging detailed feedback with specific story examples]
-Strengths: [strength1]|[strength2]|[strength3]|[strength4]|[strength5]
-Improvements: [improvement1]|[improvement2]|[improvement3]
-VocabularyUsed: [word1]|[word2]|[word3]|[word4]|[word5]
-SuggestedWords: [word1]|[word2]|[word3]|[word4]|[word5]
-Educational: [educational insights about their writing development]`;
-
-    try {
-      const response = await smartAIProvider.generateResponse(prompt);
-      return this.parseDetailedAssessmentResponse(
-        response,
-        storyStats.totalWords
-      );
-    } catch (error) {
-      console.error('AI assessment generation failed:', error);
-      return this.getDetailedFallbackAssessment(storyStats.totalWords);
-    }
-  }
+  // REMOVED: Old generateAssessment method - replaced with advanced assessment
 
   private getFreeformGuidanceForTurn(turnNumber: number): string {
     const guidanceMap: Record<number, string> = {
@@ -947,15 +76,6 @@ Educational: [educational insights about their writing development]`;
       6: 'Assist them in crafting a satisfying conclusion for their unique tale',
     };
     return guidanceMap[turnNumber] || guidanceMap[6];
-  }
-
-  private getEducationalFallbackOpening(elements: StoryElements): string {
-    const openings = [
-      `Meet a brave ${elements.character.toLowerCase()} in the amazing ${elements.setting.toLowerCase()}! Something ${elements.mood.toLowerCase()} is about to happen in this ${elements.genre.toLowerCase()} adventure. What do you think your ${elements.character.toLowerCase()} discovers first?`,
-      `Welcome to ${elements.setting.toLowerCase()}, where a ${elements.character.toLowerCase()} begins an incredible ${elements.genre.toLowerCase()} journey! The atmosphere feels ${elements.mood.toLowerCase()} and full of possibilities. How does your story begin?`,
-      `In a ${elements.mood.toLowerCase()} ${elements.setting.toLowerCase()}, our ${elements.character.toLowerCase()} hero starts a ${elements.genre.toLowerCase()} tale about ${elements.theme.toLowerCase()}. What exciting thing happens first in your adventure?`,
-    ];
-    return openings[Math.floor(Math.random() * openings.length)];
   }
 
   private getEducationalFallbackResponse(
@@ -973,281 +93,8 @@ Educational: [educational insights about their writing development]`;
     return responses[Math.min(turnNumber - 1, responses.length - 1)];
   }
 
-  private parseDetailedAssessmentResponse(
-    aiResponse: string,
-    totalWords: number
-  ): {
-    grammarScore: number;
-    creativityScore: number;
-    vocabularyScore: number;
-    structureScore: number;
-    characterDevelopmentScore: number;
-    plotDevelopmentScore: number;
-    overallScore: number;
-    readingLevel: string;
-    feedback: string;
-    strengths: string[];
-    improvements: string[];
-    vocabularyUsed: string[];
-    suggestedWords: string[];
-    educationalInsights: string;
-  } {
-    try {
-      const lines = aiResponse.split('\n');
-      let grammarScore = 85;
-      let creativityScore = 88;
-      let vocabularyScore = 82;
-      let structureScore = 80;
-      let characterDevelopmentScore = 78;
-      let plotDevelopmentScore = 83;
-      let overallScore = 83;
-      let readingLevel = 'Elementary';
-      let feedback = `Great job on your creative story! Your ${totalWords}-word adventure shows wonderful imagination and storytelling skills. Keep practicing your writing - you're doing amazing work!`;
-      let strengths: string[] = [];
-      let improvements: string[] = [];
-      let vocabularyUsed: string[] = [];
-      let suggestedWords: string[] = [];
-      let educationalInsights =
-        'Continue developing your storytelling abilities through regular practice and reading.';
-
-      for (const line of lines) {
-        if (line.toLowerCase().includes('grammar:')) {
-          const score =
-            parseInt(line.replace(/grammar:/i, '').trim()) || grammarScore;
-          grammarScore = Math.max(70, Math.min(100, score));
-        } else if (line.toLowerCase().includes('creativity:')) {
-          const score =
-            parseInt(line.replace(/creativity:/i, '').trim()) ||
-            creativityScore;
-          creativityScore = Math.max(70, Math.min(100, score));
-        } else if (line.toLowerCase().includes('vocabulary:')) {
-          const score =
-            parseInt(line.replace(/vocabulary:/i, '').trim()) ||
-            vocabularyScore;
-          vocabularyScore = Math.max(70, Math.min(100, score));
-        } else if (line.toLowerCase().includes('structure:')) {
-          const score =
-            parseInt(line.replace(/structure:/i, '').trim()) || structureScore;
-          structureScore = Math.max(70, Math.min(100, score));
-        } else if (line.toLowerCase().includes('character:')) {
-          const score =
-            parseInt(line.replace(/character:/i, '').trim()) ||
-            characterDevelopmentScore;
-          characterDevelopmentScore = Math.max(70, Math.min(100, score));
-        } else if (line.toLowerCase().includes('plot:')) {
-          const score =
-            parseInt(line.replace(/plot:/i, '').trim()) || plotDevelopmentScore;
-          plotDevelopmentScore = Math.max(70, Math.min(100, score));
-        } else if (line.toLowerCase().includes('overall:')) {
-          const score =
-            parseInt(line.replace(/overall:/i, '').trim()) || overallScore;
-          overallScore = Math.max(70, Math.min(100, score));
-        } else if (line.toLowerCase().includes('reading level:')) {
-          readingLevel =
-            line.replace(/reading level:/i, '').trim() || readingLevel;
-        } else if (line.toLowerCase().includes('feedback:')) {
-          feedback = line.replace(/feedback:/i, '').trim() || feedback;
-        } else if (line.toLowerCase().includes('strengths:')) {
-          const strengthsText = line.replace(/strengths:/i, '').trim();
-          strengths = strengthsText
-            .split('|')
-            .map((s) => s.trim())
-            .filter((s) => s);
-        } else if (line.toLowerCase().includes('improvements:')) {
-          const improvementsText = line.replace(/improvements:/i, '').trim();
-          improvements = improvementsText
-            .split('|')
-            .map((s) => s.trim())
-            .filter((s) => s);
-        } else if (line.toLowerCase().includes('vocabularyused:')) {
-          const vocabText = line.replace(/vocabularyused:/i, '').trim();
-          vocabularyUsed = vocabText
-            .split('|')
-            .map((s) => s.trim())
-            .filter((s) => s);
-        } else if (line.toLowerCase().includes('suggestedwords:')) {
-          const suggestedText = line.replace(/suggestedwords:/i, '').trim();
-          suggestedWords = suggestedText
-            .split('|')
-            .map((s) => s.trim())
-            .filter((s) => s);
-        } else if (line.toLowerCase().includes('educational:')) {
-          educationalInsights = line.replace(/educational:/i, '').trim();
-        }
-      }
-
-      return {
-        grammarScore: Math.max(70, Math.min(100, grammarScore)),
-        creativityScore: Math.max(70, Math.min(100, creativityScore)),
-        vocabularyScore: Math.max(70, Math.min(100, vocabularyScore)),
-        structureScore: Math.max(70, Math.min(100, structureScore)),
-        characterDevelopmentScore: Math.max(
-          70,
-          Math.min(100, characterDevelopmentScore)
-        ),
-        plotDevelopmentScore: Math.max(70, Math.min(100, plotDevelopmentScore)),
-        overallScore: Math.max(70, Math.min(100, overallScore)),
-        readingLevel,
-        feedback,
-        strengths:
-          strengths.length > 0
-            ? strengths
-            : [
-                'Creative imagination',
-                'Good story ideas',
-                'Engaging plot',
-                'Character development',
-                'Descriptive writing',
-              ],
-        improvements:
-          improvements.length > 0
-            ? improvements
-            : [
-                'Add more dialogue',
-                'Use more descriptive adjectives',
-                'Vary sentence lengths',
-              ],
-        vocabularyUsed:
-          vocabularyUsed.length > 0
-            ? vocabularyUsed
-            : ['adventure', 'mysterious', 'brave', 'discovered', 'amazing'],
-        suggestedWords:
-          suggestedWords.length > 0
-            ? suggestedWords
-            : [
-                'magnificent',
-                'extraordinary',
-                'perilous',
-                'astonishing',
-                'triumphant',
-              ],
-        educationalInsights,
-      };
-    } catch (error) {
-      console.error('Error parsing detailed assessment response:', error);
-      return this.getDetailedFallbackAssessment(totalWords);
-    }
-  }
-
-  private getDetailedFallbackAssessment(totalWords: number): {
-    grammarScore: number;
-    creativityScore: number;
-    vocabularyScore: number;
-    structureScore: number;
-    characterDevelopmentScore: number;
-    plotDevelopmentScore: number;
-    overallScore: number;
-    readingLevel: string;
-    feedback: string;
-    strengths: string[];
-    improvements: string[];
-    vocabularyUsed: string[];
-    suggestedWords: string[];
-    educationalInsights: string;
-  } {
-    const grammarScore = Math.floor(Math.random() * 15) + 80;
-    const creativityScore = Math.floor(Math.random() * 20) + 85;
-    const vocabularyScore = Math.floor(Math.random() * 15) + 75;
-    const structureScore = Math.floor(Math.random() * 15) + 78;
-    const characterDevelopmentScore = Math.floor(Math.random() * 20) + 75;
-    const plotDevelopmentScore = Math.floor(Math.random() * 15) + 80;
-    const overallScore = Math.floor(
-      (grammarScore +
-        creativityScore +
-        vocabularyScore +
-        structureScore +
-        characterDevelopmentScore +
-        plotDevelopmentScore) /
-        6
-    );
-
-    const readingLevel =
-      totalWords < 100
-        ? 'Beginner'
-        : totalWords < 200
-          ? 'Elementary'
-          : 'Intermediate';
-
-    const feedbackOptions = [
-      `Excellent work on your ${totalWords}-word story! Your creativity and imagination really shine through in every paragraph. I particularly enjoyed how you developed your characters and built up the excitement. Your storytelling abilities are impressive, particularly in how you handled the story structure and pacing. The way you used descriptive language really helped me visualize the scenes. Consider experimenting with different sentence lengths to add variety to your writing style!`,
-      `Outstanding storytelling! Your ${totalWords}-word story is filled with creativity and shows great understanding of story elements. I was particularly impressed by your character development and the creative conflicts you created. Keep working on expanding your vocabulary to make your descriptions even more vivid!`,
-      `Wonderful imagination at work! Your ${totalWords}-word story demonstrates strong writing skills and creative thinking. The plot development was engaging and your use of descriptive details really brought the story to life. Try incorporating more sensory details to help readers feel like they're experiencing the adventure alongside your characters!`,
-    ];
-
-    return {
-      grammarScore,
-      creativityScore,
-      vocabularyScore,
-      structureScore,
-      characterDevelopmentScore,
-      plotDevelopmentScore,
-      overallScore,
-      readingLevel,
-      feedback:
-        feedbackOptions[Math.floor(Math.random() * feedbackOptions.length)],
-      strengths: [
-        'Creative imagination',
-        'Good story ideas',
-        'Engaging plot',
-        'Character development',
-        'Descriptive writing',
-      ],
-      improvements: [
-        'Add more dialogue',
-        'Use more descriptive adjectives',
-        'Vary sentence lengths',
-      ],
-      vocabularyUsed: [
-        'adventure',
-        'mysterious',
-        'brave',
-        'discovered',
-        'amazing',
-      ],
-      suggestedWords: [
-        'magnificent',
-        'extraordinary',
-        'perilous',
-        'astonishing',
-        'triumphant',
-      ],
-      educationalInsights:
-        'Your writing shows strong development in narrative structure and creative expression. Continue practicing descriptive writing and character development to enhance your storytelling abilities.',
-    };
-  }
-
-  async generateAssessmentLegacy(
-    storyContent: string,
-    totalWords: number,
-    childAge?: number
-  ): Promise<{
-    grammarScore: number;
-    creativityScore: number;
-    overallScore: number;
-    feedback: string;
-  }> {
-    const detailedAssessment = await this.generateAssessment(
-      storyContent,
-      null,
-      {
-        totalWords,
-        turnCount: 6,
-        storyTheme: 'Adventure',
-        storyGenre: 'Fantasy',
-        storyMode: 'freeform',
-      }
-    );
-
-    return {
-      grammarScore: detailedAssessment.grammarScore,
-      creativityScore: detailedAssessment.creativityScore,
-      overallScore: detailedAssessment.overallScore,
-      feedback: detailedAssessment.feedback,
-    };
-  }
-
   /**
-   * Complete collaborative story and run advanced assessment
+   * Complete collaborative story and run ADVANCED assessment with AI detection
    */
   static async completeAndAssessCollaborativeStory(
     sessionId: string,
@@ -1286,6 +133,7 @@ Educational: [educational insights about their writing development]`;
       throw new Error('No user content found for assessment');
     }
 
+    // CHANGED: Use only user content for assessment (collaborative stories)
     const userContent = userTurns.join('\n\n');
     const wordCount = userContent.split(/\s+/).filter(Boolean).length;
 
@@ -1294,92 +142,99 @@ Educational: [educational insights about their writing development]`;
     }
 
     console.log(
-      `📊 Assessing collaborative story: ${wordCount} user words from ${userTurns.length} turns`
+      `📊 Running ADVANCED assessment on collaborative story: ${wordCount} user words from ${userTurns.length} turns`
     );
 
-    // Run advanced assessment on user contributions only
-    const assessmentResult = await AssessmentEngine.assessStory(
-      userContent, // Assess only user's writing
-      sessionId,
-      userId
-    );
+    // CHANGED: Use our advanced assessment engine with AI detection
+    const assessmentResult = await AIAssessmentEngine.performCompleteAssessment(userContent, {
+      childAge: session.childAge || 10,
+      isCollaborativeStory: true, // Important: This tells the engine it's collaborative
+      storyTitle: session.title,
+      expectedGenre: 'creative',
+      userTurns: userTurns, // Pass user turns for analysis
+    });
 
-    // Update session with assessment and completion
+    // Log assessment results for debugging
+    console.log(`🔍 AI Detection Score: ${assessmentResult.integrityAnalysis.aiDetectionResult.overallScore}/100`);
+    console.log(`🔍 AI Likelihood: ${assessmentResult.integrityAnalysis.aiDetectionResult.likelihood}`);
+    console.log(`📝 Plagiarism Score: ${assessmentResult.integrityAnalysis.plagiarismResult.overallScore}/100`);
+    console.log(`⚖️ Integrity Risk: ${assessmentResult.integrityAnalysis.integrityRisk}`);
+    console.log(`🎯 Integrity Status: ${assessmentResult.integrityStatus.status}`);
+
+    // ADDED: Determine session status based on integrity assessment
+    let sessionStatus = 'completed';
+    if (assessmentResult.integrityStatus.status === 'FAIL') {
+      sessionStatus = 'flagged';
+      console.log(`🚨 Story FLAGGED: ${assessmentResult.integrityStatus.message}`);
+    } else if (assessmentResult.integrityStatus.status === 'WARNING') {
+      sessionStatus = 'review';
+      console.log(`⚠️ Story needs REVIEW: ${assessmentResult.integrityStatus.message}`);
+    }
+
+    // Update session with ADVANCED assessment
     await StorySession.findByIdAndUpdate(sessionId, {
       $set: {
-        status:
-          assessmentResult.integrityAnalysis.integrityRisk === 'critical'
-            ? 'flagged'
-            : 'completed',
+        status: sessionStatus,
         completedAt: new Date(),
         totalWords: fullStory.split(/\s+/).filter(Boolean).length,
         childWords: wordCount,
 
+        // CHANGED: Store complete advanced assessment
         assessment: {
-          // Legacy fields for backward compatibility
+          // Core scores from advanced engine
           grammarScore: assessmentResult.categoryScores.grammar,
           creativityScore: assessmentResult.categoryScores.creativity,
           vocabularyScore: assessmentResult.categoryScores.vocabulary,
           structureScore: assessmentResult.categoryScores.structure,
-          characterDevelopmentScore:
-            assessmentResult.categoryScores.characterDevelopment,
+          characterDevelopmentScore: assessmentResult.categoryScores.characterDevelopment,
           plotDevelopmentScore: assessmentResult.categoryScores.plotDevelopment,
           overallScore: assessmentResult.overallScore,
           readingLevel: assessmentResult.categoryScores.readingLevel,
+
+          // Educational feedback from advanced engine
           feedback: assessmentResult.educationalFeedback.teacherComment,
           strengths: assessmentResult.educationalFeedback.strengths,
           improvements: assessmentResult.educationalFeedback.improvements,
-          vocabularyUsed: [], // Legacy field
-          suggestedWords: [], // Legacy field
-          educationalInsights:
-            assessmentResult.educationalFeedback.encouragement,
+          encouragement: assessmentResult.educationalFeedback.encouragement,
+          nextSteps: assessmentResult.educationalFeedback.nextSteps,
 
-          // NEW: Advanced integrity fields
+          // ADVANCED: Integrity analysis with AI detection
           plagiarismScore: assessmentResult.integrityAnalysis.originalityScore,
-          aiDetectionScore:
-            assessmentResult.integrityAnalysis.aiDetectionResult.overallScore,
+          aiDetectionScore: assessmentResult.integrityAnalysis.aiDetectionResult.overallScore,
           integrityRisk: assessmentResult.integrityAnalysis.integrityRisk,
+          integrityStatus: assessmentResult.integrityStatus.status,
+          integrityMessage: assessmentResult.integrityStatus.message,
+          integrityRecommendation: assessmentResult.integrityStatus.recommendation,
 
-          // Store detailed analysis
-          integrityAnalysis: {
-            plagiarismResult: {
-              score:
-                assessmentResult.integrityAnalysis.plagiarismResult
-                  .overallScore,
-              riskLevel:
-                assessmentResult.integrityAnalysis.plagiarismResult.riskLevel,
-              violationCount:
-                assessmentResult.integrityAnalysis.plagiarismResult.violations
-                  ?.length || 0,
-              detailedAnalysis:
-                assessmentResult.integrityAnalysis.plagiarismResult
-                  .detailedAnalysis,
+          // Detailed integrity analysis
+          detailedIntegrityAnalysis: {
+            aiDetection: {
+              score: assessmentResult.integrityAnalysis.aiDetectionResult.overallScore,
+              likelihood: assessmentResult.integrityAnalysis.aiDetectionResult.likelihood,
+              confidence: assessmentResult.integrityAnalysis.aiDetectionResult.confidence,
+              indicators: assessmentResult.integrityAnalysis.aiDetectionResult.indicators,
+              patternMatching: assessmentResult.integrityAnalysis.aiDetectionResult.detailedAnalysis.patternMatching,
+              vocabularyAnalysis: assessmentResult.integrityAnalysis.aiDetectionResult.detailedAnalysis.vocabularyAnalysis,
+              stylometricAnalysis: assessmentResult.integrityAnalysis.aiDetectionResult.detailedAnalysis.stylometricAnalysis,
             },
-            aiDetectionResult: {
-              score:
-                assessmentResult.integrityAnalysis.aiDetectionResult
-                  .overallScore,
-              likelihood:
-                assessmentResult.integrityAnalysis.aiDetectionResult.likelihood,
-              confidence:
-                assessmentResult.integrityAnalysis.aiDetectionResult.confidence,
-              indicatorCount:
-                assessmentResult.integrityAnalysis.aiDetectionResult.indicators
-                  ?.length || 0,
-              detailedAnalysis:
-                assessmentResult.integrityAnalysis.aiDetectionResult
-                  .detailedAnalysis,
+            plagiarism: {
+              score: assessmentResult.integrityAnalysis.plagiarismResult.overallScore,
+              riskLevel: assessmentResult.integrityAnalysis.plagiarismResult.riskLevel,
+              violations: assessmentResult.integrityAnalysis.plagiarismResult.violations,
+              detailedAnalysis: assessmentResult.integrityAnalysis.plagiarismResult.detailedAnalysis,
             },
           },
 
-          // Educational enhancements
+          // Advanced recommendations
           recommendations: assessmentResult.recommendations,
           progressTracking: assessmentResult.progressTracking,
 
           // Assessment metadata
-          assessmentVersion: '2.0',
+          assessmentVersion: '3.0', // Updated version
           assessmentDate: new Date(),
-          isReassessment: false,
+          assessmentType: 'collaborative',
+          isAdvancedAssessment: true,
+          childAge: session.childAge || 10,
         },
 
         // Sync top-level fields
@@ -1389,16 +244,19 @@ Educational: [educational insights about their writing development]`;
         feedback: assessmentResult.educationalFeedback.teacherComment,
         assessmentAttempts: 1,
         lastAssessedAt: new Date(),
+
+        // ADDED: Integrity tracking at top level
+        integrityStatus: assessmentResult.integrityStatus.status,
+        aiDetectionScore: assessmentResult.integrityAnalysis.aiDetectionResult.overallScore,
+        plagiarismScore: assessmentResult.integrityAnalysis.originalityScore,
       },
     });
 
-    console.log(`✅ Collaborative story completed and assessed: ${sessionId}`);
-    console.log(
-      `📊 User assessment: ${assessmentResult.overallScore}% overall`
-    );
-    console.log(
-      `🔍 Integrity: ${assessmentResult.integrityAnalysis.originalityScore}% originality, ${assessmentResult.integrityAnalysis.integrityRisk} risk`
-    );
+    console.log(`✅ Collaborative story completed with ADVANCED assessment: ${sessionId}`);
+    console.log(`📊 Overall Score: ${assessmentResult.overallScore}%`);
+    console.log(`🔍 AI Detection: ${assessmentResult.integrityAnalysis.aiDetectionResult.overallScore}% (${assessmentResult.integrityAnalysis.aiDetectionResult.likelihood})`);
+    console.log(`📝 Plagiarism: ${assessmentResult.integrityAnalysis.plagiarismResult.overallScore}% (${assessmentResult.integrityAnalysis.plagiarismResult.riskLevel})`);
+    console.log(`⚖️ Final Status: ${sessionStatus} - ${assessmentResult.integrityStatus.message}`);
 
     return {
       sessionId,
@@ -1413,11 +271,46 @@ Educational: [educational insights about their writing development]`;
         totalTurns: turns.length,
         userTurns: userTurns.length,
       },
+      integrityStatus: assessmentResult.integrityStatus,
     };
   }
 
   /**
-   * Get assessment for completed collaborative story
+   * QUICK AI CHECK: Before full assessment, check if content is AI-generated
+   */
+  static async quickAICheck(
+    userContent: string,
+    childAge: number = 10
+  ): Promise<{
+    isAI: boolean;
+    likelihood: string;
+    confidence: number;
+    score: number;
+    shouldBlock: boolean;
+  }> {
+    console.log('🔍 Running quick AI detection check...');
+
+    const aiResult = await AIDetector.detectAIContent(userContent, {
+      childAge,
+      isCreativeWriting: true,
+    });
+
+    const isAI = aiResult.likelihood === 'very_high' || aiResult.likelihood === 'high';
+    const shouldBlock = aiResult.likelihood === 'very_high' || (aiResult.likelihood === 'high' && aiResult.confidence > 80);
+
+    console.log(`🤖 Quick AI Check: ${aiResult.overallScore}% human-like, ${aiResult.likelihood} AI likelihood`);
+
+    return {
+      isAI,
+      likelihood: aiResult.likelihood,
+      confidence: aiResult.confidence,
+      score: aiResult.overallScore,
+      shouldBlock,
+    };
+  }
+
+  /**
+   * Get assessment for completed collaborative story with integrity details
    */
   static async getCollaborativeStoryAssessment(
     sessionId: string,
@@ -1428,7 +321,7 @@ Educational: [educational insights about their writing development]`;
     const session = await StorySession.findOne({
       _id: sessionId,
       childId: userId,
-      status: { $in: ['completed', 'flagged'] },
+      status: { $in: ['completed', 'flagged', 'review'] }, // Added 'review' status
     });
 
     if (!session) {
@@ -1439,17 +332,7 @@ Educational: [educational insights about their writing development]`;
       throw new Error('Story not yet assessed');
     }
 
-    // Use type guard for canReassess in collaboration.ts
-    const canReassess =
-      typeof (session as any).canReassess === 'function'
-        ? (session as any).canReassess()
-        : false;
-
-    // Use type guard for integrityStatus in collaboration.ts
-    const integrityStatus =
-      typeof (session as any).integrityStatus === 'string'
-        ? (session as any).integrityStatus
-        : 'unknown';
+    const canReassess = session.assessmentAttempts < 3;
 
     return {
       sessionId,
@@ -1464,7 +347,85 @@ Educational: [educational insights about their writing development]`;
         maxAttempts: 3,
         canReassess,
       },
-      integrityStatus,
+      integrityStatus: {
+        status: session.integrityStatus || 'unknown',
+        aiDetectionScore: session.aiDetectionScore || 0,
+        plagiarismScore: session.plagiarismScore || 0,
+        message: session.assessment.integrityMessage || '',
+        recommendation: session.assessment.integrityRecommendation || '',
+      },
+      isAdvanced: session.assessment.isAdvancedAssessment || false,
+    };
+  }
+
+  /**
+   * ADDED: Method to re-assess story with advanced detection
+   */
+  static async reassessStory(
+    sessionId: string,
+    userId: string
+  ) {
+    await connectToDatabase();
+
+    const session = await StorySession.findOne({
+      _id: sessionId,
+      childId: userId,
+      status: { $in: ['completed', 'flagged', 'review'] },
+    });
+
+    if (!session) {
+      throw new Error('Story session not found');
+    }
+
+    if (session.assessmentAttempts >= 3) {
+      throw new Error('Maximum assessment attempts reached');
+    }
+
+    // Get user content from turns
+    const turns = await Turn.find({ sessionId }).sort({ turnNumber: 1 });
+    const userTurns = turns
+      .filter((turn) => turn.childInput?.trim())
+      .map((turn) => turn.childInput.trim());
+
+    if (userTurns.length === 0) {
+      throw new Error('No user content found for reassessment');
+    }
+
+    const userContent = userTurns.join('\n\n');
+
+    console.log(`🔄 Running REASSESSMENT on story: ${sessionId}`);
+
+    // Run advanced assessment again
+    const assessmentResult = await AIAssessmentEngine.performCompleteAssessment(userContent, {
+      childAge: session.childAge || 10,
+      isCollaborativeStory: true,
+      storyTitle: session.title,
+      expectedGenre: 'creative',
+      userTurns: userTurns,
+    });
+
+    // Update with new assessment
+    await StorySession.findByIdAndUpdate(sessionId, {
+      $set: {
+        'assessment.overallScore': assessmentResult.overallScore,
+        'assessment.integrityStatus': assessmentResult.integrityStatus.status,
+        'assessment.integrityMessage': assessmentResult.integrityStatus.message,
+        'assessment.aiDetectionScore': assessmentResult.integrityAnalysis.aiDetectionResult.overallScore,
+        'assessment.plagiarismScore': assessmentResult.integrityAnalysis.originalityScore,
+        'assessment.feedback': assessmentResult.educationalFeedback.teacherComment,
+        integrityStatus: assessmentResult.integrityStatus.status,
+        aiDetectionScore: assessmentResult.integrityAnalysis.aiDetectionResult.overallScore,
+        plagiarismScore: assessmentResult.integrityAnalysis.originalityScore,
+      },
+      $inc: { assessmentAttempts: 1 },
+    });
+
+    console.log(`✅ Reassessment complete: ${assessmentResult.integrityStatus.status}`);
+
+    return {
+      sessionId,
+      newAssessment: assessmentResult,
+      attemptNumber: session.assessmentAttempts + 1,
     };
   }
 }

@@ -1,617 +1,30 @@
-// // lib/competition-manager.ts - COMPLETE VERSION
-// import { connectToDatabase } from '@/utils/db';
-// import Competition from '@/models/Competition';
-// import StorySession from '@/models/StorySession';
-// import User from '@/models/User';
-// import {
-//   COMPETITION_CONFIG,
-//   getCompetitionSchedule,
-//   getCurrentCompetitionPhase,
-// } from '@/config/competition';
-// import { sendCompetitionSubmissionConfirmation } from '@/lib/mailer';
-
-// export class CompetitionManager {
-//   /**
-//    * Get current active competition
-//    */
-//   static async getCurrentCompetition() {
-//     await connectToDatabase();
-
-//     const now = new Date();
-//     const currentMonth = now.toLocaleDateString('en-US', { month: 'long' });
-//     const currentYear = now.getFullYear();
-
-//     let competition = await Competition.findOne({
-//       month: currentMonth,
-//       year: currentYear,
-//       isActive: true,
-//     });
-
-//     if (!competition) {
-//       competition = await this.createMonthlyCompetition(currentYear, now.getMonth() + 1);
-//     }
-
-//     return competition;
-//   }
-
-//   /**
-//    * Create new monthly competition
-//    */
-//   static async createMonthlyCompetition(year: number, month: number) {
-//     const schedule = getCompetitionSchedule(year, month);
-//     const monthName = new Date(year, month - 1, 1).toLocaleDateString('en-US', {
-//       month: 'long',
-//     });
-
-//     const adminUser = await User.findOne({ role: 'admin' });
-//     if (!adminUser) {
-//       throw new Error('No admin user found to create competition');
-//     }
-
-//     const competition = new Competition({
-//       month: monthName,
-//       year: year,
-//       phase: 'submission',
-//       submissionStart: schedule.submissionStart,
-//       submissionEnd: schedule.submissionEnd,
-//       judgingStart: schedule.judgingStart,
-//       judgingEnd: schedule.judgingEnd,
-//       resultsDate: schedule.resultsDate,
-//       isActive: true,
-//       createdBy: adminUser._id,
-//       entries: [],
-//       winners: [],
-//       judgingCriteria: COMPETITION_CONFIG.judgingCriteria,
-//     });
-
-//     await competition.save();
-//     console.log(`✅ Created competition: ${monthName} ${year}`);
-//     return competition;
-//   }
-
-//   /**
-//    * Check if user can submit to competition
-//    */
-//   static async canUserSubmit(userId: string): Promise<{
-//     canSubmit: boolean;
-//     reason?: string;
-//     entriesUsed: number;
-//     maxEntries: number;
-//     currentPhase: string;
-//   }> {
-//     await connectToDatabase();
-
-//     const user = await User.findById(userId);
-//     if (!user) {
-//       return {
-//         canSubmit: false,
-//         reason: 'User not found',
-//         entriesUsed: 0,
-//         maxEntries: 3,
-//         currentPhase: 'unknown',
-//       };
-//     }
-
-//     const competition = await this.getCurrentCompetition();
-//     if (!competition) {
-//       return {
-//         canSubmit: false,
-//         reason: 'No active competition',
-//         entriesUsed: user.competitionEntriesThisMonth || 0,
-//         maxEntries: 3,
-//         currentPhase: 'none',
-//       };
-//     }
-
-//     // Check if in submission phase
-//     if (competition.phase !== 'submission') {
-//       return {
-//         canSubmit: false,
-//         reason: `Competition is in ${competition.phase} phase`,
-//         entriesUsed: user.competitionEntriesThisMonth || 0,
-//         maxEntries: 3,
-//         currentPhase: competition.phase,
-//       };
-//     }
-
-//     // Check monthly entries limit
-//     const entriesUsed = user.competitionEntriesThisMonth || 0;
-//     const maxEntries = 3;
-
-//     if (entriesUsed >= maxEntries) {
-//       return {
-//         canSubmit: false,
-//         reason: `Monthly entry limit reached (${maxEntries} max)`,
-//         entriesUsed,
-//         maxEntries,
-//         currentPhase: competition.phase,
-//       };
-//     }
-
-//     return {
-//       canSubmit: true,
-//       entriesUsed,
-//       maxEntries,
-//       currentPhase: competition.phase,
-//     };
-//   }
-
-//   /**
-//    * Get user's competition entries for current month
-//    */
-//   static async getUserCompetitionEntries(userId: string) {
-//     await connectToDatabase();
-
-//     const competition = await this.getCurrentCompetition();
-//     if (!competition) return [];
-
-//     const entries = await StorySession.find({
-//       childId: userId,
-//       'competitionEntries.competitionId': competition._id
-//     }).select('title competitionEntries createdAt').lean();
-
-//     return entries.map((story: any) => {
-//       const entry = story.competitionEntries.find(
-//         (e: any) => e.competitionId.toString() === competition._id.toString()
-//       );
-//       return {
-//         storyId: story._id,
-//         title: story.title,
-//         submittedAt: entry.submittedAt,
-//         score: entry.score,
-//         rank: entry.rank,
-//         phase: competition.phase
-//       };
-//     });
-//   }
-
-//   /**
-//    * Submit story to competition
-//    */
-//   static async submitStoryToCompetition(storyId: string, userId: string) {
-//     await connectToDatabase();
-
-//     const competition = await this.getCurrentCompetition();
-//     if (!competition) {
-//       throw new Error('No active competition found');
-//     }
-
-//     if (competition.phase !== 'submission') {
-//       throw new Error('Submission phase has ended');
-//     }
-
-//     const user = await User.findById(userId);
-//     if (!user) {
-//       throw new Error('User not found');
-//     }
-
-//     // Check if user has reached entry limit
-//     const entriesUsed = user.competitionEntriesThisMonth || 0;
-//     if (entriesUsed >= 3) {
-//       throw new Error('Maximum 3 entries per month already submitted');
-//     }
-
-//     const story = await StorySession.findById(storyId);
-//     if (!story) {
-//       throw new Error('Story not found');
-//     }
-
-//     if (story.childId.toString() !== userId) {
-//       throw new Error('You can only submit your own stories');
-//     }
-
-//     if (!story.isPublished) {
-//       throw new Error('Story must be published before competition submission');
-//     }
-
-//     // Check if already submitted to this competition
-//     const existingEntry = story.competitionEntries?.find(
-//       (e: any) => e.competitionId.toString() === competition._id.toString()
-//     );
-    
-//     if (existingEntry) {
-//       throw new Error('Story already submitted to this competition');
-//     }
-
-//     // Add competition entry to story
-//     const competitionEntry = {
-//       competitionId: competition._id,
-//       submittedAt: new Date(),
-//       phase: 'submission'
-//     };
-
-//     await StorySession.findByIdAndUpdate(storyId, {
-//       $push: { competitionEntries: competitionEntry }
-//     });
-
-//     // Increment user's monthly competition entries
-//     await User.findByIdAndUpdate(userId, {
-//       $inc: { competitionEntriesThisMonth: 1 }
-//     });
-
-//     // Send confirmation email
-//     try {
-//       await sendCompetitionSubmissionConfirmation(user.email, story.title, competition.month);
-//     } catch (emailError) {
-//       console.error('Failed to send submission confirmation:', emailError);
-//     }
-
-//     return {
-//       success: true,
-//       competitionId: competition._id,
-//       submissionDate: new Date(),
-//     };
-//   }
-
-//   /**
-//    * Advance competition phase
-//    */
-//   static async advancePhase(competitionId: string) {
-//     await connectToDatabase();
-
-//     const competition = await Competition.findById(competitionId);
-//     if (!competition) {
-//       throw new Error('Competition not found');
-//     }
-
-//     const now = new Date();
-
-//     switch (competition.phase) {
-//       case 'submission':
-//         if (now >= competition.judgingStart) {
-//           competition.phase = 'judging';
-//           await competition.save();
-//           console.log(`📊 Competition ${competition.month} moved to JUDGING phase`);
-          
-//           // Start AI judging process
-//           await this.startAIJudging(competitionId);
-//         }
-//         break;
-
-//       case 'judging':
-//         if (now >= competition.resultsDate) {
-//           competition.phase = 'results';
-//           await competition.save();
-//           console.log(`🏆 Competition ${competition.month} moved to RESULTS phase`);
-          
-//           // Finalize results
-//           await this.finalizeResults(competitionId);
-//         }
-//         break;
-
-//       case 'results':
-//         if (now >= competition.resultsDate) {
-//           competition.isActive = false;
-//           await competition.save();
-//           console.log(`📁 Competition ${competition.month} COMPLETED`);
-//         }
-//         break;
-//     }
-
-//     return competition;
-//   }
-
-//  // Update lib/competition-manager.ts - Add these methods:
-
-// /**
-//  * Enhanced AI judging with automatic winner selection
-//  */
-// static async startAIJudging(competitionId: string) {
-//   const competition = await Competition.findById(competitionId);
-//   if (!competition) throw new Error('Competition not found');
-
-//   // Get all submitted stories
-//   const submittedStories = await StorySession.find({
-//     'competitionEntries.competitionId': competitionId
-//   }).populate('childId', 'firstName lastName email');
-
-//   console.log(`🤖 Starting AI judging for ${submittedStories.length} stories`);
-
-//   const judgedStories = [];
-
-//   for (const story of submittedStories) {
-//     // Use existing assessment or calculate comprehensive score
-//     const judgedScore = await this.calculateComprehensiveScore(story);
-
-//     // Update story with AI judgment
-//     await StorySession.findOneAndUpdate(
-//       {
-//         _id: story._id,
-//         'competitionEntries.competitionId': competitionId
-//       },
-//       {
-//         $set: {
-//           'competitionEntries.$.score': judgedScore.totalScore,
-//           'competitionEntries.$.aiJudgingNotes': judgedScore.notes,
-//           'competitionEntries.$.phase': 'judged'
-//         }
-//       }
-//     );
-
-//     judgedStories.push({
-//       storyId: story._id,
-//       title: story.title,
-//       childId: story.childId._id,
-//       childName: `${story.childId.firstName} ${story.childId.lastName}`,
-//       score: judgedScore.totalScore
-//     });
-
-//     console.log(`📊 Judged "${story.title}": ${judgedScore.totalScore}/100`);
-//   }
-
-//   // Auto-select top 3 winners
-//   const sortedStories = judgedStories.sort((a, b) => b.score - a.score);
-//   const top3Winners = sortedStories.slice(0, 3).map((story, index) => ({
-//     position: index + 1,
-//     childId: story.childId,
-//     childName: story.childName,
-//     storyId: story.storyId,
-//     title: story.title,
-//     score: story.score,
-//     aiJudgingNotes: `Ranked #${index + 1} out of ${sortedStories.length} submissions`
-//   }));
-
-//   console.log(`🏆 Top 3 winners selected:`, top3Winners.map(w => `${w.position}. ${w.childName} (${w.score}%)`));
-
-//   return { judgedStories, winners: top3Winners };
-// }
-
-// /**
-//  * Enhanced scoring system with 16+ categories
-//  */
-// static async calculateComprehensiveScore(story: any) {
-//   const assessment = story.assessment;
-  
-//   if (assessment) {
-//     // Comprehensive scoring based on multiple factors
-//     const scores = {
-//       grammar: assessment.grammarScore || 70,
-//       creativity: assessment.creativityScore || 75,
-//       structure: assessment.structureScore || 70,
-//       character: assessment.characterScore || 70,
-//       plot: assessment.plotScore || 70,
-//       vocabulary: assessment.vocabularyScore || 70,
-//       // Additional factors
-//       wordCount: this.calculateWordCountScore(story.totalWords || story.childWords || 0),
-//       originality: this.calculateOriginalityScore(story),
-//       engagement: this.calculateEngagementScore(story),
-//       technicality: assessment.technicalScore || 70
-//     };
-
-//     // Weighted total score
-//     const totalScore = Math.round(
-//       scores.grammar * 0.15 +        // 15%
-//       scores.creativity * 0.20 +     // 20% 
-//       scores.structure * 0.12 +      // 12%
-//       scores.character * 0.12 +      // 12%
-//       scores.plot * 0.15 +           // 15%
-//       scores.vocabulary * 0.10 +     // 10%
-//       scores.wordCount * 0.06 +      // 6%
-//       scores.originality * 0.05 +    // 5%
-//       scores.engagement * 0.03 +     // 3%
-//       scores.technicality * 0.02     // 2%
-//     );
-
-//     const notes = `AI Evaluation: Grammar(${scores.grammar}%) Creativity(${scores.creativity}%) Structure(${scores.structure}%) Plot(${scores.plot}%)`;
-    
-//     return { totalScore: Math.min(100, Math.max(0, totalScore)), notes };
-//   } else {
-//     // Fallback scoring for stories without assessment
-//     const wordCount = story.totalWords || story.childWords || 0;
-//     const baseScore = 65;
-//     const wordBonus = this.calculateWordCountScore(wordCount) * 0.3;
-//     const randomVariation = (Math.random() - 0.5) * 20; // ±10 points variation
-    
-//     const totalScore = Math.round(baseScore + wordBonus + randomVariation);
-    
-//     return { 
-//       totalScore: Math.min(100, Math.max(40, totalScore)), 
-//       notes: 'Automated scoring - encourage getting full assessment for better evaluation' 
-//     };
-//   }
-// }
-
-// static calculateWordCountScore(wordCount: number): number {
-//   if (wordCount < 100) return 40;
-//   if (wordCount < 350) return 60;
-//   if (wordCount < 800) return 85;
-//   if (wordCount < 1500) return 95;
-//   if (wordCount <= 2000) return 100;
-//   return 85; // Penalty for too long
-// }
-
-// static calculateOriginalityScore(story: any): number {
-//   // Bonus for unique titles, recent creation, etc.
-//   const baseScore = 75;
-//   const titleLength = story.title?.length || 0;
-//   const bonus = titleLength > 20 ? 10 : titleLength > 10 ? 5 : 0;
-//   return Math.min(100, baseScore + bonus);
-// }
-
-// static calculateEngagementScore(story: any): number {
-//   // Factor in story metadata
-//   const baseScore = 70;
-//   const hasAssessment = story.assessment ? 15 : 0;
-//   const isRecent = (Date.now() - new Date(story.createdAt).getTime()) < (30 * 24 * 60 * 60 * 1000) ? 10 : 0;
-//   return Math.min(100, baseScore + hasAssessment + isRecent);
-// }
-
-//   /**
-//    * Finalize competition results
-//    */
-//   static async finalizeResults(competitionId: string) {
-//     const competition = await Competition.findById(competitionId);
-//     if (!competition) throw new Error('Competition not found');
-
-//     // Get all submitted stories with scores
-//     const submittedStories = await StorySession.find({
-//       'competitionEntries.competitionId': competitionId
-//     }).populate('childId', 'name email');
-
-//     // Extract and sort by scores
-//     const rankedEntries = submittedStories
-//       .map((story: any) => {
-//         const entry = story.competitionEntries.find(
-//           (e: any) => e.competitionId.toString() === competitionId
-//         );
-//         return {
-//           childId: story.childId._id,
-//           childName: story.childId.name,
-//           childEmail: story.childId.email,
-//           storyId: story._id,
-//           title: story.title,
-//           score: entry.score || 0
-//         };
-//       })
-//       .sort((a, b) => b.score - a.score);
-
-//     // Select top 3 winners
-//     const winners = rankedEntries.slice(0, 3).map((entry, index) => ({
-//       position: index + 1,
-//       childId: entry.childId,
-//       childName: entry.childName,
-//       storyId: entry.storyId,
-//       title: entry.title,
-//       score: entry.score,
-//       aiJudgingNotes: `Competition score: ${entry.score}%`
-//     }));
-
-//     // Update competition with winners
-//     competition.winners = winners;
-//     competition.totalParticipants = new Set(rankedEntries.map(e => e.childId.toString())).size;
-//     competition.totalSubmissions = rankedEntries.length;
-//     await competition.save();
-
-//     // Update story sessions with rankings
-//     for (let i = 0; i < rankedEntries.length; i++) {
-//       await StorySession.findOneAndUpdate(
-//         {
-//           _id: rankedEntries[i].storyId,
-//           'competitionEntries.competitionId': competitionId
-//         },
-//         {
-//           $set: {
-//             'competitionEntries.$.rank': i + 1,
-//             'competitionEntries.$.phase': 'results'
-//           }
-//         }
-//       );
-//     }
-
-//     console.log(`🏆 Competition ${competition.month} results finalized:`,
-//       winners.map(w => `${w.position}. ${w.childName} (${w.score}%)`));
-
-//     return { winners, totalParticipants: rankedEntries.length };
-//   }
-
-//   /**
-//    * Get past competitions
-//    */
-//   static async getPastCompetitions(limit: number = 10) {
-//     await connectToDatabase();
-
-//     return await Competition.find({
-//       phase: 'results',
-//       isActive: false
-//     })
-//     .sort({ year: -1, createdAt: -1 })
-//     .limit(limit)
-//     .lean();
-//   }
-
-//   /**
-//    * Get eligible stories for competition submission
-//    */
-//   static async getEligibleStories(userId: string) {
-//     await connectToDatabase();
-
-//     const competition = await this.getCurrentCompetition();
-//     if (!competition) return [];
-
-//     // Get stories that are published and not already submitted to current competition
-//     const stories = await StorySession.find({
-//       childId: userId,
-//       isPublished: true,
-//       competitionEligible: true,
-//       'competitionEntries.competitionId': { $ne: competition._id }
-//     }).select('title totalWords childWords createdAt').lean();
-
-//     return stories.map((story: any) => ({
-//       _id: story._id,
-//       title: story.title,
-//       wordCount: story.totalWords || story.childWords || 0,
-//       createdAt: story.createdAt,
-//       isEligible: true
-//     }));
-//   }
-
-//   /**
-//    * Get competition statistics
-//    */
-//   static async getCompetitionStats(competitionId?: string) {
-//     await connectToDatabase();
-
-//     const competition = competitionId
-//       ? await Competition.findById(competitionId)
-//       : await this.getCurrentCompetition();
-
-//     if (!competition) return null;
-
-//     // Get submission count for this competition
-//     const submissionCount = await StorySession.countDocuments({
-//       'competitionEntries.competitionId': competition._id
-//     });
-
-//     // Get unique participants
-//     const participantStories = await StorySession.find({
-//       'competitionEntries.competitionId': competition._id
-//     }).select('childId').lean();
-
-//     const uniqueParticipants = new Set(
-//       participantStories.map((story: any) => story.childId.toString())
-//     ).size;
-
-//     return {
-//       _id: competition._id,
-//       month: competition.month,
-//       year: competition.year,
-//       phase: competition.phase,
-//       isActive: competition.isActive,
-//       totalSubmissions: submissionCount,
-//       totalParticipants: uniqueParticipants,
-//       winners: competition.winners || [],
-//       submissionStart: competition.submissionStart,
-//       submissionEnd: competition.submissionEnd,
-//       judgingStart: competition.judgingStart,
-//       judgingEnd: competition.judgingEnd,
-//       resultsDate: competition.resultsDate,
-//       createdAt: competition.createdAt,
-//       updatedAt: competition.updatedAt
-//     };
-//   }
-
-  
-// }
-
-// // Export both class and instance for compatibility
-// export const competitionManager = CompetitionManager;
-// export default CompetitionManager;
-
-// lib/competition-manager.ts - COMPLETE ENHANCED VERSION
+// lib/competition-manager.ts - COMPLETE $20 BUDGET OPTIMIZED VERSION
 import { connectToDatabase } from '@/utils/db';
 import Competition from '@/models/Competition';
 import StorySession from '@/models/StorySession';
 import User from '@/models/User';
-import {
-  COMPETITION_CONFIG,
-  getCompetitionSchedule,
-  getCurrentCompetitionPhase,
-} from '@/config/competition';
-import { sendCompetitionSubmissionConfirmation } from '@/lib/mailer';
+import { AIAssessmentEngine } from '@/lib/ai/ai-assessment-engine';
+import { sendWinnerCongratulationsEmail, sendCompetitionUpdateEmail } from '@/lib/mailer';
 
 export class CompetitionManager {
+  // ULTRA-BUDGET AI Processing Configuration
+  private static readonly BUDGET_CONFIG = {
+    MONTHLY_BUDGET: 20,           // $20/month hard limit
+    COST_PER_FULL_AI: 0.02,       // 2¢ per comprehensive AI analysis
+    COST_PER_LIGHT_AI: 0.005,     // 0.5¢ per lightweight AI analysis
+    
+    // Tier thresholds for 10K stories
+    TIER_1_FILTER: 200,           // Quick filter: 10K → 200 (FREE)
+    TIER_2_FILTER: 50,            // Pattern filter: 200 → 50 (FREE)
+    TIER_3_AI_ANALYSIS: 20,       // Light AI: 50 → 20 ($0.25)
+    FINAL_AI_WINNERS: 3,          // Full AI: 20 → 3 ($0.40)
+    
+    BATCH_SIZE: 5,                // Process 5 stories at once
+    DELAY_BETWEEN_BATCHES: 500,   // 0.5 second delay
+  };
+
   /**
-   * Get current active competition
+   * Get or create current month's competition (starts automatically on 1st)
    */
   static async getCurrentCompetition() {
     await connectToDatabase();
@@ -623,48 +36,104 @@ export class CompetitionManager {
     let competition = await Competition.findOne({
       month: currentMonth,
       year: currentYear,
-      isActive: true,
     });
 
+    // Auto-create competition on 1st of month
     if (!competition) {
       competition = await this.createMonthlyCompetition(currentYear, now.getMonth() + 1);
     }
+
+    // Auto-advance phases based on dates
+    await this.checkAndAdvancePhase(competition);
 
     return competition;
   }
 
   /**
-   * Create new monthly competition
+   * Create new monthly competition (starts on 1st automatically)
    */
   static async createMonthlyCompetition(year: number, month: number) {
-    const schedule = getCompetitionSchedule(year, month);
     const monthName = new Date(year, month - 1, 1).toLocaleDateString('en-US', {
       month: 'long',
     });
 
-    const adminUser = await User.findOne({ role: 'admin' });
-    if (!adminUser) {
-      throw new Error('No admin user found to create competition');
-    }
+    // Calculate dates for current month
+    const firstDay = new Date(year, month - 1, 1); // 1st of month
+    const lastDay = new Date(year, month, 0); // Last day of month
+    const submissionCloseDay = new Date(year, month, -2); // 3 days before last day
 
     const competition = new Competition({
       month: monthName,
       year: year,
       phase: 'submission',
-      submissionStart: schedule.submissionStart,
-      submissionEnd: schedule.submissionEnd,
-      judgingStart: schedule.judgingStart,
-      judgingEnd: schedule.judgingEnd,
-      resultsDate: schedule.resultsDate,
+      submissionStart: firstDay,
+      submissionEnd: submissionCloseDay,
+      judgingStart: submissionCloseDay,
+      judgingEnd: lastDay,
+      resultsDate: lastDay,
       isActive: true,
-      createdBy: adminUser._id,
       entries: [],
       winners: [],
-      judgingCriteria: COMPETITION_CONFIG.judgingCriteria,
+      judgingCriteria: {
+        grammar: 12,
+        creativity: 25, // Highest weight for competition
+        structure: 10,
+        character: 12,
+        plot: 15,
+        vocabulary: 10,
+        originality: 8,
+        engagement: 5,
+        aiDetection: 3, // Penalize AI-generated content
+      },
     });
 
     await competition.save();
-    console.log(`✅ Created competition: ${monthName} ${year}`);
+    console.log(`🎉 [COMPETITION] Created: ${monthName} ${year} - Submissions open!`);
+    
+    return competition;
+  }
+
+  /**
+   * Automatic phase advancement based on dates
+   */
+  static async checkAndAdvancePhase(competition: any) {
+    const now = new Date();
+
+    switch (competition.phase) {
+      case 'submission':
+        if (now >= competition.submissionEnd) {
+          competition.phase = 'judging';
+          await competition.save();
+          
+          console.log(`🔒 [COMPETITION] ${competition.month} submissions CLOSED`);
+          console.log(`🤖 [COMPETITION] AI judging begins - winners announced on ${competition.resultsDate.toLocaleDateString()}`);
+          
+          await this.notifySubmissionClosure(competition);
+        }
+        break;
+
+      case 'judging':
+        if (now >= competition.resultsDate) {
+          competition.phase = 'results';
+          await competition.save();
+          
+          console.log(`🏆 [COMPETITION] ${competition.month} - AI judging starting!`);
+          
+          const winners = await this.runBudgetOptimizedJudging(competition._id);
+          await this.announceWinners(competition, winners);
+        }
+        break;
+
+      case 'results':
+        const nextMonth = new Date(competition.year, new Date(`${competition.month} 1, ${competition.year}`).getMonth() + 1, 1);
+        if (now >= nextMonth) {
+          competition.isActive = false;
+          await competition.save();
+          console.log(`📁 [COMPETITION] ${competition.month} ${competition.year} completed`);
+        }
+        break;
+    }
+
     return competition;
   }
 
@@ -677,6 +146,7 @@ export class CompetitionManager {
     entriesUsed: number;
     maxEntries: number;
     currentPhase: string;
+    daysLeft?: number;
   }> {
     await connectToDatabase();
 
@@ -696,7 +166,7 @@ export class CompetitionManager {
       return {
         canSubmit: false,
         reason: 'No active competition',
-        entriesUsed: user.competitionEntriesThisMonth || 0,
+        entriesUsed: 0,
         maxEntries: 3,
         currentPhase: 'none',
       };
@@ -706,24 +176,31 @@ export class CompetitionManager {
     if (competition.phase !== 'submission') {
       return {
         canSubmit: false,
-        reason: `Competition is in ${competition.phase} phase`,
+        reason: competition.phase === 'judging' 
+          ? 'Submissions closed - AI judging in progress'
+          : 'Competition results available',
         entriesUsed: user.competitionEntriesThisMonth || 0,
         maxEntries: 3,
         currentPhase: competition.phase,
       };
     }
 
-    // Check monthly entries limit
+    // Calculate days left for submission
+    const now = new Date();
+    const daysLeft = Math.ceil((competition.submissionEnd.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+
+    // Check monthly entries limit (max 3 stories per month)
     const entriesUsed = user.competitionEntriesThisMonth || 0;
     const maxEntries = 3;
 
     if (entriesUsed >= maxEntries) {
       return {
         canSubmit: false,
-        reason: `Monthly entry limit reached (${maxEntries} max)`,
+        reason: `Maximum ${maxEntries} stories per month already submitted`,
         entriesUsed,
         maxEntries,
         currentPhase: competition.phase,
+        daysLeft,
       };
     }
 
@@ -732,51 +209,19 @@ export class CompetitionManager {
       entriesUsed,
       maxEntries,
       currentPhase: competition.phase,
+      daysLeft: Math.max(0, daysLeft),
     };
   }
 
   /**
-   * Get user's competition entries for current month
-   */
-  static async getUserCompetitionEntries(userId: string) {
-    await connectToDatabase();
-
-    const competition = await this.getCurrentCompetition();
-    if (!competition) return [];
-
-    const entries = await StorySession.find({
-      childId: userId,
-      'competitionEntries.competitionId': competition._id
-    }).select('title competitionEntries createdAt').lean();
-
-    return entries.map((story: any) => {
-      const entry = story.competitionEntries.find(
-        (e: any) => e.competitionId.toString() === competition._id.toString()
-      );
-      return {
-        storyId: story._id,
-        title: story.title,
-        submittedAt: entry.submittedAt,
-        score: entry.score,
-        rank: entry.rank,
-        phase: competition.phase
-      };
-    });
-  }
-
-  /**
-   * Submit story to competition
+   * Submit story to competition (upload best stories)
    */
   static async submitStoryToCompetition(storyId: string, userId: string) {
     await connectToDatabase();
 
     const competition = await this.getCurrentCompetition();
-    if (!competition) {
-      throw new Error('No active competition found');
-    }
-
-    if (competition.phase !== 'submission') {
-      throw new Error('Submission phase has ended');
+    if (!competition || competition.phase !== 'submission') {
+      throw new Error('Submission period has ended');
     }
 
     const user = await User.findById(userId);
@@ -784,10 +229,10 @@ export class CompetitionManager {
       throw new Error('User not found');
     }
 
-    // Check if user has reached entry limit
+    // Check submission limit
     const entriesUsed = user.competitionEntriesThisMonth || 0;
     if (entriesUsed >= 3) {
-      throw new Error('Maximum 3 entries per month already submitted');
+      throw new Error('Maximum 3 stories per month already submitted');
     }
 
     const story = await StorySession.findById(storyId);
@@ -799,8 +244,8 @@ export class CompetitionManager {
       throw new Error('You can only submit your own stories');
     }
 
-    if (!story.isPublished) {
-      throw new Error('Story must be published before competition submission');
+    if (story.status !== 'completed') {
+      throw new Error('Only completed stories can be submitted');
     }
 
     // Check if already submitted to this competition
@@ -816,7 +261,7 @@ export class CompetitionManager {
     const competitionEntry = {
       competitionId: competition._id,
       submittedAt: new Date(),
-      phase: 'submission'
+      phase: 'submitted'
     };
 
     await StorySession.findByIdAndUpdate(storyId, {
@@ -828,370 +273,893 @@ export class CompetitionManager {
       $inc: { competitionEntriesThisMonth: 1 }
     });
 
-    // Send confirmation email
-    try {
-      await sendCompetitionSubmissionConfirmation(user.email, story.title, competition.month);
-    } catch (emailError) {
-      console.error('Failed to send submission confirmation:', emailError);
-    }
+    const daysLeft = Math.ceil((competition.submissionEnd.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
+
+    console.log(`📝 [COMPETITION] Story "${story.title}" submitted by ${user.firstName} (${entriesUsed + 1}/3)`);
 
     return {
       success: true,
       competitionId: competition._id,
       submissionDate: new Date(),
+      entriesUsed: entriesUsed + 1,
+      daysLeft: Math.max(0, daysLeft),
     };
   }
 
   /**
-   * Advance competition phase
+   * ULTRA-BUDGET AI JUDGING: $20 budget for 10K stories
    */
-  static async advancePhase(competitionId: string) {
-    await connectToDatabase();
+  static async runBudgetOptimizedJudging(competitionId: string) {
+    console.log(`💰 [BUDGET-AI] Starting $20 budget optimization for large-scale judging`);
 
-    const competition = await Competition.findById(competitionId);
-    if (!competition) {
-      throw new Error('Competition not found');
-    }
-
-    const now = new Date();
-
-    switch (competition.phase) {
-      case 'submission':
-        if (now >= competition.judgingStart) {
-          competition.phase = 'judging';
-          await competition.save();
-          console.log(`📊 Competition ${competition.month} moved to JUDGING phase`);
-          
-          // Start AI judging process
-          await this.startAIJudging(competitionId);
-        }
-        break;
-
-      case 'judging':
-        if (now >= competition.resultsDate) {
-          competition.phase = 'results';
-          await competition.save();
-          console.log(`🏆 Competition ${competition.month} moved to RESULTS phase`);
-          
-          // Finalize results
-          await this.finalizeResults(competitionId);
-        }
-        break;
-
-      case 'results':
-        // After results are shown for a few days, mark as inactive
-        const resultsPlusDays = new Date(competition.resultsDate);
-        resultsPlusDays.setDate(resultsPlusDays.getDate() + 7); // Show results for 7 days
-        
-        if (now >= resultsPlusDays) {
-          competition.isActive = false;
-          await competition.save();
-          console.log(`📁 Competition ${competition.month} COMPLETED`);
-        }
-        break;
-    }
-
-    return competition;
-  }
-
-  /**
-   * Enhanced AI judging with automatic winner selection
-   */
-  static async startAIJudging(competitionId: string) {
     const competition = await Competition.findById(competitionId);
     if (!competition) throw new Error('Competition not found');
 
-    // Get all submitted stories
-    const submittedStories = await StorySession.find({
+    // Get all submissions
+    const allSubmissions = await StorySession.find({
       'competitionEntries.competitionId': competitionId
     }).populate('childId', 'firstName lastName email');
 
-    console.log(`🤖 Starting AI judging for ${submittedStories.length} stories`);
+    const totalStories = allSubmissions.length;
+    console.log(`📊 [BUDGET-AI] Processing ${totalStories} stories with $20 budget`);
 
-    const judgedStories = [];
+    if (totalStories === 0) {
+      console.log(`⚠️ [COMPETITION] No submissions found`);
+      return [];
+    }
 
-    for (const story of submittedStories) {
-      // Use existing assessment or calculate comprehensive score
-      const judgedScore = await this.calculateComprehensiveScore(story);
+    if (totalStories <= 20) {
+      // Small volume: Use full AI for all (cost: ~$0.40)
+      console.log(`📊 [SMALL-VOLUME] Using full AI analysis for all ${totalStories} stories`);
+      return await this.fullAIAnalysis(allSubmissions, competitionId);
+    }
 
-      // Update story with AI judgment
-      await StorySession.findOneAndUpdate(
-        {
-          _id: story._id,
-          'competitionEntries.competitionId': competitionId
-        },
-        {
-          $set: {
-            'competitionEntries.$.score': judgedScore.totalScore,
-            'competitionEntries.$.aiJudgingNotes': judgedScore.notes,
-            'competitionEntries.$.phase': 'judged'
-          }
+    // LARGE VOLUME: Multi-tier filtering approach
+    return await this.ultraBudgetTieredAnalysis(allSubmissions, competitionId);
+  }
+
+  /**
+   * TIER-1: Quick Mathematical Filter (10K → 200 stories) - FREE
+   */
+  static async tier1QuickFilter(stories: any[], targetCount: number = 200) {
+    console.log(`🔢 [TIER-1] Quick mathematical filter: ${stories.length} → ${targetCount} (FREE)`);
+
+    const scoredStories = stories.map(story => {
+      const quickScore = this.calculateMathematicalScore(story);
+      return { ...story._doc || story, quickScore };
+    });
+
+    const topStories = scoredStories
+      .sort((a, b) => b.quickScore - a.quickScore)
+      .slice(0, targetCount);
+
+    console.log(`✅ [TIER-1] Selected top ${topStories.length} stories for next tier`);
+    console.log(`   Top score: ${topStories[0]?.quickScore}, Bottom score: ${topStories[topStories.length - 1]?.quickScore}`);
+    
+    return topStories;
+  }
+
+  /**
+   * TIER-2: Advanced Pattern Analysis (200 → 50 stories) - FREE
+   */
+  static async tier2PatternFilter(stories: any[], targetCount: number = 50) {
+    console.log(`🔍 [TIER-2] Pattern analysis filter: ${stories.length} → ${targetCount} (FREE)`);
+
+    const scoredStories = stories.map(story => {
+      const patternScore = this.calculatePatternScore(story);
+      const combinedScore = (story.quickScore * 0.6) + (patternScore * 0.4);
+      return { ...story, patternScore, combinedScore };
+    });
+
+    const topStories = scoredStories
+      .sort((a, b) => b.combinedScore - a.combinedScore)
+      .slice(0, targetCount);
+
+    console.log(`✅ [TIER-2] Selected top ${topStories.length} stories for AI analysis`);
+    console.log(`   Top combined score: ${topStories[0]?.combinedScore?.toFixed(1)}, Bottom: ${topStories[topStories.length - 1]?.combinedScore?.toFixed(1)}`);
+    
+    return topStories;
+  }
+
+  /**
+   * TIER-3: Limited AI Analysis (50 → 20 stories) - $0.25
+   */
+  static async tier3LimitedAI(stories: any[], targetCount: number = 20) {
+    console.log(`🤖 [TIER-3] Limited AI analysis: ${stories.length} → ${targetCount} ($0.25)`);
+
+    const aiResults = [];
+    const batches = this.createBatches(stories, this.BUDGET_CONFIG.BATCH_SIZE);
+
+    for (let i = 0; i < batches.length; i++) {
+      const batch = batches[i];
+      console.log(`   Processing batch ${i + 1}/${batches.length} (${batch.length} stories)`);
+
+      const batchPromises = batch.map(async (story) => {
+        try {
+          const lightAnalysis = await this.lightweightAIAnalysis(story);
+          return { ...story, aiScore: lightAnalysis.score, aiNotes: lightAnalysis.notes };
+        } catch (error) {
+          console.error(`Failed lightweight AI for ${story.title}:`, error);
+          return { ...story, aiScore: story.combinedScore, aiNotes: 'Fallback scoring' };
         }
-      );
-
-      judgedStories.push({
-        storyId: story._id,
-        title: story.title,
-        childId: story.childId._id,
-        childName: `${story.childId.firstName} ${story.childId.lastName}`,
-        score: judgedScore.totalScore
       });
 
-      console.log(`📊 Judged "${story.title}": ${judgedScore.totalScore}/100`);
+      const batchResults = await Promise.all(batchPromises);
+      aiResults.push(...batchResults);
+
+      // Small delay between batches
+      if (i < batches.length - 1) {
+        await this.delay(this.BUDGET_CONFIG.DELAY_BETWEEN_BATCHES);
+      }
     }
 
-    // Auto-select top 3 winners
-    const sortedStories = judgedStories.sort((a, b) => b.score - a.score);
-    const top3Winners = sortedStories.slice(0, 3).map((story, index) => ({
-      position: index + 1,
-      childId: story.childId,
-      childName: story.childName,
-      storyId: story.storyId,
-      title: story.title,
-      score: story.score,
-      aiJudgingNotes: `Ranked #${index + 1} out of ${sortedStories.length} submissions`
-    }));
+    const topStories = aiResults
+      .sort((a, b) => b.aiScore - a.aiScore)
+      .slice(0, targetCount);
 
-    console.log(`🏆 Top 3 winners selected:`, top3Winners.map(w => `${w.position}. ${w.childName} (${w.score}%)`));
-
-    return { judgedStories, winners: top3Winners };
-  }
-
-  /**
-   * Enhanced scoring system with 16+ categories
-   */
-  static async calculateComprehensiveScore(story: any) {
-    const assessment = story.assessment;
+    console.log(`✅ [TIER-3] Selected top ${topStories.length} for final comprehensive AI`);
+    console.log(`   Top AI score: ${topStories[0]?.aiScore}, Bottom: ${topStories[topStories.length - 1]?.aiScore}`);
     
-    if (assessment) {
-      // Comprehensive scoring based on multiple factors
-      const scores = {
-        grammar: assessment.grammarScore || 70,
-        creativity: assessment.creativityScore || 75,
-        structure: assessment.structureScore || 70,
-        character: assessment.characterScore || 70,
-        plot: assessment.plotScore || 70,
-        vocabulary: assessment.vocabularyScore || 70,
-        // Additional factors
-        wordCount: this.calculateWordCountScore(story.totalWords || story.childWords || 0),
-        originality: this.calculateOriginalityScore(story),
-        engagement: this.calculateEngagementScore(story),
-        technicality: assessment.technicalScore || 70
-      };
-
-      // Weighted total score
-      const totalScore = Math.round(
-        scores.grammar * 0.15 +        // 15%
-        scores.creativity * 0.20 +     // 20% 
-        scores.structure * 0.12 +      // 12%
-        scores.character * 0.12 +      // 12%
-        scores.plot * 0.15 +           // 15%
-        scores.vocabulary * 0.10 +     // 10%
-        scores.wordCount * 0.06 +      // 6%
-        scores.originality * 0.05 +    // 5%
-        scores.engagement * 0.03 +     // 3%
-        scores.technicality * 0.02     // 2%
-      );
-
-      const notes = `AI Evaluation: Grammar(${scores.grammar}%) Creativity(${scores.creativity}%) Structure(${scores.structure}%) Plot(${scores.plot}%)`;
-      
-      return { totalScore: Math.min(100, Math.max(0, totalScore)), notes };
-    } else {
-      // Fallback scoring for stories without assessment
-      const wordCount = story.totalWords || story.childWords || 0;
-      const baseScore = 65;
-      const wordBonus = this.calculateWordCountScore(wordCount) * 0.3;
-      const randomVariation = (Math.random() - 0.5) * 20; // ±10 points variation
-      
-      const totalScore = Math.round(baseScore + wordBonus + randomVariation);
-      
-      return { 
-        totalScore: Math.min(100, Math.max(40, totalScore)), 
-        notes: 'Automated scoring - encourage getting full assessment for better evaluation' 
-      };
-    }
-  }
-
-  static calculateWordCountScore(wordCount: number): number {
-    if (wordCount < 100) return 40;
-    if (wordCount < 350) return 60;
-    if (wordCount < 800) return 85;
-    if (wordCount < 1500) return 95;
-    if (wordCount <= 2000) return 100;
-    return 85; // Penalty for too long
-  }
-
-  static calculateOriginalityScore(story: any): number {
-    // Bonus for unique titles, recent creation, etc.
-    const baseScore = 75;
-    const titleLength = story.title?.length || 0;
-    const bonus = titleLength > 20 ? 10 : titleLength > 10 ? 5 : 0;
-    return Math.min(100, baseScore + bonus);
-  }
-
-  static calculateEngagementScore(story: any): number {
-    // Factor in story metadata
-    const baseScore = 70;
-    const hasAssessment = story.assessment ? 15 : 0;
-    const isRecent = (Date.now() - new Date(story.createdAt).getTime()) < (30 * 24 * 60 * 60 * 1000) ? 10 : 0;
-    return Math.min(100, baseScore + hasAssessment + isRecent);
+    return topStories;
   }
 
   /**
-   * Finalize competition results
+   * TIER-4: Full Comprehensive AI (20 → 3 winners) - $0.40
    */
-  static async finalizeResults(competitionId: string) {
-    const competition = await Competition.findById(competitionId);
-    if (!competition) throw new Error('Competition not found');
+  static async tier4ComprehensiveAI(stories: any[], competitionId: string) {
+    console.log(`🎯 [TIER-4] Comprehensive AI analysis for final ${stories.length} stories ($0.40)`);
 
-    // Get all submitted stories with scores
-    const submittedStories = await StorySession.find({
-      'competitionEntries.competitionId': competitionId
-    }).populate('childId', 'firstName lastName email');
+    const finalResults = [];
 
-    // Extract and sort by scores
-    const rankedEntries = submittedStories
-      .map((story: any) => {
-        const entry = story.competitionEntries.find(
-          (e: any) => e.competitionId.toString() === competitionId
-        );
-        return {
-          childId: story.childId._id,
-          childName: `${story.childId.firstName} ${story.childId.lastName}`,
-          childEmail: story.childId.email,
+    for (let i = 0; i < stories.length; i++) {
+      const story = stories[i];
+      console.log(`   Analyzing ${i + 1}/${stories.length}: "${story.title}"`);
+
+      try {
+        // Full comprehensive analysis (same as assessment engine)
+        const storyContent = story.childTurns?.join('\n\n') || story.content || '';
+        
+        const assessment = await AIAssessmentEngine.performCompleteAssessment(storyContent, {
+          childAge: 10,
+          isCompetition: true,
+          expectedWordCount: story.totalWords || 400,
+          storyTitle: story.title,
+        });
+
+        const competitionScore = this.calculateCompetitionScore(assessment, story);
+
+        finalResults.push({
           storyId: story._id,
           title: story.title,
-          score: entry.score || 0
-        };
-      })
-      .sort((a, b) => b.score - a.score);
+          childId: story.childId._id || story.childId,
+          childName: `${story.childId.firstName} ${story.childId.lastName}`,
+          childEmail: story.childId.email,
+          score: competitionScore.totalScore,
+          breakdown: competitionScore.breakdown,
+          fullAnalysis: assessment,
+        });
 
-    // Select top 3 winners
-    const winners = rankedEntries.slice(0, 3).map((entry, index) => ({
-      position: index + 1,
-      childId: entry.childId,
-      childName: entry.childName,
-      storyId: entry.storyId,
-      title: entry.title,
-      score: entry.score,
-      aiJudgingNotes: `Competition score: ${entry.score}%`
-    }));
+        console.log(`   ✅ "${story.title}": ${competitionScore.totalScore}/100`);
 
-    // Update competition with winners
-    competition.winners = winners;
-    competition.totalParticipants = new Set(rankedEntries.map(e => e.childId.toString())).size;
-    competition.totalSubmissions = rankedEntries.length;
-    await competition.save();
-
-    // Update story sessions with rankings
-    for (let i = 0; i < rankedEntries.length; i++) {
-      await StorySession.findOneAndUpdate(
-        {
-          _id: rankedEntries[i].storyId,
-          'competitionEntries.competitionId': competitionId
-        },
-        {
-          $set: {
-            'competitionEntries.$.rank': i + 1,
-            'competitionEntries.$.phase': 'results'
-          }
-        }
-      );
+      } catch (error) {
+        console.error(`   ❌ Failed comprehensive AI for "${story.title}":`, error);
+        finalResults.push({
+          storyId: story._id,
+          title: story.title,
+          childId: story.childId._id || story.childId,
+          childName: `${story.childId.firstName} ${story.childId.lastName}`,
+          childEmail: story.childId.email,
+          score: story.aiScore || 70,
+          breakdown: { error: 'Comprehensive analysis failed' },
+        });
+      }
     }
 
-    console.log(`🏆 Competition ${competition.month} results finalized:`,
-      winners.map(w => `${w.position}. ${w.childName} (${w.score}%)`));
+    // Select top 3 winners
+    const winners = finalResults
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 3)
+      .map((story, index) => ({
+        position: index + 1,
+        place: index === 0 ? '1st' : index === 1 ? '2nd' : '3rd',
+        ...story,
+      }));
 
-    return { winners, totalParticipants: rankedEntries.length };
+    console.log(`🏆 [WINNERS] Final 3 selected with comprehensive AI analysis`);
+    winners.forEach(w => console.log(`   ${w.place}: ${w.childName} - "${w.title}" (${w.score}%)`));
+
+    // Update competition results
+    await this.updateCompetitionResults(competitionId, winners, finalResults);
+
+    return winners;
   }
 
   /**
-   * Get past competitions
+   * Main ultra-budget tiered analysis workflow
    */
-  static async getPastCompetitions(limit: number = 10) {
-    await connectToDatabase();
+  static async ultraBudgetTieredAnalysis(allStories: any[], competitionId: string) {
+    const startTime = Date.now();
+    
+    try {
+      console.log(`🎯 [ULTRA-BUDGET] Starting 4-tier analysis for ${allStories.length} stories`);
 
-    return await Competition.find({
-      phase: 'results',
-      $or: [
-        { isActive: false },
-        { 
-          isActive: true,
-          resultsDate: { $lt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) } // Older than 7 days
-        }
-      ]
-    })
-    .sort({ year: -1, createdAt: -1 })
-    .limit(limit)
-    .lean();
+      // TIER 1: Mathematical filter (FREE) - 10K → 200
+      const tier1Results = await this.tier1QuickFilter(
+        allStories, 
+        Math.min(this.BUDGET_CONFIG.TIER_1_FILTER, allStories.length)
+      );
+      
+      // TIER 2: Pattern analysis (FREE) - 200 → 50  
+      const tier2Results = await this.tier2PatternFilter(
+        tier1Results, 
+        Math.min(this.BUDGET_CONFIG.TIER_2_FILTER, tier1Results.length)
+      );
+      
+      // TIER 3: Lightweight AI (CHEAP) - 50 → 20
+      const tier3Results = await this.tier3LimitedAI(
+        tier2Results, 
+        Math.min(this.BUDGET_CONFIG.TIER_3_AI_ANALYSIS, tier2Results.length)
+      );
+      
+      // TIER 4: Comprehensive AI (FULL) - 20 → 3
+      const winners = await this.tier4ComprehensiveAI(tier3Results, competitionId);
+
+      const processingTime = (Date.now() - startTime) / 1000;
+      const estimatedCost = (tier2Results.length * this.BUDGET_CONFIG.COST_PER_LIGHT_AI) + 
+                           (tier3Results.length * this.BUDGET_CONFIG.COST_PER_FULL_AI);
+
+      console.log(`⚡ [COMPLETE] Processed ${allStories.length} stories in ${processingTime.toFixed(1)}s`);
+      console.log(`💰 [COST] Estimated total: $${estimatedCost.toFixed(2)} (well under $20 budget)`);
+      console.log(`📊 [EFFICIENCY] ${((allStories.length - 3) / allStories.length * 100).toFixed(1)}% filtered without expensive AI`);
+
+      return winners;
+
+    } catch (error) {
+      console.error(`❌ [ERROR] Budget AI judging failed:`, error);
+      throw error;
+    }
+  }
+
+  /**
+   * Full AI analysis for small volumes
+   */
+  static async fullAIAnalysis(stories: any[], competitionId: string) {
+    console.log(`🤖 [FULL-AI] Comprehensive analysis for all ${stories.length} stories`);
+
+    const results = [];
+
+    for (let i = 0; i < stories.length; i++) {
+      const story = stories[i];
+      console.log(`   Analyzing ${i + 1}/${stories.length}: "${story.title}"`);
+
+      try {
+        const storyContent = story.childTurns?.join('\n\n') || story.content || '';
+        
+        const assessment = await AIAssessmentEngine.performCompleteAssessment(storyContent, {
+          childAge: 10,
+          isCompetition: true,
+          expectedWordCount: story.totalWords || 400,
+          storyTitle: story.title,
+        });
+
+        const competitionScore = this.calculateCompetitionScore(assessment, story);
+
+        results.push({
+          storyId: story._id,
+          title: story.title,
+          childId: story.childId._id || story.childId,
+          childName: `${story.childId.firstName} ${story.childId.lastName}`,
+          childEmail: story.childId.email,
+          score: competitionScore.totalScore,
+          breakdown: competitionScore.breakdown,
+        });
+
+        console.log(`   ✅ "${story.title}": ${competitionScore.totalScore}/100`);
+
+      } catch (error) {
+        console.error(`   ❌ Failed analysis for "${story.title}":`, error);
+        results.push({
+          storyId: story._id,
+          title: story.title,
+          childId: story.childId._id || story.childId,
+          childName: `${story.childId.firstName} ${story.childId.lastName}`,
+          childEmail: story.childId.email,
+          score: 70,
+          breakdown: { error: 'Analysis failed' },
+        });
+      }
+    }
+
+    // Select top 3 winners
+    const winners = results
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 3)
+      .map((story, index) => ({
+        position: index + 1,
+        place: index === 0 ? '1st' : index === 1 ? '2nd' : '3rd',
+        ...story,
+      }));
+
+    await this.updateCompetitionResults(competitionId, winners, results);
+    return winners;
+  }
+
+  /**
+   * Mathematical scoring (no AI calls) - FREE
+   */
+  static calculateMathematicalScore(story: any): number {
+    const wordCount = story.totalWords || story.childWords || 0;
+    const title = story.title || '';
+    const createdAt = new Date(story.createdAt);
+    const now = new Date();
+    
+    // Word count scoring (0-30 points)
+    let wordScore = 0;
+    if (wordCount < 100) wordScore = 5;
+    else if (wordCount < 300) wordScore = 15;
+    else if (wordCount < 600) wordScore = 25;
+    else if (wordCount < 1000) wordScore = 30;
+    else if (wordCount < 1500) wordScore = 25;
+    else wordScore = 15; // Too long penalty
+
+    // Title quality (0-20 points)
+    const titleScore = Math.min(20, Math.max(5, title.length * 1.2));
+
+    // Recency bonus (0-15 points)
+    const daysOld = (now.getTime() - createdAt.getTime()) / (1000 * 60 * 60 * 24);
+    const recencyScore = Math.max(0, 15 - (daysOld * 0.3));
+
+    // Completion status (0-25 points)
+    const completionScore = story.status === 'completed' ? 25 : 
+                           story.status === 'in_progress' ? 15 : 10;
+
+    // Story structure bonus (0-10 points)
+    const turnCount = story.childTurns?.length || 1;
+    const structureScore = turnCount >= 7 ? 10 : 
+                          turnCount >= 5 ? 8 : 
+                          turnCount >= 3 ? 5 : 2;
+
+    const totalScore = wordScore + titleScore + recencyScore + completionScore + structureScore;
+    return Math.round(Math.min(100, Math.max(0, totalScore)));
+  }
+
+  /**
+   * Pattern analysis scoring (no AI calls) - FREE
+   */
+  static calculatePatternScore(story: any): number {
+    const content = story.childTurns?.join(' ') || story.content || '';
+    const title = story.title || '';
+    
+    if (!content) return 50; // Default score for empty content
+
+    // Vocabulary diversity (0-25 points)
+    const words = content.toLowerCase().split(/\s+/).filter((w:any) => w.length > 2);
+    const uniqueWords = new Set(words);
+    const diversityRatio = words.length > 0 ? uniqueWords.size / words.length : 0;
+    const vocabularyScore = Math.min(25, diversityRatio * 80);
+
+    // Sentence structure variety (0-20 points)
+    const sentences = content.split(/[.!?]+/).filter((s: string) => s.trim().length > 5);
+    const avgSentenceLength: number = sentences.length > 0
+    ? sentences.reduce((sum: number, s: string) => sum + s.trim().split(/\s+/).length, 0) / sentences.length : 0;
+    const structureScore = avgSentenceLength > 12 ? 20 : 
+                          avgSentenceLength > 8 ? 15 : 
+                          avgSentenceLength > 5 ? 10 : 5;
+
+    // Title creativity (0-15 points)
+    const creativeTitleWords = ['adventure', 'mystery', 'magic', 'secret', 'journey', 'dragon', 'princess', 'treasure', 'quest', 'kingdom'];
+    const titleCreativity = creativeTitleWords.some(word => title.toLowerCase().includes(word)) ? 15 : 
+                           title.length > 15 ? 12 : 
+                           title.length > 8 ? 8 : 5;
+
+    // Dialogue presence (0-20 points)
+    const dialogueMatches = content.match(/["'].*?["']/g) || [];
+    const hasDialogue = dialogueMatches.length > 2 ? 20 : 
+                       dialogueMatches.length > 0 ? 15 : 5;
+
+    // Descriptive language (0-20 points)
+    const descriptiveWords = ['beautiful', 'scary', 'enormous', 'tiny', 'colorful', 'bright', 'dark', 'mysterious', 'sparkling', 'ancient'];
+    const descriptiveCount = descriptiveWords.filter(word => content.toLowerCase().includes(word)).length;
+    const descriptiveScore = Math.min(20, descriptiveCount * 3);
+
+    const totalScore = vocabularyScore + structureScore + titleCreativity + hasDialogue + descriptiveScore;
+    return Math.round(Math.min(100, Math.max(0, totalScore)));
+  }
+
+  /**
+   * Lightweight AI analysis (cheaper than full assessment)
+   */
+  static async lightweightAIAnalysis(story: any) {
+    const content = story.childTurns?.join('\n\n') || story.content || '';
+    
+    // Use a much simpler prompt to reduce token costs
+    const lightPrompt = `Rate this children's story from 60-95 for overall quality. Consider creativity, writing skill, and storytelling. Return only a number: "${content.substring(0, 400)}..."`;
+    
+    try {
+      // This would use your lightweight AI assessment
+      const response = await AIAssessmentEngine.performLightweightAssessment(lightPrompt);
+      const score = parseInt(response.match(/\d+/)?.[0] || '75');
+      
+      return {
+        score: Math.min(95, Math.max(60, score)),
+        notes: 'Lightweight AI screening'
+      };
+    } catch (error) {
+      // Fallback to mathematical score with small boost
+      const fallbackScore = Math.min(85, (story.combinedScore || 70) + Math.random() * 10);
+      return {
+        score: Math.round(fallbackScore),
+        notes: 'Pattern-based scoring (AI unavailable)'
+      };
+    }
+  }
+
+  /**
+   * Competition score calculation using assessment engine results
+   */
+  static calculateCompetitionScore(assessment: any, story: any) {
+    const scores = {
+      grammar: assessment.integrityAnalysis?.plagiarismResult?.grammarScore || 70,
+      creativity: assessment.educationalAssessment?.creativityScore || 75,
+      structure: assessment.educationalAssessment?.structureScore || 70,
+      character: assessment.educationalAssessment?.characterScore || 70,
+      plot: assessment.educationalAssessment?.plotScore || 70,
+      vocabulary: assessment.educationalAssessment?.vocabularyScore || 70,
+      wordCount: this.calculateWordCountScore(story.totalWords || 0),
+      originality: assessment.integrityAnalysis?.originalityScore || 80,
+      aiPenalty: assessment.integrityAnalysis?.aiDetectionResult?.overallScore || 100,
+    };
+
+    // Weighted competition scoring (prioritizes creativity and plot)
+    const totalScore = Math.round(
+      scores.grammar * 0.12 +        // 12% - Grammar
+      scores.creativity * 0.25 +     // 25% - Creativity (highest)
+      scores.structure * 0.10 +      // 10% - Structure  
+      scores.character * 0.12 +      // 12% - Character
+      scores.plot * 0.15 +           // 15% - Plot
+      scores.vocabulary * 0.10 +     // 10% - Vocabulary
+      scores.wordCount * 0.05 +      // 5% - Word count
+      scores.originality * 0.08 +    // 8% - Originality
+      (scores.aiPenalty / 100) * 0.03  // 3% - AI penalty
+    );
+
+    const notes = `Competition Analysis: Creativity(${scores.creativity}%) Grammar(${scores.grammar}%) Plot(${scores.plot}%) Originality(${scores.originality}%) AI-Check(${scores.aiPenalty}%)`;
+    return { 
+      totalScore: Math.min(100, Math.max(0, totalScore)), 
+      notes,
+      breakdown: scores
+    };
+  }
+
+  /**
+   * Word count scoring for competition
+   */
+  static calculateWordCountScore(wordCount: number): number {
+    // Optimal word count scoring for children's stories
+    if (wordCount < 100) return 40;       // Too short
+    if (wordCount < 200) return 60;       // Short but acceptable
+    if (wordCount < 400) return 85;       // Good length
+    if (wordCount < 800) return 100;      // Perfect length
+    if (wordCount < 1200) return 95;      // Very good
+    if (wordCount < 1500) return 90;      // Long but good
+    if (wordCount <= 2000) return 85;     // Long
+    return 70; // Too long - may lose reader interest
+  }
+
+  /**
+   * Helper function to create batches for processing
+   */
+  static createBatches(array: any[], batchSize: number): any[][] {
+    const batches = [];
+    for (let i = 0; i < array.length; i += batchSize) {
+      batches.push(array.slice(i, i + batchSize));
+    }
+    return batches;
+  }
+
+  /**
+   * Helper function for delays between API calls
+   */
+  static async delay(ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  /**
+   * Update competition with final results
+   */
+  static async updateCompetitionResults(competitionId: string, winners: any[], allResults: any[]) {
+    try {
+      const competition = await Competition.findById(competitionId);
+      if (!competition) return;
+
+      // Update competition document
+      competition.winners = winners;
+      competition.totalSubmissions = allResults.length;
+      competition.totalParticipants = new Set(allResults.map(r => r.childId.toString())).size;
+      await competition.save();
+
+      // Update individual story sessions with rankings
+      for (let i = 0; i < allResults.length; i++) {
+        const result = allResults[i];
+        await StorySession.findOneAndUpdate(
+          {
+            _id: result.storyId,
+            'competitionEntries.competitionId': competitionId
+          },
+          {
+            $set: {
+              'competitionEntries.$.score': result.score,
+              'competitionEntries.$.rank': i + 1,
+              'competitionEntries.$.phase': 'results',
+              'competitionEntries.$.aiJudgingNotes': result.breakdown ? JSON.stringify(result.breakdown) : 'Competition analyzed'
+            }
+          }
+        );
+      }
+
+      console.log(`📊 [UPDATE] Competition results saved - ${winners.length} winners, ${allResults.length} total entries`);
+
+    } catch (error) {
+      console.error(`❌ [ERROR] Failed to update competition results:`, error);
+    }
+  }
+
+  /**
+   * Olympic-style winner announcement with emails
+   */
+  static async announceWinners(competition: any, winners: any[]) {
+    console.log(`🎉 [OLYMPIC-ANNOUNCEMENT] ${competition.month} ${competition.year} Competition Results!`);
+    
+    if (winners.length === 0) {
+      console.log(`ℹ️  No winners - no valid submissions found`);
+      return [];
+    }
+
+    // Display winners Olympic-style
+    winners.forEach(winner => {
+      const medal = winner.position === 1 ? '🥇' : winner.position === 2 ? '🥈' : '🥉';
+      console.log(`${medal} ${winner.place} Place: ${winner.childName} - "${winner.title}" (${winner.score}%)`);
+    });
+
+    // Send congratulations emails to winners
+    const emailPromises = winners.map(async (winner) => {
+      try {
+        await sendWinnerCongratulationsEmail(
+          winner.childEmail,
+          winner.childName,
+          winner.place,
+          winner.title,
+          winner.score,
+          competition.month,
+          competition.year
+        );
+        console.log(`📧 [CONGRATULATIONS] Email sent to ${winner.place} place winner: ${winner.childName}`);
+        return { success: true, winner: winner.childName };
+      } catch (error) {
+        console.error(`❌ [EMAIL-ERROR] Failed to send congratulations to ${winner.childName}:`, error);
+        return { success: false, winner: winner.childName, error };
+      }
+    });
+
+    const emailResults = await Promise.all(emailPromises);
+    const successfulEmails = emailResults.filter(r => r.success).length;
+    console.log(`📬 [EMAIL-SUMMARY] ${successfulEmails}/${winners.length} congratulations emails sent successfully`);
+
+    return winners;
+  }
+
+  /**
+   * Notify users about submission closure
+   */
+  static async notifySubmissionClosure(competition: any) {
+    try {
+      // This could send emails to all participants about submission closure
+      console.log(`📢 [NOTIFICATION] Submissions closed for ${competition.month} ${competition.year}`);
+      console.log(`🤖 AI judging will complete by ${competition.resultsDate.toLocaleDateString()}`);
+      
+      // Optional: Send email to admin about closure
+      await sendCompetitionUpdateEmail(
+        process.env.ADMIN_EMAIL || 'admin@yourdomain.com',
+        `${competition.month} Competition Update`,
+        `Submissions for ${competition.month} ${competition.year} are now closed. AI judging will begin and results will be announced on ${competition.resultsDate.toLocaleDateString()}.`
+      );
+      
+    } catch (error) {
+      console.error(`❌ [NOTIFICATION-ERROR] Failed to send closure notification:`, error);
+    }
+  }
+
+  /**
+   * Get competition status for UI display
+   */
+  static async getCompetitionStatus() {
+    try {
+      const competition = await this.getCurrentCompetition();
+      if (!competition) return null;
+
+      const now = new Date();
+      let statusMessage = '';
+      let daysLeft = 0;
+      let phaseIcon = '';
+
+      switch (competition.phase) {
+        case 'submission':
+          daysLeft = Math.ceil((competition.submissionEnd.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+          phaseIcon = '📝';
+          statusMessage = `Submissions open! ${Math.max(0, daysLeft)} day${daysLeft !== 1 ? 's' : ''} left to submit your best stories`;
+          break;
+        case 'judging':
+          const resultDays = Math.ceil((competition.resultsDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+          phaseIcon = '🤖';
+          statusMessage = `AI judging in progress! Results in ${Math.max(0, resultDays)} day${resultDays !== 1 ? 's' : ''}`;
+          break;
+        case 'results':
+          phaseIcon = '🏆';
+          statusMessage = `Results are live! Check out this month's winners`;
+          break;
+      }
+
+      // Get submission count
+      const submissionCount = await StorySession.countDocuments({
+        'competitionEntries.competitionId': competition._id
+      });
+
+      return {
+        competition: {
+          _id: competition._id,
+          month: competition.month,
+          year: competition.year,
+          phase: competition.phase,
+          isActive: competition.isActive,
+          submissionStart: competition.submissionStart,
+          submissionEnd: competition.submissionEnd,
+          resultsDate: competition.resultsDate,
+          winners: competition.winners || [],
+          totalSubmissions: submissionCount,
+        },
+        statusMessage,
+        phaseIcon,
+        daysLeft: Math.max(0, daysLeft),
+        canSubmit: competition.phase === 'submission',
+        submissionCount,
+      };
+
+    } catch (error) {
+      console.error(`❌ [STATUS-ERROR] Failed to get competition status:`, error);
+      return null;
+    }
+  }
+
+  /**
+   * Get user's submissions for current competition
+   */
+  static async getUserSubmissions(userId: string) {
+    try {
+      const competition = await this.getCurrentCompetition();
+      if (!competition) return [];
+
+      const submissions = await StorySession.find({
+        childId: userId,
+        'competitionEntries.competitionId': competition._id
+      }).select('title totalWords childWords competitionEntries createdAt status').lean();
+
+      return submissions.map((story: any) => {
+        const entry = story.competitionEntries.find(
+          (e: any) => e.competitionId.toString() === competition._id.toString()
+        );
+        return {
+          storyId: story._id,
+          title: story.title,
+          wordCount: story.totalWords || story.childWords || 0,
+          submittedAt: entry.submittedAt,
+          score: entry.score || null,
+          rank: entry.rank || null,
+          phase: entry.phase || 'submitted',
+          status: story.status,
+        };
+      }).sort((a, b) => new Date(b.submittedAt).getTime() - new Date(a.submittedAt).getTime());
+
+    } catch (error) {
+      console.error(`❌ [USER-SUBMISSIONS-ERROR] Failed to get user submissions:`, error);
+      return [];
+    }
   }
 
   /**
    * Get eligible stories for competition submission
    */
   static async getEligibleStories(userId: string) {
-    await connectToDatabase();
+    try {
+      const competition = await this.getCurrentCompetition();
+      if (!competition || competition.phase !== 'submission') return [];
 
-    const competition = await this.getCurrentCompetition();
-    if (!competition) return [];
-
-    // Get stories that are published and not already submitted to current competition
+      // Get completed stories that haven't been submitted to current competition
       const stories = await StorySession.find({
         childId: userId,
         status: 'completed',
-        'competitionEntries.competitionId': { $ne: competition._id }
+        $or: [
+          { 'competitionEntries.competitionId': { $ne: competition._id } },
+          { competitionEntries: { $exists: false } },
+          { competitionEntries: { $size: 0 } }
+        ]
       }).select('title totalWords childWords createdAt').lean();
 
-    return stories.map((story: any) => ({
-      _id: story._id,
-      title: story.title,
-      wordCount: story.totalWords || story.childWords || 0,
-      createdAt: story.createdAt,
-      isEligible: true
-    }));
+      return stories.map((story: any) => ({
+        _id: story._id,
+        title: story.title,
+        wordCount: story.totalWords || story.childWords || 0,
+        createdAt: story.createdAt,
+        isEligible: true,
+      })).sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+
+    } catch (error) {
+      console.error(`❌ [ELIGIBLE-STORIES-ERROR] Failed to get eligible stories:`, error);
+      return [];
+    }
   }
 
   /**
-   * Get competition statistics
+   * Get competition leaderboard/results
    */
-  static async getCompetitionStats(competitionId?: string) {
-    await connectToDatabase();
+  static async getCompetitionResults(competitionId?: string) {
+    try {
+      const competition = competitionId
+        ? await Competition.findById(competitionId)
+        : await this.getCurrentCompetition();
 
-    const competition = competitionId
-      ? await Competition.findById(competitionId)
-      : await this.getCurrentCompetition();
+      if (!competition || competition.phase !== 'results') return null;
 
-    if (!competition) return null;
+      // Get all submissions with scores
+      const submissions = await StorySession.find({
+        'competitionEntries.competitionId': competition._id
+      })
+      .populate('childId', 'firstName lastName')
+      .select('title totalWords childWords competitionEntries childId')
+      .lean();
 
-    // Get submission count for this competition
-    const submissionCount = await StorySession.countDocuments({
-      'competitionEntries.competitionId': competition._id
-    });
+      const results = submissions
+        .map((story: any) => {
+          const entry = story.competitionEntries.find(
+            (e: any) => e.competitionId.toString() === competition._id.toString()
+          );
+          return {
+            rank: entry.rank || 999,
+            childName: `${story.childId.firstName} ${story.childId.lastName}`,
+            title: story.title,
+            wordCount: story.totalWords || story.childWords || 0,
+            score: entry.score || 0,
+            isWinner: entry.rank <= 3,
+            medal: entry.rank === 1 ? '🥇' : entry.rank === 2 ? '🥈' : entry.rank === 3 ? '🥉' : null,
+          };
+        })
+        .sort((a, b) => a.rank - b.rank);
 
-    // Get unique participants
-    const participantStories = await StorySession.find({
-      'competitionEntries.competitionId': competition._id
-    }).select('childId').lean();
+      return {
+        competition: {
+          month: competition.month,
+          year: competition.year,
+          totalParticipants: competition.totalParticipants,
+          totalSubmissions: competition.totalSubmissions,
+        },
+        winners: results.slice(0, 3),
+        allResults: results,
+      };
 
-    const uniqueParticipants = new Set(
-      participantStories.map((story: any) => story.childId.toString())
-    ).size;
+    } catch (error) {
+      console.error(`❌ [RESULTS-ERROR] Failed to get competition results:`, error);
+      return null;
+    }
+  }
 
-    return {
-      _id: competition._id,
-      month: competition.month,
-      year: competition.year,
-      phase: competition.phase,
-      isActive: competition.isActive,
-      totalSubmissions: submissionCount,
-      totalParticipants: uniqueParticipants,
-      winners: competition.winners || [],
-      submissionStart: competition.submissionStart,
-      submissionEnd: competition.submissionEnd,
-      judgingStart: competition.judgingStart,
-      judgingEnd: competition.judgingEnd,
-      // Remove isPublished check. Publishing is not required for competition submission.
-    };
+  /**
+   * Get past competitions for historical view
+   */
+  static async getPastCompetitions(limit: number = 12) {
+    try {
+      await connectToDatabase();
+
+      const pastCompetitions = await Competition.find({
+        phase: 'results',
+        isActive: false,
+      })
+      .sort({ year: -1, createdAt: -1 })
+      .limit(limit)
+      .select('month year winners totalParticipants totalSubmissions resultsDate')
+      .lean();
+
+      return pastCompetitions.map((comp: any) => ({
+        _id: comp._id,
+        month: comp.month,
+        year: comp.year,
+        winners: comp.winners || [],
+        totalParticipants: comp.totalParticipants || 0,
+        totalSubmissions: comp.totalSubmissions || 0,
+        resultsDate: comp.resultsDate,
+      }));
+
+    } catch (error) {
+      console.error(`❌ [PAST-COMPETITIONS-ERROR] Failed to get past competitions:`, error);
+      return [];
+    }
+  }
+
+  /**
+   * Manual competition phase advancement (for admin)
+   */
+  static async forceAdvancePhase(competitionId: string) {
+    try {
+      const competition = await Competition.findById(competitionId);
+      if (!competition) {
+        throw new Error('Competition not found');
+      }
+
+      const oldPhase = competition.phase;
+
+      switch (competition.phase) {
+        case 'submission':
+          competition.phase = 'judging';
+          competition.submissionEnd = new Date();
+          break;
+        case 'judging':
+          competition.phase = 'results';
+          const winners = await this.runBudgetOptimizedJudging(competitionId);
+          await this.announceWinners(competition, winners);
+          break;
+        case 'results':
+          competition.isActive = false;
+          break;
+      }
+
+      await competition.save();
+      console.log(`👨‍💼 [ADMIN] Manually advanced ${competition.month} from ${oldPhase} to ${competition.phase}`);
+
+      return competition;
+
+    } catch (error) {
+      console.error(`❌ [FORCE-ADVANCE-ERROR] Failed to force advance phase:`, error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get competition statistics for admin dashboard
+   */
+  static async getCompetitionStats() {
+    try {
+      await connectToDatabase();
+
+      const currentCompetition = await this.getCurrentCompetition();
+      const allCompetitions = await Competition.countDocuments();
+      const activeCompetitions = await Competition.countDocuments({ isActive: true });
+      
+      // Total submissions across all competitions
+      const totalSubmissions = await Competition.aggregate([
+        { $group: { _id: null, total: { $sum: '$totalSubmissions' } } }
+      ]);
+
+      // Average participants per competition
+      const avgParticipants = await Competition.aggregate([
+        { $group: { _id: null, avg: { $avg: '$totalParticipants' } } }
+      ]);
+
+      return {
+        currentCompetition: currentCompetition ? {
+          month: currentCompetition.month,
+          year: currentCompetition.year,
+          phase: currentCompetition.phase,
+          submissions: currentCompetition.totalSubmissions || 0,
+          participants: currentCompetition.totalParticipants || 0,
+        } : null,
+        totalCompetitions: allCompetitions,
+        activeCompetitions,
+        totalSubmissions: totalSubmissions[0]?.total || 0,
+        averageParticipants: Math.round(avgParticipants[0]?.avg || 0),
+      };
+
+    } catch (error) {
+      console.error(`❌ [STATS-ERROR] Failed to get competition stats:`, error);
+      return null;
+    }
   }
 }
 

@@ -1,8 +1,9 @@
+//api/stories/assessment/[sessionId]/route.ts
 import { NextResponse } from 'next/server';
 import { connectToDatabase } from '@/utils/db';
 import StorySession from '@/models/StorySession';
 import Turn from '@/models/Turn';
-import { AssessmentEngine } from '@/lib/ai/assessment-engine';
+import { AIAssessmentEngine } from '@/lib/ai/ai-assessment-engine';
 import { UsageManager } from '@/lib/usage-manager';
 import type { NextRequest } from 'next/server';
 import { getServerSession } from 'next-auth';
@@ -162,7 +163,7 @@ export async function POST(
       // Generate assessment using advanced AI engine
       console.log('🎯 Generating advanced AI assessment for story:', storySession.title);
 
-      const assessment = await AssessmentEngine.assessStory(
+      const assessment = await AIAssessmentEngine.assessStory(
         storyContent,
         actualSessionId,
         session.user.id

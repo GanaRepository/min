@@ -2,7 +2,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/utils/authOptions';
-import { AssessmentEngine } from '@/lib/ai/assessment-engine';
+import { AIAssessmentEngine } from '@/lib/ai/ai-assessment-engine';
 import { connectToDatabase } from '@/utils/db';
 import User from '@/models/User';
 
@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
     try {
       if (checkType === 'plagiarism' || checkType === 'both') {
         console.log('🔍 Running plagiarism check...');
-        const plagiarismResult = await AssessmentEngine.checkPlagiarismOnly(
+        const plagiarismResult = await AIAssessmentEngine.checkPlagiarismOnly(
           content,
           childAge
         );
@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
 
       if (checkType === 'ai' || checkType === 'both') {
         console.log('🤖 Running AI detection...');
-        const aiResult = await AssessmentEngine.checkAIContentOnly(
+        const aiResult = await AIAssessmentEngine.checkAIContentOnly(
           content,
           childAge
         );

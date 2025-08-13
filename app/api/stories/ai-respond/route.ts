@@ -1,3 +1,4 @@
+//api/stories/ai-respond/route.ts
 import { NextResponse } from 'next/server';
 import { connectToDatabase } from '@/utils/db';
 import StorySession from '@/models/StorySession';
@@ -5,7 +6,7 @@ import Turn from '@/models/Turn';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/utils/authOptions';
 import { collaborationEngine } from '@/lib/ai/collaboration';
-import { AssessmentEngine } from '@/lib/ai/assessment-engine';
+import { AIAssessmentEngine } from '@/lib/ai/ai-assessment-engine';
 import mongoose from 'mongoose';
 import type { NextRequest } from 'next/server';
 
@@ -151,7 +152,7 @@ export async function POST(req: NextRequest) {
           .join(' ');
 
         // Use the advanced assessment engine
-        assessment = await AssessmentEngine.assessStory(
+        assessment = await AIAssessmentEngine.assessStory(
           storyContent,
           actualSessionId,
           session.user.id
