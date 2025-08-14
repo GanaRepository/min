@@ -33,6 +33,7 @@ import {
   Zap,
   Heart,
   Rocket,
+  X,
 } from 'lucide-react';
 
 // ===== INTERFACES =====

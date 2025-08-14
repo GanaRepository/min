@@ -1,7 +1,7 @@
 // app/api/community/stories/[id]/like/route.ts - LIKE FUNCTIONALITY
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { authOptions } from '@/utils/authOptions';
 import { connectToDatabase } from '@/utils/db';
 import StorySession from '@/models/StorySession';
 
@@ -42,7 +42,7 @@ export async function POST(
     
     if (isLiked) {
       // Remove like
-      story.likes = story.likes.filter(like => like.toString() !== userId);
+      story.likes = story.likes.filter((like: string) => like.toString() !== userId);
     } else {
       // Add like
       story.likes.push(userId);

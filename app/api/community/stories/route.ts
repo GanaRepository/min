@@ -1,7 +1,7 @@
 // app/api/community/stories/route.ts - COMMUNITY STORIES
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { authOptions } from '@/utils/authOptions';
 import { connectToDatabase } from '@/utils/db';
 import StorySession from '@/models/StorySession';
 import User from '@/models/User';
@@ -124,7 +124,7 @@ export async function GET(request: NextRequest) {
      // Get competition winner info if applicable
      let competitionWinner = null;
      if (story.competitionEntries?.length > 0) {
-       const winnerEntry = story.competitionEntries.find(entry => entry.isWinner);
+       const winnerEntry = story.competitionEntries.find((entry: any) => entry.isWinner);
        if (winnerEntry) {
          competitionWinner = {
            position: winnerEntry.position,

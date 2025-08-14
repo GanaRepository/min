@@ -1,7 +1,7 @@
 // app/api/stories/session/[sessionId]/turns/route.ts - TURNS API
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { authOptions } from '@/utils/authOptions';
 import { connectToDatabase } from '@/utils/db';
 import StorySession from '@/models/StorySession';
 import Turn from '@/models/Turn';

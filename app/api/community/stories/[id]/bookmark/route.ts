@@ -1,7 +1,7 @@
 // app/api/community/stories/[id]/bookmark/route.ts - BOOKMARK FUNCTIONALITY
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { authOptions } from '@/utils/authOptions';
 import { connectToDatabase } from '@/utils/db';
 import StorySession from '@/models/StorySession';
 
@@ -42,7 +42,7 @@ export async function POST(
     
     if (isBookmarked) {
       // Remove bookmark
-      story.bookmarks = story.bookmarks.filter(bookmark => bookmark.toString() !== userId);
+      story.bookmarks = story.bookmarks.filter((bookmark: string) => bookmark.toString() !== userId);
     } else {
       // Add bookmark
       story.bookmarks.push(userId);
