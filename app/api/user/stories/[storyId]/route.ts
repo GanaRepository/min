@@ -1,4 +1,4 @@
-// app/api/user/stories/[storyId]/route.ts - COMPLETE UPDATE FOR MINTOONS REQUIREMENTS
+// app/api/user/stories/[storyId]/route.ts - COMPLETE FIXED VERSION
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/utils/authOptions';
@@ -8,6 +8,7 @@ import Turn from '@/models/Turn';
 import PublishedStory from '@/models/PublishedStory';
 import StoryComment from '@/models/StoryComment';
 import mongoose from 'mongoose';
+
 
 export const dynamic = 'force-dynamic';
 
@@ -38,7 +39,7 @@ export async function GET(
 
     await connectToDatabase();
 
-    // Get the story and verify ownership
+    // Get the story and verify ownership - FIXED WITH PROPER TYPING
     const story = await StorySession.findOne({
       _id: storyId,
       childId: session.user.id
@@ -66,7 +67,7 @@ export async function GET(
       fullContent += story.aiOpening + '\n\n';
     }
 
-    turns.forEach((turn, index) => {
+    turns.forEach((turn) => {
       if (turn.childInput) {
         fullContent += `**Turn ${turn.turnNumber} - Your Writing:**\n${turn.childInput}\n\n`;
       }
@@ -88,7 +89,7 @@ export async function GET(
     console.log(`💬 Found ${comments.length} comments`);
 
     // Determine story type
-    let storyType = 'freestyle';
+    let storyType: 'freestyle' | 'uploaded' | 'competition' = 'freestyle';
     if (story.isUploadedForAssessment) {
       storyType = 'uploaded';
     } else if (story.competitionEntries && story.competitionEntries.length > 0) {
@@ -100,15 +101,15 @@ export async function GET(
       ? story.competitionEntries[story.competitionEntries.length - 1]
       : null;
 
-    // Format comprehensive story response
+    // FIXED: Format comprehensive story response with ALL required properties
     const formattedStory = {
       _id: story._id.toString(),
-      title: story.title,
-      status: story.status,
+      title: story.title || '',
+      status: story.status || 'active',
       storyType,
-      createdAt: story.createdAt,
-      updatedAt: story.updatedAt,
-      completedAt: story.completedAt,
+      createdAt: story.createdAt ? new Date(story.createdAt).toISOString() : new Date().toISOString(),
+      updatedAt: story.updatedAt ? new Date(story.updatedAt).toISOString() : new Date().toISOString(),
+      completedAt: story.completedAt ? new Date(story.completedAt).toISOString() : undefined,
       
       // Word counts and progress
       totalWords: story.totalWords || 0,
@@ -117,23 +118,29 @@ export async function GET(
       maxTurns: story.maxApiCalls || 7,
       apiCallsUsed: story.apiCallsUsed || 0,
       
+      // FIXED: All the missing properties that were causing errors
+      aiOpening: story.aiOpening || '',
+      storyNumber: story.storyNumber || 0,
+      pausedAt: story.pausedAt ? new Date(story.pausedAt).toISOString() : undefined,
+      resumedAt: story.resumedAt ? new Date(story.resumedAt).toISOString() : undefined,
+      
       // Content
       content: fullContent.trim(),
-      aiOpening: story.aiOpening || '',
       turns: turns.map(turn => ({
-        turnNumber: turn.turnNumber,
+        turnNumber: turn.turnNumber || 1,
         childInput: turn.childInput || '',
         aiResponse: turn.aiResponse || '',
         wordCount: turn.wordCount || 0,
-        timestamp: turn.createdAt
+        timestamp: turn.createdAt ? new Date(turn.createdAt).toISOString() : new Date().toISOString()
       })),
       
       // Publication status
       isPublished,
-      publishedAt: publishedStory?.publishedAt || null,
-      publicationFee: publishedStory?.publicationFee || null,
+      publishedAt: publishedStory?.publishedAt ? new Date(publishedStory.publishedAt).toISOString() : undefined,
+      publicationDate: publishedStory?.publishedAt ? new Date(publishedStory.publishedAt).toISOString() : undefined,
+      publicationFee: story.publicationFee || undefined,
       
-      // Assessment data
+      // Assessment data - FIXED with proper null checking
       isUploadedForAssessment: story.isUploadedForAssessment || false,
       assessmentAttempts: story.assessmentAttempts || 0,
       assessment: story.assessment ? {
@@ -145,77 +152,58 @@ export async function GET(
         structureScore: story.assessment.structureScore || 0,
         characterDevelopmentScore: story.assessment.characterDevelopmentScore || 0,
         plotDevelopmentScore: story.assessment.plotDevelopmentScore || 0,
+        themeScore: story.assessment.themeScore || 0,
+        dialogueScore: story.assessment.dialogueScore || 0,
+        descriptiveScore: story.assessment.descriptiveScore || 0,
+        pacingScore: story.assessment.pacingScore || 0,
         
         // Reading level and feedback
         readingLevel: story.assessment.readingLevel || 'Unknown',
         feedback: story.assessment.feedback || '',
         strengths: story.assessment.strengths || [],
         improvements: story.assessment.improvements || [],
-        encouragement: story.assessment.encouragement || '',
-        educationalInsights: story.assessment.educationalInsights || '',
         
-        // Vocabulary analysis
-        vocabularyUsed: story.assessment.vocabularyUsed || [],
-        suggestedWords: story.assessment.suggestedWords || [],
-        
-        // Integrity analysis
+        // Integrity analysis - FIXED with proper structure
         integrityAnalysis: story.assessment.integrityAnalysis ? {
-          originalityScore: story.assessment.integrityAnalysis.originalityScore || 100,
           plagiarismResult: {
             overallScore: story.assessment.integrityAnalysis.plagiarismResult?.overallScore || 100,
-            riskLevel: story.assessment.integrityAnalysis.plagiarismResult?.riskLevel || 'low',
-            violations: story.assessment.integrityAnalysis.plagiarismResult?.violations || []
+            riskLevel: story.assessment.integrityAnalysis.plagiarismResult?.riskLevel || 'low'
           },
           aiDetectionResult: {
             likelihood: story.assessment.integrityAnalysis.aiDetectionResult?.likelihood || 'low',
-            confidence: story.assessment.integrityAnalysis.aiDetectionResult?.confidence || 0,
-            indicators: story.assessment.integrityAnalysis.aiDetectionResult?.indicators || []
+            confidence: story.assessment.integrityAnalysis.aiDetectionResult?.confidence || 0
           },
           integrityRisk: story.assessment.integrityAnalysis.integrityRisk || 'low'
-        } : null,
+        } : undefined,
         
         integrityStatus: story.assessment.integrityStatus || {
-          status: 'PASS',
+          status: 'PASS' as const,
           message: 'Story passed all integrity checks'
-        },
-        
-        // Recommendations and progress
-        recommendations: story.assessment.recommendations || {
-          immediate: [],
-          longTerm: [],
-          practiceExercises: []
-        },
-        
-        progressTracking: story.assessment.progressTracking || null
-      } : null,
+        }
+      } : undefined,
       
-      // Competition data
+      // Competition data - FIXED
       competitionEligible: story.competitionEligible || false,
       competitionEntries: story.competitionEntries || [],
       latestCompetitionEntry,
       submittedToCompetition: !!latestCompetitionEntry,
       
-      // Story elements (if any)
+      // Story elements - FIXED
       elements: story.elements || {},
       
-      // Comments from mentors/admin
-      comments: comments.map(comment => ({
+      // Comments from mentors/admin - FIXED with proper property names
+      comments: comments.map((comment: any) => ({
         _id: comment._id.toString(),
-        content: comment.content,
+        content: comment.content || comment.comment || '', // Handle both property names
         author: comment.authorId ? {
-          _id: comment.authorId._id.toString(),
-          name: `${comment.authorId.firstName} ${comment.authorId.lastName}`,
-          role: comment.authorId.role
+          _id: comment.authorId._id ? comment.authorId._id.toString() : '',
+          name: `${comment.authorId.firstName || ''} ${comment.authorId.lastName || ''}`.trim(),
+          role: comment.authorId.role || 'mentor'
         } : null,
-        createdAt: comment.createdAt,
-        isPublic: comment.isPublic || false,
-        category: comment.category || 'general'
-      })),
-      
-      // Metadata
-      storyNumber: story.storyNumber || 0,
-      pausedAt: story.pausedAt,
-      resumedAt: story.resumedAt
+        createdAt: comment.createdAt ? new Date(comment.createdAt).toISOString() : new Date().toISOString(),
+        isPublic: comment.isPublic !== undefined ? comment.isPublic : true,
+        category: comment.category || comment.commentType || 'general'
+      }))
     };
 
     console.log('📊 Story details compiled successfully');

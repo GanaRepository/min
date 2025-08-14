@@ -1,4 +1,4 @@
-// models/StoryComment.ts - FIXED VERSION
+// models/StoryComment.ts - FIX PROPERTY NAMES
 import mongoose, { Schema, Document } from 'mongoose';
 
 export interface IStoryComment extends Document {
@@ -6,8 +6,10 @@ export interface IStoryComment extends Document {
   storyId: mongoose.Types.ObjectId;
   authorId: mongoose.Types.ObjectId;
   authorRole: 'admin' | 'mentor';
-  comment: string;
+  content: string; // Changed from 'comment' to 'content'
   commentType: 'general' | 'grammar' | 'creativity' | 'structure' | 'suggestion' | 'admin_feedback';
+  category: string; // Added this property
+  isPublic: boolean; // Added this property
   isResolved: boolean;
   resolvedAt?: Date;
   resolvedBy?: mongoose.Types.ObjectId;
@@ -37,7 +39,7 @@ const StoryCommentSchema = new Schema<IStoryComment>({
     enum: ['admin', 'mentor'],
     required: true,
   },
-  comment: {
+  content: { // Changed from 'comment' to 'content'
     type: String,
     required: true,
     maxlength: 1000,
@@ -46,6 +48,14 @@ const StoryCommentSchema = new Schema<IStoryComment>({
     type: String,
     enum: ['general', 'grammar', 'creativity', 'structure', 'suggestion', 'admin_feedback'],
     default: 'general',
+  },
+  category: { // Added this field
+    type: String,
+    default: 'general',
+  },
+  isPublic: { // Added this field
+    type: Boolean,
+    default: true,
   },
   isResolved: {
     type: Boolean,
