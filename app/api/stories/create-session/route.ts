@@ -1,97 +1,374 @@
-// app/api/stories/create-session/route.ts - FREESTYLE ONLY
+// app/api/stories/create-session/route.ts - COMPLETE UPDATE FOR MINTOONS REQUIREMENTS
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/utils/authOptions';
 import { connectToDatabase } from '@/utils/db';
-import { UsageManager } from '@/lib/usage-manager';
 import StorySession from '@/models/StorySession';
 import User from '@/models/User';
+import { UsageManager } from '@/lib/usage-manager';
+import { collaborationEngine } from '@/lib/ai/collaboration';
+import mongoose from 'mongoose';
 
-interface StoryCreationRequest {
-  openingText?: string;
-}
+export const dynamic = 'force-dynamic';
 
 export async function POST(request: Request) {
   try {
     const session = await getServerSession(authOptions);
-    const body: StoryCreationRequest = await request.json();
-
-    if (!session || session.user.role !== 'child') {
+    
+    if (!session || session.user?.role !== 'child') {
       return NextResponse.json(
         { error: 'Access denied. Children only.' },
         { status: 403 }
       );
     }
 
-    await connectToDatabase();
+    console.log('📝 Creating new story session for user:', session.user.id);
 
-    // Check if user can create a story
-    const usageCheck = await UsageManager.canCreateStory(session.user.id);
-    if (!usageCheck.allowed) {
+    const body = await request.json();
+    const { sessionType, title, elements } = body;
+
+    // Validate session type
+    if (!['freestyle', 'guided'].includes(sessionType)) {
       return NextResponse.json(
-        {
-          error: usageCheck.reason,
-          needsUpgrade: usageCheck.upgradeRequired,
-          currentUsage: usageCheck.currentUsage,
-          limits: usageCheck.limits,
-        },
-        { status: 429 }
+        { error: 'Invalid session type. Use "freestyle" or "guided".' },
+        { status: 400 }
       );
     }
 
-    const user = await User.findById(session.user.id);
-    if (!user) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    // For Mintoons, we only support freestyle now
+    if (sessionType !== 'freestyle') {
+      return NextResponse.json(
+        { error: 'Only freestyle story writing is currently supported.' },
+        { status: 400 }
+      );
     }
 
-    // Get next story number
-    const lastSession = await StorySession.findOne({
-      childId: session.user.id,
-    }).sort({ storyNumber: -1 }).select('storyNumber');
+    await connectToDatabase();
 
-    const nextStoryNumber = (lastSession?.storyNumber || 0) + 1;
-    const title = `My Creative Story #${nextStoryNumber}`;
+    // Check if user can create a new story
+    const canCreate = await UsageManager.canCreateStory(session.user.id);
+    if (!canCreate.allowed) {
+      console.log(`❌ Story creation denied: ${canCreate.reason}`);
+      return NextResponse.json(
+        {
+          error: canCreate.reason,
+          upgradeRequired: canCreate.upgradeRequired
+        },
+        { status: 403 }
+      );
+    }
 
-    const sessionData = {
-      childId: session.user.id,
-      storyNumber: nextStoryNumber,
-      title,
-      aiOpening: body.openingText || 'Welcome to your creative writing adventure! What story would you like to tell today?',
+    console.log('✅ User can create story, proceeding...');
+
+    // Get user data
+    const user = await User.findById(session.user.id);
+    if (!user) {
+      return NextResponse.json(
+        { error: 'User not found' },
+        { status: 404 }
+      );
+    }
+
+    // Calculate story number for this user
+    const userStoryCount = await StorySession.countDocuments({
+      childId: session.user.id
+    });
+
+    // Generate AI opening for freestyle stories
+    let aiOpening = '';
+    try {
+      aiOpening = await collaborationEngine.generateFreeformOpening();
+      console.log('🤖 AI opening generated');
+    } catch (error) {
+      console.error('❌ Failed to generate AI opening:', error);
+      aiOpening = 'Welcome to your creative writing adventure! What story would you like to tell today? Start with any idea, character, or situation that excites you.';
+    }
+
+    // Create new story session
+    const storySession = new StorySession({
+      childId: new mongoose.Types.ObjectId(session.user.id),
+      storyNumber: userStoryCount + 1,
+      title: title?.trim() || `My Story #${userStoryCount + 1}`,
+      aiOpening,
       currentTurn: 1,
+      status: 'active',
+      
+      // Story configuration
+      maxApiCalls: 7, // 7 turns total for Mintoons
+      apiCallsUsed: 0,
       totalWords: 0,
       childWords: 0,
-      apiCallsUsed: 0,
-      maxApiCalls: 7,
-      status: 'active',
+      
+      // Story elements (if provided)
+      elements: elements || {},
+      
+      // Flags
       isUploadedForAssessment: false,
-    };
+      competitionEligible: true, // Default to eligible
+      isPublished: false,
+      
+      // Assessment tracking
+      assessmentAttempts: 0,
+      
+      // Timestamps
+      createdAt: new Date(),
+      updatedAt: new Date()
+    });
 
-    const newSession = await StorySession.create(sessionData);
+    await storySession.save();
 
-    // Increment user's story creation counter
+    // Increment user's story creation count
     await UsageManager.incrementStoryCreation(session.user.id);
 
-    console.log(`✅ Created freestyle story session: ${newSession._id}`);
+    console.log(`✅ Story session created: ${storySession._id}`);
 
+    // Return success response
+    return NextResponse.json({
+      success: true,
+      message: 'Story session created successfully',
+      sessionId: storySession._id.toString(),
+      story: {
+        _id: storySession._id.toString(),
+        title: storySession.title,
+        storyNumber: storySession.storyNumber,
+        currentTurn: storySession.currentTurn,
+        maxTurns: storySession.maxApiCalls,
+        aiOpening: storySession.aiOpening,
+        status: storySession.status,
+        createdAt: storySession.createdAt
+      },
+      redirectUrl: `/children-dashboard/story/${storySession._id}`
+    });
+
+  } catch (error) {
+    console.error('❌ Error creating story session:', error);
+    return NextResponse.json(
+      { 
+        error: 'Failed to create story session',
+        details: error instanceof Error ? error.message : 'Unknown error'
+      },
+      { status: 500 }
+    );
+  }
+}
+
+// GET endpoint for retrieving session information
+export async function GET(request: Request) {
+  try {
+    const session = await getServerSession(authOptions);
+    
+    if (!session || session.user?.role !== 'child') {
+      return NextResponse.json(
+        { error: 'Access denied. Children only.' },
+        { status: 403 }
+      );
+    }
+
+    const { searchParams } = new URL(request.url);
+    const sessionId = searchParams.get('sessionId');
+
+    if (!sessionId) {
+      return NextResponse.json(
+        { error: 'Session ID is required' },
+        { status: 400 }
+      );
+    }
+
+    await connectToDatabase();
+
+    // Get the story session and verify ownership
+    const storySession = await StorySession.findOne({
+      _id: sessionId,
+      childId: session.user.id
+    }).lean();
+
+    if (!storySession) {
+      return NextResponse.json(
+        { error: 'Story session not found or access denied' },
+        { status: 404 }
+      );
+    }
+
+    // Return session information
     return NextResponse.json({
       success: true,
       session: {
-        id: newSession._id,
-        storyNumber: newSession.storyNumber,
-        title: newSession.title,
-        currentTurn: newSession.currentTurn,
-        totalWords: newSession.totalWords,
-        childWords: newSession.childWords,
-        apiCallsUsed: newSession.apiCallsUsed,
-        maxApiCalls: newSession.maxApiCalls,
-        status: newSession.status,
-      },
-      aiOpening: newSession.aiOpening,
+        _id: storySession._id.toString(),
+        title: storySession.title,
+        storyNumber: storySession.storyNumber,
+        currentTurn: storySession.currentTurn,
+        maxTurns: storySession.maxApiCalls || 7,
+        apiCallsUsed: storySession.apiCallsUsed || 0,
+        status: storySession.status,
+        aiOpening: storySession.aiOpening,
+        totalWords: storySession.totalWords || 0,
+        childWords: storySession.childWords || 0,
+        elements: storySession.elements || {},
+        createdAt: storySession.createdAt,
+        updatedAt: storySession.updatedAt
+      }
     });
+
   } catch (error) {
-    console.error('❌ Error in create-session API:', error);
+    console.error('❌ Error retrieving story session:', error);
     return NextResponse.json(
-      { error: 'Failed to create story session' },
+      { 
+        error: 'Failed to retrieve story session',
+        details: error instanceof Error ? error.message : 'Unknown error'
+      },
+      { status: 500 }
+    );
+  }
+}
+
+// PUT endpoint for updating session details
+export async function PUT(request: Request) {
+  try {
+    const session = await getServerSession(authOptions);
+    
+    if (!session || session.user?.role !== 'child') {
+      return NextResponse.json(
+        { error: 'Access denied. Children only.' },
+        { status: 403 }
+      );
+    }
+
+    const body = await request.json();
+    const { sessionId, title, elements, competitionEligible } = body;
+
+    if (!sessionId) {
+      return NextResponse.json(
+        { error: 'Session ID is required' },
+        { status: 400 }
+      );
+    }
+
+    await connectToDatabase();
+
+    // Find and verify ownership
+    const storySession = await StorySession.findOne({
+      _id: sessionId,
+      childId: session.user.id
+    });
+
+    if (!storySession) {
+      return NextResponse.json(
+        { error: 'Story session not found or access denied' },
+        { status: 404 }
+      );
+    }
+
+    // Update allowed fields
+    if (title && title.trim()) {
+      storySession.title = title.trim();
+    }
+
+    if (elements && typeof elements === 'object') {
+      storySession.elements = { ...storySession.elements, ...elements };
+    }
+
+    if (typeof competitionEligible === 'boolean') {
+      storySession.competitionEligible = competitionEligible;
+    }
+
+    storySession.updatedAt = new Date();
+    await storySession.save();
+
+    console.log(`✅ Story session ${sessionId} updated successfully`);
+
+    return NextResponse.json({
+      success: true,
+      message: 'Story session updated successfully',
+      session: {
+        _id: storySession._id.toString(),
+        title: storySession.title,
+        elements: storySession.elements,
+        competitionEligible: storySession.competitionEligible,
+        updatedAt: storySession.updatedAt
+      }
+    });
+
+  } catch (error) {
+    console.error('❌ Error updating story session:', error);
+    return NextResponse.json(
+      { 
+        error: 'Failed to update story session',
+        details: error instanceof Error ? error.message : 'Unknown error'
+      },
+      { status: 500 }
+    );
+  }
+}
+
+// DELETE endpoint for deleting a session (only if not completed/published)
+export async function DELETE(request: Request) {
+  try {
+    const session = await getServerSession(authOptions);
+    
+    if (!session || session.user?.role !== 'child') {
+      return NextResponse.json(
+        { error: 'Access denied. Children only.' },
+        { status: 403 }
+      );
+    }
+
+    const { searchParams } = new URL(request.url);
+    const sessionId = searchParams.get('sessionId');
+
+    if (!sessionId) {
+      return NextResponse.json(
+        { error: 'Session ID is required' },
+        { status: 400 }
+      );
+    }
+
+    await connectToDatabase();
+
+    // Find and verify ownership
+    const storySession = await StorySession.findOne({
+      _id: sessionId,
+      childId: session.user.id
+    });
+
+    if (!storySession) {
+      return NextResponse.json(
+        { error: 'Story session not found or access denied' },
+        { status: 404 }
+      );
+    }
+
+    // Check if session can be deleted
+    if (storySession.status === 'completed' || storySession.isPublished) {
+      return NextResponse.json(
+        { error: 'Cannot delete completed or published stories' },
+        { status: 400 }
+      );
+    }
+
+    if (storySession.competitionEntries && storySession.competitionEntries.length > 0) {
+      return NextResponse.json(
+        { error: 'Cannot delete stories submitted to competitions' },
+        { status: 400 }
+      );
+    }
+
+    // Delete the session
+    await StorySession.findByIdAndDelete(sessionId);
+
+    console.log(`🗑️ Story session ${sessionId} deleted successfully`);
+
+    return NextResponse.json({
+      success: true,
+      message: 'Story session deleted successfully'
+    });
+
+  } catch (error) {
+    console.error('❌ Error deleting story session:', error);
+    return NextResponse.json(
+      { 
+        error: 'Failed to delete story session',
+        details: error instanceof Error ? error.message : 'Unknown error'
+      },
       { status: 500 }
     );
   }

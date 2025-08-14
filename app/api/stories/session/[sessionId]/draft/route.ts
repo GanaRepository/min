@@ -1,69 +1,167 @@
-// app/api/stories/session/[sessionId]/draft/route.ts
-import { NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/utils/authOptions';
+// app/api/stories/session/[sessionId]/draft/route.ts - DRAFT SAVE API
+import { NextRequest, NextResponse } from 'next/server';
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { connectToDatabase } from '@/utils/db';
 import StorySession from '@/models/StorySession';
-import mongoose from 'mongoose';
 
 export async function POST(
-  request: Request,
+  request: NextRequest,
   { params }: { params: { sessionId: string } }
 ) {
   try {
     const session = await getServerSession(authOptions);
-
-    if (!session || session.user.role !== 'child') {
-      return NextResponse.json(
-        { error: 'Access denied. Children only.' },
-        { status: 403 }
-      );
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
     }
 
     const { sessionId } = params;
     const body = await request.json();
-    const { draftContent, turnNumber } = body;
+    const { draftContent } = body;
 
-    if (!draftContent || !turnNumber) {
+    if (!sessionId || !draftContent) {
       return NextResponse.json(
-        { error: 'Missing required fields' },
+        { error: 'Session ID and draft content are required' },
         { status: 400 }
       );
     }
 
     await connectToDatabase();
 
-    // Update session with draft
-    const updatedSession = await StorySession.findOneAndUpdate(
-      {
-        _id: sessionId,
-        childId: session.user.id,
-        status: 'active',
-      },
-      {
-        $set: {
-          [`draft.turn${turnNumber}`]: draftContent,
-          'draft.lastSaved': new Date(),
-        },
-      },
-      { new: true }
-    );
+    // Verify session ownership and status
+    const storySession = await StorySession.findOne({
+      _id: sessionId,
+      childId: session.user.id
+    });
 
-    if (!updatedSession) {
+    if (!storySession) {
+      return NextResponse.json({ error: 'Story session not found' }, { status: 404 });
+    }
+
+    if (storySession.status === 'completed') {
       return NextResponse.json(
-        { error: 'Story session not found or not active' },
-        { status: 404 }
+        { error: 'Cannot save drafts for completed stories' },
+        { status: 400 }
       );
     }
+
+    // Save draft content
+    await StorySession.findByIdAndUpdate(sessionId, {
+      draftContent: draftContent.trim(),
+      lastDraftSaved: new Date(),
+      updatedAt: new Date()
+    });
+
+    console.log(`💾 Draft saved for session ${sessionId}: ${draftContent.length} characters`);
 
     return NextResponse.json({
       success: true,
       message: 'Draft saved successfully',
+      savedAt: new Date(),
+      draftLength: draftContent.trim().length
     });
+
   } catch (error) {
     console.error('Error saving draft:', error);
     return NextResponse.json(
       { error: 'Failed to save draft' },
+      { status: 500 }
+    );
+  }
+}
+
+export async function GET(
+  request: NextRequest,
+  { params }: { params: { sessionId: string } }
+) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
+    }
+
+    const { sessionId } = params;
+
+    if (!sessionId) {
+      return NextResponse.json({ error: 'Session ID required' }, { status: 400 });
+    }
+
+    await connectToDatabase();
+
+    // Get story session with draft
+    const storySession = await StorySession.findOne({
+      _id: sessionId,
+      childId: session.user.id
+    }).select('draftContent lastDraftSaved');
+
+    if (!storySession) {
+      return NextResponse.json({ error: 'Story session not found' }, { status: 404 });
+    }
+
+    return NextResponse.json({
+      success: true,
+      draftContent: storySession.draftContent || '',
+      lastSaved: storySession.lastDraftSaved || null,
+      hasDraft: !!storySession.draftContent
+    });
+
+  } catch (error) {
+    console.error('Error fetching draft:', error);
+    return NextResponse.json(
+      { error: 'Failed to fetch draft' },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: { sessionId: string } }
+) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
+    }
+
+    const { sessionId } = params;
+
+    if (!sessionId) {
+      return NextResponse.json({ error: 'Session ID required' }, { status: 400 });
+    }
+
+    await connectToDatabase();
+
+    // Verify session ownership
+    const storySession = await StorySession.findOne({
+      _id: sessionId,
+      childId: session.user.id
+    });
+
+    if (!storySession) {
+      return NextResponse.json({ error: 'Story session not found' }, { status: 404 });
+    }
+
+    // Clear draft content
+    await StorySession.findByIdAndUpdate(sessionId, {
+      $unset: {
+        draftContent: 1,
+        lastDraftSaved: 1
+      },
+      updatedAt: new Date()
+    });
+
+    console.log(`🗑️ Draft cleared for session ${sessionId}`);
+
+    return NextResponse.json({
+      success: true,
+      message: 'Draft cleared successfully'
+    });
+
+  } catch (error) {
+    console.error('Error clearing draft:', error);
+    return NextResponse.json(
+      { error: 'Failed to clear draft' },
       { status: 500 }
     );
   }

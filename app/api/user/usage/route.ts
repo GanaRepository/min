@@ -1,214 +1,259 @@
-// import { NextRequest, NextResponse } from 'next/server';
-// import { getServerSession } from 'next-auth';
-// import { authOptions } from '@/utils/authOptions';
-// import { connectToDatabase } from '@/utils/db';
-// import User from '@/models/User';
-
-// // Define proper interfaces
-// interface UserLimits {
-//   stories: number;
-//   assessments: number;
-//   competitionEntries: number;
-//   totalAssessmentAttempts: number;
-// }
-
-// interface PurchaseHistoryItem {
-//   type: string;
-//   amount: number;
-//   purchaseDate: Date;
-// }
-
-// function getUserLimits(user: any): UserLimits {
-//   // Basic implementation - you can enhance this based on your business logic
-//   const hasStoryPack = user.purchaseHistory?.some(
-//     (purchase: PurchaseHistoryItem) => {
-//       const purchaseDate = new Date(purchase.purchaseDate);
-//       const thisMonth = new Date();
-//       return (
-//         purchase.type === 'story_pack' &&
-//         purchaseDate.getMonth() === thisMonth.getMonth() &&
-//         purchaseDate.getFullYear() === thisMonth.getFullYear()
-//       );
-//     }
-//   );
-
-//   return {
-//     stories: hasStoryPack ? 8 : 3, // 8 if they bought story pack, 3 free
-//     assessments: hasStoryPack ? 8 : 3,
-//     competitionEntries: 3,
-//     totalAssessmentAttempts: 9, // 3 attempts per story, 3 stories max
-//   };
-// }
-
-// export async function GET(req: NextRequest) {
-//   try {
-//     const session = await getServerSession(authOptions);
-//     if (!session?.user?.id) {
-//       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-//     }
-
-//     await connectToDatabase();
-
-//     const user = await User.findById(session.user.id).select(
-//       'storiesCreatedThisMonth assessmentUploadsThisMonth competitionEntriesThisMonth assessmentAttempts purchaseHistory lastMonthlyReset'
-//     );
-
-//     if (!user) {
-//       return NextResponse.json({ error: 'User not found' }, { status: 404 });
-//     }
-
-//     // Get user's current limits based on purchases
-//     const limits = getUserLimits(user);
-
-//     // Calculate total assessment attempts used - handle Map properly
-//     let totalAssessmentAttempts = 0;
-//     if (
-//       user.assessmentAttempts &&
-//       typeof user.assessmentAttempts === 'object'
-//     ) {
-//       if (user.assessmentAttempts instanceof Map) {
-//         for (const attempts of user.assessmentAttempts.values()) {
-//           totalAssessmentAttempts += Number(attempts) || 0;
-//         }
-//       } else {
-//         // Handle as object
-//         for (const attempts of Object.values(user.assessmentAttempts)) {
-//           totalAssessmentAttempts += Number(attempts) || 0;
-//         }
-//       }
-//     }
-
-//     // Calculate monthly spent safely
-//     let monthlySpent = 0;
-//     if (user.purchaseHistory && Array.isArray(user.purchaseHistory)) {
-//       monthlySpent = user.purchaseHistory.reduce(
-//         (total: number, purchase: any) => {
-//           if (purchase && purchase.purchaseDate && purchase.amount) {
-//             const purchaseDate = new Date(purchase.purchaseDate);
-//             const thisMonth = new Date();
-//             if (
-//               purchaseDate.getMonth() === thisMonth.getMonth() &&
-//               purchaseDate.getFullYear() === thisMonth.getFullYear()
-//             ) {
-//               return total + (Number(purchase.amount) || 0);
-//             }
-//           }
-//           return total;
-//         },
-//         0
-//       );
-//     }
-
-//     const usageStats = {
-//       storiesCreated: Number(user.storiesCreatedThisMonth) || 0,
-//       storyLimit: limits.stories,
-//       assessmentUploads: Number(user.assessmentUploadsThisMonth) || 0,
-//       assessmentLimit: limits.assessments,
-//       competitionEntries: Number(user.competitionEntriesThisMonth) || 0,
-//       competitionLimit: limits.competitionEntries,
-//       totalAssessmentAttempts,
-//       maxAssessmentAttempts: limits.totalAssessmentAttempts,
-//       lastReset: user.lastMonthlyReset,
-
-//       // Remaining counts
-//       storiesRemaining: Math.max(
-//         0,
-//         limits.stories - (Number(user.storiesCreatedThisMonth) || 0)
-//       ),
-//       assessmentsRemaining: Math.max(
-//         0,
-//         limits.assessments - (Number(user.assessmentUploadsThisMonth) || 0)
-//       ),
-//       competitionEntriesRemaining: Math.max(
-//         0,
-//         limits.competitionEntries -
-//           (Number(user.competitionEntriesThisMonth) || 0)
-//       ),
-
-//       // Purchase info
-//       hasStoryPackThisMonth: limits.stories > 3, // More than free tier
-//       monthlySpent,
-//     };
-
-//     return NextResponse.json(usageStats);
-//   } catch (error) {
-//     console.error('Error fetching user usage:', error);
-//     return NextResponse.json(
-//       { error: 'Failed to fetch usage statistics' },
-//       { status: 500 }
-//     );
-//   }
-// }
-
-// app/api/user/usage/route.ts - FIXED TO MATCH DASHBOARD
-import { NextRequest, NextResponse } from 'next/server';
+// app/api/user/usage/route.ts - COMPLETE UPDATE FOR MINTOONS REQUIREMENTS
+import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/utils/authOptions';
 import { connectToDatabase } from '@/utils/db';
+import { UsageManager } from '@/lib/usage-manager';
 import User from '@/models/User';
+import StorySession from '@/models/StorySession';
+import PublishedStory from '@/models/PublishedStory';
 
-function getUserLimits(user: any) {
-  const hasStoryPack = user.purchaseHistory?.some(
-    (purchase: any) => {
-      const purchaseDate = new Date(purchase.purchaseDate);
-      const thisMonth = new Date();
-      return (
-        purchase.type === 'story_pack' &&
-        purchaseDate.getMonth() === thisMonth.getMonth() &&
-        purchaseDate.getFullYear() === thisMonth.getFullYear()
-      );
-    }
-  );
+export const dynamic = 'force-dynamic';
 
-  return {
-    stories: hasStoryPack ? 8 : 3,
-    assessments: hasStoryPack ? 8 : 3,
-    competitionEntries: 3,
-    totalAssessmentAttempts: 9,
-  };
-}
-
-export async function GET(req: NextRequest) {
+export async function GET() {
   try {
     const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    if (!session || session.user?.role !== 'child') {
+      return NextResponse.json(
+        { error: 'Access denied. Children only.' },
+        { status: 403 }
+      );
     }
+
+    console.log('📊 Fetching usage statistics for user:', session.user.id);
 
     await connectToDatabase();
 
-    const user = await User.findById(session.user.id).select(
-      'storiesCreatedThisMonth assessmentUploadsThisMonth competitionEntriesThisMonth purchaseHistory lastMonthlyReset'
-    );
+    // Get current month dates
+    const now = new Date();
+    const currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+    const nextMonthStart = new Date(now.getFullYear(), now.getMonth() + 1, 1);
 
+    // Get user data
+    const user = await User.findById(session.user.id);
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    const limits = getUserLimits(user);
+    // Calculate user's current limits (including any Story Pack purchases)
+    const userLimits = await UsageManager.getUserLimits(session.user.id);
+    const currentUsage = await UsageManager.getCurrentUsage(session.user.id);
 
-    // Format to match your dashboard expectations
+    console.log('📈 Current usage:', currentUsage);
+    console.log('📋 User limits:', userLimits);
+
+    // Get detailed story breakdown for this month
+    const monthlyStories = await StorySession.find({
+      childId: session.user.id,
+      createdAt: { $gte: currentMonthStart }
+    }).select('isUploadedForAssessment competitionEntries assessmentAttempts createdAt');
+
+    // Count freestyle stories (not uploaded, not just created)
+    const freestyleStories = monthlyStories.filter(story => 
+      !story.isUploadedForAssessment && 
+      (!story.competitionEntries || story.competitionEntries.length === 0)
+    ).length;
+
+    // Count uploaded stories for assessment
+    const uploadedStories = monthlyStories.filter(story => 
+      story.isUploadedForAssessment === true
+    ).length;
+
+    // Count competition entries from user's monthly tracking
+    const competitionEntries = user.competitionEntriesThisMonth || 0;
+
+    // Count total assessment attempts (across all stories)
+    const totalAssessmentAttempts = monthlyStories.reduce(
+      (sum, story) => sum + (story.assessmentAttempts || 0), 
+      0
+    );
+
+    // Count publications this month
+    const monthlyPublications = await PublishedStory.countDocuments({
+      childId: session.user.id,
+      publishedAt: { $gte: currentMonthStart }
+    });
+
+    // Determine subscription tier
+    const hasStoryPack = user.purchaseHistory?.some((purchase: any) => 
+      purchase.type === 'story_pack' && 
+      purchase.purchaseDate >= currentMonthStart &&
+      purchase.purchaseDate < nextMonthStart
+    ) || false;
+
+    const subscriptionTier = hasStoryPack ? 'STORY_PACK' : 'FREE';
+
+    // Build comprehensive usage response
     const usageStats = {
+      // Freestyle story creation
       stories: {
-        used: Number(user.storiesCreatedThisMonth) || 0,
-        limit: limits.stories,
+        used: freestyleStories,
+        limit: userLimits.stories,
+        remaining: Math.max(0, userLimits.stories - freestyleStories),
+        canUse: freestyleStories < userLimits.stories
       },
+
+      // Story uploads for assessment
       assessments: {
-        used: Number(user.assessmentUploadsThisMonth) || 0,
-        limit: limits.assessments,
+        used: uploadedStories,
+        limit: userLimits.assessments,
+        remaining: Math.max(0, userLimits.assessments - uploadedStories),
+        canUse: uploadedStories < userLimits.assessments
       },
+
+      // Assessment attempts (total pool)
+      assessmentAttempts: {
+        used: totalAssessmentAttempts,
+        limit: userLimits.totalAssessmentAttempts,
+        remaining: Math.max(0, userLimits.totalAssessmentAttempts - totalAssessmentAttempts),
+        canUse: totalAssessmentAttempts < userLimits.totalAssessmentAttempts
+      },
+
+      // Competition entries
       competitions: {
-        used: Number(user.competitionEntriesThisMonth) || 0,
-        limit: limits.competitionEntries,
+        used: competitionEntries,
+        limit: userLimits.competitionEntries,
+        remaining: Math.max(0, userLimits.competitionEntries - competitionEntries),
+        canUse: competitionEntries < userLimits.competitionEntries
       },
-      currentPeriod: new Date().toLocaleDateString(),
+
+      // Free publications
+      publications: {
+        used: monthlyPublications,
+        limit: 1, // Always 1 free publication per month
+        remaining: Math.max(0, 1 - monthlyPublications),
+        canUse: monthlyPublications < 1
+      },
+
+      // Additional metadata
+      resetDate: nextMonthStart.toISOString(),
+      subscriptionTier: subscriptionTier,
+      currentPeriod: now.toLocaleDateString('en-US', { 
+        month: 'long', 
+        year: 'numeric' 
+      }),
+
+      // Detailed breakdown for admin/debugging
+      breakdown: {
+        freestyleStories,
+        uploadedStories,
+        competitionEntries,
+        totalAssessmentAttempts,
+        monthlyPublications,
+        hasStoryPack,
+        totalMonthlyStories: monthlyStories.length
+      }
     };
 
-    return NextResponse.json(usageStats);
+    console.log('✅ Usage statistics calculated:', usageStats);
+
+    return NextResponse.json({
+      success: true,
+      usage: usageStats,
+      message: 'Usage statistics retrieved successfully'
+    });
+
   } catch (error) {
-    console.error('Error fetching user usage:', error);
+    console.error('❌ Error fetching usage statistics:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch usage statistics' },
+      { 
+        error: 'Failed to fetch usage statistics',
+        details: error instanceof Error ? error.message : 'Unknown error'
+      },
+      { status: 500 }
+    );
+  }
+}
+
+// POST endpoint for manual usage updates (admin only)
+export async function POST(request: Request) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session || (session.user?.role !== 'admin' && session.user?.role !== 'child')) {
+      return NextResponse.json(
+        { error: 'Access denied' },
+        { status: 403 }
+      );
+    }
+
+    const body = await request.json();
+    const { action, userId } = body;
+
+    const targetUserId = userId || session.user.id;
+
+    // Only allow children to update their own usage, admins can update anyone
+    if (session.user.role === 'child' && targetUserId !== session.user.id) {
+      return NextResponse.json(
+        { error: 'Cannot update other users usage' },
+        { status: 403 }
+      );
+    }
+
+    await connectToDatabase();
+
+    let result;
+    switch (action) {
+      case 'increment_story':
+        await UsageManager.incrementStoryCreation(targetUserId);
+        result = 'Story creation incremented';
+        break;
+        
+      case 'increment_assessment_upload':
+        await UsageManager.incrementAssessmentUpload(targetUserId);
+        result = 'Assessment upload incremented';
+        break;
+        
+      case 'increment_assessment_attempt':
+        const { storyId } = body;
+        if (!storyId) {
+          return NextResponse.json(
+            { error: 'Story ID required for assessment attempt' },
+            { status: 400 }
+          );
+        }
+        await UsageManager.incrementAssessmentAttempt(targetUserId, storyId);
+        result = 'Assessment attempt incremented';
+        break;
+        
+      case 'increment_competition':
+        await UsageManager.incrementCompetitionEntry(targetUserId);
+        result = 'Competition entry incremented';
+        break;
+        
+      case 'reset_monthly':
+        if (session.user.role !== 'admin') {
+          return NextResponse.json(
+            { error: 'Admin access required for monthly reset' },
+            { status: 403 }
+          );
+        }
+        const resetResult = await UsageManager.resetMonthlyUsage();
+        result = `Monthly usage reset for ${resetResult.usersReset} users`;
+        break;
+        
+      default:
+        return NextResponse.json(
+          { error: 'Invalid action specified' },
+          { status: 400 }
+        );
+    }
+
+    console.log(`✅ Usage action completed: ${action} for user ${targetUserId}`);
+
+    return NextResponse.json({
+      success: true,
+      message: result,
+      action,
+      userId: targetUserId
+    });
+
+  } catch (error) {
+    console.error('❌ Error updating usage:', error);
+    return NextResponse.json(
+      { 
+        error: 'Failed to update usage',
+        details: error instanceof Error ? error.message : 'Unknown error'
+      },
       { status: 500 }
     );
   }
