@@ -1,62 +1,50 @@
+// models/MentorAssignment.ts - FIXED VERSION
 import mongoose, { Schema, Document } from 'mongoose';
 
 export interface IMentorAssignment extends Document {
+  _id: mongoose.Types.ObjectId;
   mentorId: mongoose.Types.ObjectId;
   childId: mongoose.Types.ObjectId;
-  assignedAt: Date;
-  assignedBy: mongoose.Types.ObjectId; // Admin who made the assignment
+  assignedBy: mongoose.Types.ObjectId;
   isActive: boolean;
-  unassignedAt?: Date;
-  unassignedBy?: mongoose.Types.ObjectId;
+  assignmentDate: Date;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-const MentorAssignmentSchema = new Schema<IMentorAssignment>(
-  {
-    mentorId: {
-      type: Schema.Types.ObjectId,
-      ref: 'User',
-      required: true,
-    },
-    childId: {
-      type: Schema.Types.ObjectId,
-      ref: 'User',
-      required: true,
-    },
-    assignedAt: {
-      type: Date,
-      required: true,
-      default: Date.now,
-    },
-    assignedBy: {
-      type: Schema.Types.ObjectId,
-      ref: 'User',
-      required: true,
-    },
-    isActive: {
-      type: Boolean,
-      default: true,
-    },
-    unassignedAt: {
-      type: Date,
-    },
-    unassignedBy: {
-      type: Schema.Types.ObjectId,
-      ref: 'User',
-    },
+const MentorAssignmentSchema = new Schema<IMentorAssignment>({
+  mentorId: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
+    index: true,
   },
-  {
-    timestamps: true,
-  }
-);
+  childId: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
+    index: true,
+  },
+  assignedBy: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
+  },
+  isActive: {
+    type: Boolean,
+    default: true,
+    index: true,
+  },
+  assignmentDate: {
+    type: Date,
+    default: Date.now,
+  },
+}, {
+  timestamps: true,
+});
 
-// Compound indexes
+// Indexes
 MentorAssignmentSchema.index({ mentorId: 1, isActive: 1 });
+MentorAssignmentSchema.index({ childId: 1, isActive: 1 });
 
-// Ensure a child can only be assigned to one active mentor
-MentorAssignmentSchema.index(
-  { childId: 1, isActive: 1 },
-  { unique: true, partialFilterExpression: { isActive: true } }
-);
-
-export default mongoose.models.MentorAssignment ||
-  mongoose.model<IMentorAssignment>('MentorAssignment', MentorAssignmentSchema);
+export default mongoose.models?.MentorAssignment || mongoose.model<IMentorAssignment>('MentorAssignment', MentorAssignmentSchema);
