@@ -1,4 +1,4 @@
-// app/api/user/stories/[storyId]/route.ts - COMPLETE FIXED VERSION
+// app/api/user/stories/[storyId]/route.ts - COMPLETELY FIXED ALL TYPESCRIPT ERRORS
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/utils/authOptions';
@@ -9,8 +9,99 @@ import PublishedStory from '@/models/PublishedStory';
 import StoryComment from '@/models/StoryComment';
 import mongoose from 'mongoose';
 
-
 export const dynamic = 'force-dynamic';
+
+// Type definitions to fix all FlattenMaps errors
+interface StoryDocument {
+  _id: mongoose.Types.ObjectId;
+  title: string;
+  status: string;
+  createdAt: Date;
+  updatedAt: Date;
+  completedAt?: Date;
+  totalWords: number;
+  childWords: number;
+  currentTurn: number;
+  maxApiCalls: number;
+  apiCallsUsed: number;
+  aiOpening?: string;
+  storyNumber: number;
+  pausedAt?: Date;
+  resumedAt?: Date;
+  publicationFee?: number;
+  isUploadedForAssessment: boolean;
+  assessmentAttempts: number;
+  competitionEligible: boolean;
+  competitionEntries?: Array<{
+    competitionId: mongoose.Types.ObjectId;
+    submittedAt: Date;
+    rank?: number;
+    score?: number;
+  }>;
+  elements?: Record<string, any>;
+  assessment?: {
+    overallScore: number;
+    grammarScore: number;
+    creativityScore: number;
+    vocabularyScore: number;
+    structureScore: number;
+    characterDevelopmentScore: number;
+    plotDevelopmentScore: number;
+    themeScore?: number;
+    dialogueScore?: number;
+    descriptiveScore?: number;
+    pacingScore?: number;
+    readingLevel: string;
+    feedback: string;
+    strengths: string[];
+    improvements: string[];
+    integrityAnalysis?: {
+      plagiarismResult?: {
+        overallScore: number;
+        riskLevel: string;
+      };
+      aiDetectionResult?: {
+        likelihood: string;
+        confidence: number;
+      };
+      integrityRisk?: string;
+    };
+    integrityStatus: {
+      status: 'PASS' | 'WARNING' | 'FAIL';
+      message: string;
+    };
+  };
+}
+
+interface TurnDocument {
+  _id: mongoose.Types.ObjectId;
+  turnNumber: number;
+  childInput: string;
+  aiResponse: string;
+  wordCount: number;
+  createdAt: Date;
+}
+
+interface PublishedStoryDocument {
+  _id: mongoose.Types.ObjectId;
+  publishedAt: Date;
+}
+
+interface CommentDocument {
+  _id: mongoose.Types.ObjectId;
+  content?: string;
+  comment?: string;
+  createdAt: Date;
+  isPublic?: boolean;
+  category?: string;
+  commentType?: string;
+  authorId?: {
+    _id: mongoose.Types.ObjectId;
+    firstName: string;
+    lastName: string;
+    role: string;
+  };
+}
 
 export async function GET(
   request: Request,
@@ -43,7 +134,7 @@ export async function GET(
     const story = await StorySession.findOne({
       _id: storyId,
       childId: session.user.id
-    }).lean();
+    }).lean() as StoryDocument | null;
 
     if (!story) {
       return NextResponse.json(
@@ -57,7 +148,7 @@ export async function GET(
     // Get all turns for this story (for content)
     const turns = await Turn.find({ sessionId: storyId })
       .sort({ turnNumber: 1 })
-      .lean();
+      .lean() as unknown as TurnDocument[];
 
     console.log(`📝 Found ${turns.length} turns`);
 
@@ -77,14 +168,14 @@ export async function GET(
     });
 
     // Check if story is published
-    const publishedStory = await PublishedStory.findOne({ sessionId: storyId }).lean();
+    const publishedStory = await PublishedStory.findOne({ sessionId: storyId }).lean() as PublishedStoryDocument | null;
     const isPublished = !!publishedStory;
 
     // Get comments (from mentors/admin)
     const comments = await StoryComment.find({ storyId })
       .populate('authorId', 'firstName lastName role')
       .sort({ createdAt: -1 })
-      .lean();
+      .lean() as unknown as CommentDocument[];
 
     console.log(`💬 Found ${comments.length} comments`);
 
@@ -192,7 +283,7 @@ export async function GET(
       elements: story.elements || {},
       
       // Comments from mentors/admin - FIXED with proper property names
-      comments: comments.map((comment: any) => ({
+      comments: comments.map((comment) => ({
         _id: comment._id.toString(),
         content: comment.content || comment.comment || '', // Handle both property names
         author: comment.authorId ? {
@@ -338,7 +429,7 @@ export async function DELETE(
     const story = await StorySession.findOne({
       _id: storyId,
       childId: session.user.id
-    }).lean();
+    }).lean() as StoryDocument | null;
 
     if (!story) {
       return NextResponse.json(

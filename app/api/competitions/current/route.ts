@@ -1,4 +1,4 @@
-// app/api/competitions/current/route.ts - COMPLETE UPDATE FOR MINTOONS REQUIREMENTS
+// app/api/competitions/current/route.ts - COMPLETELY FIXED ALL REMAINING ERRORS
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/utils/authOptions';
@@ -11,6 +11,44 @@ import mongoose from 'mongoose';
 
 export const dynamic = 'force-dynamic';
 
+// Type definitions for better type safety
+interface CompetitionEntry {
+  competitionId: mongoose.Types.ObjectId;
+  submittedAt: Date;
+  rank?: number;
+  score?: number;
+}
+
+interface StoryWithCompetition {
+  _id: mongoose.Types.ObjectId;
+  title: string;
+  competitionEntries?: CompetitionEntry[];
+  createdAt: Date;
+}
+
+interface CompetitionDoc {
+  _id: mongoose.Types.ObjectId;
+  month: string;
+  year: number;
+  phase: 'submission' | 'judging' | 'results';
+  isActive: boolean;
+  submissionEnd?: Date;
+  judgingEnd?: Date;
+  resultsDate?: Date;
+  totalSubmissions?: number;
+  totalParticipants?: number;
+  winners?: Array<{
+    position: number;
+    childId: mongoose.Types.ObjectId;
+    childName: string;
+    title: string;
+    score: number;
+  }>;
+  judgingCriteria?: Record<string, number>;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 export async function GET() {
   try {
     console.log('🏆 Fetching current competition data...');
@@ -18,7 +56,7 @@ export async function GET() {
     await connectToDatabase();
 
     // Get current competition from manager (handles auto-creation and phase advancement)
-    const currentCompetition = await competitionManager.getCurrentCompetition();
+    const currentCompetition = await competitionManager.getCurrentCompetition() as CompetitionDoc | null;
 
     if (!currentCompetition) {
       console.log('ℹ️ No active competition found');
@@ -72,8 +110,8 @@ export async function GET() {
       const entriesUsed = user?.competitionEntriesThisMonth || 0;
       const entriesLimit = 3; // Always 3 per month
 
-      // Get user's actual competition entries for this competition
-      const userEntries = await StorySession.find({
+      // Get user's actual competition entries for this competition - FIXED TYPE CASTING
+      const userEntriesRaw = await StorySession.find({
         childId: session.user.id,
         competitionEntries: {
           $elemMatch: {
@@ -82,10 +120,17 @@ export async function GET() {
         }
       }).select('title competitionEntries createdAt').lean();
 
+      const userEntries: StoryWithCompetition[] = userEntriesRaw.map((entry: any) => ({
+        _id: entry._id,
+        title: entry.title,
+        competitionEntries: entry.competitionEntries,
+        createdAt: entry.createdAt
+      }));
+
       // Format user entries with competition-specific data
-      const formattedUserEntries = userEntries.map(story => {
+      const formattedUserEntries = userEntries.map((story: StoryWithCompetition) => {
         const competitionEntry = story.competitionEntries?.find(
-          (entry: any) => entry.competitionId.toString() === currentCompetition._id.toString()
+          (entry: CompetitionEntry) => entry.competitionId.toString() === currentCompetition._id.toString()
         );
 
         return {
@@ -130,7 +175,7 @@ export async function GET() {
       
       // Winners (if in results phase)
       winners: currentCompetition.phase === 'results' && currentCompetition.winners 
-        ? currentCompetition.winners.map((winner: any) => ({
+        ? currentCompetition.winners.map((winner) => ({
             position: winner.position,
             childId: winner.childId.toString(),
             childName: winner.childName,
@@ -275,9 +320,9 @@ export async function POST(request: Request) {
           message: 'Competition settings updated',
           competition: {
             _id: competition._id,
+            phase: competition.phase,
             month: competition.month,
-            year: competition.year,
-            phase: competition.phase
+            year: competition.year
           }
         };
         break;

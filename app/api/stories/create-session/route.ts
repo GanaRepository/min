@@ -1,4 +1,4 @@
-// app/api/stories/create-session/route.ts - COMPLETE UPDATE FOR MINTOONS REQUIREMENTS
+// app/api/stories/create-session/route.ts - FIXED TYPESCRIPT ERRORS
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/utils/authOptions';
@@ -10,6 +10,24 @@ import { collaborationEngine } from '@/lib/ai/collaboration';
 import mongoose from 'mongoose';
 
 export const dynamic = 'force-dynamic';
+
+// Type definitions for better type safety
+interface StorySessionDoc {
+  _id: mongoose.Types.ObjectId;
+  title: string;
+  storyNumber: number;
+  currentTurn: number;
+  maxApiCalls: number;
+  aiOpening: string;
+  status: 'active' | 'completed' | 'flagged' | 'review';
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+interface UserDoc {
+  _id: mongoose.Types.ObjectId;
+  competitionEntriesThisMonth?: number;
+}
 
 export async function POST(request: Request) {
   try {
@@ -61,7 +79,7 @@ export async function POST(request: Request) {
     console.log('✅ User can create story, proceeding...');
 
     // Get user data
-    const user = await User.findById(session.user.id);
+    const user = await User.findById(session.user.id) as UserDoc | null;
     if (!user) {
       return NextResponse.json(
         { error: 'User not found' },
@@ -115,29 +133,29 @@ export async function POST(request: Request) {
       updatedAt: new Date()
     });
 
-    await storySession.save();
+    const savedSession = await storySession.save() as StorySessionDoc;
 
     // Increment user's story creation count
     await UsageManager.incrementStoryCreation(session.user.id);
 
-    console.log(`✅ Story session created: ${storySession._id}`);
+    console.log(`✅ Story session created: ${savedSession._id}`);
 
     // Return success response
     return NextResponse.json({
       success: true,
       message: 'Story session created successfully',
-      sessionId: storySession._id.toString(),
+      sessionId: savedSession._id.toString(),
       story: {
-        _id: storySession._id.toString(),
-        title: storySession.title,
-        storyNumber: storySession.storyNumber,
-        currentTurn: storySession.currentTurn,
-        maxTurns: storySession.maxApiCalls,
-        aiOpening: storySession.aiOpening,
-        status: storySession.status,
-        createdAt: storySession.createdAt
+        _id: savedSession._id.toString(),
+        title: savedSession.title,
+        storyNumber: savedSession.storyNumber,
+        currentTurn: savedSession.currentTurn,
+        maxTurns: savedSession.maxApiCalls,
+        aiOpening: savedSession.aiOpening,
+        status: savedSession.status,
+        createdAt: savedSession.createdAt
       },
-      redirectUrl: `/children-dashboard/story/${storySession._id}`
+      redirectUrl: `/children-dashboard/story/${savedSession._id}`
     });
 
   } catch (error) {
@@ -180,7 +198,7 @@ export async function GET(request: Request) {
     const storySession = await StorySession.findOne({
       _id: sessionId,
       childId: session.user.id
-    }).lean();
+    }).lean() as StorySessionDoc | null;
 
     if (!storySession) {
       return NextResponse.json(
@@ -198,12 +216,12 @@ export async function GET(request: Request) {
         storyNumber: storySession.storyNumber,
         currentTurn: storySession.currentTurn,
         maxTurns: storySession.maxApiCalls || 7,
-        apiCallsUsed: storySession.apiCallsUsed || 0,
+        apiCallsUsed: (storySession as any).apiCallsUsed || 0,
         status: storySession.status,
         aiOpening: storySession.aiOpening,
-        totalWords: storySession.totalWords || 0,
-        childWords: storySession.childWords || 0,
-        elements: storySession.elements || {},
+        totalWords: (storySession as any).totalWords || 0,
+        childWords: (storySession as any).childWords || 0,
+        elements: (storySession as any).elements || {},
         createdAt: storySession.createdAt,
         updatedAt: storySession.updatedAt
       }

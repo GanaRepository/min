@@ -1,4 +1,4 @@
-// app/api/competitions/past/route.ts - COMPLETE UPDATE FOR MINTOONS REQUIREMENTS
+// app/api/competitions/past/route.ts - FIXED TYPESCRIPT ERRORS
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/utils/authOptions';
@@ -6,8 +6,52 @@ import { connectToDatabase } from '@/utils/db';
 import { competitionManager } from '@/lib/competition-manager';
 import Competition from '@/models/Competition';
 import StorySession from '@/models/StorySession';
+import mongoose from 'mongoose';
 
 export const dynamic = 'force-dynamic';
+
+// Type definitions for better type safety
+interface CompetitionEntry {
+  competitionId: mongoose.Types.ObjectId;
+  submittedAt: Date;
+  rank?: number;
+  score?: number;
+}
+
+interface StoryWithCompetition {
+  _id: mongoose.Types.ObjectId;
+  title: string;
+  competitionEntries?: CompetitionEntry[];
+  createdAt: Date;
+}
+
+interface PastCompetitionDoc {
+  _id: mongoose.Types.ObjectId;
+  month: string;
+  year: number;
+  phase: 'submission' | 'judging' | 'results';
+  isActive: boolean;
+  submissionStart?: Date;
+  submissionEnd?: Date;
+  resultsDate?: Date;
+  updatedAt: Date;
+  totalSubmissions?: number;
+  totalParticipants?: number;
+  winners?: Array<{
+    position: number;
+    childId: mongoose.Types.ObjectId;
+    childName: string;
+    title: string;
+    score: number;
+  }>;
+  judgingCriteria?: Record<string, number>;
+  entries?: Array<{
+    storyId: mongoose.Types.ObjectId;
+    submittedAt: Date;
+    score?: number;
+    rank?: number;
+  }>;
+}
 
 export async function GET() {
   try {
@@ -27,7 +71,7 @@ export async function GET() {
     })
     .sort({ year: -1, month: -1 }) // Most recent first
     .limit(12) // Last 12 competitions
-    .lean();
+    .lean() as unknown as PastCompetitionDoc[];
 
     console.log(`📊 Found ${pastCompetitions.length} past competitions`);
 
@@ -47,13 +91,13 @@ export async function GET() {
                 competitionId: competition._id
               }
             }
-          }).select('title competitionEntries').lean();
+          }).select('title competitionEntries createdAt').lean() as unknown as StoryWithCompetition[];
 
           if (userStories.length > 0) {
             userParticipated = true;
             userEntries = userStories.map(story => {
               const competitionEntry = story.competitionEntries?.find(
-                (entry: any) => entry.competitionId.toString() === competition._id.toString()
+                (entry: CompetitionEntry) => entry.competitionId.toString() === competition._id.toString()
               );
 
               return {
@@ -94,7 +138,7 @@ export async function GET() {
           isActive: competition.isActive || false,
           
           // Winners (top 3)
-          winners: competition.winners?.slice(0, 3).map((winner: any) => ({
+          winners: competition.winners?.slice(0, 3).map((winner) => ({
             position: winner.position,
             childId: winner.childId?.toString() || '',
             childName: winner.childName || 'Anonymous',
@@ -243,7 +287,7 @@ export async function POST(request: Request) {
           );
         }
 
-        const detailedStats = await competitionManager.getCompetitionStats(competitionId);
+        const detailedStats = await competitionManager.getCompetitionStats();
         
         result = {
           success: true,
@@ -263,7 +307,7 @@ export async function POST(request: Request) {
         // Get competition with all entries
         const compForExport = await Competition.findById(competitionId)
           .populate('entries.storyId')
-          .lean();
+          .lean() as PastCompetitionDoc | null;
 
         if (!compForExport) {
           return NextResponse.json(
@@ -282,9 +326,9 @@ export async function POST(request: Request) {
             totalParticipants: compForExport.totalParticipants
           },
           winners: compForExport.winners || [],
-          entries: compForExport.entries?.map((entry: any) => ({
-            storyId: entry.storyId?._id,
-            title: entry.storyId?.title,
+          entries: compForExport.entries?.map((entry) => ({
+            storyId: (entry.storyId as any)?._id,
+            title: (entry.storyId as any)?.title,
             submittedAt: entry.submittedAt,
             score: entry.score,
             rank: entry.rank

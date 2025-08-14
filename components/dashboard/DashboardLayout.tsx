@@ -1,4 +1,4 @@
-// components/dashboard/DashboardLayout.tsx - COMPLETE FIXED VERSION
+// components/dashboard/DashboardLayout.tsx - FIXED TYPESCRIPT ERRORS
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -58,7 +58,6 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
   if (isStoryWritingPage) {
     return (
-      // components/dashboard/DashboardLayout.tsx - COMPLETE FIXED VERSION (continued)
       <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900">
         <header className="sticky top-0 z-30 bg-gray-800/80 backdrop-blur-xl border-b border-gray-600/40">
           <div className="px-4 sm:px-6 lg:px-8">
