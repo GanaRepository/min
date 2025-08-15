@@ -7,6 +7,9 @@ import StorySession from '@/models/StorySession';
 import User from '@/models/User';
 import { UsageManager } from '@/lib/usage-manager';
 import { AIAssessmentEngine } from '@/lib/ai/ai-assessment-engine';
+// Add these for file processing
+import pdfParse from 'pdf-parse';
+import mammoth from 'mammoth';
 
 export async function POST(request: NextRequest) {
   try {
@@ -55,77 +58,63 @@ export async function POST(request: NextRequest) {
 
     // Handle file upload or direct content
     if (file && file.size > 0) {
-      // Support multiple file types but only parse text files
-      if (
-        file.type !== 'text/plain' && 
-        !file.name.endsWith('.txt') &&
-        !file.type.includes('pdf') &&
-        !file.name.endsWith('.pdf') &&
-        !file.name.endsWith('.docx') &&
-        !file.type.includes('application/vnd.openxmlformats-officedocument.wordprocessingml.document')
-      ) {
-        return NextResponse.json(
-          {
-            error: 'Please upload .txt, .pdf, or .docx files only.',
-          },
-          { status: 400 }
-        );
-      }
-
       // File size validation
       const maxSize = 10 * 1024 * 1024; // 10MB for all file types
       if (file.size > maxSize) {
         return NextResponse.json(
-          {
-            error: 'File size must be less than 10MB.',
-          },
+          { error: 'File size must be less than 10MB.' },
           { status: 400 }
         );
       }
 
       try {
-        // Only parse text files - for PDF/DOCX, instruct user to copy-paste
+        // Process different file types
         if (file.type === 'text/plain' || file.name.endsWith('.txt')) {
+          // Handle .txt files
           storyContent = await file.text();
-        } else if (file.type.includes('pdf') || file.name.endsWith('.pdf')) {
+        } 
+        else if (file.type.includes('pdf') || file.name.endsWith('.pdf')) {
+          // Handle PDF files
+          const arrayBuffer = await file.arrayBuffer();
+          const buffer = Buffer.from(arrayBuffer);
+          const pdfData = await pdfParse(buffer);
+          storyContent = pdfData.text;
+        } 
+        else if (file.name.endsWith('.docx') || file.type.includes('application/vnd.openxmlformats-officedocument.wordprocessingml.document')) {
+          // Handle DOCX files
+          const arrayBuffer = await file.arrayBuffer();
+          const buffer = Buffer.from(arrayBuffer);
+          const result = await mammoth.extractRawText({ buffer });
+          storyContent = result.value;
+        } 
+        else {
           return NextResponse.json(
-            {
-              error: 'PDF files detected. Please copy the text from your PDF and paste it in the text area below instead of uploading the file.',
-              suggestion: 'copy_paste',
-              fileType: 'pdf'
-            },
-            { status: 400 }
-          );
-        } else if (file.name.endsWith('.docx') || file.type.includes('application/vnd.openxmlformats-officedocument.wordprocessingml.document')) {
-          return NextResponse.json(
-            {
-              error: 'Word document detected. Please copy the text from your document and paste it in the text area below instead of uploading the file.',
-              suggestion: 'copy_paste',
-              fileType: 'docx'
-            },
-            { status: 400 }
-          );
-        } else {
-          return NextResponse.json(
-            {
-              error: 'Unsupported file type. Please upload a .txt file or paste your text directly in the text area.',
-            },
+            { error: 'Unsupported file type. Please upload .txt, .pdf, or .docx files only.' },
             { status: 400 }
           );
         }
+
+        // Clean up extracted text
+        storyContent = storyContent.trim().replace(/\s+/g, ' ');
+        
       } catch (error) {
+        console.error('❌ File processing error:', error);
         return NextResponse.json(
-          {
-            error: 'Failed to read file. Please try uploading a .txt file or paste your text directly.',
+          { 
+            error: `Failed to read ${file.name}. Please try uploading a different file or paste your text directly in the text area below.`,
+            suggestion: 'copy_paste'
           },
           { status: 400 }
         );
       }
-    } else if (content?.trim()) {
+    } 
+    else if (content?.trim()) {
+      // Use pasted text content
       storyContent = content.trim();
-    } else {
+    } 
+    else {
       return NextResponse.json(
-        { error: 'Please provide story content via .txt file upload or paste text directly in the text area' },
+        { error: 'Please provide story content by either uploading a file (.txt, .pdf, .docx) OR pasting text directly in the text area.' },
         { status: 400 }
       );
     }
