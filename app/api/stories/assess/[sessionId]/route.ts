@@ -1,9 +1,10 @@
-// app/api/stories/assess/[sessionId]/route.ts - COMPLETE IMPLEMENTATION
+// app/api/stories/assess/[sessionId]/route.ts - UPDATED FOR SIMPLIFIED ASSESSMENT REQUESTS
 import { NextResponse } from 'next/server';
 import { connectToDatabase } from '@/utils/db';
 import StorySession from '@/models/StorySession';
 import Turn from '@/models/Turn';
 import { AIAssessmentEngine } from '@/lib/ai/ai-assessment-engine';
+import { UsageManager } from '@/lib/usage-manager'; // ADD: Import simplified usage manager
 import type { NextRequest } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/utils/authOptions';
@@ -24,6 +25,21 @@ export async function POST(
       console.log('❌ Unauthorized assessment attempt');
       return NextResponse.json(
         { error: 'Access denied. Children only.' },
+        { status: 403 }
+      );
+    }
+
+    // ADD: Check if user can request assessment using simplified system
+    const canAssess = await UsageManager.canRequestAssessment(userSession.user.id);
+    if (!canAssess.allowed) {
+      console.log(`❌ Assessment request denied: ${canAssess.reason}`);
+      return NextResponse.json(
+        {
+          error: canAssess.reason,
+          upgradeRequired: canAssess.upgradeRequired,
+          usage: canAssess.currentUsage,
+          limits: canAssess.limits
+        },
         { status: 403 }
       );
     }
@@ -63,20 +79,11 @@ export async function POST(
       );
     }
 
-    // Check if this is a re-assessment request
+    // SIMPLIFIED: Remove per-story attempt limit check - now handled by total pool
     const isReassessment = !!storySession.assessment;
 
     if (isReassessment) {
       console.log('🔄 Re-assessment requested for session:', actualSessionId);
-
-      // Check assessment attempts limit
-      const currentAttempts = storySession.assessmentAttempts || 0;
-      if (currentAttempts >= 3) {
-        return NextResponse.json(
-          { error: 'Maximum assessment attempts (3) reached for this story.' },
-          { status: 400 }
-        );
-      }
     }
 
     console.log('📊 Starting assessment generation...');
@@ -227,6 +234,7 @@ export async function POST(
           assessment.integrityAnalysis.integrityRisk === 'critical'
             ? 'flagged'
             : 'completed',
+        // SIMPLIFIED: Increment assessment attempts but no per-story limit
         assessmentAttempts: (storySession.assessmentAttempts || 0) + 1,
         lastAssessedAt: new Date(),
       };
@@ -237,9 +245,12 @@ export async function POST(
         { new: true }
       );
 
+      // ADD: Increment assessment request counter in simplified system
+      await UsageManager.incrementAssessmentRequest(userSession.user.id, actualSessionId);
+
       console.log(`📝 Assessment saved for session: ${actualSessionId}`);
 
-      // Prepare response
+      // Prepare response with updated usage info
       const response = {
         success: true,
         assessment: {
@@ -265,8 +276,14 @@ export async function POST(
           // Assessment metadata
           assessmentDate: new Date(),
           attemptNumber: (storySession.assessmentAttempts || 0) + 1,
-          maxAttempts: 3,
+          // SIMPLIFIED: Remove per-story maxAttempts
           isReassessment,
+        },
+        // ADD: Include updated usage information
+        usage: {
+          assessmentRequests: canAssess.currentUsage.assessmentRequests + 1,
+          limit: canAssess.limits.assessmentRequests,
+          remaining: canAssess.limits.assessmentRequests - (canAssess.currentUsage.assessmentRequests + 1)
         },
         message:
           assessment.integrityAnalysis.integrityRisk === 'critical'
@@ -323,6 +340,9 @@ export async function POST(
         },
       });
 
+      // Still increment usage counter even if assessment fails
+      await UsageManager.incrementAssessmentRequest(userSession.user.id, actualSessionId);
+
       return NextResponse.json(
         {
           error: 'Assessment generation failed',
@@ -331,10 +351,12 @@ export async function POST(
               ? assessmentError.message
               : 'Unknown error',
           retryable: true,
-          attemptsRemaining: Math.max(
-            0,
-            3 - ((storySession.assessmentAttempts || 0) + 1)
-          ),
+          // SIMPLIFIED: Show remaining assessment requests instead of per-story attempts
+          usage: {
+            assessmentRequests: canAssess.currentUsage.assessmentRequests + 1,
+            limit: canAssess.limits.assessmentRequests,
+            remaining: canAssess.limits.assessmentRequests - (canAssess.currentUsage.assessmentRequests + 1)
+          }
         },
         { status: 500 }
       );
@@ -351,7 +373,7 @@ export async function POST(
   }
 }
 
-// GET endpoint to retrieve existing assessment
+// GET endpoint to retrieve existing assessment (keep existing functionality)
 export async function GET(
   req: NextRequest,
   { params }: { params: { sessionId: string } }
@@ -388,22 +410,24 @@ export async function GET(
     }
 
     if (!storySession.assessment) {
+      // SIMPLIFIED: Check if user can make assessment requests instead of per-story attempts
+      const canAssess = await UsageManager.canRequestAssessment(userSession.user.id);
+      
       return NextResponse.json(
         {
           error: 'No assessment available for this story',
-          canAssess:
-            storySession.status === 'completed' &&
-            (storySession.assessmentAttempts || 0) < 3,
-          attemptsRemaining: Math.max(
-            0,
-            3 - (storySession.assessmentAttempts || 0)
-          ),
+          canAssess: storySession.status === 'completed' && canAssess.allowed,
+          usage: canAssess.currentUsage,
+          limits: canAssess.limits,
+          message: canAssess.allowed ? 
+            'You can request an assessment for this story' : 
+            canAssess.reason
         },
         { status: 404 }
       );
     }
 
-    // Return existing assessment
+    // Return existing assessment (keep existing response structure)
     const response = {
       success: true,
       assessment: {
@@ -448,9 +472,8 @@ export async function GET(
         assessmentDate:
           storySession.assessment.assessmentDate || storySession.lastAssessedAt,
         attemptNumber: storySession.assessmentAttempts || 1,
-        maxAttempts: 3,
-        // Remove canReassess from response, as it is not available on the returned type
-        // assessmentVersion: storySession.assessment.assessmentVersion || '1.0',
+        // SIMPLIFIED: Remove maxAttempts from response
+        isReassessment: storySession.assessmentAttempts > 1,
       },
       storyInfo: {
         id: storySession._id,

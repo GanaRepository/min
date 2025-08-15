@@ -1,111 +1,44 @@
-// components/dashboard/MobileNavigation.tsx - FIXED TYPESCRIPT ERRORS
+// components/dashboard/MobileNavigation.tsx - SIMPLE WORKING VERSION
 'use client';
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { Dispatch, SetStateAction } from 'react';
-import {
-  Home,
-  Sparkles,
-  BookOpen,
-  Trophy,
-  Upload,
-  Menu,
-} from 'lucide-react';
+import { useSession } from 'next-auth/react';
+import { Menu, Sparkles, User } from 'lucide-react';
 
 interface MobileNavigationProps {
-  setSidebarOpen?: Dispatch<SetStateAction<boolean>>;
-  className?: string;
+  setSidebarOpen: (open: boolean) => void;
 }
 
-const mobileNavItems = [
-  {
-    name: 'Dashboard',
-    href: '/children-dashboard',
-    icon: Home,
-    description: 'Your creative home',
-  },
-  {
-    name: 'Create Stories Freestyle',
-    href: '/create-stories/#freestyle',
-    icon: Sparkles,
-    description: 'Freestyle story writing',
-  },
-  {
-    name: 'Upload Stories For Assessment',
-    href: '/create-stories/#assessment',
-    icon: Upload,
-    description: 'Submit for AI feedback',
-  },
-  {
-    name: 'My Stories',
-    href: '/children-dashboard/my-stories',
-    icon: BookOpen,
-    description: 'View your stories',
-  },
-  {
-    name: 'Competitions',
-    href: '/children-dashboard/competitions',
-    icon: Trophy,
-    description: 'Monthly contests',
-  },
-];
+export default function MobileNavigation({ setSidebarOpen }: MobileNavigationProps) {
+  const { data: session } = useSession();
 
-export default function MobileNavigation({ setSidebarOpen, className }: MobileNavigationProps) {
-  const pathname = usePathname();
-
-  // If we have setSidebarOpen prop, render the mobile header instead
-  if (setSidebarOpen) {
-    return (
-      <div className="bg-gray-800/95 backdrop-blur-xl border-b border-gray-600/40 px-4 py-3">
+  return (
+    <div className="bg-gray-800 border-b border-gray-700">
+      <div className="px-4 py-3">
         <div className="flex items-center justify-between">
           <button
-            type="button"
-            className="text-gray-300 hover:text-white transition-colors"
             onClick={() => setSidebarOpen(true)}
+            className="text-gray-300 hover:text-white p-2 rounded-lg hover:bg-gray-700"
           >
-            <Menu className="h-6 w-6" />
-            <span className="sr-only">Open sidebar</span>
+            <Menu className="w-6 h-6" />
           </button>
-          
-          <div className="text-white font-semibold">
-            Mintoons Dashboard
+
+          <div className="flex items-center space-x-2">
+            <div className="w-8 h-8 bg-gradient-to-br from-green-400 to-blue-500 rounded-lg flex items-center justify-center">
+              <Sparkles className="w-5 h-5 text-white" />
+            </div>
+            <span className="text-lg font-bold text-white">Mintoons</span>
           </div>
-          
-          <div className="w-6" /> {/* Spacer for centering */}
+
+          <div className="flex items-center space-x-2">
+            <div className="w-8 h-8 bg-gradient-to-br from-purple-400 to-pink-500 rounded-full flex items-center justify-center">
+              <User className="w-4 h-4 text-white" />
+            </div>
+            <span className="text-sm font-medium text-white hidden sm:block">
+              {session?.user?.firstName}
+            </span>
+          </div>
         </div>
       </div>
-    );
-  }
-
-  // Regular bottom navigation
-  return (
-    <nav
-      className={`fixed bottom-0 left-0 right-0 bg-gray-800/95 backdrop-blur-xl border-t border-gray-600/40 z-30 ${className || ''}`}
-    >
-      <div className="flex items-center justify-around py-2">
-        {mobileNavItems.map((item) => {
-          const isActive =
-            pathname === item.href ||
-            (item.href !== '/children-dashboard' &&
-              pathname?.startsWith(item.href));
-
-          return (
-            <Link
-              key={item.name}
-              href={item.href}
-              className={`flex flex-col items-center py-2 px-2 min-w-0 flex-1 transition-colors ${
-                isActive
-                  ? 'text-green-400'
-                  : 'text-gray-400 hover:text-gray-300'
-              }`}
-            >
-              <item.icon className="w-5 h-5 mb-1" />
-              <span className="text-xs font-medium truncate">{item.name}</span>
-            </Link>
-          );
-        })}
-      </div>
-    </nav>
+    </div>
   );
 }

@@ -1,4 +1,7 @@
-// lib/usage-manager.ts - UPDATED FOR MINTOONS REQUIREMENTS
+// ========================================
+// lib/usage-manager.ts - SIMPLIFIED INTERFACE
+// ========================================
+
 import { connectToDatabase } from '@/utils/db';
 import User from '@/models/User';
 import StorySession from '@/models/StorySession';
@@ -9,13 +12,11 @@ import {
   validateUsageWithinLimits,
 } from '@/config/limits';
 import type { UsageLimits } from '@/config/limits';
-import type { IUser } from '@/models/User';
 
 export interface UserUsage {
-  stories: number;
-  assessments: number;
-  competition: number;
-  totalAssessmentAttempts: number;
+  freestyleStories: number;
+  assessmentRequests: number; // SIMPLIFIED: Total assessments used
+  competitionEntries: number;
 }
 
 export interface UsageCheckResult {
@@ -28,36 +29,41 @@ export interface UsageCheckResult {
 
 export class UsageManager {
   /**
-   * Get current month's usage for a user
+   * Get current month's usage for a user - SIMPLIFIED COUNTING
    */
   static async getCurrentUsage(userId: string): Promise<UserUsage> {
     await connectToDatabase();
-    const user = await User.findById(userId);
-    if (!user) {
-      throw new Error('User not found');
-    }
-
+    
     // Get current month start date
     const now = new Date();
-    const currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
 
-    // Get assessment attempts for current month (SIMPLIFIED - NO PER-STORY LIMITS)
-    const assessmentStories = await StorySession.find({
+    // Get all stories for current month
+    const stories = await StorySession.find({
       childId: userId,
-      isUploadedForAssessment: true,
-      createdAt: { $gte: currentMonthStart },
-    }).select('assessmentAttempts');
+      createdAt: { $gte: monthStart }
+    }).lean();
 
-    const totalAssessmentAttempts = assessmentStories.reduce(
-      (sum, story) => sum + (story.assessmentAttempts || 0),
-      0
-    );
+    // Count freestyle stories (collaborative AI stories)
+    const freestyleStories = stories.filter(s => 
+      !s.isUploadedForAssessment && 
+      (!s.competitionEntries || s.competitionEntries.length === 0)
+    ).length;
+
+    // Count ALL assessment requests (uploads + re-assessments)
+    const assessmentRequests = stories.reduce((sum, story) => {
+      return sum + (story.assessmentAttempts || (story.assessment ? 1 : 0));
+    }, 0);
+
+    // Count competition entries
+    const competitionEntries = stories.filter(s => 
+      s.competitionEntries && s.competitionEntries.length > 0
+    ).length;
 
     return {
-      stories: user.storiesCreatedThisMonth || 0,
-      assessments: user.assessmentUploadsThisMonth || 0,
-      competition: user.competitionEntriesThisMonth || 0,
-      totalAssessmentAttempts: totalAssessmentAttempts,
+      freestyleStories,
+      assessmentRequests,
+      competitionEntries,
     };
   }
 
@@ -81,9 +87,8 @@ export class UsageManager {
       user.purchaseHistory?.map((p: any) => ({
         type: p.type,
         storiesAdded: p.metadata?.storiesAdded || 0,
-        assessmentsAdded: p.metadata?.assessmentsAdded || 0,
+        assessmentRequestsAdded: p.metadata?.assessmentRequestsAdded || p.metadata?.assessmentsAdded || 0,
         competitionEntriesAdded: p.metadata?.competitionEntriesAdded || 0,
-        totalAssessmentAttemptsAdded: p.metadata?.totalAssessmentAttemptsAdded || 0,
         purchaseDate: p.purchaseDate,
       })) || [],
       currentMonthStart
@@ -91,7 +96,7 @@ export class UsageManager {
   }
 
   /**
-   * Check if user can create a new story
+   * Check if user can create a new freestyle story
    */
   static async canCreateStory(userId: string): Promise<UsageCheckResult> {
     const [currentUsage, limits] = await Promise.all([
@@ -99,13 +104,13 @@ export class UsageManager {
       this.getUserLimits(userId),
     ]);
 
-    const allowed = currentUsage.stories < limits.stories;
+    const allowed = currentUsage.freestyleStories < limits.freestyleStories;
 
     return {
       allowed,
       reason: allowed
-        ? `Can create story (${currentUsage.stories}/${limits.stories})`
-        : `Story limit reached (${currentUsage.stories}/${limits.stories}). Upgrade to Story Pack for 5 more stories!`,
+        ? `Can create story (${currentUsage.freestyleStories}/${limits.freestyleStories})`
+        : `Story limit reached (${currentUsage.freestyleStories}/${limits.freestyleStories}). Upgrade to Story Pack for 5 more stories!`,
       currentUsage,
       limits,
       upgradeRequired: !allowed,
@@ -113,21 +118,21 @@ export class UsageManager {
   }
 
   /**
-   * Check if user can upload a story for assessment
+   * Check if user can request assessment (upload OR re-assess) - SIMPLIFIED
    */
-  static async canUploadAssessment(userId: string): Promise<UsageCheckResult> {
+  static async canRequestAssessment(userId: string): Promise<UsageCheckResult> {
     const [currentUsage, limits] = await Promise.all([
       this.getCurrentUsage(userId),
       this.getUserLimits(userId),
     ]);
 
-    const allowed = currentUsage.assessments < limits.assessments;
+    const allowed = currentUsage.assessmentRequests < limits.assessmentRequests;
 
     return {
       allowed,
       reason: allowed
-        ? `Can upload assessment (${currentUsage.assessments}/${limits.assessments})`
-        : `Assessment upload limit reached (${currentUsage.assessments}/${limits.assessments}). Upgrade to Story Pack for 5 more assessments!`,
+        ? `Can request assessment (${currentUsage.assessmentRequests}/${limits.assessmentRequests} used)`
+        : `Assessment requests exhausted (${currentUsage.assessmentRequests}/${limits.assessmentRequests})`,
       currentUsage,
       limits,
       upgradeRequired: !allowed,
@@ -135,30 +140,7 @@ export class UsageManager {
   }
 
   /**
-   * Check if user can attempt assessment (SIMPLIFIED - NO PER-STORY LIMITS)
-   */
-  static async canAttemptAssessment(userId: string): Promise<UsageCheckResult> {
-    const [currentUsage, limits] = await Promise.all([
-      this.getCurrentUsage(userId),
-      this.getUserLimits(userId),
-    ]);
-
-    // ONLY check total monthly attempts (no per-story limit)
-    const allowed = currentUsage.totalAssessmentAttempts < limits.totalAssessmentAttempts;
-
-    return {
-      allowed,
-      reason: allowed
-        ? `Can attempt assessment (${currentUsage.totalAssessmentAttempts}/${limits.totalAssessmentAttempts} used)`
-        : `Assessment attempts limit reached (${currentUsage.totalAssessmentAttempts}/${limits.totalAssessmentAttempts}). Upgrade to Story Pack for 15 more attempts!`,
-      currentUsage,
-      limits,
-      upgradeRequired: !allowed,
-    };
-  }
-
-  /**
-   * Check if user can enter competition (UPDATED: Only 1 entry)
+   * Check if user can enter competition
    */
   static async canEnterCompetition(userId: string): Promise<UsageCheckResult> {
     const [currentUsage, limits] = await Promise.all([
@@ -166,13 +148,13 @@ export class UsageManager {
       this.getUserLimits(userId),
     ]);
 
-    const allowed = currentUsage.competition < limits.competitionEntries;
+    const allowed = currentUsage.competitionEntries < limits.competitionEntries;
 
     return {
       allowed,
       reason: allowed
-        ? `Can enter competition (${currentUsage.competition}/${limits.competitionEntries})`
-        : `Competition entry limit reached (${currentUsage.competition}/${limits.competitionEntries}). You can submit 1 best story per month.`,
+        ? `Can enter competition (${currentUsage.competitionEntries}/${limits.competitionEntries})`
+        : `Competition entry limit reached (${currentUsage.competitionEntries}/${limits.competitionEntries}).`,
       currentUsage,
       limits,
       upgradeRequired: false, // Competition entries are not part of story pack
@@ -183,20 +165,11 @@ export class UsageManager {
    * Increment usage counters after successful action
    */
   static async incrementStoryCreation(userId: string): Promise<void> {
-    await connectToDatabase();
-    await User.findByIdAndUpdate(userId, {
-      $inc: { storiesCreatedThisMonth: 1 },
-    });
+    // No need to increment anything - we count directly from stories
+    console.log(`✅ Story created for user ${userId}`);
   }
 
-  static async incrementAssessmentUpload(userId: string): Promise<void> {
-    await connectToDatabase();
-    await User.findByIdAndUpdate(userId, {
-      $inc: { assessmentUploadsThisMonth: 1 },
-    });
-  }
-
-  static async incrementAssessmentAttempt(
+  static async incrementAssessmentRequest(
     userId: string,
     storyId: string
   ): Promise<void> {
@@ -204,17 +177,17 @@ export class UsageManager {
     await StorySession.findByIdAndUpdate(storyId, {
       $inc: { assessmentAttempts: 1 },
     });
+    console.log(`✅ Assessment request incremented for story ${storyId}`);
   }
 
   static async incrementCompetitionEntry(userId: string): Promise<void> {
-    await connectToDatabase();
-    await User.findByIdAndUpdate(userId, {
-      $inc: { competitionEntriesThisMonth: 1 },
-    });
+    // No need to increment anything - we count directly from story competitionEntries
+    console.log(`✅ Competition entry created for user ${userId}`);
   }
 
   /**
    * Reset monthly usage counters for all users (for cron job)
+   * With simplified system, this is less critical since we count from actual data
    */
   static async resetMonthlyUsage(): Promise<{
     usersReset: number;
@@ -226,20 +199,18 @@ export class UsageManager {
     const errors: string[] = [];
 
     try {
+      // Optional: Clean up old assessment attempt counters if needed
       const result = await User.updateMany(
         { role: 'child', isActive: true },
         {
           $set: {
-            storiesCreatedThisMonth: 0,
-            assessmentUploadsThisMonth: 0,
-            competitionEntriesThisMonth: 0,
             lastMonthlyReset: new Date(),
           },
         }
       );
 
       usersReset = result.modifiedCount;
-      console.log(`✅ Monthly usage reset for ${usersReset} users`);
+      console.log(`✅ Monthly reset completed for ${usersReset} users`);
     } catch (error) {
       const errorMsg = `Monthly reset failed: ${error instanceof Error ? error.message : 'Unknown error'}`;
       errors.push(errorMsg);
@@ -250,14 +221,13 @@ export class UsageManager {
   }
 
   /**
-   * Validate and enforce limits before any action (SIMPLIFIED)
+   * Validate and enforce limits before any action
    */
   static async enforceLimit(
     userId: string,
     action:
       | 'create_story'
-      | 'upload_assessment'
-      | 'attempt_assessment'
+      | 'request_assessment'
       | 'enter_competition'
   ): Promise<{ allowed: boolean; message: string; needsUpgrade: boolean }> {
     let result: UsageCheckResult;
@@ -266,11 +236,8 @@ export class UsageManager {
       case 'create_story':
         result = await this.canCreateStory(userId);
         break;
-      case 'upload_assessment':
-        result = await this.canUploadAssessment(userId);
-        break;
-      case 'attempt_assessment':
-        result = await this.canAttemptAssessment(userId);
+      case 'request_assessment':
+        result = await this.canRequestAssessment(userId);
         break;
       case 'enter_competition':
         result = await this.canEnterCompetition(userId);

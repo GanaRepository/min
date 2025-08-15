@@ -1815,7 +1815,7 @@ export default function CreateStoriesPage() {
 
   // ===== RENDER SECTIONS =====
   const renderHomeSection = () => (
-    <div className="max-w-7xl mx-auto px-6">
+    <div className="max-w-7xl mx-auto px-6 mt-12">
       {/* Hero Section */}
       <motion.div
         initial={{ opacity: 0, y: 30 }}

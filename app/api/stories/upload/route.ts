@@ -1,4 +1,4 @@
-// app/api/stories/upload/route.ts - COMPLETE UPDATE
+// app/api/stories/upload/route.ts - FIXED FOR SIMPLIFIED ASSESSMENT REQUESTS
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/utils/authOptions';
@@ -23,16 +23,16 @@ export async function POST(request: NextRequest) {
 
     await connectToDatabase();
 
-    // Check if user can upload for assessment - FIXED METHOD NAME
-    const canUpload = await UsageManager.canUploadAssessment(session.user.id);
-    if (!canUpload.allowed) {
-      console.log(`❌ Upload denied: ${canUpload.reason}`);
+    // FIXED: Check if user can request assessment using simplified system
+    const canAssess = await UsageManager.canRequestAssessment(session.user.id);
+    if (!canAssess.allowed) {
+      console.log(`❌ Upload denied: ${canAssess.reason}`);
       return NextResponse.json(
         {
-          error: typeof canUpload.reason === 'string' ? canUpload.reason : '',
-          upgradeRequired:
-            typeof canUpload.reason === 'string' &&
-            canUpload.reason.includes('limit reached'),
+          error: canAssess.reason,
+          upgradeRequired: canAssess.upgradeRequired,
+          usage: canAssess.currentUsage,
+          limits: canAssess.limits
         },
         { status: 403 }
       );
@@ -175,12 +175,9 @@ export async function POST(request: NextRequest) {
       aiOpening: storyContent, // Store the uploaded content here
       completedAt: new Date(),
       assessmentAttempts: 0, // Reset attempts for new upload
-  });
+    });
 
-  // Increment assessment upload counter - FIXED
-  await UsageManager.incrementAssessmentUpload(session.user.id);
-
-  console.log(`✅ Story session created: ${storySession._id}`);
+    console.log(`✅ Story session created: ${storySession._id}`);
 
     // Run advanced assessment
     try {
@@ -284,8 +281,8 @@ export async function POST(request: NextRequest) {
         },
       });
 
-      // Increment user's assessment upload counter
-      await UsageManager.incrementAssessmentUpload(session.user.id);
+      // FIXED: Increment assessment request counter in simplified system
+      await UsageManager.incrementAssessmentRequest(session.user.id, storySession._id.toString());
 
       console.log(
         `📝 Story uploaded and assessed successfully: ${storySession._id}`
@@ -299,8 +296,7 @@ export async function POST(request: NextRequest) {
           title: storySession.title,
           storyNumber: (storySession as any)?.storyNumber ?? 0,
           wordCount,
-          assessmentAttempts: 0,
-          maxAttempts: 3,
+          assessmentAttempts: 1, // First attempt after upload
           status: storySession.status,
         },
         assessment: {
@@ -316,6 +312,12 @@ export async function POST(request: NextRequest) {
           },
           educationalFeedback: assessmentResult.educationalFeedback,
           categoryScores: assessmentResult.categoryScores,
+        },
+        // FIXED: Include updated usage information
+        usage: {
+          assessmentRequests: canAssess.currentUsage.assessmentRequests + 1,
+          limit: canAssess.limits.assessmentRequests,
+          remaining: canAssess.limits.assessmentRequests - (canAssess.currentUsage.assessmentRequests + 1)
         },
         message:
           assessmentResult.integrityAnalysis.integrityRisk === 'critical'
@@ -365,8 +367,8 @@ export async function POST(request: NextRequest) {
         },
       });
 
-      // Still increment usage since story was uploaded
-      await UsageManager.incrementAssessmentUpload(session.user.id);
+      // FIXED: Still increment usage since story was uploaded
+      await UsageManager.incrementAssessmentRequest(session.user.id, storySession._id.toString());
 
       return NextResponse.json({
         success: true,
@@ -375,8 +377,13 @@ export async function POST(request: NextRequest) {
           title: storySession.title,
           storyNumber: (storySession as any)?.storyNumber ?? 0,
           wordCount,
-          assessmentAttempts: 0,
-          maxAttempts: 3,
+          assessmentAttempts: 1,
+        },
+        // FIXED: Include updated usage information
+        usage: {
+          assessmentRequests: canAssess.currentUsage.assessmentRequests + 1,
+          limit: canAssess.limits.assessmentRequests,
+          remaining: canAssess.limits.assessmentRequests - (canAssess.currentUsage.assessmentRequests + 1)
         },
         warning:
           'Story saved successfully, but assessment failed. You can retry assessment from your dashboard.',

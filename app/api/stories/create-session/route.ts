@@ -1,4 +1,4 @@
-// app/api/stories/create-session/route.ts - FIXED TYPESCRIPT ERRORS
+// app/api/stories/create-session/route.ts - UPDATED FOR SIMPLIFIED USAGE (COMPLETE)
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/utils/authOptions';
@@ -63,7 +63,7 @@ export async function POST(request: Request) {
 
     await connectToDatabase();
 
-    // Check if user can create a new story
+    // Check if user can create a new story using simplified system
     const canCreate = await UsageManager.canCreateStory(session.user.id);
     if (!canCreate.allowed) {
       console.log(`❌ Story creation denied: ${canCreate.reason}`);
@@ -135,7 +135,7 @@ export async function POST(request: Request) {
 
     const savedSession = await storySession.save() as StorySessionDoc;
 
-    // Increment user's story creation count
+    // Increment user's story creation count - simplified system counts directly from stories
     await UsageManager.incrementStoryCreation(session.user.id);
 
     console.log(`✅ Story session created: ${savedSession._id}`);

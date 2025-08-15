@@ -1153,18 +1153,18 @@ export default function StoryDetailPage({
                   )}
 
                   {/* Vocabulary Analysis */}
-                  {(story.assessment.vocabularyUsed.length > 0 || story.assessment.suggestedWords.length > 0) && (
+                  {((story.assessment.vocabularyUsed?.length || 0) > 0 || (story.assessment.suggestedWords?.length || 0) > 0) && (
                     <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-6">
                       <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
                         <BookOpen className="w-5 h-5 text-purple-400" />
                         Vocabulary Analysis
                       </h3>
                       
-                      {story.assessment.vocabularyUsed.length > 0 && (
+                      {(story.assessment.vocabularyUsed?.length || 0) > 0 && (
                         <div className="mb-4">
                           <h4 className="font-medium text-purple-300 mb-2">Great Words You Used:</h4>
                           <div className="flex flex-wrap gap-2">
-                            {story.assessment.vocabularyUsed.slice(0, 10).map((word, index) => (
+                            {(story.assessment.vocabularyUsed || []).slice(0, 10).map((word, index) => (
                               <span key={index} className="bg-purple-500/20 text-purple-300 px-2 py-1 rounded text-sm">
                                 {word}
                               </span>
@@ -1173,11 +1173,11 @@ export default function StoryDetailPage({
                         </div>
                       )}
                       
-                      {story.assessment.suggestedWords.length > 0 && (
+                      {(story.assessment.suggestedWords?.length || 0) > 0 && (
                         <div>
                           <h4 className="font-medium text-blue-300 mb-2">Suggested Words to Try:</h4>
                           <div className="flex flex-wrap gap-2">
-                            {story.assessment.suggestedWords.slice(0, 10).map((word, index) => (
+                            {(story.assessment.suggestedWords || []).slice(0, 10).map((word, index) => (
                               <span key={index} className="bg-blue-500/20 text-blue-300 px-2 py-1 rounded text-sm">
                                 {word}
                               </span>
