@@ -377,6 +377,7 @@ import { Button } from '@/components/ui/button';
 import { FiChevronDown, FiMenu, FiX, FiLogIn } from 'react-icons/fi';
 import { usePathname } from 'next/navigation';
 import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 import { LogOut, User, Building } from 'lucide-react';
 import Image from 'next/image';
 import MintoonsLogo from './MintoonsLogo';
@@ -388,6 +389,7 @@ const Navbar = () => {
   const pathname = usePathname();
   const userMenuRef = useRef<HTMLDivElement>(null);
   const { data: session, status } = useSession();
+  const router = useRouter();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -618,7 +620,7 @@ const Navbar = () => {
                     <button
                       onClick={() => {
                         setIsUserMenuOpen(false);
-                        // Handle sign out
+                        router.push('/logout');
                       }}
                       className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50"
                     >

@@ -1,4 +1,4 @@
-// app/children-dashboard/story/[sessionId]/page.tsx - FIXED COMPLETE WRITING INTERFACE
+// app/children-dashboard/story/[sessionId]/page.tsx - FIXED INPUT VISIBILITY
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
@@ -165,13 +165,16 @@ export default function StoryWritingInterface({
       const sessionData = await sessionResponse.json();
       const turnsData = await turnsResponse.json();
 
-      setStorySession(sessionData);
+      // FIXED: Extract session from the nested response structure
+      const actualSession = sessionData.session || sessionData;
+      
+      setStorySession(actualSession);
       setTurns(turnsData.turns || []);
-      setEditedTitle(sessionData.title || '');
+      setEditedTitle(actualSession.title || '');
 
       // Check if story is completed and has assessment
-      if (sessionData.status === 'completed' && sessionData.assessment) {
-        setAssessment(sessionData.assessment);
+      if (actualSession.status === 'completed' && actualSession.assessment) {
+        setAssessment(actualSession.assessment);
       }
 
     } catch (error) {
@@ -342,7 +345,7 @@ export default function StoryWritingInterface({
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-slate-900 to-green-900 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-purple-400 mx-auto mb-4"></div>
           <p className="text-white text-lg">Loading your story...</p>
@@ -353,7 +356,7 @@ export default function StoryWritingInterface({
 
   if (!storySession) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-slate-900 to-green-900 flex items-center justify-center">
         <div className="text-center">
           <p className="text-white text-lg">Story not found</p>
         </div>
@@ -361,14 +364,34 @@ export default function StoryWritingInterface({
     );
   }
 
+
   const isCompleted = storySession.status === 'completed';
-  const canWrite = !isCompleted && storySession.currentTurn < maxTurns;
-  const progressPercentage = Math.min((storySession.currentTurn / maxTurns) * 100, 100);
+  // More robust canWrite logic - check each condition separately
+  const statusIsActive = storySession.status === 'active';
+  const turnNotExceeded = storySession.currentTurn <= maxTurns;
+  const canWrite = !isCompleted && statusIsActive && turnNotExceeded;
+
+  // Fix: Always show the correct turn number and progress
+  const turnsCompleted = isCompleted ? maxTurns : Math.min(storySession.currentTurn, maxTurns);
+  const progressPercentage = isCompleted
+    ? 100
+    : Math.round((turnsCompleted / maxTurns) * 100);
+
+  // DEBUG: Log the values to see what's happening
+  console.log('DEBUG - Story Session:', {
+    currentTurn: storySession.currentTurn,
+    maxTurns,
+    status: storySession.status,
+    canWrite,
+    isCompleted,
+    turnsCompleted,
+    progressPercentage
+  });
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-slate-900 to-green-900">
       {/* Header */}
-      <div className="border-b border-gray-700/50 bg-gray-900/60 backdrop-blur-xl sticky top-0 z-50">
+      <div className=" backdrop-blur-xl sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
@@ -440,7 +463,7 @@ export default function StoryWritingInterface({
               
               <div className="text-right">
                 <div className="text-sm text-gray-400">
-                  Turn {storySession.currentTurn} of {maxTurns}
+                  Turn {turnsCompleted} of {maxTurns}
                 </div>
                 <div className="text-xs text-gray-500">
                   {storySession.childWords} words written
@@ -454,7 +477,7 @@ export default function StoryWritingInterface({
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm text-gray-400">Story Progress</span>
               <span className="text-sm text-purple-400 font-medium">
-                {Math.round(progressPercentage)}% Complete
+                {progressPercentage}% Complete
               </span>
             </div>
             <div className="w-full bg-gray-700 rounded-full h-2">
@@ -489,7 +512,7 @@ export default function StoryWritingInterface({
               {/* Timeline */}
               <div 
                 ref={storyTimelineRef}
-                className="space-y-6 max-h-96 overflow-y-auto pr-4 custom-scrollbar"
+                className="space-y-6 max-h-[130vh] overflow-y-auto pr-4 custom-scrollbar"
               >
                 {/* AI Opening */}
                 {storySession.aiOpening && (
@@ -605,6 +628,25 @@ export default function StoryWritingInterface({
                   </motion.div>
                 )}
 
+                {/* Start Writing Message for Turn 1 */}
+                {storySession.currentTurn === 1 && turns.length === 0 && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="text-center py-8"
+                  >
+                    <div className="bg-gradient-to-r from-purple-500/20 to-pink-600/20 border border-purple-500/30 rounded-lg p-6">
+                      <Edit3 className="w-12 h-12 text-purple-400 mx-auto mb-3" />
+                      <h3 className="text-white font-bold text-lg mb-2">
+                        Ready to Start Your Story!
+                      </h3>
+                      <p className="text-gray-300 mb-4">
+                        Write your opening scene below (60-100 words). What adventure will you create?
+                      </p>
+                    </div>
+                  </motion.div>
+                )}
+
                 {/* Completion Message */}
                 {isCompleted && (
                   <motion.div
@@ -635,13 +677,13 @@ export default function StoryWritingInterface({
               </div>
             </div>
 
-            {/* Writing Input */}
+            {/* FIXED Writing Input - Always show when canWrite is true */}
             {canWrite && (
               <div className="mt-6 bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-6">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-white font-semibold text-lg flex items-center gap-2">
                     <Edit3 className="w-5 h-5 text-purple-400" />
-                    Your Turn {storySession.currentTurn + 1}
+                    {storySession.currentTurn === 1 ? 'Start Your Story!' : `Your Turn ${storySession.currentTurn}`}
                   </h3>
                   <div className="flex items-center gap-4">
                     <div className={`text-sm font-medium ${
@@ -669,7 +711,10 @@ export default function StoryWritingInterface({
                     ref={textareaRef}
                     value={currentInput}
                     onChange={(e) => handleInputChange(e.target.value)}
-                    placeholder="Continue your story here... What happens next in your adventure?"
+                    placeholder={storySession.currentTurn === 1 
+                      ? "Start your amazing story here! Introduce your character, setting, or situation..."
+                      : "Continue your story here... What happens next in your adventure?"
+                    }
                     className="w-full bg-gray-900/50 border border-gray-600 rounded-lg p-4 text-white placeholder-gray-400 focus:border-purple-500 focus:outline-none resize-none min-h-[120px]"
                     disabled={isSubmitting}
                   />
@@ -677,7 +722,7 @@ export default function StoryWritingInterface({
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2 text-sm text-gray-400">
                       <Lightbulb className="w-4 h-4" />
-                      Write 60-100 words to continue your story
+                      Write 60-100 words to {storySession.currentTurn === 1 ? 'begin' : 'continue'} your story
                     </div>
                     
                     <button
@@ -697,7 +742,7 @@ export default function StoryWritingInterface({
                       ) : (
                         <>
                           <Send className="w-4 h-4" />
-                          Submit Turn
+                          {storySession.currentTurn === 1 ? 'Start Story!' : 'Submit Turn'}
                         </>
                       )}
                     </button>
@@ -705,6 +750,8 @@ export default function StoryWritingInterface({
                 </div>
               </div>
             )}
+
+     
           </div>
 
           {/* Sidebar */}

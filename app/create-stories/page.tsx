@@ -1690,7 +1690,7 @@ export default function CreateStoriesPage() {
               <div className="text-2xl font-bold text-purple-400">
                 {usageStats.competitionEntries.remaining}
               </div>
-              <div className="text-sm text-purple-300">Competition Entries</div>
+              <div className="text-sm text-purple-300">Competition Entries Left</div>
             </div>
           </motion.div>
         )}
