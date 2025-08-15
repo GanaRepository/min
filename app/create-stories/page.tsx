@@ -1536,86 +1536,110 @@ export default function CreateStoriesPage() {
   };
 
   // ===== STORY UPLOAD =====
-  const handleUploadStory = async () => {
-    if (!uploadData.title.trim()) {
-      setError('Please enter a story title');
-      return;
-    }
+ const handleUploadStory = async () => {
+  if (!uploadData.title.trim()) {
+    setError('Please enter a story title');
+    return;
+  }
 
-    if (!uploadData.content.trim() && !uploadData.file) {
-      setError('Please provide story content via file upload or text input');
-      return;
-    }
+  if (!uploadData.content.trim() && !uploadData.file) {
+    setError('Please provide story content via file upload or text input');
+    return;
+  }
 
-    // Check usage limits based on upload type
+  // Check usage limits based on upload type
   if (uploadData.uploadType === 'assessment' && !usageStats?.assessmentRequests.canUse) {
-      setError('You have reached your monthly assessment upload limit. Upgrade to Story Pack for more uploads!');
-      return;
-    }
+    setError('You have reached your monthly assessment upload limit. Upgrade to Story Pack for more uploads!');
+    return;
+  }
 
   if (uploadData.uploadType === 'competition' && !usageStats?.competitionEntries.canUse) {
-      setError('You have reached your monthly competition entry limit (3 entries maximum).');
-      return;
+    setError('You have reached your monthly competition entry limit (3 entries maximum).');
+    return;
+  }
+
+  setUploading(true);
+  setError(null);
+
+  try {
+    const formData = new FormData();
+    formData.append('title', uploadData.title.trim());
+    formData.append('uploadType', uploadData.uploadType);
+    
+    if (uploadData.file) {
+      formData.append('file', uploadData.file);
+    } else {
+      formData.append('content', uploadData.content.trim());
     }
 
-    setUploading(true);
-    setError(null);
+    const endpoint = uploadData.uploadType === 'competition' 
+      ? '/api/user/stories/upload-competition'
+      : '/api/stories/upload';
 
-    try {
-      const formData = new FormData();
-      formData.append('title', uploadData.title.trim());
-      formData.append('uploadType', uploadData.uploadType);
-      
-      if (uploadData.file) {
-        formData.append('file', uploadData.file);
-      } else {
-        formData.append('content', uploadData.content.trim());
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      body: formData,
+    });
+
+    // FIXED: Better error handling for non-JSON responses
+    if (!response.ok) {
+      let errorMessage = `Server error: ${response.status}`;
+      try {
+        const errorData = await response.json();
+        errorMessage = errorData.error || errorMessage;
+      } catch {
+        // If response is not JSON, use status text
+        errorMessage = response.statusText || errorMessage;
       }
+      throw new Error(errorMessage);
+    }
 
-      const endpoint = uploadData.uploadType === 'competition' 
-        ? '/api/user/stories/upload-competition'
-        : '/api/stories/upload';
+    // FIXED: Handle JSON parsing errors
+    let data;
+    try {
+      data = await response.json();
+    } catch (jsonError) {
+      console.error('❌ JSON parsing error:', jsonError);
+      throw new Error('Server returned invalid response. Please try again.');
+    }
 
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        body: formData,
+    if (data.success) {
+      setSuccess(`Story uploaded successfully! ${
+        uploadData.uploadType === 'assessment' 
+          ? 'AI assessment has begun and will be ready shortly.'
+          : 'Your competition entry has been submitted.'
+      }`);
+      
+      // Reset form
+      setUploadData({
+        file: null,
+        content: '',
+        title: '',
+        uploadType: 'assessment'
       });
+      
+      // Refresh usage stats
+      fetchUsageStats();
 
-      const data = await response.json();
-
-      if (data.success) {
-        setSuccess(`Story uploaded successfully! ${
-          uploadData.uploadType === 'assessment' 
-            ? 'AI assessment has begun and will be ready shortly.'
-            : 'Your competition entry has been submitted.'
-        }`);
-        
-        // Reset form
-        setUploadData({
-          file: null,
-          content: '',
-          title: '',
-          uploadType: 'assessment'
-        });
-        
-        // Refresh usage stats
-        fetchUsageStats();
-
+      // FIXED: Use the correct property from response
+      const storyId = data.storyId || data.story?.id;
+      if (storyId) {
         // Redirect to story view after delay
         setTimeout(() => {
-          router.push(`/children-dashboard/my-stories/${data.storyId}`);
+          router.push(`/children-dashboard/my-stories/${storyId}`);
         }, 2000);
-      } else {
-        // Handle general upload errors
-        setError(data.error || 'Failed to upload story');
       }
-    } catch (error) {
-      console.error('❌ Upload error:', error);
-      setError(error instanceof Error ? error.message : 'Failed to upload story. Please try again.');
-    } finally {
-      setUploading(false);
+    } else {
+      // Handle general upload errors
+      setError(data.error || 'Failed to upload story');
     }
-  };
+  } catch (error) {
+    console.error('❌ Upload error:', error);
+    setError(error instanceof Error ? error.message : 'Failed to upload story. Please try again.');
+  } finally {
+    setUploading(false);
+  }
+};
 
   // ===== LOADING STATE =====
   if (loading) {
