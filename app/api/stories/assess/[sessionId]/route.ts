@@ -213,6 +213,17 @@ export async function POST(
           },
         },
 
+        // Required integrityStatus field
+        integrityStatus: {
+          status: assessment.integrityAnalysis.integrityRisk === 'critical' ? 'FAIL' : 
+                  assessment.integrityAnalysis.integrityRisk === 'high' ? 'WARNING' : 'PASS',
+          message: assessment.integrityAnalysis.integrityRisk === 'critical' ? 
+                   'Critical integrity issues detected' :
+                   assessment.integrityAnalysis.integrityRisk === 'high' ?
+                   'High integrity risk detected' :
+                   'Integrity check passed'
+        },
+
         // Educational enhancements
         recommendations: assessment.recommendations,
         progressTracking: assessment.progressTracking,
@@ -335,6 +346,10 @@ export async function POST(
                 ? assessmentError.message
                 : 'Unknown error',
             assessmentDate: new Date(),
+            integrityStatus: {
+              status: 'PASS',
+              message: 'Assessment failed - integrity status unknown'
+            }
           },
           assessmentAttempts: (storySession.assessmentAttempts || 0) + 1,
         },

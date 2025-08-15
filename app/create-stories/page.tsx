@@ -1606,7 +1606,14 @@ export default function CreateStoriesPage() {
           router.push(`/children-dashboard/my-stories/${data.storyId}`);
         }, 2000);
       } else {
-        throw new Error(data.error || 'Failed to upload story');
+        // Handle specific file type errors with helpful suggestions
+        if (data.suggestion === 'copy_paste') {
+          setError(`${data.error}\n\nTip: Open your ${data.fileType?.toUpperCase() || 'file'}, select all text (Ctrl+A), copy (Ctrl+C), and paste it in the text area below.`);
+          // Clear the file to encourage text pasting
+          setUploadData(prev => ({ ...prev, file: null }));
+        } else {
+          setError(data.error || 'Failed to upload story');
+        }
       }
     } catch (error) {
       console.error('❌ Upload error:', error);
@@ -2179,8 +2186,11 @@ export default function CreateStoriesPage() {
                   <p className="text-white font-medium mb-2">
                     Drag and drop your story file here
                   </p>
-                  <p className="text-gray-400 text-sm mb-4">
+                  <p className="text-gray-400 text-sm mb-2">
                     or click to browse (.txt, .pdf, .docx files up to 10MB)
+                  </p>
+                  <p className="text-yellow-400 text-xs mb-4">
+                    📝 Note: For PDF/DOCX files, you'll be asked to copy-paste the text
                   </p>
                   <input
                     type="file"
@@ -2268,9 +2278,13 @@ export default function CreateStoriesPage() {
         {/* Error/Success Messages */}
         {error && (
           <div className="mb-6 p-4 bg-red-500/20 border border-red-500/30 rounded-lg">
-            <div className="flex items-center gap-2">
-              <AlertCircle className="w-5 h-5 text-red-400" />
-              <p className="text-red-400">{error}</p>
+            <div className="flex items-start gap-2">
+              <AlertCircle className="w-5 h-5 text-red-400 mt-0.5 flex-shrink-0" />
+              <div className="text-red-400">
+                {error.split('\n').map((line, index) => (
+                  <p key={index} className={index > 0 ? 'mt-2' : ''}>{line}</p>
+                ))}
+              </div>
             </div>
           </div>
         )}

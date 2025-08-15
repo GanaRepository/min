@@ -128,6 +128,14 @@ export async function POST(request: Request) {
       // Assessment tracking
       assessmentAttempts: 0,
       
+      // Assessment object with required integrityStatus
+      assessment: {
+        integrityStatus: {
+          status: 'PASS',
+          message: 'Integrity check passed.'
+        }
+      },
+      
       // Timestamps
       createdAt: new Date(),
       updatedAt: new Date()

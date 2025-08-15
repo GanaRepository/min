@@ -1,4 +1,3 @@
-
 // components/dashboard/DashboardSidebar.tsx - SIMPLE WORKING VERSION
 'use client';
 
@@ -47,11 +46,15 @@ export default function DashboardSidebar({ open, setOpen }: DashboardSidebarProp
       href: '/children-dashboard/competitions',
       icon: Trophy,
     },
- 
+    {
+      name: 'Community',
+      href: '/children-dashboard/community',
+      icon: Upload,
+    },
   ];
 
   const handleSignOut = async () => {
-    await signOut({ callbackUrl: '/login/child' });
+    await signOut({ callbackUrl: '/logout' });
   };
 
   return (
@@ -130,14 +133,7 @@ export default function DashboardSidebar({ open, setOpen }: DashboardSidebarProp
 
         {/* Bottom section */}
         <div className="p-3 border-t border-gray-700">
-          <Link 
-            href="/children-dashboard/settings"
-            onClick={() => setOpen(false)}
-            className="flex items-center space-x-3 px-3 py-3 text-sm font-medium rounded-lg text-gray-300 hover:text-white hover:bg-gray-700"
-          >
-            <Settings className="w-5 h-5" />
-            <span>Settings</span>
-          </Link>
+  
           
           <button
             onClick={handleSignOut}

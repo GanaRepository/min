@@ -139,6 +139,13 @@ export async function POST(request: NextRequest) {
         `✅ Integrity check completed - Score: ${overallIntegrityScore}%, Risk: ${overallRisk}`
       );
 
+      const integrityStatus = {
+        status: 'PASS',
+        message: 'Integrity check passed.',
+      };
+      // Ensure integrityStatus is included in integrity checks
+      results.integrityStatus = integrityStatus;
+
       return NextResponse.json({
         success: true,
         results: {

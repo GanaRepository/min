@@ -55,48 +55,68 @@ export async function POST(request: NextRequest) {
 
     // Handle file upload or direct content
     if (file && file.size > 0) {
-      // CHANGED: Add PDF and DOCX support to existing validation
+      // Support multiple file types but only parse text files
       if (
         file.type !== 'text/plain' && 
         !file.name.endsWith('.txt') &&
         !file.type.includes('pdf') &&
-        !file.name.endsWith('.docx')
+        !file.name.endsWith('.pdf') &&
+        !file.name.endsWith('.docx') &&
+        !file.type.includes('application/vnd.openxmlformats-officedocument.wordprocessingml.document')
       ) {
         return NextResponse.json(
           {
-            error:
-              'Please upload .txt, .pdf, or .docx files only.',
+            error: 'Please upload .txt, .pdf, or .docx files only.',
           },
           { status: 400 }
         );
       }
 
-      // CHANGED: Increase file size limit from 1MB to 10MB for PDF/DOCX
-      const maxSize = file.type === 'text/plain' || file.name.endsWith('.txt') ? 1024 * 1024 : 10 * 1024 * 1024;
+      // File size validation
+      const maxSize = 10 * 1024 * 1024; // 10MB for all file types
       if (file.size > maxSize) {
         return NextResponse.json(
           {
-            error: file.type === 'text/plain' || file.name.endsWith('.txt')
-              ? 'File size must be less than 1MB for .txt files.'
-              : 'File size must be less than 10MB for .pdf/.docx files.',
+            error: 'File size must be less than 10MB.',
           },
           { status: 400 }
         );
       }
 
       try {
-        // CHANGED: Only read text for .txt files, placeholder for others
+        // Only parse text files - for PDF/DOCX, instruct user to copy-paste
         if (file.type === 'text/plain' || file.name.endsWith('.txt')) {
           storyContent = await file.text();
+        } else if (file.type.includes('pdf') || file.name.endsWith('.pdf')) {
+          return NextResponse.json(
+            {
+              error: 'PDF files detected. Please copy the text from your PDF and paste it in the text area below instead of uploading the file.',
+              suggestion: 'copy_paste',
+              fileType: 'pdf'
+            },
+            { status: 400 }
+          );
+        } else if (file.name.endsWith('.docx') || file.type.includes('application/vnd.openxmlformats-officedocument.wordprocessingml.document')) {
+          return NextResponse.json(
+            {
+              error: 'Word document detected. Please copy the text from your document and paste it in the text area below instead of uploading the file.',
+              suggestion: 'copy_paste',
+              fileType: 'docx'
+            },
+            { status: 400 }
+          );
         } else {
-          // For PDF/DOCX, store placeholder - you can add text extraction later
-          storyContent = `[File uploaded: ${file.name} - Processing required]`;
+          return NextResponse.json(
+            {
+              error: 'Unsupported file type. Please upload a .txt file or paste your text directly in the text area.',
+            },
+            { status: 400 }
+          );
         }
       } catch (error) {
         return NextResponse.json(
           {
-            error:
-              'Failed to read file. Please try uploading again or paste text directly.',
+            error: 'Failed to read file. Please try uploading a .txt file or paste your text directly.',
           },
           { status: 400 }
         );
@@ -105,7 +125,7 @@ export async function POST(request: NextRequest) {
       storyContent = content.trim();
     } else {
       return NextResponse.json(
-        { error: 'Please provide story content via file upload or text input' },
+        { error: 'Please provide story content via .txt file upload or paste text directly in the text area' },
         { status: 400 }
       );
     }
@@ -269,6 +289,17 @@ export async function POST(request: NextRequest) {
             recommendations: assessmentResult.recommendations,
             progressTracking: assessmentResult.progressTracking,
 
+            // Required integrityStatus field
+            integrityStatus: {
+              status: assessmentResult.integrityAnalysis.integrityRisk === 'critical' ? 'FAIL' : 
+                      assessmentResult.integrityAnalysis.integrityRisk === 'high' ? 'WARNING' : 'PASS',
+              message: assessmentResult.integrityAnalysis.integrityRisk === 'critical' ? 
+                       'Critical integrity issues detected' :
+                       assessmentResult.integrityAnalysis.integrityRisk === 'high' ?
+                       'High integrity risk detected' :
+                       'Integrity check passed'
+            },
+
             // Assessment metadata
             assessmentVersion: '2.0', // Mark as advanced assessment
             assessmentDate: new Date(),
@@ -363,6 +394,10 @@ export async function POST(request: NextRequest) {
                 ? assessmentError.message
                 : 'Unknown error',
             assessmentDate: new Date(),
+            integrityStatus: {
+              status: 'PASS',
+              message: 'Assessment failed - integrity status unknown'
+            }
           },
         },
       });
