@@ -39,31 +39,19 @@ import {
 
 // ===== INTERFACES =====
 interface UsageStats {
-  stories: {
+  freestyleStories: {
     used: number;
     limit: number;
     remaining: number;
     canUse: boolean;
   };
-  assessments: {
+  assessmentRequests: {
     used: number;
     limit: number;
     remaining: number;
     canUse: boolean;
   };
-  assessmentAttempts: {
-    used: number;
-    limit: number;
-    remaining: number;
-    canUse: boolean;
-  };
-  competitions: {
-    used: number;
-    limit: number;
-    remaining: number;
-    canUse: boolean;
-  };
-  publications: {
+  competitionEntries: {
     used: number;
     limit: number;
     remaining: number;
@@ -219,9 +207,9 @@ export default function ChildrenDashboard() {
         // Show upgrade promo if user is close to limits
         if (usageData.usage.subscriptionTier === 'FREE') {
           const nearLimit = 
-            usageData.usage.stories.remaining <= 1 ||
-            usageData.usage.assessments.remaining <= 1 ||
-            usageData.usage.assessmentAttempts.remaining <= 3;
+            usageData.usage.freestyleStories.remaining <= 1 ||
+            usageData.usage.assessmentRequests.remaining <= 1 ||
+            usageData.usage.competitionEntries.remaining <= 1;
           setShowUpgradePromo(nearLimit);
         }
       } else {
@@ -273,13 +261,11 @@ export default function ChildrenDashboard() {
 
   // ===== HELPER FUNCTIONS =====
   const getDefaultUsageStats = (): UsageStats => ({
-    stories: { used: 0, limit: 3, remaining: 3, canUse: true },
-    assessments: { used: 0, limit: 3, remaining: 3, canUse: true },
-    assessmentAttempts: { used: 0, limit: 9, remaining: 9, canUse: true },
-    competitions: { used: 0, limit: 3, remaining: 3, canUse: true },
-    publications: { used: 0, limit: 1, remaining: 1, canUse: true },
-    resetDate: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1).toISOString(),
-    subscriptionTier: 'FREE'
+  freestyleStories: { used: 0, limit: 3, remaining: 3, canUse: true },
+  assessmentRequests: { used: 0, limit: 9, remaining: 9, canUse: true },
+  competitionEntries: { used: 0, limit: 3, remaining: 3, canUse: true },
+  resetDate: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1).toISOString(),
+  subscriptionTier: 'FREE'
   });
 
   const getStoryTypeInfo = (story: Story) => {
@@ -333,7 +319,7 @@ export default function ChildrenDashboard() {
   };
 
   const handlePublishStory = async (storyId: string) => {
-    if (!session?.user?.id || !usageStats?.publications.canUse) return;
+  if (!session?.user?.id) return;
     
     setPublishingStory(storyId);
     
@@ -494,7 +480,7 @@ export default function ChildrenDashboard() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-12"
+          className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-6 mb-12"
         >
           {/* Freestyle Stories */}
           <div className="bg-blue-500/20 border border-blue-500/30 rounded-xl p-6 relative overflow-hidden">
@@ -505,70 +491,44 @@ export default function ChildrenDashboard() {
             </div>
             <div className="flex items-end gap-2 mb-3">
               <span className="text-3xl font-bold text-white">
-                {usageStats?.stories.remaining || 0}
+                {usageStats?.freestyleStories.remaining || 0}
               </span>
               <span className="text-blue-300">remaining</span>
             </div>
             <div className="text-sm text-blue-200">
-              {usageStats?.stories.used || 0} / {usageStats?.stories.limit || 3} used
+              {usageStats?.freestyleStories.used || 0} / {usageStats?.freestyleStories.limit || 3} used
             </div>
             <div className="w-full bg-blue-800/30 rounded-full h-2 mt-3">
               <div
                 className="bg-blue-400 h-2 rounded-full transition-all"
                 style={{ 
-                  width: `${Math.min(((usageStats?.stories.used || 0) / (usageStats?.stories.limit || 3)) * 100, 100)}%` 
+                  width: `${Math.min(((usageStats?.freestyleStories.used || 0) / (usageStats?.freestyleStories.limit || 3)) * 100, 100)}%` 
                 }}
               ></div>
             </div>
           </div>
 
-          {/* Assessment Uploads */}
+          {/* Assessment Requests */}
           <div className="bg-green-500/20 border border-green-500/30 rounded-xl p-6 relative overflow-hidden">
             <div className="absolute top-0 right-0 w-20 h-20 bg-green-400/10 rounded-full -translate-y-4 translate-x-4"></div>
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-green-300">Assessment Uploads</h3>
+              <h3 className="text-lg font-semibold text-green-300">Assessment Requests</h3>
               <Upload className="w-6 h-6 text-green-400" />
             </div>
             <div className="flex items-end gap-2 mb-3">
               <span className="text-3xl font-bold text-white">
-                {usageStats?.assessments.remaining || 0}
+                {usageStats?.assessmentRequests.remaining || 0}
               </span>
               <span className="text-green-300">remaining</span>
             </div>
             <div className="text-sm text-green-200">
-              {usageStats?.assessments.used || 0} / {usageStats?.assessments.limit || 3} used
+              {usageStats?.assessmentRequests.used || 0} / {usageStats?.assessmentRequests.limit || 9} used
             </div>
             <div className="w-full bg-green-800/30 rounded-full h-2 mt-3">
               <div
                 className="bg-green-400 h-2 rounded-full transition-all"
                 style={{ 
-                  width: `${Math.min(((usageStats?.assessments.used || 0) / (usageStats?.assessments.limit || 3)) * 100, 100)}%` 
-                }}
-              ></div>
-            </div>
-          </div>
-
-          {/* Assessment Attempts */}
-          <div className="bg-yellow-500/20 border border-yellow-500/30 rounded-xl p-6 relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-20 h-20 bg-yellow-400/10 rounded-full -translate-y-4 translate-x-4"></div>
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-yellow-300">Assessment Pool</h3>
-              <Brain className="w-6 h-6 text-yellow-400" />
-            </div>
-            <div className="flex items-end gap-2 mb-3">
-              <span className="text-3xl font-bold text-white">
-                {usageStats?.assessmentAttempts.remaining || 0}
-              </span>
-              <span className="text-yellow-300">remaining</span>
-            </div>
-            <div className="text-sm text-yellow-200">
-              {usageStats?.assessmentAttempts.used || 0} / {usageStats?.assessmentAttempts.limit || 9} used
-            </div>
-            <div className="w-full bg-yellow-800/30 rounded-full h-2 mt-3">
-              <div
-                className="bg-yellow-400 h-2 rounded-full transition-all"
-                style={{ 
-                  width: `${Math.min(((usageStats?.assessmentAttempts.used || 0) / (usageStats?.assessmentAttempts.limit || 9)) * 100, 100)}%` 
+                  width: `${Math.min(((usageStats?.assessmentRequests.used || 0) / (usageStats?.assessmentRequests.limit || 9)) * 100, 100)}%` 
                 }}
               ></div>
             </div>
@@ -583,44 +543,18 @@ export default function ChildrenDashboard() {
             </div>
             <div className="flex items-end gap-2 mb-3">
               <span className="text-3xl font-bold text-white">
-                {usageStats?.competitions.remaining || 0}
+                {usageStats?.competitionEntries.remaining || 0}
               </span>
               <span className="text-purple-300">remaining</span>
             </div>
             <div className="text-sm text-purple-200">
-              {usageStats?.competitions.used || 0} / {usageStats?.competitions.limit || 3} used
+              {usageStats?.competitionEntries.used || 0} / {usageStats?.competitionEntries.limit || 3} used
             </div>
             <div className="w-full bg-purple-800/30 rounded-full h-2 mt-3">
               <div
                 className="bg-purple-400 h-2 rounded-full transition-all"
                 style={{ 
-                  width: `${Math.min(((usageStats?.competitions.used || 0) / (usageStats?.competitions.limit || 3)) * 100, 100)}%` 
-                }}
-              ></div>
-            </div>
-          </div>
-
-          {/* Free Publications */}
-          <div className="bg-pink-500/20 border border-pink-500/30 rounded-xl p-6 relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-20 h-20 bg-pink-400/10 rounded-full -translate-y-4 translate-x-4"></div>
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-pink-300">Free Publications</h3>
-              <Star className="w-6 h-6 text-pink-400" />
-            </div>
-            <div className="flex items-end gap-2 mb-3">
-              <span className="text-3xl font-bold text-white">
-                {usageStats?.publications.remaining || 0}
-              </span>
-              <span className="text-pink-300">remaining</span>
-            </div>
-            <div className="text-sm text-pink-200">
-              {usageStats?.publications.used || 0} / {usageStats?.publications.limit || 1} used
-            </div>
-            <div className="w-full bg-pink-800/30 rounded-full h-2 mt-3">
-              <div
-                className="bg-pink-400 h-2 rounded-full transition-all"
-                style={{ 
-                  width: `${Math.min(((usageStats?.publications.used || 0) / (usageStats?.publications.limit || 1)) * 100, 100)}%` 
+                  width: `${Math.min(((usageStats?.competitionEntries.used || 0) / (usageStats?.competitionEntries.limit || 3)) * 100, 100)}%` 
                 }}
               ></div>
             </div>
@@ -786,7 +720,7 @@ export default function ChildrenDashboard() {
                               </Link>
                               
                               {/* Publish Button (conditional) */}
-                              {story.status === 'completed' && !story.isPublished && usageStats?.publications.canUse && (
+                              {story.status === 'completed' && !story.isPublished && (
                                 <button
                                   onClick={() => handlePublishStory(story._id)}
                                   disabled={publishingStory === story._id}

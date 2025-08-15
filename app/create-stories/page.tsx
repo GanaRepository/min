@@ -1,188 +1,5 @@
-// 'use client';
-
-// import React from 'react';
-// import { useState, useEffect, useCallback } from 'react';
-// import { useSession } from 'next-auth/react';
-// import { useRouter } from 'next/navigation';
-// import { motion, AnimatePresence } from 'framer-motion';
-// import {} from 'lucide-react';
-// import { Button } from '@/components/ui/button';
-// import {
-//   Card,
-//   CardContent,
-//   CardDescription,
-//   CardHeader,
-//   CardTitle,
-// } from '@/components/ui/card';
-// import { Alert, AlertDescription } from '@/components/ui/alert';
-// import { Textarea } from '@/components/ui/textarea';
-// import { Input } from '@/components/ui/input';
-// import { Label } from '@/components/ui/label';
-// import Image from 'next/image';
-// import {
-//   Sparkles,
-//   BookOpen,
-//   AlertCircle,
-//   Users,
-//   Target,
-//   Palette,
-//   Star,
-//   Compass,
-//   Wand2,
-//   HelpCircle,
-//   Rocket,
-//   Smile,
-//   Heart,
-//   Castle,
-//   Baby,
-//   TreePine,
-//   Waves,
-//   Building,
-//   Home,
-//   Mountain,
-//   Sun,
-//   Eye,
-//   Gamepad2,
-//   Crown,
-//   Shield,
-//   Flame,
-//   Zap,
-//   Gift,
-//   Sword,
-//   Trophy,
-//   HandHeart,
-//   Award,
-//   TrendingUp,
-//   UserCheck,
-//   Play,
-//   ArrowRight,
-//   Check,
-//   ChevronRight,
-//   PenTool,
-//   MessageSquare,
-//   Lightbulb,
-//   Brain,
-//   Globe,
-//   Clock,
-//   CheckCircle,
-//   Feather,
-//   Share2,
-//   ArrowLeft,
-//   Loader2,
-//   Upload,
-//   FileText,
-//   Edit3,
-//   Send,
-//   BarChart3,
-// } from 'lucide-react';
-// import { useToast } from '@/hooks/use-toast';
-// import Link from 'next/link';
-// import { DiamondSeparator } from '@/components/seperators/DiamondSeparator';
-// import { Suspense } from 'react';
-// import { useSearchParams } from 'next/navigation';
-
-// interface UsageStats {
-//   stories: number;
-//   assessments: number;
-//   attempts: number;
-//   competition: number;
-// }
-
-// interface UserLimits {
-//   stories: number;
-//   assessments: number;
-//   totalAttempts: number;
-//   competition: number;
-// }
-
-// function CreateStoriesContent() {
-//   const { data: session, status } = useSession();
-//   const router = useRouter();
-//   const searchParams = useSearchParams();
-//   const { toast } = useToast();
-
-//   const [mode, setMode] = useState<'select' | 'write' | 'upload'>('select');
-//   const [loading, setLoading] = useState(false);
-//   const [error, setError] = useState('');
-//   const [usage, setUsage] = useState<UsageStats | null>(null);
-//   const [limits, setLimits] = useState<UserLimits | null>(null);
-
-//   // Upload form state
-//   const [title, setTitle] = useState('');
-//   const [content, setContent] = useState('');
-//   const [file, setFile] = useState<File | null>(null);
-//   const [dragActive, setDragActive] = useState(false);
-
-//   useEffect(() => {
-//     if (status === 'loading') return;
-//     if (!session || session.user?.role !== 'child') {
-//       router.push('/login/child');
-//       return;
-//     }
-//     fetchUsageStats();
-//   }, [session, status, router]);
-
-//   const fetchUsageStats = async () => {
-//     try {
-//       const response = await fetch('/api/user/usage');
-//       const data = await response.json();
-
-//       if (data.success) {
-//         setUsage(data.usage);
-//         setLimits(data.limits);
-//       }
-//     } catch (error) {
-//       console.error('Error fetching usage stats:', error);
-//     }
-//   };
-
-//   const handleCreateNewStory = async () => {
-//     setLoading(true);
-//     setError('');
-
-//     try {
-//       // Check if user can create story
-//       const checkResponse = await fetch('/api/stories/usage-check', {
-//         method: 'POST',
-//         headers: { 'Content-Type': 'application/json' },
-//         body: JSON.stringify({ action: 'create_story' }),
-//       });
-
-//       const checkData = await checkResponse.json();
-
-//       if (!checkData.allowed) {
-//         setError(checkData.message);
-//         setLoading(false);
-//         return;
-//       }
-
-//       // Create new story session
-//       const response = await fetch('/api/stories/create-session', {
-//         method: 'POST',
-//         headers: { 'Content-Type': 'application/json' },
-//         body: JSON.stringify({
-//           storyMode: 'freeform',
-//           openingText: 'Start writing your story here...',
-//         }),
-//       });
-
-//       const data = await response.json();
-
-//       if (data.success) {
-//         // Redirect to story writing interface
-//         router.push(`/children-dashboard/story/${data.session.id}`);
-//       } else {
-//         setError(data.error || 'Failed to create story session');
-//       }
-//     } catch (error) {
-//       setError('Failed to create new story');
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-//     const selectedFile = e.target.files?.[0];
+// This file has been fully migrated to use only the three core usage types: freestyleStories, assessmentRequests, competitionEntries.
+// All legacy fields (stories, assessments, attempts, competitions, publications, etc.) have been removed.
 //     if (selectedFile) {
 //       const allowedTypes = [
 //         'text/plain',
@@ -1546,11 +1363,9 @@ import {
 
 // ===== INTERFACES =====
 interface UsageStats {
-  stories: { used: number; limit: number; remaining: number; canUse: boolean };
-  assessments: { used: number; limit: number; remaining: number; canUse: boolean };
-  assessmentAttempts: { used: number; limit: number; remaining: number; canUse: boolean };
-  competitions: { used: number; limit: number; remaining: number; canUse: boolean };
-  publications: { used: number; limit: number; remaining: number; canUse: boolean };
+  freestyleStories: { used: number; limit: number; remaining: number; canUse: boolean };
+  assessmentRequests: { used: number; limit: number; remaining: number; canUse: boolean };
+  competitionEntries: { used: number; limit: number; remaining: number; canUse: boolean };
   subscriptionTier: 'FREE' | 'STORY_PACK';
   resetDate: string;
 }
@@ -1632,7 +1447,7 @@ export default function CreateStoriesPage() {
 
   // ===== STORY CREATION =====
   const handleCreateFreestyleStory = async () => {
-    if (!usageStats?.stories.canUse) {
+  if (!usageStats?.freestyleStories.canUse) {
       setError('You have reached your monthly story creation limit. Upgrade to Story Pack for more stories!');
       return;
     }
@@ -1733,12 +1548,12 @@ export default function CreateStoriesPage() {
     }
 
     // Check usage limits based on upload type
-    if (uploadData.uploadType === 'assessment' && !usageStats?.assessments.canUse) {
+  if (uploadData.uploadType === 'assessment' && !usageStats?.assessmentRequests.canUse) {
       setError('You have reached your monthly assessment upload limit. Upgrade to Story Pack for more uploads!');
       return;
     }
 
-    if (uploadData.uploadType === 'competition' && !usageStats?.competitions.canUse) {
+  if (uploadData.uploadType === 'competition' && !usageStats?.competitionEntries.canUse) {
       setError('You have reached your monthly competition entry limit (3 entries maximum).');
       return;
     }
@@ -1856,32 +1671,23 @@ export default function CreateStoriesPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-            className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto mb-12"
+            className="grid grid-cols-3 md:grid-cols-3 gap-4 max-w-4xl mx-auto mb-12"
           >
             <div className="bg-blue-500/20 border border-blue-500/30 rounded-lg p-4">
               <div className="text-2xl font-bold text-blue-400">
-                {usageStats.stories.remaining}
+                {usageStats.freestyleStories.remaining}
               </div>
               <div className="text-sm text-blue-300">Freestyle Stories Left</div>
             </div>
-            
             <div className="bg-green-500/20 border border-green-500/30 rounded-lg p-4">
               <div className="text-2xl font-bold text-green-400">
-                {usageStats.assessments.remaining}
+                {usageStats.assessmentRequests.remaining}
               </div>
-              <div className="text-sm text-green-300">Assessments Left</div>
+              <div className="text-sm text-green-300">Assessment Requests Left</div>
             </div>
-            
-            <div className="bg-yellow-500/20 border border-yellow-500/30 rounded-lg p-4">
-              <div className="text-2xl font-bold text-yellow-400">
-                {usageStats.assessmentAttempts.remaining}
-              </div>
-              <div className="text-sm text-yellow-300">Assessment Attempts</div>
-            </div>
-            
             <div className="bg-purple-500/20 border border-purple-500/30 rounded-lg p-4">
               <div className="text-2xl font-bold text-purple-400">
-                {usageStats.competitions.remaining}
+                {usageStats.competitionEntries.remaining}
               </div>
               <div className="text-sm text-purple-300">Competition Entries</div>
             </div>
@@ -1948,8 +1754,8 @@ export default function CreateStoriesPage() {
             {usageStats && (
               <div className="mb-6 p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg">
                 <p className="text-sm text-gray-300">
-                  {usageStats.stories.canUse ? (
-                    `${usageStats.stories.remaining} stories remaining this month`
+                  {usageStats.freestyleStories?.canUse ? (
+                    `${usageStats.freestyleStories?.remaining ?? 0} stories remaining this month`
                   ) : (
                     <span className="text-red-400">Monthly limit reached - Upgrade to Story Pack</span>
                   )}
@@ -2003,8 +1809,8 @@ export default function CreateStoriesPage() {
             {usageStats && (
               <div className="mb-6 p-3 bg-green-500/10 border border-green-500/20 rounded-lg">
                 <p className="text-sm text-gray-300">
-                  {usageStats.assessments.canUse ? (
-                    `${usageStats.assessments.remaining} uploads remaining this month`
+                  {usageStats.assessmentRequests.canUse ? (
+                    `${usageStats.assessmentRequests.remaining} uploads remaining this month`
                   ) : (
                     <span className="text-red-400">Monthly limit reached - Upgrade to Story Pack</span>
                   )}
@@ -2058,8 +1864,8 @@ export default function CreateStoriesPage() {
             {usageStats && (
               <div className="mb-6 p-3 bg-purple-500/10 border border-purple-500/20 rounded-lg">
                 <p className="text-sm text-gray-300">
-                  {usageStats.competitions.canUse ? (
-                    `${usageStats.competitions.remaining} entries remaining this month`
+                  {usageStats.competitionEntries.canUse ? (
+                    `${usageStats.competitionEntries.remaining} entries remaining this month`
                   ) : (
                     <span className="text-orange-400">3 entries used - Maximum reached</span>
                   )}
@@ -2188,35 +1994,35 @@ export default function CreateStoriesPage() {
         </div>
 
         {usageStats && (
-          <div className="mb-6 p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-gray-300">Stories Remaining:</span>
-              <span className="text-white font-semibold">{usageStats.stories.remaining} / {usageStats.stories.limit}</span>
-            </div>
-            <div className="w-full bg-blue-800/30 rounded-full h-2">
-              <div
-                className="bg-blue-400 h-2 rounded-full transition-all"
-                style={{ width: `${(usageStats.stories.used / usageStats.stories.limit) * 100}%` }}
-              />
-            </div>
-            {!usageStats.stories.canUse && (
-              <p className="text-red-400 text-sm mt-2">
-                Monthly limit reached. 
-                <button
-                  onClick={() => router.push('/pricing')}
-                  className="underline ml-1 hover:no-underline"
-                >
-                  Upgrade to Story Pack
-                </button>
-              </p>
-            )}
-          </div>
+              <div className="mb-6 p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-gray-300">Stories Remaining:</span>
+                  <span className="text-white font-semibold">{usageStats.freestyleStories?.remaining ?? 0} / {usageStats.freestyleStories?.limit ?? 0}</span>
+                </div>
+                <div className="w-full bg-blue-800/30 rounded-full h-2">
+                  <div
+                    className="bg-blue-400 h-2 rounded-full transition-all"
+                    style={{ width: `${((usageStats.freestyleStories?.used ?? 0) / (usageStats.freestyleStories?.limit ?? 1)) * 100}%` }}
+                  />
+                </div>
+                {!usageStats.freestyleStories?.canUse && (
+                  <p className="text-red-400 text-sm mt-2">
+                    Monthly limit reached. 
+                    <button
+                      onClick={() => router.push('/pricing')}
+                      className="underline ml-1 hover:no-underline"
+                    >
+                      Upgrade to Story Pack
+                    </button>
+                  </p>
+                )}
+              </div>
         )}
 
         <div className="text-center">
           <button
             onClick={handleCreateFreestyleStory}
-            disabled={creatingStory || !usageStats?.stories.canUse}
+            disabled={creatingStory || !usageStats?.freestyleStories?.canUse}
             className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 disabled:from-gray-600 disabled:to-gray-700 text-white px-8 py-4 rounded-lg font-bold text-lg transition-all flex items-center gap-3 mx-auto disabled:cursor-not-allowed"
           >
             {creatingStory ? (
@@ -2421,8 +2227,8 @@ export default function CreateStoriesPage() {
                   <span className="text-gray-300">Uploads Remaining:</span>
                   <span className="text-white font-semibold">
                     {uploadData.uploadType === 'assessment' 
-                      ? `${usageStats.assessments.remaining} / ${usageStats.assessments.limit}`
-                      : `${usageStats.competitions.remaining} / ${usageStats.competitions.limit}`
+                      ? `${usageStats.assessmentRequests.remaining} / ${usageStats.assessmentRequests.limit}`
+                      : `${usageStats.competitionEntries.remaining} / ${usageStats.competitionEntries.limit}`
                     }
                   </span>
                 </div>
@@ -2431,8 +2237,8 @@ export default function CreateStoriesPage() {
                     className="bg-green-400 h-2 rounded-full transition-all"
                     style={{ 
                       width: `${uploadData.uploadType === 'assessment'
-                        ? (usageStats.assessments.used / usageStats.assessments.limit) * 100
-                        : (usageStats.competitions.used / usageStats.competitions.limit) * 100
+                        ? (usageStats.assessmentRequests.used / usageStats.assessmentRequests.limit) * 100
+                        : (usageStats.competitionEntries.used / usageStats.competitionEntries.limit) * 100
                       }%` 
                     }}
                   />
@@ -2444,13 +2250,13 @@ export default function CreateStoriesPage() {
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-gray-300">Assessment Attempts:</span>
                     <span className="text-white font-semibold">
-                      {usageStats.assessmentAttempts.remaining} / {usageStats.assessmentAttempts.limit}
+                      {usageStats.assessmentRequests.remaining} / {usageStats.assessmentRequests.limit}
                     </span>
                   </div>
                   <div className="w-full bg-yellow-800/30 rounded-full h-2">
                     <div
                       className="bg-yellow-400 h-2 rounded-full transition-all"
-                      style={{ width: `${(usageStats.assessmentAttempts.used / usageStats.assessmentAttempts.limit) * 100}%` }}
+                      style={{ width: `${(usageStats.assessmentRequests.used / usageStats.assessmentRequests.limit) * 100}%` }}
                     />
                   </div>
                 </div>
@@ -2486,8 +2292,8 @@ export default function CreateStoriesPage() {
               uploading || 
               !uploadData.title.trim() || 
               (!uploadData.content.trim() && !uploadData.file) ||
-              (uploadData.uploadType === 'assessment' && !usageStats?.assessments.canUse) ||
-              (uploadData.uploadType === 'competition' && !usageStats?.competitions.canUse)
+              (uploadData.uploadType === 'assessment' && !usageStats?.assessmentRequests.canUse) ||
+              (uploadData.uploadType === 'competition' && !usageStats?.competitionEntries.canUse)
             }
             className="bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700 disabled:from-gray-600 disabled:to-gray-700 text-white px-8 py-4 rounded-lg font-bold text-lg transition-all flex items-center gap-3 mx-auto disabled:cursor-not-allowed"
           >
@@ -2599,11 +2405,11 @@ export default function CreateStoriesPage() {
               setUploadData(prev => ({ ...prev, uploadType: 'competition' }));
               setActiveSection('assessment'); // Reuse upload interface
             }}
-            disabled={!usageStats?.competitions.canUse}
+            disabled={!usageStats?.competitionEntries.canUse}
             className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 disabled:from-gray-600 disabled:to-gray-700 text-white px-8 py-4 rounded-lg font-bold text-lg transition-all flex items-center gap-3 mx-auto disabled:cursor-not-allowed"
           >
             <Trophy className="w-6 h-6" />
-            {usageStats?.competitions.canUse ? 'Submit to Competition' : 'Competition Limit Reached'}
+            {usageStats?.competitionEntries.canUse ? 'Submit to Competition' : 'Competition Limit Reached'}
           </button>
         </div>
       </div>

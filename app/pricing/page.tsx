@@ -66,7 +66,7 @@ export default function PricingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 mt-16">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 pt-16">
       {/* Header */}
       <div className="pt-16 pb-16">
         <div className="max-w-7xl mx-auto px-6 text-center">
@@ -75,7 +75,10 @@ export default function PricingPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <h1 className="text-4xl  text-white mb-6">Simple, Fair Pricing</h1>
+            <div className="flex items-center justify-center gap-2 mb-6">
+              <Zap className="text-green-400" size={32} />
+              <h1 className="text-4xl text-white">Simple, Fair Pricing</h1>
+            </div>
             <p className="text-xl text-gray-300  max-w-3xl mx-auto">
               Pay only for what you use. Start free, upgrade when you need more.
               No subscriptions, no hidden fees, just transparent pricing for

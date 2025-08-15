@@ -39,7 +39,7 @@ export default function DashboardSidebar({ open, setOpen }: DashboardSidebarProp
     },
     {
       name: 'Create Stories',
-      href: '/children-dashboard/create-stories',
+      href: '/create-stories',
       icon: Sparkles,
     },
     {
@@ -47,11 +47,7 @@ export default function DashboardSidebar({ open, setOpen }: DashboardSidebarProp
       href: '/children-dashboard/competitions',
       icon: Trophy,
     },
-    {
-      name: 'Upload Story',
-      href: '/children-dashboard/upload-story',
-      icon: Upload,
-    },
+ 
   ];
 
   const handleSignOut = async () => {

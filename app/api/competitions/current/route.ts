@@ -105,12 +105,9 @@ export async function GET() {
     if (session && session.user?.role === 'child') {
       console.log(`👤 Getting user stats for: ${session.user.id}`);
 
-      // Get user's monthly competition entries
-      const user = await User.findById(session.user.id);
-      const entriesUsed = user?.competitionEntriesThisMonth || 0;
       const entriesLimit = 3; // Always 3 per month
 
-      // Get user's actual competition entries for this competition - FIXED TYPE CASTING
+      // Get user's actual competition entries for this competition
       const userEntriesRaw = await StorySession.find({
         childId: session.user.id,
         competitionEntries: {
@@ -141,6 +138,8 @@ export async function GET() {
           score: competitionEntry?.score || null
         };
       });
+
+      const entriesUsed = formattedUserEntries.length;
 
       userStats = {
         entriesUsed,
