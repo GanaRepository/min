@@ -1,4 +1,4 @@
-// types/index.ts - COMPLETELY FIXED ALL INTERFACE ISSUES
+// types/index.ts - FIXED VERSION (REMOVE CONFLICTING User INTERFACE)
 import mongoose from 'mongoose';
 
 // Base MongoDB document interface
@@ -8,7 +8,7 @@ export interface BaseDocument {
   updatedAt: Date;
 }
 
-// Story Types - FIXED: Make isPublished required, not optional
+// Story Types
 export interface CompetitionEntry {
   competitionId: mongoose.Types.ObjectId;
   submittedAt: Date;
@@ -69,7 +69,7 @@ export interface StoryTurn {
   timestamp: Date;
 }
 
-// Main Story Interface - FIXED: isPublished is required boolean
+// Main Story Interface
 export interface Story extends BaseDocument {
   childId: mongoose.Types.ObjectId;
   title: string;
@@ -88,16 +88,16 @@ export interface Story extends BaseDocument {
   // Story elements
   elements?: StoryElements;
   
-  // Publication - FIXED: Required boolean
+  // Publication
   isPublished: boolean;
   publicationDate?: Date;
   publicationFee?: number;
   
-  // Competition - FIXED: Required boolean
+  // Competition
   competitionEligible: boolean;
   competitionEntries?: CompetitionEntry[];
   
-  // Assessment - FIXED: Required boolean
+  // Assessment
   isUploadedForAssessment: boolean;
   assessmentAttempts: number;
   assessment?: StoryAssessment;
@@ -149,34 +149,9 @@ export interface Competition extends BaseDocument {
   archivedAt?: Date;
 }
 
-// User Types
-export interface User extends BaseDocument {
-  firstName: string;
-  lastName: string;
-  email: string;
-  role: 'child' | 'parent' | 'mentor' | 'admin';
-  
-  // Usage tracking
-  storiesThisMonth?: number;
-  assessmentsThisMonth?: number;
-  totalAssessmentAttemptsThisMonth?: number;
-  competitionEntriesThisMonth?: number;
-  
-  // Limits
-  monthlyStoryLimit?: number;
-  monthlyAssessmentLimit?: number;
-  monthlyAssessmentAttemptLimit?: number;
-  
-  // Features
-  hasStoryPack?: boolean;
-  storyPackExpiresAt?: Date;
-  
-  // Parent connection
-  parentId?: mongoose.Types.ObjectId;
-  children?: mongoose.Types.ObjectId[];
-}
+// REMOVED: User interface - now only exists in models/User.ts to avoid conflicts
 
-// API Response Types - FIXED: StoryResponse matches Story interface exactly
+// API Response Types
 export interface ApiResponse<T = any> {
   success: boolean;
   message?: string;
@@ -184,7 +159,6 @@ export interface ApiResponse<T = any> {
   data?: T;
 }
 
-// FIXED: StoryResponse now correctly extends Story with exact same types
 export interface StoryResponse extends Story {
   turns?: StoryTurn[];
   content?: string;
@@ -287,10 +261,18 @@ export interface ExtendedSession {
   expires: string;
 }
 
+// File types
+export interface FileInfo {
+  id: string;
+  filename: string;
+  contentType: string;
+  size: number;
+  uploadDate: Date;
+}
+
 // MongoDB Lean Document Types (for fixing FlattenMaps errors)
 export type StoryLean = mongoose.FlattenMaps<Story> & { _id: mongoose.Types.ObjectId };
 export type CompetitionLean = mongoose.FlattenMaps<Competition> & { _id: mongoose.Types.ObjectId };
-export type UserLean = mongoose.FlattenMaps<User> & { _id: mongoose.Types.ObjectId };
 
 // Utility Types
 export type StoryStatus = 'active' | 'completed' | 'flagged' | 'review';

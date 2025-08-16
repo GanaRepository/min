@@ -115,7 +115,7 @@ export class UsageManager {
     const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
 
     // Get user and check purchaseHistory instead of UserPurchase collection
-    const user = await User.findById(userId).lean();
+    const user = await User.findById(userId);
     
     if (!user || !user.purchaseHistory) {
       return {
@@ -289,7 +289,7 @@ export class UsageManager {
       const nextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
 
       // Get user and check purchaseHistory
-      const user = await User.findById(userId).lean();
+      const user = await User.findById(userId);
       
       let storyPackPurchases = [];
       if (user && user.purchaseHistory) {
