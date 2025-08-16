@@ -32,7 +32,6 @@ export async function GET(request: NextRequest) {
     // Get current month dates
     const now = new Date();
     const currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
-    const nextMonthStart = new Date(now.getFullYear(), now.getMonth() + 1, 1);
 
     // Get user data
     const user = await User.findById(session.user.id);
@@ -40,7 +39,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    // Get usage statistics using the fixed UsageManager
+    // Get usage statistics using the FIXED UsageManager
     const usageStats = await UsageManager.getUserUsageStats(session.user.id);
 
     console.log('📈 Usage stats retrieved:', usageStats);
@@ -70,7 +69,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      usage: completeUsageStats,
+      data: completeUsageStats,
       message: 'Usage statistics retrieved successfully'
     });
 
@@ -93,7 +92,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      usage: defaultStats,
+      data: defaultStats,
       message: 'Default usage statistics (error occurred)',
       error: error instanceof Error ? error.message : 'Unknown error'
     });

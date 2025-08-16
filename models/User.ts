@@ -1,22 +1,19 @@
+// // models/User.ts - COMPLETE FIXED VERSION
 // import mongoose, { Schema, Document } from 'mongoose';
 
 // export interface IUser extends Document {
 //   _id: mongoose.Types.ObjectId;
-//   firstName: string;
-//   lastName: string;
 //   email: string;
 //   password: string;
-//   role: 'child' | 'mentor' | 'admin';
+//   firstName: string;
+//   lastName: string;
 //   age?: number;
-//   dateOfBirth?: Date;
-//   grade?: string;
 //   school?: string;
-//   avatar?: string;
+//   role: 'admin' | 'mentor' | 'child';
 //   isActive: boolean;
-//   isVerified: boolean; // Added this field
 
 //   // Subscription fields
-//   subscriptionTier: 'FREE' | 'BASIC' | 'PREMIUM';
+//   subscriptionTier: 'FREE' | 'STORY_PACK';
 //   subscriptionStatus: 'active' | 'inactive' | 'cancelled';
 //   billingPeriodStart?: Date;
 //   billingPeriodEnd?: Date;
@@ -29,6 +26,34 @@
 //   lastActiveDate?: Date;
 //   totalTimeWriting: number;
 
+//   // Monthly Usage Tracking - FIXED to match dashboard requirements
+//   monthlyUsage: {
+//     stories: {
+//       used: number;
+//       limit: number;
+//     };
+//     assessments: {
+//       used: number;
+//       limit: number;
+//     };
+//     assessmentAttempts: {
+//       used: number;
+//       limit: number;
+//     };
+//     competitions: {
+//       used: number;
+//       limit: number;
+//     };
+//     publications: {
+//       used: number;
+//       limit: number;
+//     };
+//     resetDate: Date;
+//   };
+
+//   // Assessment attempts per story
+//   assessmentAttempts: Map<string, number>;
+
 //   // User Preferences
 //   preferences: {
 //     theme: 'light' | 'dark' | 'auto';
@@ -38,201 +63,182 @@
 //     autoSave: boolean;
 //   };
 
-//   // Password reset fields
-//   resetPasswordToken?: string | null;
-//   resetPasswordExpires?: Date | null;
+//   // Password reset
+//   resetPasswordToken?: string;
+//   resetPasswordExpires?: Date;
 
-//   // Optional mentor/child relationship fields
+//   // Relationships
 //   assignedMentor?: mongoose.Types.ObjectId;
 //   createdBy?: mongoose.Types.ObjectId;
 
+//   // Timestamps
 //   createdAt: Date;
 //   updatedAt: Date;
 // }
 
-// const UserSchema = new Schema<IUser>(
-//   {
-//     firstName: {
-//       type: String,
-//       required: true,
-//       trim: true,
-//       maxlength: 50,
+// const UserSchema = new Schema<IUser>({
+//   email: {
+//     type: String,
+//     required: true,
+//     unique: true,
+//     lowercase: true,
+//     trim: true,
+//   },
+//   password: {
+//     type: String,
+//     required: true,
+//   },
+//   firstName: {
+//     type: String,
+//     required: true,
+//     trim: true,
+//   },
+//   lastName: {
+//     type: String,
+//     required: true,
+//     trim: true,
+//   },
+//   age: {
+//     type: Number,
+//     min: 3,
+//     max: 18,
+//   },
+//   school: {
+//     type: String,
+//     trim: true,
+//   },
+//   role: {
+//     type: String,
+//     enum: ['admin', 'mentor', 'child'],
+//     required: true,
+//   },
+//   isActive: {
+//     type: Boolean,
+//     default: true,
+//   },
+
+//   // Subscription fields
+//   subscriptionTier: {
+//     type: String,
+//     enum: ['FREE', 'STORY_PACK'],
+//     default: 'FREE',
+//   },
+//   subscriptionStatus: {
+//     type: String,
+//     enum: ['active', 'inactive', 'cancelled'],
+//     default: 'active',
+//   },
+//   billingPeriodStart: Date,
+//   billingPeriodEnd: Date,
+
+//   // Writing Statistics
+//   totalStoriesCreated: {
+//     type: Number,
+//     default: 0,
+//   },
+//   storiesCreatedThisMonth: {
+//     type: Number,
+//     default: 0,
+//   },
+//   totalWordsWritten: {
+//     type: Number,
+//     default: 0,
+//   },
+//   writingStreak: {
+//     type: Number,
+//     default: 0,
+//   },
+//   lastActiveDate: Date,
+//   totalTimeWriting: {
+//     type: Number,
+//     default: 0,
+//   },
+
+//   // Monthly Usage Tracking
+//   monthlyUsage: {
+//     stories: {
+//       used: { type: Number, default: 0 },
+//       limit: { type: Number, default: 3 },
 //     },
-//     lastName: {
-//       type: String,
-//       required: true,
-//       trim: true,
-//       maxlength: 50,
+//     assessments: {
+//       used: { type: Number, default: 0 },
+//       limit: { type: Number, default: 3 },
 //     },
-//     email: {
-//       type: String,
-//       required: true,
-//       unique: true,
-//       lowercase: true,
-//       trim: true,
+//     assessmentAttempts: {
+//       used: { type: Number, default: 0 },
+//       limit: { type: Number, default: 9 },
 //     },
-//     password: {
-//       type: String,
-//       required: true,
-//       minlength: 6,
+//     competitions: {
+//       used: { type: Number, default: 0 },
+//       limit: { type: Number, default: 3 },
 //     },
-//     role: {
-//       type: String,
-//       enum: ['child', 'mentor', 'admin'],
-//       required: true,
+//     publications: {
+//       used: { type: Number, default: 0 },
+//       limit: { type: Number, default: 1 },
 //     },
-//     age: {
-//       type: Number,
-//       min: 2,
-//       max: 18,
-//     },
-//     dateOfBirth: {
+//     resetDate: {
 //       type: Date,
+//       default: () => new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1),
 //     },
-//     grade: {
+//   },
+
+//   // Assessment attempts map
+//   assessmentAttempts: {
+//     type: Map,
+//     of: Number,
+//     default: new Map(),
+//   },
+
+//   // User Preferences
+//   preferences: {
+//     theme: {
 //       type: String,
-//       trim: true,
+//       enum: ['light', 'dark', 'auto'],
+//       default: 'dark',
 //     },
-//     school: {
+//     language: {
 //       type: String,
-//       trim: true,
-//       maxlength: 100,
+//       default: 'en',
 //     },
-//     avatar: {
-//       type: String,
-//       trim: true,
-//     },
-//     isActive: {
+//     emailNotifications: {
 //       type: Boolean,
 //       default: true,
 //     },
-//     // Added isVerified field
-//     isVerified: {
+//     soundEffects: {
 //       type: Boolean,
-//       required: true,
-//       default: false,
+//       default: true,
 //     },
-
-//     // Subscription fields with defaults
-//     subscriptionTier: {
-//       type: String,
-//       enum: ['FREE', 'BASIC', 'PREMIUM'],
-//       required: true,
-//       default: 'FREE',
-//     },
-//     subscriptionStatus: {
-//       type: String,
-//       enum: ['active', 'inactive', 'cancelled'],
-//       required: true,
-//       default: 'active',
-//     },
-//     billingPeriodStart: {
-//       type: Date,
-//     },
-//     billingPeriodEnd: {
-//       type: Date,
-//     },
-
-//     // Writing Statistics - ALL REQUIRED with defaults
-//     totalStoriesCreated: {
-//       type: Number,
-//       required: true,
-//       default: 0,
-//       min: 0,
-//     },
-//     storiesCreatedThisMonth: {
-//       type: Number,
-//       required: true,
-//       default: 0,
-//       min: 0,
-//     },
-//     totalWordsWritten: {
-//       type: Number,
-//       required: true,
-//       default: 0,
-//       min: 0,
-//     },
-//     writingStreak: {
-//       type: Number,
-//       required: true,
-//       default: 0,
-//       min: 0,
-//     },
-//     lastActiveDate: {
-//       type: Date,
-//     },
-//     totalTimeWriting: {
-//       type: Number,
-//       required: true,
-//       default: 0,
-//       min: 0,
-//     },
-
-//     // User Preferences - ALL REQUIRED with defaults
-//     preferences: {
-//       theme: {
-//         type: String,
-//         enum: ['light', 'dark', 'auto'],
-//         required: true,
-//         default: 'dark',
-//       },
-//       language: {
-//         type: String,
-//         required: true,
-//         default: 'en',
-//       },
-//       emailNotifications: {
-//         type: Boolean,
-//         required: true,
-//         default: true,
-//       },
-//       soundEffects: {
-//         type: Boolean,
-//         required: true,
-//         default: true,
-//       },
-//       autoSave: {
-//         type: Boolean,
-//         required: true,
-//         default: true,
-//       },
-//     },
-
-//     // Password reset fields
-//     resetPasswordToken: {
-//       type: String,
-//       default: null,
-//     },
-//     resetPasswordExpires: {
-//       type: Date,
-//       default: null,
-//     },
-
-//     // Optional relationship fields
-//     assignedMentor: {
-//       type: Schema.Types.ObjectId,
-//       ref: 'User',
-//     },
-//     createdBy: {
-//       type: Schema.Types.ObjectId,
-//       ref: 'User',
+//     autoSave: {
+//       type: Boolean,
+//       default: true,
 //     },
 //   },
-//   {
-//     timestamps: true,
-//   }
-// );
+
+//   // Password reset
+//   resetPasswordToken: String,
+//   resetPasswordExpires: Date,
+
+//   // Relationships
+//   assignedMentor: {
+//     type: Schema.Types.ObjectId,
+//     ref: 'User',
+//   },
+//   createdBy: {
+//     type: Schema.Types.ObjectId,
+//     ref: 'User',
+//   },
+// }, {
+//   timestamps: true,
+// });
 
 // // Indexes
 // UserSchema.index({ role: 1, isActive: 1 });
 // UserSchema.index({ subscriptionTier: 1, subscriptionStatus: 1 });
-// UserSchema.index({ email: 1, isVerified: 1 }); // Added index for verification queries
-// UserSchema.index({ isActive: 1, isVerified: 1 }); // Added compound index
 
-// export default mongoose.models.User ||
-//   mongoose.model<IUser>('User', UserSchema);
+// export default mongoose.models?.User || mongoose.model<IUser>('User', UserSchema);
 
-// models/User.ts - COMPLETE FIXED VERSION
+
+// models/User.ts - COMPLETE FIXED VERSION WITH PURCHASE HISTORY
 import mongoose, { Schema, Document } from 'mongoose';
 
 export interface IUser extends Document {
@@ -260,33 +266,22 @@ export interface IUser extends Document {
   lastActiveDate?: Date;
   totalTimeWriting: number;
 
-  // Monthly Usage Tracking - FIXED to match dashboard requirements
-  monthlyUsage: {
-    stories: {
-      used: number;
-      limit: number;
+  // Purchase History - ADD THIS FIELD
+  purchaseHistory: Array<{
+    type: 'story_pack' | 'individual_story';
+    amount: number;
+    stripePaymentId?: string;
+    stripeSessionId?: string;
+    paymentStatus: 'pending' | 'completed' | 'failed';
+    itemDetails?: {
+      storyId?: mongoose.Types.ObjectId;
+      storyTitle?: string;
+      storiesAdded?: number;
+      assessmentsAdded?: number;
     };
-    assessments: {
-      used: number;
-      limit: number;
-    };
-    assessmentAttempts: {
-      used: number;
-      limit: number;
-    };
-    competitions: {
-      used: number;
-      limit: number;
-    };
-    publications: {
-      used: number;
-      limit: number;
-    };
-    resetDate: Date;
-  };
-
-  // Assessment attempts per story
-  assessmentAttempts: Map<string, number>;
+    purchaseDate: Date;
+    _id?: mongoose.Types.ObjectId;
+  }>;
 
   // User Preferences
   preferences: {
@@ -388,40 +383,45 @@ const UserSchema = new Schema<IUser>({
     default: 0,
   },
 
-  // Monthly Usage Tracking
-  monthlyUsage: {
-    stories: {
-      used: { type: Number, default: 0 },
-      limit: { type: Number, default: 3 },
+  // Purchase History - ADD THIS SCHEMA FIELD
+  purchaseHistory: [{
+    type: {
+      type: String,
+      enum: ['story_pack', 'individual_story'],
+      required: true,
     },
-    assessments: {
-      used: { type: Number, default: 0 },
-      limit: { type: Number, default: 3 },
+    amount: {
+      type: Number,
+      required: true,
+      min: 0,
     },
-    assessmentAttempts: {
-      used: { type: Number, default: 0 },
-      limit: { type: Number, default: 9 },
+    stripePaymentId: {
+      type: String,
     },
-    competitions: {
-      used: { type: Number, default: 0 },
-      limit: { type: Number, default: 3 },
+    stripeSessionId: {
+      type: String,
     },
-    publications: {
-      used: { type: Number, default: 0 },
-      limit: { type: Number, default: 1 },
+    paymentStatus: {
+      type: String,
+      enum: ['pending', 'completed', 'failed'],
+      required: true,
+      default: 'completed',
     },
-    resetDate: {
+    itemDetails: {
+      storyId: {
+        type: Schema.Types.ObjectId,
+        ref: 'StorySession',
+      },
+      storyTitle: { type: String },
+      storiesAdded: { type: Number },
+      assessmentsAdded: { type: Number },
+    },
+    purchaseDate: {
       type: Date,
-      default: () => new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1),
+      required: true,
+      default: Date.now,
     },
-  },
-
-  // Assessment attempts map
-  assessmentAttempts: {
-    type: Map,
-    of: Number,
-    default: new Map(),
-  },
+  }],
 
   // User Preferences
   preferences: {
@@ -468,5 +468,7 @@ const UserSchema = new Schema<IUser>({
 // Indexes
 UserSchema.index({ role: 1, isActive: 1 });
 UserSchema.index({ subscriptionTier: 1, subscriptionStatus: 1 });
+UserSchema.index({ 'purchaseHistory.stripeSessionId': 1 });
+UserSchema.index({ 'purchaseHistory.purchaseDate': -1 });
 
 export default mongoose.models?.User || mongoose.model<IUser>('User', UserSchema);
