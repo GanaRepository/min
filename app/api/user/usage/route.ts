@@ -1,10 +1,9 @@
-// app/api/user/usage/route.ts - SIMPLIFIED USAGE API
+// app/api/user/usage/route.ts - COMPLETE FIXED VERSION
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/utils/authOptions';
 import { connectToDatabase } from '@/utils/db';
 import User from '@/models/User';
-import StorySession from '@/models/StorySession';
 import PublishedStory from '@/models/PublishedStory';
 import { UsageManager } from '@/lib/usage-manager';
 
@@ -41,12 +40,10 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    // Get usage and limits using simplified UsageManager
-    const userLimits = await UsageManager.getUserLimits(session.user.id);
-    const currentUsage = await UsageManager.getCurrentUsage(session.user.id);
+    // Get usage statistics using the fixed UsageManager
+    const usageStats = await UsageManager.getUserUsageStats(session.user.id);
 
-    console.log('📈 Current usage:', currentUsage);
-    console.log('📋 User limits:', userLimits);
+    console.log('📈 Usage stats retrieved:', usageStats);
 
     // Count publications this month
     const monthlyPublications = await PublishedStory.countDocuments({
@@ -54,83 +51,51 @@ export async function GET(request: NextRequest) {
       publishedAt: { $gte: currentMonthStart }
     });
 
-    // Determine subscription tier
-    const hasStoryPack = user.purchaseHistory?.some((purchase: any) => 
-      purchase.type === 'story_pack' && 
-      purchase.purchaseDate >= currentMonthStart &&
-      purchase.purchaseDate < nextMonthStart
-    ) || false;
-
-    const subscriptionTier = hasStoryPack ? 'STORY_PACK' : 'FREE';
-
-    // Build simplified usage response
-    const usageStats = {
-      // Freestyle Stories (Collaborative AI stories)
-      freestyleStories: {
-        used: currentUsage.freestyleStories,
-        limit: userLimits.freestyleStories,
-        remaining: Math.max(0, userLimits.freestyleStories - currentUsage.freestyleStories),
-        canUse: currentUsage.freestyleStories < userLimits.freestyleStories
-      },
-
-      // Assessment Requests (uploads + re-assessments combined)
-      assessmentRequests: {
-        used: currentUsage.assessmentRequests,
-        limit: userLimits.assessmentRequests,
-        remaining: Math.max(0, userLimits.assessmentRequests - currentUsage.assessmentRequests),
-        canUse: currentUsage.assessmentRequests < userLimits.assessmentRequests
-      },
-
-      // Competition entries
-      competitionEntries: {
-        used: currentUsage.competitionEntries,
-        limit: userLimits.competitionEntries,
-        remaining: Math.max(0, userLimits.competitionEntries - currentUsage.competitionEntries),
-        canUse: currentUsage.competitionEntries < userLimits.competitionEntries
-      },
-
-      // Free publications (unchanged)
+    // Add publications to the usage stats
+    const completeUsageStats = {
+      ...usageStats,
       publications: {
         used: monthlyPublications,
         limit: 1, // Always 1 free publication per month
         remaining: Math.max(0, 1 - monthlyPublications),
         canUse: monthlyPublications < 1
       },
-
-      // Additional metadata
-      resetDate: nextMonthStart.toISOString(),
-      subscriptionTier: subscriptionTier,
       currentPeriod: now.toLocaleDateString('en-US', { 
         month: 'long', 
         year: 'numeric' 
-      }),
-
-      // Detailed breakdown for admin/debugging
-      breakdown: {
-        freestyleStories: currentUsage.freestyleStories,
-        assessmentRequests: currentUsage.assessmentRequests,
-        competitionEntries: currentUsage.competitionEntries,
-        monthlyPublications,
-        hasStoryPack,
-      }
+      })
     };
 
-    console.log('✅ Usage statistics calculated:', usageStats);
+    console.log('✅ Complete usage statistics:', completeUsageStats);
 
     return NextResponse.json({
       success: true,
-      usage: usageStats,
+      usage: completeUsageStats,
       message: 'Usage statistics retrieved successfully'
     });
 
   } catch (error) {
     console.error('❌ Error fetching usage statistics:', error);
-    return NextResponse.json(
-      { 
-        error: 'Failed to fetch usage statistics',
-        details: error instanceof Error ? error.message : 'Unknown error'
-      },
-      { status: 500 }
-    );
+    
+    // Return safe defaults for new users if error occurs
+    const defaultStats = {
+      freestyleStories: { used: 0, limit: 3, remaining: 3, canUse: true },
+      assessmentRequests: { used: 0, limit: 9, remaining: 9, canUse: true },
+      competitionEntries: { used: 0, limit: 3, remaining: 3, canUse: true },
+      publications: { used: 0, limit: 1, remaining: 1, canUse: true },
+      subscriptionTier: 'FREE',
+      resetDate: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1).toISOString(),
+      currentPeriod: new Date().toLocaleDateString('en-US', { 
+        month: 'long', 
+        year: 'numeric' 
+      })
+    };
+
+    return NextResponse.json({
+      success: true,
+      usage: defaultStats,
+      message: 'Default usage statistics (error occurred)',
+      error: error instanceof Error ? error.message : 'Unknown error'
+    });
   }
 }

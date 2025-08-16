@@ -669,7 +669,7 @@ export async function POST(
     console.log(`⚠️ Integrity Risk: ${assessment.integrityAnalysis.integrityRisk}`);
 
     // POOL SYSTEM: Record assessment request (any type - upload or re-assess)
-    await UsageManager.recordAssessmentRequest(actualSessionId);
+  await UsageManager.incrementAssessmentRequest(userSession.user.id, actualSessionId);
 
     // Prepare assessment data for storage (matching your existing structure)
     const assessmentData = {
