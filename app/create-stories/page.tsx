@@ -1977,7 +1977,7 @@ export default function CreateStoriesPage() {
       >
         <button
           onClick={() => setActiveSection('home')}
-          className="flex items-center gap-2 text-gray-400 hover:text-white mb-6 transition-colors mx-auto"
+          className="bg-green-500 p-2 px-6 rounded-lg flex items-center gap-2 text-gray-800 hover:text-white mb-6 transition-colors mx-auto"
         >
           ← Back to Options
         </button>
@@ -2099,7 +2099,7 @@ export default function CreateStoriesPage() {
       >
         <button
           onClick={() => setActiveSection('home')}
-          className="flex items-center gap-2 text-gray-400 hover:text-white mb-6 transition-colors mx-auto"
+          className="bg-green-500 p-2 px-6 rounded-lg flex items-center gap-2 text-gray-800 hover:text-white mb-6 transition-colors mx-auto"
         >
           ← Back to Options
         </button>
@@ -2167,76 +2167,13 @@ export default function CreateStoriesPage() {
         </div>
 
         {/* File Upload Area */}
-        <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-300 mb-2">
-            Upload Story File
-          </label>
-          <div
-            className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
-              dragActive
-                ? 'border-green-400 bg-green-400/10'
-                : 'border-gray-600 hover:border-gray-500'
-            }`}
-            onDragOver={handleDragOver}
-            onDragLeave={handleDragLeave}
-            onDrop={handleDrop}
-          >
-            {uploadData.file ? (
-              <div className="space-y-4">
-                <CheckCircle className="w-12 h-12 text-green-400 mx-auto" />
-                <div>
-                  <p className="text-white font-medium">{uploadData.file.name}</p>
-                  <p className="text-gray-400 text-sm">
-                    {(uploadData.file.size / 1024 / 1024).toFixed(2)} MB
-                  </p>
-                </div>
-                <button
-                  onClick={() => setUploadData(prev => ({ ...prev, file: null }))}
-                  className="text-red-400 hover:text-red-300 text-sm underline"
-                >
-                  Remove file
-                </button>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                <Upload className="w-12 h-12 text-gray-400 mx-auto" />
-                <div>
-                  <p className="text-white font-medium mb-2">
-                    Drag and drop your story file here
-                  </p>
-                  <p className="text-gray-400 text-sm mb-2">
-                    or click to browse (.txt, .pdf, .docx files up to 10MB)
-                  </p>
-                  <p className="text-green-400 text-xs mb-4">
-                    ✅ All file types supported - we'll extract the text automatically
-                  </p>
-                  <input
-                    type="file"
-                    accept=".txt,.pdf,.docx"
-                    onChange={handleFileSelect}
-                    className="hidden"
-                    id="file-upload"
-                  />
-                  <label
-                    htmlFor="file-upload"
-                    className="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg cursor-pointer transition-colors inline-block"
-                  >
-                    Choose File
-                  </label>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
 
         {/* Text Input Alternative */}
         <div className="mb-6">
           <label className="block text-sm font-medium text-gray-300 mb-2">
-            Or paste your story text directly:
+            Paste your story text directly (600 words max) *:
           </label>
-          <div className="text-sm text-gray-400 mb-2">
-            Choose either file upload OR text paste - both work perfectly!
-          </div>
+  
           <textarea
             placeholder="Paste your story here..."
             value={uploadData.content}
@@ -2377,7 +2314,7 @@ export default function CreateStoriesPage() {
       >
         <button
           onClick={() => setActiveSection('home')}
-          className="flex items-center gap-2 text-gray-400 hover:text-white mb-6 transition-colors mx-auto"
+          className="bg-green-500 p-2 px-6 rounded-lg flex items-center gap-2 text-gray-800 hover:text-white mb-6 transition-colors mx-auto"
         >
           ← Back to Options
         </button>
