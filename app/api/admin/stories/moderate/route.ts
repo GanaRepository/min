@@ -35,14 +35,6 @@ export async function POST(request: NextRequest) {
     let message = '';
 
     switch (action) {
-      case 'publish':
-        updateData = { isPublished: true };
-        message = `${storyIds.length} stories published`;
-        break;
-      case 'unpublish':
-        updateData = { isPublished: false };
-        message = `${storyIds.length} stories unpublished`;
-        break;
       case 'feature':
         updateData = { isFeatured: true };
         message = `${storyIds.length} stories featured`;

@@ -1,3 +1,4 @@
+
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/utils/authOptions';
@@ -5,11 +6,11 @@ import { connectToDatabase } from '@/utils/db';
 import StorySession from '@/models/StorySession';
 import Turn from '@/models/Turn';
 import PublishedStory from '@/models/PublishedStory';
+import { UsageManager } from '@/lib/usage-manager';
 
 export async function POST(request: Request) {
   try {
     const session = await getServerSession(authOptions);
-
     if (!session || session.user.role !== 'child') {
       return NextResponse.json(
         { error: 'Access denied. Children only.' },
@@ -21,6 +22,15 @@ export async function POST(request: Request) {
     const { sessionId, assessment } = body;
 
     await connectToDatabase();
+
+    // Check monthly publication limit (1 per month)
+    const canPublish = await UsageManager.canPublishStory(session.user.id);
+    if (!canPublish.allowed) {
+      return NextResponse.json(
+        { error: canPublish.reason },
+        { status: 400 }
+      );
+    }
 
     // Get story session and turns
     const [storySession, turns] = await Promise.all([
@@ -76,6 +86,14 @@ export async function POST(request: Request) {
       creativityScore: assessment.creativityScore,
       overallScore: assessment.overallScore,
       aifeedback: assessment.feedback,
+    });
+
+    // ALSO set the flag in StorySession for community page
+    await StorySession.findByIdAndUpdate(sessionId, {
+      $set: {
+        isPublished: true,
+        publishedAt: new Date()
+      }
     });
 
     return NextResponse.json({

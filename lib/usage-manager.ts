@@ -1,108 +1,4 @@
-// // ========================================
-// // lib/usage-manager.ts - SIMPLIFIED INTERFACE
-// // ========================================
 
-// import { connectToDatabase } from '@/utils/db';
-// import User from '@/models/User';
-// import StorySession from '@/models/StorySession';
-// import {
-//   FREE_TIER_LIMITS,
-//   STORY_PACK_BENEFITS,
-//   calculateUserLimits,
-//   validateUsageWithinLimits,
-// } from '@/config/limits';
-// import type { UsageLimits } from '@/config/limits';
-
-// export interface UserUsage {
-//   freestyleStories: number;
-//   assessmentRequests: number; // SIMPLIFIED: Total assessments used
-//   competitionEntries: number;
-// }
-
-// export interface UsageCheckResult {
-//   allowed: boolean;
-//   reason?: string;
-//   currentUsage: UserUsage;
-//   limits: UsageLimits;
-//   upgradeRequired?: boolean;
-// }
-
-// export class UsageManager {
-//   /**
-//    * Get current month's usage for a user - SIMPLIFIED COUNTING
-//    */
-//   static async getCurrentUsage(userId: string): Promise<UserUsage> {
-//     await connectToDatabase();
-    
-//     // Get current month start date
-//     const now = new Date();
-//     const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
-
-//     // Get all stories for current month
-//     const stories = await StorySession.find({
-//       childId: userId,
-//       createdAt: { $gte: monthStart }
-//     }).lean();
-
-//     // Count freestyle stories (collaborative AI stories)
-//     const freestyleStories = stories.filter(s => 
-//       !s.isUploadedForAssessment && 
-//       (!s.competitionEntries || s.competitionEntries.length === 0)
-//     ).length;
-
-//     // Count ALL assessment requests (uploads + re-assessments)
-//     const assessmentRequests = stories.reduce((sum, story) => {
-//       return sum + (story.assessmentAttempts || (story.assessment ? 1 : 0));
-//     }, 0);
-
-//     // Count competition entries
-//     const competitionEntries = stories.filter(s => 
-//       s.competitionEntries && s.competitionEntries.length > 0
-//     ).length;
-
-//     return {
-//       freestyleStories,
-//       assessmentRequests,
-//       competitionEntries,
-//     };
-//   }
-
-//   /**
-//    * Get user's current limits (including purchases)
-//    */
-//   static async getUserLimits(userId: string): Promise<UsageLimits> {
-//     await connectToDatabase();
-//     const user = await User.findById(userId);
-//     if (!user) {
-//       throw new Error('User not found');
-//     }
-
-//     // Get current month start
-//     const now = new Date();
-//     const currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
-
-//     // Calculate limits including this month's purchases
-//     return calculateUserLimits(
-//       FREE_TIER_LIMITS,
-//       user.purchaseHistory?.map((p: any) => ({
-//         type: p.type,
-//         storiesAdded: p.metadata?.storiesAdded || 0,
-//         assessmentRequestsAdded: p.metadata?.assessmentRequestsAdded || p.metadata?.assessmentsAdded || 0,
-//         competitionEntriesAdded: p.metadata?.competitionEntriesAdded || 0,
-//         purchaseDate: p.purchaseDate,
-//       })) || [],
-//       currentMonthStart
-//     );
-//   }
-
-//   /**
-//    * Check if user can create a new freestyle story
-//    */
-//   static async canCreateStory(userId: string): Promise<UsageCheckResult> {
-//     const [currentUsage, limits] = await Promise.all([
-//       this.getCurrentUsage(userId),
-//       this.getUserLimits(userId),
-//     ]);
 
 //     const allowed = currentUsage.freestyleStories < limits.freestyleStories;
 
@@ -282,6 +178,38 @@ export interface UsageCheckResult {
 }
 
 export class UsageManager {
+
+  /**
+   * Check if user can publish a story (1 per month, by publishedAt)
+   */
+  static async canPublishStory(userId: string): Promise<UsageCheckResult> {
+    try {
+      await connectToDatabase();
+
+      const now = new Date();
+      const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+      const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
+
+      // Check publishedAt field instead of publicationDate
+      const publishedCount = await StorySession.countDocuments({
+        childId: userId,
+        isPublished: true,
+        publishedAt: { $gte: startOfMonth, $lte: endOfMonth }
+      });
+
+      const canPublish = publishedCount < 1;
+
+      return {
+        allowed: canPublish,
+        reason: canPublish ? undefined : 'You can only publish 1 story per month for free. Limit resets next month.',
+        currentUsage: { publications: publishedCount },
+        limits: { publications: 1 }
+      };
+    } catch (error) {
+      console.error('❌ Error checking publication usage:', error);
+      return { allowed: false, reason: 'Failed to check publication limits' };
+    }
+  }
   /**
    * Get current month's usage for a user
    */
