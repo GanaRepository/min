@@ -1,4 +1,4 @@
-// app/api/user/usage/route.ts - COMPLETE FIXED VERSION
+// app/api/user/usage/route.ts - COMPLETE WORKING VERSION RESTORED
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/utils/authOptions';
@@ -69,7 +69,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      data: completeUsageStats,
+      usage: completeUsageStats,
       message: 'Usage statistics retrieved successfully'
     });
 
@@ -92,7 +92,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      data: defaultStats,
+      usage: defaultStats,
       message: 'Default usage statistics (error occurred)',
       error: error instanceof Error ? error.message : 'Unknown error'
     });
