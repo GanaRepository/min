@@ -63,7 +63,7 @@ export default function UsersPage() {
       setLoading(true);
       const params = new URLSearchParams({
         page: page.toString(),
-        limit: '20',
+        limit: '6',
       });
 
       if (filterRole !== 'all') {

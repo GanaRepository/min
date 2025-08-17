@@ -19,8 +19,8 @@ export async function GET(request: NextRequest) {
     }
 
     const { searchParams } = new URL(request.url);
-    const page = parseInt(searchParams.get('page') || '1');
-    const limit = parseInt(searchParams.get('limit') || '9'); // ✅ FIXED: Default to 9 for card layout
+  const page = parseInt(searchParams.get('page') || '1');
+  const limit = parseInt(searchParams.get('limit') || '6');
     const resolved = searchParams.get('resolved');
     const type = searchParams.get('type');
 

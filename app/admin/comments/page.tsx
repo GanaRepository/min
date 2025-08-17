@@ -81,7 +81,7 @@ export default function CommentsPage() {
       setLoading(true);
       const params = new URLSearchParams({
         page: page.toString(),
-        limit: '9', // ✅ FIXED: 9 comments per page (3x3 grid)
+        limit: '6',
       });
 
       if (resolvedFilter !== 'all') {
