@@ -1,4 +1,4 @@
-// app/api/admin/competitions/advance-phase/route.ts - Advance Competition Phase
+// app/api/admin/competitions/advance-phase/route.ts - FIXED VERSION
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/utils/authOptions';
@@ -22,8 +22,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const updatedCompetition =
-      await competitionManager.advancePhase(competitionId);
+    console.log(`🚀 Admin advancing competition phase for ID: ${competitionId}`);
+
+    // 🔧 FIX: Use forceAdvancePhase instead of advancePhase
+    const updatedCompetition = await competitionManager.forceAdvancePhase(competitionId);
+
+    console.log(`✅ Competition advanced: ${updatedCompetition.month} ${updatedCompetition.year} → ${updatedCompetition.phase}`);
 
     return NextResponse.json({
       success: true,
@@ -31,9 +35,12 @@ export async function POST(request: NextRequest) {
       message: `Competition advanced to ${updatedCompetition.phase} phase`,
     });
   } catch (error) {
-    console.error('Error advancing competition phase:', error);
+    console.error('❌ Error advancing competition phase:', error);
     return NextResponse.json(
-      { error: 'Failed to advance competition phase' },
+      { 
+        error: 'Failed to advance competition phase',
+        details: error instanceof Error ? error.message : 'Unknown error'
+      },
       { status: 500 }
     );
   }
