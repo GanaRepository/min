@@ -86,30 +86,41 @@ export default function AdminCompetitionsPage() {
   const fetchData = async () => {
     try {
       setLoading(true);
-      
       // Use existing APIs
       const [currentResponse, pastResponse] = await Promise.all([
         fetch('/api/competitions/current'),
         fetch('/api/competitions/past')
       ]);
-      
       const currentData = await currentResponse.json();
       const pastData = await pastResponse.json();
 
       // Set current competition
+      let currentComp = null;
       if (currentData.success && currentData.competition) {
-        setCurrentCompetition(currentData.competition);
+        currentComp = currentData.competition;
+        setCurrentCompetition(currentComp);
       }
 
-      // Combine all competitions for admin view
+      // Combine all competitions for admin view - BUT AVOID DUPLICATES
       const allCompetitions = [];
-      if (currentData.success && currentData.competition) {
-        allCompetitions.push(currentData.competition);
+      // Add current competition first (if exists)
+      if (currentComp) {
+        allCompetitions.push(currentComp);
       }
+      // Add past competitions, but EXCLUDE the current competition to prevent duplicates
       if (pastData.success && pastData.competitions) {
-        allCompetitions.push(...pastData.competitions);
+        const filteredPastCompetitions = pastData.competitions.filter((comp: Competition) => {
+          // If there's no current competition, include all past competitions
+          if (!currentComp) return true;
+          // Otherwise, exclude any competition that matches the current competition ID
+          return comp._id !== currentComp._id;
+        });
+        allCompetitions.push(...filteredPastCompetitions);
       }
-      
+
+      console.log(`📊 [ADMIN] Loaded ${allCompetitions.length} competitions total`);
+      console.log(`📊 [ADMIN] Current: ${currentComp ? 1 : 0}, Past: ${pastData.competitions?.length || 0}, Filtered: ${allCompetitions.length}`);
+
       setCompetitions(allCompetitions);
 
       // Calculate stats from existing data
@@ -123,7 +134,6 @@ export default function AdminCompetitionsPage() {
       };
 
       setStats(statsData);
-
     } catch (error) {
       console.error('Error fetching data:', error);
     } finally {

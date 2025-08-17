@@ -54,6 +54,7 @@
 //   return POST(req);
 // }
 
+// // app/api/cron/monthly-reset/route.ts - FIXED VERSION
 import { NextRequest, NextResponse } from 'next/server';
 import { connectToDatabase } from '@/utils/db';
 import { UsageManager } from '@/lib/usage-manager';

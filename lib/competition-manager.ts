@@ -7,6 +7,29 @@ import { AIAssessmentEngine } from '@/lib/ai/ai-assessment-engine';
 import { sendWinnerCongratulationsEmail, sendCompetitionUpdateEmail } from '@/lib/mailer';
 
 export class CompetitionManager {
+  /**
+   * Utility: Cleanup duplicate competitions for the same month/year
+   * Deactivates all but the most recent active competition for each month/year
+   */
+  static async cleanupDuplicateCompetitions() {
+    await connectToDatabase();
+    const competitions = await Competition.find({ isActive: true }).sort({ year: -1, month: -1, createdAt: -1 });
+    const seen = new Set();
+    let deactivated = 0;
+    for (const comp of competitions) {
+      const key = `${comp.month}-${comp.year}`;
+      if (seen.has(key)) {
+        comp.isActive = false;
+        await comp.save();
+        deactivated++;
+        console.log(`🧹 [CLEANUP] Deactivated duplicate: ${comp.month} ${comp.year} (${comp._id})`);
+      } else {
+        seen.add(key);
+      }
+    }
+    console.log(`🧹 [CLEANUP] Deactivated ${deactivated} duplicate competitions.`);
+    return deactivated;
+  }
   // ULTRA-BUDGET AI Processing Configuration
   private static readonly BUDGET_CONFIG = {
     MONTHLY_BUDGET: 20,           // $20/month hard limit
@@ -57,23 +80,29 @@ export class CompetitionManager {
       month: 'long',
     });
 
-    // Calculate dates for current month
+    // Calculate correct dates for the competition
+    const now = new Date();
     const firstDay = new Date(year, month - 1, 1); // 1st of month
-    const lastDay = new Date(year, month, 0); // Last day of month
-    const submissionCloseDay = new Date(year, month, -2); // 3 days before last day
+    const submissionEnd = new Date(year, month - 1, 28, 23, 59, 59, 999); // 28th, end of day
+    const judgingStart = new Date(year, month - 1, 29, 0, 0, 0, 0); // 29th
+    const judgingEnd = new Date(year, month - 1, 30, 23, 59, 59, 999); // 30th, end of day
+    const resultsDate = new Date(year, month - 1, 31, 23, 59, 59, 999); // 31st, end of day
+    const lastDay = resultsDate;
 
     const competition = new Competition({
       month: monthName,
       year: year,
       phase: 'submission',
       submissionStart: firstDay,
-      submissionEnd: submissionCloseDay,
-      judgingStart: submissionCloseDay,
-      judgingEnd: lastDay,
-      resultsDate: lastDay,
+      submissionEnd,
+      judgingStart,
+      judgingEnd,
+      resultsDate,
       isActive: true,
       entries: [],
       winners: [],
+      createdAt: firstDay,
+      updatedAt: now,
       judgingCriteria: {
         grammar: 12,
         creativity: 25, // Highest weight for competition
@@ -89,7 +118,6 @@ export class CompetitionManager {
 
     await competition.save();
     console.log(`🎉 [COMPETITION] Created: ${monthName} ${year} - Submissions open!`);
-    
     return competition;
   }
 
@@ -772,15 +800,30 @@ export class CompetitionManager {
       const competition = await Competition.findById(competitionId);
       if (!competition) return;
 
+      // Prevent duplicate results update
+      if (competition.winners && competition.winners.length > 0) {
+        console.log(`⚠️ Competition already has winners, skipping updateCompetitionResults`);
+        return;
+      }
+
       // Update competition document
       competition.winners = winners;
       competition.totalSubmissions = allResults.length;
       competition.totalParticipants = new Set(allResults.map(r => r.childId.toString())).size;
       await competition.save();
 
-      // Update individual story sessions with rankings
+      // Update individual story sessions with rankings, skip if already has rank
       for (let i = 0; i < allResults.length; i++) {
         const result = allResults[i];
+        const existingStory = await StorySession.findOne({
+          _id: result.storyId,
+          'competitionEntries.competitionId': competitionId,
+          'competitionEntries.rank': { $exists: true }
+        });
+        if (existingStory) {
+          console.log(`⚠️ Story already has competition results, skipping`);
+          continue;
+        }
         await StorySession.findOneAndUpdate(
           {
             _id: result.storyId,
@@ -1099,11 +1142,24 @@ export class CompetitionManager {
         case 'submission':
           competition.phase = 'judging';
           competition.submissionEnd = new Date();
+          // Ensure required deadlines are set
+          if (!competition.judgingDeadline) {
+            competition.judgingDeadline = new Date(Date.now() + 5 * 24 * 60 * 60 * 1000); // 5 days from now
+          }
+          if (!competition.submissionDeadline) {
+            competition.submissionDeadline = competition.submissionEnd;
+          }
           break;
         case 'judging':
-          competition.phase = 'results';
-          const winners = await this.runBudgetOptimizedJudging(competitionId);
-          await this.announceWinners(competition, winners);
+          // Prevent duplicate judging/results
+          if (competition.winners && competition.winners.length > 0) {
+            console.log(`⚠️ Competition already has winners, skipping judging`);
+            competition.phase = 'results';
+          } else {
+            competition.phase = 'results';
+            const winners = await this.runBudgetOptimizedJudging(competitionId);
+            await this.announceWinners(competition, winners);
+          }
           break;
         case 'results':
           competition.isActive = false;

@@ -27,29 +27,15 @@ export async function GET(request: NextRequest) {
 
     await connectToDatabase();
 
-    // Mock refund requests - in real app, you'd have a Refund model
-    const mockRefunds = [
-      {
-        _id: '1',
-        user: { firstName: 'John', lastName: 'Doe', email: 'john@example.com' },
-        amount: 15.0,
-        reason: 'Accidental purchase',
-        status: 'pending',
-        requestDate: new Date(),
-        transactionId: 'tx_123',
-      },
-    ];
-
+    // No real refunds yet, return empty array for clean UI
+    const realRefunds: any[] = [];
     return NextResponse.json({
       success: true,
-      refunds:
-        status === 'all'
-          ? mockRefunds
-          : mockRefunds.filter((r) => r.status === status),
+      refunds: [],
       pagination: {
         page,
         limit,
-        total: mockRefunds.length,
+        total: 0,
         pages: 1,
       },
     });

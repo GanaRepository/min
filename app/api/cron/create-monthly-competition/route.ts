@@ -1,3 +1,4 @@
+//app/api/cron/create-monthly-competition/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { CompetitionManager } from '@/lib/competition-manager';
 

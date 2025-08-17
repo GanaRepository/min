@@ -59,6 +59,7 @@
 //   return POST(req);
 // }
 
+//app/api/cron/competition-phase/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { connectToDatabase } from '@/utils/db';
 import { CompetitionManager } from '@/lib/competition-manager';
