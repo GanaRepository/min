@@ -228,12 +228,12 @@ export default function AssignStudentsPage() {
   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4 w-full min-w-0">
         <div className="flex items-center space-x-4">
           <Link href="/admin/mentors">
-            <button className="p-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg transition-colors">
+            <button className="p-2 text-gray-400 hover:text-white hover:bg-gray-700  transition-colors">
               <ArrowLeft size={20} />
             </button>
           </Link>
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-white">
+            <h1 className="text-2xl sm:text-3xl  text-white">
               Assign Students to Mentors
             </h1>
             <p className="text-gray-400">
@@ -244,7 +244,7 @@ export default function AssignStudentsPage() {
         <button
           onClick={fetchData}
           disabled={loading}
-          className="bg-gray-700 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition-colors flex items-center"
+          className="bg-gray-700 text-white px-4 py-2  hover:bg-gray-600 transition-colors flex items-center"
         >
           <RefreshCw size={16} className={`mr-2 ${loading ? 'animate-spin' : ''}`} />
           Refresh
@@ -253,54 +253,54 @@ export default function AssignStudentsPage() {
 
       {/* Stats Cards */}
   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-6 w-full min-w-0">
-        <div className="bg-gray-800 rounded-xl p-6">
+        <div className="bg-gray-800  p-6">
           <div className="flex items-center space-x-3">
-            <div className="bg-blue-600 p-3 rounded-lg">
+            <div className="bg-blue-600 p-3 ">
               <Users size={24} className="text-white" />
             </div>
             <div>
               <p className="text-sm text-gray-400">Total Students</p>
-              <p className="text-2xl font-bold text-white">{students.length}</p>
+              <p className="text-2xl  text-white">{students.length}</p>
             </div>
           </div>
         </div>
 
-        <div className="bg-gray-800 rounded-xl p-6">
+        <div className="bg-gray-800  p-6">
           <div className="flex items-center space-x-3">
-            <div className="bg-green-600 p-3 rounded-lg">
+            <div className="bg-green-600 p-3 ">
               <UserCheck size={24} className="text-white" />
             </div>
             <div>
               <p className="text-sm text-gray-400">Assigned Students</p>
-              <p className="text-2xl font-bold text-white">
+              <p className="text-2xl  text-white">
                 {students.filter(s => s.isAssigned).length}
               </p>
             </div>
           </div>
         </div>
 
-        <div className="bg-gray-800 rounded-xl p-6">
+        <div className="bg-gray-800  p-6">
           <div className="flex items-center space-x-3">
-            <div className="bg-orange-600 p-3 rounded-lg">
+            <div className="bg-orange-600 p-3 ">
               <AlertCircle size={24} className="text-white" />
             </div>
             <div>
               <p className="text-sm text-gray-400">Unassigned Students</p>
-              <p className="text-2xl font-bold text-white">
+              <p className="text-2xl  text-white">
                 {students.filter(s => !s.isAssigned).length}
               </p>
             </div>
           </div>
         </div>
 
-        <div className="bg-gray-800 rounded-xl p-6">
+        <div className="bg-gray-800  p-6">
           <div className="flex items-center space-x-3">
-            <div className="bg-purple-600 p-3 rounded-lg">
+            <div className="bg-purple-600 p-3 ">
               <GraduationCap size={24} className="text-white" />
             </div>
             <div>
               <p className="text-sm text-gray-400">Active Mentors</p>
-              <p className="text-2xl font-bold text-white">
+              <p className="text-2xl  text-white">
                 {mentors.filter(m => m.isActive).length}
               </p>
             </div>
@@ -309,7 +309,7 @@ export default function AssignStudentsPage() {
       </div>
 
       {/* Filters */}
-  <div className="bg-gray-800 rounded-xl p-4 sm:p-6 overflow-x-auto w-full min-w-0">
+  <div className="bg-gray-800  p-4 sm:p-6 overflow-x-auto w-full min-w-0">
   <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3 sm:gap-4 w-full min-w-0">
           {/* Search */}
           <div className="relative">
@@ -319,7 +319,7 @@ export default function AssignStudentsPage() {
               placeholder="Search students by name or email..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full pl-10 pr-4 py-2.5 bg-gray-700 border border-gray-600  text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
@@ -328,7 +328,7 @@ export default function AssignStudentsPage() {
             <select
               value={filterType}
               onChange={(e) => setFilterType(e.target.value as any)}
-              className="w-full px-3 py-2.5 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2.5 bg-gray-700 border border-gray-600  text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="all">All Students</option>
               <option value="assigned">Assigned Students</option>
@@ -341,7 +341,7 @@ export default function AssignStudentsPage() {
             <select
               value={selectedMentor}
               onChange={(e) => setSelectedMentor(e.target.value)}
-              className="w-full px-3 py-2.5 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2.5 bg-gray-700 border border-gray-600  text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="">Select mentor for bulk assign</option>
               {mentors.filter(m => m.isActive).map((mentor) => (
@@ -355,9 +355,9 @@ export default function AssignStudentsPage() {
       </div>
 
       {/* Students List */}
-  <div className="bg-gray-800 rounded-xl p-4 sm:p-6 overflow-x-auto w-full min-w-0">
+  <div className="bg-gray-800  p-4 sm:p-6 overflow-x-auto w-full min-w-0">
         <div className="flex items-center justify-between mb-6">
-          <h3 className="text-lg font-semibold text-white">
+          <h3 className="text-lg  text-white">
             Students ({filteredStudents.length})
           </h3>
           <div className="flex items-center space-x-2">
@@ -374,18 +374,18 @@ export default function AssignStudentsPage() {
                 key={student._id}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-2 sm:p-4 bg-gray-700/50 rounded-lg hover:bg-gray-700/70 transition-colors gap-1 sm:gap-2 min-w-0 w-full"
+                className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-2 sm:p-4 bg-gray-700/50  hover:bg-gray-700/70 transition-colors gap-1 sm:gap-2 min-w-0 w-full"
               >
                 {/* Student Info */}
                 <div className="flex items-center space-x-4">
-                  <div className="w-12 h-12 bg-gray-600 rounded-full flex items-center justify-center flex-shrink-0">
-                    <span className="text-white font-medium text-base sm:text-lg">
+                  <div className="w-12 h-12 bg-gray-600 -full flex items-center justify-center flex-shrink-0">
+                    <span className="text-white  text-base sm:text-lg">
                       {student.firstName[0]}{student.lastName[0]}
                     </span>
                   </div>
                   <div className="min-w-0 w-full break-words">
                     <Link href={`/admin/users/${student._id}`}>
-                      <h4 className="text-white font-medium hover:text-blue-400 cursor-pointer text-base sm:text-lg break-words">
+                      <h4 className="text-white  hover:text-blue-400 cursor-pointer text-base sm:text-lg break-words">
                         {student.firstName} {student.lastName}
                       </h4>
                     </Link>
@@ -407,7 +407,7 @@ export default function AssignStudentsPage() {
                     <div className="text-right">
                       <div className="flex items-center space-x-2">
                         <Check size={16} className="text-green-400" />
-                        <span className="text-green-400 text-sm font-medium">Assigned</span>
+                        <span className="text-green-400 text-sm ">Assigned</span>
                       </div>
                       <p className="text-gray-400 text-sm">
                         Mentor: {student.currentMentor.firstName} {student.currentMentor.lastName}
@@ -416,7 +416,7 @@ export default function AssignStudentsPage() {
                   ) : (
                     <div className="flex items-center space-x-2">
                       <X size={16} className="text-red-400" />
-                      <span className="text-red-400 text-sm font-medium">Unassigned</span>
+                      <span className="text-red-400 text-sm ">Unassigned</span>
                     </div>
                   )}
 
@@ -426,7 +426,7 @@ export default function AssignStudentsPage() {
                       <button
                         onClick={() => unassignStudent(student._id)}
                         disabled={assigning === student._id}
-                        className="bg-red-600 text-white px-3 py-1 rounded-md hover:bg-red-700 transition-colors flex items-center text-sm disabled:opacity-50"
+                        className="bg-red-600 text-white px-3 py-1  hover:bg-red-700 transition-colors flex items-center text-sm disabled:opacity-50"
                       >
                         <Trash2 size={14} className="mr-1" />
                         {assigning === student._id ? 'Unassigning...' : 'Unassign'}
@@ -434,7 +434,7 @@ export default function AssignStudentsPage() {
                     ) : (
                       <div className="flex items-center space-x-2">
                         <select
-                          className="px-2 py-1 bg-gray-600 border border-gray-500 rounded text-white text-sm"
+                          className="px-2 py-1 bg-gray-600 border border-gray-500  text-white text-sm"
                           onChange={(e) => {
                             if (e.target.value) {
                               assignStudent(student._id, e.target.value);
@@ -470,33 +470,33 @@ export default function AssignStudentsPage() {
 
       {/* Quick Actions */}
       {students.filter(s => !s.isAssigned).length > 0 && (
-        <div className="bg-blue-900/20 border border-blue-500/30 rounded-xl p-6">
-          <h3 className="text-lg font-semibold text-blue-400 mb-4">
+        <div className="bg-blue-900/20 border border-blue-500/30  p-6">
+          <h3 className="text-lg  text-blue-400 mb-4">
             Quick Actions
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="bg-gray-800 rounded-lg p-4">
-              <h4 className="text-white font-medium mb-2">
+            <div className="bg-gray-800  p-4">
+              <h4 className="text-white  mb-2">
                 Unassigned Students Alert
               </h4>
               <p className="text-gray-400 text-sm mb-3">
                 {students.filter(s => !s.isAssigned).length} students need mentor assignment
               </p>
               <Link href="/admin/mentors/create">
-                <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm">
+                <button className="bg-blue-600 text-white px-4 py-2  hover:bg-blue-700 transition-colors text-sm">
                   Create New Mentor
                 </button>
               </Link>
             </div>
-            <div className="bg-gray-800 rounded-lg p-4">
-              <h4 className="text-white font-medium mb-2">
+            <div className="bg-gray-800  p-4">
+              <h4 className="text-white  mb-2">
                 Mentor Capacity
               </h4>
               <p className="text-gray-400 text-sm mb-3">
                 Average students per mentor: {mentors.length > 0 ? Math.round(students.filter(s => s.isAssigned).length / mentors.filter(m => m.isActive).length) : 0}
               </p>
               <Link href="/admin/mentors">
-                <button className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors text-sm">
+                <button className="bg-purple-600 text-white px-4 py-2  hover:bg-purple-700 transition-colors text-sm">
                   View All Mentors
                 </button>
               </Link>

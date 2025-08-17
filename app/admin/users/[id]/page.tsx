@@ -152,12 +152,12 @@ export default function ViewUser() {
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
           <Link href="/admin/users">
-            <button className="p-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg transition-colors">
+            <button className="p-2 text-gray-400 hover:text-white hover:bg-gray-700  transition-colors">
               <ArrowLeft size={20} />
             </button>
           </Link>
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-white">
+            <h1 className="text-2xl sm:text-3xl  text-white">
               {user.firstName} {user.lastName}
             </h1>
             <p className="text-gray-400">User Details & Activity</p>
@@ -166,7 +166,7 @@ export default function ViewUser() {
 
         <div className="flex items-center space-x-2">
           <Link href={`/admin/users/${userId}/edit`}>
-            <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center">
+            <button className="bg-blue-600 text-white px-4 py-2  hover:bg-blue-700 transition-colors flex items-center">
               <Edit size={16} className="mr-2" />
               Edit
             </button>
@@ -175,7 +175,7 @@ export default function ViewUser() {
             <button
               onClick={deleteUser}
               disabled={deleting}
-              className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors flex items-center disabled:opacity-50"
+              className="bg-red-600 text-white px-4 py-2  hover:bg-red-700 transition-colors flex items-center disabled:opacity-50"
             >
               <Trash2 size={16} className="mr-2" />
               {deleting ? 'Deleting...' : 'Delete'}
@@ -185,35 +185,35 @@ export default function ViewUser() {
       </div>
 
       {/* User Info Card */}
-      <div className="bg-gray-800 rounded-xl p-6">
+      <div className="bg-gray-800  p-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <div className="flex items-center space-x-3">
-            <div className="bg-blue-600 p-3 rounded-lg">
+            <div className="bg-blue-600 p-3 ">
               <User size={24} className="text-white" />
             </div>
             <div>
               <p className="text-sm text-gray-400">Role</p>
-              <p className="text-white font-medium capitalize">{user.role}</p>
+              <p className="text-white  capitalize">{user.role}</p>
             </div>
           </div>
 
           <div className="flex items-center space-x-3">
-            <div className="bg-green-600 p-3 rounded-lg">
+            <div className="bg-green-600 p-3 ">
               <Mail size={24} className="text-white" />
             </div>
             <div>
               <p className="text-sm text-gray-400">Email</p>
-              <p className="text-white font-medium">{user.email}</p>
+              <p className="text-white ">{user.email}</p>
             </div>
           </div>
 
           <div className="flex items-center space-x-3">
-            <div className="bg-purple-600 p-3 rounded-lg">
+            <div className="bg-purple-600 p-3 ">
               <Calendar size={24} className="text-white" />
             </div>
             <div>
               <p className="text-sm text-gray-400">Joined</p>
-              <p className="text-white font-medium">
+              <p className="text-white ">
                 {new Date(user.createdAt).toLocaleDateString()}
               </p>
             </div>
@@ -221,13 +221,13 @@ export default function ViewUser() {
 
           <div className="flex items-center space-x-3">
             <div
-              className={`${user.isActive ? 'bg-green-600' : 'bg-red-600'} p-3 rounded-lg`}
+              className={`${user.isActive ? 'bg-green-600' : 'bg-red-600'} p-3 `}
             >
               <Activity size={24} className="text-white" />
             </div>
             <div>
               <p className="text-sm text-gray-400">Status</p>
-              <p className="text-white font-medium">
+              <p className="text-white ">
                 {user.isActive ? 'Active' : 'Inactive'}
               </p>
             </div>
@@ -239,26 +239,26 @@ export default function ViewUser() {
       {user.role === 'child' && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {/* Monthly Usage */}
-          <div className="bg-gray-800 rounded-xl p-6">
-            <h3 className="text-lg font-semibold text-white mb-4">
+          <div className="bg-gray-800  p-6">
+            <h3 className="text-lg  text-white mb-4">
               Monthly Usage
             </h3>
             <div className="space-y-3">
               <div className="flex justify-between">
                 <span className="text-gray-400">Stories:</span>
-                <span className="text-blue-400 font-medium">
+                <span className="text-blue-400 ">
                   {user.storiesCreatedThisMonth}/3
                 </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-400">Assessments:</span>
-                <span className="text-green-400 font-medium">
+                <span className="text-green-400 ">
                   {user.assessmentUploadsThisMonth}/3
                 </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-400">Competitions:</span>
-                <span className="text-yellow-400 font-medium">
+                <span className="text-yellow-400 ">
                   {user.competitionEntriesThisMonth}/3
                 </span>
               </div>
@@ -266,8 +266,8 @@ export default function ViewUser() {
           </div>
 
           {/* Total Stats */}
-          <div className="bg-gray-800 rounded-xl p-6">
-            <h3 className="text-lg font-semibold text-white mb-4">
+          <div className="bg-gray-800  p-6">
+            <h3 className="text-lg  text-white mb-4">
               Total Stats
             </h3>
             <div className="space-y-3">
@@ -276,7 +276,7 @@ export default function ViewUser() {
                   <BookOpen size={16} className="text-blue-400 mr-2" />
                   <span className="text-gray-400">Stories:</span>
                 </div>
-                <span className="text-white font-medium">
+                <span className="text-white ">
                   {user.totalStoriesCreated}
                 </span>
               </div>
@@ -285,7 +285,7 @@ export default function ViewUser() {
                   <Target size={16} className="text-green-400 mr-2" />
                   <span className="text-gray-400">Words:</span>
                 </div>
-                <span className="text-white font-medium">
+                <span className="text-white ">
                   {user.totalWordsWritten.toLocaleString()}
                 </span>
               </div>
@@ -294,8 +294,8 @@ export default function ViewUser() {
 
           {/* Revenue Generated */}
           {totalRevenue > 0 && (
-            <div className="bg-gray-800 rounded-xl p-6">
-              <h3 className="text-lg font-semibold text-white mb-4">
+            <div className="bg-gray-800  p-6">
+              <h3 className="text-lg  text-white mb-4">
                 Revenue Generated
               </h3>
               <div className="space-y-3">
@@ -304,7 +304,7 @@ export default function ViewUser() {
                     <DollarSign size={16} className="text-emerald-400 mr-2" />
                     <span className="text-gray-400">Total:</span>
                   </div>
-                  <span className="text-emerald-400 font-bold text-xl">
+                  <span className="text-emerald-400  text-xl">
                     ${totalRevenue.toFixed(2)}
                   </span>
                 </div>
@@ -318,16 +318,16 @@ export default function ViewUser() {
 
           {/* Assigned Mentor */}
           {user.assignedMentor && (
-            <div className="bg-gray-800 rounded-xl p-6">
-              <h3 className="text-lg font-semibold text-white mb-4">
+            <div className="bg-gray-800  p-6">
+              <h3 className="text-lg  text-white mb-4">
                 Assigned Mentor
               </h3>
               <div className="flex items-center space-x-3">
-                <div className="bg-purple-600 p-2 rounded-lg">
+                <div className="bg-purple-600 p-2 ">
                   <Star size={16} className="text-white" />
                 </div>
                 <div>
-                  <p className="text-white font-medium">
+                  <p className="text-white ">
                     {user.assignedMentor.firstName}{' '}
                     {user.assignedMentor.lastName}
                   </p>
@@ -343,24 +343,24 @@ export default function ViewUser() {
 
       {/* Purchase History */}
       {user.role === 'child' && user.purchaseHistory.length > 0 && (
-        <div className="bg-gray-800 rounded-xl p-6">
-          <h3 className="text-lg font-semibold text-white mb-4">
+        <div className="bg-gray-800  p-6">
+          <h3 className="text-lg  text-white mb-4">
             Purchase History
           </h3>
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
                 <tr className="border-b border-gray-700">
-                  <th className="text-left py-2 text-sm font-medium text-gray-300">
+                  <th className="text-left py-2 text-sm  text-gray-300">
                     Type
                   </th>
-                  <th className="text-left py-2 text-sm font-medium text-gray-300">
+                  <th className="text-left py-2 text-sm  text-gray-300">
                     Amount
                   </th>
-                  <th className="text-left py-2 text-sm font-medium text-gray-300">
+                  <th className="text-left py-2 text-sm  text-gray-300">
                     Date
                   </th>
-                  <th className="text-left py-2 text-sm font-medium text-gray-300">
+                  <th className="text-left py-2 text-sm  text-gray-300">
                     Details
                   </th>
                 </tr>
@@ -370,7 +370,7 @@ export default function ViewUser() {
                   <tr key={index} className="border-b border-gray-700/50">
                     <td className="py-3">
                       <span
-                        className={`px-2 py-1 text-xs rounded-full ${
+                        className={`px-2 py-1 text-xs  ${
                           purchase.type === 'story_pack'
                             ? 'bg-blue-100 text-blue-800'
                             : 'bg-purple-100 text-purple-800'
@@ -381,7 +381,7 @@ export default function ViewUser() {
                           : 'Publication'}
                       </span>
                     </td>
-                    <td className="py-3 text-emerald-400 font-medium">
+                    <td className="py-3 text-emerald-400 ">
                       ${purchase.amount.toFixed(2)}
                     </td>
                     <td className="py-3 text-gray-300">
@@ -411,19 +411,19 @@ export default function ViewUser() {
       {user.role === 'child' &&
         user.recentStories &&
         user.recentStories.length > 0 && (
-          <div className="bg-gray-800 rounded-xl p-6">
-            <h3 className="text-lg font-semibold text-white mb-4">
+          <div className="bg-gray-800  p-6">
+            <h3 className="text-lg  text-white mb-4">
               Recent Stories
             </h3>
             <div className="space-y-3">
               {user.recentStories.slice(0, 5).map((story) => (
                 <div
                   key={story._id}
-                  className="flex items-center justify-between p-3 bg-gray-700/50 rounded-lg"
+                  className="flex items-center justify-between p-3 bg-gray-700/50 "
                 >
                   <div className="flex-1">
                     <Link href={`/admin/stories/${story._id}`}>
-                      <h4 className="text-white font-medium hover:text-blue-400 cursor-pointer">
+                      <h4 className="text-white  hover:text-blue-400 cursor-pointer">
                         {story.title}
                       </h4>
                     </Link>
@@ -433,7 +433,7 @@ export default function ViewUser() {
                     </p>
                   </div>
                   <span
-                    className={`px-2 py-1 text-xs rounded-full ${
+                    className={`px-2 py-1 text-xs  ${
                       story.status === 'completed'
                         ? 'bg-green-100 text-green-800'
                         : story.status === 'active'

@@ -62,10 +62,10 @@
 //         transition={{ duration: 0.5 }}
 //         className="max-w-md w-full"
 //       >
-//         <div className="bg-gray-800 rounded-2xl shadow-2xl p-8 border border-gray-700">
+//         <div className="bg-gray-800  shadow-2xl p-8 border border-gray-700">
 //           {/* Header */}
 //           <div className="text-center mb-8">
-//             <div className="bg-gradient-to-r from-blue-600 to-green-600 p-4 rounded-full inline-block mb-4">
+//             <div className="bg-gradient-to-r from-blue-600 to-green-600 p-4  inline-block mb-4">
 //               <Crown size={32} className="text-white" />
 //             </div>
 //             <h1 className="text-3xl  text-white mb-2">Admin Portal</h1>
@@ -77,7 +77,7 @@
 //             <motion.div
 //               initial={{ opacity: 0, x: -10 }}
 //               animate={{ opacity: 1, x: 0 }}
-//               className="bg-red-900/50 border border-red-500/50 text-red-200 p-3 rounded-lg mb-6 text-sm"
+//               className="bg-red-900/50 border border-red-500/50 text-red-200 p-3  mb-6 text-sm"
 //             >
 //               {error}
 //             </motion.div>
@@ -98,7 +98,7 @@
 //                   required
 //                   value={email}
 //                   onChange={(e) => setEmail(e.target.value)}
-//                   className="w-full pl-10 pr-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+//                   className="w-full pl-10 pr-4 py-3 bg-gray-700 border border-gray-600  text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
 //                   placeholder="admin@mintoons.com"
 //                 />
 //               </div>
@@ -117,7 +117,7 @@
 //                   required
 //                   value={password}
 //                   onChange={(e) => setPassword(e.target.value)}
-//                   className="w-full pl-10 pr-12 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+//                   className="w-full pl-10 pr-12 py-3 bg-gray-700 border border-gray-600  text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
 //                   placeholder="Enter your password"
 //                 />
 //                 <button
@@ -134,11 +134,11 @@
 //             <button
 //               type="submit"
 //               disabled={loading}
-//               className="w-full bg-gradient-to-r from-blue-600 to-green-600 text-white py-3 px-4 rounded-lg  hover:from-blue-700 hover:to-green-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+//               className="w-full bg-gradient-to-r from-blue-600 to-green-600 text-white py-3 px-4   hover:from-blue-700 hover:to-green-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
 //             >
 //               {loading ? (
 //                 <div className="flex items-center justify-center">
-//                   <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+//                   <div className="animate-spin  h-5 w-5 border-b-2 border-white mr-2"></div>
 //                   Signing In...
 //                 </div>
 //               ) : (
@@ -275,7 +275,7 @@ export default function AdminLogin() {
           transition={{ duration: 0.8, delay: 0.2 }}
           className="flex-1 w-full flex flex-col items-center justify-center relative min-h-[350px] sm:min-h-[400px] md:min-h-[450px] lg:min-h-[500px]"
         >
-          <div className="relative w-full h-full bg-white/5 backdrop-blur-sm border border-white/10 rounded-3xl p-4 sm:p-6 md:p-8 flex flex-col items-center justify-center overflow-hidden">
+          <div className="relative w-full h-full bg-white/5 backdrop-blur-sm border border-white/10  p-4 sm:p-6 md:p-8 flex flex-col items-center justify-center overflow-hidden">
             {/* Background image */}
             <div className="absolute inset-0 w-full h-full z-0">
               <Image
@@ -283,7 +283,7 @@ export default function AdminLogin() {
                 alt="Admin Portal Background"
                 fill
                 style={{ objectFit: 'cover', objectPosition: 'center' }}
-                className="rounded-3xl opacity-60"
+                className=" opacity-60"
                 priority
               />
             </div>
@@ -411,7 +411,7 @@ export default function AdminLogin() {
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-red-500/20 backdrop-blur-sm border border-red-500/30 text-red-200 p-3 rounded-xl mb-6 text-sm"
+              className="bg-red-500/20 backdrop-blur-sm border border-red-500/30 text-red-200 p-3  mb-6 text-sm"
             >
               {error}
             </motion.div>
@@ -436,7 +436,7 @@ export default function AdminLogin() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 bg-white/10  border border-white/20 rounded-xl text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
+                  className="w-full pl-10 pr-4 py-3 bg-white/10  border border-white/20  text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
                   placeholder="admin@mintoons.com"
                   required
                 />
@@ -454,7 +454,7 @@ export default function AdminLogin() {
                   type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-10 pr-12 py-3 bg-white/10  border border-white/20 rounded-xl text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
+                  className="w-full pl-10 pr-12 py-3 bg-white/10  border border-white/20  text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
                   placeholder="Enter your admin password"
                   required
                 />
@@ -478,11 +478,11 @@ export default function AdminLogin() {
               whileTap={{ scale: 0.98 }}
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 text-white  py-3 px-6 rounded-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
+              className="w-full bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 text-white  py-3 px-6  transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
             >
               {loading ? (
                 <div className="flex items-center justify-center space-x-2">
-                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  <div className="w-5 h-5 border-2 border-white/30 border-t-white  animate-spin" />
                   <span>Accessing Admin Panel...</span>
                 </div>
               ) : (
@@ -523,7 +523,7 @@ export default function AdminLogin() {
             duration: 3,
             repeat: Infinity,
           }}
-          className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-3"
+          className="bg-white/10 backdrop-blur-sm border border-white/20  p-3"
         >
           <div className="flex items-center space-x-2">
             <Shield className="w-5 h-5 text-blue-400" />
@@ -543,7 +543,7 @@ export default function AdminLogin() {
             repeat: Infinity,
             delay: 1.5,
           }}
-          className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-3"
+          className="bg-white/10 backdrop-blur-sm border border-white/20  p-3"
         >
           <div className="flex items-center space-x-2">
             <Zap className="w-5 h-5 text-yellow-400" />

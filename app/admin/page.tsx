@@ -122,10 +122,10 @@ export default function AdminDashboard() {
       color: 'bg-blue-600 hover:bg-blue-700',
     },
     {
-      title: 'View Analytics',
-      description: 'Detailed platform analytics',
+      title: 'View Revenue',
+      description: 'Detailed platform revenue',
       icon: BarChart3,
-      href: '/admin/analytics',
+      href: '/admin/revenue',
       color: 'bg-purple-600 hover:bg-purple-700',
     },
     {
@@ -141,7 +141,7 @@ export default function AdminDashboard() {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center">
-          <div className="w-8 h-8 border-4 border-blue-600/30 border-t-blue-600 rounded-full animate-spin mx-auto mb-4"></div>
+          <div className="w-8 h-8 border-4 border-blue-600/30 border-t-blue-600  animate-spin mx-auto mb-4"></div>
           <p className="text-gray-400">Loading dashboard...</p>
         </div>
       </div>
@@ -151,8 +151,8 @@ export default function AdminDashboard() {
   return (
     <div className="space-y-6">
       {/* Welcome Header */}
-      <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl p-6 text-white">
-        <h1 className="text-2xl sm:text-3xl font-bold mb-2">
+      <div className="bg-gradient-to-r from-blue-600 to-purple-600  p-6 text-white">
+        <h1 className="text-2xl sm:text-3xl  mb-2">
           Welcome back, {session?.user?.firstName}!
         </h1>
         <p className="text-blue-100">
@@ -183,20 +183,20 @@ export default function AdminDashboard() {
               transition={{ delay: index * 0.1 }}
             >
               <Link href={card.href}>
-                <div className="bg-gray-800 rounded-xl p-6 hover:bg-gray-750 transition-all duration-200 cursor-pointer group">
+                <div className="bg-gray-800  p-6 hover:bg-gray-750 transition-all duration-200 cursor-pointer group">
                   <div className="flex items-center justify-between mb-4">
                     <div
-                      className={`w-12 h-12 bg-gradient-to-r ${card.color} rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-200`}
+                      className={`w-12 h-12 bg-gradient-to-r ${card.color}  flex items-center justify-center group-hover:scale-110 transition-transform duration-200`}
                     >
                       <Icon className="w-6 h-6 text-white" />
                     </div>
                     <ArrowUpRight className="w-4 h-4 text-gray-400 group-hover:text-white transition-colors" />
                   </div>
                   <div>
-                    <p className="text-gray-400 text-sm font-medium">
+                    <p className="text-gray-400 text-sm ">
                       {card.title}
                     </p>
-                    <p className="text-2xl font-bold text-white mt-1">
+                    <p className="text-2xl  text-white mt-1">
                       {card.value}
                     </p>
                     <p className="text-gray-500 text-xs mt-2">{card.change}</p>
@@ -211,67 +211,67 @@ export default function AdminDashboard() {
       {/* Activity Overview & Quick Actions */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Recent Activity */}
-        <div className="lg:col-span-2 bg-gray-800 rounded-xl p-6">
+        <div className="lg:col-span-2 bg-gray-800  p-6">
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-lg font-semibold text-white">
+            <h3 className="text-lg  text-white">
               Platform Activity
             </h3>
             <Activity className="w-5 h-5 text-gray-400" />
           </div>
 
           <div className="space-y-4">
-            <div className="flex items-center justify-between p-4 bg-gray-700/50 rounded-lg">
+            <div className="flex items-center justify-between p-4 bg-gray-700/50 ">
               <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
+                <div className="w-8 h-8 bg-blue-600  flex items-center justify-center">
                   <Users className="w-4 h-4 text-white" />
                 </div>
                 <div>
-                  <p className="text-white font-medium">Active Users Today</p>
+                  <p className="text-white ">Active Users Today</p>
                   <p className="text-gray-400 text-sm">
                     {stats?.users.activeToday || 0} users online
                   </p>
                 </div>
               </div>
               <div className="text-right">
-                <p className="text-white font-semibold">
+                <p className="text-white ">
                   {stats?.users.activeToday || 0}
                 </p>
                 <p className="text-green-400 text-xs">+12% vs yesterday</p>
               </div>
             </div>
 
-            <div className="flex items-center justify-between p-4 bg-gray-700/50 rounded-lg">
+            <div className="flex items-center justify-between p-4 bg-gray-700/50 ">
               <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center">
+                <div className="w-8 h-8 bg-green-600  flex items-center justify-center">
                   <BookOpen className="w-4 h-4 text-white" />
                 </div>
                 <div>
-                  <p className="text-white font-medium">Stories This Week</p>
+                  <p className="text-white ">Stories This Week</p>
                   <p className="text-gray-400 text-sm">
                     {stats?.stories.thisWeek || 0} new stories
                   </p>
                 </div>
               </div>
               <div className="text-right">
-                <p className="text-white font-semibold">
+                <p className="text-white ">
                   {stats?.stories.thisWeek || 0}
                 </p>
                 <p className="text-green-400 text-xs">+8% vs last week</p>
               </div>
             </div>
 
-            <div className="flex items-center justify-between p-4 bg-gray-700/50 rounded-lg">
+            <div className="flex items-center justify-between p-4 bg-gray-700/50 ">
               <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center">
+                <div className="w-8 h-8 bg-purple-600  flex items-center justify-center">
                   <MessageSquare className="w-4 h-4 text-white" />
                 </div>
                 <div>
-                  <p className="text-white font-medium">Pending Comments</p>
+                  <p className="text-white ">Pending Comments</p>
                   <p className="text-gray-400 text-sm">Need admin review</p>
                 </div>
               </div>
               <div className="text-right">
-                <p className="text-white font-semibold">
+                <p className="text-white ">
                   {stats?.comments.unresolved || 0}
                 </p>
                 {(stats?.comments.unresolved || 0) > 0 && (
@@ -283,8 +283,8 @@ export default function AdminDashboard() {
         </div>
 
         {/* Quick Actions */}
-        <div className="bg-gray-800 rounded-xl p-6">
-          <h3 className="text-lg font-semibold text-white mb-6">
+        <div className="bg-gray-800  p-6">
+          <h3 className="text-lg  text-white mb-6">
             Quick Actions
           </h3>
 
@@ -294,12 +294,12 @@ export default function AdminDashboard() {
               return (
                 <Link key={action.title} href={action.href}>
                   <div
-                    className={`${action.color} p-4 rounded-lg transition-colors duration-200`}
+                    className={`${action.color} p-4 m-2  transition-colors duration-200`}
                   >
                     <div className="flex items-center space-x-3">
                       <Icon className="w-5 h-5 text-white" />
                       <div>
-                        <p className="text-white font-medium text-sm">
+                        <p className="text-white  text-sm">
                           {action.title}
                         </p>
                         <p className="text-white/80 text-xs">
@@ -315,26 +315,26 @@ export default function AdminDashboard() {
 
           {/* System Status */}
           <div className="mt-6 pt-6 border-t border-gray-700">
-            <h4 className="text-white font-medium mb-3">System Status</h4>
+            <h4 className="text-white  mb-3">System Status</h4>
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-gray-400 text-sm">Server Status</span>
                 <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <div className="w-2 h-2 bg-green-500 "></div>
                   <span className="text-green-400 text-xs">Online</span>
                 </div>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-gray-400 text-sm">Database</span>
                 <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <div className="w-2 h-2 bg-green-500 "></div>
                   <span className="text-green-400 text-xs">Connected</span>
                 </div>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-gray-400 text-sm">API Health</span>
                 <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <div className="w-2 h-2 bg-green-500 "></div>
                   <span className="text-green-400 text-xs">Healthy</span>
                 </div>
               </div>

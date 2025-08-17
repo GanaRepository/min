@@ -287,12 +287,12 @@ export default function ViewComment() {
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
           <Link href="/admin/comments">
-            <button className="p-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg transition-colors">
+            <button className="p-2 text-gray-400 hover:text-white hover:bg-gray-700  transition-colors">
               <ArrowLeft size={20} />
             </button>
           </Link>
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-white">
+            <h1 className="text-2xl sm:text-3xl  text-white">
               Comment Details
             </h1>
             <p className="text-gray-400">Manage and moderate comment</p>
@@ -306,7 +306,7 @@ export default function ViewComment() {
               <button
                 onClick={() => navigateToComment('prev')}
                 disabled={!pagination.prev || loadingPagination}
-                className="p-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="p-2 text-gray-400 hover:text-white hover:bg-gray-700  transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 title="Previous comment"
               >
                 <ChevronLeft size={20} />
@@ -317,7 +317,7 @@ export default function ViewComment() {
               <button
                 onClick={() => navigateToComment('next')}
                 disabled={!pagination.next || loadingPagination}
-                className="p-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="p-2 text-gray-400 hover:text-white hover:bg-gray-700  transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 title="Next comment"
               >
                 <ChevronRight size={20} />
@@ -329,7 +329,7 @@ export default function ViewComment() {
           <button
             onClick={() => updateCommentStatus(!comment.isResolved)}
             disabled={updating}
-            className={`px-4 py-2 rounded-lg transition-colors flex items-center disabled:opacity-50 ${
+            className={`px-4 py-2  transition-colors flex items-center disabled:opacity-50 ${
               comment.isResolved
                 ? 'bg-yellow-600 text-white hover:bg-yellow-700'
                 : 'bg-green-600 text-white hover:bg-green-700'
@@ -350,7 +350,7 @@ export default function ViewComment() {
           <button
             onClick={deleteComment}
             disabled={deleting}
-            className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors flex items-center disabled:opacity-50"
+            className="bg-red-600 text-white px-4 py-2  hover:bg-red-700 transition-colors flex items-center disabled:opacity-50"
           >
             <Trash2 size={16} className="mr-2" />
             {deleting ? 'Deleting...' : 'Delete'}
@@ -363,19 +363,19 @@ export default function ViewComment() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-gray-800 rounded-xl p-4"
+          className="bg-gray-800  p-4"
         >
           <div className="flex items-center space-x-3">
-            <div className="bg-blue-600 p-3 rounded-lg">
+            <div className="bg-blue-600 p-3 ">
               <User size={20} className="text-white" />
             </div>
             <div>
               <p className="text-sm text-gray-400">Author</p>
-              <p className="text-white font-medium">
+              <p className="text-white ">
                 {comment.authorId.firstName} {comment.authorId.lastName}
               </p>
               <span
-                className={`inline-flex items-center px-2 py-1 text-xs rounded-full ${getRoleColor(comment.authorId.role)}`}
+                className={`inline-flex items-center px-2 py-1 text-xs  ${getRoleColor(comment.authorId.role)}`}
               >
                 {comment.authorId.role}
               </span>
@@ -386,16 +386,16 @@ export default function ViewComment() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-gray-800 rounded-xl p-4"
+          className="bg-gray-800  p-4"
         >
           <div className="flex items-center space-x-3">
-            <div className="bg-purple-600 p-3 rounded-lg">
+            <div className="bg-purple-600 p-3 ">
               <MessageSquare size={20} className="text-white" />
             </div>
             <div>
               <p className="text-sm text-gray-400">Type</p>
               <span
-                className={`inline-flex items-center px-2 py-1 text-xs rounded-full ${getCommentTypeColor(comment.commentType)}`}
+                className={`inline-flex items-center px-2 py-1 text-xs  ${getCommentTypeColor(comment.commentType)}`}
               >
                 {comment.commentType}
               </span>
@@ -406,11 +406,11 @@ export default function ViewComment() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-gray-800 rounded-xl p-4"
+          className="bg-gray-800  p-4"
         >
           <div className="flex items-center space-x-3">
             <div
-              className={`p-3 rounded-lg ${comment.isResolved ? 'bg-green-600' : 'bg-red-600'}`}
+              className={`p-3  ${comment.isResolved ? 'bg-green-600' : 'bg-red-600'}`}
             >
               {comment.isResolved ? (
                 <Check size={20} className="text-white" />
@@ -421,7 +421,7 @@ export default function ViewComment() {
             <div>
               <p className="text-sm text-gray-400">Status</p>
               <p
-                className={`font-medium ${comment.isResolved ? 'text-green-400' : 'text-red-400'}`}
+                className={` ${comment.isResolved ? 'text-green-400' : 'text-red-400'}`}
               >
                 {comment.isResolved ? 'Resolved' : 'Unresolved'}
               </p>
@@ -432,15 +432,15 @@ export default function ViewComment() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-gray-800 rounded-xl p-4"
+          className="bg-gray-800  p-4"
         >
           <div className="flex items-center space-x-3">
-            <div className="bg-orange-600 p-3 rounded-lg">
+            <div className="bg-orange-600 p-3 ">
               <Calendar size={20} className="text-white" />
             </div>
             <div>
               <p className="text-sm text-gray-400">Created</p>
-              <p className="text-white font-medium">
+              <p className="text-white ">
                 {new Date(comment.createdAt).toLocaleDateString()}
               </p>
               <p className="text-xs text-gray-400">
@@ -455,15 +455,15 @@ export default function ViewComment() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-gray-800 rounded-xl p-6"
+        className="bg-gray-800  p-6"
       >
         <div className="flex items-start justify-between mb-4">
           <div className="flex items-center space-x-3">
-            <div className="bg-gray-600 p-3 rounded-lg">
+            <div className="bg-gray-600 p-3 ">
               <BookOpen size={20} className="text-white" />
             </div>
             <div>
-              <h3 className="text-white font-medium">Story Context</h3>
+              <h3 className="text-white ">Story Context</h3>
               <Link
                 href={`/admin/stories/${comment.storyId._id}`}
                 className="text-blue-400 hover:text-blue-300 transition-colors"
@@ -480,7 +480,7 @@ export default function ViewComment() {
           {canEdit && !isEditing && (
             <button
               onClick={handleEditClick}
-              className="text-yellow-400 hover:text-yellow-300 p-2 hover:bg-gray-700 rounded-lg transition-colors"
+              className="text-yellow-400 hover:text-yellow-300 p-2 hover:bg-gray-700  transition-colors"
               title="Edit comment"
             >
               <Edit size={16} />
@@ -488,9 +488,9 @@ export default function ViewComment() {
           )}
         </div>
 
-        <div className="bg-gray-700/50 rounded-lg p-4">
+        <div className="bg-gray-700/50  p-4">
           <div className="flex items-center justify-between mb-3">
-            <h4 className="text-white font-medium">Comment Content</h4>
+            <h4 className="text-white ">Comment Content</h4>
             {comment.updatedAt !== comment.createdAt && (
               <span className="text-gray-400 text-xs">
                 (edited {new Date(comment.updatedAt).toLocaleDateString()})
@@ -504,7 +504,7 @@ export default function ViewComment() {
               <textarea
                 value={editValue}
                 onChange={(e) => setEditValue(e.target.value)}
-                className="w-full p-3 bg-gray-600 border border-gray-500 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                className="w-full p-3 bg-gray-600 border border-gray-500  text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
                 rows={6}
                 placeholder="Edit your comment..."
               />
@@ -512,7 +512,7 @@ export default function ViewComment() {
                 <button
                   onClick={handleEditSave}
                   disabled={!editValue.trim() || saving}
-                  className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
+                  className="bg-green-600 text-white px-4 py-2  hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
                 >
                   <Save size={16} className="mr-2" />
                   {saving ? 'Saving...' : 'Save Changes'}
@@ -520,7 +520,7 @@ export default function ViewComment() {
                 <button
                   onClick={handleEditCancel}
                   disabled={saving}
-                  className="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors flex items-center"
+                  className="bg-gray-600 text-white px-4 py-2  hover:bg-gray-700 transition-colors flex items-center"
                 >
                   <XCircle size={16} className="mr-2" />
                   Cancel
@@ -540,23 +540,23 @@ export default function ViewComment() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-gray-800 rounded-xl p-6"
+          className="bg-gray-800  p-6"
         >
-          <h3 className="text-white font-medium mb-4">
+          <h3 className="text-white  mb-4">
             Replies ({comment.replies.length})
           </h3>
           <div className="space-y-4">
             {comment.replies.map((reply, index) => (
               <div
                 key={reply._id}
-                className="bg-gray-700/30 rounded-lg p-4 ml-6"
+                className="bg-gray-700/30  p-4 ml-6"
               >
                 <div className="flex items-center space-x-2 mb-2">
-                  <span className="text-white font-medium">
+                  <span className="text-white ">
                     {reply.authorId.firstName} {reply.authorId.lastName}
                   </span>
                   <span
-                    className={`px-2 py-1 text-xs rounded-full ${getRoleColor(reply.authorId.role)}`}
+                    className={`px-2 py-1 text-xs  ${getRoleColor(reply.authorId.role)}`}
                   >
                     {reply.authorId.role}
                   </span>

@@ -142,12 +142,12 @@ export default function TransactionsPage() {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div className="flex items-center space-x-4">
           <Link href="/admin/revenue">
-            <button className="p-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg transition-colors">
+            <button className="p-2 text-gray-400 hover:text-white hover:bg-gray-700  transition-colors">
               <ArrowLeft size={20} />
             </button>
           </Link>
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-white">
+            <h1 className="text-2xl sm:text-3xl  text-white">
               Transaction History
             </h1>
             <p className="text-gray-400">
@@ -157,7 +157,7 @@ export default function TransactionsPage() {
         </div>
         <button
           onClick={exportTransactions}
-          className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center"
+          className="bg-green-600 text-white px-4 py-2  hover:bg-green-700 transition-colors flex items-center"
         >
           <Download size={16} className="mr-2" />
           Export CSV
@@ -165,11 +165,11 @@ export default function TransactionsPage() {
       </div>
 
       {/* Filters */}
-      <div className="bg-gray-800 rounded-xl p-6">
+      <div className="bg-gray-800  p-6">
         <div className="flex flex-col lg:flex-row gap-4">
           <div className="flex items-center gap-2">
             <Filter size={20} className="text-gray-400" />
-            <span className="text-white font-medium">Date Range:</span>
+            <span className="text-white ">Date Range:</span>
           </div>
 
           <div className="flex flex-col sm:flex-row gap-4 flex-1">
@@ -184,7 +184,7 @@ export default function TransactionsPage() {
                     startDate: e.target.value,
                   }))
                 }
-                className="px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="px-3 py-2 bg-gray-700 border border-gray-600  text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
 
@@ -196,13 +196,13 @@ export default function TransactionsPage() {
                 onChange={(e) =>
                   setDateRange((prev) => ({ ...prev, endDate: e.target.value }))
                 }
-                className="px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="px-3 py-2 bg-gray-700 border border-gray-600  text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
 
             <button
               onClick={applyDateFilter}
-              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+              className="bg-blue-600 text-white px-4 py-2  hover:bg-blue-700 transition-colors"
             >
               Apply Filter
             </button>
@@ -211,24 +211,24 @@ export default function TransactionsPage() {
       </div>
 
       {/* Transactions Table */}
-      <div className="bg-gray-800 rounded-xl overflow-hidden">
+      <div className="bg-gray-800  overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="bg-gray-700">
               <tr>
-                <th className="text-left py-3 px-4 text-sm font-medium text-gray-300">
+                <th className="text-left py-3 px-4 text-sm  text-gray-300">
                   Customer
                 </th>
-                <th className="text-left py-3 px-4 text-sm font-medium text-gray-300">
+                <th className="text-left py-3 px-4 text-sm  text-gray-300">
                   Type
                 </th>
-                <th className="text-left py-3 px-4 text-sm font-medium text-gray-300">
+                <th className="text-left py-3 px-4 text-sm  text-gray-300">
                   Amount
                 </th>
-                <th className="text-left py-3 px-4 text-sm font-medium text-gray-300">
+                <th className="text-left py-3 px-4 text-sm  text-gray-300">
                   Date
                 </th>
-                <th className="text-left py-3 px-4 text-sm font-medium text-gray-300">
+                <th className="text-left py-3 px-4 text-sm  text-gray-300">
                   Details
                 </th>
               </tr>
@@ -242,12 +242,12 @@ export default function TransactionsPage() {
                   {/* Customer */}
                   <td className="py-3 px-4">
                     <div className="flex items-center space-x-3">
-                      <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
+                      <div className="w-8 h-8 bg-blue-600  flex items-center justify-center">
                         <User size={16} className="text-white" />
                       </div>
                       <div>
                         <Link href={`/admin/users/${transaction.customer.id}`}>
-                          <h4 className="text-white font-medium hover:text-blue-400 cursor-pointer">
+                          <h4 className="text-white  hover:text-blue-400 cursor-pointer">
                             {transaction.customer.name}
                           </h4>
                         </Link>
@@ -261,7 +261,7 @@ export default function TransactionsPage() {
                   {/* Type */}
                   <td className="py-3 px-4">
                     <span
-                      className={`px-2 py-1 text-xs font-medium rounded-full ${getTransactionTypeColor(transaction.transaction.type)}`}
+                      className={`px-2 py-1 text-xs   ${getTransactionTypeColor(transaction.transaction.type)}`}
                     >
                       {transaction.transaction.type === 'story_pack'
                         ? 'Story Pack'
@@ -273,7 +273,7 @@ export default function TransactionsPage() {
                   <td className="py-3 px-4">
                     <div className="flex items-center">
                       <DollarSign size={16} className="text-emerald-400 mr-1" />
-                      <span className="text-emerald-400 font-bold text-lg">
+                      <span className="text-emerald-400  text-lg">
                         {transaction.transaction.amount.toFixed(2)}
                       </span>
                     </div>
@@ -328,7 +328,7 @@ export default function TransactionsPage() {
         {transactions.length === 0 && !loading && (
           <div className="text-center py-12">
             <DollarSign size={48} className="text-gray-600 mx-auto mb-4" />
-            <h3 className="text-xl font-medium text-gray-400 mb-2">
+            <h3 className="text-xl  text-gray-400 mb-2">
               No transactions found
             </h3>
             <p className="text-gray-500">
@@ -346,7 +346,7 @@ export default function TransactionsPage() {
           <button
             onClick={() => setPage(Math.max(1, page - 1))}
             disabled={page === 1}
-            className="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="px-4 py-2 bg-gray-700 text-white  hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             Previous
           </button>
@@ -359,7 +359,7 @@ export default function TransactionsPage() {
                 <button
                   key={pageNum}
                   onClick={() => setPage(pageNum)}
-                  className={`px-3 py-2 rounded-lg transition-colors ${
+                  className={`px-3 py-2  transition-colors ${
                     page === pageNum
                       ? 'bg-blue-600 text-white'
                       : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
@@ -374,7 +374,7 @@ export default function TransactionsPage() {
           <button
             onClick={() => setPage(Math.min(pagination.pages, page + 1))}
             disabled={page === pagination.pages}
-            className="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="px-4 py-2 bg-gray-700 text-white  hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             Next
           </button>

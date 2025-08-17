@@ -125,7 +125,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       <div className="lg:hidden fixed top-4 left-4 z-50">
         <button
           onClick={() => setSidebarOpen(!sidebarOpen)}
-          className="bg-gray-800 p-2 rounded-lg text-white hover:bg-gray-700 transition-colors"
+          className="bg-gray-800 p-2  text-white hover:bg-gray-700 transition-colors"
         >
           {sidebarOpen ? (
             <X className="w-6 h-6" />
@@ -149,7 +149,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           <div className="p-6 border-b border-gray-700">
             <div className="flex items-center space-x-2">
               <Crown className="w-8 h-8 text-yellow-500" />
-              <h1 className="text-xl font-bold text-white">Admin Panel</h1>
+              <h1 className="text-xl  text-white">Admin Panel</h1>
             </div>
           </div>
 
@@ -162,7 +162,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                   <li key={item.name}>
                     <Link
                       href={item.href}
-                      className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${
+                      className={`flex items-center space-x-3 px-4 py-3  transition-colors ${
                         isActive(item.href)
                           ? 'bg-blue-600 text-white'
                           : 'text-gray-300 hover:bg-gray-700 hover:text-white'
@@ -170,7 +170,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                       onClick={() => setSidebarOpen(false)}
                     >
                       <Icon className="w-5 h-5" />
-                      <span className="font-medium">{item.name}</span>
+                      <span className="">{item.name}</span>
                     </Link>
                   </li>
                 );
@@ -181,11 +181,11 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           {/* User Info & Logout */}
           <div className="p-4 border-t border-gray-700">
             <div className="flex items-center space-x-3 mb-3">
-              <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
+              <div className="w-8 h-8 bg-blue-600  flex items-center justify-center">
                 <User className="w-4 h-4 text-white" />
               </div>
               <div>
-                <p className="text-sm font-medium text-white">
+                <p className="text-sm  text-white">
                   {session?.user?.firstName} {session?.user?.lastName}
                 </p>
                 <p className="text-xs text-gray-400">Administrator</p>
@@ -193,7 +193,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
             </div>
             <button
               onClick={handleLogout}
-              className="flex items-center space-x-2 w-full px-3 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors"
+              className="flex items-center space-x-2 w-full px-3 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white  transition-colors"
             >
               <LogOut className="w-4 h-4" />
               <span>Sign Out</span>
@@ -220,7 +220,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           <header className="bg-gray-800 border-b border-gray-700 px-6 py-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
-                <h2 className="text-xl font-semibold text-white">
+                <h2 className="text-xl  text-white">
                   {navigation.find((item) => isActive(item.href))?.name ||
                     'Dashboard'}
                 </h2>

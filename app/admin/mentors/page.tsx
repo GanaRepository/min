@@ -125,7 +125,7 @@ export default function MentorsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">
+          <h1 className="text-2xl sm:text-3xl  text-white mb-2">
             Mentors Management
           </h1>
           <p className="text-gray-400">
@@ -133,7 +133,7 @@ export default function MentorsPage() {
           </p>
         </div>
         <Link href="/admin/mentors/create">
-          <button className="bg-gradient-to-r from-purple-600 to-purple-700 text-white px-6 py-2.5 rounded-lg hover:from-purple-700 hover:to-purple-800 transition-all duration-200 flex items-center">
+          <button className="bg-gradient-to-r from-purple-600 to-purple-700 text-white px-6 py-2.5  hover:from-purple-700 hover:to-purple-800 transition-all duration-200 flex items-center">
             <UserPlus size={20} className="mr-2" />
             Add New Mentor
           </button>
@@ -141,7 +141,7 @@ export default function MentorsPage() {
       </div>
 
       {/* Search */}
-      <div className="bg-gray-800 rounded-xl p-6">
+      <div className="bg-gray-800  p-6">
         <div className="relative">
           <Search size={20} className="absolute left-3 top-3 text-gray-400" />
           <input
@@ -149,7 +149,7 @@ export default function MentorsPage() {
             placeholder="Search mentors by name or email..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+            className="w-full pl-10 pr-4 py-2.5 bg-gray-700 border border-gray-600  text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
           />
         </div>
       </div>
@@ -161,19 +161,19 @@ export default function MentorsPage() {
             key={mentor._id}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-gray-800 rounded-xl p-6 hover:bg-gray-700/50 transition-all duration-200"
+            className="bg-gray-800  p-6 hover:bg-gray-700/50 transition-all duration-200"
           >
             {/* Mentor Header */}
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center space-x-3">
-                <div className="w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center">
-                  <span className="text-white font-bold text-lg">
+                <div className="w-12 h-12 bg-purple-600  flex items-center justify-center">
+                  <span className="text-white  text-lg">
                     {mentor.firstName[0]}
                     {mentor.lastName[0]}
                   </span>
                 </div>
                 <div>
-                  <h3 className="text-white font-semibold">
+                  <h3 className="text-white ">
                     {mentor.firstName} {mentor.lastName}
                   </h3>
                   <p className="text-gray-400 text-sm">{mentor.email}</p>
@@ -181,7 +181,7 @@ export default function MentorsPage() {
               </div>
               <div className="flex items-center space-x-1">
                 <div
-                  className={`w-3 h-3 rounded-full ${
+                  className={`w-3 h-3  ${
                     mentor.isActive ? 'bg-green-500' : 'bg-red-500'
                   }`}
                 ></div>
@@ -194,7 +194,7 @@ export default function MentorsPage() {
                 <div className="flex items-center justify-center mb-1">
                   <Users size={16} className="text-blue-400" />
                 </div>
-                <p className="text-2xl font-bold text-white">
+                <p className="text-2xl  text-white">
                   {mentor.assignedStudents}
                 </p>
                 <p className="text-xs text-gray-400">Students</p>
@@ -203,7 +203,7 @@ export default function MentorsPage() {
                 <div className="flex items-center justify-center mb-1">
                   <BookOpen size={16} className="text-green-400" />
                 </div>
-                <p className="text-2xl font-bold text-white">
+                <p className="text-2xl  text-white">
                   {mentor.totalStories}
                 </p>
                 <p className="text-xs text-gray-400">Stories</p>
@@ -212,7 +212,7 @@ export default function MentorsPage() {
                 <div className="flex items-center justify-center mb-1">
                   <MessageSquare size={16} className="text-orange-400" />
                 </div>
-                <p className="text-2xl font-bold text-white">
+                <p className="text-2xl  text-white">
                   {mentor.totalComments}
                 </p>
                 <p className="text-xs text-gray-400">Comments</p>
@@ -227,12 +227,12 @@ export default function MentorsPage() {
               </div>
               <div className="flex items-center space-x-2">
                 <Link href={`/admin/mentors/${mentor._id}`}>
-                  <button className="p-2 text-gray-400 hover:text-blue-400 hover:bg-gray-600 rounded-lg transition-colors">
+                  <button className="p-2 text-gray-400 hover:text-blue-400 hover:bg-gray-600  transition-colors">
                     <Eye size={16} />
                   </button>
                 </Link>
                 <Link href={`/admin/mentors/${mentor._id}/edit`}>
-                  <button className="p-2 text-gray-400 hover:text-green-400 hover:bg-gray-600 rounded-lg transition-colors">
+                  <button className="p-2 text-gray-400 hover:text-green-400 hover:bg-gray-600  transition-colors">
                     <Edit size={16} />
                   </button>
                 </Link>
@@ -243,7 +243,7 @@ export default function MentorsPage() {
                       `${mentor.firstName} ${mentor.lastName}`
                     )
                   }
-                  className="p-2 text-gray-400 hover:text-red-400 hover:bg-gray-600 rounded-lg transition-colors"
+                  className="p-2 text-gray-400 hover:text-red-400 hover:bg-gray-600  transition-colors"
                 >
                   <Trash2 size={16} />
                 </button>
@@ -257,7 +257,7 @@ export default function MentorsPage() {
       {mentors.length === 0 && !loading && (
         <div className="text-center py-12">
           <Users size={48} className="text-gray-600 mx-auto mb-4" />
-          <h3 className="text-xl font-medium text-gray-400 mb-2">
+          <h3 className="text-xl  text-gray-400 mb-2">
             No mentors found
           </h3>
           <p className="text-gray-500 mb-6">
@@ -274,7 +274,7 @@ export default function MentorsPage() {
           <button
             onClick={() => setPage(Math.max(1, page - 1))}
             disabled={page === 1}
-            className="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="px-4 py-2 bg-gray-700 text-white  hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             Previous
           </button>
@@ -287,7 +287,7 @@ export default function MentorsPage() {
                 <button
                   key={pageNum}
                   onClick={() => setPage(pageNum)}
-                  className={`px-3 py-2 rounded-lg transition-colors ${
+                  className={`px-3 py-2  transition-colors ${
                     page === pageNum
                       ? 'bg-purple-600 text-white'
                       : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
@@ -302,7 +302,7 @@ export default function MentorsPage() {
           <button
             onClick={() => setPage(Math.min(pagination.pages, page + 1))}
             disabled={page === pagination.pages}
-            className="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="px-4 py-2 bg-gray-700 text-white  hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             Next
           </button>

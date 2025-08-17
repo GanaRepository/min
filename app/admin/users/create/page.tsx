@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, Save, User, Mail, Lock, Shield } from 'lucide-react';
+import { ArrowLeft, Save, User, Mail, Lock, Shield, Calendar, School } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function CreateUserPage() {
@@ -22,7 +22,8 @@ export default function CreateUserPage() {
     password: '',
     confirmPassword: '',
     role: 'child',
-    parentEmail: '',
+    age: '',
+    school: '',
   });
 
   useEffect(() => {
@@ -45,6 +46,18 @@ export default function CreateUserPage() {
       return;
     }
 
+    // Validate age and school for child
+    if (formData.role === 'child') {
+      const newErrors: { [key: string]: string } = {};
+      if (!formData.age) newErrors.age = 'Age is required';
+      if (!formData.school) newErrors.school = 'School is required';
+      if (Object.keys(newErrors).length > 0) {
+        setErrors(newErrors);
+        setLoading(false);
+        return;
+      }
+    }
+
     try {
       const response = await fetch('/api/admin/users', {
         method: 'POST',
@@ -57,8 +70,8 @@ export default function CreateUserPage() {
           email: formData.email,
           password: formData.password,
           role: formData.role,
-          parentEmail:
-            formData.role === 'child' ? formData.parentEmail : undefined,
+          age: formData.role === 'child' ? formData.age : undefined,
+          school: formData.role === 'child' ? formData.school : undefined,
         }),
       });
 
@@ -97,16 +110,16 @@ export default function CreateUserPage() {
   };
 
   return (
-    <div className="space-y-6 px-2 sm:px-4 md:px-8 lg:px-12 xl:px-20 py-4 sm:py-6 md:py-8">
+  <div className="space-y-6 px-2 sm:px-4 md:px-8 lg:px-12 xl:px-20 py-4 sm:py-6 md:py-8 w-full min-w-0">
       {/* Header */}
-      <div className="flex items-center space-x-4">
+  <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:space-x-4 w-full min-w-0">
         <Link href="/admin/users">
-          <button className="p-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg transition-colors">
+          <button className="p-2 text-gray-400 hover:text-white hover:bg-gray-700  transition-colors">
             <ArrowLeft size={20} />
           </button>
         </Link>
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-white">
+          <h1 className="text-2xl sm:text-3xl  text-white">
             Create New User
           </h1>
           <p className="text-gray-400">Add a new user to the platform</p>
@@ -117,19 +130,19 @@ export default function CreateUserPage() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-gray-800 rounded-xl p-6"
+  className="bg-gray-800  p-4 sm:p-6 w-full min-w-0"
       >
-        <form onSubmit={handleSubmit} className="space-y-6">
+  <form onSubmit={handleSubmit} className="space-y-6 w-full min-w-0">
           {/* General Error */}
           {errors.general && (
-            <div className="bg-red-900/50 border border-red-500/50 text-red-200 p-3 rounded-lg text-sm">
+            <div className="bg-red-900/50 border border-red-500/50 text-red-200 p-3  text-sm">
               {errors.general}
             </div>
           )}
 
           {/* Role Selection */}
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="block text-sm  text-gray-300 mb-2">
               User Role
             </label>
             <div className="relative">
@@ -140,7 +153,7 @@ export default function CreateUserPage() {
               <select
                 value={formData.role}
                 onChange={(e) => handleInputChange('role', e.target.value)}
-                className="w-full pl-10 pr-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full pl-10 pr-4 py-3 bg-gray-700 border border-gray-600  text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="child">Child (Student)</option>
                 <option value="mentor">Mentor</option>
@@ -149,9 +162,9 @@ export default function CreateUserPage() {
           </div>
 
           {/* Basic Info */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 w-full min-w-0">
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
+              <label className="block text-sm  text-gray-300 mb-2">
                 First Name
               </label>
               <div className="relative">
@@ -166,7 +179,7 @@ export default function CreateUserPage() {
                   onChange={(e) =>
                     handleInputChange('firstName', e.target.value)
                   }
-                  className={`w-full pl-10 pr-4 py-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                  className={`w-full pl-10 pr-4 py-3 bg-gray-700 border  text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                     errors.firstName ? 'border-red-500' : 'border-gray-600'
                   }`}
                   placeholder="Enter first name"
@@ -178,7 +191,7 @@ export default function CreateUserPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
+              <label className="block text-sm  text-gray-300 mb-2">
                 Last Name
               </label>
               <div className="relative">
@@ -193,7 +206,7 @@ export default function CreateUserPage() {
                   onChange={(e) =>
                     handleInputChange('lastName', e.target.value)
                   }
-                  className={`w-full pl-10 pr-4 py-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                  className={`w-full pl-10 pr-4 py-3 bg-gray-700 border  text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                     errors.lastName ? 'border-red-500' : 'border-gray-600'
                   }`}
                   placeholder="Enter last name"
@@ -207,7 +220,7 @@ export default function CreateUserPage() {
 
           {/* Email */}
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="block text-sm  text-gray-300 mb-2">
               Email Address
             </label>
             <div className="relative">
@@ -217,7 +230,7 @@ export default function CreateUserPage() {
                 required
                 value={formData.email}
                 onChange={(e) => handleInputChange('email', e.target.value)}
-                className={`w-full pl-10 pr-4 py-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                className={`w-full pl-10 pr-4 py-3 bg-gray-700 border  text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                   errors.email ? 'border-red-500' : 'border-gray-600'
                 }`}
                 placeholder="Enter email address"
@@ -228,42 +241,60 @@ export default function CreateUserPage() {
             )}
           </div>
 
-          {/* Parent Email (Child only) */}
+          {/* Age and School (Child only) */}
           {formData.role === 'child' && (
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
-                Parent Email Address
-              </label>
-              <div className="relative">
-                <Mail
-                  size={20}
-                  className="absolute left-3 top-3 text-gray-400"
-                />
-                <input
-                  type="email"
-                  required
-                  value={formData.parentEmail}
-                  onChange={(e) =>
-                    handleInputChange('parentEmail', e.target.value)
-                  }
-                  className={`w-full pl-10 pr-4 py-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                    errors.parentEmail ? 'border-red-500' : 'border-gray-600'
-                  }`}
-                  placeholder="Enter parent email address"
-                />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 w-full min-w-0">
+              <div>
+                <label className="block text-sm  text-gray-300 mb-2">
+                  Age
+                </label>
+                <div className="relative">
+                  <Calendar size={20} className="absolute left-3 top-3 text-gray-400" />
+                  <input
+                    type="number"
+                    min="3"
+                    max="18"
+                    required
+                    value={formData.age}
+                    onChange={(e) => handleInputChange('age', e.target.value)}
+                    className={`w-full pl-10 pr-4 py-3 bg-gray-700 border  text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                      errors.age ? 'border-red-500' : 'border-gray-600'
+                    }`}
+                    placeholder="Enter age"
+                  />
+                </div>
+                {errors.age && (
+                  <p className="text-red-400 text-sm mt-1">{errors.age}</p>
+                )}
               </div>
-              {errors.parentEmail && (
-                <p className="text-red-400 text-sm mt-1">
-                  {errors.parentEmail}
-                </p>
-              )}
+              <div>
+                <label className="block text-sm  text-gray-300 mb-2">
+                  School
+                </label>
+                <div className="relative">
+                  <School size={20} className="absolute left-3 top-3 text-gray-400" />
+                  <input
+                    type="text"
+                    required
+                    value={formData.school}
+                    onChange={(e) => handleInputChange('school', e.target.value)}
+                    className={`w-full pl-10 pr-4 py-3 bg-gray-700 border  text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                      errors.school ? 'border-red-500' : 'border-gray-600'
+                    }`}
+                    placeholder="Enter school name"
+                  />
+                </div>
+                {errors.school && (
+                  <p className="text-red-400 text-sm mt-1">{errors.school}</p>
+                )}
+              </div>
             </div>
           )}
 
           {/* Passwords */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 w-full min-w-0">
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
+              <label className="block text-sm  text-gray-300 mb-2">
                 Password
               </label>
               <div className="relative">
@@ -278,7 +309,7 @@ export default function CreateUserPage() {
                   onChange={(e) =>
                     handleInputChange('password', e.target.value)
                   }
-                  className={`w-full pl-10 pr-4 py-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                  className={`w-full pl-10 pr-4 py-3 bg-gray-700 border  text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                     errors.password ? 'border-red-500' : 'border-gray-600'
                   }`}
                   placeholder="Enter password"
@@ -291,7 +322,7 @@ export default function CreateUserPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
+              <label className="block text-sm  text-gray-300 mb-2">
                 Confirm Password
               </label>
               <div className="relative">
@@ -306,7 +337,7 @@ export default function CreateUserPage() {
                   onChange={(e) =>
                     handleInputChange('confirmPassword', e.target.value)
                   }
-                  className={`w-full pl-10 pr-4 py-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                  className={`w-full pl-10 pr-4 py-3 bg-gray-700 border  text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                     errors.confirmPassword
                       ? 'border-red-500'
                       : 'border-gray-600'
@@ -324,11 +355,11 @@ export default function CreateUserPage() {
           </div>
 
           {/* Action Buttons */}
-          <div className="flex items-center justify-end space-x-4 pt-6 border-t border-gray-700">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-end sm:space-x-4 pt-6 border-t border-gray-700 w-full min-w-0">
             <Link href="/admin/users">
               <button
                 type="button"
-                className="px-6 py-2.5 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+                className="px-6 py-2.5 bg-gray-600 text-white  hover:bg-gray-700 transition-colors"
               >
                 Cancel
               </button>
@@ -336,7 +367,7 @@ export default function CreateUserPage() {
             <button
               type="submit"
               disabled={loading}
-              className="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center disabled:opacity-50"
+              className="px-6 py-2.5 bg-blue-600 text-white  hover:bg-blue-700 transition-colors flex items-center disabled:opacity-50"
             >
               <Save size={16} className="mr-2" />
               {loading ? 'Creating...' : `Create ${formData.role}`}

@@ -194,7 +194,7 @@ export default function StoriesPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">
+          <h1 className="text-2xl sm:text-3xl  text-white mb-2">
             Stories Management
           </h1>
           <p className="text-gray-400">
@@ -203,7 +203,7 @@ export default function StoriesPage() {
         </div>
         <button
           onClick={exportStories}
-          className="bg-gradient-to-r from-green-600 to-green-700 text-white px-6 py-2.5 rounded-lg hover:from-green-700 hover:to-green-800 transition-all duration-200 flex items-center"
+          className="bg-gradient-to-r from-green-600 to-green-700 text-white px-6 py-2.5  hover:from-green-700 hover:to-green-800 transition-all duration-200 flex items-center"
         >
           <Download size={20} className="mr-2" />
           Export Stories
@@ -213,24 +213,24 @@ export default function StoriesPage() {
       {/* Stats Cards */}
       {stats && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="bg-gray-800 rounded-xl p-6">
+          <div className="bg-gray-800  p-6">
             <div className="flex items-center justify-between mb-2">
-              <h3 className="text-sm font-medium text-gray-400">
+              <h3 className="text-sm  text-gray-400">
                 Total Stories
               </h3>
               <BookOpen size={20} className="text-blue-400" />
             </div>
-            <p className="text-2xl font-bold text-white">
+            <p className="text-2xl  text-white">
               {stats.totalStories}
             </p>
           </div>
 
-          <div className="bg-gray-800 rounded-xl p-6">
+          <div className="bg-gray-800  p-6">
             <div className="flex items-center justify-between mb-2">
-              <h3 className="text-sm font-medium text-gray-400">Completed</h3>
+              <h3 className="text-sm  text-gray-400">Completed</h3>
               <BarChart3 size={20} className="text-green-400" />
             </div>
-            <p className="text-2xl font-bold text-white">
+            <p className="text-2xl  text-white">
               {stats.completedStories}
             </p>
             <p className="text-xs text-gray-500 mt-1">
@@ -243,22 +243,22 @@ export default function StoriesPage() {
             </p>
           </div>
 
-          <div className="bg-gray-800 rounded-xl p-6">
+          <div className="bg-gray-800  p-6">
             <div className="flex items-center justify-between mb-2">
-              <h3 className="text-sm font-medium text-gray-400">Active</h3>
+              <h3 className="text-sm  text-gray-400">Active</h3>
               <BookOpen size={20} className="text-blue-400" />
             </div>
-            <p className="text-2xl font-bold text-white">
+            <p className="text-2xl  text-white">
               {stats.activeStories}
             </p>
           </div>
 
-          <div className="bg-gray-800 rounded-xl p-6">
+          <div className="bg-gray-800  p-6">
             <div className="flex items-center justify-between mb-2">
-              <h3 className="text-sm font-medium text-gray-400">Comments</h3>
+              <h3 className="text-sm  text-gray-400">Comments</h3>
               <MessageSquare size={20} className="text-purple-400" />
             </div>
-            <p className="text-2xl font-bold text-white">
+            <p className="text-2xl  text-white">
               {stats.totalComments}
             </p>
             {stats.totalUnresolvedComments > 0 && (
@@ -271,17 +271,17 @@ export default function StoriesPage() {
       )}
 
       {/* Filters */}
-      <div className="bg-gray-800 rounded-xl p-6">
+      <div className="bg-gray-800  p-6">
         <div className="flex flex-col lg:flex-row gap-4">
           {/* Status Filter */}
           <div className="flex items-center gap-2">
             <Filter size={20} className="text-gray-400" />
-            <div className="flex bg-gray-700 rounded-lg p-1">
+            <div className="flex bg-gray-700  p-1">
               {['all', 'active', 'completed', 'paused'].map((status) => (
                 <button
                   key={status}
                   onClick={() => setStatusFilter(status)}
-                  className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
+                  className={`px-3 py-1.5 text-sm   transition-colors ${
                     statusFilter === status
                       ? 'bg-blue-600 text-white'
                       : 'text-gray-300 hover:text-white'
@@ -303,7 +303,7 @@ export default function StoriesPage() {
                 placeholder="Filter by author email..."
                 value={authorFilter}
                 onChange={(e) => setAuthorFilter(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full pl-10 pr-4 py-2.5 bg-gray-700 border border-gray-600  text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
           </div>
@@ -311,30 +311,30 @@ export default function StoriesPage() {
       </div>
 
       {/* Stories Table */}
-      <div className="bg-gray-800 rounded-xl overflow-hidden">
+      <div className="bg-gray-800  overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="bg-gray-700">
               <tr>
-                <th className="text-left py-3 px-4 text-sm font-medium text-gray-300">
+                <th className="text-left py-3 px-4 text-sm  text-gray-300">
                   Story
                 </th>
-                <th className="text-left py-3 px-4 text-sm font-medium text-gray-300">
+                <th className="text-left py-3 px-4 text-sm  text-gray-300">
                   Author
                 </th>
-                <th className="text-left py-3 px-4 text-sm font-medium text-gray-300">
+                <th className="text-left py-3 px-4 text-sm  text-gray-300">
                   Status
                 </th>
-                <th className="text-left py-3 px-4 text-sm font-medium text-gray-300">
+                <th className="text-left py-3 px-4 text-sm  text-gray-300">
                   Progress
                 </th>
-                <th className="text-left py-3 px-4 text-sm font-medium text-gray-300">
+                <th className="text-left py-3 px-4 text-sm  text-gray-300">
                   Comments
                 </th>
-                <th className="text-left py-3 px-4 text-sm font-medium text-gray-300">
+                <th className="text-left py-3 px-4 text-sm  text-gray-300">
                   Created
                 </th>
-                <th className="text-left py-3 px-4 text-sm font-medium text-gray-300">
+                <th className="text-left py-3 px-4 text-sm  text-gray-300">
                   Actions
                 </th>
               </tr>
@@ -349,7 +349,7 @@ export default function StoriesPage() {
                   <td className="py-3 px-4">
                     <div>
                       <Link href={`/admin/stories/${story._id}`}>
-                        <h4 className="text-white font-medium hover:text-blue-400 cursor-pointer">
+                        <h4 className="text-white  hover:text-blue-400 cursor-pointer">
                           {story.title}
                         </h4>
                       </Link>
@@ -358,12 +358,12 @@ export default function StoriesPage() {
                           #{story.storyNumber}
                         </p>
                         {story.isPublished && (
-                          <span className="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full">
+                          <span className="px-2 py-1 text-xs bg-blue-100 text-blue-800 ">
                             Published
                           </span>
                         )}
                         {story.submittedToCompetition && (
-                          <span className="px-2 py-1 text-xs bg-yellow-100 text-yellow-800 rounded-full">
+                          <span className="px-2 py-1 text-xs bg-yellow-100 text-yellow-800 ">
                             Competition
                           </span>
                         )}
@@ -375,7 +375,7 @@ export default function StoriesPage() {
                   <td className="py-3 px-4">
                     <div>
                       <Link href={`/admin/users/${story.childId._id}`}>
-                        <p className="text-white font-medium hover:text-blue-400 cursor-pointer">
+                        <p className="text-white  hover:text-blue-400 cursor-pointer">
                           {story.childId.firstName} {story.childId.lastName}
                         </p>
                       </Link>
@@ -388,7 +388,7 @@ export default function StoriesPage() {
                   {/* Status */}
                   <td className="py-3 px-4">
                     <span
-                      className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(story.status)}`}
+                      className={`px-2 py-1 text-xs   ${getStatusColor(story.status)}`}
                     >
                       {story.status}
                     </span>
@@ -408,9 +408,9 @@ export default function StoriesPage() {
                         </span>
                       </div>
                       {/* Progress bar */}
-                      <div className="w-full bg-gray-600 rounded-full h-1">
+                      <div className="w-full bg-gray-600  h-1">
                         <div
-                          className="bg-blue-500 h-1 rounded-full"
+                          className="bg-blue-500 h-1 "
                           style={{
                             width: `${Math.min((story.apiCallsUsed / story.maxApiCalls) * 100, 100)}%`,
                           }}
@@ -424,7 +424,7 @@ export default function StoriesPage() {
                     <div className="flex items-center space-x-2">
                       <span className="text-white">{story.commentCount}</span>
                       {story.unresolvedComments > 0 && (
-                        <span className="px-1 py-0.5 text-xs bg-red-100 text-red-800 rounded">
+                        <span className="px-1 py-0.5 text-xs bg-red-100 text-red-800 ">
                           {story.unresolvedComments} unresolved
                         </span>
                       )}
@@ -450,18 +450,18 @@ export default function StoriesPage() {
                   <td className="py-3 px-4">
                     <div className="flex items-center space-x-2">
                       <Link href={`/admin/stories/${story._id}`}>
-                        <button className="p-2 text-gray-400 hover:text-blue-400 hover:bg-gray-700 rounded-lg transition-colors">
+                        <button className="p-2 text-gray-400 hover:text-blue-400 hover:bg-gray-700  transition-colors">
                           <Eye size={16} />
                         </button>
                       </Link>
                       <Link href={`/admin/stories/${story._id}/edit`}>
-                        <button className="p-2 text-gray-400 hover:text-green-400 hover:bg-gray-700 rounded-lg transition-colors">
+                        <button className="p-2 text-gray-400 hover:text-green-400 hover:bg-gray-700  transition-colors">
                           <Edit size={16} />
                         </button>
                       </Link>
                       <button
                         onClick={() => deleteStory(story._id, story.title)}
-                        className="p-2 text-gray-400 hover:text-red-400 hover:bg-gray-700 rounded-lg transition-colors"
+                        className="p-2 text-gray-400 hover:text-red-400 hover:bg-gray-700  transition-colors"
                       >
                         <Trash2 size={16} />
                       </button>
@@ -477,7 +477,7 @@ export default function StoriesPage() {
         {stories.length === 0 && !loading && (
           <div className="text-center py-12">
             <BookOpen size={48} className="text-gray-600 mx-auto mb-4" />
-            <h3 className="text-xl font-medium text-gray-400 mb-2">
+            <h3 className="text-xl  text-gray-400 mb-2">
               No stories found
             </h3>
             <p className="text-gray-500">
@@ -495,7 +495,7 @@ export default function StoriesPage() {
           <button
             onClick={() => setPage(Math.max(1, page - 1))}
             disabled={page === 1}
-            className="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="px-4 py-2 bg-gray-700 text-white  hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             Previous
           </button>
@@ -508,7 +508,7 @@ export default function StoriesPage() {
                 <button
                   key={pageNum}
                   onClick={() => setPage(pageNum)}
-                  className={`px-3 py-2 rounded-lg transition-colors ${
+                  className={`px-3 py-2  transition-colors ${
                     page === pageNum
                       ? 'bg-blue-600 text-white'
                       : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
@@ -523,7 +523,7 @@ export default function StoriesPage() {
           <button
             onClick={() => setPage(Math.min(pagination.pages, page + 1))}
             disabled={page === pagination.pages}
-            className="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="px-4 py-2 bg-gray-700 text-white  hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             Next
           </button>

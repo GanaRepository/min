@@ -186,12 +186,12 @@ export default function ModerationPage() {
       {/* Header */}
       <div className="flex items-center space-x-4">
         <Link href="/admin/comments">
-          <button className="p-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg transition-colors">
+          <button className="p-2 text-gray-400 hover:text-white hover:bg-gray-700  transition-colors">
             <ArrowLeft size={20} />
           </button>
         </Link>
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-white">
+          <h1 className="text-2xl sm:text-3xl  text-white">
             Bulk Comment Moderation
           </h1>
           <p className="text-gray-400">
@@ -201,7 +201,7 @@ export default function ModerationPage() {
       </div>
 
       {/* Filters and Search */}
-      <div className="bg-gray-800 rounded-xl p-6">
+      <div className="bg-gray-800  p-6">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
           {/* Search */}
           <div className="lg:col-span-2">
@@ -217,7 +217,7 @@ export default function ModerationPage() {
                 onChange={(e) =>
                   setFilters((prev) => ({ ...prev, search: e.target.value }))
                 }
-                className="w-full pl-10 pr-4 py-2.5 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full pl-10 pr-4 py-2.5 bg-gray-700 border border-gray-600  text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
           </div>
@@ -229,7 +229,7 @@ export default function ModerationPage() {
               onChange={(e) =>
                 setFilters((prev) => ({ ...prev, resolved: e.target.value }))
               }
-              className="w-full px-3 py-2.5 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2.5 bg-gray-700 border border-gray-600  text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="false">Unresolved</option>
               <option value="true">Resolved</option>
@@ -244,7 +244,7 @@ export default function ModerationPage() {
               onChange={(e) =>
                 setFilters((prev) => ({ ...prev, type: e.target.value }))
               }
-              className="w-full px-3 py-2.5 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2.5 bg-gray-700 border border-gray-600  text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="all">All Types</option>
               <option value="praise">Praise</option>
@@ -261,7 +261,7 @@ export default function ModerationPage() {
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-blue-900/20 border border-blue-500/30 rounded-xl p-4"
+          className="bg-blue-900/20 border border-blue-500/30  p-4"
         >
           <div className="flex items-center justify-between">
             <div className="text-blue-300">
@@ -271,7 +271,7 @@ export default function ModerationPage() {
               <button
                 onClick={() => bulkModerate('resolve')}
                 disabled={processing}
-                className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center disabled:opacity-50"
+                className="bg-green-600 text-white px-4 py-2  hover:bg-green-700 transition-colors flex items-center disabled:opacity-50"
               >
                 <Check size={16} className="mr-2" />
                 Mark Resolved
@@ -279,7 +279,7 @@ export default function ModerationPage() {
               <button
                 onClick={() => bulkModerate('unresolve')}
                 disabled={processing}
-                className="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 transition-colors flex items-center disabled:opacity-50"
+                className="bg-orange-600 text-white px-4 py-2  hover:bg-orange-700 transition-colors flex items-center disabled:opacity-50"
               >
                 <X size={16} className="mr-2" />
                 Mark Unresolved
@@ -287,7 +287,7 @@ export default function ModerationPage() {
               <button
                 onClick={() => bulkModerate('delete')}
                 disabled={processing}
-                className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors flex items-center disabled:opacity-50"
+                className="bg-red-600 text-white px-4 py-2  hover:bg-red-700 transition-colors flex items-center disabled:opacity-50"
               >
                 <Trash2 size={16} className="mr-2" />
                 Delete
@@ -298,7 +298,7 @@ export default function ModerationPage() {
       )}
 
       {/* Comments List */}
-      <div className="bg-gray-800 rounded-xl p-6">
+      <div className="bg-gray-800  p-6">
         {/* Select All Header */}
         <div className="flex items-center justify-between mb-4 pb-4 border-b border-gray-700">
           <label className="flex items-center">
@@ -308,9 +308,9 @@ export default function ModerationPage() {
                 comments.length > 0 && selectedComments.size === comments.length
               }
               onChange={selectAll}
-              className="mr-3 rounded"
+              className="mr-3 "
             />
-            <span className="text-white font-medium">
+            <span className="text-white ">
               Select All ({comments.length} comments)
             </span>
           </label>
@@ -332,7 +332,7 @@ export default function ModerationPage() {
                 key={comment._id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
+                className={`p-4  border-2 cursor-pointer transition-all ${
                   selectedComments.has(comment._id)
                     ? 'border-blue-500 bg-blue-900/20'
                     : 'border-gray-700 bg-gray-700/30 hover:border-gray-600'
@@ -351,7 +351,7 @@ export default function ModerationPage() {
                   <div className="flex-1">
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center space-x-3">
-                        <h4 className="text-white font-medium">
+                        <h4 className="text-white ">
                           {comment.authorId.firstName}{' '}
                           {comment.authorId.lastName}
                         </h4>
@@ -359,14 +359,14 @@ export default function ModerationPage() {
                           ({comment.authorId.role})
                         </span>
                         <span
-                          className={`px-2 py-1 text-xs rounded-full ${getCommentTypeColor(comment.commentType)}`}
+                          className={`px-2 py-1 text-xs  ${getCommentTypeColor(comment.commentType)}`}
                         >
                           {comment.commentType}
                         </span>
                       </div>
 
                       <span
-                        className={`px-2 py-1 text-xs rounded-full ${
+                        className={`px-2 py-1 text-xs  ${
                           comment.isResolved
                             ? 'bg-green-100 text-green-800'
                             : 'bg-red-100 text-red-800'
@@ -397,7 +397,7 @@ export default function ModerationPage() {
         ) : (
           <div className="text-center py-12">
             <MessageSquare size={48} className="text-gray-600 mx-auto mb-4" />
-            <h3 className="text-xl font-medium text-gray-400 mb-2">
+            <h3 className="text-xl  text-gray-400 mb-2">
               No comments found
             </h3>
             <p className="text-gray-500">

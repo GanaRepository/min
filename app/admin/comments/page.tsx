@@ -183,7 +183,7 @@ export default function CommentsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">
+          <h1 className="text-2xl sm:text-3xl  text-white mb-2">
             Comments Moderation
           </h1>
           <p className="text-gray-400">
@@ -191,20 +191,20 @@ export default function CommentsPage() {
           </p>
         </div>
         <Link href="/admin/comments/moderate">
-          <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+          <button className="bg-blue-600 text-white px-4 py-2  hover:bg-blue-700 transition-colors">
             Bulk Moderate
           </button>
         </Link>
       </div>
 
       {/* ✅ FIXED: Proper Filters */}
-      <div className="bg-gray-800 rounded-xl p-6">
+      <div className="bg-gray-800  p-6">
         <div className="flex flex-col lg:flex-row gap-4">
           {/* Resolution Status Filter */}
           <div className="flex items-center gap-2">
             <Filter size={20} className="text-gray-400" />
             <span className="text-gray-400 text-sm">Status:</span>
-            <div className="flex bg-gray-700 rounded-lg p-1">
+            <div className="flex bg-gray-700  p-1">
               {[
                 { value: 'all', label: 'All' },
                 { value: 'false', label: 'Unresolved' },
@@ -216,7 +216,7 @@ export default function CommentsPage() {
                     setResolvedFilter(status.value);
                     setPage(1); // Reset to first page
                   }}
-                  className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
+                  className={`px-3 py-1.5 text-sm  -md transition-colors ${
                     resolvedFilter === status.value
                       ? 'bg-blue-600 text-white'
                       : 'text-gray-300 hover:text-white'
@@ -231,7 +231,7 @@ export default function CommentsPage() {
           {/* Comment Type Filter */}
           <div className="flex items-center gap-2">
             <span className="text-gray-400 text-sm">Type:</span>
-            <div className="flex bg-gray-700 rounded-lg p-1 flex-wrap">
+            <div className="flex bg-gray-700  p-1 flex-wrap">
               {commentTypeOptions.map((type) => (
                 <button
                   key={type.value}
@@ -239,7 +239,7 @@ export default function CommentsPage() {
                     setTypeFilter(type.value);
                     setPage(1); // Reset to first page
                   }}
-                  className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
+                  className={`px-3 py-1.5 text-sm  -md transition-colors ${
                     typeFilter === type.value
                       ? 'bg-purple-600 text-white'
                       : 'text-gray-300 hover:text-white'
@@ -276,21 +276,21 @@ export default function CommentsPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
-              className="bg-gray-800 rounded-xl p-6 hover:bg-gray-750 transition-colors"
+              className="bg-gray-800  p-6 hover:bg-gray-750 transition-colors"
             >
               {/* Card Header */}
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-gray-600 rounded-full flex items-center justify-center">
-                    <span className="text-sm font-medium text-white">
+                  <div className="w-10 h-10 bg-gray-600  flex items-center justify-center">
+                    <span className="text-sm  text-white">
                       {comment.authorId.firstName[0]}{comment.authorId.lastName[0]}
                     </span>
                   </div>
                   <div>
-                    <p className="text-white font-medium text-sm">
+                    <p className="text-white  text-sm">
                       {comment.authorId.firstName} {comment.authorId.lastName}
                     </p>
-                    <span className={`inline-block px-2 py-1 text-xs rounded-full ${getRoleColor(comment.authorId.role)}`}>
+                    <span className={`inline-block px-2 py-1 text-xs  ${getRoleColor(comment.authorId.role)}`}>
                       {comment.authorId.role}
                     </span>
                   </div>
@@ -314,7 +314,7 @@ export default function CommentsPage() {
 
               {/* Comment Type */}
               <div className="mb-3">
-                <span className={`inline-block px-2 py-1 text-xs rounded-full ${getCommentTypeColor(comment.commentType)}`}>
+                <span className={`inline-block px-2 py-1 text-xs  ${getCommentTypeColor(comment.commentType)}`}>
                   {comment.commentType.replace('_', ' ')}
                 </span>
               </div>
@@ -327,11 +327,11 @@ export default function CommentsPage() {
               </div>
 
               {/* Story Info */}
-              <div className="mb-4 p-3 bg-gray-700/50 rounded-lg">
+              <div className="mb-4 p-3 bg-gray-700/50 ">
                 <div className="flex items-center space-x-2 text-sm">
                   <BookOpen size={14} className="text-gray-400" />
                   <span className="text-gray-400">Story:</span>
-                  <span className="text-white font-medium truncate">
+                  <span className="text-white  truncate">
                     {comment.storyId.title}
                   </span>
                 </div>
@@ -348,7 +348,7 @@ export default function CommentsPage() {
                   {/* Toggle Resolution */}
                   <button
                     onClick={() => updateCommentStatus(comment._id, !comment.isResolved)}
-                    className={`px-3 py-1 text-xs rounded-md transition-colors ${
+                    className={`px-3 py-1 text-xs -md transition-colors ${
                       comment.isResolved
                         ? 'bg-yellow-600 hover:bg-yellow-700 text-white'
                         : 'bg-green-600 hover:bg-green-700 text-white'
@@ -359,7 +359,7 @@ export default function CommentsPage() {
                   
                   {/* View Details */}
                   <Link href={`/admin/comments/${comment._id}`}>
-                    <button className="p-2 text-gray-400 hover:text-white hover:bg-gray-600 rounded-lg transition-colors">
+                    <button className="p-2 text-gray-400 hover:text-white hover:bg-gray-600  transition-colors">
                       <Eye size={14} />
                     </button>
                   </Link>
@@ -384,7 +384,7 @@ export default function CommentsPage() {
           <button
             onClick={() => setPage(page - 1)}
             disabled={page === 1}
-            className="p-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="p-2 text-gray-400 hover:text-white hover:bg-gray-700  transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <ChevronLeft size={20} />
           </button>
@@ -394,7 +394,7 @@ export default function CommentsPage() {
               <button
                 key={pageNum}
                 onClick={() => setPage(pageNum)}
-                className={`px-3 py-2 text-sm rounded-lg transition-colors ${
+                className={`px-3 py-2 text-sm  transition-colors ${
                   page === pageNum
                     ? 'bg-blue-600 text-white'
                     : 'text-gray-400 hover:text-white hover:bg-gray-700'
@@ -408,7 +408,7 @@ export default function CommentsPage() {
           <button
             onClick={() => setPage(page + 1)}
             disabled={page === pagination.pages}
-            className="p-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="p-2 text-gray-400 hover:text-white hover:bg-gray-700  transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <ChevronRight size={20} />
           </button>

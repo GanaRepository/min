@@ -207,8 +207,8 @@ export default function AdminCompetitionsPage() {
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-gray-700 border-t-green-400 rounded-full animate-spin mb-4"></div>
-          <p className="text-green-300 font-medium">Loading competitions...</p>
+          <div className="w-16 h-16 border-4 border-gray-700 border-t-green-400  animate-spin mb-4"></div>
+          <p className="text-green-300 ">Loading competitions...</p>
         </div>
       </div>
     );
@@ -224,7 +224,7 @@ export default function AdminCompetitionsPage() {
       >
   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4 w-full min-w-0">
           <div>
-            <h1 className="text-2xl sm:text-4xl font-bold text-white mb-2 break-words">
+            <h1 className="text-2xl sm:text-4xl  text-white mb-2 break-words">
               🏆 Competition Management
             </h1>
             <p className="text-xs sm:text-gray-400 break-words">
@@ -234,7 +234,7 @@ export default function AdminCompetitionsPage() {
           <div className="flex space-x-2 sm:space-x-3">
             <button
               onClick={() => window.location.reload()}
-              className="px-4 py-2 bg-blue-700 text-white rounded-lg hover:bg-blue-600 transition-colors"
+              className="px-4 py-2 bg-blue-700 text-white  hover:bg-blue-600 transition-colors"
             >
               <Download className="w-4 h-4 mr-2 inline" />
               Export Data
@@ -250,41 +250,41 @@ export default function AdminCompetitionsPage() {
           animate={{ opacity: 1, y: 0 }}
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8 w-full"
         >
-          <div className="bg-gray-800 rounded-xl p-4 sm:p-6 shadow-lg border border-gray-700 w-full min-w-0">
+          <div className="bg-gray-800  p-4 sm:p-6 shadow-lg border border-gray-700 w-full min-w-0">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-400 text-sm">Total Competitions</p>
-                <p className="text-3xl font-bold text-white">{stats.totalCompetitions}</p>
+                <p className="text-3xl  text-white">{stats.totalCompetitions}</p>
               </div>
               <Trophy className="w-12 h-12 text-blue-400" />
             </div>
           </div>
 
-          <div className="bg-gray-800 rounded-xl p-4 sm:p-6 shadow-lg border border-gray-700 w-full min-w-0">
+          <div className="bg-gray-800  p-4 sm:p-6 shadow-lg border border-gray-700 w-full min-w-0">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-400 text-sm">Active Competitions</p>
-                <p className="text-3xl font-bold text-green-400">{stats.activeCompetitions}</p>
+                <p className="text-3xl  text-green-400">{stats.activeCompetitions}</p>
               </div>
               <Clock className="w-12 h-12 text-green-400" />
             </div>
           </div>
 
-          <div className="bg-gray-800 rounded-xl p-4 sm:p-6 shadow-lg border border-gray-700 w-full min-w-0">
+          <div className="bg-gray-800  p-4 sm:p-6 shadow-lg border border-gray-700 w-full min-w-0">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-400 text-sm">Total Submissions</p>
-                <p className="text-3xl font-bold text-blue-400">{stats.totalSubmissions}</p>
+                <p className="text-3xl  text-blue-400">{stats.totalSubmissions}</p>
               </div>
               <FileText className="w-12 h-12 text-blue-400" />
             </div>
           </div>
 
-          <div className="bg-gray-800 rounded-xl p-4 sm:p-6 shadow-lg border border-gray-700 w-full min-w-0">
+          <div className="bg-gray-800  p-4 sm:p-6 shadow-lg border border-gray-700 w-full min-w-0">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-400 text-sm">Avg Participants</p>
-                <p className="text-3xl font-bold text-orange-400">{stats.avgParticipants}</p>
+                <p className="text-3xl  text-orange-400">{stats.avgParticipants}</p>
               </div>
               <Users className="w-12 h-12 text-orange-400" />
             </div>
@@ -297,11 +297,11 @@ export default function AdminCompetitionsPage() {
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="bg-gray-800 rounded-xl p-4 sm:p-6 mb-8 text-white border border-gray-700 w-full min-w-0"
+          className="bg-gray-800  p-4 sm:p-6 mb-8 text-white border border-gray-700 w-full min-w-0"
         >
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between w-full min-w-0">
             <div>
-              <h2 className="text-lg sm:text-2xl font-bold mb-2 break-words">
+              <h2 className="text-lg sm:text-2xl  mb-2 break-words">
                 Current Competition: {currentCompetition.month} {currentCompetition.year}
               </h2>
               <div className="flex flex-wrap items-center gap-2 sm:space-x-4 text-blue-100 min-w-0">
@@ -313,7 +313,7 @@ export default function AdminCompetitionsPage() {
                   <FileText className="w-4 h-4 mr-1" />
                   {currentCompetition.totalSubmissions || 0} submissions
                 </span>
-                <span className={`px-2 sm:px-3 py-1 rounded-full text-xs font-medium ${
+                <span className={`px-2 sm:px-3 py-1  text-xs  ${
                   currentCompetition.phase === 'submission' ? 'bg-green-500/20 text-green-100' :
                   currentCompetition.phase === 'judging' ? 'bg-yellow-500/20 text-yellow-100' :
                   'bg-blue-500/20 text-blue-100'
@@ -327,11 +327,11 @@ export default function AdminCompetitionsPage() {
               <button
                 onClick={() => handleAdvancePhase(currentCompetition._id)}
                 disabled={advancingPhase}
-                className="px-6 py-3 bg-white/20 hover:bg-white/30 rounded-lg font-medium transition-colors disabled:opacity-50"
+                className="px-6 py-3 bg-white/20 hover:bg-white/30   transition-colors disabled:opacity-50"
               >
                 {advancingPhase ? (
                   <div className="flex items-center">
-                    <div className="w-4 h-4 border-2 border-white/50 border-t-white rounded-full animate-spin mr-2"></div>
+                    <div className="w-4 h-4 border-2 border-white/50 border-t-white  animate-spin mr-2"></div>
                     Advancing...
                   </div>
                 ) : (
@@ -350,11 +350,11 @@ export default function AdminCompetitionsPage() {
   <motion.div
     initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}
-  className="bg-gray-800 rounded-xl p-4 sm:p-6 shadow-lg border border-gray-700 mb-8 overflow-x-auto w-full min-w-0"
+  className="bg-gray-800  p-4 sm:p-6 shadow-lg border border-gray-700 mb-8 overflow-x-auto w-full min-w-0"
   >
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Search</label>
+            <label className="block text-sm  text-gray-700 mb-2">Search</label>
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
               <input
@@ -362,17 +362,17 @@ export default function AdminCompetitionsPage() {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Search competitions..."
-                className="w-full pl-10 pr-4 py-2 border border-gray-700 bg-gray-900 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full pl-10 pr-4 py-2 border border-gray-700 bg-gray-900 text-white  focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Phase</label>
+            <label className="block text-sm  text-gray-700 mb-2">Phase</label>
             <select
               value={filterPhase}
               onChange={(e) => setFilterPhase(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-700 bg-gray-900 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-700 bg-gray-900 text-white  focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
               <option value="all">All Phases</option>
               <option value="submission">Submission</option>
@@ -382,11 +382,11 @@ export default function AdminCompetitionsPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Sort By</label>
+            <label className="block text-sm  text-gray-700 mb-2">Sort By</label>
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-700 bg-gray-900 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-700 bg-gray-900 text-white  focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
               <option value="newest">Newest First</option>
               <option value="oldest">Oldest First</option>
@@ -402,7 +402,7 @@ export default function AdminCompetitionsPage() {
                 setFilterPhase('all');
                 setSortBy('newest');
               }}
-              className="w-full px-4 py-2 bg-gray-700 text-gray-200 rounded-lg hover:bg-gray-600 transition-colors"
+              className="w-full px-4 py-2 bg-gray-700 text-gray-200  hover:bg-gray-600 transition-colors"
             >
               Clear Filters
             </button>
@@ -417,7 +417,7 @@ export default function AdminCompetitionsPage() {
   className="space-y-6 overflow-x-auto w-full min-w-0"
   >
         {filteredCompetitions.length === 0 ? (
-          <div className="bg-gray-800 rounded-xl p-12 shadow-lg border border-gray-700 text-center">
+          <div className="bg-gray-800  p-12 shadow-lg border border-gray-700 text-center">
             <Trophy className="w-16 h-16 text-gray-600 mx-auto mb-4" />
             <h3 className="text-xl font-semibold text-gray-300 mb-2">No competitions found</h3>
             <p className="text-gray-400">Try adjusting your search or filter criteria</p>
@@ -429,15 +429,15 @@ export default function AdminCompetitionsPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
-              className="bg-gray-800 rounded-xl p-4 sm:p-6 shadow-lg border border-gray-700 hover:shadow-xl transition-all duration-300 min-w-0 w-full"
+              className="bg-gray-800  p-4 sm:p-6 shadow-lg border border-gray-700 hover:shadow-xl transition-all duration-300 min-w-0 w-full"
             >
               <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between mb-4 w-full min-w-0">
                 <div className="flex items-center gap-2 sm:space-x-4 min-w-0">
-                  <div className="w-12 h-12 bg-blue-700 rounded-xl flex items-center justify-center text-white font-bold text-base sm:text-lg">
+                  <div className="w-12 h-12 bg-blue-700  flex items-center justify-center text-white  text-base sm:text-lg">
                     {competition.month.substring(0, 3)}
                   </div>
                   <div className="min-w-0">
-                    <h3 className="text-base sm:text-xl font-bold text-white break-words">
+                    <h3 className="text-base sm:text-xl  text-white break-words">
                       {competition.month} {competition.year}
                     </h3>
                     <p className="text-xs sm:text-gray-400 break-words">
@@ -446,12 +446,12 @@ export default function AdminCompetitionsPage() {
                   </div>
                 </div>
                 <div className="flex items-center gap-2 sm:space-x-3 min-w-0">
-                  <span className={`px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium ${getPhaseColor(competition.phase)} break-words`}>
+                  <span className={`px-2 sm:px-3 py-1  text-xs sm:text-sm  ${getPhaseColor(competition.phase)} break-words`}>
                     {getPhaseIcon(competition.phase)}
                     <span className="ml-1 capitalize">{competition.phase}</span>
                   </span>
                   {competition.isActive && (
-                    <span className="px-2 py-1 bg-green-900 text-green-300 rounded-full text-xs font-medium break-words">
+                    <span className="px-2 py-1 bg-green-900 text-green-300  text-xs  break-words">
                       Active
                     </span>
                   )}
@@ -460,19 +460,19 @@ export default function AdminCompetitionsPage() {
 
               <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-4 sm:gap-4 mb-4 w-full">
                 <div className="text-center">
-                  <p className="text-lg sm:text-2xl font-bold text-blue-400 break-words">{competition.totalParticipants || 0}</p>
+                  <p className="text-lg sm:text-2xl  text-blue-400 break-words">{competition.totalParticipants || 0}</p>
                   <p className="text-xs sm:text-sm text-gray-400 break-words">Participants</p>
                 </div>
                 <div className="text-center">
-                  <p className="text-lg sm:text-2xl font-bold text-blue-400 break-words">{competition.totalSubmissions || 0}</p>
+                  <p className="text-lg sm:text-2xl  text-blue-400 break-words">{competition.totalSubmissions || 0}</p>
                   <p className="text-xs sm:text-sm text-gray-400 break-words">Submissions</p>
                 </div>
                 <div className="text-center">
-                  <p className="text-lg sm:text-2xl font-bold text-green-400 break-words">{competition.winners?.length || 0}</p>
+                  <p className="text-lg sm:text-2xl  text-green-400 break-words">{competition.winners?.length || 0}</p>
                   <p className="text-xs sm:text-sm text-gray-400 break-words">Winners</p>
                 </div>
                 <div className="text-center">
-                  <p className="text-lg sm:text-2xl font-bold text-orange-400 break-words">
+                  <p className="text-lg sm:text-2xl  text-orange-400 break-words">
                     {competition.resultsDate ? new Date(competition.resultsDate).toLocaleDateString() : 'TBD'}
                   </p>
                   <p className="text-xs sm:text-sm text-gray-400 break-words">Results Date</p>
@@ -490,7 +490,7 @@ export default function AdminCompetitionsPage() {
                     {competition.winners.slice(0, 3).map((winner) => (
                       <div
                         key={winner.position}
-                        className="flex items-center space-x-3 p-3 bg-gray-700 rounded-lg"
+                        className="flex items-center space-x-3 p-3 bg-gray-700 "
                       >
                         <div className="flex-shrink-0">
                           {winner.position === 1 && <span className="text-2xl">🥇</span>}
@@ -498,10 +498,10 @@ export default function AdminCompetitionsPage() {
                           {winner.position === 3 && <span className="text-2xl">🥉</span>}
                         </div>
                         <div className="flex-1 min-w-0 break-words">
-                          <p className="font-medium text-white truncate">{winner.childName}</p>
+                          <p className=" text-white truncate">{winner.childName}</p>
                           <p className="text-sm text-gray-400 truncate">{winner.title}</p>
                           {winner.score && (
-                            <p className="text-xs text-blue-400 font-medium">Score: {winner.score}/100</p>
+                            <p className="text-xs text-blue-400 ">Score: {winner.score}/100</p>
                           )}
                         </div>
                       </div>
@@ -518,7 +518,7 @@ export default function AdminCompetitionsPage() {
                 <div className="flex space-x-2">
                   <button
                     onClick={() => setSelectedCompetition(competition)}
-                    className="px-4 py-2 bg-blue-800 text-blue-200 rounded-lg hover:bg-blue-700 transition-colors"
+                    className="px-4 py-2 bg-blue-800 text-blue-200  hover:bg-blue-700 transition-colors"
                   >
                     <Eye className="w-4 h-4 mr-1 inline" />
                     View Details
@@ -527,7 +527,7 @@ export default function AdminCompetitionsPage() {
                     <button
                       onClick={() => handleAdvancePhase(competition._id)}
                       disabled={advancingPhase}
-                      className="px-4 py-2 bg-green-800 text-green-200 rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50"
+                      className="px-4 py-2 bg-green-800 text-green-200  hover:bg-green-700 transition-colors disabled:opacity-50"
                     >
                       <Play className="w-4 h-4 mr-1 inline" />
                       Advance Phase
@@ -546,16 +546,16 @@ export default function AdminCompetitionsPage() {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-gray-900 rounded-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto border border-gray-700"
+            className="bg-gray-900  w-full max-w-4xl max-h-[90vh] overflow-y-auto border border-gray-700"
           >
             <div className="p-6 border-b border-gray-700">
               <div className="flex items-center justify-between">
-                <h2 className="text-2xl font-bold text-white">
+                <h2 className="text-2xl  text-white">
                   {selectedCompetition.month} {selectedCompetition.year} Competition Details
                 </h2>
                 <button
                   onClick={() => setSelectedCompetition(null)}
-                  className="p-2 hover:bg-gray-800 rounded-lg transition-colors text-gray-400 hover:text-white"
+                  className="p-2 hover:bg-gray-800  transition-colors text-gray-400 hover:text-white"
                 >
                   ✕
                 </button>
@@ -570,13 +570,13 @@ export default function AdminCompetitionsPage() {
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
                       <span className="text-gray-400">Phase:</span>
-                      <span className={`px-2 py-1 rounded text-xs font-medium ${getPhaseColor(selectedCompetition.phase)}`}>
+                      <span className={`px-2 py-1  text-xs  ${getPhaseColor(selectedCompetition.phase)}`}>
                         {selectedCompetition.phase}
                       </span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-400">Status:</span>
-                      <span className={`px-2 py-1 rounded text-xs font-medium ${
+                      <span className={`px-2 py-1  text-xs  ${
                         selectedCompetition.isActive ? 'bg-green-900 text-green-300' : 'bg-gray-800 text-gray-400'
                       }`}>
                         {selectedCompetition.isActive ? 'Active' : 'Inactive'}
@@ -584,15 +584,15 @@ export default function AdminCompetitionsPage() {
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-400">Participants:</span>
-                      <span className="font-medium text-white">{selectedCompetition.totalParticipants || 0}</span>
+                      <span className=" text-white">{selectedCompetition.totalParticipants || 0}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-400">Submissions:</span>
-                      <span className="font-medium text-white">{selectedCompetition.totalSubmissions || 0}</span>
+                      <span className=" text-white">{selectedCompetition.totalSubmissions || 0}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-400">Created:</span>
-                      <span className="font-medium text-white">{new Date(selectedCompetition.createdAt).toLocaleDateString()}</span>
+                      <span className=" text-white">{new Date(selectedCompetition.createdAt).toLocaleDateString()}</span>
                     </div>
                   </div>
                 </div>
@@ -605,7 +605,7 @@ export default function AdminCompetitionsPage() {
                       {Object.entries(selectedCompetition.judgingCriteria).map(([key, value]) => (
                         <div key={key} className="flex justify-between">
                           <span className="text-gray-400 capitalize">{key.replace(/([A-Z])/g, ' $1')}:</span>
-                          <span className="font-medium text-white">{String(value)} points</span>
+                          <span className=" text-white">{String(value)} points</span>
                         </div>
                       ))}
                     </div>
@@ -619,7 +619,7 @@ export default function AdminCompetitionsPage() {
                   <h3 className="font-semibold text-white mb-4">Competition Winners</h3>
                   <div className="space-y-3">
                     {selectedCompetition.winners.map((winner) => (
-                      <div key={winner.position} className="p-4 bg-gray-800 rounded-lg">
+                      <div key={winner.position} className="p-4 bg-gray-800 ">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center space-x-3">
                             <div className="text-2xl">
@@ -628,19 +628,19 @@ export default function AdminCompetitionsPage() {
                               {winner.position === 3 && '🥉'}
                             </div>
                             <div>
-                              <p className="font-medium text-white">{winner.childName}</p>
+                              <p className=" text-white">{winner.childName}</p>
                               <p className="text-sm text-gray-400">{winner.title}</p>
                             </div>
                           </div>
                           {winner.score && (
                             <div className="text-right">
-                              <p className="text-lg font-bold text-blue-400">{winner.score}/100</p>
+                              <p className="text-lg  text-blue-400">{winner.score}/100</p>
                               <p className="text-xs text-gray-400">Final Score</p>
                             </div>
                           )}
                         </div>
                         {winner.aiJudgingNotes && (
-                          <div className="mt-3 p-3 bg-gray-900 rounded border-l-4 border-blue-500">
+                          <div className="mt-3 p-3 bg-gray-900  border-l-4 border-blue-500">
                             <p className="text-sm text-gray-300">{winner.aiJudgingNotes}</p>
                           </div>
                         )}

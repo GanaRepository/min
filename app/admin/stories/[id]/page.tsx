@@ -314,12 +314,12 @@ export default function ViewStory() {
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
           <Link href="/admin/stories">
-            <button className="p-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg transition-colors">
+            <button className="p-2 text-gray-400 hover:text-white hover:bg-gray-700  transition-colors">
               <ArrowLeft size={20} />
             </button>
           </Link>
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-white">
+            <h1 className="text-2xl sm:text-3xl  text-white">
               {story.title}
             </h1>
             <p className="text-gray-400">Story #{story._id}</p>
@@ -328,14 +328,14 @@ export default function ViewStory() {
 
         <div className="flex items-center space-x-2">
           <Link href={`/admin/stories/${storyId}/edit`}>
-            <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center">
+            <button className="bg-blue-600 text-white px-4 py-2  hover:bg-blue-700 transition-colors flex items-center">
               <Edit size={16} className="mr-2" />
               Edit
             </button>
           </Link>
           <button
             onClick={exportStory}
-            className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center"
+            className="bg-green-600 text-white px-4 py-2  hover:bg-green-700 transition-colors flex items-center"
           >
             <Download size={16} className="mr-2" />
             Export
@@ -343,7 +343,7 @@ export default function ViewStory() {
           <button
             onClick={deleteStory}
             disabled={deleting}
-            className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors flex items-center disabled:opacity-50"
+            className="bg-red-600 text-white px-4 py-2  hover:bg-red-700 transition-colors flex items-center disabled:opacity-50"
           >
             <Trash2 size={16} className="mr-2" />
             {deleting ? 'Deleting...' : 'Delete'}
@@ -352,16 +352,16 @@ export default function ViewStory() {
       </div>
 
       {/* Story Info Card */}
-      <div className="bg-gray-800 rounded-xl p-6">
+      <div className="bg-gray-800  p-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <div className="flex items-center space-x-3">
-            <div className="bg-blue-600 p-3 rounded-lg">
+            <div className="bg-blue-600 p-3 ">
               <User size={24} className="text-white" />
             </div>
             <div>
               <p className="text-sm text-gray-400">Author</p>
               <Link href={`/admin/users/${story.childId._id}`}>
-                <p className="text-white font-medium hover:text-blue-400 cursor-pointer">
+                <p className="text-white  hover:text-blue-400 cursor-pointer">
                   {story.childId.firstName} {story.childId.lastName}
                 </p>
               </Link>
@@ -369,23 +369,23 @@ export default function ViewStory() {
           </div>
 
           <div className="flex items-center space-x-3">
-            <div className="bg-green-600 p-3 rounded-lg">
+            <div className="bg-green-600 p-3 ">
               <BookOpen size={24} className="text-white" />
             </div>
             <div>
               <p className="text-sm text-gray-400">Word Count</p>
-              <p className="text-white font-medium">{story.totalWords} words</p>
+              <p className="text-white ">{story.totalWords} words</p>
             </div>
           </div>
 
           <div className="flex items-center space-x-3">
-            <div className="bg-purple-600 p-3 rounded-lg">
+            <div className="bg-purple-600 p-3 ">
               <MessageSquare size={24} className="text-white" />
             </div>
             <div>
               <p className="text-sm text-gray-400">Status</p>
               <span
-                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(story.status)}`}
+                className={`inline-flex items-center px-2.5 py-0.5  text-xs  ${getStatusColor(story.status)}`}
               >
                 {story.status}
               </span>
@@ -393,12 +393,12 @@ export default function ViewStory() {
           </div>
 
           <div className="flex items-center space-x-3">
-            <div className="bg-yellow-600 p-3 rounded-lg">
+            <div className="bg-yellow-600 p-3 ">
               <Calendar size={24} className="text-white" />
             </div>
             <div>
               <p className="text-sm text-gray-400">Created</p>
-              <p className="text-white font-medium">
+              <p className="text-white ">
                 {new Date(story.createdAt).toLocaleDateString()}
               </p>
             </div>
@@ -407,7 +407,7 @@ export default function ViewStory() {
       </div>
 
       {/* Tab Navigation */}
-      <div className="bg-gray-800 rounded-xl">
+      <div className="bg-gray-800 ">
         <div className="flex border-b border-gray-700">
           {[
             { key: 'content', label: 'Story Content', icon: BookOpen },
@@ -438,7 +438,7 @@ export default function ViewStory() {
                   {story.turns.map((turn, index) => (
                     <div
                       key={index}
-                      className={`p-4 rounded-lg ${
+                      className={`p-4  ${
                         turn.type === 'child'
                           ? 'bg-blue-900/20 border-l-4 border-blue-500'
                           : 'bg-purple-900/20 border-l-4 border-purple-500'
@@ -446,7 +446,7 @@ export default function ViewStory() {
                     >
                       <div className="flex items-center justify-between mb-2">
                         <span
-                          className={`text-sm font-medium ${
+                          className={`text-sm  ${
                             turn.type === 'child' ? 'text-blue-400' : 'text-purple-400'
                           }`}
                         >
@@ -472,7 +472,7 @@ export default function ViewStory() {
           {activeTab === 'comments' && (
             <div className="space-y-6">
               <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold text-white">
+                <h3 className="text-lg  text-white">
                   Comments & Feedback
                 </h3>
                 <span className="text-sm text-gray-400">
@@ -482,14 +482,14 @@ export default function ViewStory() {
               </div>
 
               {/* Add Comment Form */}
-              <div className="bg-gray-700/30 rounded-lg p-4">
-                <h4 className="text-white font-medium mb-3">
+              <div className="bg-gray-700/30  p-4">
+                <h4 className="text-white  mb-3">
                   Add Admin Comment
                 </h4>
 
                 {/* Comment Type Selector */}
                 <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-400 mb-2">
+                  <label className="block text-sm  text-gray-400 mb-2">
                     Comment Type
                   </label>
                   <div className="relative">
@@ -497,11 +497,11 @@ export default function ViewStory() {
                       onClick={() =>
                         setShowCommentTypeDropdown(!showCommentTypeDropdown)
                       }
-                      className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center justify-between"
+                      className="w-full bg-gray-700 border border-gray-600  px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center justify-between"
                     >
                       <div className="flex items-center space-x-2">
                         <span
-                          className={`px-2 py-1 text-xs rounded-full ${getCommentTypeColor(commentType)}`}
+                          className={`px-2 py-1 text-xs  ${getCommentTypeColor(commentType)}`}
                         >
                           {selectedCommentType?.label}
                         </span>
@@ -518,7 +518,7 @@ export default function ViewStory() {
                     </button>
 
                     {showCommentTypeDropdown && (
-                      <div className="absolute z-10 w-full mt-1 bg-gray-700 border border-gray-600 rounded-lg shadow-lg">
+                      <div className="absolute z-10 w-full mt-1 bg-gray-700 border border-gray-600  shadow-lg">
                         {commentTypeOptions.map((option) => (
                           <button
                             key={option.value}
@@ -530,7 +530,7 @@ export default function ViewStory() {
                           >
                             <div className="flex items-center space-x-2">
                               <span
-                                className={`px-2 py-1 text-xs rounded-full ${getCommentTypeColor(option.value)}`}
+                                className={`px-2 py-1 text-xs  ${getCommentTypeColor(option.value)}`}
                               >
                                 {option.label}
                               </span>
@@ -549,14 +549,14 @@ export default function ViewStory() {
                   value={newComment}
                   onChange={(e) => setNewComment(e.target.value)}
                   placeholder="Add your feedback or comments about this story..."
-                  className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                  className="w-full p-3 bg-gray-700 border border-gray-600  text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
                   rows={4}
                 />
                 <div className="flex justify-end mt-3">
                   <button
                     onClick={addComment}
                     disabled={!newComment.trim() || addingComment}
-                    className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="bg-blue-600 text-white px-4 py-2  hover:bg-blue-700 transition-colors flex items-center disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <Send size={16} className="mr-2" />
                     {addingComment ? 'Adding...' : 'Add Comment'}
@@ -568,16 +568,16 @@ export default function ViewStory() {
               <div className="space-y-4">
                 {story.comments.length > 0 ? (
                   story.comments.map((comment, index) => (
-                    <div key={comment._id} className="bg-gray-700/30 rounded-lg p-4">
+                    <div key={comment._id} className="bg-gray-700/30  p-4">
                       <div className="flex items-start justify-between mb-2">
                         <div className="flex items-center space-x-2">
-                          <span className="text-white font-medium">
+                          <span className="text-white ">
                             {comment.authorId.firstName} {comment.authorId.lastName}
                           </span>
-                          <span className={`px-2 py-1 text-xs rounded-full ${getRoleColor(comment.authorId.role)}`}>
+                          <span className={`px-2 py-1 text-xs  ${getRoleColor(comment.authorId.role)}`}>
                             {comment.authorId.role}
                           </span>
-                          <span className={`px-2 py-1 text-xs rounded-full ${getCommentTypeColor(comment.commentType)}`}>
+                          <span className={`px-2 py-1 text-xs  ${getCommentTypeColor(comment.commentType)}`}>
                             {comment.commentType}
                           </span>
                         </div>
@@ -610,8 +610,8 @@ export default function ViewStory() {
           {activeTab === 'details' && (
             <div className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="bg-gray-700/30 rounded-lg p-4">
-                  <h4 className="text-white font-medium mb-3">Story Statistics</h4>
+                <div className="bg-gray-700/30  p-4">
+                  <h4 className="text-white  mb-3">Story Statistics</h4>
                   <div className="space-y-2">
                     <div className="flex justify-between">
                       <span className="text-gray-400">Total Words:</span>
@@ -636,8 +636,8 @@ export default function ViewStory() {
                   </div>
                 </div>
 
-                <div className="bg-gray-700/30 rounded-lg p-4">
-                  <h4 className="text-white font-medium mb-3">Publication Status</h4>
+                <div className="bg-gray-700/30  p-4">
+                  <h4 className="text-white  mb-3">Publication Status</h4>
                   <div className="space-y-2">
                     <div className="flex justify-between">
                       <span className="text-gray-400">Published:</span>

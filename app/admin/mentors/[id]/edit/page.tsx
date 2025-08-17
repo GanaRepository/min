@@ -167,12 +167,12 @@ export default function EditMentor() {
       {/* Header */}
       <div className="flex items-center space-x-4">
         <Link href={`/admin/mentors/${mentorId}`}>
-          <button className="p-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg transition-colors">
+          <button className="p-2 text-gray-400 hover:text-white hover:bg-gray-700  transition-colors">
             <ArrowLeft size={20} />
           </button>
         </Link>
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-white">
+          <h1 className="text-2xl sm:text-3xl  text-white">
             Edit Mentor
           </h1>
           <p className="text-gray-400">
@@ -185,13 +185,13 @@ export default function EditMentor() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-gray-800 rounded-xl p-6"
+        className="bg-gray-800  p-6"
       >
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Basic Info */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
+              <label className="block text-sm  text-gray-300 mb-2">
                 First Name
               </label>
               <div className="relative">
@@ -206,7 +206,7 @@ export default function EditMentor() {
                   onChange={(e) =>
                     handleInputChange('firstName', e.target.value)
                   }
-                  className={`w-full pl-10 pr-4 py-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                  className={`w-full pl-10 pr-4 py-3 bg-gray-700 border  text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                     errors.firstName ? 'border-red-500' : 'border-gray-600'
                   }`}
                   placeholder="Enter first name"
@@ -218,7 +218,7 @@ export default function EditMentor() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
+              <label className="block text-sm  text-gray-300 mb-2">
                 Last Name
               </label>
               <div className="relative">
@@ -233,7 +233,7 @@ export default function EditMentor() {
                   onChange={(e) =>
                     handleInputChange('lastName', e.target.value)
                   }
-                  className={`w-full pl-10 pr-4 py-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                  className={`w-full pl-10 pr-4 py-3 bg-gray-700 border  text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                     errors.lastName ? 'border-red-500' : 'border-gray-600'
                   }`}
                   placeholder="Enter last name"
@@ -247,7 +247,7 @@ export default function EditMentor() {
 
           {/* Email */}
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="block text-sm  text-gray-300 mb-2">
               Email Address
             </label>
             <div className="relative">
@@ -257,7 +257,7 @@ export default function EditMentor() {
                 required
                 value={formData.email}
                 onChange={(e) => handleInputChange('email', e.target.value)}
-                className={`w-full pl-10 pr-4 py-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                className={`w-full pl-10 pr-4 py-3 bg-gray-700 border  text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                   errors.email ? 'border-red-500' : 'border-gray-600'
                 }`}
                 placeholder="Enter email address"
@@ -270,7 +270,7 @@ export default function EditMentor() {
 
           {/* Bio */}
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="block text-sm  text-gray-300 mb-2">
               Bio
             </label>
             <div className="relative">
@@ -282,7 +282,7 @@ export default function EditMentor() {
                 value={formData.bio}
                 onChange={(e) => handleInputChange('bio', e.target.value)}
                 rows={4}
-                className="w-full pl-10 pr-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full pl-10 pr-4 py-3 bg-gray-700 border border-gray-600  text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Enter mentor bio..."
               />
             </div>
@@ -290,7 +290,7 @@ export default function EditMentor() {
 
           {/* Experience */}
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="block text-sm  text-gray-300 mb-2">
               Experience
             </label>
             <div className="relative">
@@ -304,7 +304,7 @@ export default function EditMentor() {
                   handleInputChange('experience', e.target.value)
                 }
                 rows={4}
-                className="w-full pl-10 pr-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full pl-10 pr-4 py-3 bg-gray-700 border border-gray-600  text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Enter mentor experience and qualifications..."
               />
             </div>
@@ -312,7 +312,7 @@ export default function EditMentor() {
 
           {/* Specializations */}
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="block text-sm  text-gray-300 mb-2">
               Specializations
             </label>
             <div className="flex gap-2 mb-3">
@@ -329,14 +329,14 @@ export default function EditMentor() {
                     e.key === 'Enter' &&
                     (e.preventDefault(), addSpecialization())
                   }
-                  className="w-full pl-10 pr-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full pl-10 pr-4 py-3 bg-gray-700 border border-gray-600  text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="Add specialization..."
                 />
               </div>
               <button
                 type="button"
                 onClick={addSpecialization}
-                className="px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                className="px-4 py-3 bg-blue-600 text-white  hover:bg-blue-700 transition-colors"
               >
                 Add
               </button>
@@ -345,7 +345,7 @@ export default function EditMentor() {
               {formData.specializations.map((spec, index) => (
                 <span
                   key={index}
-                  className="px-3 py-1 bg-purple-100 text-purple-800 text-sm rounded-full flex items-center"
+                  className="px-3 py-1 bg-purple-100 text-purple-800 text-sm  flex items-center"
                 >
                   {spec}
                   <button
@@ -370,9 +370,9 @@ export default function EditMentor() {
                   onChange={(e) =>
                     handleInputChange('isActive', e.target.checked)
                   }
-                  className="w-5 h-5 bg-gray-700 border-gray-600 rounded focus:ring-blue-500 focus:ring-2"
+                  className="w-5 h-5 bg-gray-700 border-gray-600  focus:ring-blue-500 focus:ring-2"
                 />
-                <span className="text-white font-medium">Account Active</span>
+                <span className="text-white ">Account Active</span>
               </label>
               <p className="text-gray-400 text-sm mt-1">
                 Mentor can log in and access students
@@ -387,7 +387,7 @@ export default function EditMentor() {
             <Link href={`/admin/mentors/${mentorId}`}>
               <button
                 type="button"
-                className="px-6 py-2.5 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+                className="px-6 py-2.5 bg-gray-600 text-white  hover:bg-gray-700 transition-colors"
               >
                 Cancel
               </button>
@@ -395,7 +395,7 @@ export default function EditMentor() {
             <button
               type="submit"
               disabled={saving}
-              className="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center disabled:opacity-50"
+              className="px-6 py-2.5 bg-blue-600 text-white  hover:bg-blue-700 transition-colors flex items-center disabled:opacity-50"
             >
               <Save size={16} className="mr-2" />
               {saving ? 'Saving...' : 'Save Changes'}

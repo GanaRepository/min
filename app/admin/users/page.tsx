@@ -177,21 +177,21 @@ export default function UsersPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">
+          <h1 className="text-2xl sm:text-3xl  text-white mb-2">
             User Management
           </h1>
           <p className="text-gray-400">Manage all users in the platform</p>
         </div>
         <div className="flex items-center space-x-2">
           <Link href="/admin/users/create">
-            <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center">
+            <button className="bg-blue-600 text-white px-4 py-2  hover:bg-blue-700 transition-colors flex items-center">
               <UserPlus size={16} className="mr-2" />
               Add User
             </button>
           </Link>
           <button
             onClick={exportUsers}
-            className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center"
+            className="bg-green-600 text-white px-4 py-2  hover:bg-green-700 transition-colors flex items-center"
           >
             <Download size={16} className="mr-2" />
             Export
@@ -201,49 +201,49 @@ export default function UsersPage() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="bg-gray-800 rounded-xl p-6">
+        <div className="bg-gray-800  p-6">
           <div className="flex items-center justify-between mb-2">
-            <h3 className="text-sm font-medium text-gray-400">Total Users</h3>
+            <h3 className="text-sm  text-gray-400">Total Users</h3>
             <Users size={20} className="text-blue-400" />
           </div>
-          <p className="text-2xl font-bold text-white">
+          <p className="text-2xl  text-white">
             {pagination?.total || 0}
           </p>
         </div>
 
-        <div className="bg-gray-800 rounded-xl p-6">
+        <div className="bg-gray-800  p-6">
           <div className="flex items-center justify-between mb-2">
-            <h3 className="text-sm font-medium text-gray-400">Children</h3>
+            <h3 className="text-sm  text-gray-400">Children</h3>
             <BookOpen size={20} className="text-green-400" />
           </div>
-          <p className="text-2xl font-bold text-white">
+          <p className="text-2xl  text-white">
             {users.filter((u) => u.role === 'child').length}
           </p>
         </div>
 
-        <div className="bg-gray-800 rounded-xl p-6">
+        <div className="bg-gray-800  p-6">
           <div className="flex items-center justify-between mb-2">
-            <h3 className="text-sm font-medium text-gray-400">Mentors</h3>
+            <h3 className="text-sm  text-gray-400">Mentors</h3>
             <UserCheck size={20} className="text-purple-400" />
           </div>
-          <p className="text-2xl font-bold text-white">
+          <p className="text-2xl  text-white">
             {users.filter((u) => u.role === 'mentor').length}
           </p>
         </div>
 
-        <div className="bg-gray-800 rounded-xl p-6">
+        <div className="bg-gray-800  p-6">
           <div className="flex items-center justify-between mb-2">
-            <h3 className="text-sm font-medium text-gray-400">Admins</h3>
+            <h3 className="text-sm  text-gray-400">Admins</h3>
             <Crown size={20} className="text-red-400" />
           </div>
-          <p className="text-2xl font-bold text-white">
+          <p className="text-2xl  text-white">
             {users.filter((u) => u.role === 'admin').length}
           </p>
         </div>
       </div>
 
       {/* Search and Filters */}
-      <div className="bg-gray-800 rounded-xl p-6">
+      <div className="bg-gray-800  p-6">
         <div className="flex flex-col sm:flex-row gap-4">
           <div className="flex-1 relative">
             <Search
@@ -255,7 +255,7 @@ export default function UsersPage() {
               placeholder="Search users by name or email..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full pl-10 pr-4 py-2 bg-gray-700 border border-gray-600  text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
           <div className="flex items-center space-x-4">
@@ -264,7 +264,7 @@ export default function UsersPage() {
               <select
                 value={filterRole}
                 onChange={(e) => setFilterRole(e.target.value)}
-                className="bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="bg-gray-700 border border-gray-600  px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="all">All Roles</option>
                 <option value="child">Children</option>
@@ -277,27 +277,27 @@ export default function UsersPage() {
       </div>
 
       {/* Users Table */}
-      <div className="bg-gray-800 rounded-xl overflow-hidden">
+      <div className="bg-gray-800  overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="bg-gray-700">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs  text-gray-300 uppercase tracking-wider">
                   User
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs  text-gray-300 uppercase tracking-wider">
                   Role
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs  text-gray-300 uppercase tracking-wider">
                   Status
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs  text-gray-300 uppercase tracking-wider">
                   Joined
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs  text-gray-300 uppercase tracking-wider">
                   Last Active
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs  text-gray-300 uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
@@ -314,15 +314,15 @@ export default function UsersPage() {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
                         <div className="flex-shrink-0 h-10 w-10">
-                          <div className="h-10 w-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center">
-                            <span className="text-sm font-medium text-white">
+                          <div className="h-10 w-10  bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center">
+                            <span className="text-sm  text-white">
                               {user.firstName.charAt(0)}
                               {user.lastName.charAt(0)}
                             </span>
                           </div>
                         </div>
                         <div className="ml-4">
-                          <div className="text-sm font-medium text-white">
+                          <div className="text-sm  text-white">
                             {user.firstName} {user.lastName}
                           </div>
                           <div className="text-sm text-gray-400">
@@ -335,7 +335,7 @@ export default function UsersPage() {
                       <div className="flex items-center space-x-2">
                         {getRoleIcon(user.role)}
                         <span
-                          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getRoleBadgeColor(user.role)}`}
+                          className={`inline-flex items-center px-2.5 py-0.5  text-xs  ${getRoleBadgeColor(user.role)}`}
                         >
                           {user.role}
                         </span>
@@ -343,7 +343,7 @@ export default function UsersPage() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span
-                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(user.isActive)}`}
+                        className={`inline-flex items-center px-2.5 py-0.5  text-xs  ${getStatusColor(user.isActive)}`}
                       >
                         {getStatusText(user.isActive)}
                       </span>
@@ -356,7 +356,7 @@ export default function UsersPage() {
                         ? new Date(user.lastActiveDate).toLocaleDateString()
                         : 'Never'}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm ">
                       <div className="flex items-center space-x-2">
                         <Link href={`/admin/users/${user._id}`}>
                           <button className="text-blue-400 hover:text-blue-300">
@@ -390,7 +390,7 @@ export default function UsersPage() {
                   <td colSpan={6} className="px-6 py-8 text-center">
                     <div className="text-gray-400">
                       <Users size={48} className="mx-auto mb-4 opacity-50" />
-                      <p className="text-lg font-medium">No users found</p>
+                      <p className="text-lg ">No users found</p>
                       <p className="text-sm">
                         Users will appear here as they register
                       </p>
@@ -414,7 +414,7 @@ export default function UsersPage() {
               <button
                 onClick={() => setPage(Math.max(1, page - 1))}
                 disabled={page === 1}
-                className="px-3 py-1 text-sm bg-gray-600 text-white rounded hover:bg-gray-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-3 py-1 text-sm bg-gray-600 text-white  hover:bg-gray-500 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Previous
               </button>
@@ -424,7 +424,7 @@ export default function UsersPage() {
               <button
                 onClick={() => setPage(Math.min(pagination.pages, page + 1))}
                 disabled={page === pagination.pages}
-                className="px-3 py-1 text-sm bg-gray-600 text-white rounded hover:bg-gray-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-3 py-1 text-sm bg-gray-600 text-white  hover:bg-gray-500 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Next
               </button>

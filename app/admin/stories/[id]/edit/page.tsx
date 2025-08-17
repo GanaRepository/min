@@ -144,12 +144,12 @@ export default function EditStory() {
       {/* Header */}
       <div className="flex items-center space-x-4">
         <Link href={`/admin/stories/${storyId}`}>
-          <button className="p-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg transition-colors">
+          <button className="p-2 text-gray-400 hover:text-white hover:bg-gray-700  transition-colors">
             <ArrowLeft size={20} />
           </button>
         </Link>
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-white">
+          <h1 className="text-2xl sm:text-3xl  text-white">
             Edit Story
           </h1>
           <p className="text-gray-400">Modify story settings and metadata</p>
@@ -160,12 +160,12 @@ export default function EditStory() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-gray-800 rounded-xl p-6"
+        className="bg-gray-800  p-6"
       >
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Title */}
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="block text-sm  text-gray-300 mb-2">
               Story Title
             </label>
             <div className="relative">
@@ -178,7 +178,7 @@ export default function EditStory() {
                 required
                 value={formData.title}
                 onChange={(e) => handleInputChange('title', e.target.value)}
-                className={`w-full pl-10 pr-4 py-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                className={`w-full pl-10 pr-4 py-3 bg-gray-700 border  text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                   errors.title ? 'border-red-500' : 'border-gray-600'
                 }`}
                 placeholder="Enter story title"
@@ -191,13 +191,13 @@ export default function EditStory() {
 
           {/* Status */}
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="block text-sm  text-gray-300 mb-2">
               Status
             </label>
             <select
               value={formData.status}
               onChange={(e) => handleInputChange('status', e.target.value)}
-              className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-3 bg-gray-700 border border-gray-600  text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="active">Active</option>
               <option value="completed">Completed</option>
@@ -207,7 +207,7 @@ export default function EditStory() {
 
           {/* API Calls Limit */}
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="block text-sm  text-gray-300 mb-2">
               Max AI Calls
             </label>
             <div className="relative">
@@ -226,7 +226,7 @@ export default function EditStory() {
                     parseInt(e.target.value) || 50
                   )
                 }
-                className="w-full pl-10 pr-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full pl-10 pr-4 py-3 bg-gray-700 border border-gray-600  text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Maximum AI calls allowed"
               />
             </div>
@@ -237,13 +237,13 @@ export default function EditStory() {
 
           {/* Competition Settings */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-white">
+            <h3 className="text-lg  text-white">
               Competition Settings
             </h3>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
+                <label className="block text-sm  text-gray-300 mb-2">
                   Competition Score
                 </label>
                 <input
@@ -257,13 +257,13 @@ export default function EditStory() {
                       parseInt(e.target.value) || 0
                     )
                   }
-                  className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-3 bg-gray-700 border border-gray-600  text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="Competition score (0-100)"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
+                <label className="block text-sm  text-gray-300 mb-2">
                   Competition Rank
                 </label>
                 <input
@@ -276,7 +276,7 @@ export default function EditStory() {
                       parseInt(e.target.value) || 0
                     )
                   }
-                  className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-3 bg-gray-700 border border-gray-600  text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="Competition rank"
                 />
               </div>
@@ -293,9 +293,9 @@ export default function EditStory() {
                   onChange={(e) =>
                     handleInputChange('isPublished', e.target.checked)
                   }
-                  className="w-5 h-5 bg-gray-700 border-gray-600 rounded focus:ring-blue-500 focus:ring-2"
+                  className="w-5 h-5 bg-gray-700 border-gray-600  focus:ring-blue-500 focus:ring-2"
                 />
-                <span className="text-white font-medium">Published</span>
+                <span className="text-white ">Published</span>
               </label>
               <p className="text-gray-400 text-sm mt-1">
                 Story is publicly visible
@@ -313,9 +313,9 @@ export default function EditStory() {
                       e.target.checked
                     )
                   }
-                  className="w-5 h-5 bg-gray-700 border-gray-600 rounded focus:ring-blue-500 focus:ring-2"
+                  className="w-5 h-5 bg-gray-700 border-gray-600  focus:ring-blue-500 focus:ring-2"
                 />
-                <span className="text-white font-medium">
+                <span className="text-white ">
                   Competition Entry
                 </span>
               </label>
@@ -330,7 +330,7 @@ export default function EditStory() {
             <Link href={`/admin/stories/${storyId}`}>
               <button
                 type="button"
-                className="px-6 py-2.5 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+                className="px-6 py-2.5 bg-gray-600 text-white  hover:bg-gray-700 transition-colors"
               >
                 Cancel
               </button>
@@ -338,7 +338,7 @@ export default function EditStory() {
             <button
               type="submit"
               disabled={saving}
-              className="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center disabled:opacity-50"
+              className="px-6 py-2.5 bg-blue-600 text-white  hover:bg-blue-700 transition-colors flex items-center disabled:opacity-50"
             >
               <Save size={16} className="mr-2" />
               {saving ? 'Saving...' : 'Save Changes'}

@@ -157,12 +157,12 @@ export default function StoriesExportPage() {
       {/* Header */}
       <div className="flex items-center space-x-4">
         <Link href="/admin/stories">
-          <button className="p-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg transition-colors">
+          <button className="p-2 text-gray-400 hover:text-white hover:bg-gray-700  transition-colors">
             <ArrowLeft size={20} />
           </button>
         </Link>
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-white">
+          <h1 className="text-2xl sm:text-3xl  text-white">
             Bulk Story Export
           </h1>
           <p className="text-gray-400">
@@ -178,14 +178,14 @@ export default function StoriesExportPage() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-gray-800 rounded-xl p-6"
+            className="bg-gray-800  p-6"
           >
-            <h3 className="text-lg font-semibold text-white mb-4 flex items-center">
+            <h3 className="text-lg  text-white mb-4 flex items-center">
               <FileText size={20} className="mr-2" />
               Export Format
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <label className="flex items-center p-4 bg-gray-700/50 rounded-lg cursor-pointer hover:bg-gray-700 transition-colors">
+              <label className="flex items-center p-4 bg-gray-700/50  cursor-pointer hover:bg-gray-700 transition-colors">
                 <input
                   type="radio"
                   name="format"
@@ -197,14 +197,14 @@ export default function StoriesExportPage() {
                   className="mr-3"
                 />
                 <div>
-                  <div className="text-white font-medium">CSV Format</div>
+                  <div className="text-white ">CSV Format</div>
                   <div className="text-gray-400 text-sm">
                     Comma-separated values, Excel compatible
                   </div>
                 </div>
               </label>
 
-              <label className="flex items-center p-4 bg-gray-700/50 rounded-lg cursor-pointer hover:bg-gray-700 transition-colors">
+              <label className="flex items-center p-4 bg-gray-700/50  cursor-pointer hover:bg-gray-700 transition-colors">
                 <input
                   type="radio"
                   name="format"
@@ -216,7 +216,7 @@ export default function StoriesExportPage() {
                   className="mr-3"
                 />
                 <div>
-                  <div className="text-white font-medium">JSON Format</div>
+                  <div className="text-white ">JSON Format</div>
                   <div className="text-gray-400 text-sm">
                     Structured data, developer friendly
                   </div>
@@ -230,9 +230,9 @@ export default function StoriesExportPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="bg-gray-800 rounded-xl p-6"
+            className="bg-gray-800  p-6"
           >
-            <h3 className="text-lg font-semibold text-white mb-4 flex items-center">
+            <h3 className="text-lg  text-white mb-4 flex items-center">
               <Calendar size={20} className="mr-2" />
               Date Range
             </h3>
@@ -247,7 +247,7 @@ export default function StoriesExportPage() {
                   onChange={(e) =>
                     handleConfigChange('dateRange', 'startDate', e.target.value)
                   }
-                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600  text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <div>
@@ -260,7 +260,7 @@ export default function StoriesExportPage() {
                   onChange={(e) =>
                     handleConfigChange('dateRange', 'endDate', e.target.value)
                   }
-                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600  text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
             </div>
@@ -271,9 +271,9 @@ export default function StoriesExportPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="bg-gray-800 rounded-xl p-6"
+            className="bg-gray-800  p-6"
           >
-            <h3 className="text-lg font-semibold text-white mb-4 flex items-center">
+            <h3 className="text-lg  text-white mb-4 flex items-center">
               <Filter size={20} className="mr-2" />
               Content Filters
             </h3>
@@ -289,7 +289,7 @@ export default function StoriesExportPage() {
                   onChange={(e) =>
                     handleConfigChange('filters', 'status', e.target.value)
                   }
-                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600  text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="all">All Stories</option>
                   <option value="active">Active Stories</option>
@@ -311,7 +311,7 @@ export default function StoriesExportPage() {
                         e.target.checked
                       )
                     }
-                    className="mr-3 rounded"
+                    className="mr-3 "
                   />
                   <span className="text-white">Include Author Information</span>
                 </label>
@@ -327,7 +327,7 @@ export default function StoriesExportPage() {
                         e.target.checked
                       )
                     }
-                    className="mr-3 rounded"
+                    className="mr-3 "
                   />
                   <span className="text-white">Include Story Statistics</span>
                 </label>
@@ -343,7 +343,7 @@ export default function StoriesExportPage() {
                         e.target.checked
                       )
                     }
-                    className="mr-3 rounded"
+                    className="mr-3 "
                   />
                   <span className="text-white">Include Story Content</span>
                 </label>
@@ -359,7 +359,7 @@ export default function StoriesExportPage() {
                         e.target.checked
                       )
                     }
-                    className="mr-3 rounded"
+                    className="mr-3 "
                   />
                   <span className="text-white">Include Comments</span>
                 </label>
@@ -374,24 +374,24 @@ export default function StoriesExportPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="bg-gray-800 rounded-xl p-6"
+            className="bg-gray-800  p-6"
           >
-            <h3 className="text-lg font-semibold text-white mb-4 flex items-center">
+            <h3 className="text-lg  text-white mb-4 flex items-center">
               <BookOpen size={20} className="mr-2" />
               Export Summary
             </h3>
 
             <div className="space-y-3">
-              <div className="flex justify-between items-center p-3 bg-gray-700/50 rounded-lg">
+              <div className="flex justify-between items-center p-3 bg-gray-700/50 ">
                 <span className="text-gray-400">Format:</span>
-                <span className="text-white font-medium uppercase">
+                <span className="text-white  uppercase">
                   {exportConfig.format}
                 </span>
               </div>
 
-              <div className="flex justify-between items-center p-3 bg-gray-700/50 rounded-lg">
+              <div className="flex justify-between items-center p-3 bg-gray-700/50 ">
                 <span className="text-gray-400">Status Filter:</span>
-                <span className="text-white font-medium capitalize">
+                <span className="text-white  capitalize">
                   {exportConfig.filters.status === 'all'
                     ? 'All Stories'
                     : exportConfig.filters.status}
@@ -399,35 +399,35 @@ export default function StoriesExportPage() {
               </div>
 
               {exportConfig.dateRange.startDate && (
-                <div className="flex justify-between items-center p-3 bg-gray-700/50 rounded-lg">
+                <div className="flex justify-between items-center p-3 bg-gray-700/50 ">
                   <span className="text-gray-400">Date Range:</span>
-                  <span className="text-white font-medium text-sm">
+                  <span className="text-white  text-sm">
                     {exportConfig.dateRange.startDate} -{' '}
                     {exportConfig.dateRange.endDate || 'Now'}
                   </span>
                 </div>
               )}
 
-              <div className="p-3 bg-gray-700/50 rounded-lg">
+              <div className="p-3 bg-gray-700/50 ">
                 <span className="text-gray-400 block mb-2">Included Data:</span>
                 <div className="flex flex-wrap gap-2">
                   {exportConfig.filters.includeAuthorInfo && (
-                    <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
+                    <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs ">
                       Author Info
                     </span>
                   )}
                   {exportConfig.filters.includeStats && (
-                    <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">
+                    <span className="px-2 py-1 bg-green-100 text-green-800 text-xs ">
                       Statistics
                     </span>
                   )}
                   {exportConfig.filters.includeContent && (
-                    <span className="px-2 py-1 bg-purple-100 text-purple-800 text-xs rounded-full">
+                    <span className="px-2 py-1 bg-purple-100 text-purple-800 text-xs ">
                       Content
                     </span>
                   )}
                   {exportConfig.filters.includeComments && (
-                    <span className="px-2 py-1 bg-orange-100 text-orange-800 text-xs rounded-full">
+                    <span className="px-2 py-1 bg-orange-100 text-orange-800 text-xs ">
                       Comments
                     </span>
                   )}
@@ -441,13 +441,13 @@ export default function StoriesExportPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-            className="bg-gray-800 rounded-xl p-6"
+            className="bg-gray-800  p-6"
           >
-            <h3 className="text-lg font-semibold text-white mb-4">
+            <h3 className="text-lg  text-white mb-4">
               Ready to Export
             </h3>
 
-            <div className="bg-blue-900/20 border border-blue-500/30 rounded-lg p-4 mb-6">
+            <div className="bg-blue-900/20 border border-blue-500/30  p-4 mb-6">
               <p className="text-blue-300 text-sm">
                 📊 Your export will include all stories matching your criteria.
                 Large exports may take a few minutes to process.
@@ -457,7 +457,7 @@ export default function StoriesExportPage() {
             <button
               onClick={handleExport}
               disabled={loading}
-              className="w-full bg-gradient-to-r from-green-600 to-green-700 text-white py-4 px-6 rounded-lg hover:from-green-700 hover:to-green-800 transition-all duration-200 flex items-center justify-center font-medium disabled:opacity-50"
+              className="w-full bg-gradient-to-r from-green-600 to-green-700 text-white py-4 px-6  hover:from-green-700 hover:to-green-800 transition-all duration-200 flex items-center justify-center  disabled:opacity-50"
             >
               <Download size={20} className="mr-2" />
               {loading ? 'Exporting...' : 'Export Stories'}

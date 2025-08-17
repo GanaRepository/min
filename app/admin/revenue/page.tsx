@@ -95,7 +95,7 @@ export default function RevenuePage() {
     <div className="space-y-6 px-2 sm:px-4 md:px-8 lg:px-12 xl:px-20 py-4 sm:py-6 md:py-8">
       {/* Header */}
       <div>
-        <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">
+        <h1 className="text-2xl sm:text-3xl  text-white mb-2">
           Revenue Dashboard
         </h1>
         <p className="text-gray-400">
@@ -109,10 +109,10 @@ export default function RevenuePage() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-gray-800 rounded-xl p-6"
+          className="bg-gray-800  p-6"
         >
           <div className="flex items-center justify-between mb-4">
-            <div className="bg-emerald-600 p-3 rounded-lg">
+            <div className="bg-emerald-600 p-3 ">
               <DollarSign size={24} className="text-white" />
             </div>
             <div className="flex items-center">
@@ -121,14 +121,14 @@ export default function RevenuePage() {
                 className: getGrowthColor(revenueData.growth),
               })}
               <span
-                className={`ml-1 font-medium ${getGrowthColor(revenueData.growth)}`}
+                className={`ml-1  ${getGrowthColor(revenueData.growth)}`}
               >
                 {revenueData.growth >= 0 ? '+' : ''}
                 {revenueData.growth.toFixed(1)}%
               </span>
             </div>
           </div>
-          <h3 className="text-2xl font-bold text-white mb-1">
+          <h3 className="text-2xl  text-white mb-1">
             ${revenueData.totalRevenue.toLocaleString()}
           </h3>
           <p className="text-gray-400 text-sm">Total Revenue</p>
@@ -139,14 +139,14 @@ export default function RevenuePage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-gray-800 rounded-xl p-6"
+          className="bg-gray-800  p-6"
         >
           <div className="flex items-center justify-between mb-4">
-            <div className="bg-blue-600 p-3 rounded-lg">
+            <div className="bg-blue-600 p-3 ">
               <Calendar size={24} className="text-white" />
             </div>
           </div>
-          <h3 className="text-2xl font-bold text-white mb-1">
+          <h3 className="text-2xl  text-white mb-1">
             ${revenueData.thisMonthRevenue.toLocaleString()}
           </h3>
           <p className="text-gray-400 text-sm">This Month</p>
@@ -160,14 +160,14 @@ export default function RevenuePage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="bg-gray-800 rounded-xl p-6"
+          className="bg-gray-800  p-6"
         >
           <div className="flex items-center justify-between mb-4">
-            <div className="bg-purple-600 p-3 rounded-lg">
+            <div className="bg-purple-600 p-3 ">
               <CreditCard size={24} className="text-white" />
             </div>
           </div>
-          <h3 className="text-2xl font-bold text-white mb-1">
+          <h3 className="text-2xl  text-white mb-1">
             {revenueData.storyPacksSold}
           </h3>
           <p className="text-gray-400 text-sm">Story Packs Sold</p>
@@ -178,14 +178,14 @@ export default function RevenuePage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="bg-gray-800 rounded-xl p-6"
+          className="bg-gray-800  p-6"
         >
           <div className="flex items-center justify-between mb-4">
-            <div className="bg-orange-600 p-3 rounded-lg">
+            <div className="bg-orange-600 p-3 ">
               <FileText size={24} className="text-white" />
             </div>
           </div>
-          <h3 className="text-2xl font-bold text-white mb-1">
+          <h3 className="text-2xl  text-white mb-1">
             {revenueData.publicationsSold}
           </h3>
           <p className="text-gray-400 text-sm">Publications Sold</p>
@@ -194,15 +194,15 @@ export default function RevenuePage() {
 
       {/* Quick Actions */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div className="bg-gray-800 rounded-xl p-6">
-          <h3 className="text-lg font-semibold text-white mb-4">
+        <div className="bg-gray-800  p-6">
+          <h3 className="text-lg  text-white mb-4">
             Revenue Management
           </h3>
           <div className="space-y-3">
             <Link href="/admin/revenue/transactions">
-              <button className="w-full text-left p-3 bg-gray-700/50 rounded-lg hover:bg-gray-700 transition-colors">
+              <button className="w-full text-left p-3 bg-gray-700/50  hover:bg-gray-700 transition-colors">
                 <div className="flex items-center justify-between">
-                  <span className="text-white font-medium">
+                  <span className="text-white ">
                     Transaction History
                   </span>
                   <FileText size={16} className="text-blue-400" />
@@ -214,9 +214,9 @@ export default function RevenuePage() {
             </Link>
 
             <Link href="/admin/revenue/refunds">
-              <button className="w-full text-left p-3 bg-gray-700/50 rounded-lg hover:bg-gray-700 transition-colors">
+              <button className="w-full text-left p-3 bg-gray-700/50  hover:bg-gray-700 transition-colors">
                 <div className="flex items-center justify-between">
-                  <span className="text-white font-medium">
+                  <span className="text-white ">
                     Refund Management
                   </span>
                   <CreditCard size={16} className="text-orange-400" />
@@ -229,14 +229,14 @@ export default function RevenuePage() {
           </div>
         </div>
 
-        <div className="bg-gray-800 rounded-xl p-6">
-          <h3 className="text-lg font-semibold text-white mb-4">
+        <div className="bg-gray-800  p-6">
+          <h3 className="text-lg  text-white mb-4">
             Revenue Analytics
           </h3>
           <div className="space-y-4">
-            <div className="flex items-center justify-between p-3 bg-gray-700/50 rounded-lg">
+            <div className="flex items-center justify-between p-3 bg-gray-700/50 ">
               <span className="text-gray-400">Average Order Value</span>
-              <span className="text-white font-medium">
+              <span className="text-white ">
                 $
                 {revenueData.totalRevenue > 0 &&
                 revenueData.storyPacksSold + revenueData.publicationsSold > 0
@@ -249,10 +249,10 @@ export default function RevenuePage() {
               </span>
             </div>
 
-            <div className="flex items-center justify-between p-3 bg-gray-700/50 rounded-lg">
+            <div className="flex items-center justify-between p-3 bg-gray-700/50 ">
               <span className="text-gray-400">Revenue Growth</span>
               <span
-                className={`font-medium ${getGrowthColor(revenueData.growth)}`}
+                className={` ${getGrowthColor(revenueData.growth)}`}
               >
                 {revenueData.growth >= 0 ? '+' : ''}
                 {revenueData.growth.toFixed(1)}%
@@ -261,22 +261,22 @@ export default function RevenuePage() {
           </div>
         </div>
 
-        <div className="bg-gray-800 rounded-xl p-6">
-          <h3 className="text-lg font-semibold text-white mb-4">
+        <div className="bg-gray-800  p-6">
+          <h3 className="text-lg  text-white mb-4">
             Top Paying Users
           </h3>
           <div className="space-y-3">
             {revenueData.topPayingUsers.slice(0, 3).map((user, index) => (
               <div
                 key={user._id}
-                className="flex items-center justify-between p-3 bg-gray-700/50 rounded-lg"
+                className="flex items-center justify-between p-3 bg-gray-700/50 "
               >
                 <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 bg-emerald-600 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                  <div className="w-8 h-8 bg-emerald-600  flex items-center justify-center text-white  text-sm">
                     #{index + 1}
                   </div>
                   <div>
-                    <p className="text-white font-medium text-sm">
+                    <p className="text-white  text-sm">
                       {user.firstName} {user.lastName}
                     </p>
                     <p className="text-gray-400 text-xs">
@@ -284,7 +284,7 @@ export default function RevenuePage() {
                     </p>
                   </div>
                 </div>
-                <div className="text-emerald-400 font-bold">
+                <div className="text-emerald-400 ">
                   ${user.totalSpent.toFixed(2)}
                 </div>
               </div>

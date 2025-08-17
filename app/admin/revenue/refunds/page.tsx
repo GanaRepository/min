@@ -138,12 +138,12 @@ export default function RefundsPage() {
       {/* Header */}
       <div className="flex items-center space-x-4">
         <Link href="/admin/revenue">
-          <button className="p-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg transition-colors">
+          <button className="p-2 text-gray-400 hover:text-white hover:bg-gray-700  transition-colors">
             <ArrowLeft size={20} />
           </button>
         </Link>
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-white">
+          <h1 className="text-2xl sm:text-3xl  text-white">
             Refund Management
           </h1>
           <p className="text-gray-400">
@@ -153,15 +153,15 @@ export default function RefundsPage() {
       </div>
 
       {/* Filters */}
-      <div className="bg-gray-800 rounded-xl p-6">
+      <div className="bg-gray-800  p-6">
         <div className="flex items-center gap-4">
           <Filter size={20} className="text-gray-400" />
-          <div className="flex bg-gray-700 rounded-lg p-1">
+          <div className="flex bg-gray-700  p-1">
             {['pending', 'approved', 'rejected', 'all'].map((status) => (
               <button
                 key={status}
                 onClick={() => setStatusFilter(status)}
-                className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
+                className={`px-3 py-1.5 text-sm   transition-colors ${
                   statusFilter === status
                     ? 'bg-blue-600 text-white'
                     : 'text-gray-300 hover:text-white'
@@ -183,17 +183,17 @@ export default function RefundsPage() {
               key={refund._id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-gray-800 rounded-xl p-6"
+              className="bg-gray-800  p-6"
             >
               <div className="flex items-start justify-between">
                 {/* Refund Info */}
                 <div className="flex-1">
                   <div className="flex items-center space-x-4 mb-4">
-                    <div className="w-12 h-12 bg-gray-600 rounded-full flex items-center justify-center">
+                    <div className="w-12 h-12 bg-gray-600  flex items-center justify-center">
                       <User size={20} className="text-white" />
                     </div>
                     <div>
-                      <h4 className="text-white font-medium">
+                      <h4 className="text-white ">
                         {refund.user.firstName} {refund.user.lastName}
                       </h4>
                       <p className="text-gray-400 text-sm">
@@ -201,15 +201,15 @@ export default function RefundsPage() {
                       </p>
                     </div>
                     <span
-                      className={`px-3 py-1 text-sm font-medium rounded-full ${getStatusColor(refund.status)} flex items-center`}
+                      className={`px-3 py-1 text-sm   ${getStatusColor(refund.status)} flex items-center`}
                     >
                       <StatusIcon size={14} className="mr-1" />
                       {refund.status}
                     </span>
                   </div>
 
-                  <div className="bg-gray-700/50 rounded-lg p-4 mb-4">
-                    <h5 className="text-white font-medium mb-2">
+                  <div className="bg-gray-700/50  p-4 mb-4">
+                    <h5 className="text-white  mb-2">
                       Refund Reason:
                     </h5>
                     <p className="text-gray-300">{refund.reason}</p>
@@ -218,7 +218,7 @@ export default function RefundsPage() {
                   <div className="flex items-center space-x-6 text-sm text-gray-400">
                     <div className="flex items-center">
                       <DollarSign size={16} className="mr-1 text-emerald-400" />
-                      <span className="text-emerald-400 font-bold text-lg">
+                      <span className="text-emerald-400  text-lg">
                         ${refund.amount.toFixed(2)}
                       </span>
                     </div>
@@ -236,7 +236,7 @@ export default function RefundsPage() {
                     <button
                       onClick={() => processRefund(refund._id, 'approve')}
                       disabled={processing === refund._id}
-                      className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center disabled:opacity-50"
+                      className="bg-green-600 text-white px-4 py-2  hover:bg-green-700 transition-colors flex items-center disabled:opacity-50"
                     >
                       <Check size={16} className="mr-2" />
                       {processing === refund._id ? 'Processing...' : 'Approve'}
@@ -251,7 +251,7 @@ export default function RefundsPage() {
                         }
                       }}
                       disabled={processing === refund._id}
-                      className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors flex items-center disabled:opacity-50"
+                      className="bg-red-600 text-white px-4 py-2  hover:bg-red-700 transition-colors flex items-center disabled:opacity-50"
                     >
                       <X size={16} className="mr-2" />
                       Reject
@@ -268,7 +268,7 @@ export default function RefundsPage() {
       {refunds.length === 0 && !loading && (
         <div className="text-center py-12">
           <DollarSign size={48} className="text-gray-600 mx-auto mb-4" />
-          <h3 className="text-xl font-medium text-gray-400 mb-2">
+          <h3 className="text-xl  text-gray-400 mb-2">
             No refund requests
           </h3>
           <p className="text-gray-500">
