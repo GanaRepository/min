@@ -1817,8 +1817,7 @@ function StoryCard({ story, onPublish, onPurchase, publishingStory }: StoryCardP
                 <div className="w-3 h-3 border border-white border-t-transparent rounded-full animate-spin"></div>
               ) : (
                 <>
-                  <Star size={12} />
-                  Publish
+                 # Publish To Community - Free
                 </>
               )}
             </button>
@@ -1832,8 +1831,7 @@ function StoryCard({ story, onPublish, onPurchase, publishingStory }: StoryCardP
               onClick={onPurchase}
               className="bg-yellow-600 hover:bg-yellow-700 text-white py-2 rounded-lg text-xs font-medium transition-colors flex items-center justify-center gap-1"
             >
-              <DollarSign size={12} />
-              $10
+              $10 - Reserve In Physical Story Book
             </button>
           )}
         </div>

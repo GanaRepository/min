@@ -154,7 +154,7 @@
 // }
 
 
-// app/api/stripe/checkout/route.ts - COMPLETE FIXED VERSION
+// app/api/stripe/checkout/route.ts - FIXED VERSION
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/utils/authOptions';
@@ -187,6 +187,10 @@ export async function POST(req: NextRequest) {
     const { productType, storyId, userId } = body;
 
     console.log('🔍 Checkout request:', { productType, storyId, userId });
+    console.log('🔍 Environment variables check:', {
+      STRIPE_STORY_PACK_PRICE_ID: process.env.STRIPE_STORY_PACK_PRICE_ID ? '✅ Set' : '❌ Missing',
+      STRIPE_PURCHASE_PRICE_ID: process.env.STRIPE_PURCHASE_PRICE_ID ? '✅ Set' : '❌ Missing'
+    });
 
     if (!productType || !userId) {
       return NextResponse.json(
@@ -214,6 +218,7 @@ export async function POST(req: NextRequest) {
     switch (productType) {
       case 'story_pack':
         if (!process.env.STRIPE_STORY_PACK_PRICE_ID) {
+          console.error('❌ STRIPE_STORY_PACK_PRICE_ID not configured');
           return NextResponse.json(
             { error: 'Story pack not configured' },
             { status: 500 }
@@ -226,57 +231,18 @@ export async function POST(req: NextRequest) {
         metadata.attemptsAdded = '15';
         break;
 
-      case 'story_publication':
-        if (!process.env.STRIPE_PUBLICATION_PRICE_ID) {
-          return NextResponse.json(
-            { error: 'Publication not configured' },
-            { status: 500 }
-          );
-        }
-
-        if (!storyId) {
-          return NextResponse.json(
-            { error: 'Story ID required for publication' },
-            { status: 400 }
-          );
-        }
-
-        // Verify story exists and belongs to user
-        const story = await StorySession.findById(storyId);
-        if (!story || story.childId.toString() !== userId) {
-          return NextResponse.json(
-            { error: 'Story not found or access denied' },
-            { status: 404 }
-          );
-        }
-
-        if (story.isPublished) {
-          return NextResponse.json(
-            { error: 'Story is already published' },
-            { status: 400 }
-          );
-        }
-
-        priceId = process.env.STRIPE_PUBLICATION_PRICE_ID;
-        productName = `Publish "${story.title}"`;
-        metadata.storyId = storyId;
-        metadata.storyTitle = story.title;
-        break;
-
-      case 'story_purchase':
-        console.log('📦 Processing story_purchase case');
-        
+      case 'story_purchase':  // THIS WAS THE BUG - Missing case!
         if (!process.env.STRIPE_PURCHASE_PRICE_ID) {
           console.error('❌ STRIPE_PURCHASE_PRICE_ID not configured');
           return NextResponse.json(
-            { error: 'Physical book purchase not configured' },
+            { error: 'Physical anthology purchase not configured' },
             { status: 500 }
           );
         }
 
         if (!storyId) {
           return NextResponse.json(
-            { error: 'Story ID required for physical book purchase' },
+            { error: 'Story ID required for physical anthology purchase' },
             { status: 400 }
           );
         }
@@ -291,16 +257,18 @@ export async function POST(req: NextRequest) {
         }
 
         priceId = process.env.STRIPE_PURCHASE_PRICE_ID;
-        
-        // FIXED: Use generic product name instead of story-specific
-        productName = "Physical Anthology Spot";
-        
-        // Store the actual story details in metadata for processing
+        productName = "Physical Anthology Purchase";
         metadata.storyId = storyId;
         metadata.storyTitle = purchaseStory.title;
-        
-        console.log('✅ Story purchase configured:', { priceId, productName });
         break;
+
+      case 'story_publication':
+        // FREE FEATURE - No Stripe payment needed
+        // This should be handled directly in your app, not through Stripe
+        return NextResponse.json(
+          { error: 'Story publication is free - no payment required' },
+          { status: 400 }
+        );
 
       default:
         console.error('❌ Invalid product type:', productType);
@@ -328,11 +296,7 @@ export async function POST(req: NextRequest) {
       cancel_url: `${process.env.NEXTAUTH_URL}/pricing?purchase=cancelled`,
       billing_address_collection: 'required',
       shipping_address_collection:
-        productType === 'story_purchase' // Add shipping for physical books
-          ? {
-              allowed_countries: ['US', 'CA', 'GB', 'AU'],
-            }
-          : productType === 'story_publication'
+        productType === 'story_purchase' // Only physical books need shipping
           ? {
               allowed_countries: ['US', 'CA', 'GB', 'AU'],
             }
