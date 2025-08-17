@@ -223,9 +223,9 @@ export default function AssignStudentsPage() {
   }
 
   return (
-    <div className="space-y-6 px-2 sm:px-4 md:px-8 lg:px-12 xl:px-20 py-4 sm:py-6 md:py-8">
+  <div className="space-y-6 px-1 sm:px-4 md:px-8 lg:px-12 xl:px-20 py-2 sm:py-6 md:py-8 overflow-x-auto w-full min-w-0">
       {/* Header */}
-      <div className="flex items-center justify-between">
+  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4 w-full min-w-0">
         <div className="flex items-center space-x-4">
           <Link href="/admin/mentors">
             <button className="p-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg transition-colors">
@@ -252,7 +252,7 @@ export default function AssignStudentsPage() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-6 w-full min-w-0">
         <div className="bg-gray-800 rounded-xl p-6">
           <div className="flex items-center space-x-3">
             <div className="bg-blue-600 p-3 rounded-lg">
@@ -309,8 +309,8 @@ export default function AssignStudentsPage() {
       </div>
 
       {/* Filters */}
-      <div className="bg-gray-800 rounded-xl p-6">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+  <div className="bg-gray-800 rounded-xl p-4 sm:p-6 overflow-x-auto w-full min-w-0">
+  <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3 sm:gap-4 w-full min-w-0">
           {/* Search */}
           <div className="relative">
             <Search size={20} className="absolute left-3 top-3 text-gray-400" />
@@ -355,7 +355,7 @@ export default function AssignStudentsPage() {
       </div>
 
       {/* Students List */}
-      <div className="bg-gray-800 rounded-xl p-6">
+  <div className="bg-gray-800 rounded-xl p-4 sm:p-6 overflow-x-auto w-full min-w-0">
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-lg font-semibold text-white">
             Students ({filteredStudents.length})
@@ -368,29 +368,29 @@ export default function AssignStudentsPage() {
         </div>
 
         {filteredStudents.length > 0 ? (
-          <div className="space-y-3">
+          <div className="space-y-3 min-w-0 w-full">
             {filteredStudents.map((student) => (
               <motion.div
                 key={student._id}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="flex items-center justify-between p-4 bg-gray-700/50 rounded-lg hover:bg-gray-700/70 transition-colors"
+                className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-2 sm:p-4 bg-gray-700/50 rounded-lg hover:bg-gray-700/70 transition-colors gap-1 sm:gap-2 min-w-0 w-full"
               >
                 {/* Student Info */}
                 <div className="flex items-center space-x-4">
-                  <div className="w-12 h-12 bg-gray-600 rounded-full flex items-center justify-center">
-                    <span className="text-white font-medium">
+                  <div className="w-12 h-12 bg-gray-600 rounded-full flex items-center justify-center flex-shrink-0">
+                    <span className="text-white font-medium text-base sm:text-lg">
                       {student.firstName[0]}{student.lastName[0]}
                     </span>
                   </div>
-                  <div>
+                  <div className="min-w-0 w-full break-words">
                     <Link href={`/admin/users/${student._id}`}>
-                      <h4 className="text-white font-medium hover:text-blue-400 cursor-pointer">
+                      <h4 className="text-white font-medium hover:text-blue-400 cursor-pointer text-base sm:text-lg break-words">
                         {student.firstName} {student.lastName}
                       </h4>
                     </Link>
-                    <p className="text-gray-400 text-sm">{student.email}</p>
-                    <div className="flex items-center space-x-4 mt-1">
+                    <p className="text-gray-400 text-xs sm:text-sm break-words">{student.email}</p>
+                    <div className="flex flex-wrap items-center gap-2 mt-1">
                       <span className="text-xs text-gray-500">
                         {student.storiesCount} stories
                       </span>

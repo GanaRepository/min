@@ -1445,7 +1445,7 @@ export default function MyStoriesPage() {
             </div>
             
             <Link
-              href="/children-dashboard/create-stories"
+              href="/create-stories"
               className="bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white px-6 py-3 rounded-xl font-semibold transition-all flex items-center gap-2 shadow-lg"
             >
               <Plus size={20} />
@@ -1583,7 +1583,7 @@ export default function MyStoriesPage() {
               <h3 className="text-xl font-semibold text-white mb-4">No Stories Yet</h3>
               <p className="text-gray-300 mb-6">Start your creative writing journey today!</p>
               <Link
-                href="/children-dashboard/create-stories"
+                href="/create-stories"
                 className="bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white px-8 py-4 rounded-xl font-semibold transition-all inline-flex items-center gap-2"
               >
                 <Plus size={20} />

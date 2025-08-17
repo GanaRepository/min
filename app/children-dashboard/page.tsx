@@ -1336,7 +1336,7 @@ export default function ChildrenDashboardPage() {
             </div>
             
             <Link
-              href="/children-dashboard/create-stories"
+              href="/create-stories"
               className="bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white px-6 py-3 rounded-xl font-semibold transition-all flex items-center gap-2 shadow-lg"
             >
               <Plus size={20} />

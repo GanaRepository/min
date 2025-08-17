@@ -469,15 +469,14 @@ export default function CompetitionsPage() {
                   </div>
                 </div>
 
-                {currentCompetition.phase === 'submission' && currentCompetition.userStats?.canSubmit && (
-                  <button
-                    onClick={() => setUploadModal(prev => ({ ...prev, show: true }))}
-                    className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-6 py-3 rounded-lg font-medium transition-all flex items-center gap-2"
-                  >
-                    <Plus size={20} />
-                    Upload New Story
-                  </button>
-                )}
+               <Link
+                           href="/create-stories"
+                           className="bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white px-6 py-3 rounded-xl font-semibold transition-all flex items-center gap-2 shadow-lg"
+                         >
+                           <Plus size={20} />
+                           Upload Story For Competition
+                         </Link>
+          
               </div>
 
               {/* Competition Stats */}
