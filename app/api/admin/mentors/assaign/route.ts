@@ -1,5 +1,4 @@
-//app/api/admin/mentors/assaign/route.ts
-// app/api/admin/mentors/assign/route.ts
+// app/api/admin/mentors/assaign/route.ts - FIXED VERSION
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/utils/authOptions';
@@ -66,18 +65,25 @@ export async function POST(request: NextRequest) {
     // Deactivate any existing assignment for this child
     await MentorAssignment.updateMany(
       { childId, isActive: true },
-      { isActive: false, unassignedDate: new Date() }
+      { 
+        isActive: false, 
+        unassignedDate: new Date(),
+        unassignedBy: session.user.id // ✅ ADDED: Track who unassigned
+      }
     );
 
-    // Create new assignment
+    // ✅ FIXED: Create new assignment with all required fields
     const assignment = new MentorAssignment({
       mentorId,
       childId,
-      assignedDate: new Date(),
+      assignedBy: session.user.id, // ✅ FIXED: Added the missing required field
+      assignmentDate: new Date(),
       isActive: true,
     });
 
     await assignment.save();
+
+    console.log(`✅ Assignment created: ${child.firstName} ${child.lastName} → ${mentor.firstName} ${mentor.lastName} (by Admin: ${session.user.id})`);
 
     return NextResponse.json({
       success: true,
@@ -109,7 +115,8 @@ export async function GET() {
     const assignments = await MentorAssignment.find({ isActive: true })
       .populate('mentorId', 'firstName lastName email')
       .populate('childId', 'firstName lastName email')
-      .sort({ assignedDate: -1 });
+      .populate('assignedBy', 'firstName lastName') // ✅ ADDED: Populate assignedBy
+      .sort({ assignmentDate: -1 });
 
     return NextResponse.json({
       success: true,
@@ -154,6 +161,7 @@ export async function DELETE(request: NextRequest) {
       {
         isActive: false,
         unassignedDate: new Date(),
+        unassignedBy: session.user.id, // ✅ ADDED: Track who unassigned
       },
       { new: true }
     );

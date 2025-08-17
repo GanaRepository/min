@@ -2174,7 +2174,7 @@ export default function StoryDetailPage() {
                       story.assessment.integrityRisk === 'high' ? 'text-orange-400' :
                       'text-red-400'
                     }`}>
-                      {story.assessment.integrityRisk.toUpperCase()}
+                      {(story.assessment.integrityRisk || 'unknown').toUpperCase()}
                     </span>
                   </div>
                 </div>

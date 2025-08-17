@@ -1,4 +1,4 @@
-// app/admin/stories/[id]/page.tsx - COMPLETE FIXED VERSION WITH COMMENT TYPE SELECTOR
+// app/admin/stories/[id]/page.tsx - COMPLETE FIXED VERSION
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -18,21 +18,23 @@ import {
   Download,
   Send,
   ChevronDown,
+  Check,
+  X,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface StoryDetails {
   _id: string;
   title: string;
-  status: 'active' | 'completed' | 'paused';
-  storyNumber: number;
+  status: 'active' | 'completed' | 'paused' | 'flagged' | 'review';
   totalWords: number;
   childWords: number;
-  apiCallsUsed: number;
+  aiWords: number;
+  currentTurn: number;
   maxApiCalls: number;
+  apiCallsUsed: number;
   createdAt: string;
   updatedAt: string;
-  completedAt?: string;
   isPublished: boolean;
   submittedToCompetition: boolean;
   competitionScore?: number;
@@ -51,7 +53,7 @@ interface StoryDetails {
   }>;
   comments: Array<{
     _id: string;
-    comment: string;
+    content: string;        // ✅ FIXED: Changed from 'comment' to 'content'
     commentType: string;
     authorId: {
       _id: string;
@@ -184,17 +186,21 @@ export default function ViewStory() {
     }
   };
 
+  // ✅ FIXED: Complete addComment function using admin API
   const addComment = async () => {
     if (!newComment.trim()) return;
 
     try {
       setAddingComment(true);
-      const response = await fetch(`/api/stories/${storyId}/comments`, {
+      
+      // ✅ FIXED: Use admin comments API instead of general stories API
+      const response = await fetch(`/api/admin/comments`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          comment: newComment,
-          commentType: commentType,
+          storyId: storyId,           // ✅ Pass storyId as separate field
+          content: newComment,        // ✅ Use 'content' field (not 'comment')
+          commentType: commentType,   // ✅ Include comment type
         }),
       });
 
@@ -204,13 +210,13 @@ export default function ViewStory() {
         fetchStory();
         setNewComment('');
         setCommentType('general');
-        alert('Comment added successfully!');
+        alert('Admin comment added successfully!');
       } else {
         alert('Failed to add comment: ' + (data.error || 'Unknown error'));
       }
     } catch (error) {
-      console.error('Error adding comment:', error);
-      alert('Failed to add comment');
+      console.error('Error adding admin comment:', error);
+      alert('Failed to add admin comment');
     } finally {
       setAddingComment(false);
     }
@@ -259,6 +265,8 @@ export default function ViewStory() {
         return 'bg-blue-100 text-blue-800';
       case 'paused':
         return 'bg-yellow-100 text-yellow-800';
+      case 'flagged':
+        return 'bg-red-100 text-red-800';
       default:
         return 'bg-gray-100 text-gray-800';
     }
@@ -289,6 +297,8 @@ export default function ViewStory() {
         return 'bg-blue-100 text-blue-800';
       case 'suggestion':
         return 'bg-green-100 text-green-800';
+      case 'general':
+        return 'bg-gray-100 text-gray-800';
       default:
         return 'bg-gray-100 text-gray-800';
     }
@@ -312,11 +322,17 @@ export default function ViewStory() {
             <h1 className="text-2xl sm:text-3xl font-bold text-white">
               {story.title}
             </h1>
-            <p className="text-gray-400">Story #{story.storyNumber} Details</p>
+            <p className="text-gray-400">Story #{story._id}</p>
           </div>
         </div>
 
         <div className="flex items-center space-x-2">
+          <Link href={`/admin/stories/${storyId}/edit`}>
+            <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center">
+              <Edit size={16} className="mr-2" />
+              Edit
+            </button>
+          </Link>
           <button
             onClick={exportStory}
             className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center"
@@ -324,12 +340,6 @@ export default function ViewStory() {
             <Download size={16} className="mr-2" />
             Export
           </button>
-          <Link href={`/admin/stories/${storyId}/edit`}>
-            <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center">
-              <Edit size={16} className="mr-2" />
-              Edit
-            </button>
-          </Link>
           <button
             onClick={deleteStory}
             disabled={deleting}
@@ -413,13 +423,8 @@ export default function ViewStory() {
                   : 'border-transparent text-gray-400 hover:text-white'
               }`}
             >
-              <tab.icon size={16} />
+              <tab.icon size={18} />
               <span>{tab.label}</span>
-              {tab.key === 'comments' && (
-                <span className="bg-gray-600 text-white text-xs px-2 py-1 rounded-full">
-                  {story.comments.length}
-                </span>
-              )}
             </button>
           ))}
         </div>
@@ -427,11 +432,8 @@ export default function ViewStory() {
         <div className="p-6">
           {/* Content Tab */}
           {activeTab === 'content' && (
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-white">
-                Story Content
-              </h3>
-              {story.turns.length > 0 ? (
+            <div className="space-y-6">
+              {story.turns && story.turns.length > 0 ? (
                 <div className="space-y-4">
                   {story.turns.map((turn, index) => (
                     <div
@@ -439,33 +441,28 @@ export default function ViewStory() {
                       className={`p-4 rounded-lg ${
                         turn.type === 'child'
                           ? 'bg-blue-900/20 border-l-4 border-blue-500'
-                          : 'bg-gray-700/30'
+                          : 'bg-purple-900/20 border-l-4 border-purple-500'
                       }`}
                     >
                       <div className="flex items-center justify-between mb-2">
                         <span
-                          className={`text-xs font-medium px-2 py-1 rounded ${
-                            turn.type === 'child'
-                              ? 'bg-blue-100 text-blue-800'
-                              : 'bg-gray-100 text-gray-800'
+                          className={`text-sm font-medium ${
+                            turn.type === 'child' ? 'text-blue-400' : 'text-purple-400'
                           }`}
                         >
-                          {turn.type === 'child' ? 'Child' : 'AI'} - Turn{' '}
-                          {turn.turnNumber}
+                          Turn {turn.turnNumber} - {turn.type === 'child' ? 'Child' : 'AI'}
                         </span>
-                        <span className="text-xs text-gray-400">
+                        <span className="text-gray-400 text-xs">
                           {new Date(turn.createdAt).toLocaleString()}
                         </span>
                       </div>
-                      <p className="text-gray-300 whitespace-pre-wrap">
-                        {turn.content}
-                      </p>
+                      <p className="text-gray-300 whitespace-pre-wrap">{turn.content}</p>
                     </div>
                   ))}
                 </div>
               ) : (
-                <p className="text-gray-400">
-                  No content available for this story.
+                <p className="text-gray-400 text-center py-8">
+                  No story content available.
                 </p>
               )}
             </div>
@@ -514,7 +511,9 @@ export default function ViewStory() {
                       </div>
                       <ChevronDown
                         size={16}
-                        className={`transition-transform ${showCommentTypeDropdown ? 'rotate-180' : ''}`}
+                        className={`transition-transform ${
+                          showCommentTypeDropdown ? 'rotate-180' : ''
+                        }`}
                       />
                     </button>
 
@@ -568,61 +567,40 @@ export default function ViewStory() {
               {/* Comments List */}
               <div className="space-y-4">
                 {story.comments.length > 0 ? (
-                  story.comments.map((comment) => (
-                    <motion.div
-                      key={comment._id}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="bg-gray-700/30 rounded-lg p-4"
-                    >
-                      <div className="flex items-start justify-between mb-3">
-                        <div className="flex items-center space-x-3">
-                          <div className="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center">
-                            <span className="text-xs font-medium text-white">
-                              {comment.authorId.firstName[0]}
-                              {comment.authorId.lastName[0]}
-                            </span>
-                          </div>
-                          <div>
-                            <div className="flex items-center space-x-2">
-                              <h4 className="text-white font-medium text-sm">
-                                {comment.authorId.firstName}{' '}
-                                {comment.authorId.lastName}
-                              </h4>
-                              <span
-                                className={`px-2 py-1 text-xs rounded-full ${getRoleColor(comment.authorId.role)}`}
-                              >
-                                {comment.authorId.role}
-                              </span>
-                              <span
-                                className={`px-2 py-1 text-xs rounded-full ${getCommentTypeColor(comment.commentType)}`}
-                              >
-                                {commentTypeOptions.find(
-                                  (opt) => opt.value === comment.commentType
-                                )?.label || comment.commentType}
-                              </span>
-                            </div>
-                          </div>
+                  story.comments.map((comment, index) => (
+                    <div key={comment._id} className="bg-gray-700/30 rounded-lg p-4">
+                      <div className="flex items-start justify-between mb-2">
+                        <div className="flex items-center space-x-2">
+                          <span className="text-white font-medium">
+                            {comment.authorId.firstName} {comment.authorId.lastName}
+                          </span>
+                          <span className={`px-2 py-1 text-xs rounded-full ${getRoleColor(comment.authorId.role)}`}>
+                            {comment.authorId.role}
+                          </span>
+                          <span className={`px-2 py-1 text-xs rounded-full ${getCommentTypeColor(comment.commentType)}`}>
+                            {comment.commentType}
+                          </span>
                         </div>
-                        <span className="text-gray-400 text-sm">
-                          {new Date(comment.createdAt).toLocaleString()}
-                        </span>
+                        <div className="flex items-center space-x-2">
+                          <span className="text-gray-400 text-sm">
+                            {new Date(comment.createdAt).toLocaleDateString()}
+                          </span>
+                          {comment.isResolved ? (
+                            <Check size={16} className="text-green-400" />
+                          ) : (
+                            <X size={16} className="text-red-400" />
+                          )}
+                        </div>
                       </div>
                       <p className="text-gray-300 whitespace-pre-wrap">
-                        {comment.comment}
+                        {comment.content}  {/* ✅ FIXED: Using comment.content instead of comment.comment */}
                       </p>
-                    </motion.div>
+                    </div>
                   ))
                 ) : (
-                  <div className="text-center py-8">
-                    <MessageSquare
-                      size={48}
-                      className="text-gray-600 mx-auto mb-4"
-                    />
-                    <p className="text-gray-400">
-                      No comments yet. Be the first to add feedback!
-                    </p>
-                  </div>
+                  <p className="text-gray-400 text-center py-8">
+                    No comments yet. Add the first comment above.
+                  </p>
                 )}
               </div>
             </div>
@@ -631,87 +609,60 @@ export default function ViewStory() {
           {/* Details Tab */}
           {activeTab === 'details' && (
             <div className="space-y-6">
-              <h3 className="text-lg font-semibold text-white">
-                Story Details
-              </h3>
-
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-4">
-                  <div>
-                    <label className="text-sm text-gray-400">Story ID</label>
-                    <p className="text-white font-mono text-sm">{story._id}</p>
-                  </div>
-
-                  <div>
-                    <label className="text-sm text-gray-400">
-                      API Calls Used
-                    </label>
-                    <p className="text-white">
-                      {story.apiCallsUsed} / {story.maxApiCalls}
-                    </p>
-                    <div className="w-full bg-gray-700 rounded-full h-2 mt-1">
-                      <div
-                        className="bg-blue-500 h-2 rounded-full"
-                        style={{
-                          width: `${Math.min((story.apiCallsUsed / story.maxApiCalls) * 100, 100)}%`,
-                        }}
-                      ></div>
+                <div className="bg-gray-700/30 rounded-lg p-4">
+                  <h4 className="text-white font-medium mb-3">Story Statistics</h4>
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <span className="text-gray-400">Total Words:</span>
+                      <span className="text-white">{story.totalWords}</span>
                     </div>
-                  </div>
-
-                  <div>
-                    <label className="text-sm text-gray-400">Total Words</label>
-                    <p className="text-white">{story.totalWords}</p>
-                  </div>
-
-                  <div>
-                    <label className="text-sm text-gray-400">Child Words</label>
-                    <p className="text-white">{story.childWords}</p>
+                    <div className="flex justify-between">
+                      <span className="text-gray-400">Child Words:</span>
+                      <span className="text-white">{story.childWords}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-400">AI Words:</span>
+                      <span className="text-white">{story.aiWords}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-400">Current Turn:</span>
+                      <span className="text-white">{story.currentTurn}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-400">API Calls Used:</span>
+                      <span className="text-white">{story.apiCallsUsed}/{story.maxApiCalls}</span>
+                    </div>
                   </div>
                 </div>
 
-                <div className="space-y-4">
-                  <div>
-                    <label className="text-sm text-gray-400">Created</label>
-                    <p className="text-white">
-                      {new Date(story.createdAt).toLocaleString()}
-                    </p>
-                  </div>
-
-                  <div>
-                    <label className="text-sm text-gray-400">
-                      Last Updated
-                    </label>
-                    <p className="text-white">
-                      {new Date(story.updatedAt).toLocaleString()}
-                    </p>
-                  </div>
-
-                  {story.completedAt && (
-                    <div>
-                      <label className="text-sm text-gray-400">Completed</label>
-                      <p className="text-white">
-                        {new Date(story.completedAt).toLocaleString()}
-                      </p>
+                <div className="bg-gray-700/30 rounded-lg p-4">
+                  <h4 className="text-white font-medium mb-3">Publication Status</h4>
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <span className="text-gray-400">Published:</span>
+                      <span className={story.isPublished ? 'text-green-400' : 'text-red-400'}>
+                        {story.isPublished ? 'Yes' : 'No'}
+                      </span>
                     </div>
-                  )}
-
-                  <div>
-                    <label className="text-sm text-gray-400">
-                      Publication Status
-                    </label>
-                    <p className="text-white">
-                      {story.isPublished ? 'Published' : 'Not Published'}
-                    </p>
-                  </div>
-
-                  <div>
-                    <label className="text-sm text-gray-400">Competition</label>
-                    <p className="text-white">
-                      {story.submittedToCompetition
-                        ? 'Submitted'
-                        : 'Not Submitted'}
-                    </p>
+                    <div className="flex justify-between">
+                      <span className="text-gray-400">Competition Entry:</span>
+                      <span className={story.submittedToCompetition ? 'text-green-400' : 'text-red-400'}>
+                        {story.submittedToCompetition ? 'Yes' : 'No'}
+                      </span>
+                    </div>
+                    {story.competitionScore && (
+                      <div className="flex justify-between">
+                        <span className="text-gray-400">Competition Score:</span>
+                        <span className="text-white">{story.competitionScore}</span>
+                      </div>
+                    )}
+                    {story.competitionRank && (
+                      <div className="flex justify-between">
+                        <span className="text-gray-400">Competition Rank:</span>
+                        <span className="text-white">#{story.competitionRank}</span>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

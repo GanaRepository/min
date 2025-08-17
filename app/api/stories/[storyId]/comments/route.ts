@@ -1,4 +1,4 @@
-//app/api/stories/[storyId]/comments/route.ts
+// app/api/stories/[storyId]/comments/route.ts - COMPLETE FIXED VERSION
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/utils/authOptions';
@@ -7,6 +7,7 @@ import StoryComment from '@/models/StoryComment';
 import StorySession from '@/models/StorySession';
 import MentorAssignment from '@/models/MentorAssignment';
 
+// POST method - Create comment (COMPLETED)
 export async function POST(
   request: Request,
   { params }: { params: { storyId: string } }
@@ -16,57 +17,77 @@ export async function POST(
 
     if (!session || !['admin', 'mentor'].includes(session.user.role)) {
       return NextResponse.json(
-        { error: 'Admin or Mentor access required' },
+        { error: 'Access denied. Admins and mentors only.' },
         { status: 403 }
       );
     }
 
     const { storyId } = params;
+    
+    // ✅ FIXED: Parse request body
     const body = await request.json();
-    const { comment, commentType, position, parentCommentId } = body;
+    const { content, commentType = 'general', category = 'general', isPublic = true } = body;
+
+    // ✅ FIXED: Validate content
+    if (!content || !content.trim()) {
+      return NextResponse.json(
+        { error: 'Comment content is required' },
+        { status: 400 }
+      );
+    }
 
     await connectToDatabase();
 
-    // Verify story exists
+    // ✅ FIXED: Verify story exists
     const story = await StorySession.findById(storyId);
     if (!story) {
-      return NextResponse.json({ error: 'Story not found' }, { status: 404 });
+      return NextResponse.json(
+        { error: 'Story not found' },
+        { status: 404 }
+      );
     }
 
-    // If mentor, verify they can access this child's story
-    if (session.user.role === 'mentor') {
+    // ✅ FIXED: Check access permissions
+    let hasAccess = false;
+    if (session.user.role === 'admin') {
+      hasAccess = true;
+    } else if (session.user.role === 'mentor') {
       const assignment = await MentorAssignment.findOne({
         mentorId: session.user.id,
         childId: story.childId,
         isActive: true,
       });
-
-      if (!assignment) {
-        return NextResponse.json(
-          { error: 'You are not assigned to this student' },
-          { status: 403 }
-        );
-      }
+      hasAccess = !!assignment;
     }
 
-    // Create comment
-    const newComment = await StoryComment.create({
+    if (!hasAccess) {
+      return NextResponse.json({ error: 'Access denied' }, { status: 403 });
+    }
+
+    // ✅ FIXED: Create the comment
+    const comment = new StoryComment({
       storyId,
       authorId: session.user.id,
       authorRole: session.user.role,
-      comment,
-      commentType: commentType || 'general',
-      position,
-      parentCommentId,
+      content: content.trim(),
+      commentType,
+      category,
+      isPublic,
     });
 
-    // Populate author info for response
-    await newComment.populate('authorId', 'firstName lastName email');
+    await comment.save();
+
+    // ✅ FIXED: Populate author info for response
+    await comment.populate('authorId', 'firstName lastName email role');
+
+    console.log('✅ Comment created successfully:', comment._id);
 
     return NextResponse.json({
       success: true,
-      comment: newComment,
+      comment,
+      message: 'Comment added successfully',
     });
+
   } catch (error) {
     console.error('Error adding comment:', error);
     return NextResponse.json(
@@ -76,6 +97,7 @@ export async function POST(
   }
 }
 
+// GET method - Fetch comments (existing code)
 export async function GET(
   request: Request,
   { params }: { params: { storyId: string } }
@@ -84,25 +106,19 @@ export async function GET(
     const session = await getServerSession(authOptions);
 
     if (!session) {
-      return NextResponse.json(
-        { error: 'Authentication required' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
     }
 
     const { storyId } = params;
-
     await connectToDatabase();
 
-    // Get story to verify access
+    // Verify story exists and check access
     const story = await StorySession.findById(storyId);
     if (!story) {
       return NextResponse.json({ error: 'Story not found' }, { status: 404 });
     }
 
-    // Check access permissions
     let hasAccess = false;
-
     if (session.user.role === 'admin') {
       hasAccess = true;
     } else if (session.user.role === 'mentor') {

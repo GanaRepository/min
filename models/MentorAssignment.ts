@@ -1,4 +1,5 @@
-// models/MentorAssignment.ts - FIXED VERSION
+// Update /models/MentorAssignment.ts to add unassign tracking fields
+
 import mongoose, { Schema, Document } from 'mongoose';
 
 export interface IMentorAssignment extends Document {
@@ -8,6 +9,8 @@ export interface IMentorAssignment extends Document {
   assignedBy: mongoose.Types.ObjectId;
   isActive: boolean;
   assignmentDate: Date;
+  unassignedDate?: Date; // ✅ NEW FIELD
+  unassignedBy?: mongoose.Types.ObjectId; // ✅ NEW FIELD
   createdAt: Date;
   updatedAt: Date;
 }
@@ -38,6 +41,13 @@ const MentorAssignmentSchema = new Schema<IMentorAssignment>({
   assignmentDate: {
     type: Date,
     default: Date.now,
+  },
+  unassignedDate: { // ✅ NEW FIELD
+    type: Date,
+  },
+  unassignedBy: { // ✅ NEW FIELD
+    type: Schema.Types.ObjectId,
+    ref: 'User',
   },
 }, {
   timestamps: true,
