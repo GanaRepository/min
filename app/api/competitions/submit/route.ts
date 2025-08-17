@@ -1,18 +1,17 @@
-// app/api/competitions/submit/route.ts - UPDATED FOR SIMPLIFIED COMPETITION ENTRIES (COMPLETE)
+// app/api/competitions/submit/route.ts - COMPLETE FIXED VERSION
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/utils/authOptions';
 import { connectToDatabase } from '@/utils/db';
-import { competitionManager } from '@/lib/competition-manager';
 import StorySession from '@/models/StorySession';
-import User from '@/models/User';
-import mongoose from 'mongoose';
 import Competition from '@/models/Competition';
-import { UsageManager } from '@/lib/usage-manager'; // ADD: Import simplified usage manager
+import User from '@/models/User';
+import { competitionManager } from '@/lib/competition-manager';
+import { UsageManager } from '@/lib/usage-manager';
+import mongoose from 'mongoose';
 
 export const dynamic = 'force-dynamic';
 
-// Type definitions for better type safety
 interface StoryDocument {
   _id: mongoose.Types.ObjectId;
   title: string;
@@ -27,8 +26,6 @@ interface StoryDocument {
     score?: number;
   }>;
   isUploadedForAssessment?: boolean;
-  createdAt: Date;
-  updatedAt: Date;
 }
 
 interface CompetitionDocument {
@@ -58,8 +55,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const body = await request.json();
-    const { storyId } = body;
+    const { storyId } = await request.json();
 
     if (!storyId || !mongoose.Types.ObjectId.isValid(storyId)) {
       return NextResponse.json(
@@ -68,20 +64,13 @@ export async function POST(request: Request) {
       );
     }
 
-    console.log('🏆 Processing competition submission:', storyId);
-
     await connectToDatabase();
 
-    // ADD: Check if user can enter competition using simplified system
+    // Check competition eligibility using simplified system
     const canEnter = await UsageManager.canEnterCompetition(session.user.id);
     if (!canEnter.allowed) {
-      console.log(`❌ Competition entry denied: ${canEnter.reason}`);
       return NextResponse.json(
-        {
-          error: canEnter.reason,
-          usage: canEnter.currentUsage,
-          limits: canEnter.limits
-        },
+        { error: canEnter.reason },
         { status: 403 }
       );
     }
@@ -92,19 +81,11 @@ export async function POST(request: Request) {
     if (!currentCompetition) {
       return NextResponse.json(
         { error: 'No active competition found' },
-        { status: 404 }
-      );
-    }
-
-    if (currentCompetition.phase !== 'submission') {
-      return NextResponse.json(
-        { error: 'Competition submission period has ended' },
         { status: 400 }
       );
     }
 
-    // Check if submission deadline has passed
-    if (currentCompetition.submissionEnd && new Date() > currentCompetition.submissionEnd) {
+    if (currentCompetition.phase !== 'submission') {
       return NextResponse.json(
         { error: 'Competition submission deadline has passed' },
         { status: 400 }
@@ -174,10 +155,10 @@ export async function POST(request: Request) {
       );
     }
 
-    // KEEP: Legacy check but it's now redundant since UsageManager handles this
+    // Legacy check (now redundant since UsageManager handles this)
     const user = await User.findById(session.user.id).lean() as UserDocument | null;
     const userEntriesThisMonth = user?.competitionEntriesThisMonth || 0;
-    const monthlyLimit = 3; // Always 3 per month
+    const monthlyLimit = 3;
 
     if (userEntriesThisMonth >= monthlyLimit) {
       return NextResponse.json(
@@ -206,19 +187,31 @@ export async function POST(request: Request) {
       }
     });
 
-    // Update user's monthly competition count
+    // Update user's monthly competition counter
     await User.findByIdAndUpdate(session.user.id, {
       $inc: {
         competitionEntriesThisMonth: 1
       }
     });
 
-    // Update competition stats
-    await Competition.findByIdAndUpdate(currentCompetition._id, {
-      $inc: { totalSubmissions: 1 }
+    // ✅ FIXED: Update competition stats
+    const userSubmissionsCount = await StorySession.countDocuments({
+      childId: session.user.id,
+      'competitionEntries.competitionId': currentCompetition._id
     });
 
-    // ADD: Increment competition entry in simplified system (logs only)
+    const isFirstSubmissionFromUser = userSubmissionsCount === 1;
+
+    await Competition.findByIdAndUpdate(currentCompetition._id, {
+      $inc: {
+        totalSubmissions: 1,
+        ...(isFirstSubmissionFromUser && { totalParticipants: 1 })
+      }
+    });
+
+    console.log(`📊 Updated competition: +1 submission${isFirstSubmissionFromUser ? ', +1 participant' : ''}`);
+
+    // Increment competition entry in simplified system
     await UsageManager.incrementCompetitionEntry(session.user.id);
 
     console.log(`✅ Story ${storyId} submitted to competition successfully`);
@@ -235,7 +228,6 @@ export async function POST(request: Request) {
         userEntriesUsed: userEntriesThisMonth + 1,
         userEntriesLimit: monthlyLimit
       },
-      // ADD: Include updated usage information
       usage: {
         competitionEntries: canEnter.currentUsage.competitionEntries + 1,
         limit: canEnter.limits.competitionEntries,
@@ -279,10 +271,7 @@ export async function GET(request: Request) {
 
     await connectToDatabase();
 
-    // ADD: Check competition eligibility using simplified system
     const canEnter = await UsageManager.canEnterCompetition(session.user.id);
-
-    // Get current competition
     const currentCompetition = await competitionManager.getCurrentCompetition() as CompetitionDocument | null;
 
     if (!currentCompetition) {
@@ -290,7 +279,6 @@ export async function GET(request: Request) {
         eligible: false,
         reason: 'No active competition found',
         competition: null,
-        // ADD: Include usage info even when no competition
         usage: canEnter.allowed ? {
           competitionEntries: canEnter.currentUsage.competitionEntries,
           limit: canEnter.limits.competitionEntries,
@@ -328,11 +316,9 @@ export async function GET(request: Request) {
       notAlreadySubmitted: !story.competitionEntries?.some(
         entry => entry.competitionId.toString() === currentCompetition._id.toString()
       ),
-      // ADD: Check using simplified system
       hasEntriesLeft: canEnter.allowed
     };
 
-    // Get user's current entries (keep for backward compatibility)
     const user = await User.findById(session.user.id).lean() as UserDocument | null;
     const userEntriesThisMonth = user?.competitionEntriesThisMonth || 0;
     const monthlyLimit = 3;
@@ -350,40 +336,25 @@ export async function GET(request: Request) {
 
     return NextResponse.json({
       eligible,
-      reason: eligible ? 'Story is eligible for submission' : reason,
+      reason: eligible ? null : reason,
       competition: {
-        _id: currentCompetition._id.toString(),
+        id: currentCompetition._id,
         month: currentCompetition.month,
         year: currentCompetition.year,
-        phase: currentCompetition.phase,
-        submissionEnd: currentCompetition.submissionEnd?.toISOString()
+        phase: currentCompetition.phase
       },
-      story: {
-        _id: story._id.toString(),
-        title: story.title,
-        status: story.status,
-        totalWords: story.totalWords,
-        competitionEligible: story.competitionEligible
-      },
-      userStats: {
-        entriesUsed: userEntriesThisMonth,
-        entriesLimit: monthlyLimit,
-        entriesLeft: monthlyLimit - userEntriesThisMonth
-      },
-      // ADD: Include simplified usage info
-      usage: {
+      usage: canEnter.allowed ? {
         competitionEntries: canEnter.currentUsage.competitionEntries,
         limit: canEnter.limits.competitionEntries,
         remaining: canEnter.limits.competitionEntries - canEnter.currentUsage.competitionEntries
-      },
-      checks
+      } : null
     });
 
   } catch (error) {
-    console.error('❌ Error checking competition eligibility:', error);
+    console.error('❌ Error checking submission eligibility:', error);
     return NextResponse.json(
       { 
-        error: 'Failed to check competition eligibility',
+        error: 'Failed to check submission eligibility',
         details: error instanceof Error ? error.message : 'Unknown error'
       },
       { status: 500 }
