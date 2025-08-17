@@ -244,13 +244,14 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
           assessmentsAdded: 15,
         },
       };
-    } else if (productType === 'individual_story') {
+    } else if (productType === 'individual_story' || productType === 'story_purchase') {
       purchaseData = {
-        type: 'individual_story' as const,
+        type: 'individual_story' as const, // Always save as 'individual_story' for schema compatibility
         amount: 10.00,
         itemDetails: {
           storyId: storyId ? new mongoose.Types.ObjectId(storyId) : undefined,
           storyTitle: storyTitle || 'Unknown Story',
+          ...(productType === 'story_purchase' ? { physicalBookInclusion: true } : {}),
         },
       };
     } else {
@@ -283,17 +284,14 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     // Handle specific product actions
     if (productType === 'story_pack') {
       console.log('📦 Story pack purchased: +5 stories, +15 assessments for user', userId);
-      
       // Update subscription tier
       await User.findByIdAndUpdate(userId, {
         subscriptionTier: 'STORY_PACK',
         billingPeriodStart: new Date(),
         billingPeriodEnd: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
       });
-
     } else if (productType === 'individual_story' && storyId) {
       console.log('📖 Individual story purchased for physical anthology:', storyId);
-      
       // Mark story for physical anthology
       await StorySession.findByIdAndUpdate(storyId, {
         physicalAnthology: {
@@ -302,6 +300,14 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
           stripeSessionId: session.id,
           amount: 10.00,
         },
+      });
+    } else if (productType === 'story_purchase' && storyId) {
+      console.log('📖 Physical book purchased for story:', storyId);
+      // Mark story as purchased for physical book
+      await StorySession.findByIdAndUpdate(storyId, {
+        purchasedForPhysicalBook: true,
+        physicalBookPurchaseDate: new Date(),
+        physicalBookStripeSessionId: session.id,
       });
     }
 

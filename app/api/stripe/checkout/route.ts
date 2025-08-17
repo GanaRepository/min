@@ -154,7 +154,7 @@
 // }
 
 
-// app/api/stripe/checkout/route.ts - COMPLETE WITH story_purchase CASE
+// app/api/stripe/checkout/route.ts - COMPLETE FIXED VERSION
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/utils/authOptions';
@@ -263,7 +263,6 @@ export async function POST(req: NextRequest) {
         metadata.storyTitle = story.title;
         break;
 
-      // 🔥 THE MISSING CASE - THIS IS WHY YOUR PURCHASE BUTTON WASN'T WORKING!
       case 'story_purchase':
         console.log('📦 Processing story_purchase case');
         
@@ -292,7 +291,11 @@ export async function POST(req: NextRequest) {
         }
 
         priceId = process.env.STRIPE_PURCHASE_PRICE_ID;
-        productName = `Physical Copy of "${purchaseStory.title}"`;
+        
+        // FIXED: Use generic product name instead of story-specific
+        productName = "Physical Anthology Spot";
+        
+        // Store the actual story details in metadata for processing
         metadata.storyId = storyId;
         metadata.storyTitle = purchaseStory.title;
         

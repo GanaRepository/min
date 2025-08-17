@@ -28,7 +28,7 @@ export interface IUser extends Document {
 
   // Purchase History - THE MISSING FIELD CAUSING ALL ERRORS
   purchaseHistory: Array<{
-    type: 'story_pack' | 'individual_story';
+    type: 'story_pack' | 'individual_story' | 'story_purchase';
     amount: number;
     stripePaymentId?: string;
     stripeSessionId?: string;
@@ -147,7 +147,7 @@ const UserSchema = new Schema<IUser>({
   purchaseHistory: [{
     type: {
       type: String,
-      enum: ['story_pack', 'individual_story'],
+      enum: ['story_pack', 'individual_story', 'story_purchase'],
       required: true,
     },
     amount: {
