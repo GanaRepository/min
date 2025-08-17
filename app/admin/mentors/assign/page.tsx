@@ -64,6 +64,8 @@ interface Assignment {
 }
 
 export default function AssignStudentsPage() {
+
+  // State declarations
   const { data: session, status } = useSession();
   const router = useRouter();
 
@@ -75,6 +77,8 @@ export default function AssignStudentsPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState<'all' | 'assigned' | 'unassigned'>('all');
   const [selectedMentor, setSelectedMentor] = useState('');
+  const [page, setPage] = useState(1);
+  const studentsPerPage = 6;
 
   useEffect(() => {
     if (status === 'loading') return;
@@ -200,6 +204,7 @@ export default function AssignStudentsPage() {
     }
   };
 
+  // Pagination logic (must come after all state declarations)
   const filteredStudents = students.filter((student) => {
     const matchesSearch = 
       student.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -213,6 +218,15 @@ export default function AssignStudentsPage() {
 
     return matchesSearch && matchesFilter;
   });
+  const totalPages = Math.ceil(filteredStudents.length / studentsPerPage);
+  const paginatedStudents = filteredStudents.slice((page - 1) * studentsPerPage, page * studentsPerPage);
+
+  // Reset page if filteredStudents shrinks below current page
+  useEffect(() => {
+    if (page > 1 && (page - 1) * studentsPerPage >= filteredStudents.length) {
+      setPage(Math.max(1, Math.ceil(filteredStudents.length / studentsPerPage)));
+    }
+  }, [filteredStudents.length, page]);
 
   if (loading) {
     return (
@@ -362,14 +376,15 @@ export default function AssignStudentsPage() {
           </h3>
           <div className="flex items-center space-x-2">
             <span className="text-sm text-gray-400">
-              Showing {filteredStudents.length} of {students.length} students
+              Showing {paginatedStudents.length} of {filteredStudents.length} students (Page {page} of {totalPages || 1})
             </span>
           </div>
         </div>
 
         {filteredStudents.length > 0 ? (
-          <div className="space-y-3 min-w-0 w-full">
-            {filteredStudents.map((student) => (
+          <>
+            <div className="space-y-3 min-w-0 w-full">
+              {paginatedStudents.map((student) => (
               <motion.div
                 key={student._id}
                 initial={{ opacity: 0, y: 10 }}
@@ -457,6 +472,25 @@ export default function AssignStudentsPage() {
               </motion.div>
             ))}
           </div>
+          {/* Pagination Controls */}
+          <div className="flex justify-center items-center gap-2 mt-6">
+            <button
+              className="px-3 py-1 bg-gray-700 text-white rounded disabled:opacity-50"
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              disabled={page === 1}
+            >
+              Previous
+            </button>
+            <span className="text-gray-300">Page {page} of {totalPages || 1}</span>
+            <button
+              className="px-3 py-1 bg-gray-700 text-white rounded disabled:opacity-50"
+              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+              disabled={page === totalPages || totalPages === 0}
+            >
+              Next
+            </button>
+          </div>
+          </>
         ) : (
           <div className="text-center py-12">
             <Users size={48} className="mx-auto text-gray-400 mb-4" />
