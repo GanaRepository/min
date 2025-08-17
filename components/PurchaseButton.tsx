@@ -112,7 +112,7 @@ import { useRouter } from 'next/navigation';
 import { CreditCard, Loader2, DollarSign, BookOpen } from 'lucide-react';
 
 interface PurchaseButtonProps {
-  productType: 'story_pack' | 'story_publication';
+  productType: 'story_pack'  | 'story_purchase';
   storyId?: string;
   className?: string;
   children?: React.ReactNode;
@@ -187,12 +187,14 @@ export default function PurchaseButton({
 
   const defaultText = {
     story_pack: 'Buy Story Pack - $15',
-    story_publication: 'Publish in Anthology - $10',
+    story_publication: 'Publish Story - FREE',
+    story_purchase: 'Buy Physical Copy - $10',
   };
 
   const defaultIcon = {
     story_pack: CreditCard,
     story_publication: variant === 'gradient' ? DollarSign : BookOpen,
+    story_purchase: CreditCard,
   };
 
   const Icon = defaultIcon[productType];
