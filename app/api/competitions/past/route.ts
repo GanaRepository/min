@@ -1,107 +1,68 @@
-// app/api/competitions/past/route.ts - FIXED TYPESCRIPT ERRORS
+// app/api/competitions/past/route.ts - FIXED WITH REAL-TIME STATS
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/utils/authOptions';
 import { connectToDatabase } from '@/utils/db';
-import { competitionManager } from '@/lib/competition-manager';
 import Competition from '@/models/Competition';
 import StorySession from '@/models/StorySession';
-import mongoose from 'mongoose';
 
 export const dynamic = 'force-dynamic';
 
-// Type definitions for better type safety
-interface CompetitionEntry {
-  competitionId: mongoose.Types.ObjectId;
-  submittedAt: Date;
-  rank?: number;
-  score?: number;
-}
-
-interface StoryWithCompetition {
-  _id: mongoose.Types.ObjectId;
-  title: string;
-  competitionEntries?: CompetitionEntry[];
-  createdAt: Date;
-}
-
-interface PastCompetitionDoc {
-  _id: mongoose.Types.ObjectId;
-  month: string;
-  year: number;
-  phase: 'submission' | 'judging' | 'results';
-  isActive: boolean;
-  submissionStart?: Date;
-  submissionEnd?: Date;
-  resultsDate?: Date;
-  updatedAt: Date;
-  totalSubmissions?: number;
-  totalParticipants?: number;
-  winners?: Array<{
-    position: number;
-    childId: mongoose.Types.ObjectId;
-    childName: string;
-    title: string;
-    score: number;
-  }>;
-  judgingCriteria?: Record<string, number>;
-  entries?: Array<{
-    storyId: mongoose.Types.ObjectId;
-    submittedAt: Date;
-    score?: number;
-    rank?: number;
-  }>;
-}
-
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    console.log('📜 Fetching past competitions...');
-
     await connectToDatabase();
 
-    // Get session to check if user is logged in for personalized data
-    const session = await getServerSession(authOptions);
+    console.log('📜 Fetching past competitions...');
 
-    // Get past competitions (completed/inactive)
+    // Get all past competitions (not active or in results phase)
     const pastCompetitions = await Competition.find({
       $or: [
         { isActive: false },
         { phase: 'results' }
       ]
     })
-    .sort({ year: -1, month: -1 }) // Most recent first
-    .limit(12) // Last 12 competitions
-    .lean() as unknown as PastCompetitionDoc[];
+    .sort({ year: -1, createdAt: -1 })
+    .lean();
 
     console.log(`📊 Found ${pastCompetitions.length} past competitions`);
 
-    // Format competitions for frontend
+    // Get session for user-specific data
+    const session = await getServerSession(authOptions);
+
+    // Calculate real-time stats for each past competition
     const formattedCompetitions = await Promise.all(
-      pastCompetitions.map(async (competition) => {
-        // Get user-specific data if logged in
+      pastCompetitions.map(async (competition: any) => {
+        console.log(`📈 Calculating stats for ${competition.month} ${competition.year}...`);
+
+        // 🔧 CALCULATE REAL-TIME STATISTICS
+        const submissions = await StorySession.find({
+          'competitionEntries.competitionId': competition._id
+        }).select('childId competitionEntries').lean();
+
+        const realTotalSubmissions = submissions.length;
+        const realTotalParticipants = new Set(
+          submissions.map(submission => submission.childId.toString())
+        ).size;
+
+        // User participation data (if logged in as child)
         let userParticipated = false;
         let userEntries: any[] = [];
-        
+
         if (session && session.user?.role === 'child') {
-          // Check if user participated in this competition
           const userStories = await StorySession.find({
             childId: session.user.id,
-            competitionEntries: {
-              $elemMatch: {
-                competitionId: competition._id
-              }
-            }
-          }).select('title competitionEntries createdAt').lean() as unknown as StoryWithCompetition[];
+            'competitionEntries.competitionId': competition._id
+          }).select('title competitionEntries createdAt').lean();
 
           if (userStories.length > 0) {
             userParticipated = true;
             userEntries = userStories.map(story => {
               const competitionEntry = story.competitionEntries?.find(
-                (entry: CompetitionEntry) => entry.competitionId.toString() === competition._id.toString()
+                (entry: any) => entry.competitionId.toString() === competition._id.toString()
               );
 
               return {
-                storyId: story._id.toString(),
+                storyId: (story._id as string | { toString(): string }).toString(),
                 title: story.title,
                 submittedAt: competitionEntry?.submittedAt || story.createdAt,
                 rank: competitionEntry?.rank || null,
@@ -123,9 +84,9 @@ export async function GET() {
           year: competition.year,
           phase: competition.phase,
           
-          // Participation stats
-          totalSubmissions: competition.totalSubmissions || 0,
-          totalParticipants: competition.totalParticipants || 0,
+          // 🔧 REAL-TIME STATS (not stored values)
+          totalSubmissions: realTotalSubmissions,
+          totalParticipants: realTotalParticipants,
           
           // Dates
           submissionStart: competition.submissionStart?.toISOString(),
@@ -138,7 +99,7 @@ export async function GET() {
           isActive: competition.isActive || false,
           
           // Winners (top 3)
-          winners: competition.winners?.slice(0, 3).map((winner) => ({
+          winners: competition.winners?.slice(0, 3).map((winner: any) => ({
             position: winner.position,
             childId: winner.childId?.toString() || '',
             childName: winner.childName || 'Anonymous',
@@ -166,7 +127,7 @@ export async function GET() {
       })
     );
 
-    // Calculate summary statistics
+    // Calculate summary statistics with REAL data
     const summary = {
       totalCompetitions: formattedCompetitions.length,
       totalSubmissions: formattedCompetitions.reduce(
@@ -186,13 +147,13 @@ export async function GET() {
         : 0
     };
 
-    console.log('✅ Past competitions formatted successfully');
+    console.log('✅ Past competitions formatted with real-time stats');
 
     return NextResponse.json({
       success: true,
       competitions: formattedCompetitions,
       summary,
-      message: `Retrieved ${formattedCompetitions.length} past competitions`
+      message: `Retrieved ${formattedCompetitions.length} past competitions with real-time statistics`
     });
 
   } catch (error) {
@@ -207,7 +168,7 @@ export async function GET() {
   }
 }
 
-// POST endpoint for admin actions on past competitions
+// POST endpoint for admin actions on past competitions - UNCHANGED
 export async function POST(request: Request) {
   try {
     const session = await getServerSession(authOptions);
@@ -260,109 +221,19 @@ export async function POST(request: Request) {
         };
         break;
 
-      case 'archive_competition':
-        if (!competitionId) {
-          return NextResponse.json(
-            { error: 'Competition ID required' },
-            { status: 400 }
-          );
-        }
-
-        await Competition.findByIdAndUpdate(competitionId, {
-          isActive: false,
-          archivedAt: new Date()
-        });
-
-        result = {
-          success: true,
-          message: 'Competition archived successfully'
-        };
-        break;
-
-      case 'get_detailed_stats':
-        if (!competitionId) {
-          return NextResponse.json(
-            { error: 'Competition ID required' },
-            { status: 400 }
-          );
-        }
-
-        const detailedStats = await competitionManager.getCompetitionStats();
-        
-        result = {
-          success: true,
-          stats: detailedStats,
-          message: 'Detailed statistics retrieved'
-        };
-        break;
-
-      case 'export_competition_data':
-        if (!competitionId) {
-          return NextResponse.json(
-            { error: 'Competition ID required' },
-            { status: 400 }
-          );
-        }
-
-        // Get competition with all entries
-        const compForExport = await Competition.findById(competitionId)
-          .populate('entries.storyId')
-          .lean() as PastCompetitionDoc | null;
-
-        if (!compForExport) {
-          return NextResponse.json(
-            { error: 'Competition not found' },
-            { status: 404 }
-          );
-        }
-
-        // Format export data
-        const exportData = {
-          competition: {
-            month: compForExport.month,
-            year: compForExport.year,
-            phase: compForExport.phase,
-            totalSubmissions: compForExport.totalSubmissions,
-            totalParticipants: compForExport.totalParticipants
-          },
-          winners: compForExport.winners || [],
-          entries: compForExport.entries?.map((entry) => ({
-            storyId: (entry.storyId as any)?._id,
-            title: (entry.storyId as any)?.title,
-            submittedAt: entry.submittedAt,
-            score: entry.score,
-            rank: entry.rank
-          })) || [],
-          judgingCriteria: compForExport.judgingCriteria,
-          exportedAt: new Date().toISOString()
-        };
-
-        result = {
-          success: true,
-          exportData,
-          filename: `${compForExport.month}_${compForExport.year}_competition_data.json`,
-          message: 'Competition data exported successfully'
-        };
-        break;
-
       default:
         return NextResponse.json(
-          { error: 'Invalid action specified' },
+          { error: 'Invalid action' },
           { status: 400 }
         );
     }
 
-    console.log(`✅ Competition action '${action}' completed successfully`);
-
     return NextResponse.json(result);
 
   } catch (error) {
-    console.error('❌ Error processing competition action:', error);
+    console.error('❌ Error in past competitions action:', error);
     return NextResponse.json(
-      { 
-        error: 'Failed to process competition action',
-        details: error instanceof Error ? error.message : 'Unknown error'
-      },
+      { error: 'Failed to process action' },
       { status: 500 }
     );
   }

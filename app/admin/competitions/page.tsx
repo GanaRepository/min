@@ -1,49 +1,56 @@
-// app/admin/competitions/page.tsx - COMPLETE FIXED VERSION
 'use client';
 
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import {
   Trophy,
   Users,
+  FileText,
   Calendar,
-  TrendingUp,
-  Eye,
-  Award,
-  Clock,
-  Play,
-  Pause,
-  RefreshCw,
   Crown,
   Medal,
-  Star,
-  ChevronRight,
-  AlertCircle,
+  TrendingUp,
+  Clock,
   CheckCircle,
-  Timer,
+  AlertCircle,
+  Play,
+  Eye,
+  Filter,
+  Search,
+  Download,
+  Plus,
+  BarChart3
 } from 'lucide-react';
 import { motion } from 'framer-motion';
+
+interface Winner {
+  position: number;
+  childId: string;
+  childName: string;
+  title: string;
+  score: number;
+  aiJudgingNotes?: string;
+}
 
 interface Competition {
   _id: string;
   month: string;
   year: number;
   phase: 'submission' | 'judging' | 'results';
+  isActive: boolean;
   totalSubmissions: number;
   totalParticipants: number;
-  isActive: boolean;
-  daysLeft?: number;
-  submissionDeadline?: string;
-  judgingDeadline?: string;
+  winners?: Winner[];
+  submissionStart?: string;
+  submissionEnd?: string;
+  judgingStart?: string;
+  judgingEnd?: string;
   resultsDate?: string;
-  winners?: Array<{
-    position: number;
-    childName: string;
-    title: string;
-    score: number;
-  }>;
+  createdAt: string;
+  updatedAt: string;
+  theme?: string;
+  judgingCriteria?: any;
 }
 
 interface CompetitionStats {
@@ -62,6 +69,10 @@ export default function AdminCompetitionsPage() {
   const [stats, setStats] = useState<CompetitionStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [advancingPhase, setAdvancingPhase] = useState(false);
+  const [selectedCompetition, setSelectedCompetition] = useState<Competition | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterPhase, setFilterPhase] = useState<string>('all');
+  const [sortBy, setSortBy] = useState<string>('newest');
 
   useEffect(() => {
     if (status === 'loading') return;
@@ -76,24 +87,21 @@ export default function AdminCompetitionsPage() {
     try {
       setLoading(true);
       
-      // Fetch current competition
-      const currentResponse = await fetch('/api/competitions/current');
+      // Use existing APIs
+      const [currentResponse, pastResponse] = await Promise.all([
+        fetch('/api/competitions/current'),
+        fetch('/api/competitions/past')
+      ]);
+      
       const currentData = await currentResponse.json();
-      
-      // Fetch past competitions
-      const pastResponse = await fetch('/api/competitions/past');
       const pastData = await pastResponse.json();
-      
-      // Fetch admin competitions data
-      const adminResponse = await fetch('/api/admin/competitions');
-      const adminData = await adminResponse.json();
 
       // Set current competition
       if (currentData.success && currentData.competition) {
         setCurrentCompetition(currentData.competition);
       }
 
-      // Combine all competitions
+      // Combine all competitions for admin view
       const allCompetitions = [];
       if (currentData.success && currentData.competition) {
         allCompetitions.push(currentData.competition);
@@ -104,7 +112,7 @@ export default function AdminCompetitionsPage() {
       
       setCompetitions(allCompetitions);
 
-      // Calculate stats
+      // Calculate stats from existing data
       const statsData = {
         totalCompetitions: allCompetitions.length,
         activeCompetitions: allCompetitions.filter(c => c.isActive).length,
@@ -113,36 +121,42 @@ export default function AdminCompetitionsPage() {
           ? Math.round(allCompetitions.reduce((sum, c) => sum + (c.totalParticipants || 0), 0) / allCompetitions.length)
           : 0,
       };
+
       setStats(statsData);
 
     } catch (error) {
-      console.error('Error fetching competitions data:', error);
+      console.error('Error fetching data:', error);
     } finally {
       setLoading(false);
     }
   };
 
-  const advancePhase = async () => {
-    if (!currentCompetition) return;
+  const handleAdvancePhase = async (competitionId: string) => {
+    if (!confirm('Are you sure you want to advance this competition to the next phase?')) {
+      return;
+    }
 
     try {
       setAdvancingPhase(true);
+      
+      // Use existing advance-phase API
       const response = await fetch('/api/admin/competitions/advance-phase', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ competitionId: currentCompetition._id }),
+        body: JSON.stringify({ competitionId })
       });
 
       const data = await response.json();
+      
       if (data.success) {
+        await fetchData(); // Refresh data
         alert(data.message);
-        fetchData(); // Refresh data
       } else {
         alert('Failed to advance phase: ' + data.error);
       }
     } catch (error) {
       console.error('Error advancing phase:', error);
-      alert('Failed to advance competition phase');
+      alert('Error advancing phase');
     } finally {
       setAdvancingPhase(false);
     }
@@ -150,301 +164,496 @@ export default function AdminCompetitionsPage() {
 
   const getPhaseColor = (phase: string) => {
     switch (phase) {
-      case 'submission':
-        return 'bg-blue-100 text-blue-800';
-      case 'judging':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'results':
-        return 'bg-green-100 text-green-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
+      case 'submission': return 'bg-green-100 text-green-800';
+      case 'judging': return 'bg-yellow-100 text-yellow-800';
+      case 'results': return 'bg-blue-100 text-blue-800';
+      default: return 'bg-gray-100 text-gray-800';
     }
   };
 
   const getPhaseIcon = (phase: string) => {
     switch (phase) {
-      case 'submission':
-        return <Clock size={16} />;
-      case 'judging':
-        return <Timer size={16} />;
-      case 'results':
-        return <Trophy size={16} />;
-      default:
-        return <AlertCircle size={16} />;
+      case 'submission': return <FileText className="w-4 h-4" />;
+      case 'judging': return <Clock className="w-4 h-4" />;
+      case 'results': return <Trophy className="w-4 h-4" />;
+      default: return <AlertCircle className="w-4 h-4" />;
     }
   };
 
+  // Filter and sort competitions
+  const filteredCompetitions = competitions
+    .filter(comp => {
+      const matchesSearch = comp.month.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           comp.year.toString().includes(searchTerm);
+      const matchesPhase = filterPhase === 'all' || comp.phase === filterPhase;
+      return matchesSearch && matchesPhase;
+    })
+    .sort((a, b) => {
+      switch (sortBy) {
+        case 'newest':
+          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+        case 'oldest':
+          return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+        case 'submissions':
+          return (b.totalSubmissions || 0) - (a.totalSubmissions || 0);
+        case 'participants':
+          return (b.totalParticipants || 0) - (a.totalParticipants || 0);
+        default:
+          return 0;
+      }
+    });
+
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-xl text-gray-400">Loading competitions...</div>
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin mb-4"></div>
+          <p className="text-purple-600 font-medium">Loading competitions...</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6 px-2 sm:px-4 md:px-8 lg:px-12 xl:px-20 py-4 sm:py-6 md:py-8">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50 p-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">
-            Competition Management
-          </h1>
-          <p className="text-gray-400">
-            Automated monthly competitions - view results and analytics
-          </p>
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="mb-8"
+      >
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-4xl font-bold text-gray-900 mb-2">
+              🏆 Competition Management
+            </h1>
+            <p className="text-gray-600">
+              Manage monthly storytelling competitions and track winners
+            </p>
+          </div>
+          <div className="flex space-x-3">
+            <button
+              onClick={() => window.location.reload()}
+              className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+            >
+              <Download className="w-4 h-4 mr-2 inline" />
+              Export Data
+            </button>
+          </div>
         </div>
-        <button
-          onClick={fetchData}
-          disabled={loading}
-          className="bg-gray-700 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition-colors flex items-center"
-        >
-          <RefreshCw size={16} className={`mr-2 ${loading ? 'animate-spin' : ''}`} />
-          Refresh
-        </button>
-      </div>
+      </motion.div>
 
       {/* Stats Cards */}
       {stats && (
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <div className="bg-gray-800 rounded-xl p-6">
-            <div className="flex items-center space-x-3">
-              <div className="bg-blue-600 p-3 rounded-lg">
-                <Trophy size={24} className="text-white" />
-              </div>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8"
+        >
+          <div className="bg-white rounded-xl p-6 shadow-lg border">
+            <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-400">Total Competitions</p>
-                <p className="text-2xl font-bold text-white">{stats.totalCompetitions}</p>
+                <p className="text-gray-500 text-sm">Total Competitions</p>
+                <p className="text-3xl font-bold text-gray-900">{stats.totalCompetitions}</p>
               </div>
+              <Trophy className="w-12 h-12 text-purple-500" />
             </div>
           </div>
 
-          <div className="bg-gray-800 rounded-xl p-6">
-            <div className="flex items-center space-x-3">
-              <div className="bg-green-600 p-3 rounded-lg">
-                <Users size={24} className="text-white" />
-              </div>
+          <div className="bg-white rounded-xl p-6 shadow-lg border">
+            <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-400">Total Submissions</p>
-                <p className="text-2xl font-bold text-white">{stats.totalSubmissions}</p>
+                <p className="text-gray-500 text-sm">Active Competitions</p>
+                <p className="text-3xl font-bold text-green-600">{stats.activeCompetitions}</p>
               </div>
+              <Clock className="w-12 h-12 text-green-500" />
             </div>
           </div>
 
-          <div className="bg-gray-800 rounded-xl p-6">
-            <div className="flex items-center space-x-3">
-              <div className="bg-purple-600 p-3 rounded-lg">
-                <Star size={24} className="text-white" />
-              </div>
+          <div className="bg-white rounded-xl p-6 shadow-lg border">
+            <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-400">Active Competitions</p>
-                <p className="text-2xl font-bold text-white">{stats.activeCompetitions}</p>
+                <p className="text-gray-500 text-sm">Total Submissions</p>
+                <p className="text-3xl font-bold text-blue-600">{stats.totalSubmissions}</p>
               </div>
+              <FileText className="w-12 h-12 text-blue-500" />
             </div>
           </div>
 
-          <div className="bg-gray-800 rounded-xl p-6">
-            <div className="flex items-center space-x-3">
-              <div className="bg-orange-600 p-3 rounded-lg">
-                <TrendingUp size={24} className="text-white" />
-              </div>
+          <div className="bg-white rounded-xl p-6 shadow-lg border">
+            <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-400">Avg Participants</p>
-                <p className="text-2xl font-bold text-white">{stats.avgParticipants}</p>
+                <p className="text-gray-500 text-sm">Avg Participants</p>
+                <p className="text-3xl font-bold text-orange-600">{stats.avgParticipants}</p>
               </div>
+              <Users className="w-12 h-12 text-orange-500" />
             </div>
           </div>
-        </div>
+        </motion.div>
       )}
 
-      {/* Current Competition Status */}
-      {currentCompetition ? (
-        <div className="bg-gray-800 rounded-xl p-6">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-semibold text-white">Current Competition</h2>
-            <div className="flex items-center space-x-3">
-              <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getPhaseColor(currentCompetition.phase)}`}>
-                {getPhaseIcon(currentCompetition.phase)}
-                <span className="ml-1">{currentCompetition.phase.toUpperCase()}</span>
-              </span>
-              {currentCompetition.phase !== 'results' && (
-                <button
-                  onClick={advancePhase}
-                  disabled={advancingPhase}
-                  className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center disabled:opacity-50"
-                >
-                  <Play size={16} className="mr-2" />
-                  {advancingPhase ? 'Advancing...' : 'Advance Phase'}
-                </button>
-              )}
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <div className="bg-blue-900/20 border border-blue-500/30 rounded-lg p-4">
-              <div className="flex items-center space-x-2 mb-2">
-                <Calendar className="text-blue-400" size={20} />
-                <span className="text-blue-400 font-medium">Period</span>
+      {/* Current Competition Highlight */}
+      {currentCompetition && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl p-6 mb-8 text-white"
+        >
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-2xl font-bold mb-2">
+                Current Competition: {currentCompetition.month} {currentCompetition.year}
+              </h2>
+              <div className="flex items-center space-x-4 text-purple-100">
+                <span className="flex items-center">
+                  <Users className="w-4 h-4 mr-1" />
+                  {currentCompetition.totalParticipants || 0} participants
+                </span>
+                <span className="flex items-center">
+                  <FileText className="w-4 h-4 mr-1" />
+                  {currentCompetition.totalSubmissions || 0} submissions
+                </span>
+                <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                  currentCompetition.phase === 'submission' ? 'bg-green-500/20 text-green-100' :
+                  currentCompetition.phase === 'judging' ? 'bg-yellow-500/20 text-yellow-100' :
+                  'bg-blue-500/20 text-blue-100'
+                }`}>
+                  {getPhaseIcon(currentCompetition.phase)}
+                  <span className="ml-1 capitalize">{currentCompetition.phase}</span>
+                </span>
               </div>
-              <p className="text-white text-lg font-semibold">
-                {currentCompetition.month} {currentCompetition.year}
-              </p>
             </div>
-
-            <div className="bg-green-900/20 border border-green-500/30 rounded-lg p-4">
-              <div className="flex items-center space-x-2 mb-2">
-                <Users className="text-green-400" size={20} />
-                <span className="text-green-400 font-medium">Submissions</span>
-              </div>
-              <p className="text-white text-lg font-semibold">
-                {currentCompetition.totalSubmissions || 0}
-              </p>
-            </div>
-
-            <div className="bg-purple-900/20 border border-purple-500/30 rounded-lg p-4">
-              <div className="flex items-center space-x-2 mb-2">
-                <Trophy className="text-purple-400" size={20} />
-                <span className="text-purple-400 font-medium">Participants</span>
-              </div>
-              <p className="text-white text-lg font-semibold">
-                {currentCompetition.totalParticipants || 0}
-              </p>
-            </div>
-
-            <div className="bg-orange-900/20 border border-orange-500/30 rounded-lg p-4">
-              <div className="flex items-center space-x-2 mb-2">
-                <Clock className="text-orange-400" size={20} />
-                <span className="text-orange-400 font-medium">Days Left</span>
-              </div>
-              <p className="text-white text-lg font-semibold">
-                {currentCompetition.daysLeft || 0}
-              </p>
-            </div>
-          </div>
-
-          {/* Winners Section (if results phase) */}
-          {currentCompetition.phase === 'results' && currentCompetition.winners && currentCompetition.winners.length > 0 && (
-            <div className="mt-6 pt-6 border-t border-gray-700">
-              <h3 className="text-lg font-semibold text-white mb-4">Competition Winners</h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {currentCompetition.winners.slice(0, 3).map((winner, index) => (
-                  <div key={index} className="bg-gray-700/50 rounded-lg p-4">
-                    <div className="flex items-center space-x-3">
-                      <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                        index === 0 ? 'bg-yellow-500' : index === 1 ? 'bg-gray-400' : 'bg-orange-500'
-                      }`}>
-                        {index === 0 ? <Crown size={20} className="text-white" /> : 
-                         index === 1 ? <Medal size={20} className="text-white" /> :
-                         <Award size={20} className="text-white" />}
-                      </div>
-                      <div>
-                        <p className="text-white font-medium">{winner.childName}</p>
-                        <p className="text-gray-400 text-sm">"{winner.title}"</p>
-                        <p className="text-blue-400 text-sm">Score: {winner.score}</p>
-                      </div>
-                    </div>
+            {currentCompetition.phase !== 'results' && (
+              <button
+                onClick={() => handleAdvancePhase(currentCompetition._id)}
+                disabled={advancingPhase}
+                className="px-6 py-3 bg-white/20 hover:bg-white/30 rounded-lg font-medium transition-colors disabled:opacity-50"
+              >
+                {advancingPhase ? (
+                  <div className="flex items-center">
+                    <div className="w-4 h-4 border-2 border-white/50 border-t-white rounded-full animate-spin mr-2"></div>
+                    Advancing...
                   </div>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-      ) : (
-        <div className="bg-gray-800 rounded-xl p-6">
-          <div className="text-center py-8">
-            <AlertCircle size={48} className="mx-auto text-gray-400 mb-4" />
-            <h3 className="text-xl text-gray-400 mb-2">No Active Competition</h3>
-            <p className="text-gray-500">
-              No competition is currently running. A new one will start automatically.
-            </p>
+                ) : (
+                  <div className="flex items-center">
+                    <Play className="w-4 h-4 mr-2" />
+                    Advance to {currentCompetition.phase === 'submission' ? 'Judging' : 'Results'}
+                  </div>
+                )}
+              </button>
+            )}
           </div>
-        </div>
+        </motion.div>
       )}
 
-      {/* Past Competitions */}
-      <div className="bg-gray-800 rounded-xl p-6">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-semibold text-white">Competition History</h2>
-          <span className="text-sm text-gray-400">
-            {competitions.length} total competitions
-          </span>
-        </div>
+      {/* Filters and Search */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="bg-white rounded-xl p-6 shadow-lg border mb-8"
+      >
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Search</label>
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Search competitions..."
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              />
+            </div>
+          </div>
 
-        {competitions.length > 0 ? (
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-gray-700">
-                  <th className="text-left py-3 px-4 text-gray-400 font-medium">Period</th>
-                  <th className="text-left py-3 px-4 text-gray-400 font-medium">Phase</th>
-                  <th className="text-left py-3 px-4 text-gray-400 font-medium">Submissions</th>
-                  <th className="text-left py-3 px-4 text-gray-400 font-medium">Participants</th>
-                  <th className="text-left py-3 px-4 text-gray-400 font-medium">Winner</th>
-                  <th className="text-left py-3 px-4 text-gray-400 font-medium">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {competitions.map((competition, index) => (
-                  <motion.tr
-                    key={competition._id}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                    className="border-b border-gray-700/50 hover:bg-gray-700/20 transition-colors"
-                  >
-                    <td className="py-3 px-4">
-                      <div className="flex items-center space-x-2">
-                        <span className="text-white font-medium">
-                          {competition.month} {competition.year}
-                        </span>
-                        {competition.isActive && (
-                          <span className="bg-green-500 w-2 h-2 rounded-full"></span>
-                        )}
-                      </div>
-                    </td>
-                    <td className="py-3 px-4">
-                      <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getPhaseColor(competition.phase)}`}>
-                        {getPhaseIcon(competition.phase)}
-                        <span className="ml-1">{competition.phase}</span>
-                      </span>
-                    </td>
-                    <td className="py-3 px-4 text-white">
-                      {competition.totalSubmissions || 0}
-                    </td>
-                    <td className="py-3 px-4 text-white">
-                      {competition.totalParticipants || 0}
-                    </td>
-                    <td className="py-3 px-4">
-                      {competition.winners && competition.winners.length > 0 ? (
-                        <span className="text-yellow-400">
-                          {competition.winners[0].childName}
-                        </span>
-                      ) : (
-                        <span className="text-gray-500">-</span>
-                      )}
-                    </td>
-                    <td className="py-3 px-4">
-                      <Link href={`/admin/competitions/${competition._id}`}>
-                        <button className="text-blue-400 hover:text-blue-300 p-1 rounded">
-                          <Eye size={16} />
-                        </button>
-                      </Link>
-                    </td>
-                  </motion.tr>
-                ))}
-              </tbody>
-            </table>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Phase</label>
+            <select
+              value={filterPhase}
+              onChange={(e) => setFilterPhase(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+            >
+              <option value="all">All Phases</option>
+              <option value="submission">Submission</option>
+              <option value="judging">Judging</option>
+              <option value="results">Results</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Sort By</label>
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+            >
+              <option value="newest">Newest First</option>
+              <option value="oldest">Oldest First</option>
+              <option value="submissions">Most Submissions</option>
+              <option value="participants">Most Participants</option>
+            </select>
+          </div>
+
+          <div className="flex items-end">
+            <button
+              onClick={() => {
+                setSearchTerm('');
+                setFilterPhase('all');
+                setSortBy('newest');
+              }}
+              className="w-full px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+            >
+              Clear Filters
+            </button>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Competitions List */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="space-y-6"
+      >
+        {filteredCompetitions.length === 0 ? (
+          <div className="bg-white rounded-xl p-12 shadow-lg border text-center">
+            <Trophy className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+            <h3 className="text-xl font-semibold text-gray-600 mb-2">No competitions found</h3>
+            <p className="text-gray-500">Try adjusting your search or filter criteria</p>
           </div>
         ) : (
-          <div className="text-center py-8">
-            <Trophy size={48} className="mx-auto text-gray-400 mb-4" />
-            <h3 className="text-xl text-gray-400 mb-2">No Competitions Yet</h3>
-            <p className="text-gray-500">
-              Competitions will appear here once they are created.
-            </p>
-          </div>
+          filteredCompetitions.map((competition, index) => (
+            <motion.div
+              key={competition._id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
+              className="bg-white rounded-xl p-6 shadow-lg border hover:shadow-xl transition-all duration-300"
+            >
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center space-x-4">
+                  <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center text-white font-bold text-lg">
+                    {competition.month.substring(0, 3)}
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-900">
+                      {competition.month} {competition.year}
+                    </h3>
+                    <p className="text-gray-500">
+                      {competition.theme || 'Monthly Storytelling Competition'}
+                    </p>
+                  </div>
+                </div>
+                
+                <div className="flex items-center space-x-3">
+                  <span className={`px-3 py-1 rounded-full text-sm font-medium ${getPhaseColor(competition.phase)}`}>
+                    {getPhaseIcon(competition.phase)}
+                    <span className="ml-1 capitalize">{competition.phase}</span>
+                  </span>
+                  {competition.isActive && (
+                    <span className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">
+                      Active
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                <div className="text-center">
+                  <p className="text-2xl font-bold text-purple-600">{competition.totalParticipants || 0}</p>
+                  <p className="text-sm text-gray-500">Participants</p>
+                </div>
+                <div className="text-center">
+                  <p className="text-2xl font-bold text-blue-600">{competition.totalSubmissions || 0}</p>
+                  <p className="text-sm text-gray-500">Submissions</p>
+                </div>
+                <div className="text-center">
+                  <p className="text-2xl font-bold text-green-600">{competition.winners?.length || 0}</p>
+                  <p className="text-sm text-gray-500">Winners</p>
+                </div>
+                <div className="text-center">
+                  <p className="text-2xl font-bold text-orange-600">
+                    {competition.resultsDate ? new Date(competition.resultsDate).toLocaleDateString() : 'TBD'}
+                  </p>
+                  <p className="text-sm text-gray-500">Results Date</p>
+                </div>
+              </div>
+
+              {/* Winners Section */}
+              {competition.winners && competition.winners.length > 0 && (
+                <div className="border-t pt-4">
+                  <h4 className="font-semibold text-gray-900 mb-3 flex items-center">
+                    <Medal className="w-4 h-4 mr-2 text-yellow-500" />
+                    Winners
+                  </h4>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    {competition.winners.slice(0, 3).map((winner) => (
+                      <div
+                        key={winner.position}
+                        className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg"
+                      >
+                        <div className="flex-shrink-0">
+                          {winner.position === 1 && <span className="text-2xl">🥇</span>}
+                          {winner.position === 2 && <span className="text-2xl">🥈</span>}
+                          {winner.position === 3 && <span className="text-2xl">🥉</span>}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-medium text-gray-900 truncate">{winner.childName}</p>
+                          <p className="text-sm text-gray-500 truncate">{winner.title}</p>
+                          {winner.score && (
+                            <p className="text-xs text-purple-600 font-medium">Score: {winner.score}/100</p>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Action Buttons */}
+              <div className="flex items-center justify-between pt-4 border-t">
+                <div className="text-sm text-gray-500">
+                  Created: {new Date(competition.createdAt).toLocaleDateString()}
+                </div>
+                <div className="flex space-x-2">
+                  <button
+                    onClick={() => setSelectedCompetition(competition)}
+                    className="px-4 py-2 bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 transition-colors"
+                  >
+                    <Eye className="w-4 h-4 mr-1 inline" />
+                    View Details
+                  </button>
+                  {competition.isActive && competition.phase !== 'results' && (
+                    <button
+                      onClick={() => handleAdvancePhase(competition._id)}
+                      disabled={advancingPhase}
+                      className="px-4 py-2 bg-green-100 text-green-700 rounded-lg hover:bg-green-200 transition-colors disabled:opacity-50"
+                    >
+                      <Play className="w-4 h-4 mr-1 inline" />
+                      Advance Phase
+                    </button>
+                  )}
+                </div>
+              </div>
+            </motion.div>
+          ))
         )}
-      </div>
+      </motion.div>
+
+      {/* Competition Details Modal */}
+      {selectedCompetition && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto"
+          >
+            <div className="p-6 border-b">
+              <div className="flex items-center justify-between">
+                <h2 className="text-2xl font-bold text-gray-900">
+                  {selectedCompetition.month} {selectedCompetition.year} Competition Details
+                </h2>
+                <button
+                  onClick={() => setSelectedCompetition(null)}
+                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                >
+                  ✕
+                </button>
+              </div>
+            </div>
+            
+            <div className="p-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Competition Info */}
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-3">Competition Information</h3>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">Phase:</span>
+                      <span className={`px-2 py-1 rounded text-xs font-medium ${getPhaseColor(selectedCompetition.phase)}`}>
+                        {selectedCompetition.phase}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">Status:</span>
+                      <span className={`px-2 py-1 rounded text-xs font-medium ${
+                        selectedCompetition.isActive ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                      }`}>
+                        {selectedCompetition.isActive ? 'Active' : 'Inactive'}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">Participants:</span>
+                      <span className="font-medium">{selectedCompetition.totalParticipants || 0}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">Submissions:</span>
+                      <span className="font-medium">{selectedCompetition.totalSubmissions || 0}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">Created:</span>
+                      <span className="font-medium">{new Date(selectedCompetition.createdAt).toLocaleDateString()}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Judging Criteria */}
+                {selectedCompetition.judgingCriteria && (
+                  <div>
+                    <h3 className="font-semibold text-gray-900 mb-3">Judging Criteria</h3>
+                    <div className="space-y-2 text-sm">
+                      {Object.entries(selectedCompetition.judgingCriteria).map(([key, value]) => (
+                        <div key={key} className="flex justify-between">
+                          <span className="text-gray-500 capitalize">{key.replace(/([A-Z])/g, ' $1')}:</span>
+                          <span className="font-medium">{String(value)} points</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Winners Details */}
+              {selectedCompetition.winners && selectedCompetition.winners.length > 0 && (
+                <div className="mt-6">
+                  <h3 className="font-semibold text-gray-900 mb-4">Competition Winners</h3>
+                  <div className="space-y-3">
+                    {selectedCompetition.winners.map((winner) => (
+                      <div key={winner.position} className="p-4 bg-gray-50 rounded-lg">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-3">
+                            <div className="text-2xl">
+                              {winner.position === 1 && '🥇'}
+                              {winner.position === 2 && '🥈'}
+                              {winner.position === 3 && '🥉'}
+                            </div>
+                            <div>
+                              <p className="font-medium text-gray-900">{winner.childName}</p>
+                              <p className="text-sm text-gray-600">{winner.title}</p>
+                            </div>
+                          </div>
+                          {winner.score && (
+                            <div className="text-right">
+                              <p className="text-lg font-bold text-purple-600">{winner.score}/100</p>
+                              <p className="text-xs text-gray-500">Final Score</p>
+                            </div>
+                          )}
+                        </div>
+                        {winner.aiJudgingNotes && (
+                          <div className="mt-3 p-3 bg-white rounded border-l-4 border-purple-500">
+                            <p className="text-sm text-gray-700">{winner.aiJudgingNotes}</p>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </motion.div>
+        </div>
+      )}
     </div>
   );
 }
