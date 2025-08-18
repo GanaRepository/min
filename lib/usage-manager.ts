@@ -27,6 +27,13 @@ export interface UsageCheckResult {
 export class UsageManager {
 
   /**
+   * Alias for backward compatibility
+   */
+  static async canCreateFreestyleStory(userId: string): Promise<UsageCheckResult> {
+    return this.canCreateStory(userId);
+  }
+
+  /**
    * Check if user can publish a story (1 per month, by publishedAt)
    */
   static async canPublishStory(userId: string): Promise<UsageCheckResult> {

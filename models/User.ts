@@ -45,14 +45,14 @@ export interface IUser extends Document {
 
 
   // Monthly Limits (for stacking purchases)
-  monthlyLimits?: {
+  monthlyLimits: {
     freestyleStories: number;
     assessmentRequests: number;
     competitionEntries: number;
   };
 
   // Monthly reset tracking
-  currentMonth?: string;
+  currentMonth: string;
 
   // User Preferences
   preferences: {
