@@ -1,4 +1,479 @@
-// lib/usage-manager.ts - FIXED VERSION (Remove unused import)
+// // lib/usage-manager.ts - FIXED VERSION (Remove unused import)
+// import { connectToDatabase } from '@/utils/db';
+// import User from '@/models/User';
+// import StorySession from '@/models/StorySession';
+// import { USAGE_LIMITS } from '@/config/limits';
+
+// export interface UsageStats {
+//   freestyleStories: { used: number; limit: number; remaining: number; canUse: boolean };
+//   assessmentRequests: { used: number; limit: number; remaining: number; canUse: boolean };
+//   competitionEntries: { used: number; limit: number; remaining: number; canUse: boolean };
+//   subscriptionTier: 'FREE' | 'STORY_PACK';
+//   resetDate: string;
+//   resetInfo?: {
+//     performed: boolean;
+//     message: string;
+//   };
+// }
+
+// export interface UsageCheckResult {
+//   allowed: boolean;
+//   reason?: string;
+//   upgradeRequired?: boolean;
+//   currentUsage?: any;
+//   limits?: any;
+// }
+
+// export class UsageManager {
+
+//   /**
+//    * Alias for backward compatibility
+//    */
+//   static async canCreateFreestyleStory(userId: string): Promise<UsageCheckResult> {
+//     return this.canCreateStory(userId);
+//   }
+
+//   /**
+//    * Check if user can publish a story (1 per month, by publishedAt)
+//    */
+//   static async canPublishStory(userId: string): Promise<UsageCheckResult> {
+//     try {
+//       await connectToDatabase();
+
+//       const now = new Date();
+//       const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+//       const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
+
+//       // Check publishedAt field instead of publicationDate
+//       const publishedCount = await StorySession.countDocuments({
+//         childId: userId,
+//         isPublished: true,
+//         publishedAt: { $gte: startOfMonth, $lte: endOfMonth }
+//       });
+
+//       const canPublish = publishedCount < 1;
+
+//       return {
+//         allowed: canPublish,
+//         reason: canPublish ? undefined : 'You can only publish 1 story per month for free. Limit resets next month.',
+//         currentUsage: { publications: publishedCount },
+//         limits: { publications: 1 }
+//       };
+//     } catch (error) {
+//       console.error('❌ Error checking publication usage:', error);
+//       return { allowed: false, reason: 'Failed to check publication limits' };
+//     }
+//   }
+
+//   /**
+//    * Get current month's usage for a user
+//    */
+//   static async getCurrentUsage(userId: string): Promise<{
+//     freestyleStories: number;
+//     assessmentRequests: number;
+//     competitionEntries: number;
+//   }> {
+//     await connectToDatabase();
+    
+//     const now = new Date();
+//     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+//     const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
+
+//     // Get all stories for current month
+//     const stories = await StorySession.find({
+//       childId: userId,
+//       createdAt: { $gte: startOfMonth, $lte: endOfMonth }
+//     }).lean();
+
+//     // Count freestyle stories (collaborative AI stories, not uploaded for assessment, not competition)
+//     const freestyleStories = stories.filter(s => 
+//       !s.isUploadedForAssessment && 
+//       (!s.competitionEntries || s.competitionEntries.length === 0)
+//     ).length;
+
+//     // Count assessment requests (uploaded stories + assessment attempts)
+//     const assessmentRequests = stories.reduce((sum, story) => {
+//       if (story.isUploadedForAssessment || story.assessment) {
+//         return sum + (story.assessmentAttempts || 1);
+//       }
+//       return sum;
+//     }, 0);
+
+//     // Count competition entries
+//     const competitionEntries = stories.filter(s => 
+//       s.competitionEntries && s.competitionEntries.length > 0
+//     ).length;
+
+//     return {
+//       freestyleStories,
+//       assessmentRequests,
+//       competitionEntries,
+//     };
+//   }
+
+//   /**
+//    * Get user's current limits (including purchases) - FIXED VERSION
+//    */
+//   static async getUserLimits(userId: string): Promise<{
+//     freestyleStories: number;
+//     assessmentRequests: number;
+//     competitionEntries: number;
+//   }> {
+//     await connectToDatabase();
+    
+//     const now = new Date();
+//     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+//     const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
+
+//     // Get user and check purchaseHistory instead of UserPurchase collection
+//     const user = await User.findById(userId);
+    
+//         if (user?.monthlyLimits) {
+//           return {
+//             freestyleStories: user.monthlyLimits.freestyleStories,
+//             assessmentRequests: user.monthlyLimits.assessmentRequests,
+//             competitionEntries: user.monthlyLimits.competitionEntries,
+//           };
+//         }
+//         if (!user || !user.purchaseHistory) {
+//           return {
+//             freestyleStories: 3,
+//             assessmentRequests: 9,
+//             competitionEntries: 3,
+//           };
+//         }
+
+//     // Filter story pack purchases from this month
+//     const storyPackPurchases = user.purchaseHistory.filter((purchase: any) => 
+//       purchase.type === 'story_pack' && 
+//       new Date(purchase.purchaseDate) >= startOfMonth && 
+//       new Date(purchase.purchaseDate) <= endOfMonth
+//     );
+
+//     const totalStoryPacks = storyPackPurchases.length;
+
+//     return {
+//       freestyleStories: 3 + (totalStoryPacks * 5),  // 3 base + 5 per pack
+//       assessmentRequests: 9 + (totalStoryPacks * 15), // 9 base + 15 per pack  
+//       competitionEntries: 3, // Always 3, no upgrades
+//     };
+//   }
+
+//   /**
+//    * Check if user can create freestyle story
+//    */
+//   static async canCreateStory(userId: string): Promise<UsageCheckResult> {
+//     try {
+//       await connectToDatabase();
+
+//       const now = new Date();
+//       const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+//       const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
+
+//       // Get limits
+//       const limits = await this.getUserLimits(userId);
+//       const freestyleLimit = limits.freestyleStories;
+
+//       // Count freestyle stories this month with CORRECT query
+//       const freestyleCount = await StorySession.countDocuments({
+//         childId: userId,
+//         createdAt: { $gte: startOfMonth, $lte: endOfMonth },
+//         isUploadedForAssessment: { $ne: true },
+//         $or: [
+//           { competitionEntries: { $exists: false } },
+//           { competitionEntries: { $size: 0 } }
+//         ]
+//       });
+
+//       const canUse = freestyleCount < freestyleLimit;
+
+//       return {
+//         allowed: canUse,
+//         reason: canUse 
+//           ? undefined 
+//           : `Freestyle story limit reached (${freestyleCount}/${freestyleLimit}). Upgrade to get 5 more stories.`,
+//         upgradeRequired: !canUse,
+//         currentUsage: { freestyleStories: freestyleCount },
+//         limits: { freestyleStories: freestyleLimit }
+//       };
+
+//     } catch (error) {
+//       console.error('❌ Error checking freestyle usage:', error);
+//       return { allowed: false, reason: 'Failed to check usage limits' };
+//     }
+//   }
+
+//   /**
+//    * Check if user can request assessment
+//    */
+//   static async canRequestAssessment(userId: string): Promise<UsageCheckResult> {
+//     try {
+//       await connectToDatabase();
+
+//       const now = new Date();
+//       const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+//       const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
+
+//       // Get limits
+//       const limits = await this.getUserLimits(userId);
+//       const assessmentLimit = limits.assessmentRequests;
+
+//       // Count assessment requests this month
+//       const assessmentStats = await StorySession.aggregate([
+//         {
+//           $match: {
+//             childId: userId,
+//             createdAt: { $gte: startOfMonth, $lte: endOfMonth },
+//             $or: [
+//               { isUploadedForAssessment: true },
+//               { assessment: { $exists: true } }
+//             ]
+//           }
+//         },
+//         {
+//           $group: {
+//             _id: null,
+//             totalAttempts: { $sum: { $ifNull: ['$assessmentAttempts', 1] } }
+//           }
+//         }
+//       ]);
+
+//       const assessmentUsed = assessmentStats[0]?.totalAttempts || 0;
+//       const canUse = assessmentUsed < assessmentLimit;
+
+//       return {
+//         allowed: canUse,
+//         reason: canUse 
+//           ? undefined 
+//           : `Assessment requests exhausted (${assessmentUsed}/${assessmentLimit}). Upgrade for 15 more assessments.`,
+//         upgradeRequired: !canUse,
+//         currentUsage: { assessmentRequests: assessmentUsed },
+//         limits: { assessmentRequests: assessmentLimit }
+//       };
+
+//     } catch (error) {
+//       console.error('❌ Error checking assessment usage:', error);
+//       return { allowed: false, reason: 'Failed to check usage limits' };
+//     }
+//   }
+
+//   /**
+//    * Check if user can enter competitions
+//    */
+//   static async canEnterCompetition(userId: string): Promise<UsageCheckResult> {
+//     try {
+//       await connectToDatabase();
+
+//       const now = new Date();
+//       const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+//       const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
+
+//       // Competition limit is ALWAYS 3 (no upgrades)
+//       const competitionLimit = USAGE_LIMITS.FREE.competitionEntries; // 3
+
+//       // Count competition entries with CORRECT query
+//       const competitionCount = await StorySession.countDocuments({
+//         childId: userId,
+//         createdAt: { $gte: startOfMonth, $lte: endOfMonth },
+//         competitionEntries: { $exists: true, $not: { $size: 0 } }
+//       });
+
+//       const canUse = competitionCount < competitionLimit;
+
+//       return {
+//         allowed: canUse,
+//         reason: canUse ? undefined : `Competition entry limit reached (${competitionCount}/${competitionLimit}). Limit resets next month.`,
+//         upgradeRequired: false, // No upgrade available for competitions
+//         currentUsage: { competitionEntries: competitionCount },
+//         limits: { competitionEntries: competitionLimit }
+//       };
+
+//     } catch (error) {
+//       console.error('❌ Error checking competition usage:', error);
+//       return { allowed: false, reason: 'Failed to check usage limits' };
+//     }
+//   }
+
+//   /**
+//    * Get comprehensive usage statistics for dashboard - COMPLETE METHOD
+//    */
+//   static async getUserUsageStats(userId: string): Promise<UsageStats> {
+//     try {
+//       await connectToDatabase();
+
+//       const now = new Date();
+//       const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+//       const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
+//       const nextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+
+//       // Get user and check purchaseHistory
+//       const user = await User.findById(userId);
+      
+
+
+//         let limits;
+//         let subscriptionTier;
+//         if (user?.monthlyLimits) {
+//           limits = {
+//             freestyleStories: user.monthlyLimits.freestyleStories,
+//             assessmentRequests: user.monthlyLimits.assessmentRequests,
+//             competitionEntries: user.monthlyLimits.competitionEntries,
+//           };
+//           subscriptionTier = user.subscriptionTier || 'FREE';
+//         } else {
+//           let storyPackPurchases = [];
+//           if (user && user.purchaseHistory) {
+//             storyPackPurchases = user.purchaseHistory.filter((purchase: any) => 
+//               purchase.type === 'story_pack' && 
+//               new Date(purchase.purchaseDate) >= startOfMonth && 
+//               new Date(purchase.purchaseDate) <= endOfMonth
+//             );
+//           }
+//           const totalStoryPacks = storyPackPurchases.length;
+//           subscriptionTier = totalStoryPacks > 0 ? 'STORY_PACK' : 'FREE';
+//           limits = {
+//             freestyleStories: 3 + (totalStoryPacks * 5),
+//             assessmentRequests: 9 + (totalStoryPacks * 15),
+//             competitionEntries: 3
+//           };
+//         }
+
+//       // Count actual usage
+//       const [freestyleCount, competitionCount] = await Promise.all([
+//         // Freestyle stories
+//         StorySession.countDocuments({
+//           childId: userId,
+//           createdAt: { $gte: startOfMonth, $lte: endOfMonth },
+//           isUploadedForAssessment: { $ne: true },
+//           $or: [
+//             { competitionEntries: { $exists: false } },
+//             { competitionEntries: { $size: 0 } }
+//           ]
+//         }),
+        
+//         // Competition entries
+//         StorySession.countDocuments({
+//           childId: userId,
+//           createdAt: { $gte: startOfMonth, $lte: endOfMonth },
+//           competitionEntries: { $exists: true, $ne: [] }
+//         })
+//       ]);
+
+//       // Count assessment requests (any story upload or assessment)
+//       const assessmentStats = await StorySession.aggregate([
+//         {
+//           $match: {
+//             childId: userId,
+//             createdAt: { $gte: startOfMonth, $lte: endOfMonth },
+//             $or: [
+//               { isUploadedForAssessment: true },
+//               { assessment: { $exists: true } }
+//             ]
+//           }
+//         },
+//         {
+//           $group: {
+//             _id: null,
+//             totalAssessments: { $sum: 1 },
+//             totalAttempts: { $sum: { $ifNull: ['$assessmentAttempts', 1] } }
+//           }
+//         }
+//       ]);
+
+//       const assessmentUsed = assessmentStats[0]?.totalAttempts || 0;
+
+//       // Return complete UsageStats object
+//       return {
+//         freestyleStories: {
+//           used: freestyleCount,
+//           limit: limits.freestyleStories,
+//           remaining: Math.max(0, limits.freestyleStories - freestyleCount),
+//           canUse: freestyleCount < limits.freestyleStories
+//         },
+//         assessmentRequests: {
+//           used: assessmentUsed,
+//           limit: limits.assessmentRequests,
+//           remaining: Math.max(0, limits.assessmentRequests - assessmentUsed),
+//           canUse: assessmentUsed < limits.assessmentRequests
+//         },
+//         competitionEntries: {
+//           used: competitionCount,
+//           limit: limits.competitionEntries,
+//           remaining: Math.max(0, limits.competitionEntries - competitionCount),
+//           canUse: competitionCount < limits.competitionEntries
+//         },
+//         subscriptionTier,
+//         resetDate: nextMonth.toISOString()
+//       };
+
+//     } catch (error) {
+//       console.error('❌ Error getting usage stats:', error);
+//       // Return safe defaults for new users
+//       return {
+//         freestyleStories: { used: 0, limit: 3, remaining: 3, canUse: true },
+//         assessmentRequests: { used: 0, limit: 9, remaining: 9, canUse: true },
+//         competitionEntries: { used: 0, limit: 3, remaining: 3, canUse: true },
+//         subscriptionTier: 'FREE',
+//         resetDate: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1).toISOString()
+//       };
+//     }
+//   }
+
+//   /**
+//    * Reset monthly usage counters for all users (for cron job)
+//    */
+//   static async resetMonthlyUsage(): Promise<{
+//     usersReset: number;
+//     errors: string[];
+//   }> {
+//     await connectToDatabase();
+
+//     let usersReset = 0;
+//     const errors: string[] = [];
+
+//     try {
+//       // Optional: Clean up old assessment attempt counters if needed
+//       const result = await User.updateMany(
+//         { role: 'child', isActive: true },
+//         {
+//           $set: {
+//             lastMonthlyReset: new Date(),
+//           },
+//         }
+//       );
+
+//       usersReset = result.modifiedCount;
+//       console.log(`✅ Monthly reset completed for ${usersReset} users`);
+//     } catch (error) {
+//       const errorMsg = `Monthly reset failed: ${error instanceof Error ? error.message : 'Unknown error'}`;
+//       errors.push(errorMsg);
+//       console.error('❌ Monthly reset error:', error);
+//     }
+
+//     return { usersReset, errors };
+//   }
+
+//   /**
+//    * Increment usage counters after successful action
+//    */
+//   static async incrementStoryCreation(userId: string): Promise<void> {
+//     console.log(`✅ Story created for user ${userId}`);
+//   }
+
+//   static async incrementAssessmentRequest(userId: string, storyId: string): Promise<void> {
+//     await connectToDatabase();
+//     await StorySession.findByIdAndUpdate(storyId, {
+//       $inc: { assessmentAttempts: 1 },
+//     });
+//     console.log(`✅ Assessment request incremented for story ${storyId}`);
+//   }
+
+//   static async incrementCompetitionEntry(userId: string): Promise<void> {
+//     console.log(`✅ Competition entry created for user ${userId}`);
+//   }
+// }
+
+// lib/usage-manager.ts - COMPLETE WITH ALL EXISTING METHODS + 30-DAY SYSTEM
 import { connectToDatabase } from '@/utils/db';
 import User from '@/models/User';
 import StorySession from '@/models/StorySession';
@@ -10,6 +485,8 @@ export interface UsageStats {
   competitionEntries: { used: number; limit: number; remaining: number; canUse: boolean };
   subscriptionTier: 'FREE' | 'STORY_PACK';
   resetDate: string;
+  storyPackExpiry?: string; // NEW: When current story pack expires
+  daysRemaining?: number; // NEW: Days left on story pack
   resetInfo?: {
     performed: boolean;
     message: string;
@@ -27,14 +504,82 @@ export interface UsageCheckResult {
 export class UsageManager {
 
   /**
-   * Alias for backward compatibility
+   * NEW: Calculate user's current limits based on active 30-day Story Pack purchases
+   */
+  static async calculateUserLimits(userId: string): Promise<{
+    limits: { freestyleStories: number; assessmentRequests: number; competitionEntries: number };
+    tier: 'FREE' | 'STORY_PACK';
+    storyPackExpiry?: Date;
+    daysRemaining?: number;
+  }> {
+    await connectToDatabase();
+    
+    const user = await User.findById(userId);
+    if (!user) {
+      return {
+        limits: { freestyleStories: 3, assessmentRequests: 9, competitionEntries: 3 },
+        tier: 'FREE'
+      };
+    }
+
+    // Start with FREE tier limits
+    let limits = {
+      freestyleStories: 3,
+      assessmentRequests: 9,
+      competitionEntries: 3
+    };
+    let tier: 'FREE' | 'STORY_PACK' = 'FREE';
+    let storyPackExpiry: Date | undefined;
+    let daysRemaining: number | undefined;
+
+    // Check for active Story Pack purchases (30-day rolling)
+    const now = new Date();
+    const activePurchases = user.purchaseHistory?.filter((purchase: any) => {
+      if (purchase.type !== 'story_pack' || purchase.paymentStatus !== 'completed') {
+        return false;
+      }
+
+      // Check if this purchase is still active (within 30 days)
+      const purchaseDate = new Date(purchase.purchaseDate);
+      const expiryDate = new Date(purchaseDate.getTime() + (30 * 24 * 60 * 60 * 1000)); // +30 days
+      
+      return now <= expiryDate;
+    }) || [];
+
+    // If any active Story Pack purchases exist, apply benefits
+    if (activePurchases.length > 0) {
+      // Find the purchase that expires latest (most recent or stacked)
+      const latestPurchase = activePurchases.reduce((latest: any, current: any) => {
+        const currentExpiry = new Date(new Date(current.purchaseDate).getTime() + (30 * 24 * 60 * 60 * 1000));
+        const latestExpiry = new Date(new Date(latest.purchaseDate).getTime() + (30 * 24 * 60 * 60 * 1000));
+        return currentExpiry > latestExpiry ? current : latest;
+      });
+
+      storyPackExpiry = new Date(new Date(latestPurchase.purchaseDate).getTime() + (30 * 24 * 60 * 60 * 1000));
+      daysRemaining = Math.ceil((storyPackExpiry.getTime() - now.getTime()) / (24 * 60 * 60 * 1000));
+
+      // Apply Story Pack benefits for each active purchase
+      activePurchases.forEach((purchase: any) => {
+        limits.freestyleStories += purchase.itemDetails?.storiesAdded || 5;
+        limits.assessmentRequests += purchase.itemDetails?.assessmentsAdded || 15;
+        // Competition entries don't get upgraded
+      });
+
+      tier = 'STORY_PACK';
+    }
+
+    return { limits, tier, storyPackExpiry, daysRemaining };
+  }
+
+  /**
+   * PRESERVED: Alias for backward compatibility
    */
   static async canCreateFreestyleStory(userId: string): Promise<UsageCheckResult> {
     return this.canCreateStory(userId);
   }
 
   /**
-   * Check if user can publish a story (1 per month, by publishedAt)
+   * PRESERVED: Check if user can publish a story (1 per month, by publishedAt)
    */
   static async canPublishStory(userId: string): Promise<UsageCheckResult> {
     try {
@@ -66,7 +611,7 @@ export class UsageManager {
   }
 
   /**
-   * Get current month's usage for a user
+   * PRESERVED: Get current month's usage for a user
    */
   static async getCurrentUsage(userId: string): Promise<{
     freestyleStories: number;
@@ -112,69 +657,30 @@ export class UsageManager {
   }
 
   /**
-   * Get user's current limits (including purchases) - FIXED VERSION
+   * PRESERVED: Get user's current limits (including purchases) - ENHANCED WITH 30-DAY SYSTEM
    */
   static async getUserLimits(userId: string): Promise<{
     freestyleStories: number;
     assessmentRequests: number;
     competitionEntries: number;
   }> {
-    await connectToDatabase();
-    
-    const now = new Date();
-    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-    const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
-
-    // Get user and check purchaseHistory instead of UserPurchase collection
-    const user = await User.findById(userId);
-    
-        if (user?.monthlyLimits) {
-          return {
-            freestyleStories: user.monthlyLimits.freestyleStories,
-            assessmentRequests: user.monthlyLimits.assessmentRequests,
-            competitionEntries: user.monthlyLimits.competitionEntries,
-          };
-        }
-        if (!user || !user.purchaseHistory) {
-          return {
-            freestyleStories: 3,
-            assessmentRequests: 9,
-            competitionEntries: 3,
-          };
-        }
-
-    // Filter story pack purchases from this month
-    const storyPackPurchases = user.purchaseHistory.filter((purchase: any) => 
-      purchase.type === 'story_pack' && 
-      new Date(purchase.purchaseDate) >= startOfMonth && 
-      new Date(purchase.purchaseDate) <= endOfMonth
-    );
-
-    const totalStoryPacks = storyPackPurchases.length;
-
-    return {
-      freestyleStories: 3 + (totalStoryPacks * 5),  // 3 base + 5 per pack
-      assessmentRequests: 9 + (totalStoryPacks * 15), // 9 base + 15 per pack  
-      competitionEntries: 3, // Always 3, no upgrades
-    };
+    // Use the new 30-day calculation system
+    const { limits } = await this.calculateUserLimits(userId);
+    return limits;
   }
 
   /**
-   * Check if user can create freestyle story
+   * ENHANCED: Check if user can create a story (with 30-day support)
    */
   static async canCreateStory(userId: string): Promise<UsageCheckResult> {
     try {
-      await connectToDatabase();
+      const { limits } = await this.calculateUserLimits(userId);
 
       const now = new Date();
       const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
       const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
 
-      // Get limits
-      const limits = await this.getUserLimits(userId);
-      const freestyleLimit = limits.freestyleStories;
-
-      // Count freestyle stories this month with CORRECT query
+      // Count freestyle stories this month
       const freestyleCount = await StorySession.countDocuments({
         childId: userId,
         createdAt: { $gte: startOfMonth, $lte: endOfMonth },
@@ -185,16 +691,14 @@ export class UsageManager {
         ]
       });
 
-      const canUse = freestyleCount < freestyleLimit;
+      const canUse = freestyleCount < limits.freestyleStories;
 
       return {
         allowed: canUse,
-        reason: canUse 
-          ? undefined 
-          : `Freestyle story limit reached (${freestyleCount}/${freestyleLimit}). Upgrade to get 5 more stories.`,
-        upgradeRequired: !canUse,
+        reason: canUse ? undefined : `Freestyle story limit reached (${freestyleCount}/${limits.freestyleStories}). ${limits.freestyleStories <= 3 ? 'Upgrade to get 5 more stories.' : 'Limit resets next month.'}`,
+        upgradeRequired: !canUse && limits.freestyleStories <= 3,
         currentUsage: { freestyleStories: freestyleCount },
-        limits: { freestyleStories: freestyleLimit }
+        limits: { freestyleStories: limits.freestyleStories }
       };
 
     } catch (error) {
@@ -204,19 +708,15 @@ export class UsageManager {
   }
 
   /**
-   * Check if user can request assessment
+   * ENHANCED: Check if user can request assessment (with 30-day support)
    */
   static async canRequestAssessment(userId: string): Promise<UsageCheckResult> {
     try {
-      await connectToDatabase();
+      const { limits } = await this.calculateUserLimits(userId);
 
       const now = new Date();
       const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
       const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
-
-      // Get limits
-      const limits = await this.getUserLimits(userId);
-      const assessmentLimit = limits.assessmentRequests;
 
       // Count assessment requests this month
       const assessmentStats = await StorySession.aggregate([
@@ -239,16 +739,14 @@ export class UsageManager {
       ]);
 
       const assessmentUsed = assessmentStats[0]?.totalAttempts || 0;
-      const canUse = assessmentUsed < assessmentLimit;
+      const canUse = assessmentUsed < limits.assessmentRequests;
 
       return {
         allowed: canUse,
-        reason: canUse 
-          ? undefined 
-          : `Assessment requests exhausted (${assessmentUsed}/${assessmentLimit}). Upgrade for 15 more assessments.`,
-        upgradeRequired: !canUse,
+        reason: canUse ? undefined : `Assessment requests exhausted (${assessmentUsed}/${limits.assessmentRequests}). ${limits.assessmentRequests <= 9 ? 'Upgrade for 15 more assessments.' : 'Limit resets next month.'}`,
+        upgradeRequired: !canUse && limits.assessmentRequests <= 9,
         currentUsage: { assessmentRequests: assessmentUsed },
-        limits: { assessmentRequests: assessmentLimit }
+        limits: { assessmentRequests: limits.assessmentRequests }
       };
 
     } catch (error) {
@@ -258,18 +756,15 @@ export class UsageManager {
   }
 
   /**
-   * Check if user can enter competitions
+   * ENHANCED: Check if user can enter competitions (with 30-day support)
    */
   static async canEnterCompetition(userId: string): Promise<UsageCheckResult> {
     try {
-      await connectToDatabase();
+      const { limits } = await this.calculateUserLimits(userId);
 
       const now = new Date();
       const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
       const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
-
-      // Competition limit is ALWAYS 3 (no upgrades)
-      const competitionLimit = USAGE_LIMITS.FREE.competitionEntries; // 3
 
       // Count competition entries with CORRECT query
       const competitionCount = await StorySession.countDocuments({
@@ -278,14 +773,14 @@ export class UsageManager {
         competitionEntries: { $exists: true, $not: { $size: 0 } }
       });
 
-      const canUse = competitionCount < competitionLimit;
+      const canUse = competitionCount < limits.competitionEntries;
 
       return {
         allowed: canUse,
-        reason: canUse ? undefined : `Competition entry limit reached (${competitionCount}/${competitionLimit}). Limit resets next month.`,
+        reason: canUse ? undefined : `Competition entry limit reached (${competitionCount}/${limits.competitionEntries}). Limit resets next month.`,
         upgradeRequired: false, // No upgrade available for competitions
         currentUsage: { competitionEntries: competitionCount },
-        limits: { competitionEntries: competitionLimit }
+        limits: { competitionEntries: limits.competitionEntries }
       };
 
     } catch (error) {
@@ -295,50 +790,20 @@ export class UsageManager {
   }
 
   /**
-   * Get comprehensive usage statistics for dashboard - COMPLETE METHOD
+   * ENHANCED: Get comprehensive usage statistics with 30-day Story Pack support
    */
   static async getUserUsageStats(userId: string): Promise<UsageStats> {
     try {
       await connectToDatabase();
+
+      const { limits, tier, storyPackExpiry, daysRemaining } = await this.calculateUserLimits(userId);
 
       const now = new Date();
       const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
       const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
       const nextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
 
-      // Get user and check purchaseHistory
-      const user = await User.findById(userId);
-      
-
-
-        let limits;
-        let subscriptionTier;
-        if (user?.monthlyLimits) {
-          limits = {
-            freestyleStories: user.monthlyLimits.freestyleStories,
-            assessmentRequests: user.monthlyLimits.assessmentRequests,
-            competitionEntries: user.monthlyLimits.competitionEntries,
-          };
-          subscriptionTier = user.subscriptionTier || 'FREE';
-        } else {
-          let storyPackPurchases = [];
-          if (user && user.purchaseHistory) {
-            storyPackPurchases = user.purchaseHistory.filter((purchase: any) => 
-              purchase.type === 'story_pack' && 
-              new Date(purchase.purchaseDate) >= startOfMonth && 
-              new Date(purchase.purchaseDate) <= endOfMonth
-            );
-          }
-          const totalStoryPacks = storyPackPurchases.length;
-          subscriptionTier = totalStoryPacks > 0 ? 'STORY_PACK' : 'FREE';
-          limits = {
-            freestyleStories: 3 + (totalStoryPacks * 5),
-            assessmentRequests: 9 + (totalStoryPacks * 15),
-            competitionEntries: 3
-          };
-        }
-
-      // Count actual usage
+      // Count actual usage this CALENDAR MONTH
       const [freestyleCount, competitionCount] = await Promise.all([
         // Freestyle stories
         StorySession.countDocuments({
@@ -382,8 +847,7 @@ export class UsageManager {
 
       const assessmentUsed = assessmentStats[0]?.totalAttempts || 0;
 
-      // Return complete UsageStats object
-      return {
+      const result: UsageStats = {
         freestyleStories: {
           used: freestyleCount,
           limit: limits.freestyleStories,
@@ -402,9 +866,17 @@ export class UsageManager {
           remaining: Math.max(0, limits.competitionEntries - competitionCount),
           canUse: competitionCount < limits.competitionEntries
         },
-        subscriptionTier,
+        subscriptionTier: tier,
         resetDate: nextMonth.toISOString()
       };
+
+      // Add Story Pack specific info
+      if (storyPackExpiry && daysRemaining) {
+        result.storyPackExpiry = storyPackExpiry.toISOString();
+        result.daysRemaining = daysRemaining;
+      }
+
+      return result;
 
     } catch (error) {
       console.error('❌ Error getting usage stats:', error);
@@ -420,7 +892,7 @@ export class UsageManager {
   }
 
   /**
-   * Reset monthly usage counters for all users (for cron job)
+   * PRESERVED: Monthly reset for FREE tier limits (NO LONGER AFFECTS STORY PACKS)
    */
   static async resetMonthlyUsage(): Promise<{
     usersReset: number;
@@ -432,7 +904,9 @@ export class UsageManager {
     const errors: string[] = [];
 
     try {
-      // Optional: Clean up old assessment attempt counters if needed
+      console.log('🔄 Starting calendar month reset (preserving Story Pack purchases)...');
+      
+      // Only reset monthly tracking, DO NOT TOUCH Story Pack purchases
       const result = await User.updateMany(
         { role: 'child', isActive: true },
         {
@@ -443,7 +917,7 @@ export class UsageManager {
       );
 
       usersReset = result.modifiedCount;
-      console.log(`✅ Monthly reset completed for ${usersReset} users`);
+      console.log(`✅ Monthly reset completed for ${usersReset} users (Story Packs preserved)`);
     } catch (error) {
       const errorMsg = `Monthly reset failed: ${error instanceof Error ? error.message : 'Unknown error'}`;
       errors.push(errorMsg);
@@ -454,7 +928,7 @@ export class UsageManager {
   }
 
   /**
-   * Increment usage counters after successful action
+   * PRESERVED: Increment usage counters after successful action
    */
   static async incrementStoryCreation(userId: string): Promise<void> {
     console.log(`✅ Story created for user ${userId}`);
