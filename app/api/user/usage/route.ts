@@ -25,31 +25,50 @@ export async function GET(request: NextRequest) {
       );
     }
 
+
+    // 🌟 AUTOMATIC MONTHLY RESET - Check internet date and reset if needed
+    const { checkAndPerformMonthlyReset } = await import('@/utils/autoReset');
+    const resetPerformed = await checkAndPerformMonthlyReset();
+    if (resetPerformed) {
+      console.log('🎉 Monthly reset completed automatically via internet date');
+    }
+
     console.log('📊 Fetching usage statistics for user:', session.user.id);
-
     await connectToDatabase();
-
     // Get current month dates
     const now = new Date();
     const currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
-
     // Get user data
     const user = await User.findById(session.user.id);
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
-
-    // Get usage statistics using the FIXED UsageManager
+    // Use existing UsageManager logic but include monthlyLimits
     const usageStats = await UsageManager.getUserUsageStats(session.user.id);
-
-    console.log('📈 Usage stats retrieved:', usageStats);
-
+    // If user has monthlyLimits, override the calculated limits
+    if (user.monthlyLimits) {
+      usageStats.freestyleStories.limit = user.monthlyLimits.freestyleStories;
+      usageStats.assessmentRequests.limit = user.monthlyLimits.assessmentRequests;
+      usageStats.competitionEntries.limit = user.monthlyLimits.competitionEntries;
+      usageStats.freestyleStories.remaining = Math.max(0, user.monthlyLimits.freestyleStories - usageStats.freestyleStories.used);
+      usageStats.freestyleStories.canUse = usageStats.freestyleStories.used < user.monthlyLimits.freestyleStories;
+      usageStats.assessmentRequests.remaining = Math.max(0, user.monthlyLimits.assessmentRequests - usageStats.assessmentRequests.used);
+      usageStats.assessmentRequests.canUse = usageStats.assessmentRequests.used < user.monthlyLimits.assessmentRequests;
+      usageStats.competitionEntries.remaining = Math.max(0, user.monthlyLimits.competitionEntries - usageStats.competitionEntries.used);
+      usageStats.competitionEntries.canUse = usageStats.competitionEntries.used < user.monthlyLimits.competitionEntries;
+    }
+    // Add reset info if it just happened
+    if (resetPerformed) {
+      usageStats.resetInfo = {
+        performed: true,
+        message: 'Monthly limits have been reset to FREE tier'
+      };
+    }
     // Count publications this month
     const monthlyPublications = await PublishedStory.countDocuments({
       childId: session.user.id,
       publishedAt: { $gte: currentMonthStart }
     });
-
     // Add publications to the usage stats
     const completeUsageStats = {
       ...usageStats,
@@ -64,9 +83,7 @@ export async function GET(request: NextRequest) {
         year: 'numeric' 
       })
     };
-
     console.log('✅ Complete usage statistics:', completeUsageStats);
-
     return NextResponse.json({
       success: true,
       usage: completeUsageStats,

@@ -15,8 +15,13 @@ export async function POST(request: Request) {
       );
     }
 
-    const body = await request.json();
-    const { action, storyId } = body;
+
+  // Auto-reset check before usage validation
+  const { checkAndPerformMonthlyReset } = await import('@/utils/autoReset');
+  await checkAndPerformMonthlyReset();
+
+  const body = await request.json();
+  const { action, storyId } = body;
 
     // Validate action
     const validActions = [
@@ -32,13 +37,22 @@ export async function POST(request: Request) {
       );
     }
 
-    // Check usage limits for the specific action
-    const result = await UsageManager.enforceLimit(
-      session.user.id,
-      action,
-      storyId
-    );
-
+    // Check usage limits for the specific action using updated UsageManager
+    let result;
+    switch (action) {
+      case 'create_story':
+        result = await UsageManager.canCreateStory(session.user.id);
+        break;
+      case 'upload_assessment':
+      case 'attempt_assessment':
+        result = await UsageManager.canRequestAssessment(session.user.id);
+        break;
+      case 'enter_competition':
+        result = await UsageManager.canEnterCompetition(session.user.id);
+        break;
+      default:
+        return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
+    }
     if (result.allowed) {
       return NextResponse.json({
         allowed: true,
@@ -47,8 +61,8 @@ export async function POST(request: Request) {
     } else {
       return NextResponse.json({
         allowed: false,
-        message: result.message,
-        needsUpgrade: result.needsUpgrade,
+        message: result.reason,
+        needsUpgrade: result.upgradeRequired,
       });
     }
   } catch (error) {

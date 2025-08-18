@@ -30,6 +30,7 @@ import {
   FileText,
   Trophy,
   Clock,
+  BookMarked,
 } from 'lucide-react';
 import React from 'react';
 
@@ -266,83 +267,206 @@ export default function Home() {
   ];
 
   // Updated steps for current system
+  // const steps = [
+  //   {
+  //     number: '01',
+  //     icon: <PenTool className="w-8 h-8" />,
+  //     title: 'Start Writing Freely',
+  //     description:
+  //       'Begin your story with complete creative freedom. Write about anything that sparks your imagination - no limits!',
+  //     gradient: 'from-green-500 to-teal-600',
+  //     features: [
+  //       'Any Genre Welcome',
+  //       'No Story Restrictions',
+  //       'Real-time AI Help',
+  //       'Word Count Tracking',
+  //     ],
+  //     image: '/kid9.jpg',
+  //   },
+  //   {
+  //     number: '02',
+  //     icon: <Sparkles className="w-8 h-8" />,
+  //     title: 'Collaborate with AI',
+  //     description:
+  //       'Get suggestions and ideas from AI as you write. The AI helps develop your story while you stay in complete control.',
+  //     gradient: 'from-blue-500 to-cyan-600',
+  //     features: [
+  //       'Plot Suggestions',
+  //       'Character Development',
+  //       'Creative Prompts',
+  //       'Writing Guidance',
+  //     ],
+  //     image: '/kid10.jpg',
+  //   },
+  //   {
+  //     number: '03',
+  //     icon: <BookOpen className="w-8 h-8" />,
+  //     title: 'Complete Your Story',
+  //     description:
+  //       'Finish your masterpiece! Stories can be any length - from short tales to epic adventures.',
+  //     gradient: 'from-purple-500 to-indigo-600',
+  //     features: [
+  //       'Flexible Length',
+  //       'Auto-save Progress',
+  //       'Draft Management',
+  //       'Story Preview',
+  //     ],
+  //     image: '/kid11.jpg',
+  //   },
+  //   {
+  //     number: '04',
+  //     icon: <Upload className="w-8 h-8" />,
+  //     title: 'Upload for Assessment',
+  //     description:
+  //       'Submit your completed story for detailed AI analysis and personalized feedback to improve your writing.',
+  //     gradient: 'from-orange-500 to-red-600',
+  //     features: [
+  //       'File Upload Support',
+  //       'Instant Processing',
+  //       'Multiple Attempts',
+  //       'Plagiarism Detection',
+  //     ],
+  //     image: '/kid12.jpg',
+  //   },
+  //   {
+  //     number: '05',
+  //     icon: <Award className="w-8 h-8" />,
+  //     title: 'Get Feedback & Compete',
+  //     description:
+  //       'Receive comprehensive feedback to improve your writing and enter monthly competitions with other young writers.',
+  //     gradient: 'from-pink-500 to-purple-600',
+  //     features: [
+  //       'Grammar Analysis',
+  //       'Creativity Scores',
+  //       'Competition Entry',
+  //       'Progress Tracking',
+  //     ],
+  //     image: '/kid14.jpg',
+  //   },
+  // ];
+
   const steps = [
-    {
-      number: '01',
-      icon: <PenTool className="w-8 h-8" />,
-      title: 'Start Writing Freely',
-      description:
-        'Begin your story with complete creative freedom. Write about anything that sparks your imagination - no limits!',
-      gradient: 'from-green-500 to-teal-600',
-      features: [
-        'Any Genre Welcome',
-        'No Story Restrictions',
-        'Real-time AI Help',
-        'Word Count Tracking',
-      ],
-      image: '/kid9.jpg',
-    },
-    {
-      number: '02',
-      icon: <Sparkles className="w-8 h-8" />,
-      title: 'Collaborate with AI',
-      description:
-        'Get suggestions and ideas from AI as you write. The AI helps develop your story while you stay in complete control.',
-      gradient: 'from-blue-500 to-cyan-600',
-      features: [
-        'Plot Suggestions',
-        'Character Development',
-        'Creative Prompts',
-        'Writing Guidance',
-      ],
-      image: '/kid10.jpg',
-    },
-    {
-      number: '03',
-      icon: <BookOpen className="w-8 h-8" />,
-      title: 'Complete Your Story',
-      description:
-        'Finish your masterpiece! Stories can be any length - from short tales to epic adventures.',
-      gradient: 'from-purple-500 to-indigo-600',
-      features: [
-        'Flexible Length',
-        'Auto-save Progress',
-        'Draft Management',
-        'Story Preview',
-      ],
-      image: '/kid11.jpg',
-    },
-    {
-      number: '04',
-      icon: <Upload className="w-8 h-8" />,
-      title: 'Upload for Assessment',
-      description:
-        'Submit your completed story for detailed AI analysis and personalized feedback to improve your writing.',
-      gradient: 'from-orange-500 to-red-600',
-      features: [
-        'File Upload Support',
-        'Instant Processing',
-        'Multiple Attempts',
-        'Plagiarism Detection',
-      ],
-      image: '/kid12.jpg',
-    },
-    {
-      number: '05',
-      icon: <Award className="w-8 h-8" />,
-      title: 'Get Feedback & Compete',
-      description:
-        'Receive comprehensive feedback to improve your writing and enter monthly competitions with other young writers.',
-      gradient: 'from-pink-500 to-purple-600',
-      features: [
-        'Grammar Analysis',
-        'Creativity Scores',
-        'Competition Entry',
-        'Progress Tracking',
-      ],
-      image: '/kid14.jpg',
-    },
-  ];
+  {
+    number: '01',
+    icon: <PenTool className="w-8 h-8" />,
+    title: 'Start Writing Freely',
+    description:
+      'Begin your story with complete creative freedom. Write about anything that sparks your imagination - no limits!',
+    gradient: 'from-green-500 to-teal-600',
+    features: [
+      'Any Genre Welcome',
+      'No Story Restrictions',
+      'Real-time AI Help',
+      'Word Count Tracking',
+    ],
+    image: '/kid9.jpg',
+  },
+  {
+    number: '02',
+    icon: <Sparkles className="w-8 h-8" />,
+    title: 'Collaborate with AI',
+    description:
+      'Get suggestions and ideas from AI as you write. The AI helps develop your story while you stay in complete control.',
+    gradient: 'from-blue-500 to-cyan-600',
+    features: [
+      'Plot Suggestions',
+      'Character Development',
+      'Creative Prompts',
+      'Writing Guidance',
+    ],
+    image: '/kid10.jpg',
+  },
+  {
+    number: '03',
+    icon: <BookOpen className="w-8 h-8" />,
+    title: 'Complete Your Story',
+    description:
+      'Finish your masterpiece! Stories can be any length - from short tales to epic adventures (350 words to 600 words).',
+    gradient: 'from-purple-500 to-indigo-600',
+    features: [
+      'Max 600 Words Length',
+      'Auto-save Progress',
+      'Draft Management',
+      'Story Preview',
+    ],
+    image: '/kid11.jpg',
+  },
+  {
+    number: '04',
+    icon: <Upload className="w-8 h-8" />,
+    title: 'Upload for Assessment',
+    description:
+      'Submit your completed story for detailed AI analysis and personalized feedback to improve your writing.',
+    gradient: 'from-orange-500 to-red-600',
+    features: [
+      'Just Paste Your Story',
+      'Instant Processing',
+      'Multiple Attempts',
+      'Plagiarism Detection',
+    ],
+    image: '/kid12.jpg',
+  },
+  {
+    number: '05',
+    icon: <Award className="w-8 h-8" />,
+    title: 'Get Feedback & Compete',
+    description:
+      'Receive comprehensive feedback to improve your writing and enter monthly competitions with other young writers.',
+    gradient: 'from-pink-500 to-purple-600',
+    features: [
+      'Grammar Analysis',
+      'Creativity Scores',
+      'Competition Entry',
+      'Progress Tracking',
+    ],
+    image: '/kid14.jpg',
+  },
+  {
+    number: '06',
+    icon: <Trophy className="w-8 h-8" />,
+    title: 'Join Competitions',
+    description:
+      'Participate in monthly writing competitions! Compete with writers worldwide and improve your skills.',
+    gradient: 'from-yellow-500 to-orange-600',
+    features: [
+      'Monthly Challenges',
+      'Upload Your 3 Best Stories',
+      'Ai Picks Top 3 Winners',
+      'Winner Will be Considered for Free Spot in Anthology Books',
+    ],
+    image: '/kid15.jpg', // Add this image
+  },
+  {
+    number: '07',
+    icon: <Users className="w-8 h-8" />,
+    title: 'Share in Community',
+    description:
+      'Publish your one best story in a month to the community page where other young writers, mentors, and admins can read and comment.',
+    gradient: 'from-indigo-500 to-purple-600',
+    features: [
+      'Public Story Showcase',
+      'Reader Comments',
+      'Story Ratings',
+      'Author Profiles',
+    ],
+    image: '/kid16.jpg', // Add this image
+  },
+  {
+    number: '08',
+    icon: <BookMarked className="w-8 h-8" />,
+    title: 'Reserve & Order Physical Books',
+    description:
+      'Reserve your anthology spot for $10 per Story, then contact admin through our form to order the actual printed book at custom pricing.',
+    gradient: 'from-emerald-500 to-teal-600',
+    features: [
+      '$10 Per Story for Spot Reservation',
+      'Custom Book Pricing',
+      'Contact Admin for Orders',
+      'Professional Anthology',
+    ],
+    image: '/kid17.jpg', // Add this image
+  },
+];
 
   // Updated values for current system
   const values = [
@@ -679,7 +803,7 @@ export default function Home() {
                         animate={{ opacity: 1 }}
                         transition={{ delay: 1.5 }}
                       >
-                        3 free stories + 3 free assessments monthly. Join
+                        3 free stories + 9 free assessments monthly. Join
                         thousands of young writers worldwide!
                       </motion.p>
 
@@ -1307,8 +1431,8 @@ export default function Home() {
               </span>
             </h2>
             <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-              Our proven 5-step process guides young writers from initial idea
-              to published story with detailed feedback
+              Our proven 8-step process guides young writers from initial idea
+              to published story with detailed feedback and much more.
             </p>
           </motion.div>
 
@@ -1469,7 +1593,7 @@ export default function Home() {
                 <span className="text-teal-300 font-medium">
                   AI-powered feedback
                 </span>{' '}
-                to improve their skills. Start with 3 free stories and 3 free
+                to improve their skills. Start with 3 free stories and 9 free
                 assessments!
               </p>
 
@@ -1507,11 +1631,11 @@ export default function Home() {
                   </div>
                   <div className="flex items-center space-x-2">
                     <CheckCircle className="w-4 h-4 text-green-400" />
-                    <span>3 Free AI Assessments</span>
+                    <span>9 Free AI Assessments</span>
                   </div>
                   <div className="flex items-center space-x-2">
                     <CheckCircle className="w-4 h-4 text-green-400" />
-                    <span>Competition Entries</span>
+                    <span>3 Free Competition Entries</span>
                   </div>
                   <div className="flex items-center space-x-2">
                     <CheckCircle className="w-4 h-4 text-green-400" />

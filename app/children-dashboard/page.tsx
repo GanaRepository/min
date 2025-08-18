@@ -1104,6 +1104,7 @@ export default function ChildrenDashboardPage() {
 
   // ===== STATE =====
   const [usageStats, setUsageStats] = useState<UsageStats | null>(null);
+  const [resetNotification, setResetNotification] = useState<boolean>(false);
   const [recentStories, setRecentStories] = useState<Story[]>([]);
   const [currentCompetition, setCurrentCompetition] = useState<Competition | null>(null);
   const [recentAchievements, setRecentAchievements] = useState<Achievement[]>([]);
@@ -1142,10 +1143,26 @@ export default function ChildrenDashboardPage() {
         const usageData = await usageResponse.json();
         console.log('📊 Usage stats loaded:', usageData);
         setUsageStats(usageData.usage || getDefaultUsageStats());
+        // Check if reset just happened
+        if (usageData.usage?.resetInfo?.performed) {
+          setResetNotification(true);
+          setTimeout(() => setResetNotification(false), 5000);
+        }
       } else {
         console.error('❌ Failed to fetch usage stats');
         setUsageStats(getDefaultUsageStats());
       }
+  // ===== RESET NOTIFICATION UI =====
+  // Place this in your JSX where you want the notification to appear
+  {resetNotification && (
+    <div className="bg-blue-600 text-white p-4 rounded-lg mb-4 flex items-center gap-2">
+      <span className="text-2xl">🔄</span>
+      <div>
+        <strong>Monthly Reset Complete!</strong>
+        <p className="text-sm opacity-90">Your limits have been reset to FREE tier for the new month.</p>
+      </div>
+    </div>
+  )}
 
       // Handle recent stories
       if (storiesResponse.ok) {

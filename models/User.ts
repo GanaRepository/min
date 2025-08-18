@@ -43,6 +43,17 @@ export interface IUser extends Document {
     _id?: mongoose.Types.ObjectId;
   }>;
 
+
+  // Monthly Limits (for stacking purchases)
+  monthlyLimits?: {
+    freestyleStories: number;
+    assessmentRequests: number;
+    competitionEntries: number;
+  };
+
+  // Monthly reset tracking
+  currentMonth?: string;
+
   // User Preferences
   preferences: {
     theme: 'light' | 'dark' | 'auto';
@@ -181,7 +192,30 @@ const UserSchema = new Schema<IUser>({
       required: true,
       default: Date.now,
     },
+
   }],
+
+  // Monthly Limits (for stacking purchases)
+  monthlyLimits: {
+    freestyleStories: {
+      type: Number,
+      default: 3,
+    },
+    assessmentRequests: {
+      type: Number,
+      default: 9,
+    },
+    competitionEntries: {
+      type: Number,
+      default: 3,
+    },
+  },
+
+  // Monthly reset tracking
+  currentMonth: {
+    type: String,
+    default: () => new Date().toISOString().slice(0, 7), // "YYYY-MM"
+  },
 
   // User Preferences
   preferences: {

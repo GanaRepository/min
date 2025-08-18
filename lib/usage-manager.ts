@@ -10,6 +10,10 @@ export interface UsageStats {
   competitionEntries: { used: number; limit: number; remaining: number; canUse: boolean };
   subscriptionTier: 'FREE' | 'STORY_PACK';
   resetDate: string;
+  resetInfo?: {
+    performed: boolean;
+    message: string;
+  };
 }
 
 export interface UsageCheckResult {
@@ -117,13 +121,20 @@ export class UsageManager {
     // Get user and check purchaseHistory instead of UserPurchase collection
     const user = await User.findById(userId);
     
-    if (!user || !user.purchaseHistory) {
-      return {
-        freestyleStories: 3,  // Default FREE limits
-        assessmentRequests: 9,
-        competitionEntries: 3,
-      };
-    }
+        if (user?.monthlyLimits) {
+          return {
+            freestyleStories: user.monthlyLimits.freestyleStories,
+            assessmentRequests: user.monthlyLimits.assessmentRequests,
+            competitionEntries: user.monthlyLimits.competitionEntries,
+          };
+        }
+        if (!user || !user.purchaseHistory) {
+          return {
+            freestyleStories: 3,
+            assessmentRequests: 9,
+            competitionEntries: 3,
+          };
+        }
 
     // Filter story pack purchases from this month
     const storyPackPurchases = user.purchaseHistory.filter((purchase: any) => 
@@ -291,24 +302,34 @@ export class UsageManager {
       // Get user and check purchaseHistory
       const user = await User.findById(userId);
       
-      let storyPackPurchases = [];
-      if (user && user.purchaseHistory) {
-        storyPackPurchases = user.purchaseHistory.filter((purchase: any) => 
-          purchase.type === 'story_pack' && 
-          new Date(purchase.purchaseDate) >= startOfMonth && 
-          new Date(purchase.purchaseDate) <= endOfMonth
-        );
-      }
 
-      const totalStoryPacks = storyPackPurchases.length;
-      const subscriptionTier = totalStoryPacks > 0 ? 'STORY_PACK' : 'FREE';
 
-      // Calculate limits
-      const limits = {
-        freestyleStories: 3 + (totalStoryPacks * 5),
-        assessmentRequests: 9 + (totalStoryPacks * 15),
-        competitionEntries: 3 // Always 3
-      };
+        let limits;
+        let subscriptionTier;
+        if (user?.monthlyLimits) {
+          limits = {
+            freestyleStories: user.monthlyLimits.freestyleStories,
+            assessmentRequests: user.monthlyLimits.assessmentRequests,
+            competitionEntries: user.monthlyLimits.competitionEntries,
+          };
+          subscriptionTier = user.subscriptionTier || 'FREE';
+        } else {
+          let storyPackPurchases = [];
+          if (user && user.purchaseHistory) {
+            storyPackPurchases = user.purchaseHistory.filter((purchase: any) => 
+              purchase.type === 'story_pack' && 
+              new Date(purchase.purchaseDate) >= startOfMonth && 
+              new Date(purchase.purchaseDate) <= endOfMonth
+            );
+          }
+          const totalStoryPacks = storyPackPurchases.length;
+          subscriptionTier = totalStoryPacks > 0 ? 'STORY_PACK' : 'FREE';
+          limits = {
+            freestyleStories: 3 + (totalStoryPacks * 5),
+            assessmentRequests: 9 + (totalStoryPacks * 15),
+            competitionEntries: 3
+          };
+        }
 
       // Count actual usage
       const [freestyleCount, competitionCount] = await Promise.all([

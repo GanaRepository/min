@@ -284,11 +284,21 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     // Handle specific product actions
     if (productType === 'story_pack') {
       console.log('📦 Story pack purchased: +5 stories, +15 assessments for user', userId);
-      // Update subscription tier
+      // STACK monthlyLimits instead of overwriting
+      const currentUser = await User.findById(userId);
+      const currentLimits = currentUser?.monthlyLimits || { freestyleStories: 3, assessmentRequests: 9, competitionEntries: 3 };
+      const newLimits = {
+        freestyleStories: currentLimits.freestyleStories + 5,
+        assessmentRequests: currentLimits.assessmentRequests + 15,
+        competitionEntries: currentLimits.competitionEntries,
+      };
       await User.findByIdAndUpdate(userId, {
-        subscriptionTier: 'STORY_PACK',
-        billingPeriodStart: new Date(),
-        billingPeriodEnd: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
+        $set: {
+          subscriptionTier: 'STORY_PACK',
+          monthlyLimits: newLimits,
+          billingPeriodStart: new Date(),
+          billingPeriodEnd: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+        }
       });
     } else if (productType === 'individual_story' && storyId) {
       console.log('📖 Individual story purchased for physical anthology:', storyId);
