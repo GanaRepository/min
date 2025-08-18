@@ -347,7 +347,7 @@ export default function StoryWritingInterface({
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-900 via-slate-900 to-green-900 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-purple-400 mx-auto mb-4"></div>
+          <div className="animate-spin  h-32 w-32 border-b-2 border-purple-400 mx-auto mb-4"></div>
           <p className="text-white text-lg">Loading your story...</p>
         </div>
       </div>
@@ -397,13 +397,13 @@ export default function StoryWritingInterface({
             <div className="flex items-center gap-4">
               <button
                 onClick={() => router.push('/children-dashboard')}
-                className="p-2 hover:bg-gray-700/50 rounded-lg transition-colors"
+                className="p-2 hover:bg-gray-700/50  transition-colors"
               >
                 <ArrowLeft className="w-5 h-5 text-gray-400" />
               </button>
               
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-600 rounded-full flex items-center justify-center">
+                <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-600  flex items-center justify-center">
                   <BookOpen className="w-5 h-5 text-white" />
                 </div>
                 
@@ -414,7 +414,7 @@ export default function StoryWritingInterface({
                       type="text"
                       value={editedTitle}
                       onChange={(e) => setEditedTitle(e.target.value)}
-                      className="bg-gray-800 text-white px-3 py-1 rounded-lg border border-gray-600 focus:border-purple-500 focus:outline-none"
+                      className="bg-gray-800 text-white px-3 py-1  border border-gray-600 focus:border-purple-500 focus:outline-none"
                       onKeyDown={(e) => {
                         if (e.key === 'Enter') saveTitle();
                         if (e.key === 'Escape') setIsEditingTitle(false);
@@ -436,7 +436,7 @@ export default function StoryWritingInterface({
                   </div>
                 ) : (
                   <div className="flex items-center gap-2">
-                    <h1 className="text-white text-xl font-bold">
+                    <h1 className="text-white text-xl ">
                       {storySession.title}
                     </h1>
                     <button
@@ -454,7 +454,7 @@ export default function StoryWritingInterface({
               {isCompleted && assessment && (
                 <button
                   onClick={() => setShowAssessment(true)}
-                  className="px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-lg font-medium hover:from-green-600 hover:to-emerald-700 transition-all flex items-center gap-2"
+                  className="px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white   hover:from-green-600 hover:to-emerald-700 transition-all flex items-center gap-2"
                 >
                   <Award className="w-4 h-4" />
                   View Assessment
@@ -476,13 +476,13 @@ export default function StoryWritingInterface({
           <div className="mt-4">
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm text-gray-400">Story Progress</span>
-              <span className="text-sm text-purple-400 font-medium">
+              <span className="text-sm text-purple-400 ">
                 {progressPercentage}% Complete
               </span>
             </div>
-            <div className="w-full bg-gray-700 rounded-full h-2">
+            <div className="w-full bg-gray-700  h-2">
               <motion.div
-                className="bg-gradient-to-r from-purple-500 to-pink-600 h-2 rounded-full"
+                className="bg-gradient-to-r from-purple-500 to-pink-600 h-2 "
                 initial={{ width: 0 }}
                 animate={{ width: `${progressPercentage}%` }}
                 transition={{ duration: 0.5, ease: "easeOut" }}
@@ -497,9 +497,9 @@ export default function StoryWritingInterface({
           
           {/* Story Timeline - Main Content */}
           <div className="lg:col-span-2">
-            <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-6">
+            <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-6">
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-white font-semibold text-lg flex items-center gap-2">
+                <h3 className="text-white  text-lg flex items-center gap-2">
                   <MessageCircle className="w-5 h-5 text-purple-400" />
                   Story Conversation
                 </h3>
@@ -522,16 +522,16 @@ export default function StoryWritingInterface({
                     className="flex justify-end"
                   >
                     <div className="flex items-start space-x-3 max-w-[85%]">
-                      <div className="bg-gradient-to-r from-green-500/20 to-emerald-600/20 border border-green-500/30 rounded-lg p-4 rounded-br-none">
+                      <div className="bg-gradient-to-r from-green-500/20 to-emerald-600/20 border border-green-500/30  p-4 rounded-br-none">
                         <div className="flex items-center gap-2 mb-2">
                           <Bot className="w-4 h-4 text-green-400" />
-                          <span className="text-green-300 font-medium text-sm">AI Writing Partner</span>
+                          <span className="text-green-300  text-sm">AI Writing Partner</span>
                         </div>
                         <p className="text-gray-200 leading-relaxed">
                           {storySession.aiOpening}
                         </p>
                       </div>
-                      <div className="w-8 h-8 bg-gradient-to-r from-green-500 to-emerald-600 rounded-full flex items-center justify-center flex-shrink-0">
+                      <div className="w-8 h-8 bg-gradient-to-r from-green-500 to-emerald-600  flex items-center justify-center flex-shrink-0">
                         <Bot className="w-4 h-4 text-white" />
                       </div>
                     </div>
@@ -549,13 +549,13 @@ export default function StoryWritingInterface({
                       className="flex justify-start mb-4"
                     >
                       <div className="flex items-start space-x-3 max-w-[85%]">
-                        <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-600 rounded-full flex items-center justify-center flex-shrink-0">
+                        <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-600  flex items-center justify-center flex-shrink-0">
                           <User className="w-4 h-4 text-white" />
                         </div>
-                        <div className="bg-purple-500/20 border border-purple-500/30 rounded-lg p-4 rounded-bl-none">
+                        <div className="bg-purple-500/20 border border-purple-500/30  p-4 rounded-bl-none">
                           <div className="flex items-center justify-between mb-2">
                             <div className="flex items-center gap-2">
-                              <span className="text-purple-300 font-medium text-sm">You</span>
+                              <span className="text-purple-300  text-sm">You</span>
                               <span className="text-xs text-gray-400">Turn {turn.turnNumber}</span>
                             </div>
                             <span className="text-xs text-gray-500">
@@ -578,11 +578,11 @@ export default function StoryWritingInterface({
                         className="flex justify-end"
                       >
                         <div className="flex items-start space-x-3 max-w-[85%]">
-                          <div className="bg-gradient-to-r from-green-500/20 to-emerald-600/20 border border-green-500/30 rounded-lg p-4 rounded-br-none">
+                          <div className="bg-gradient-to-r from-green-500/20 to-emerald-600/20 border border-green-500/30  p-4 rounded-br-none">
                             <div className="flex items-center justify-between mb-2">
                               <div className="flex items-center gap-2">
                                 <Bot className="w-4 h-4 text-green-400" />
-                                <span className="text-green-300 font-medium text-sm">AI Partner</span>
+                                <span className="text-green-300  text-sm">AI Partner</span>
                               </div>
                               <span className="text-xs text-gray-500">
                                 {turn.aiWordCount || 0} words
@@ -592,7 +592,7 @@ export default function StoryWritingInterface({
                               {turn.aiResponse}
                             </p>
                           </div>
-                          <div className="w-8 h-8 bg-gradient-to-r from-green-500 to-emerald-600 rounded-full flex items-center justify-center flex-shrink-0">
+                          <div className="w-8 h-8 bg-gradient-to-r from-green-500 to-emerald-600  flex items-center justify-center flex-shrink-0">
                             <Bot className="w-4 h-4 text-white" />
                           </div>
                         </div>
@@ -609,19 +609,19 @@ export default function StoryWritingInterface({
                     className="flex justify-end"
                   >
                     <div className="flex items-start space-x-3 max-w-[85%]">
-                      <div className="bg-gradient-to-r from-green-500/20 to-emerald-600/20 border border-green-500/30 rounded-lg p-4 rounded-br-none">
+                      <div className="bg-gradient-to-r from-green-500/20 to-emerald-600/20 border border-green-500/30  p-4 rounded-br-none">
                         <div className="flex items-center gap-2">
                           <Bot className="w-4 h-4 text-green-400" />
-                          <span className="text-green-300 font-medium text-sm">AI Partner</span>
+                          <span className="text-green-300  text-sm">AI Partner</span>
                         </div>
                         <div className="flex items-center space-x-1 mt-2">
-                          <div className="w-2 h-2 bg-green-400 rounded-full animate-bounce"></div>
-                          <div className="w-2 h-2 bg-green-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                          <div className="w-2 h-2 bg-green-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                          <div className="w-2 h-2 bg-green-400  animate-bounce"></div>
+                          <div className="w-2 h-2 bg-green-400  animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                          <div className="w-2 h-2 bg-green-400  animate-bounce" style={{ animationDelay: '0.2s' }}></div>
                           <span className="text-green-300 text-sm ml-2">Writing response...</span>
                         </div>
                       </div>
-                      <div className="w-8 h-8 bg-gradient-to-r from-green-500 to-emerald-600 rounded-full flex items-center justify-center flex-shrink-0">
+                      <div className="w-8 h-8 bg-gradient-to-r from-green-500 to-emerald-600  flex items-center justify-center flex-shrink-0">
                         <Bot className="w-4 h-4 text-white" />
                       </div>
                     </div>
@@ -635,9 +635,9 @@ export default function StoryWritingInterface({
                     animate={{ opacity: 1, y: 0 }}
                     className="text-center py-8"
                   >
-                    <div className="bg-gradient-to-r from-purple-500/20 to-pink-600/20 border border-purple-500/30 rounded-lg p-6">
+                    <div className="bg-gradient-to-r from-purple-500/20 to-pink-600/20 border border-purple-500/30  p-6">
                       <Edit3 className="w-12 h-12 text-purple-400 mx-auto mb-3" />
-                      <h3 className="text-white font-bold text-lg mb-2">
+                      <h3 className="text-white  text-lg mb-2">
                         Ready to Start Your Story!
                       </h3>
                       <p className="text-gray-300 mb-4">
@@ -654,9 +654,9 @@ export default function StoryWritingInterface({
                     animate={{ opacity: 1, y: 0 }}
                     className="text-center py-6"
                   >
-                    <div className="bg-gradient-to-r from-yellow-500/20 to-orange-600/20 border border-yellow-500/30 rounded-lg p-6">
+                    <div className="bg-gradient-to-r from-yellow-500/20 to-orange-600/20 border border-yellow-500/30  p-6">
                       <Trophy className="w-12 h-12 text-yellow-400 mx-auto mb-3" />
-                      <h3 className="text-white font-bold text-lg mb-2">
+                      <h3 className="text-white  text-lg mb-2">
                         🎉 Story Complete!
                       </h3>
                       <p className="text-gray-300 mb-4">
@@ -665,7 +665,7 @@ export default function StoryWritingInterface({
                       {assessment && (
                         <button
                           onClick={() => setShowAssessment(true)}
-                          className="px-6 py-3 bg-gradient-to-r from-yellow-500 to-orange-600 text-white rounded-lg font-medium hover:from-yellow-600 hover:to-orange-700 transition-all flex items-center gap-2 mx-auto"
+                          className="px-6 py-3 bg-gradient-to-r from-yellow-500 to-orange-600 text-white   hover:from-yellow-600 hover:to-orange-700 transition-all flex items-center gap-2 mx-auto"
                         >
                           <Award className="w-5 h-5" />
                           View Your Assessment
@@ -679,14 +679,14 @@ export default function StoryWritingInterface({
 
             {/* FIXED Writing Input - Always show when canWrite is true */}
             {canWrite && (
-              <div className="mt-6 bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-6">
+              <div className="mt-6 bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-6">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-white font-semibold text-lg flex items-center gap-2">
+                  <h3 className="text-white  text-lg flex items-center gap-2">
                     <Edit3 className="w-5 h-5 text-purple-400" />
                     {storySession.currentTurn === 1 ? 'Start Your Story!' : `Your Turn ${storySession.currentTurn}`}
                   </h3>
                   <div className="flex items-center gap-4">
-                    <div className={`text-sm font-medium ${
+                    <div className={`text-sm  ${
                       isValid ? 'text-green-400' : 
                       wordCount > 100 ? 'text-red-400' : 
                       'text-gray-400'
@@ -715,7 +715,7 @@ export default function StoryWritingInterface({
                       ? "Start your amazing story here! Introduce your character, setting, or situation..."
                       : "Continue your story here... What happens next in your adventure?"
                     }
-                    className="w-full bg-gray-900/50 border border-gray-600 rounded-lg p-4 text-white placeholder-gray-400 focus:border-purple-500 focus:outline-none resize-none min-h-[120px]"
+                    className="w-full bg-gray-900/50 border border-gray-600  p-4 text-white placeholder-gray-400 focus:border-purple-500 focus:outline-none resize-none min-h-[120px]"
                     disabled={isSubmitting}
                   />
                   
@@ -728,7 +728,7 @@ export default function StoryWritingInterface({
                     <button
                       onClick={submitTurn}
                       disabled={!isValid || isSubmitting}
-                      className={`px-6 py-3 rounded-lg font-medium transition-all flex items-center gap-2 ${
+                      className={`px-6 py-3   transition-all flex items-center gap-2 ${
                         isValid && !isSubmitting
                           ? 'bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white'
                           : 'bg-gray-700 text-gray-400 cursor-not-allowed'
@@ -736,7 +736,7 @@ export default function StoryWritingInterface({
                     >
                       {isSubmitting ? (
                         <>
-                          <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                          <div className="w-4 h-4 border-2 border-white/30 border-t-white  animate-spin"></div>
                           Submitting...
                         </>
                       ) : (
@@ -758,8 +758,8 @@ export default function StoryWritingInterface({
           <div className="space-y-6">
             
             {/* Story Stats */}
-            <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-6">
-              <h3 className="text-white font-semibold text-lg mb-4 flex items-center gap-2">
+            <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-6">
+              <h3 className="text-white  text-lg mb-4 flex items-center gap-2">
                 <Target className="w-5 h-5 text-blue-400" />
                 Story Stats
               </h3>
@@ -767,28 +767,28 @@ export default function StoryWritingInterface({
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <span className="text-gray-400">Current Turn</span>
-                  <span className="text-white font-medium">
+                  <span className="text-white ">
                     {storySession.currentTurn} / {maxTurns}
                   </span>
                 </div>
                 
                 <div className="flex items-center justify-between">
                   <span className="text-gray-400">Your Words</span>
-                  <span className="text-white font-medium">
+                  <span className="text-white ">
                     {storySession.childWords}
                   </span>
                 </div>
                 
                 <div className="flex items-center justify-between">
                   <span className="text-gray-400">Total Words</span>
-                  <span className="text-white font-medium">
+                  <span className="text-white ">
                     {storySession.totalWords}
                   </span>
                 </div>
                 
                 <div className="flex items-center justify-between">
                   <span className="text-gray-400">Status</span>
-                  <span className={`font-medium ${
+                  <span className={` ${
                     isCompleted ? 'text-green-400' : 'text-blue-400'
                   }`}>
                     {isCompleted ? 'Completed' : 'In Progress'}
@@ -798,8 +798,8 @@ export default function StoryWritingInterface({
             </div>
 
             {/* Writing Tips */}
-            <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-6">
-              <h3 className="text-white font-semibold text-lg mb-4 flex items-center gap-2">
+            <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-6">
+              <h3 className="text-white  text-lg mb-4 flex items-center gap-2">
                 <Lightbulb className="w-5 h-5 text-yellow-400" />
                 Writing Tips
               </h3>
@@ -836,8 +836,8 @@ export default function StoryWritingInterface({
             </div>
 
             {/* Turn Guidelines */}
-            <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-6">
-              <h3 className="text-white font-semibold text-lg mb-4 flex items-center gap-2">
+            <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-6">
+              <h3 className="text-white  text-lg mb-4 flex items-center gap-2">
                 <FileText className="w-5 h-5 text-green-400" />
                 Turn Guidelines
               </h3>
@@ -846,7 +846,7 @@ export default function StoryWritingInterface({
                 {[1, 2, 3, 4, 5, 6, 7].map((turnNum) => (
                   <div 
                     key={turnNum}
-                    className={`flex items-center gap-3 p-2 rounded-lg transition-colors ${
+                    className={`flex items-center gap-3 p-2  transition-colors ${
                       storySession.currentTurn === turnNum - 1 && !isCompleted
                         ? 'bg-purple-500/20 border border-purple-500/30'
                         : storySession.currentTurn >= turnNum || isCompleted
@@ -854,7 +854,7 @@ export default function StoryWritingInterface({
                         : 'bg-gray-700/30'
                     }`}
                   >
-                    <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium ${
+                    <div className={`w-6 h-6  flex items-center justify-center text-xs  ${
                       storySession.currentTurn >= turnNum || isCompleted
                         ? 'bg-green-500 text-white'
                         : storySession.currentTurn === turnNum - 1 && !isCompleted
@@ -870,7 +870,7 @@ export default function StoryWritingInterface({
                     
                     <span className={`${
                       storySession.currentTurn === turnNum - 1 && !isCompleted
-                        ? 'text-purple-300 font-medium'
+                        ? 'text-purple-300 '
                         : storySession.currentTurn >= turnNum || isCompleted
                         ? 'text-green-300'
                         : 'text-gray-400'
@@ -884,8 +884,8 @@ export default function StoryWritingInterface({
 
             {/* Assessment Preview */}
             {assessment && (
-              <div className="bg-gradient-to-r from-green-500/20 to-emerald-600/20 border border-green-500/30 rounded-xl p-6">
-                <h3 className="text-white font-semibold text-lg mb-4 flex items-center gap-2">
+              <div className="bg-gradient-to-r from-green-500/20 to-emerald-600/20 border border-green-500/30  p-6">
+                <h3 className="text-white  text-lg mb-4 flex items-center gap-2">
                   <Award className="w-5 h-5 text-yellow-400" />
                   Assessment Ready!
                 </h3>
@@ -893,21 +893,21 @@ export default function StoryWritingInterface({
                 <div className="space-y-3 mb-4">
                   <div className="flex items-center justify-between">
                     <span className="text-gray-300">Overall Score</span>
-                    <span className="text-white font-bold text-lg">
+                    <span className="text-white  text-lg">
                       {assessment.overallScore}%
                     </span>
                   </div>
                   
                   <div className="flex items-center justify-between">
                     <span className="text-gray-300">Creativity</span>
-                    <span className="text-green-400 font-medium">
+                    <span className="text-green-400 ">
                       {assessment.categoryScores?.creativity || 0}%
                     </span>
                   </div>
                   
                   <div className="flex items-center justify-between">
                     <span className="text-gray-300">Grammar</span>
-                    <span className="text-blue-400 font-medium">
+                    <span className="text-blue-400 ">
                       {assessment.categoryScores?.grammar || 0}%
                     </span>
                   </div>
@@ -915,7 +915,7 @@ export default function StoryWritingInterface({
                 
                 <button
                   onClick={() => setShowAssessment(true)}
-                  className="w-full px-4 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-lg font-medium hover:from-green-600 hover:to-emerald-700 transition-all flex items-center justify-center gap-2"
+                  className="w-full px-4 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white   hover:from-green-600 hover:to-emerald-700 transition-all flex items-center justify-center gap-2"
                 >
                   <Award className="w-5 h-5" />
                   View Full Assessment
@@ -924,8 +924,8 @@ export default function StoryWritingInterface({
             )}
 
             {/* Quick Actions */}
-            <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-6">
-              <h3 className="text-white font-semibold text-lg mb-4 flex items-center gap-2">
+            <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-6">
+              <h3 className="text-white  text-lg mb-4 flex items-center gap-2">
                 <Wand2 className="w-5 h-5 text-purple-400" />
                 Quick Actions
               </h3>
@@ -933,7 +933,7 @@ export default function StoryWritingInterface({
               <div className="space-y-3">
                 <button
                   onClick={() => router.push('/children-dashboard/my-stories')}
-                  className="w-full px-4 py-2 bg-gray-700 hover:bg-gray-600 text-gray-300 rounded-lg transition-colors flex items-center gap-2"
+                  className="w-full px-4 py-2 bg-gray-700 hover:bg-gray-600 text-gray-300  transition-colors flex items-center gap-2"
                 >
                   <BookOpen className="w-4 h-4" />
                   My Stories
@@ -941,7 +941,7 @@ export default function StoryWritingInterface({
                 
                 <button
                   onClick={() => router.push('/children-dashboard/create-stories')}
-                  className="w-full px-4 py-2 bg-gray-700 hover:bg-gray-600 text-gray-300 rounded-lg transition-colors flex items-center gap-2"
+                  className="w-full px-4 py-2 bg-gray-700 hover:bg-gray-600 text-gray-300  transition-colors flex items-center gap-2"
                 >
                   <Edit3 className="w-4 h-4" />
                   New Story
@@ -949,7 +949,7 @@ export default function StoryWritingInterface({
                 
                 <button
                   onClick={() => router.push('/children-dashboard/competitions')}
-                  className="w-full px-4 py-2 bg-gray-700 hover:bg-gray-600 text-gray-300 rounded-lg transition-colors flex items-center gap-2"
+                  className="w-full px-4 py-2 bg-gray-700 hover:bg-gray-600 text-gray-300  transition-colors flex items-center gap-2"
                 >
                   <Trophy className="w-4 h-4" />
                   Competitions
@@ -979,18 +979,18 @@ export default function StoryWritingInterface({
             >
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-gradient-to-r from-yellow-500 to-orange-600 rounded-full flex items-center justify-center">
+                  <div className="w-12 h-12 bg-gradient-to-r from-yellow-500 to-orange-600  flex items-center justify-center">
                     <Trophy className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <h2 className="text-white text-2xl font-bold">Story Assessment</h2>
+                    <h2 className="text-white text-2xl ">Story Assessment</h2>
                     <p className="text-gray-400">Your creative writing analysis</p>
                   </div>
                 </div>
                 
                 <button
                   onClick={() => setShowAssessment(false)}
-                  className="p-2 hover:bg-gray-800 rounded-lg transition-colors"
+                  className="p-2 hover:bg-gray-800  transition-colors"
                 >
                   <X className="w-6 h-6 text-gray-400" />
                 </button>
@@ -1026,13 +1026,13 @@ export default function StoryWritingInterface({
                     />
                   </svg>
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="text-3xl font-bold text-white">
+                    <span className="text-3xl  text-white">
                       {assessment.overallScore}%
                     </span>
                   </div>
                 </div>
                 
-                <h3 className="text-white text-xl font-bold mb-2">
+                <h3 className="text-white text-xl  mb-2">
                   Overall Score: {assessment.overallScore}%
                 </h3>
                 <p className="text-gray-400">
@@ -1044,16 +1044,16 @@ export default function StoryWritingInterface({
               {/* Category Scores */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
                 {assessment.categoryScores && Object.entries(assessment.categoryScores).map(([category, score]) => (
-                  <div key={category} className="bg-gray-800/50 rounded-lg p-4">
+                  <div key={category} className="bg-gray-800/50  p-4">
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-gray-300 capitalize">
                         {category.replace(/([A-Z])/g, ' $1').trim()}
                       </span>
-                      <span className="text-white font-bold">{score as number}%</span>
+                      <span className="text-white ">{score as number}%</span>
                     </div>
-                    <div className="w-full bg-gray-700 rounded-full h-2">
+                    <div className="w-full bg-gray-700  h-2">
                       <div 
-                        className={`h-2 rounded-full transition-all duration-1000 ease-out ${
+                        className={`h-2  transition-all duration-1000 ease-out ${
                           (score as number) >= 80 ? 'bg-green-500' :
                           (score as number) >= 60 ? 'bg-yellow-500' : 'bg-red-500'
                         }`}
@@ -1065,8 +1065,8 @@ export default function StoryWritingInterface({
               </div>
 
               {/* Integrity Status */}
-              <div className="bg-gray-800/50 rounded-lg p-6 mb-8">
-                <h4 className="text-white font-semibold text-lg mb-3 flex items-center gap-2">
+              <div className="bg-gray-800/50  p-6 mb-8">
+                <h4 className="text-white  text-lg mb-3 flex items-center gap-2">
                   <CheckCircle className="w-5 h-5 text-green-400" />
                   Integrity Analysis
                 </h4>
@@ -1074,7 +1074,7 @@ export default function StoryWritingInterface({
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
                     <span className="text-gray-300">Content Status</span>
-                    <span className={`font-medium ${
+                    <span className={` ${
                       assessment.integrityStatus === 'original' ? 'text-green-400' :
                       assessment.integrityStatus === 'questionable' ? 'text-yellow-400' : 'text-red-400'
                     }`}>
@@ -1096,8 +1096,8 @@ export default function StoryWritingInterface({
 
               {/* Feedback */}
               {assessment.feedback && (
-                <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-6">
-                  <h4 className="text-white font-semibold text-lg mb-3 flex items-center gap-2">
+                <div className="bg-blue-500/10 border border-blue-500/30  p-6">
+                  <h4 className="text-white  text-lg mb-3 flex items-center gap-2">
                     <MessageCircle className="w-5 h-5 text-blue-400" />
                     Teacher Feedback
                   </h4>
@@ -1111,7 +1111,7 @@ export default function StoryWritingInterface({
               <div className="flex gap-3 mt-8">
                 <button
                   onClick={() => setShowAssessment(false)}
-                  className="flex-1 px-6 py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-lg font-medium transition-colors"
+                  className="flex-1 px-6 py-3 bg-gray-700 hover:bg-gray-600 text-white   transition-colors"
                 >
                   Close
                 </button>
@@ -1121,7 +1121,7 @@ export default function StoryWritingInterface({
                     setShowAssessment(false);
                     router.push('/children-dashboard/my-stories');
                   }}
-                  className="flex-1 px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white rounded-lg font-medium transition-all"
+                  className="flex-1 px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white   transition-all"
                 >
                   View All Stories
                 </button>

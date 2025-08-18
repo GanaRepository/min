@@ -166,7 +166,7 @@
 //   // ===== RESET NOTIFICATION UI =====
 //   // Place this in your JSX where you want the notification to appear
 //   {resetNotification && (
-//     <div className="bg-blue-600 text-white p-4 rounded-lg mb-4 flex items-center gap-2">
+//     <div className="bg-blue-600 text-white p-4  mb-4 flex items-center gap-2">
 //       <span className="text-2xl">🔄</span>
 //       <div>
 //         <strong>Monthly Reset Complete!</strong>
@@ -313,7 +313,7 @@
 //     return (
 //       <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 flex items-center justify-center">
 //         <div className="text-white text-xl flex items-center gap-3">
-//           <div className="w-8 h-8 border-4 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
+//           <div className="w-8 h-8 border-4 border-blue-400 border-t-transparent  animate-spin"></div>
 //           Loading your dashboard...
 //         </div>
 //       </div>
@@ -333,7 +333,7 @@
 //         >
 //           <div className="flex items-center justify-between">
 //             <div>
-//               <h1 className="text-4xl font-bold text-white mb-2">
+//               <h1 className="text-4xl  text-white mb-2">
 //                 Welcome back, {session?.user?.firstName || 'Writer'}! 🌟
 //               </h1>
 //               <p className="text-gray-300">Ready to continue your creative writing journey?</p>
@@ -341,7 +341,7 @@
             
 //             <Link
 //               href="/create-stories"
-//               className="bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white px-6 py-3 rounded-xl font-semibold transition-all flex items-center gap-2 shadow-lg"
+//               className="bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white px-6 py-3   transition-all flex items-center gap-2 shadow-lg"
 //             >
 //               <Plus size={20} />
 //               Create New Story
@@ -370,16 +370,16 @@
 //                 initial={{ opacity: 0, y: 30 }}
 //                 animate={{ opacity: 1, y: 0 }}
 //                 transition={{ delay: 0.6 }}
-//                 className="bg-gradient-to-r from-orange-500/20 to-red-500/20 border border-orange-500/30 rounded-xl p-8 text-center"
+//                 className="bg-gradient-to-r from-orange-500/20 to-red-500/20 border border-orange-500/30  p-8 text-center"
 //               >
 //                 <Crown className="w-16 h-16 text-orange-400 mx-auto mb-4" />
-//                 <h3 className="text-2xl font-bold text-white mb-4">Want More Creative Power?</h3>
+//                 <h3 className="text-2xl  text-white mb-4">Want More Creative Power?</h3>
 //                 <p className="text-gray-300 mb-6">
 //                   Upgrade to Story Pack and get 5 more stories, 15 more assessments for 30 days!
 //                 </p>
 //                 <button
 //                   onClick={handleUpgrade}
-//                   className="inline-flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-colors"
+//                   className="inline-flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white px-8 py-4   text-lg transition-colors"
 //                 >
 //                   <Crown className="w-5 h-5" />
 //                   Upgrade to Story Pack
@@ -393,17 +393,17 @@
 //                 initial={{ opacity: 0, y: 30 }}
 //                 animate={{ opacity: 1, y: 0 }}
 //                 transition={{ delay: 0.6 }}
-//                 className="bg-gradient-to-r from-green-500/20 to-blue-500/20 border border-green-500/30 rounded-xl p-8 text-center"
+//                 className="bg-gradient-to-r from-green-500/20 to-blue-500/20 border border-green-500/30  p-8 text-center"
 //               >
 //                 <div className="flex items-center justify-center gap-3 mb-4">
 //                   <Crown className="w-16 h-16 text-green-400" />
-//                   <div className="bg-green-500/20 rounded-full p-2">
+//                   <div className="bg-green-500/20  p-2">
 //                     <CheckCircle className="w-8 h-8 text-green-400" />
 //                   </div>
 //                 </div>
-//                 <h3 className="text-2xl font-bold text-white mb-4">Story Pack Active! 🎉</h3>
+//                 <h3 className="text-2xl  text-white mb-4">Story Pack Active! 🎉</h3>
 //                 <p className="text-gray-300 mb-2">
-//                   You have <span className="text-green-400 font-bold">{usageStats.daysRemaining} days</span> remaining
+//                   You have <span className="text-green-400 ">{usageStats.daysRemaining} days</span> remaining
 //                 </p>
 //                 <p className="text-sm text-gray-400">
 //                   Enjoying unlimited creativity until {usageStats.storyPackExpiry ? new Date(usageStats.storyPackExpiry).toLocaleDateString() : 'expiry'}
@@ -419,15 +419,15 @@
 //             initial={{ opacity: 0, y: 20 }}
 //             animate={{ opacity: 1, y: 0 }}
 //             transition={{ delay: 0.2 }}
-//             className="bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border border-yellow-500/30 rounded-xl p-6 mb-8"
+//             className="bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border border-yellow-500/30  p-6 mb-8"
 //           >
 //             <div className="flex items-center justify-between">
 //               <div className="flex items-center gap-4">
-//                 <div className="bg-yellow-500/20 p-3 rounded-lg">
+//                 <div className="bg-yellow-500/20 p-3 ">
 //                   <Gift className="w-8 h-8 text-yellow-400" />
 //                 </div>
 //                 <div>
-//                   <h3 className="text-xl font-semibold text-white mb-1">Unlock More Stories & Assessments!</h3>
+//                   <h3 className="text-xl  text-white mb-1">Unlock More Stories & Assessments!</h3>
 //                   <p className="text-gray-300">Get 5 more freestyle stories + 15 more AI assessments for just $15</p>
 //                   <div className="flex items-center gap-4 mt-2 text-sm">
 //                     <span className="text-yellow-400">✨ 8 total freestyle stories</span>
@@ -437,7 +437,7 @@
 //               </div>
 //               <Link
 //                 href="/children-dashboard/upgrade"
-//                 className="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white px-6 py-3 rounded-lg font-semibold transition-all"
+//                 className="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white px-6 py-3   transition-all"
 //               >
 //                 Upgrade Now
 //               </Link>
@@ -451,15 +451,15 @@
 //             initial={{ opacity: 0, y: 20 }}
 //             animate={{ opacity: 1, y: 0 }}
 //             transition={{ delay: 0.3 }}
-//             className="bg-gradient-to-r from-green-500/20 to-pink-500/20 border border-green-500/30 rounded-xl p-6 mb-8"
+//             className="bg-gradient-to-r from-green-500/20 to-pink-500/20 border border-green-500/30  p-6 mb-8"
 //           >
 //             <div className="flex items-center justify-between">
 //               <div className="flex items-center gap-4">
-//                 <div className="bg-green-500/20 p-3 rounded-lg">
+//                 <div className="bg-green-500/20 p-3 ">
 //                   <Crown className="w-8 h-8 text-green-400" />
 //                 </div>
 //                 <div>
-//                   <h3 className="text-xl font-semibold text-white mb-1">
+//                   <h3 className="text-xl  text-white mb-1">
 //                     {currentCompetition.month} {currentCompetition.year} Competition
 //                   </h3>
 //                   <div className="flex items-center gap-4 text-sm">
@@ -484,7 +484,7 @@
 //               </div>
 //               <Link
 //                 href="/children-dashboard/competitions"
-//                 className="bg-gradient-to-r from-green-500 to-pink-500 hover:from-green-600 hover:to-pink-600 text-white px-6 py-3 rounded-lg font-semibold transition-all"
+//                 className="bg-gradient-to-r from-green-500 to-pink-500 hover:from-green-600 hover:to-pink-600 text-white px-6 py-3   transition-all"
 //               >
 //                 Enter Competition
 //               </Link>
@@ -501,14 +501,14 @@
 //         >
 //           <Link
 //             href="/children-dashboard/create-stories?type=freestyle"
-//             className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-6 hover:border-green-500/50 transition-all group"
+//             className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-6 hover:border-green-500/50 transition-all group"
 //           >
 //             <div className="flex items-center gap-4">
-//               <div className="bg-green-500/20 p-3 rounded-lg group-hover:bg-green-500/30 transition-colors">
+//               <div className="bg-green-500/20 p-3  group-hover:bg-green-500/30 transition-colors">
 //                 <Sparkles className="w-6 h-6 text-green-400" />
 //               </div>
 //               <div>
-//                 <h3 className="text-lg font-semibold text-white">Write with AI</h3>
+//                 <h3 className="text-lg  text-white">Write with AI</h3>
 //                 <p className="text-gray-400 text-sm">Start a collaborative story</p>
 //               </div>
 //             </div>
@@ -516,14 +516,14 @@
 
 //           <Link
 //             href="/children-dashboard/create-stories?type=assessment"
-//             className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-6 hover:border-blue-500/50 transition-all group"
+//             className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-6 hover:border-blue-500/50 transition-all group"
 //           >
 //             <div className="flex items-center gap-4">
-//               <div className="bg-blue-500/20 p-3 rounded-lg group-hover:bg-blue-500/30 transition-colors">
+//               <div className="bg-blue-500/20 p-3  group-hover:bg-blue-500/30 transition-colors">
 //                 <Upload className="w-6 h-6 text-blue-400" />
 //               </div>
 //               <div>
-//                 <h3 className="text-lg font-semibold text-white">Get AI Assessment</h3>
+//                 <h3 className="text-lg  text-white">Get AI Assessment</h3>
 //                 <p className="text-gray-400 text-sm">Upload your story for review</p>
 //               </div>
 //             </div>
@@ -531,14 +531,14 @@
 
 //           <Link
 //             href="/children-dashboard/competitions"
-//             className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-6 hover:border-green-500/50 transition-all group"
+//             className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-6 hover:border-green-500/50 transition-all group"
 //           >
 //             <div className="flex items-center gap-4">
-//               <div className="bg-green-500/20 p-3 rounded-lg group-hover:bg-green-500/30 transition-colors">
+//               <div className="bg-green-500/20 p-3  group-hover:bg-green-500/30 transition-colors">
 //                 <Trophy className="w-6 h-6 text-green-400" />
 //               </div>
 //               <div>
-//                 <h3 className="text-lg font-semibold text-white">Join Competition</h3>
+//                 <h3 className="text-lg  text-white">Join Competition</h3>
 //                 <p className="text-gray-400 text-sm">Compete with other writers</p>
 //               </div>
 //             </div>
@@ -553,7 +553,7 @@
 //           className="mb-8"
 //         >
 //           <div className="flex items-center justify-between mb-6">
-//             <h2 className="text-2xl font-bold text-white">Recent Stories</h2>
+//             <h2 className="text-2xl  text-white">Recent Stories</h2>
 //             <Link
 //               href="/children-dashboard/my-stories"
 //               className="text-blue-400 hover:text-blue-300 transition-colors flex items-center gap-2"
@@ -564,13 +564,13 @@
 //           </div>
 
 //           {recentStories.length === 0 ? (
-//             <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-8 text-center">
+//             <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-8 text-center">
 //               <BookOpen className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-//               <h3 className="text-lg font-semibold text-white mb-2">No Stories Yet</h3>
+//               <h3 className="text-lg  text-white mb-2">No Stories Yet</h3>
 //               <p className="text-gray-400 mb-6">Start your creative writing journey today!</p>
 //               <Link
 //                 href="/children-dashboard/create-stories"
-//                 className="bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white px-6 py-3 rounded-lg font-semibold transition-all inline-flex items-center gap-2"
+//                 className="bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white px-6 py-3   transition-all inline-flex items-center gap-2"
 //               >
 //                 <Plus size={16} />
 //                 Create Your First Story
@@ -600,7 +600,7 @@
 //             className="mb-8"
 //           >
 //             <div className="flex items-center justify-between mb-6">
-//               <h2 className="text-2xl font-bold text-white">Recent Achievements</h2>
+//               <h2 className="text-2xl  text-white">Recent Achievements</h2>
 //               <Link
 //                 href="/children-dashboard/achievements"
 //                 className="text-yellow-400 hover:text-yellow-300 transition-colors flex items-center gap-2"
@@ -614,12 +614,12 @@
 //               {recentAchievements.map((achievement) => (
 //                 <div
 //                   key={achievement._id}
-//                   className="bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border border-yellow-500/30 rounded-xl p-6"
+//                   className="bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border border-yellow-500/30  p-6"
 //                 >
 //                   <div className="flex items-center gap-4">
 //                     <div className="text-4xl">{achievement.icon}</div>
 //                     <div>
-//                       <h3 className="text-lg font-semibold text-white">{achievement.title}</h3>
+//                       <h3 className="text-lg  text-white">{achievement.title}</h3>
 //                       <p className="text-gray-300 text-sm">{achievement.description}</p>
 //                       <span className="text-yellow-400 text-xs">
 //                         Unlocked {new Date(achievement.unlockedAt).toLocaleDateString()}
@@ -697,16 +697,16 @@
 //       initial={{ opacity: 0, scale: 0.95 }}
 //       animate={{ opacity: 1, scale: 1 }}
 //       whileHover={{ scale: 1.02 }}
-//       className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-6 hover:border-gray-500/50 transition-all group"
+//       className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-6 hover:border-gray-500/50 transition-all group"
 //     >
 //       {/* Story Type Badge */}
-//       <div className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium mb-4 ${typeInfo.bgColor} ${typeInfo.color} ${typeInfo.borderColor} border`}>
+//       <div className={`inline-flex items-center gap-1 px-2 py-1  text-xs  mb-4 ${typeInfo.bgColor} ${typeInfo.color} ${typeInfo.borderColor} border`}>
 //         <typeInfo.icon size={12} />
 //         {typeInfo.label}
 //       </div>
 
 //       {/* Title & Metadata */}
-//       <h3 className="text-lg font-semibold text-white mb-2 line-clamp-2">{story.title}</h3>
+//       <h3 className="text-lg  text-white mb-2 line-clamp-2">{story.title}</h3>
       
 //       <div className="flex items-center gap-4 text-sm text-gray-400 mb-4">
 //         <span>{story.totalWords} words</span>
@@ -721,7 +721,7 @@
 //             <span className="text-sm text-gray-300">Overall Score</span>
 //             <div className="flex items-center gap-2">
 //               {getIntegrityIcon(story.assessment.integrityRisk)}
-//               <span className={`font-semibold ${getScoreColor(story.assessment.overallScore)}`}>
+//               <span className={` ${getScoreColor(story.assessment.overallScore)}`}>
 //                 {story.assessment.overallScore}%
 //               </span>
 //             </div>
@@ -732,18 +732,18 @@
 //       {/* Status Badges */}
 //       <div className="flex flex-wrap gap-2 mb-4">
 //         {story.isPublished && (
-//           <span className="bg-green-500/20 text-green-300 px-2 py-1 rounded text-xs font-medium border border-green-500/30 flex items-center gap-1">
+//           <span className="bg-green-500/20 text-green-300 px-2 py-1  text-xs  border border-green-500/30 flex items-center gap-1">
 //             <Star size={10} />
 //             Published
 //           </span>
 //         )}
 //         {story.status === 'flagged' && (
-//           <span className="bg-red-500/20 text-red-400 px-2 py-1 rounded text-xs font-medium border border-red-500/30">
+//           <span className="bg-red-500/20 text-red-400 px-2 py-1  text-xs  border border-red-500/30">
 //             Flagged
 //           </span>
 //         )}
 //         {story.status === 'review' && (
-//           <span className="bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded text-xs font-medium border border-yellow-500/30">
+//           <span className="bg-yellow-500/20 text-yellow-400 px-2 py-1  text-xs  border border-yellow-500/30">
 //             Review
 //           </span>
 //         )}
@@ -753,7 +753,7 @@
 //       <div className="space-y-2">
 //         <Link
 //           href={`/children-dashboard/my-stories/${story._id}`}
-//           className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2"
+//           className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2  text-sm  transition-colors flex items-center justify-center gap-2"
 //         >
 //           <Eye size={16} />
 //           View Story
@@ -765,10 +765,10 @@
 //             <button
 //               onClick={onPublish}
 //               disabled={publishingStory === story._id}
-//               className="bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg text-xs font-medium transition-colors flex items-center justify-center gap-1 disabled:opacity-50"
+//               className="bg-green-600 hover:bg-green-700 text-white py-2  text-xs  transition-colors flex items-center justify-center gap-1 disabled:opacity-50"
 //             >
 //               {publishingStory === story._id ? (
-//                 <div className="w-3 h-3 border border-white border-t-transparent rounded-full animate-spin"></div>
+//                 <div className="w-3 h-3 border border-white border-t-transparent  animate-spin"></div>
 //               ) : (
 //                 <>
 //                   <Star size={12} />
@@ -784,7 +784,7 @@
 //           {story.status === 'completed' && (
 //             <button
 //               onClick={onPurchase}
-//               className="bg-yellow-600 hover:bg-yellow-700 text-white py-2 rounded-lg text-xs font-medium transition-colors flex items-center justify-center gap-1"
+//               className="bg-yellow-600 hover:bg-yellow-700 text-white py-2  text-xs  transition-colors flex items-center justify-center gap-1"
 //             >
 //               <DollarSign size={12} />
 //               $10
@@ -1022,13 +1022,13 @@ export default function ChildrenDashboardPage() {
       <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 p-6">
         <div className="max-w-7xl mx-auto">
           <div className="animate-pulse space-y-6">
-            <div className="h-20 bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl"></div>
+            <div className="h-20 bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 "></div>
             <div className="grid lg:grid-cols-3 gap-6">
               <div className="lg:col-span-2 space-y-6">
-                <div className="h-96 bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl"></div>
-                <div className="h-64 bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl"></div>
+                <div className="h-96 bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 "></div>
+                <div className="h-64 bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 "></div>
               </div>
-              <div className="h-96 bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl"></div>
+              <div className="h-96 bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 "></div>
             </div>
           </div>
         </div>
@@ -1040,12 +1040,12 @@ export default function ChildrenDashboardPage() {
   if (error) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 p-6 flex items-center justify-center">
-        <div className="text-center bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-8">
-          <h2 className="text-2xl font-bold text-white mb-4">Something went wrong</h2>
+        <div className="text-center bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-8">
+          <h2 className="text-2xl  text-white mb-4">Something went wrong</h2>
           <p className="text-gray-300 mb-6">{error}</p>
           <button
             onClick={() => window.location.reload()}
-            className="bg-blue-800 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition-colors border border-blue-600/40"
+            className="bg-blue-800 hover:bg-blue-700 text-white px-6 py-3  transition-colors border border-blue-600/40"
           >
             Try Again
           </button>
@@ -1064,7 +1064,7 @@ export default function ChildrenDashboardPage() {
           animate={{ opacity: 1, y: 0 }}
           className="text-center lg:text-left"
         >
-          <h1 className="text-4xl font-bold text-white mb-2">
+          <h1 className="text-4xl  text-white mb-2">
             Welcome back, {session?.user?.firstName || 'Writer'}! ☀️
           </h1>
           <p className="text-gray-300 text-lg">
@@ -1077,7 +1077,7 @@ export default function ChildrenDashboardPage() {
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-blue-800/80 backdrop-blur-xl border border-blue-600/40 text-white p-4 rounded-xl mb-4 flex items-center gap-3"
+            className="bg-blue-800/80 backdrop-blur-xl border border-blue-600/40 text-white p-4  mb-4 flex items-center gap-3"
           >
             <span className="text-2xl">🔄</span>
             <div>
@@ -1097,12 +1097,12 @@ export default function ChildrenDashboardPage() {
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="bg-green-800/60 backdrop-blur-xl border border-green-600/40 rounded-xl p-4"
+                className="bg-green-800/60 backdrop-blur-xl border border-green-600/40  p-4"
               >
                 <div className="flex items-center gap-3">
                   <CheckCircle className="w-5 h-5 text-green-400" />
                   <div className="flex-1">
-                    <h4 className="font-semibold text-green-200">Story Pack Active!</h4>
+                    <h4 className=" text-green-200">Story Pack Active!</h4>
                     <div className="flex items-center gap-2 text-sm text-green-300">
                       <Clock className="w-4 h-4" />
                       <span>{usageStats.daysRemaining} days remaining</span>
@@ -1123,12 +1123,12 @@ export default function ChildrenDashboardPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
-                className="bg-green-800/60 backdrop-blur-xl border border-green-600/40 rounded-xl p-4"
+                className="bg-green-800/60 backdrop-blur-xl border border-green-600/40  p-4"
               >
                 <div className="flex items-center gap-3">
                   <Crown className="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" />
                   <div className="flex-1">
-                    <h4 className="font-semibold text-green-200 mb-1">
+                    <h4 className=" text-green-200 mb-1">
                       {currentCompetition.month} {currentCompetition.year} Competition
                     </h4>
                     <div className="flex items-center gap-2 text-sm text-green-300">
@@ -1140,7 +1140,7 @@ export default function ChildrenDashboardPage() {
                   </div>
                   <Link
                     href="/children-dashboard/competitions"
-                    className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm transition-colors border border-green-500/40"
+                    className="bg-green-600 hover:bg-green-700 text-white px-4 py-2  text-sm transition-colors border border-green-500/40"
                   >
                     Enter Competition
                   </Link>
@@ -1151,10 +1151,10 @@ export default function ChildrenDashboardPage() {
             {/* Recent Activities */}
             <section>
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-white">Recent Activities</h2>
+                <h2 className="text-2xl  text-white">Recent Activities</h2>
                 <Link
                   href="/children-dashboard/my-stories"
-                  className="text-blue-400 hover:text-blue-300 text-sm font-medium flex items-center gap-1 transition-colors"
+                  className="text-blue-400 hover:text-blue-300 text-sm  flex items-center gap-1 transition-colors"
                 >
                   View All Stories
                   <ArrowRight className="w-4 h-4" />
@@ -1168,21 +1168,21 @@ export default function ChildrenDashboardPage() {
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.1 }}
-                    className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-4 hover:border-gray-500/50 transition-all"
+                    className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-4 hover:border-gray-500/50 transition-all"
                   >
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-gray-700/60 border border-gray-600/40 rounded-full flex items-center justify-center">
+                      <div className="w-10 h-10 bg-gray-700/60 border border-gray-600/40  flex items-center justify-center">
                         <span className="text-lg">{achievement.icon}</span>
                       </div>
                       <div className="flex-1">
-                        <h3 className="font-semibold text-white">{achievement.title}</h3>
+                        <h3 className=" text-white">{achievement.title}</h3>
                         <p className="text-sm text-gray-300">{achievement.description}</p>
                         <p className="text-xs text-gray-400 mt-1">
                           {new Date(achievement.unlockedAt).toLocaleDateString()}
                         </p>
                       </div>
                       <div className="text-right">
-                        <span className="text-xs text-gray-400 uppercase tracking-wide font-medium">
+                        <span className="text-xs text-gray-400 uppercase tracking-wide ">
                           {achievement.category}
                         </span>
                       </div>
@@ -1212,29 +1212,29 @@ export default function ChildrenDashboardPage() {
 
             {/* Quick Actions - Moved to sidebar below Usage Stats */}
             <section>
-              <h2 className="text-xl font-bold text-white mb-4">Quick Actions</h2>
+              <h2 className="text-xl  text-white mb-4">Quick Actions</h2>
               <div className="space-y-3">
                 <Link
                   href="/create-stories"
-                  className="block bg-green-800/60 backdrop-blur-xl border border-green-600/40 rounded-xl p-4 hover:border-green-500/50 transition-all group"
+                  className="block bg-green-800/60 backdrop-blur-xl border border-green-600/40  p-4 hover:border-green-500/50 transition-all group"
                 >
                   <div className="flex items-center gap-3">
                     <Sparkles className="w-6 h-6 text-green-400 group-hover:scale-110 transition-transform" />
                     <div>
-                      <h3 className="font-semibold text-white text-sm">Write with AI</h3>
+                      <h3 className=" text-white text-sm">Write with AI</h3>
                       <p className="text-green-300 text-xs">Start a collaborative story</p>
                     </div>
                   </div>
                 </Link>
 
                 <Link
-                  href="/children-dashboard/my-stories"
-                  className="block bg-blue-800/60 backdrop-blur-xl border border-blue-600/40 rounded-xl p-4 hover:border-blue-500/50 transition-all group"
+                  href="/create-stories"
+                  className="block bg-blue-800/60 backdrop-blur-xl border border-blue-600/40  p-4 hover:border-blue-500/50 transition-all group"
                 >
                   <div className="flex items-center gap-3">
                     <FileText className="w-6 h-6 text-blue-400 group-hover:scale-110 transition-transform" />
                     <div>
-                      <h3 className="font-semibold text-white text-sm">Get AI Assessment</h3>
+                      <h3 className=" text-white text-sm">Get AI Assessment</h3>
                       <p className="text-blue-300 text-xs">Upload your story for review</p>
                     </div>
                   </div>
@@ -1242,12 +1242,12 @@ export default function ChildrenDashboardPage() {
 
                 <Link
                   href="/children-dashboard/competitions"
-                  className="block bg-green-800/60 backdrop-blur-xl border border-green-600/40 rounded-xl p-4 hover:border-green-500/50 transition-all group"
+                  className="block bg-green-800/60 backdrop-blur-xl border border-green-600/40  p-4 hover:border-green-500/50 transition-all group"
                 >
                   <div className="flex items-center gap-3">
                     <Trophy className="w-6 h-6 text-green-400 group-hover:scale-110 transition-transform" />
                     <div>
-                      <h3 className="font-semibold text-white text-sm">Join Competition</h3>
+                      <h3 className=" text-white text-sm">Join Competition</h3>
                       <p className="text-green-300 text-xs">Compete with other writers</p>
                     </div>
                   </div>

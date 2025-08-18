@@ -492,7 +492,7 @@
 //     return (
 //       <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 flex items-center justify-center">
 //         <div className="text-white text-xl flex items-center gap-3">
-//           <div className="w-8 h-8 border-4 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
+//           <div className="w-8 h-8 border-4 border-blue-400 border-t-transparent  animate-spin"></div>
 //           Loading story details...
 //         </div>
 //       </div>
@@ -505,11 +505,11 @@
 //       <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 flex items-center justify-center">
 //         <div className="text-center max-w-md mx-auto px-6">
 //           <XCircle className="w-16 h-16 text-red-400 mx-auto mb-4" />
-//           <h2 className="text-xl font-semibold text-white mb-2">Story Not Found</h2>
+//           <h2 className="text-xl  text-white mb-2">Story Not Found</h2>
 //           <p className="text-gray-300 mb-6">{error || 'The story you\'re looking for doesn\'t exist or you don\'t have access to it.'}</p>
 //           <Link
 //             href="/children-dashboard/my-stories"
-//             className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition-colors inline-flex items-center gap-2"
+//             className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3  transition-colors inline-flex items-center gap-2"
 //           >
 //             <ArrowLeft size={20} />
 //             Back to My Stories
@@ -543,9 +543,9 @@
 
 //           {/* Story Type Badge */}
 //           <div className="flex justify-center mb-6">
-//             <div className={`inline-flex items-center gap-3 px-6 py-3 rounded-full ${typeInfo.bgColor} ${typeInfo.borderColor} border`}>
+//             <div className={`inline-flex items-center gap-3 px-6 py-3  ${typeInfo.bgColor} ${typeInfo.borderColor} border`}>
 //               <typeInfo.icon size={20} className={typeInfo.color} />
-//               <span className={`font-bold text-lg ${typeInfo.color}`}>
+//               <span className={` text-lg ${typeInfo.color}`}>
 //                 {typeInfo.label}
 //               </span>
 //             </div>
@@ -568,13 +568,13 @@
 //                     }
 //                   }}
 //                   autoFocus
-//                   className="w-full text-4xl font-bold text-white bg-transparent border-b-2 border-blue-400 focus:outline-none text-center"
+//                   className="w-full text-4xl  text-white bg-transparent border-b-2 border-blue-400 focus:outline-none text-center"
 //                   maxLength={100}
 //                 />
 //               </div>
 //             ) : (
 //               <div className="group cursor-pointer" onClick={() => setEditingTitle(true)}>
-//                 <h1 className="text-4xl font-bold text-white mb-2 group-hover:text-blue-300 transition-colors">
+//                 <h1 className="text-4xl  text-white mb-2 group-hover:text-blue-300 transition-colors">
 //                   {story.title}
 //                   <Edit className="w-6 h-6 inline-block ml-2 opacity-0 group-hover:opacity-100 transition-opacity" />
 //                 </h1>
@@ -604,14 +604,14 @@
 //             {/* Competition Entries */}
 //             {story.competitionEntries.length > 0 && (
 //               <div className="flex justify-center mb-6">
-//                 <div className="bg-purple-500/20 border border-purple-500/30 rounded-lg p-4">
-//                   <h4 className="font-medium text-purple-300 mb-2">Competition History</h4>
+//                 <div className="bg-purple-500/20 border border-purple-500/30  p-4">
+//                   <h4 className=" text-purple-300 mb-2">Competition History</h4>
 //                   <div className="space-y-2">
 //                     {story.competitionEntries.map((entry, index) => (
 //                       <div key={index} className="flex items-center gap-3">
 //                         {entry.rank && getRankIcon(entry.rank)}
 //                         <div>
-//                           <div className="text-white font-medium">
+//                           <div className="text-white ">
 //                             Submitted: {new Date(entry.submittedAt).toLocaleDateString()}
 //                           </div>
 //                           {entry.rank && (
@@ -637,7 +637,7 @@
 //           className="mb-8"
 //         >
 //           <div className="flex justify-center">
-//             <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-2 flex gap-2">
+//             <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-2 flex gap-2">
 //               {[
 //                 { id: 'overview', label: 'Overview', icon: Eye },
 //                 { id: 'assessment', label: 'Assessment', icon: Brain },
@@ -647,7 +647,7 @@
 //                 <button
 //                   key={tab.id}
 //                   onClick={() => setActiveTab(tab.id as any)}
-//                   className={`px-6 py-3 rounded-lg transition-all flex items-center gap-2 font-medium ${
+//                   className={`px-6 py-3  transition-all flex items-center gap-2  ${
 //                     activeTab === tab.id
 //                       ? 'bg-blue-600 text-white'
 //                       : 'text-gray-400 hover:text-white hover:bg-gray-700/50'
@@ -656,7 +656,7 @@
 //                   <tab.icon size={18} />
 //                   {tab.label}
 //                   {tab.id === 'comments' && story.comments.length > 0 && (
-//                     <span className="bg-red-500 text-white text-xs rounded-full px-2 py-0.5 ml-1">
+//                     <span className="bg-red-500 text-white text-xs  px-2 py-0.5 ml-1">
 //                       {story.comments.length}
 //                     </span>
 //                   )}
@@ -680,8 +680,8 @@
 //               <div className="lg:col-span-1 space-y-6">
                 
 //                 {/* Progress Card */}
-//                 <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-6">
-//                   <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+//                 <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-6">
+//                   <h3 className="text-lg  text-white mb-4 flex items-center gap-2">
 //                     <TrendingUp className="w-5 h-5 text-blue-400" />
 //                     Story Progress
 //                   </h3>
@@ -693,9 +693,9 @@
 //                           <span className="text-gray-400">Turns Complete:</span>
 //                           <span className="text-white">{story.currentTurn - 1} / {story.maxTurns}</span>
 //                         </div>
-//                         <div className="w-full bg-gray-700/50 rounded-full h-2">
+//                         <div className="w-full bg-gray-700/50  h-2">
 //                           <div
-//                             className="bg-blue-400 h-2 rounded-full transition-all"
+//                             className="bg-blue-400 h-2  transition-all"
 //                             style={{ width: `${((story.currentTurn - 1) / story.maxTurns) * 100}%` }}
 //                           />
 //                         </div>
@@ -707,9 +707,9 @@
 //                         <span className="text-gray-400">Words Written:</span>
 //                         <span className="text-white">{story.childWords} / {story.totalWords}</span>
 //                       </div>
-//                       <div className="w-full bg-gray-700/50 rounded-full h-2">
+//                       <div className="w-full bg-gray-700/50  h-2">
 //                         <div
-//                           className="bg-green-400 h-2 rounded-full transition-all"
+//                           className="bg-green-400 h-2  transition-all"
 //                           style={{ width: `${story.totalWords > 0 ? (story.childWords / story.totalWords) * 100 : 0}%` }}
 //                         />
 //                       </div>
@@ -721,9 +721,9 @@
 //                           <span className="text-gray-400">AI Calls Used:</span>
 //                           <span className="text-white">{story.apiCallsUsed} / {story.maxTurns}</span>
 //                         </div>
-//                         <div className="w-full bg-gray-700/50 rounded-full h-2">
+//                         <div className="w-full bg-gray-700/50  h-2">
 //                           <div
-//                             className="bg-purple-400 h-2 rounded-full transition-all"
+//                             className="bg-purple-400 h-2  transition-all"
 //                             style={{ width: `${(story.apiCallsUsed / story.maxTurns) * 100}%` }}
 //                           />
 //                         </div>
@@ -735,7 +735,7 @@
 //                   {story.status === 'active' && story.storyType === 'freestyle' && (
 //                     <button
 //                       onClick={handleContinueWriting}
-//                       className="w-full mt-6 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-3 rounded-lg font-medium transition-all flex items-center justify-center gap-2"
+//                       className="w-full mt-6 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-3   transition-all flex items-center justify-center gap-2"
 //                     >
 //                       <Play size={18} />
 //                       Continue Writing
@@ -745,14 +745,14 @@
 
 //                 {/* Assessment Overview */}
 //                 {story.assessment && (
-//                   <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-6">
-//                     <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+//                   <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-6">
+//                     <h3 className="text-lg  text-white mb-4 flex items-center gap-2">
 //                       <Brain className="w-5 h-5 text-green-400" />
 //                       Assessment Score
 //                     </h3>
                     
 //                     <div className="text-center mb-6">
-//                       <div className={`text-4xl font-bold ${getScoreColor(story.assessment.overallScore)} mb-2`}>
+//                       <div className={`text-4xl  ${getScoreColor(story.assessment.overallScore)} mb-2`}>
 //                         {story.assessment.overallScore}%
 //                       </div>
 //                       <div className="text-gray-400">Overall Score</div>
@@ -760,25 +760,25 @@
 
 //                     <div className="grid grid-cols-2 gap-4 mb-4">
 //                       <div className="text-center">
-//                         <div className={`text-xl font-semibold ${getScoreColor(story.assessment.grammarScore)}`}>
+//                         <div className={`text-xl  ${getScoreColor(story.assessment.grammarScore)}`}>
 //                           {story.assessment.grammarScore}%
 //                         </div>
 //                         <div className="text-xs text-gray-400">Grammar</div>
 //                       </div>
 //                       <div className="text-center">
-//                         <div className={`text-xl font-semibold ${getScoreColor(story.assessment.creativityScore)}`}>
+//                         <div className={`text-xl  ${getScoreColor(story.assessment.creativityScore)}`}>
 //                           {story.assessment.creativityScore}%
 //                         </div>
 //                         <div className="text-xs text-gray-400">Creativity</div>
 //                       </div>
 //                       <div className="text-center">
-//                         <div className={`text-xl font-semibold ${getScoreColor(story.assessment.vocabularyScore)}`}>
+//                         <div className={`text-xl  ${getScoreColor(story.assessment.vocabularyScore)}`}>
 //                           {story.assessment.vocabularyScore}%
 //                         </div>
 //                         <div className="text-xs text-gray-400">Vocabulary</div>
 //                       </div>
 //                       <div className="text-center">
-//                         <div className={`text-xl font-semibold ${getScoreColor(story.assessment.structureScore)}`}>
+//                         <div className={`text-xl  ${getScoreColor(story.assessment.structureScore)}`}>
 //                           {story.assessment.structureScore}%
 //                         </div>
 //                         <div className="text-xs text-gray-400">Structure</div>
@@ -787,9 +787,9 @@
 
 //                     {/* Integrity Status */}
 //                     {story.assessment.integrityAnalysis && (
-//                       <div className="flex items-center justify-center gap-2 p-3 bg-gray-700/30 rounded-lg">
+//                       <div className="flex items-center justify-center gap-2 p-3 bg-gray-700/30 ">
 //                         {getIntegrityIcon(story.assessment.integrityAnalysis.integrityRisk)}
-//                         <span className="text-sm font-medium text-white">
+//                         <span className="text-sm  text-white">
 //                           Integrity: {story.assessment.integrityAnalysis.integrityRisk.toUpperCase()}
 //                         </span>
 //                       </div>
@@ -798,8 +798,8 @@
 //                 )}
 
 //                 {/* Actions Card */}
-//                 <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-6">
-//                   <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+//                 <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-6">
+//                   <h3 className="text-lg  text-white mb-4 flex items-center gap-2">
 //                     <Zap className="w-5 h-5 text-yellow-400" />
 //                     Actions
 //                   </h3>
@@ -810,11 +810,11 @@
 //                       <button
 //                         onClick={handlePublishStory}
 //                         disabled={publishingStory}
-//                         className="w-full bg-green-600 hover:bg-green-700 disabled:bg-green-400 text-white py-3 rounded-lg font-medium transition-all flex items-center justify-center gap-2"
+//                         className="w-full bg-green-600 hover:bg-green-700 disabled:bg-green-400 text-white py-3   transition-all flex items-center justify-center gap-2"
 //                       >
 //                         {publishingStory ? (
 //                           <>
-//                             <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+//                             <div className="w-4 h-4 border-2 border-white border-t-transparent  animate-spin" />
 //                             Publishing...
 //                           </>
 //                         ) : (
@@ -831,11 +831,11 @@
 //                       <button
 //                         onClick={handlePurchaseStory}
 //                         disabled={purchasingStory}
-//                         className="w-full bg-yellow-600 hover:bg-yellow-700 disabled:bg-yellow-400 text-white py-3 rounded-lg font-medium transition-all flex items-center justify-center gap-2"
+//                         className="w-full bg-yellow-600 hover:bg-yellow-700 disabled:bg-yellow-400 text-white py-3   transition-all flex items-center justify-center gap-2"
 //                       >
 //                         {purchasingStory ? (
 //                           <>
-//                             <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+//                             <div className="w-4 h-4 border-2 border-white border-t-transparent  animate-spin" />
 //                             Processing...
 //                           </>
 //                         ) : (
@@ -852,11 +852,11 @@
 //                       <button
 //                         onClick={handleReassessStory}
 //                         disabled={reassessingStory}
-//                         className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white py-3 rounded-lg font-medium transition-all flex items-center justify-center gap-2"
+//                         className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white py-3   transition-all flex items-center justify-center gap-2"
 //                       >
 //                         {reassessingStory ? (
 //                           <>
-//                             <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+//                             <div className="w-4 h-4 border-2 border-white border-t-transparent  animate-spin" />
 //                             Requesting...
 //                           </>
 //                         ) : (
@@ -873,11 +873,11 @@
 //                       <button
 //                         onClick={handleDeleteStory}
 //                         disabled={deletingStory}
-//                         className="w-full bg-red-600 hover:bg-red-700 disabled:bg-red-400 text-white py-3 rounded-lg font-medium transition-all flex items-center justify-center gap-2"
+//                         className="w-full bg-red-600 hover:bg-red-700 disabled:bg-red-400 text-white py-3   transition-all flex items-center justify-center gap-2"
 //                       >
 //                         {deletingStory ? (
 //                           <>
-//                             <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+//                             <div className="w-4 h-4 border-2 border-white border-t-transparent  animate-spin" />
 //                             Deleting...
 //                           </>
 //                         ) : (
@@ -897,8 +897,8 @@
                 
 //                 {/* Story Elements */}
 //                 {Object.keys(story.elements).length > 0 && (
-//                   <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-6">
-//                     <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+//                   <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-6">
+//                     <h3 className="text-lg  text-white mb-4 flex items-center gap-2">
 //                       <Palette className="w-5 h-5 text-purple-400" />
 //                       Story Elements
 //                     </h3>
@@ -906,8 +906,8 @@
 //                     <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
 //                       {Object.entries(story.elements).map(([key, value]) => (
 //                         value && (
-//                           <div key={key} className="bg-purple-500/10 border border-purple-500/20 rounded-lg p-3">
-//                             <div className="text-sm text-purple-300 capitalize font-medium">{key}</div>
+//                           <div key={key} className="bg-purple-500/10 border border-purple-500/20  p-3">
+//                             <div className="text-sm text-purple-300 capitalize ">{key}</div>
 //                             <div className="text-white">{value}</div>
 //                           </div>
 //                         )
@@ -917,8 +917,8 @@
 //                 )}
 
 //                 {/* Status Information */}
-//                 <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-6">
-//                   <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+//                 <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-6">
+//                   <h3 className="text-lg  text-white mb-4 flex items-center gap-2">
 //                     <Clock className="w-5 h-5 text-blue-400" />
 //                     Story Timeline
 //                   </h3>
@@ -959,23 +959,23 @@
 
 //                 {/* Quick Stats */}
 //                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-//                   <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-4 text-center">
-//                     <div className="text-2xl font-bold text-blue-400">{story.totalWords}</div>
+//                   <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-4 text-center">
+//                     <div className="text-2xl  text-blue-400">{story.totalWords}</div>
 //                     <div className="text-sm text-gray-400">Total Words</div>
 //                   </div>
                   
-//                   <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-4 text-center">
-//                     <div className="text-2xl font-bold text-green-400">{story.childWords}</div>
+//                   <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-4 text-center">
+//                     <div className="text-2xl  text-green-400">{story.childWords}</div>
 //                     <div className="text-sm text-gray-400">Your Words</div>
 //                   </div>
                   
-//                   <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-4 text-center">
-//                     <div className="text-2xl font-bold text-purple-400">{story.turns.length}</div>
+//                   <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-4 text-center">
+//                     <div className="text-2xl  text-purple-400">{story.turns.length}</div>
 //                     <div className="text-sm text-gray-400">Writing Turns</div>
 //                   </div>
                   
-//                   <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-4 text-center">
-//                     <div className="text-2xl font-bold text-yellow-400">{story.assessmentAttempts}</div>
+//                   <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-4 text-center">
+//                     <div className="text-2xl  text-yellow-400">{story.assessmentAttempts}</div>
 //                     <div className="text-sm text-gray-400">Assessments</div>
 //                   </div>
 //                 </div>
@@ -987,12 +987,12 @@
 //             <div className="space-y-8">
               
 //               {/* Overall Assessment */}
-//               <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-8">
+//               <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-8">
 //                 <div className="text-center mb-8">
-//                   <div className={`text-6xl font-bold ${getScoreColor(story.assessment.overallScore)} mb-4`}>
+//                   <div className={`text-6xl  ${getScoreColor(story.assessment.overallScore)} mb-4`}>
 //                     {story.assessment.overallScore}%
 //                   </div>
-//                   <h2 className="text-2xl font-semibold text-white">Overall Assessment Score</h2>
+//                   <h2 className="text-2xl  text-white">Overall Assessment Score</h2>
 //                   <p className="text-gray-400 mt-2">Reading Level: Grade {story.assessment.readingLevel}</p>
 //                 </div>
 
@@ -1010,7 +1010,7 @@
 //                     return (
 //                       <div key={key} className="text-center">
 //                         <Icon className={`w-8 h-8 mx-auto mb-2 ${getScoreColor(score)}`} />
-//                         <div className={`text-2xl font-bold ${getScoreColor(score)} mb-1`}>
+//                         <div className={`text-2xl  ${getScoreColor(score)} mb-1`}>
 //                           {score}%
 //                         </div>
 //                         <div className="text-sm text-gray-400">{label}</div>
@@ -1021,22 +1021,22 @@
 
 //                 {/* Integrity Analysis */}
 //                 {story.assessment.integrityAnalysis && (
-//                   <div className="bg-gray-700/30 rounded-lg p-6 mb-6">
-//                     <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+//                   <div className="bg-gray-700/30  p-6 mb-6">
+//                     <h3 className="text-lg  text-white mb-4 flex items-center gap-2">
 //                       <Shield className="w-5 h-5 text-blue-400" />
 //                       Integrity Analysis
 //                     </h3>
                     
 //                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
 //                       <div className="text-center">
-//                         <div className="text-2xl font-bold text-green-400 mb-1">
+//                         <div className="text-2xl  text-green-400 mb-1">
 //                           {story.assessment.integrityAnalysis.originalityScore}%
 //                         </div>
 //                         <div className="text-sm text-gray-400">Originality</div>
 //                       </div>
                       
 //                       <div className="text-center">
-//                         <div className="text-2xl font-bold text-blue-400 mb-1">
+//                         <div className="text-2xl  text-blue-400 mb-1">
 //                           {story.assessment.integrityAnalysis.plagiarismResult.overallScore}%
 //                         </div>
 //                         <div className="text-sm text-gray-400">Plagiarism Check</div>
@@ -1045,7 +1045,7 @@
 //                       <div className="text-center">
 //                         <div className="flex items-center justify-center gap-2 mb-1">
 //                           {getIntegrityIcon(story.assessment.integrityAnalysis.integrityRisk)}
-//                           <span className="font-bold text-white capitalize">
+//                           <span className=" text-white capitalize">
 //                             {story.assessment.integrityAnalysis.integrityRisk}
 //                           </span>
 //                         </div>
@@ -1053,7 +1053,7 @@
 //                       </div>
 //                     </div>
 
-//                     <div className={`mt-4 p-4 rounded-lg ${
+//                     <div className={`mt-4 p-4  ${
 //                       story.assessment.integrityStatus.status === 'PASS' 
 //                         ? 'bg-green-500/20 border border-green-500/30'
 //                         : story.assessment.integrityStatus.status === 'WARNING'
@@ -1070,7 +1070,7 @@
 //                         {story.assessment.integrityStatus.status === 'FAIL' && (
 //                           <XCircle className="w-5 h-5 text-red-400" />
 //                         )}
-//                         <span className="font-semibold text-white">
+//                         <span className=" text-white">
 //                           {story.assessment.integrityStatus.status}
 //                         </span>
 //                       </div>
@@ -1088,8 +1088,8 @@
 //                 {/* Feedback & Insights */}
 //                 <div className="space-y-6">
 //                   {story.assessment.feedback && (
-//                     <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-6">
-//                       <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+//                     <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-6">
+//                       <h3 className="text-lg  text-white mb-4 flex items-center gap-2">
 //                         <MessageSquare className="w-5 h-5 text-blue-400" />
 //                         Teacher Feedback
 //                       </h3>
@@ -1098,8 +1098,8 @@
 //                   )}
 
 //                   {story.assessment.educationalInsights && (
-//                     <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-6">
-//                       <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+//                     <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-6">
+//                       <h3 className="text-lg  text-white mb-4 flex items-center gap-2">
 //                         <Lightbulb className="w-5 h-5 text-yellow-400" />
 //                         Educational Insights
 //                       </h3>
@@ -1108,8 +1108,8 @@
 //                   )}
 
 //                   {story.assessment.encouragement && (
-//                     <div className="bg-green-500/10 border border-green-500/20 rounded-xl p-6">
-//                       <h3 className="text-lg font-semibold text-green-300 mb-4 flex items-center gap-2">
+//                     <div className="bg-green-500/10 border border-green-500/20  p-6">
+//                       <h3 className="text-lg  text-green-300 mb-4 flex items-center gap-2">
 //                         <Heart className="w-5 h-5" />
 //                         Encouragement
 //                       </h3>
@@ -1121,14 +1121,14 @@
 //                 {/* Strengths & Improvements */}
 //                 <div className="space-y-6">
 //                   {story.assessment.strengths.length > 0 && (
-//                     <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-6">
-//                       <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+//                     <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-6">
+//                       <h3 className="text-lg  text-white mb-4 flex items-center gap-2">
 //                         <CheckCircle className="w-5 h-5 text-green-400" />
 //                         Strengths
 //                       </h3>
 //                       <div className="space-y-2">
 //                         {story.assessment.strengths.map((strength, index) => (
-//                           <div key={index} className="bg-green-500/10 border border-green-500/30 rounded-lg p-3">
+//                           <div key={index} className="bg-green-500/10 border border-green-500/30  p-3">
 //                             <span className="text-green-300">✓ {strength}</span>
 //                           </div>
 //                         ))}
@@ -1137,14 +1137,14 @@
 //                   )}
 
 //                   {story.assessment.improvements.length > 0 && (
-//                     <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-6">
-//                       <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+//                     <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-6">
+//                       <h3 className="text-lg  text-white mb-4 flex items-center gap-2">
 //                         <TrendingUp className="w-5 h-5 text-orange-400" />
 //                         Areas for Improvement
 //                       </h3>
 //                       <div className="space-y-2">
 //                         {story.assessment.improvements.map((improvement, index) => (
-//                           <div key={index} className="bg-orange-500/10 border border-orange-500/30 rounded-lg p-3">
+//                           <div key={index} className="bg-orange-500/10 border border-orange-500/30  p-3">
 //                             <span className="text-orange-300">→ {improvement}</span>
 //                           </div>
 //                         ))}
@@ -1154,15 +1154,15 @@
 
 //                   {/* Vocabulary Analysis */}
 //                   {((story.assessment.vocabularyUsed?.length || 0) > 0 || (story.assessment.suggestedWords?.length || 0) > 0) && (
-//                     <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-6">
-//                       <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+//                     <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-6">
+//                       <h3 className="text-lg  text-white mb-4 flex items-center gap-2">
 //                         <BookOpen className="w-5 h-5 text-purple-400" />
 //                         Vocabulary Analysis
 //                       </h3>
                       
 //                       {(story.assessment.vocabularyUsed?.length || 0) > 0 && (
 //                         <div className="mb-4">
-//                           <h4 className="font-medium text-purple-300 mb-2">Great Words You Used:</h4>
+//                           <h4 className=" text-purple-300 mb-2">Great Words You Used:</h4>
 //                           <div className="flex flex-wrap gap-2">
 //                             {(story.assessment.vocabularyUsed || []).slice(0, 10).map((word, index) => (
 //                               <span key={index} className="bg-purple-500/20 text-purple-300 px-2 py-1 rounded text-sm">
@@ -1175,7 +1175,7 @@
                       
 //                       {(story.assessment.suggestedWords?.length || 0) > 0 && (
 //                         <div>
-//                           <h4 className="font-medium text-blue-300 mb-2">Suggested Words to Try:</h4>
+//                           <h4 className=" text-blue-300 mb-2">Suggested Words to Try:</h4>
 //                           <div className="flex flex-wrap gap-2">
 //                             {(story.assessment.suggestedWords || []).slice(0, 10).map((word, index) => (
 //                               <span key={index} className="bg-blue-500/20 text-blue-300 px-2 py-1 rounded text-sm">
@@ -1192,8 +1192,8 @@
 
 //               {/* Recommendations */}
 //               {story.assessment.recommendations && (
-//                 <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-6">
-//                   <h3 className="text-lg font-semibold text-white mb-6 flex items-center gap-2">
+//                 <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-6">
+//                   <h3 className="text-lg  text-white mb-6 flex items-center gap-2">
 //                     <Target className="w-5 h-5 text-blue-400" />
 //                     Personalized Recommendations
 //                   </h3>
@@ -1201,7 +1201,7 @@
 //                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 //                     {story.assessment.recommendations.immediate.length > 0 && (
 //                       <div>
-//                         <h4 className="font-semibold text-red-300 mb-3">Immediate Actions</h4>
+//                         <h4 className=" text-red-300 mb-3">Immediate Actions</h4>
 //                         <div className="space-y-2">
 //                           {story.assessment.recommendations.immediate.map((rec, index) => (
 //                             <div key={index} className="bg-red-500/10 border border-red-500/30 rounded p-3 text-red-300 text-sm">
@@ -1214,7 +1214,7 @@
                     
 //                     {story.assessment.recommendations.longTerm.length > 0 && (
 //                       <div>
-//                         <h4 className="font-semibold text-blue-300 mb-3">Long-term Goals</h4>
+//                         <h4 className=" text-blue-300 mb-3">Long-term Goals</h4>
 //                         <div className="space-y-2">
 //                           {story.assessment.recommendations.longTerm.map((rec, index) => (
 //                             <div key={index} className="bg-blue-500/10 border border-blue-500/30 rounded p-3 text-blue-300 text-sm">
@@ -1227,7 +1227,7 @@
                     
 //                     {story.assessment.recommendations.practiceExercises.length > 0 && (
 //                       <div>
-//                         <h4 className="font-semibold text-green-300 mb-3">Practice Exercises</h4>
+//                         <h4 className=" text-green-300 mb-3">Practice Exercises</h4>
 //                         <div className="space-y-2">
 //                           {story.assessment.recommendations.practiceExercises.map((rec, index) => (
 //                             <div key={index} className="bg-green-500/10 border border-green-500/30 rounded p-3 text-green-300 text-sm">
@@ -1244,9 +1244,9 @@
 //           )}
 
 //           {activeTab === 'content' && (
-//             <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-6">
+//             <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-6">
 //               <div className="flex items-center justify-between mb-6">
-//                 <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+//                 <h3 className="text-lg  text-white flex items-center gap-2">
 //                   <BookOpen className="w-5 h-5 text-blue-400" />
 //                   Full Story Content
 //                 </h3>
@@ -1254,7 +1254,7 @@
 //                 <div className="flex items-center gap-3">
 //                   <button
 //                     onClick={() => setShowFullContent(!showFullContent)}
-//                     className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm transition-colors flex items-center gap-2"
+//                     className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2  text-sm transition-colors flex items-center gap-2"
 //                   >
 //                     <Eye size={16} />
 //                     {showFullContent ? 'Hide' : 'Show'} Content
@@ -1270,7 +1270,7 @@
 //                       element.click();
 //                       document.body.removeChild(element);
 //                     }}
-//                     className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm transition-colors flex items-center gap-2"
+//                     className="bg-green-600 hover:bg-green-700 text-white px-4 py-2  text-sm transition-colors flex items-center gap-2"
 //                   >
 //                     <Download size={16} />
 //                     Download
@@ -1279,7 +1279,7 @@
 //               </div>
 
 //               {showFullContent ? (
-//                 <div className="bg-gray-900/50 rounded-lg p-6 max-h-96 overflow-y-auto">
+//                 <div className="bg-gray-900/50  p-6 max-h-96 overflow-y-auto">
 //                   <div className="prose prose-invert max-w-none">
 //                     {story.content.split('\n\n').map((paragraph, index) => (
 //                       <p key={index} className="text-gray-300 leading-relaxed mb-4">
@@ -1298,12 +1298,12 @@
 //               {/* Turn-by-turn breakdown for freestyle stories */}
 //               {story.storyType === 'freestyle' && story.turns.length > 0 && (
 //                 <div className="mt-8">
-//                   <h4 className="text-lg font-semibold text-white mb-4">Writing Timeline</h4>
+//                   <h4 className="text-lg  text-white mb-4">Writing Timeline</h4>
 //                   <div className="space-y-4">
 //                     {story.turns.map((turn, index) => (
-//                       <div key={index} className="bg-gray-700/30 rounded-lg p-4">
+//                       <div key={index} className="bg-gray-700/30  p-4">
 //                         <div className="flex items-center gap-2 mb-2">
-//                           <span className="bg-blue-600 text-white px-2 py-1 rounded text-sm font-medium">
+//                           <span className="bg-blue-600 text-white px-2 py-1 rounded text-sm ">
 //                             Turn {turn.turnNumber}
 //                           </span>
 //                           <span className="text-gray-400 text-sm">
@@ -1313,7 +1313,7 @@
                         
 //                         {turn.childInput && (
 //                           <div className="mb-3">
-//                             <div className="text-green-300 text-sm font-medium mb-1">Your Writing:</div>
+//                             <div className="text-green-300 text-sm  mb-1">Your Writing:</div>
 //                             <p className="text-gray-300 text-sm bg-green-500/10 border border-green-500/20 rounded p-3">
 //                               {turn.childInput}
 //                             </p>
@@ -1322,7 +1322,7 @@
                         
 //                         {turn.aiResponse && (
 //                           <div>
-//                             <div className="text-purple-300 text-sm font-medium mb-1">AI Response:</div>
+//                             <div className="text-purple-300 text-sm  mb-1">AI Response:</div>
 //                             <p className="text-gray-300 text-sm bg-purple-500/10 border border-purple-500/20 rounded p-3">
 //                               {turn.aiResponse}
 //                             </p>
@@ -1337,8 +1337,8 @@
 //           )}
 
 //           {activeTab === 'comments' && (
-//             <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-6">
-//               <h3 className="text-lg font-semibold text-white mb-6 flex items-center gap-2">
+//             <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-6">
+//               <h3 className="text-lg  text-white mb-6 flex items-center gap-2">
 //                 <MessageSquare className="w-5 h-5 text-blue-400" />
 //                 Mentor & Teacher Comments
 //               </h3>
@@ -1346,13 +1346,13 @@
 //               {story.comments.length > 0 ? (
 //                 <div className="space-y-4">
 //                   {story.comments.map((comment) => (
-//                     <div key={comment._id} className="bg-gray-700/30 rounded-lg p-4">
+//                     <div key={comment._id} className="bg-gray-700/30  p-4">
 //                       <div className="flex items-center gap-2 mb-2">
-//                         <div className={`w-3 h-3 rounded-full ${
+//                         <div className={`w-3 h-3  ${
 //                           comment.author?.role === 'admin' ? 'bg-red-400' :
 //                           comment.author?.role === 'mentor' ? 'bg-blue-400' : 'bg-gray-400'
 //                         }`} />
-//                         <span className="font-medium text-white">
+//                         <span className=" text-white">
 //                           {comment.author?.name || 'Anonymous'}
 //                         </span>
 //                         <span className="text-xs text-gray-400 capitalize">
@@ -1657,7 +1657,7 @@ export default function StoryDetailPage() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 flex items-center justify-center">
         <div className="text-white text-xl flex items-center gap-3">
-          <div className="w-8 h-8 border-4 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
+          <div className="w-8 h-8 border-4 border-blue-400 border-t-transparent  animate-spin"></div>
           Loading story details...
         </div>
       </div>
@@ -1670,11 +1670,11 @@ export default function StoryDetailPage() {
       <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 flex items-center justify-center">
         <div className="text-center max-w-md mx-auto px-6">
           <XCircle className="w-16 h-16 text-red-400 mx-auto mb-4" />
-          <h2 className="text-xl font-semibold text-white mb-2">Story Not Found</h2>
+          <h2 className="text-xl  text-white mb-2">Story Not Found</h2>
           <p className="text-gray-300 mb-6">{error || 'The story you\'re looking for doesn\'t exist or you don\'t have access to it.'}</p>
           <Link
             href="/children-dashboard/my-stories"
-            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition-colors inline-flex items-center gap-2"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3  transition-colors inline-flex items-center gap-2"
           >
             <ArrowLeft size={16} />
             Back to My Stories
@@ -1700,14 +1700,14 @@ export default function StoryDetailPage() {
           <div className="flex items-center gap-4 mb-6">
             <Link
               href="/children-dashboard/my-stories"
-              className="bg-gray-700 hover:bg-gray-600 text-white p-2 rounded-lg transition-colors"
+              className="bg-gray-700 hover:bg-gray-600 text-white p-2  transition-colors"
             >
               <ArrowLeft size={20} />
             </Link>
             <div className="flex-1">
-              <h1 className="text-3xl font-bold text-white mb-1">{story.title}</h1>
+              <h1 className="text-3xl  text-white mb-1">{story.title}</h1>
               <div className="flex items-center gap-3">
-                <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium ${typeInfo.bgColor} ${typeInfo.color} ${typeInfo.borderColor} border`}>
+                <div className={`inline-flex items-center gap-2 px-3 py-1  text-sm  ${typeInfo.bgColor} ${typeInfo.color} ${typeInfo.borderColor} border`}>
                   <typeInfo.icon size={14} />
                   {typeInfo.label}
                 </div>
@@ -1720,20 +1720,20 @@ export default function StoryDetailPage() {
 
           {/* Story Stats & Status */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-            <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-4">
-              <div className="text-lg font-semibold text-white">{story.totalWords}</div>
+            <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-4">
+              <div className="text-lg  text-white">{story.totalWords}</div>
               <div className="text-gray-300 text-sm">Total Words</div>
             </div>
-            <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-4">
-              <div className="text-lg font-semibold text-green-400">{story.childWords}</div>
+            <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-4">
+              <div className="text-lg  text-green-400">{story.childWords}</div>
               <div className="text-gray-300 text-sm">Your Words</div>
             </div>
-            <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-4">
-              <div className="text-lg font-semibold text-blue-400">{story.aiWords}</div>
+            <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-4">
+              <div className="text-lg  text-blue-400">{story.aiWords}</div>
               <div className="text-gray-300 text-sm">AI Words</div>
             </div>
-            <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-4">
-              <div className={`text-lg font-semibold ${story.assessment ? getScoreColor(story.assessment.overallScore) : 'text-gray-400'}`}>
+            <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-4">
+              <div className={`text-lg  ${story.assessment ? getScoreColor(story.assessment.overallScore) : 'text-gray-400'}`}>
                 {story.assessment ? `${story.assessment.overallScore}%` : 'Not Assessed'}
               </div>
               <div className="text-gray-300 text-sm">Overall Score</div>
@@ -1744,7 +1744,7 @@ export default function StoryDetailPage() {
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div className="flex flex-wrap gap-2">
               {story.isPublished && (
-                <span className="bg-green-500/20 text-green-300 px-3 py-1 rounded-full text-sm font-medium border border-green-500/30 flex items-center gap-2">
+                <span className="bg-green-500/20 text-green-300 px-3 py-1  text-sm  border border-green-500/30 flex items-center gap-2">
                   <Star size={14} />
                   Published
                   {story.publishedAt && (
@@ -1760,7 +1760,7 @@ export default function StoryDetailPage() {
                   {story.competitionEntries.map((entry, index) => (
                     <span
                       key={index}
-                      className="bg-purple-500/20 text-purple-300 px-3 py-1 rounded-full text-sm font-medium border border-purple-500/30 flex items-center gap-2"
+                      className="bg-purple-500/20 text-purple-300 px-3 py-1  text-sm  border border-purple-500/30 flex items-center gap-2"
                     >
                       <Trophy size={14} />
                       Competition Entry
@@ -1778,19 +1778,19 @@ export default function StoryDetailPage() {
               )}
               
               {story.status === 'flagged' && (
-                <span className="bg-red-500/20 text-red-400 px-3 py-1 rounded-full text-sm font-medium border border-red-500/30">
+                <span className="bg-red-500/20 text-red-400 px-3 py-1  text-sm  border border-red-500/30">
                   Flagged for Review
                 </span>
               )}
               
               {story.status === 'review' && (
-                <span className="bg-yellow-500/20 text-yellow-400 px-3 py-1 rounded-full text-sm font-medium border border-yellow-500/30">
+                <span className="bg-yellow-500/20 text-yellow-400 px-3 py-1  text-sm  border border-yellow-500/30">
                   Under Review
                 </span>
               )}
               
               {story.status === 'active' && (
-                <span className="bg-blue-500/20 text-blue-400 px-3 py-1 rounded-full text-sm font-medium border border-blue-500/30">
+                <span className="bg-blue-500/20 text-blue-400 px-3 py-1  text-sm  border border-blue-500/30">
                   In Progress
                 </span>
               )}
@@ -1801,7 +1801,7 @@ export default function StoryDetailPage() {
               {story.status === 'active' && (
                 <button
                   onClick={handleContinueWriting}
-                  className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition-all flex items-center gap-2"
+                  className="bg-green-600 hover:bg-green-700 text-white px-6 py-3   transition-all flex items-center gap-2"
                 >
                   <BookOpen size={18} />
                   Continue Writing
@@ -1813,11 +1813,11 @@ export default function StoryDetailPage() {
                 <button
                   onClick={handlePublishStory}
                   disabled={publishingStory}
-                  className="bg-green-600 hover:bg-green-700 disabled:bg-green-400 text-white px-6 py-3 rounded-lg font-medium transition-all flex items-center gap-2"
+                  className="bg-green-600 hover:bg-green-700 disabled:bg-green-400 text-white px-6 py-3   transition-all flex items-center gap-2"
                 >
                   {publishingStory ? (
                     <>
-                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent  animate-spin" />
                       Publishing...
                     </>
                   ) : (
@@ -1833,7 +1833,7 @@ export default function StoryDetailPage() {
               {story.status === 'completed' && (
                 <button
                   onClick={handlePurchaseStory}
-                  className="bg-yellow-600 hover:bg-yellow-700 text-white px-6 py-3 rounded-lg font-medium transition-all flex items-center gap-2"
+                  className="bg-yellow-600 hover:bg-yellow-700 text-white px-6 py-3   transition-all flex items-center gap-2"
                 >
                   <DollarSign size={18} />
                   Purchase $10
@@ -1851,24 +1851,24 @@ export default function StoryDetailPage() {
             transition={{ delay: 0.1 }}
             className="mb-8"
           >
-            <div className="bg-purple-500/10 border border-purple-500/20 rounded-xl p-6">
-              <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+            <div className="bg-purple-500/10 border border-purple-500/20  p-6">
+              <h3 className="text-lg  text-white mb-4 flex items-center gap-2">
                 <Trophy className="w-5 h-5 text-purple-400" />
                 Competition Details
               </h3>
               
               <div className="space-y-4">
                 {story.competitionEntries.map((entry, index) => (
-                  <div key={index} className="flex items-center justify-between bg-purple-500/5 rounded-lg p-4">
+                  <div key={index} className="flex items-center justify-between bg-purple-500/5  p-4">
                     <div>
-                      <div className="text-white font-medium">
+                      <div className="text-white ">
                         Submitted on {new Date(entry.submittedAt).toLocaleDateString()}
                       </div>
                       <div className="text-purple-300 text-sm">Competition Entry #{index + 1}</div>
                     </div>
                     <div className="text-right">
                       {entry.rank && entry.rank <= 3 && (
-                        <div className="flex items-center gap-2 text-yellow-400 font-semibold">
+                        <div className="flex items-center gap-2 text-yellow-400 ">
                           <Crown size={16} />
                           Winner - Rank #{entry.rank}
                         </div>
@@ -1899,12 +1899,12 @@ export default function StoryDetailPage() {
           className="mb-8"
         >
           <div className="flex justify-center">
-            <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-2 flex gap-2">
+            <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-2 flex gap-2">
               {getAvailableTabs().map((tab) => (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id as any)}
-                  className={`px-6 py-3 rounded-lg transition-all flex items-center gap-2 font-medium ${
+                  className={`px-6 py-3  transition-all flex items-center gap-2  ${
                     activeTab === tab.id
                       ? 'bg-blue-600 text-white shadow-lg'
                       : 'text-gray-300 hover:text-white hover:bg-gray-700/50'
@@ -1926,30 +1926,30 @@ export default function StoryDetailPage() {
           transition={{ duration: 0.2 }}
         >
           {activeTab === 'overview' && (
-            <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-8">
-              <h2 className="text-2xl font-bold text-white mb-6">Story Overview</h2>
+            <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-8">
+              <h2 className="text-2xl  text-white mb-6">Story Overview</h2>
               
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Left Column */}
                 <div className="space-y-6">
                   <div>
-                    <h3 className="text-lg font-semibold text-white mb-3">Writing Statistics</h3>
+                    <h3 className="text-lg  text-white mb-3">Writing Statistics</h3>
                     <div className="space-y-3">
                       <div className="flex justify-between items-center">
                         <span className="text-gray-300">Total Words:</span>
-                        <span className="text-white font-semibold">{story.totalWords}</span>
+                        <span className="text-white ">{story.totalWords}</span>
                       </div>
                       <div className="flex justify-between items-center">
                         <span className="text-gray-300">Your Contribution:</span>
-                        <span className="text-green-400 font-semibold">{story.childWords} words</span>
+                        <span className="text-green-400 ">{story.childWords} words</span>
                       </div>
                       <div className="flex justify-between items-center">
                         <span className="text-gray-300">AI Assistance:</span>
-                        <span className="text-blue-400 font-semibold">{story.aiWords} words</span>
+                        <span className="text-blue-400 ">{story.aiWords} words</span>
                       </div>
                       <div className="flex justify-between items-center">
                         <span className="text-gray-300">Your Contribution:</span>
-                        <span className="text-yellow-400 font-semibold">
+                        <span className="text-yellow-400 ">
                           {story.totalWords > 0 ? Math.round((story.childWords / story.totalWords) * 100) : 0}%
                         </span>
                       </div>
@@ -1957,7 +1957,7 @@ export default function StoryDetailPage() {
                   </div>
 
                   <div>
-                    <h3 className="text-lg font-semibold text-white mb-3">Story Details</h3>
+                    <h3 className="text-lg  text-white mb-3">Story Details</h3>
                     <div className="space-y-3">
                       <div className="flex justify-between items-center">
                         <span className="text-gray-300">Created:</span>
@@ -1969,7 +1969,7 @@ export default function StoryDetailPage() {
                       </div>
                       <div className="flex justify-between items-center">
                         <span className="text-gray-300">Status:</span>
-                        <span className={`font-semibold capitalize ${
+                        <span className={` capitalize ${
                           story.status === 'completed' ? 'text-green-400' :
                           story.status === 'active' ? 'text-blue-400' :
                           story.status === 'flagged' ? 'text-red-400' :
@@ -1991,16 +1991,16 @@ export default function StoryDetailPage() {
                   {/* Assessment Overview - Only show if assessment should be visible */}
                   {shouldShowAssessment() && story.assessment && (
                     <div>
-                      <h3 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
+                      <h3 className="text-lg  text-white mb-3 flex items-center gap-2">
                         <Brain className="w-5 h-5 text-blue-400" />
                         Assessment Summary
                       </h3>
-                      <div className="bg-gray-700/30 rounded-lg p-4 space-y-3">
+                      <div className="bg-gray-700/30  p-4 space-y-3">
                         <div className="flex items-center justify-between">
                           <span className="text-gray-300">Overall Score:</span>
                           <div className="flex items-center gap-2">
                             {getIntegrityIcon(story.assessment.integrityRisk)}
-                            <span className={`text-xl font-bold ${getScoreColor(story.assessment.overallScore)}`}>
+                            <span className={`text-xl  ${getScoreColor(story.assessment.overallScore)}`}>
                               {story.assessment.overallScore}%
                             </span>
                           </div>
@@ -2031,22 +2031,22 @@ export default function StoryDetailPage() {
                   {/* Competition Status */}
                   {story.competitionEntries && story.competitionEntries.length > 0 && (
                     <div>
-                      <h3 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
+                      <h3 className="text-lg  text-white mb-3 flex items-center gap-2">
                         <Trophy className="w-5 h-5 text-purple-400" />
                         Competition Status
                       </h3>
-                      <div className="bg-purple-500/10 rounded-lg p-4 space-y-3">
+                      <div className="bg-purple-500/10  p-4 space-y-3">
                         {story.competitionEntries.map((entry, index) => (
                           <div key={index} className="flex items-center justify-between">
                             <div>
-                              <div className="text-white font-medium">Entry #{index + 1}</div>
+                              <div className="text-white ">Entry #{index + 1}</div>
                               <div className="text-purple-300 text-sm">
                                 {new Date(entry.submittedAt).toLocaleDateString()}
                               </div>
                             </div>
                             <div className="text-right">
                               {entry.rank && entry.rank <= 3 ? (
-                                <div className="flex items-center gap-2 text-yellow-400 font-semibold">
+                                <div className="flex items-center gap-2 text-yellow-400 ">
                                   <Crown size={16} />
                                   Winner!
                                 </div>
@@ -2065,14 +2065,14 @@ export default function StoryDetailPage() {
                   {/* Publication Status */}
                   {story.isPublished && (
                     <div>
-                      <h3 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
+                      <h3 className="text-lg  text-white mb-3 flex items-center gap-2">
                         <Star className="w-5 h-5 text-green-400" />
                         Publication Status
                       </h3>
-                      <div className="bg-green-500/10 rounded-lg p-4">
+                      <div className="bg-green-500/10  p-4">
                         <div className="flex items-center justify-between">
                           <span className="text-gray-300">Published:</span>
-                          <span className="text-green-400 font-semibold">
+                          <span className="text-green-400 ">
                             {story.publishedAt ? new Date(story.publishedAt).toLocaleDateString() : 'Yes'}
                           </span>
                         </div>
@@ -2093,34 +2093,34 @@ export default function StoryDetailPage() {
           )}
 
           {activeTab === 'assessment' && shouldShowAssessment() && story.assessment && (
-            <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-8">
-              <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
+            <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-8">
+              <h2 className="text-2xl  text-white mb-6 flex items-center gap-2">
                 <Brain className="w-6 h-6 text-blue-400" />
                 AI Assessment Results
               </h2>
               
               <div className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                  <div className="bg-gray-700/30 rounded-lg p-4 text-center">
-                    <div className={`text-2xl font-bold ${getScoreColor(story.assessment.overallScore)}`}>
+                  <div className="bg-gray-700/30  p-4 text-center">
+                    <div className={`text-2xl  ${getScoreColor(story.assessment.overallScore)}`}>
                       {story.assessment.overallScore}%
                     </div>
                     <div className="text-gray-300 text-sm">Overall Score</div>
                   </div>
-                  <div className="bg-gray-700/30 rounded-lg p-4 text-center">
-                    <div className={`text-2xl font-bold ${getScoreColor(story.assessment.grammar)}`}>
+                  <div className="bg-gray-700/30  p-4 text-center">
+                    <div className={`text-2xl  ${getScoreColor(story.assessment.grammar)}`}>
                       {story.assessment.grammar}%
                     </div>
                     <div className="text-gray-300 text-sm">Grammar</div>
                   </div>
-                  <div className="bg-gray-700/30 rounded-lg p-4 text-center">
-                    <div className={`text-2xl font-bold ${getScoreColor(story.assessment.creativity)}`}>
+                  <div className="bg-gray-700/30  p-4 text-center">
+                    <div className={`text-2xl  ${getScoreColor(story.assessment.creativity)}`}>
                       {story.assessment.creativity}%
                     </div>
                     <div className="text-gray-300 text-sm">Creativity</div>
                   </div>
-                  <div className="bg-gray-700/30 rounded-lg p-4 text-center">
-                    <div className={`text-2xl font-bold ${getScoreColor(story.assessment.vocabulary)}`}>
+                  <div className="bg-gray-700/30  p-4 text-center">
+                    <div className={`text-2xl  ${getScoreColor(story.assessment.vocabulary)}`}>
                       {story.assessment.vocabulary}%
                     </div>
                     <div className="text-gray-300 text-sm">Vocabulary</div>
@@ -2129,8 +2129,8 @@ export default function StoryDetailPage() {
 
                 {/* Feedback */}
                 {story.assessment.feedback && (
-                  <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-6">
-                    <h3 className="text-lg font-semibold text-white mb-3">AI Feedback</h3>
+                  <div className="bg-blue-500/10 border border-blue-500/20  p-6">
+                    <h3 className="text-lg  text-white mb-3">AI Feedback</h3>
                     <p className="text-gray-300 leading-relaxed">{story.assessment.feedback}</p>
                   </div>
                 )}
@@ -2139,8 +2139,8 @@ export default function StoryDetailPage() {
                 {story.assessment.recommendations && (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {story.assessment.recommendations.strengths && story.assessment.recommendations.strengths.length > 0 && (
-                      <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-6">
-                        <h3 className="text-lg font-semibold text-green-400 mb-3">Strengths</h3>
+                      <div className="bg-green-500/10 border border-green-500/20  p-6">
+                        <h3 className="text-lg  text-green-400 mb-3">Strengths</h3>
                         <ul className="space-y-2">
                           {story.assessment.recommendations.strengths.map((strength, index) => (
                             <li key={index} className="text-gray-300 flex items-start gap-2">
@@ -2153,8 +2153,8 @@ export default function StoryDetailPage() {
                     )}
 
                     {story.assessment.recommendations.improvements && story.assessment.recommendations.improvements.length > 0 && (
-                      <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-6">
-                        <h3 className="text-lg font-semibold text-yellow-400 mb-3">Areas for Improvement</h3>
+                      <div className="bg-yellow-500/10 border border-yellow-500/20  p-6">
+                        <h3 className="text-lg  text-yellow-400 mb-3">Areas for Improvement</h3>
                         <ul className="space-y-2">
                           {story.assessment.recommendations.improvements.map((improvement, index) => (
                             <li key={index} className="text-gray-300 flex items-start gap-2">
@@ -2169,13 +2169,13 @@ export default function StoryDetailPage() {
                 )}
 
                 {/* Integrity Analysis */}
-                <div className="bg-gray-700/30 rounded-lg p-6">
-                  <h3 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
+                <div className="bg-gray-700/30  p-6">
+                  <h3 className="text-lg  text-white mb-3 flex items-center gap-2">
                     Content Integrity
                     {getIntegrityIcon(story.assessment.integrityRisk)}
                   </h3>
                   <div className="text-gray-300">
-                    Risk Level: <span className={`font-semibold ${
+                    Risk Level: <span className={` ${
                       story.assessment.integrityRisk === 'low' ? 'text-green-400' :
                       story.assessment.integrityRisk === 'medium' ? 'text-yellow-400' :
                       story.assessment.integrityRisk === 'high' ? 'text-orange-400' :
@@ -2190,8 +2190,8 @@ export default function StoryDetailPage() {
           )}
 
           {activeTab === 'content' && (
-            <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-8">
-              <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
+            <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-8">
+              <h2 className="text-2xl  text-white mb-6 flex items-center gap-2">
                 <BookOpen className="w-6 h-6 text-green-400" />
                 Story Content
               </h2>
@@ -2200,8 +2200,8 @@ export default function StoryDetailPage() {
                 {/* Story Content Display */}
                 {story.isUploadedForAssessment && story.aiOpening ? (
                   // Uploaded story content
-                  <div className="bg-gray-700/30 rounded-lg p-6">
-                    <h3 className="text-lg font-semibold text-white mb-4">Uploaded Story</h3>
+                  <div className="bg-gray-700/30  p-6">
+                    <h3 className="text-lg  text-white mb-4">Uploaded Story</h3>
                     <div className="prose prose-invert max-w-none">
                       <div className="text-gray-300 leading-relaxed whitespace-pre-wrap">
                         {story.aiOpening}
@@ -2211,14 +2211,14 @@ export default function StoryDetailPage() {
                 ) : story.turns && story.turns.length > 0 ? (
                   // Collaborative story with turns
                   <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-white mb-4">Collaborative Story</h3>
+                    <h3 className="text-lg  text-white mb-4">Collaborative Story</h3>
                     {story.turns.map((turn, index) => (
                       <div key={index} className="space-y-3">
                         {turn.childInput && (
                           <div className="bg-green-500/10 border-l-4 border-green-500 rounded-r-lg p-4">
                             <div className="flex items-center gap-2 mb-2">
                               <User className="w-4 h-4 text-green-400" />
-                              <span className="text-green-400 font-medium text-sm">Your Turn {turn.turnNumber}</span>
+                              <span className="text-green-400  text-sm">Your Turn {turn.turnNumber}</span>
                             </div>
                             <div className="text-gray-300 leading-relaxed whitespace-pre-wrap">
                               {turn.childInput}
@@ -2230,7 +2230,7 @@ export default function StoryDetailPage() {
                           <div className="bg-blue-500/10 border-l-4 border-blue-500 rounded-r-lg p-4">
                             <div className="flex items-center gap-2 mb-2">
                               <Brain className="w-4 h-4 text-blue-400" />
-                              <span className="text-blue-400 font-medium text-sm">AI Response</span>
+                              <span className="text-blue-400  text-sm">AI Response</span>
                             </div>
                             <div className="text-gray-300 leading-relaxed whitespace-pre-wrap">
                               {turn.aiResponse}
@@ -2242,7 +2242,7 @@ export default function StoryDetailPage() {
                   </div>
                 ) : story.content ? (
                   // Simple content field
-                  <div className="bg-gray-700/30 rounded-lg p-6">
+                  <div className="bg-gray-700/30  p-6">
                     <div className="prose prose-invert max-w-none">
                       <div className="text-gray-300 leading-relaxed whitespace-pre-wrap">
                         {story.content}
@@ -2260,22 +2260,22 @@ export default function StoryDetailPage() {
           )}
 
           {activeTab === 'comments' && (
-            <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-8">
-              <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
+            <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-8">
+              <h2 className="text-2xl  text-white mb-6 flex items-center gap-2">
                 <MessageSquare className="w-6 h-6 text-yellow-400" />
                 Comments & Discussion
               </h2>
               
               <div className="text-center py-12">
                 <MessageSquare className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-white mb-2">Comments Coming Soon</h3>
+                <h3 className="text-lg  text-white mb-2">Comments Coming Soon</h3>
                 <p className="text-gray-400 mb-6">
                   The comments system is being developed. You'll be able to receive feedback from peers and mentors here.
                 </p>
                 
                 {/* Placeholder for future comment system */}
-                <div className="bg-gray-700/30 rounded-lg p-6 text-left max-w-2xl mx-auto">
-                  <h4 className="text-white font-medium mb-3">Future Features:</h4>
+                <div className="bg-gray-700/30  p-6 text-left max-w-2xl mx-auto">
+                  <h4 className="text-white  mb-3">Future Features:</h4>
                   <ul className="text-gray-300 space-y-2 text-sm">
                     <li>• Peer feedback and reviews</li>
                     <li>• Mentor comments and suggestions</li>

@@ -430,7 +430,7 @@
 //     return (
 //       <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 flex items-center justify-center">
 //         <div className="text-white text-xl flex items-center gap-3">
-//           <div className="w-8 h-8 border-4 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
+//           <div className="w-8 h-8 border-4 border-blue-400 border-t-transparent  animate-spin"></div>
 //           Loading your story collection...
 //         </div>
 //       </div>
@@ -443,11 +443,11 @@
 //       <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 flex items-center justify-center">
 //         <div className="text-center max-w-md mx-auto px-6">
 //           <XCircle className="w-16 h-16 text-red-400 mx-auto mb-4" />
-//           <h2 className="text-xl font-semibold text-white mb-2">Failed to load stories</h2>
+//           <h2 className="text-xl  text-white mb-2">Failed to load stories</h2>
 //           <p className="text-gray-300 mb-6">{error}</p>
 //           <button
 //             onClick={fetchStories}
-//             className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition-colors"
+//             className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3  transition-colors"
 //           >
 //             Try Again
 //           </button>
@@ -477,7 +477,7 @@
 
 //           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
 //             <div>
-//               <h1 className="text-4xl font-bold text-white mb-2 flex items-center gap-3">
+//               <h1 className="text-4xl  text-white mb-2 flex items-center gap-3">
 //                 <BookOpen size={40} className="text-blue-400" />
 //                 My Stories
 //               </h1>
@@ -489,7 +489,7 @@
 //             <div className="flex items-center gap-3">
 //               <Link
 //                 href="/create-stories"
-//                 className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-3 rounded-xl flex items-center gap-2 transition-all font-medium"
+//                 className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-3  flex items-center gap-2 transition-all "
 //               >
 //                 <Plus size={20} />
 //                 Create New Story
@@ -506,35 +506,35 @@
 //             transition={{ delay: 0.1 }}
 //             className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-8"
 //           >
-//             <div className="bg-blue-500/20 border border-blue-500/30 rounded-lg p-4 text-center">
-//               <div className="text-2xl font-bold text-blue-400">{summary.total}</div>
+//             <div className="bg-blue-500/20 border border-blue-500/30  p-4 text-center">
+//               <div className="text-2xl  text-blue-400">{summary.total}</div>
 //               <div className="text-sm text-blue-300">Total Stories</div>
 //             </div>
             
-//             <div className="bg-green-500/20 border border-green-500/30 rounded-lg p-4 text-center">
-//               <div className="text-2xl font-bold text-green-400">{summary.completed}</div>
+//             <div className="bg-green-500/20 border border-green-500/30  p-4 text-center">
+//               <div className="text-2xl  text-green-400">{summary.completed}</div>
 //               <div className="text-sm text-green-300">Completed</div>
 //             </div>
             
-//             <div className="bg-yellow-500/20 border border-yellow-500/30 rounded-lg p-4 text-center">
-//               <div className="text-2xl font-bold text-yellow-400">{summary.active}</div>
+//             <div className="bg-yellow-500/20 border border-yellow-500/30  p-4 text-center">
+//               <div className="text-2xl  text-yellow-400">{summary.active}</div>
 //               <div className="text-sm text-yellow-300">In Progress</div>
 //             </div>
             
-//             <div className="bg-purple-500/20 border border-purple-500/30 rounded-lg p-4 text-center">
-//               <div className="text-2xl font-bold text-purple-400">{summary.published}</div>
+//             <div className="bg-purple-500/20 border border-purple-500/30  p-4 text-center">
+//               <div className="text-2xl  text-purple-400">{summary.published}</div>
 //               <div className="text-sm text-purple-300">Published</div>
 //             </div>
             
-//             <div className="bg-orange-500/20 border border-orange-500/30 rounded-lg p-4 text-center">
-//               <div className="text-2xl font-bold text-orange-400">
+//             <div className="bg-orange-500/20 border border-orange-500/30  p-4 text-center">
+//               <div className="text-2xl  text-orange-400">
 //                 {summary.totalChildWords.toLocaleString()}
 //               </div>
 //               <div className="text-sm text-orange-300">Words Written</div>
 //             </div>
             
-//             <div className="bg-pink-500/20 border border-pink-500/30 rounded-lg p-4 text-center">
-//               <div className="text-2xl font-bold text-pink-400">
+//             <div className="bg-pink-500/20 border border-pink-500/30  p-4 text-center">
+//               <div className="text-2xl  text-pink-400">
 //                 {summary.averageScore ? `${summary.averageScore}%` : 'N/A'}
 //               </div>
 //               <div className="text-sm text-pink-300">Avg Score</div>
@@ -547,7 +547,7 @@
 //           initial={{ opacity: 0, y: 20 }}
 //           animate={{ opacity: 1, y: 0 }}
 //           transition={{ delay: 0.2 }}
-//           className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-6 mb-8"
+//           className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-6 mb-8"
 //         >
 //           <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
             
@@ -559,7 +559,7 @@
 //                 placeholder="Search stories..."
 //                 value={filters.search}
 //                 onChange={(e) => setFilters(prev => ({ ...prev, search: e.target.value }))}
-//                 className="w-full bg-gray-700/50 border border-gray-600/40 rounded-lg pl-10 pr-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+//                 className="w-full bg-gray-700/50 border border-gray-600/40  pl-10 pr-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
 //               />
 //             </div>
 
@@ -567,7 +567,7 @@
 //             <div className="flex items-center gap-3 flex-wrap">
 //               <button
 //                 onClick={() => setShowFilters(!showFilters)}
-//                 className="bg-gray-700/50 hover:bg-gray-600/50 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
+//                 className="bg-gray-700/50 hover:bg-gray-600/50 text-white px-4 py-2  transition-colors flex items-center gap-2"
 //               >
 //                 <Filter size={16} />
 //                 Filters
@@ -576,7 +576,7 @@
 //               <div className="flex items-center gap-2">
 //                 <button
 //                   onClick={() => setViewType('grid')}
-//                   className={`p-2 rounded-lg transition-colors ${
+//                   className={`p-2  transition-colors ${
 //                     viewType === 'grid' 
 //                       ? 'bg-blue-600 text-white' 
 //                       : 'bg-gray-700/50 text-gray-400 hover:text-white'
@@ -586,7 +586,7 @@
 //                 </button>
 //                 <button
 //                   onClick={() => setViewType('list')}
-//                   className={`p-2 rounded-lg transition-colors ${
+//                   className={`p-2  transition-colors ${
 //                     viewType === 'list' 
 //                       ? 'bg-blue-600 text-white' 
 //                       : 'bg-gray-700/50 text-gray-400 hover:text-white'
@@ -598,7 +598,7 @@
 
 //               <button
 //                 onClick={fetchStories}
-//                 className="bg-gray-700/50 hover:bg-gray-600/50 text-white p-2 rounded-lg transition-colors"
+//                 className="bg-gray-700/50 hover:bg-gray-600/50 text-white p-2  transition-colors"
 //                 title="Refresh stories"
 //               >
 //                 <RefreshCw size={16} />
@@ -613,11 +613,11 @@
                 
 //                 {/* Status Filter */}
 //                 <div>
-//                   <label className="block text-sm font-medium text-gray-300 mb-2">Status</label>
+//                   <label className="block text-sm  text-gray-300 mb-2">Status</label>
 //                   <select
 //                     value={filters.status}
 //                     onChange={(e) => setFilters(prev => ({ ...prev, status: e.target.value as any }))}
-//                     className="w-full bg-gray-700/50 border border-gray-600/40 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+//                     className="w-full bg-gray-700/50 border border-gray-600/40  px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
 //                   >
 //                     <option value="all">All Status</option>
 //                     <option value="completed">Completed</option>
@@ -629,11 +629,11 @@
 
 //                 {/* Type Filter */}
 //                 <div>
-//                   <label className="block text-sm font-medium text-gray-300 mb-2">Story Type</label>
+//                   <label className="block text-sm  text-gray-300 mb-2">Story Type</label>
 //                   <select
 //                     value={filters.type}
 //                     onChange={(e) => setFilters(prev => ({ ...prev, type: e.target.value as any }))}
-//                     className="w-full bg-gray-700/50 border border-gray-600/40 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+//                     className="w-full bg-gray-700/50 border border-gray-600/40  px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
 //                   >
 //                     <option value="all">All Types</option>
 //                     <option value="freestyle">Freestyle</option>
@@ -644,11 +644,11 @@
 
 //                 {/* Published Filter */}
 //                 <div>
-//                   <label className="block text-sm font-medium text-gray-300 mb-2">Publication</label>
+//                   <label className="block text-sm  text-gray-300 mb-2">Publication</label>
 //                   <select
 //                     value={filters.published}
 //                     onChange={(e) => setFilters(prev => ({ ...prev, published: e.target.value as any }))}
-//                     className="w-full bg-gray-700/50 border border-gray-600/40 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+//                     className="w-full bg-gray-700/50 border border-gray-600/40  px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
 //                   >
 //                     <option value="all">All Stories</option>
 //                     <option value="published">Published Only</option>
@@ -669,7 +669,7 @@
 //             className="text-center py-16"
 //           >
 //             <BookOpen className="w-20 h-20 text-gray-500 mx-auto mb-6" />
-//             <h3 className="text-2xl font-semibold text-gray-400 mb-4">
+//             <h3 className="text-2xl  text-gray-400 mb-4">
 //               {stories.length === 0 ? 'No stories yet' : 'No stories match your filters'}
 //             </h3>
 //             <p className="text-gray-500 mb-8 max-w-md mx-auto">
@@ -681,7 +681,7 @@
 //             {stories.length === 0 && (
 //               <Link
 //                 href="/create-stories"
-//                 className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg transition-colors inline-flex items-center gap-2 font-medium"
+//                 className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3  transition-colors inline-flex items-center gap-2 "
 //               >
 //                 <Plus size={20} />
 //                 Create Your First Story
@@ -768,14 +768,14 @@
 //         initial={{ opacity: 0, y: 20 }}
 //         animate={{ opacity: 1, y: 0 }}
 //         transition={{ delay: index * 0.05 }}
-//         className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-6 hover:border-gray-500/60 transition-all"
+//         className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-6 hover:border-gray-500/60 transition-all"
 //       >
 //         <div className="flex items-start justify-between">
 //           <div className="flex-1 min-w-0">
 //             {/* Header */}
 //             <div className="flex items-center gap-3 mb-3">
 //               <typeInfo.icon className={`w-5 h-5 ${typeInfo.color}`} />
-//               <span className={`text-xs font-medium ${typeInfo.color} uppercase tracking-wide`}>
+//               <span className={`text-xs  ${typeInfo.color} uppercase tracking-wide`}>
 //                 {typeInfo.label}
 //               </span>
 //               <statusInfo.icon className={`w-4 h-4 ${statusInfo.color}`} />
@@ -787,7 +787,7 @@
 //             {/* Title and Basic Info */}
 //             <div className="flex items-start justify-between mb-4">
 //               <div>
-//                 <h3 className="text-xl font-semibold text-white mb-2">{story.title}</h3>
+//                 <h3 className="text-xl  text-white mb-2">{story.title}</h3>
 //                 <div className="flex items-center gap-4 text-sm text-gray-400">
 //                   <span className="flex items-center gap-1">
 //                     <FileText size={14} />
@@ -809,7 +809,7 @@
 //               {/* Assessment Score */}
 //               {story.assessment && (
 //                 <div className="text-right">
-//                   <div className={`text-2xl font-bold ${getScoreColor(story.assessment.overallScore)}`}>
+//                   <div className={`text-2xl  ${getScoreColor(story.assessment.overallScore)}`}>
 //                     {story.assessment.overallScore}%
 //                   </div>
 //                   <div className="text-sm text-gray-400">Overall Score</div>
@@ -821,13 +821,13 @@
 //             {story.assessment && (
 //               <div className="grid grid-cols-3 gap-4 mb-4">
 //                 <div className="text-center">
-//                   <div className={`text-lg font-semibold ${getScoreColor(story.assessment.grammarScore)}`}>
+//                   <div className={`text-lg  ${getScoreColor(story.assessment.grammarScore)}`}>
 //                     {story.assessment.grammarScore}%
 //                   </div>
 //                   <div className="text-xs text-gray-400">Grammar</div>
 //                 </div>
 //                 <div className="text-center">
-//                   <div className={`text-lg font-semibold ${getScoreColor(story.assessment.creativityScore)}`}>
+//                   <div className={`text-lg  ${getScoreColor(story.assessment.creativityScore)}`}>
 //                     {story.assessment.creativityScore}%
 //                   </div>
 //                   <div className="text-xs text-gray-400">Creativity</div>
@@ -844,24 +844,24 @@
 //             {/* Status Badges */}
 //             <div className="flex items-center gap-2 mb-4">
 //               {story.isPublished && (
-//                 <span className="bg-green-500/20 text-green-300 px-3 py-1 rounded-full text-xs font-medium border border-green-500/30 flex items-center gap-1">
+//                 <span className="bg-green-500/20 text-green-300 px-3 py-1  text-xs  border border-green-500/30 flex items-center gap-1">
 //                   <Star size={12} />
 //                   Published
 //                 </span>
 //               )}
 //               {story.competitionEntries && story.competitionEntries.length > 0 && (
-//                 <span className="bg-purple-500/20 text-purple-300 px-3 py-1 rounded-full text-xs font-medium border border-purple-500/30 flex items-center gap-1">
+//                 <span className="bg-purple-500/20 text-purple-300 px-3 py-1  text-xs  border border-purple-500/30 flex items-center gap-1">
 //                   <Trophy size={12} />
 //                   In Competition
 //                 </span>
 //               )}
 //               {story.status === 'flagged' && (
-//                 <span className="bg-red-500/20 text-red-400 px-3 py-1 rounded-full text-xs font-medium border border-red-500/30">
+//                 <span className="bg-red-500/20 text-red-400 px-3 py-1  text-xs  border border-red-500/30">
 //                   Flagged
 //                 </span>
 //               )}
 //               {story.status === 'review' && (
-//                 <span className="bg-yellow-500/20 text-yellow-400 px-3 py-1 rounded-full text-xs font-medium border border-yellow-500/30">
+//                 <span className="bg-yellow-500/20 text-yellow-400 px-3 py-1  text-xs  border border-yellow-500/30">
 //                   Under Review
 //                 </span>
 //               )}
@@ -872,7 +872,7 @@
 //           <div className="flex items-center gap-2 ml-6">
 //             <Link
 //               href={`/children-dashboard/my-stories/${story._id}`}
-//               className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
+//               className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2  text-sm  transition-colors flex items-center gap-2"
 //             >
 //               <Eye size={16} />
 //               View
@@ -883,11 +883,11 @@
 //               <button
 //                 onClick={onPublish}
 //                 disabled={publishingStory === story._id}
-//                 className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 disabled:opacity-50"
+//                 className="bg-green-600 hover:bg-green-700 text-white px-4 py-2  text-sm  transition-colors flex items-center gap-2 disabled:opacity-50"
 //               >
 //                 {publishingStory === story._id ? (
 //                   <>
-//                     <div className="w-4 h-4 border border-white border-t-transparent rounded-full animate-spin"></div>
+//                     <div className="w-4 h-4 border border-white border-t-transparent  animate-spin"></div>
 //                     Publishing...
 //                   </>
 //                 ) : (
@@ -903,7 +903,7 @@
 //             {story.status === 'completed' && (
 //               <button
 //                 onClick={onPurchase}
-//                 className="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
+//                 className="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2  text-sm  transition-colors flex items-center gap-2"
 //               >
 //                 <DollarSign size={16} />
 //                 Purchase $10
@@ -912,13 +912,13 @@
 
 //             {/* More Actions Dropdown */}
 //             <div className="relative group">
-//               <button className="bg-gray-700 hover:bg-gray-600 text-white p-2 rounded-lg transition-colors">
+//               <button className="bg-gray-700 hover:bg-gray-600 text-white p-2  transition-colors">
 //                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
 //                   <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
 //                 </svg>
 //               </button>
               
-//               <div className="absolute right-0 top-full mt-2 w-48 bg-gray-800 border border-gray-600 rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10">
+//               <div className="absolute right-0 top-full mt-2 w-48 bg-gray-800 border border-gray-600  shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10">
 //                 {story.assessment && story.assessmentAttempts < 5 && (
 //                   <button
 //                     onClick={onReassess}
@@ -926,7 +926,7 @@
 //                     className="w-full text-left px-4 py-2 text-white hover:bg-gray-700 transition-colors flex items-center gap-2"
 //                   >
 //                     {reassessingStory === story._id ? (
-//                       <div className="w-4 h-4 border border-white border-t-transparent rounded-full animate-spin"></div>
+//                       <div className="w-4 h-4 border border-white border-t-transparent  animate-spin"></div>
 //                     ) : (
 //                       <RefreshCw size={16} />
 //                     )}
@@ -941,7 +941,7 @@
 //                     className="w-full text-left px-4 py-2 text-red-400 hover:bg-gray-700 transition-colors flex items-center gap-2"
 //                   >
 //                     {deletingStory === story._id ? (
-//                       <div className="w-4 h-4 border border-red-400 border-t-transparent rounded-full animate-spin"></div>
+//                       <div className="w-4 h-4 border border-red-400 border-t-transparent  animate-spin"></div>
 //                     ) : (
 //                       <Trash2 size={16} />
 //                     )}
@@ -962,13 +962,13 @@
 //       initial={{ opacity: 0, y: 20 }}
 //       animate={{ opacity: 1, y: 0 }}
 //       transition={{ delay: index * 0.05 }}
-//       className={`${typeInfo.bgColor} border ${typeInfo.borderColor} rounded-xl p-6 hover:bg-opacity-40 transition-all group relative`}
+//       className={`${typeInfo.bgColor} border ${typeInfo.borderColor}  p-6 hover:bg-opacity-40 transition-all group relative`}
 //     >
 //       {/* Story Type Badge */}
 //       <div className="flex items-center justify-between mb-4">
 //         <div className="flex items-center gap-2">
 //           <typeInfo.icon className={`w-5 h-5 ${typeInfo.color}`} />
-//           <span className={`text-xs font-medium ${typeInfo.color} uppercase tracking-wide`}>
+//           <span className={`text-xs  ${typeInfo.color} uppercase tracking-wide`}>
 //             {typeInfo.label}
 //           </span>
 //         </div>
@@ -979,25 +979,25 @@
 //       </div>
 
 //       {/* Title */}
-//       <h3 className="text-lg font-semibold text-white mb-3 line-clamp-2">{story.title}</h3>
+//       <h3 className="text-lg  text-white mb-3 line-clamp-2">{story.title}</h3>
 
 //       {/* Story Stats */}
 //       <div className="space-y-2 mb-4">
 //         <div className="flex items-center justify-between text-sm">
 //           <span className="text-gray-400">Words:</span>
-//           <span className="text-white font-medium">{story.totalWords}</span>
+//           <span className="text-white ">{story.totalWords}</span>
 //         </div>
         
 //         {story.storyType === 'freestyle' && (
 //           <div className="flex items-center justify-between text-sm">
 //             <span className="text-gray-400">Progress:</span>
-//             <span className="text-white font-medium">{story.currentTurn}/{story.maxTurns} turns</span>
+//             <span className="text-white ">{story.currentTurn}/{story.maxTurns} turns</span>
 //           </div>
 //         )}
         
 //         <div className="flex items-center justify-between text-sm">
 //           <span className="text-gray-400">Created:</span>
-//           <span className="text-white font-medium">
+//           <span className="text-white ">
 //             {new Date(story.createdAt).toLocaleDateString()}
 //           </span>
 //         </div>
@@ -1005,23 +1005,23 @@
 
 //       {/* Assessment Score */}
 //       {story.assessment && (
-//         <div className="bg-gray-700/50 rounded-lg p-3 mb-4">
+//         <div className="bg-gray-700/50  p-3 mb-4">
 //           <div className="flex items-center justify-between mb-2">
 //             <span className="text-sm text-gray-400">Overall Score</span>
-//             <span className={`text-xl font-bold ${getScoreColor(story.assessment.overallScore)}`}>
+//             <span className={`text-xl  ${getScoreColor(story.assessment.overallScore)}`}>
 //               {story.assessment.overallScore}%
 //             </span>
 //           </div>
           
 //           <div className="grid grid-cols-3 gap-2 text-xs">
 //             <div className="text-center">
-//               <div className={`font-semibold ${getScoreColor(story.assessment.grammarScore)}`}>
+//               <div className={` ${getScoreColor(story.assessment.grammarScore)}`}>
 //                 {story.assessment.grammarScore}%
 //               </div>
 //               <div className="text-gray-400">Grammar</div>
 //             </div>
 //             <div className="text-center">
-//               <div className={`font-semibold ${getScoreColor(story.assessment.creativityScore)}`}>
+//               <div className={` ${getScoreColor(story.assessment.creativityScore)}`}>
 //                 {story.assessment.creativityScore}%
 //               </div>
 //               <div className="text-gray-400">Creativity</div>
@@ -1039,24 +1039,24 @@
 //       {/* Status Badges */}
 //       <div className="flex flex-wrap gap-2 mb-4">
 //         {story.isPublished && (
-//           <span className="bg-green-500/20 text-green-300 px-2 py-1 rounded text-xs font-medium border border-green-500/30 flex items-center gap-1">
+//           <span className="bg-green-500/20 text-green-300 px-2 py-1 rounded text-xs  border border-green-500/30 flex items-center gap-1">
 //             <Star size={10} />
 //             Published
 //           </span>
 //         )}
 //         {story.competitionEntries && story.competitionEntries.length > 0 && (
-//           <span className="bg-purple-500/20 text-purple-300 px-2 py-1 rounded text-xs font-medium border border-purple-500/30 flex items-center gap-1">
+//           <span className="bg-purple-500/20 text-purple-300 px-2 py-1 rounded text-xs  border border-purple-500/30 flex items-center gap-1">
 //             <Trophy size={10} />
 //             Competition
 //           </span>
 //         )}
 //         {story.status === 'flagged' && (
-//           <span className="bg-red-500/20 text-red-400 px-2 py-1 rounded text-xs font-medium border border-red-500/30">
+//           <span className="bg-red-500/20 text-red-400 px-2 py-1 rounded text-xs  border border-red-500/30">
 //             Flagged
 //           </span>
 //         )}
 //         {story.status === 'review' && (
-//           <span className="bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded text-xs font-medium border border-yellow-500/30">
+//           <span className="bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded text-xs  border border-yellow-500/30">
 //             Review
 //           </span>
 //         )}
@@ -1066,7 +1066,7 @@
 //       <div className="space-y-2">
 //         <Link
 //           href={`/children-dashboard/my-stories/${story._id}`}
-//           className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2"
+//           className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2  text-sm  transition-colors flex items-center justify-center gap-2"
 //         >
 //           <Eye size={16} />
 //           View Story
@@ -1078,10 +1078,10 @@
 //             <button
 //               onClick={onPublish}
 //               disabled={publishingStory === story._id}
-//               className="bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg text-xs font-medium transition-colors flex items-center justify-center gap-1 disabled:opacity-50"
+//               className="bg-green-600 hover:bg-green-700 text-white py-2  text-xs  transition-colors flex items-center justify-center gap-1 disabled:opacity-50"
 //             >
 //               {publishingStory === story._id ? (
-//                 <div className="w-3 h-3 border border-white border-t-transparent rounded-full animate-spin"></div>
+//                 <div className="w-3 h-3 border border-white border-t-transparent  animate-spin"></div>
 //               ) : (
 //                 <>
 //                   <Star size={12} />
@@ -1097,7 +1097,7 @@
 //           {story.status === 'completed' && (
 //             <button
 //               onClick={onPurchase}
-//               className="bg-yellow-600 hover:bg-yellow-700 text-white py-2 rounded-lg text-xs font-medium transition-colors flex items-center justify-center gap-1"
+//               className="bg-yellow-600 hover:bg-yellow-700 text-white py-2  text-xs  transition-colors flex items-center justify-center gap-1"
 //             >
 //               <DollarSign size={12} />
 //               $10
@@ -1109,13 +1109,13 @@
 //       {/* More Actions - Absolute positioned */}
 //       <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
 //         <div className="relative group/menu">
-//           <button className="bg-gray-800/80 hover:bg-gray-700/80 text-white p-1.5 rounded-lg transition-colors">
+//           <button className="bg-gray-800/80 hover:bg-gray-700/80 text-white p-1.5  transition-colors">
 //             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
 //               <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
 //             </svg>
 //           </button>
           
-//           <div className="absolute right-0 top-full mt-1 w-40 bg-gray-800 border border-gray-600 rounded-lg shadow-xl opacity-0 invisible group-hover/menu:opacity-100 group-hover/menu:visible transition-all z-20">
+//           <div className="absolute right-0 top-full mt-1 w-40 bg-gray-800 border border-gray-600  shadow-xl opacity-0 invisible group-hover/menu:opacity-100 group-hover/menu:visible transition-all z-20">
 //             {story.assessment && story.assessmentAttempts < 5 && (
 //               <button
 //                 onClick={onReassess}
@@ -1123,7 +1123,7 @@
 //                 className="w-full text-left px-3 py-2 text-white hover:bg-gray-700 transition-colors flex items-center gap-2 text-sm"
 //               >
 //                 {reassessingStory === story._id ? (
-//                   <div className="w-3 h-3 border border-white border-t-transparent rounded-full animate-spin"></div>
+//                   <div className="w-3 h-3 border border-white border-t-transparent  animate-spin"></div>
 //                 ) : (
 //                   <RefreshCw size={14} />
 //                 )}
@@ -1138,7 +1138,7 @@
 //                 className="w-full text-left px-3 py-2 text-red-400 hover:bg-gray-700 transition-colors flex items-center gap-2 text-sm"
 //               >
 //                 {deletingStory === story._id ? (
-//                   <div className="w-3 h-3 border border-red-400 border-t-transparent rounded-full animate-spin"></div>
+//                   <div className="w-3 h-3 border border-red-400 border-t-transparent  animate-spin"></div>
 //                 ) : (
 //                   <Trash2 size={14} />
 //                 )}
@@ -1433,7 +1433,7 @@ export default function MyStoriesPage() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-blue-900 flex items-center justify-center">
         <div className="text-white text-xl flex items-center gap-3">
-          <div className="w-8 h-8 border-4 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
+          <div className="w-8 h-8 border-4 border-blue-400 border-t-transparent  animate-spin"></div>
           Loading your stories...
         </div>
       </div>
@@ -1454,31 +1454,28 @@ export default function MyStoriesPage() {
 
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
             <div className="flex flex-col gap-2">
-              <h1 className="text-4xl font-bold text-white mb-2">My Stories</h1>
+              <h1 className="text-4xl  text-white mb-2">My Stories</h1>
               <p className="text-gray-300">Manage and track your creative writing journey</p>
             </div>
             <Link
               href="/create-stories"
-              className="bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white px-6 py-3 rounded-xl font-semibold transition-all flex items-center gap-2 shadow-lg"
+              className="bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white px-6 py-3   transition-all flex items-center gap-2 shadow-lg"
             >
               <Plus size={20} />
               Create New Story
             </Link>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 w-full md:w-auto mt-6 md:mt-0">
-              <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-4 flex flex-col items-center">
-                <div className="text-2xl font-bold text-purple-400">{summary?.published ?? 0}</div>
+              <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-4 flex flex-col items-center">
+                <div className="text-2xl  text-purple-400">{summary?.published ?? 0}</div>
                 <div className="text-gray-300 text-sm">Published</div>
               </div>
-              <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-4 flex flex-col items-center">
-                <div className="text-2xl font-bold text-blue-400">{summary?.totalChildWords ? summary.totalChildWords.toLocaleString() : '0'}</div>
+              <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-4 flex flex-col items-center">
+                <div className="text-2xl  text-blue-400">{summary?.totalChildWords ? summary.totalChildWords.toLocaleString() : '0'}</div>
                 <div className="text-gray-300 text-sm">Words Written</div>
               </div>
-              <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-4 flex flex-col items-center">
-                <div className="text-2xl font-bold text-yellow-400">{summary?.competition ?? 0}</div>
-                <div className="text-gray-300 text-sm">Competitions</div>
-              </div>
-              <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-4 flex flex-col items-center">
-                <div className={`text-2xl font-bold ${summary?.averageScore ? getScoreColor(summary.averageScore) : 'text-gray-400'}`}>{summary?.averageScore ? `${summary.averageScore}%` : 'N/A'}</div>
+       
+              <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-4 flex flex-col items-center">
+                <div className={`text-2xl  ${summary?.averageScore ? getScoreColor(summary.averageScore) : 'text-gray-400'}`}>{summary?.averageScore ? `${summary.averageScore}%` : 'N/A'}</div>
                 <div className="text-gray-300 text-sm">Avg Score</div>
               </div>
             </div>
@@ -1490,7 +1487,7 @@ export default function MyStoriesPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-6 mb-8"
+          className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-6 mb-8"
         >
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             
@@ -1502,7 +1499,7 @@ export default function MyStoriesPage() {
                 placeholder="Search stories..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 bg-gray-700/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full pl-10 pr-4 py-3 bg-gray-700/50 border border-gray-600  text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
 
@@ -1510,10 +1507,10 @@ export default function MyStoriesPage() {
             {/* Status Filter dropdown and other controls remain here as before */}
 
             {/* View Mode */}
-            <div className="flex bg-gray-700/50 border border-gray-600 rounded-lg">
+            <div className="flex bg-gray-700/50 border border-gray-600 ">
               <button
                 onClick={() => setViewMode('grid')}
-                className={`flex-1 py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 ${
+                className={`flex-1 py-3 px-4  transition-colors flex items-center justify-center gap-2 ${
                   viewMode === 'grid' ? 'bg-blue-600 text-white' : 'text-gray-300 hover:text-white'
                 }`}
               >
@@ -1522,7 +1519,7 @@ export default function MyStoriesPage() {
               </button>
               <button
                 onClick={() => setViewMode('list')}
-                className={`flex-1 py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 ${
+                className={`flex-1 py-3 px-4  transition-colors flex items-center justify-center gap-2 ${
                   viewMode === 'list' ? 'bg-blue-600 text-white' : 'text-gray-300 hover:text-white'
                 }`}
               >
@@ -1545,7 +1542,7 @@ export default function MyStoriesPage() {
               <div className="text-red-400 text-lg mb-4">❌ {error}</div>
               <button
                 onClick={fetchStories}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition-colors"
+                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3  transition-colors"
               >
                 Try Again
               </button>
@@ -1553,11 +1550,11 @@ export default function MyStoriesPage() {
           ) : stories.length === 0 ? (
             <div className="text-center py-12">
               <BookOpen className="w-24 h-24 text-gray-400 mx-auto mb-6" />
-              <h3 className="text-xl font-semibold text-white mb-4">No Stories Yet</h3>
+              <h3 className="text-xl  text-white mb-4">No Stories Yet</h3>
               <p className="text-gray-300 mb-6">Start your creative writing journey today!</p>
               <Link
                 href="/create-stories"
-                className="bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white px-8 py-4 rounded-xl font-semibold transition-all inline-flex items-center gap-2"
+                className="bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white px-8 py-4   transition-all inline-flex items-center gap-2"
               >
                 <Plus size={20} />
                 Create Your First Story
@@ -1605,7 +1602,7 @@ export default function MyStoriesPage() {
             <button
               onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
               disabled={!pagination.hasPrev}
-              className="flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 disabled:bg-gray-800 disabled:opacity-50 text-white rounded-lg transition-colors"
+              className="flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 disabled:bg-gray-800 disabled:opacity-50 text-white  transition-colors"
             >
               <ChevronLeft size={16} />
               Previous
@@ -1618,7 +1615,7 @@ export default function MyStoriesPage() {
                   <button
                     key={page}
                     onClick={() => setCurrentPage(page)}
-                    className={`w-10 h-10 rounded-lg transition-colors ${
+                    className={`w-10 h-10  transition-colors ${
                       currentPage === page
                         ? 'bg-blue-600 text-white'
                         : 'bg-gray-700 hover:bg-gray-600 text-gray-300'
@@ -1633,7 +1630,7 @@ export default function MyStoriesPage() {
             <button
               onClick={() => setCurrentPage(prev => Math.min(pagination.pages, prev + 1))}
               disabled={!pagination.hasNext}
-              className="flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 disabled:bg-gray-800 disabled:opacity-50 text-white rounded-lg transition-colors"
+              className="flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 disabled:bg-gray-800 disabled:opacity-50 text-white  transition-colors"
             >
               Next
               <ChevronRight size={16} />
@@ -1703,16 +1700,16 @@ function StoryCard({ story, onPublish, onPurchase, publishingStory }: StoryCardP
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       whileHover={{ scale: 1.02 }}
-      className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-6 hover:border-gray-500/50 transition-all group relative"
+      className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-6 hover:border-gray-500/50 transition-all group relative"
     >
       {/* Story Type Badge */}
-      <div className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium mb-4 ${typeInfo.bgColor} ${typeInfo.color} ${typeInfo.borderColor} border`}>
+      <div className={`inline-flex items-center gap-1 px-2 py-1  text-xs  mb-4 ${typeInfo.bgColor} ${typeInfo.color} ${typeInfo.borderColor} border`}>
         <typeInfo.icon size={12} />
         {typeInfo.label}
       </div>
 
       {/* Title & Metadata */}
-      <h3 className="text-lg font-semibold text-white mb-2 line-clamp-2">{story.title}</h3>
+      <h3 className="text-lg  text-white mb-2 line-clamp-2">{story.title}</h3>
       <div className="flex items-center gap-4 text-sm text-gray-400 mb-4">
         <span>{story.totalWords} words</span>
         <span>•</span>
@@ -1726,7 +1723,7 @@ function StoryCard({ story, onPublish, onPurchase, publishingStory }: StoryCardP
             <span className="text-sm text-gray-300">Overall Score</span>
             <div className="flex items-center gap-2">
               {getIntegrityIcon(story.assessment.integrityRisk)}
-              <span className={`font-semibold ${getScoreColor(story.assessment.overallScore)}`}>
+              <span className={` ${getScoreColor(story.assessment.overallScore)}`}>
                 {story.assessment.overallScore}%
               </span>
             </div>
@@ -1741,13 +1738,13 @@ function StoryCard({ story, onPublish, onPurchase, publishingStory }: StoryCardP
       {/* Status Badges */}
       <div className="flex flex-wrap gap-2 mb-4">
         {story.isPublished && (
-          <span className="bg-green-500/20 text-green-300 px-2 py-1 rounded text-xs font-medium border border-green-500/30 flex items-center gap-1">
+          <span className="bg-green-500/20 text-green-300 px-2 py-1 rounded text-xs  border border-green-500/30 flex items-center gap-1">
             <CheckCircle size={12} />
             Published to Community
           </span>
         )}
         {story.physicalAnthology?.purchased && (
-          <span className="bg-yellow-800/60 border border-yellow-600/40 text-yellow-300 px-2 py-1 rounded text-xs font-medium flex items-center gap-1">
+          <span className="bg-yellow-800/60 border border-yellow-600/40 text-yellow-300 px-2 py-1 rounded text-xs  flex items-center gap-1">
             <CheckCircle size={12} />
             Spot Reserved in Physical Book
             {story.physicalAnthology.purchaseDate && (
@@ -1758,18 +1755,18 @@ function StoryCard({ story, onPublish, onPurchase, publishingStory }: StoryCardP
           </span>
         )}
         {story.competitionEntries && story.competitionEntries.length > 0 && (
-          <span className="bg-purple-500/20 text-purple-300 px-2 py-1 rounded text-xs font-medium border border-purple-500/30 flex items-center gap-1">
+          <span className="bg-purple-500/20 text-purple-300 px-2 py-1 rounded text-xs  border border-purple-500/30 flex items-center gap-1">
             <Trophy size={10} />
             Competition
           </span>
         )}
         {story.status === 'flagged' && (
-          <span className="bg-red-500/20 text-red-400 px-2 py-1 rounded text-xs font-medium border border-red-500/30">
+          <span className="bg-red-500/20 text-red-400 px-2 py-1 rounded text-xs  border border-red-500/30">
             Flagged
           </span>
         )}
         {story.status === 'review' && (
-          <span className="bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded text-xs font-medium border border-yellow-500/30">
+          <span className="bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded text-xs  border border-yellow-500/30">
             Review
           </span>
         )}
@@ -1779,7 +1776,7 @@ function StoryCard({ story, onPublish, onPurchase, publishingStory }: StoryCardP
       <div className="space-y-2">
         <Link
           href={`/children-dashboard/my-stories/${story._id}`}
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2"
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2  text-sm  transition-colors flex items-center justify-center gap-2"
         >
           <Eye size={16} />
           View Story
@@ -1791,11 +1788,11 @@ function StoryCard({ story, onPublish, onPurchase, publishingStory }: StoryCardP
             <button
               onClick={onPublish}
               disabled={publishingStory === story._id}
-              className="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg text-xs font-medium transition-colors flex items-center justify-center gap-1 disabled:opacity-50"
+              className="w-full bg-green-600 hover:bg-green-700 text-white py-2  text-xs  transition-colors flex items-center justify-center gap-1 disabled:opacity-50"
             >
               {publishingStory === story._id ? (
                 <>
-                  <div className="w-3 h-3 border border-white border-t-transparent rounded-full animate-spin"></div>
+                  <div className="w-3 h-3 border border-white border-t-transparent  animate-spin"></div>
                   Publishing...
                 </>
               ) : (
@@ -1811,7 +1808,7 @@ function StoryCard({ story, onPublish, onPurchase, publishingStory }: StoryCardP
           {!story.physicalAnthology?.purchased ? (
             <button
               onClick={onPurchase}
-              className="w-full bg-yellow-600 hover:bg-yellow-700 text-white py-2 rounded-lg text-xs font-medium transition-colors flex items-center justify-center gap-1"
+              className="w-full bg-yellow-600 hover:bg-yellow-700 text-white py-2  text-xs  transition-colors flex items-center justify-center gap-1"
             >
               <DollarSign size={12} />
               Reserve Spot in Physical Book - $10
@@ -1876,36 +1873,36 @@ function StoryListItem({ story, onPublish, onPurchase, publishingStory }: StoryC
     <motion.div
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
-      className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-6 hover:border-gray-500/50 transition-all"
+      className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-6 hover:border-gray-500/50 transition-all"
     >
       <div className="flex items-center justify-between">
         {/* Left Side - Story Info */}
         <div className="flex-1">
           <div className="flex items-center gap-3 mb-2">
             <typeInfo.icon className={`w-5 h-5 ${typeInfo.color}`} />
-            <h3 className="text-lg font-semibold text-white">{story.title}</h3>
+            <h3 className="text-lg  text-white">{story.title}</h3>
             
             {/* Status Badges */}
             <div className="flex gap-2">
               {story.isPublished && (
-                <span className="bg-green-500/20 text-green-300 px-3 py-1 rounded-full text-xs font-medium border border-green-500/30 flex items-center gap-1">
+                <span className="bg-green-500/20 text-green-300 px-3 py-1  text-xs  border border-green-500/30 flex items-center gap-1">
                   <Star size={12} />
                   Published
                 </span>
               )}
               {story.competitionEntries && story.competitionEntries.length > 0 && (
-                <span className="bg-purple-500/20 text-purple-300 px-3 py-1 rounded-full text-xs font-medium border border-purple-500/30 flex items-center gap-1">
+                <span className="bg-purple-500/20 text-purple-300 px-3 py-1  text-xs  border border-purple-500/30 flex items-center gap-1">
                   <Trophy size={12} />
                   In Competition
                 </span>
               )}
               {story.status === 'flagged' && (
-                <span className="bg-red-500/20 text-red-400 px-3 py-1 rounded-full text-xs font-medium border border-red-500/30">
+                <span className="bg-red-500/20 text-red-400 px-3 py-1  text-xs  border border-red-500/30">
                   Flagged
                 </span>
               )}
               {story.status === 'review' && (
-                <span className="bg-yellow-500/20 text-yellow-400 px-3 py-1 rounded-full text-xs font-medium border border-yellow-500/30">
+                <span className="bg-yellow-500/20 text-yellow-400 px-3 py-1  text-xs  border border-yellow-500/30">
                   Under Review
                 </span>
               )}
@@ -1921,7 +1918,7 @@ function StoryListItem({ story, onPublish, onPurchase, publishingStory }: StoryC
             {story.assessment && (
               <div className="flex items-center gap-2">
                 {getIntegrityIcon(story.assessment.integrityRisk)}
-                <span className={`font-semibold ${getScoreColor(story.assessment.overallScore)}`}>
+                <span className={` ${getScoreColor(story.assessment.overallScore)}`}>
                   {story.assessment.overallScore}% Score
                 </span>
               </div>
@@ -1933,7 +1930,7 @@ function StoryListItem({ story, onPublish, onPurchase, publishingStory }: StoryC
         <div className="flex items-center gap-2 ml-6">
           <Link
             href={`/children-dashboard/my-stories/${story._id}`}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2  text-sm  transition-colors flex items-center gap-2"
           >
             <Eye size={16} />
             View
@@ -1944,11 +1941,11 @@ function StoryListItem({ story, onPublish, onPurchase, publishingStory }: StoryC
             <button
               onClick={onPublish}
               disabled={publishingStory === story._id}
-              className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 disabled:opacity-50"
+              className="bg-green-600 hover:bg-green-700 text-white px-4 py-2  text-sm  transition-colors flex items-center gap-2 disabled:opacity-50"
             >
               {publishingStory === story._id ? (
                 <>
-                  <div className="w-4 h-4 border border-white border-t-transparent rounded-full animate-spin"></div>
+                  <div className="w-4 h-4 border border-white border-t-transparent  animate-spin"></div>
                   Publishing...
                 </>
               ) : (
@@ -1963,7 +1960,7 @@ function StoryListItem({ story, onPublish, onPurchase, publishingStory }: StoryC
           {/* Purchase Button - Show for ALL stories */}
           <button
             onClick={onPurchase}
-            className="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
+            className="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2  text-sm  transition-colors flex items-center gap-2"
           >
             <DollarSign size={16} />
             Purchase $10
@@ -1971,13 +1968,13 @@ function StoryListItem({ story, onPublish, onPurchase, publishingStory }: StoryC
 
           {/* More Actions Dropdown - NO ACTIONS */}
           <div className="relative group">
-            <button className="bg-gray-700 hover:bg-gray-600 text-white p-2 rounded-lg transition-colors">
+            <button className="bg-gray-700 hover:bg-gray-600 text-white p-2  transition-colors">
               <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
               </svg>
             </button>
             
-            <div className="absolute right-0 top-full mt-2 w-48 bg-gray-800 border border-gray-600 rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10">
+            <div className="absolute right-0 top-full mt-2 w-48 bg-gray-800 border border-gray-600  shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10">
               {/* NO ACTIONS - No reassess, no delete */}
               <div className="px-4 py-2 text-gray-400 text-sm text-center">
                 No actions available

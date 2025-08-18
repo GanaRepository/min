@@ -100,17 +100,17 @@ export default function UploadStoryPage() {
           animate={{ scale: 1, opacity: 1 }}
           className="text-center"
         >
-          <div className="bg-green-600 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6">
+          <div className="bg-green-600 w-24 h-24  flex items-center justify-center mx-auto mb-6">
             <CheckCircle className="w-12 h-12 text-white" />
           </div>
-          <h1 className="text-3xl font-bold text-white mb-4">
+          <h1 className="text-3xl  text-white mb-4">
             Story Uploaded Successfully! 🎉
           </h1>
           <p className="text-gray-300 text-lg mb-6">
             Your story "{title}" has been uploaded and is ready for publishing.
           </p>
-          <div className="bg-blue-600/20 border border-blue-500/30 rounded-xl p-6 mb-6">
-            <h3 className="text-white font-bold mb-2">Next Steps:</h3>
+          <div className="bg-blue-600/20 border border-blue-500/30  p-6 mb-6">
+            <h3 className="text-white  mb-2">Next Steps:</h3>
             <ul className="text-gray-300 text-left space-y-2">
               <li>• Pay $10 publication fee to publish your story</li>
               <li>• Published stories are eligible for monthly competitions</li>
@@ -142,7 +142,7 @@ export default function UploadStoryPage() {
         animate={{ opacity: 1, y: 0 }}
         className="text-center mb-8"
       >
-        <h1 className="text-3xl font-bold text-white mb-2 flex items-center justify-center gap-3">
+        <h1 className="text-3xl  text-white mb-2 flex items-center justify-center gap-3">
           <Book size={36} className="text-blue-400" />
           Upload Your Story
         </h1>
@@ -157,11 +157,11 @@ export default function UploadStoryPage() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="bg-gray-800/60 border border-gray-600/40 rounded-xl p-8"
+        className="bg-gray-800/60 border border-gray-600/40  p-8"
       >
         {/* Story Title */}
         <div className="mb-6">
-          <label className="block text-gray-300 font-medium mb-3">
+          <label className="block text-gray-300  mb-3">
             Story Title <span className="text-red-400">*</span>
           </label>
           <input
@@ -169,7 +169,7 @@ export default function UploadStoryPage() {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Enter your story title..."
-            className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors"
+            className="w-full bg-gray-700 border border-gray-600  px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors"
             maxLength={100}
           />
           <div className="text-gray-400 text-sm mt-1">
@@ -179,11 +179,11 @@ export default function UploadStoryPage() {
 
         {/* File Upload */}
         <div className="mb-6">
-          <label className="block text-gray-300 font-medium mb-3">
+          <label className="block text-gray-300  mb-3">
             Upload Story File <span className="text-red-400">*</span>
           </label>
 
-          <div className="border-2 border-dashed border-gray-600 rounded-lg p-8 text-center hover:border-gray-500 transition-colors">
+          <div className="border-2 border-dashed border-gray-600  p-8 text-center hover:border-gray-500 transition-colors">
             <input
               type="file"
               onChange={handleFileSelect}
@@ -195,7 +195,7 @@ export default function UploadStoryPage() {
               {file ? (
                 <div className="text-green-400">
                   <CheckCircle className="w-12 h-12 mx-auto mb-3" />
-                  <p className="font-medium text-lg">{file.name}</p>
+                  <p className=" text-lg">{file.name}</p>
                   <p className="text-gray-400 text-sm">
                     {(file.size / 1024 / 1024).toFixed(2)} MB
                   </p>
@@ -206,7 +206,7 @@ export default function UploadStoryPage() {
               ) : (
                 <div className="text-gray-400">
                   <Upload className="w-12 h-12 mx-auto mb-3" />
-                  <p className="font-medium text-lg">
+                  <p className=" text-lg">
                     Click to upload your story
                   </p>
                   <p className="text-sm">PDF or DOCX files only</p>
@@ -220,10 +220,10 @@ export default function UploadStoryPage() {
         </div>
 
         {/* Requirements */}
-        <div className="mb-6 bg-blue-600/20 border border-blue-500/30 rounded-lg p-4">
+        <div className="mb-6 bg-blue-600/20 border border-blue-500/30  p-4">
           <div className="flex items-center gap-2 mb-3">
             <Info className="w-5 h-5 text-blue-400" />
-            <span className="text-blue-400 font-medium">
+            <span className="text-blue-400 ">
               Story Requirements
             </span>
           </div>
@@ -236,17 +236,17 @@ export default function UploadStoryPage() {
         </div>
 
         {/* Publishing Info */}
-        <div className="mb-6 bg-yellow-600/20 border border-yellow-500/30 rounded-lg p-4">
+        <div className="mb-6 bg-yellow-600/20 border border-yellow-500/30  p-4">
           <div className="flex items-center gap-2 mb-3">
             <DollarSign className="w-5 h-5 text-yellow-400" />
-            <span className="text-yellow-400 font-medium">
+            <span className="text-yellow-400 ">
               Publishing & Competition
             </span>
           </div>
           <div className="text-gray-300 text-sm space-y-2">
             <div className="flex items-center justify-between">
               <span>Publication Fee:</span>
-              <span className="text-yellow-400 font-bold">$10 per story</span>
+              <span className="text-yellow-400 ">$10 per story</span>
             </div>
             <div>• Published stories are eligible for monthly competitions</div>
             <div>• Stories appear in your public portfolio</div>
@@ -255,10 +255,10 @@ export default function UploadStoryPage() {
         </div>
 
         {/* Competition Eligibility */}
-        <div className="mb-8 bg-purple-600/20 border border-purple-500/30 rounded-lg p-4">
+        <div className="mb-8 bg-purple-600/20 border border-purple-500/30  p-4">
           <div className="flex items-center gap-2 mb-3">
             <Trophy className="w-5 h-5 text-purple-400" />
-            <span className="text-purple-400 font-medium">
+            <span className="text-purple-400 ">
               Competition Benefits
             </span>
           </div>
@@ -274,11 +274,11 @@ export default function UploadStoryPage() {
         <button
           onClick={handleUpload}
           disabled={!file || !title.trim() || uploading}
-          className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white py-4 px-6 rounded-xl flex items-center justify-center gap-3 transition-colors font-semibold text-lg"
+          className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white py-4 px-6  flex items-center justify-center gap-3 transition-colors  text-lg"
         >
           {uploading ? (
             <>
-              <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+              <div className="w-5 h-5 border-2 border-white/30 border-t-white  animate-spin"></div>
               Uploading Story...
             </>
           ) : (
@@ -304,8 +304,8 @@ export default function UploadStoryPage() {
         className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6"
       >
         {/* What Happens Next */}
-        <div className="bg-gray-800/40 border border-gray-600/30 rounded-xl p-6">
-          <h3 className="text-white font-bold mb-4 flex items-center gap-2">
+        <div className="bg-gray-800/40 border border-gray-600/30  p-6">
+          <h3 className="text-white  mb-4 flex items-center gap-2">
             <Star className="text-green-400" />
             What Happens Next?
           </h3>
@@ -319,8 +319,8 @@ export default function UploadStoryPage() {
         </div>
 
         {/* Tips for Success */}
-        <div className="bg-gray-800/40 border border-gray-600/30 rounded-xl p-6">
-          <h3 className="text-white font-bold mb-4 flex items-center gap-2">
+        <div className="bg-gray-800/40 border border-gray-600/30  p-6">
+          <h3 className="text-white  mb-4 flex items-center gap-2">
             <FileText className="text-blue-400" />
             Tips for Success
           </h3>

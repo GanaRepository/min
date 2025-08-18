@@ -8,8 +8,6 @@ import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import {
   ArrowLeft,
-  Heart,
-  Bookmark,
   Share2,
   MessageCircle,
   Eye,
@@ -62,8 +60,7 @@ interface StoryDetails {
     competitionName: string;
     month: string;
   };
-  isLikedByUser: boolean;
-  isBookmarkedByUser: boolean;
+  // ...existing code...
   comments: Array<{
     _id: string;
     authorId: string;
@@ -113,63 +110,7 @@ export default function CommunityStoryView() {
     }
   };
 
-  const toggleLike = async () => {
-    if (!story) return;
-    
-    if (!session) {
-      router.push('/auth/signin');
-      return;
-    }
-    
-    try {
-      const response = await fetch(`/api/community/stories/${storyId}/like`, {
-        method: 'POST',
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setStory(prev => prev ? {
-          ...prev,
-          isLikedByUser: data.isLiked,
-          stats: {
-            ...prev.stats,
-            likes: data.totalLikes
-          }
-        } : null);
-      }
-    } catch (error) {
-      console.error('Error toggling like:', error);
-    }
-  };
-
-  const toggleBookmark = async () => {
-    if (!story) return;
-    
-    if (!session) {
-      router.push('/auth/signin');
-      return;
-    }
-    
-    try {
-      const response = await fetch(`/api/community/stories/${storyId}/bookmark`, {
-        method: 'POST',
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setStory(prev => prev ? {
-          ...prev,
-          isBookmarkedByUser: data.isBookmarked,
-          stats: {
-            ...prev.stats,
-            bookmarks: data.totalBookmarks
-          }
-        } : null);
-      }
-    } catch (error) {
-      console.error('Error toggling bookmark:', error);
-    }
-  };
+  // Removed like and bookmark handlers
 
   const submitComment = async () => {
     if (!newComment.trim() || submittingComment) return;
@@ -220,7 +161,7 @@ export default function CommunityStoryView() {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center">
-          <div className="w-8 h-8 border-4 border-blue-600/30 border-t-blue-600 rounded-full animate-spin mx-auto mb-4"></div>
+          <div className="w-8 h-8 border-4 border-blue-600/30 border-t-blue-600  animate-spin mx-auto mb-4"></div>
           <p className="text-gray-400">Loading story...</p>
         </div>
       </div>
@@ -230,10 +171,10 @@ export default function CommunityStoryView() {
   if (!story) {
     return (
       <div className="text-center py-12">
-        <h3 className="text-xl font-semibold text-white mb-2">Story Not Found</h3>
+        <h3 className="text-xl  text-white mb-2">Story Not Found</h3>
         <p className="text-gray-400 mb-4">The story you're looking for doesn't exist or has been removed.</p>
         <Link href="/children-dashboard/community">
-          <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
+          <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white  transition-colors">
             Back to Community
           </button>
         </Link>
@@ -246,34 +187,34 @@ export default function CommunityStoryView() {
       {/* Header */}
       <div className="flex items-center gap-4">
         <Link href="/children-dashboard/community">
-          <button className="p-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg transition-colors">
+          <button className="p-2 bg-gray-800 hover:bg-gray-700 text-white  transition-colors">
             <ArrowLeft className="w-5 h-5" />
           </button>
         </Link>
         <div>
-          <h1 className="text-2xl font-bold text-white">{story.title}</h1>
+          <h1 className="text-2xl  text-white">{story.title}</h1>
           <p className="text-gray-400">Published story from the community</p>
         </div>
       </div>
 
       {/* Story Header Card */}
-      <div className="bg-gray-800 rounded-xl p-6">
+      <div className="bg-gray-800  p-6">
         {/* Badges */}
         <div className="flex items-center gap-2 mb-4">
           {story.isFeatured && (
-            <div className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium bg-yellow-500/20 text-yellow-400">
+            <div className="inline-flex items-center gap-1 px-3 py-1  text-sm  bg-yellow-500/20 text-yellow-400">
               <Star className="w-4 h-4" />
               FEATURED STORY
             </div>
           )}
           {story.competitionWinner && (
-            <div className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium bg-orange-500/20 text-orange-400">
+            <div className="inline-flex items-center gap-1 px-3 py-1  text-sm  bg-orange-500/20 text-orange-400">
               <Crown className="w-4 h-4" />
               {story.competitionWinner.position === 1 ? '🥇 1st Place' : 
                story.competitionWinner.position === 2 ? '🥈 2nd Place' : '🥉 3rd Place'}
             </div>
           )}
-          <div className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium bg-blue-500/20 text-blue-400">
+          <div className="inline-flex items-center gap-1 px-3 py-1  text-sm  bg-blue-500/20 text-blue-400">
             {story.storyType === 'competition' ? 'Competition Entry' : 
              story.storyType === 'uploaded' ? 'Uploaded Story' : 'Freestyle Story'}
           </div>
@@ -281,11 +222,11 @@ export default function CommunityStoryView() {
 
         {/* Author Info */}
         <div className="flex items-center gap-4 mb-4">
-          <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+          <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600  flex items-center justify-center">
             <User className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-white">
+            <h3 className="text-lg  text-white">
               {story.author.firstName} {story.author.lastName}
             </h3>
             <p className="text-gray-400 text-sm">
@@ -297,19 +238,19 @@ export default function CommunityStoryView() {
         {/* Story Stats */}
         <div className="grid grid-cols-4 gap-4 mb-4">
           <div className="text-center">
-            <div className="text-xl font-bold text-blue-400">{story.stats.views}</div>
+            <div className="text-xl  text-blue-400">{story.stats.views}</div>
             <div className="text-sm text-gray-400">Views</div>
           </div>
           <div className="text-center">
-            <div className="text-xl font-bold text-red-400">{story.stats.likes}</div>
+            <div className="text-xl  text-red-400">{story.stats.likes}</div>
             <div className="text-sm text-gray-400">Likes</div>
           </div>
           <div className="text-center">
-            <div className="text-xl font-bold text-green-400">{story.stats.comments}</div>
+            <div className="text-xl  text-green-400">{story.stats.comments}</div>
             <div className="text-sm text-gray-400">Comments</div>
           </div>
           <div className="text-center">
-            <div className="text-xl font-bold text-purple-400">{story.wordCount}</div>
+            <div className="text-xl  text-purple-400">{story.wordCount}</div>
             <div className="text-sm text-gray-400">Words</div>
           </div>
         </div>
@@ -317,27 +258,27 @@ export default function CommunityStoryView() {
         {/* Assessment Scores */}
         <div className="grid grid-cols-3 md:grid-cols-6 gap-4 mb-6">
           <div className="text-center">
-            <div className="text-2xl font-bold text-blue-400">{story.assessment.overallScore}</div>
+            <div className="text-2xl  text-blue-400">{story.assessment.overallScore}</div>
             <div className="text-xs text-gray-400">Overall</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-purple-400">{story.assessment.creativity}</div>
+            <div className="text-2xl  text-purple-400">{story.assessment.creativity}</div>
             <div className="text-xs text-gray-400">Creativity</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-green-400">{story.assessment.grammar}</div>
+            <div className="text-2xl  text-green-400">{story.assessment.grammar}</div>
             <div className="text-xs text-gray-400">Grammar</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-yellow-400">{story.assessment.vocabulary}</div>
+            <div className="text-2xl  text-yellow-400">{story.assessment.vocabulary}</div>
             <div className="text-xs text-gray-400">Vocabulary</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-orange-400">{story.assessment.structure}</div>
+            <div className="text-2xl  text-orange-400">{story.assessment.structure}</div>
             <div className="text-xs text-gray-400">Structure</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-pink-400">{story.assessment.characterDevelopment}</div>
+            <div className="text-2xl  text-pink-400">{story.assessment.characterDevelopment}</div>
             <div className="text-xs text-gray-400">Character</div>
           </div>
         </div>
@@ -345,31 +286,9 @@ export default function CommunityStoryView() {
         {/* Action Buttons */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <button
-              onClick={toggleLike}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                story.isLikedByUser
-                  ? 'bg-red-500/20 text-red-400'
-                  : 'bg-gray-700 text-gray-400 hover:bg-red-500/20 hover:text-red-400'
-              }`}
-            >
-              <Heart className={`w-4 h-4 ${story.isLikedByUser ? 'fill-current' : ''}`} />
-              {story.stats.likes} Likes
-            </button>
+            {/* Like and Bookmark buttons removed */}
 
-            <button
-              onClick={toggleBookmark}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                story.isBookmarkedByUser
-                  ? 'bg-yellow-500/20 text-yellow-400'
-                  : 'bg-gray-700 text-gray-400 hover:bg-yellow-500/20 hover:text-yellow-400'
-              }`}
-            >
-              <Bookmark className={`w-4 h-4 ${story.isBookmarkedByUser ? 'fill-current' : ''}`} />
-              {story.isBookmarkedByUser ? 'Bookmarked' : 'Bookmark'}
-            </button>
-
-            <button className="flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-gray-400 hover:text-white rounded-lg text-sm font-medium transition-colors">
+            <button className="flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-gray-400 hover:text-white  text-sm  transition-colors">
               <Share2 className="w-4 h-4" />
               Share
             </button>
@@ -382,8 +301,8 @@ export default function CommunityStoryView() {
       </div>
 
       {/* Story Content */}
-      <div className="bg-gray-800 rounded-xl p-6">
-        <h2 className="text-xl font-semibold text-white mb-4">Story</h2>
+      <div className="bg-gray-800  p-6">
+        <h2 className="text-xl  text-white mb-4">Story</h2>
         <div className="prose prose-gray max-w-none">
           {story.content.split('\n\n').map((paragraph, index) => (
             <p key={index} className="text-gray-300 leading-relaxed mb-4">
@@ -394,8 +313,8 @@ export default function CommunityStoryView() {
       </div>
 
       {/* Comments Section */}
-      <div className="bg-gray-800 rounded-xl p-6">
-        <h2 className="text-xl font-semibold text-white mb-4">
+      <div className="bg-gray-800  p-6">
+        <h2 className="text-xl  text-white mb-4">
           Comments ({story.stats.comments})
         </h2>
 
@@ -403,7 +322,7 @@ export default function CommunityStoryView() {
         {session ? (
           <div className="mb-6">
             <div className="flex gap-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center flex-shrink-0">
+              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600  flex items-center justify-center flex-shrink-0">
                 <User className="w-5 h-5 text-white" />
               </div>
               <div className="flex-1">
@@ -412,7 +331,7 @@ export default function CommunityStoryView() {
                   onChange={(e) => setNewComment(e.target.value)}
                   onKeyPress={handleKeyPress}
                   placeholder="Share your thoughts about this story..."
-                  className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none resize-none"
+                  className="w-full p-3 bg-gray-700 border border-gray-600  text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none resize-none"
                   rows={3}
                 />
                 <div className="flex justify-between items-center mt-2">
@@ -422,10 +341,10 @@ export default function CommunityStoryView() {
                   <button
                     onClick={submitComment}
                     disabled={!newComment.trim() || submittingComment}
-                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 text-white rounded-lg text-sm font-medium transition-colors"
+                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 text-white  text-sm  transition-colors"
                   >
                     {submittingComment ? (
-                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      <div className="w-4 h-4 border-2 border-white/30 border-t-white  animate-spin" />
                     ) : (
                       <Send className="w-4 h-4" />
                     )}
@@ -436,10 +355,10 @@ export default function CommunityStoryView() {
             </div>
           </div>
         ) : (
-          <div className="mb-6 p-4 bg-gray-700 rounded-lg text-center">
+          <div className="mb-6 p-4 bg-gray-700  text-center">
             <p className="text-gray-400 mb-3">Sign in to join the conversation!</p>
             <Link href="/auth/signin">
-              <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
+              <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white  transition-colors">
                 Sign In
               </button>
             </Link>
@@ -459,14 +378,14 @@ export default function CommunityStoryView() {
                 key={comment._id}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="flex gap-3 p-4 bg-gray-700/50 rounded-lg"
+                className="flex gap-3 p-4 bg-gray-700/50 "
               >
-                <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
+                <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-blue-600  flex items-center justify-center flex-shrink-0">
                   <User className="w-5 h-5 text-white" />
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-2">
-                    <span className="font-medium text-white">{comment.authorName}</span>
+                    <span className=" text-white">{comment.authorName}</span>
                     <span className="text-sm text-gray-400">
                       {new Date(comment.createdAt).toLocaleDateString()}
                     </span>
