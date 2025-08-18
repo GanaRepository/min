@@ -596,13 +596,13 @@ export class UsageManager {
         publishedAt: { $gte: startOfMonth, $lte: endOfMonth }
       });
 
-      const canPublish = publishedCount < 1;
+      const canPublish = publishedCount < 3;
 
       return {
         allowed: canPublish,
-        reason: canPublish ? undefined : 'You can only publish 1 story per month for free. Limit resets next month.',
+        reason: canPublish ? undefined : 'You can only publish 3 stories per month for free. Limit resets next month.',
         currentUsage: { publications: publishedCount },
-        limits: { publications: 1 }
+        limits: { publications: 3 }
       };
     } catch (error) {
       console.error('❌ Error checking publication usage:', error);

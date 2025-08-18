@@ -1512,9 +1512,7 @@ export default function StoryDetailPage() {
   // ===== STORY ACTIONS =====
   const handlePublishStory = async () => {
     if (!story || publishingStory) return;
-    
     setPublishingStory(true);
-    
     try {
       const response = await fetch('/api/stories/publish', {
         method: 'POST',
@@ -1523,16 +1521,25 @@ export default function StoryDetailPage() {
       });
 
       const data = await response.json();
-      
+
       if (data.success) {
         alert('🎉 Story published to community showcase!');
         fetchStoryDetails(); // Refresh data
       } else {
-        throw new Error(data.error || 'Failed to publish story');
+        // Handle API errors properly
+        const errorMessage = data.error || 'Failed to publish story';
+        if (errorMessage.includes('3 stories per month') || errorMessage.includes('publish 3 stories')) {
+          alert(`📚 Monthly Publication Limit Reached!\n\nYou can only publish 3 stories per month for free.\n\nYour limit will reset on the 1st of next month.`);
+        } else if (errorMessage.includes('already published')) {
+          alert('ℹ️ This story is already published to the community.');
+        } else {
+          alert(`❌ Publication Failed\n\n${errorMessage}`);
+        }
       }
     } catch (error) {
-      console.error('❌ Publication error:', error);
-      alert('Failed to publish story. Please try again.');
+      // Only catch actual network/connection errors
+      console.error('❌ Network error:', error);
+      alert('❌ Connection Error\n\nPlease check your internet connection and try again.');
     } finally {
       setPublishingStory(false);
     }

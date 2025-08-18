@@ -198,19 +198,19 @@ export async function POST(request: Request) {
       childId: session.user.id,
       title: storySession.title,
       content: fullContent.join('\n\n'),
-      elements: storySession.elements,
-      totalWords: storySession.totalWords,
-      childWords: storySession.childWords,
-      grammarScore: finalAssessment.grammarScore || 0,
-      creativityScore: finalAssessment.creativityScore || 0,
-      overallScore: finalAssessment.overallScore || 0,
-      aifeedback: finalAssessment.feedback || 'No feedback provided',
+  elements: storySession.elements,
+  totalWords: storySession.totalWords,
+  childWords: storySession.childWords,
+  grammarScore: finalAssessment.grammarScore || 0,
+  creativityScore: finalAssessment.creativityScore || 0,
+  overallScore: finalAssessment.overallScore || 0,
+  aiFeeback: finalAssessment.feedback || 'No feedback provided',
     });
 
     // ALSO set the flag in StorySession for community page
     await StorySession.findByIdAndUpdate(sessionId, {
       $set: {
-        isPublished: true,
+          aiFeeback: assessment.feedback,
         publishedAt: new Date()
       }
     });

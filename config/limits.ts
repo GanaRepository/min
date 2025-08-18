@@ -177,7 +177,7 @@ export const STORY_PACK_BENEFITS = {
 
 // Pricing constants
 export const STORY_PACK_PRICE = 15.0; // $15 for story pack upgrade
-export const STORY_PUBLICATION_PRICE = 0.0; // FREE publication (1 per month)
+export const STORY_PUBLICATION_PRICE = 0.0; // FREE publication (3 per month)
 export const STORY_PURCHASE_PRICE = 10.0; // $10 for physical anthology purchase
 
 // File upload limits
@@ -203,7 +203,7 @@ export const RATE_LIMITS = {
   },
   STORY_PUBLICATION: {
     windowMs: 30 * 24 * 60 * 60 * 1000, // 30 days rolling window
-    maxRequests: 1, // Only 1 free publication per month
+    maxRequests: 3, // Allow 3 free publications per month
   },
   COMPETITION_SUBMISSION: {
     windowMs: 30 * 24 * 60 * 60 * 1000, // 30 days rolling window

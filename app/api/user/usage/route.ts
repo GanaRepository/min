@@ -180,9 +180,9 @@ export async function GET(request: NextRequest) {
       ...usageStats,
       publications: {
         used: monthlyPublications,
-        limit: 1, // Always 1 free publication per month
-        remaining: Math.max(0, 1 - monthlyPublications),
-        canUse: monthlyPublications < 1
+        limit: 3, // Allow 3 free publications per month
+        remaining: Math.max(0, 3 - monthlyPublications),
+        canUse: monthlyPublications < 3
       },
       currentPeriod: now.toLocaleDateString('en-US', { 
         month: 'long', 
@@ -205,7 +205,7 @@ export async function GET(request: NextRequest) {
       freestyleStories: { used: 0, limit: 3, remaining: 3, canUse: true },
       assessmentRequests: { used: 0, limit: 9, remaining: 9, canUse: true },
       competitionEntries: { used: 0, limit: 3, remaining: 3, canUse: true },
-      publications: { used: 0, limit: 1, remaining: 1, canUse: true },
+  publications: { used: 0, limit: 3, remaining: 3, canUse: true },
       subscriptionTier: 'FREE',
       resetDate: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1).toISOString(),
       currentPeriod: new Date().toLocaleDateString('en-US', { 

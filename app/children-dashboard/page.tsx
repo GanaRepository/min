@@ -278,33 +278,8 @@
 //   };
 
 //   // ===== STORY ACTIONS =====
-//   const handlePublishStory = async (storyId: string) => {
-//     if (!session?.user?.id) return;
-    
-//     setPublishingStory(storyId);
-    
-//     try {
-//       const response = await fetch('/api/stories/publish', {
-//         method: 'POST',
-//         headers: { 'Content-Type': 'application/json' },
-//         body: JSON.stringify({ sessionId: storyId })
-//       });
-
-//       const data = await response.json();
-      
-//       if (data.success) {
-//         alert('🎉 Story published to community showcase!');
-//         fetchDashboardData(); // Refresh data
-//       } else {
-//         throw new Error(data.error || 'Failed to publish story');
-//       }
-//     } catch (error) {
-//       console.error('❌ Publication error:', error);
-//       alert('Failed to publish story. Please try again.');
-//     } finally {
-//       setPublishingStory(null);
-//     }
-//   };
+  // Publish handler (must be inside component to access state)
+  // ...existing code...
 
 //   const handlePurchaseStory = async (storyId: string) => {
 //     if (!session?.user?.id) return;

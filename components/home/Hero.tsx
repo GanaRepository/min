@@ -441,7 +441,7 @@ export default function Home() {
     icon: <Users className="w-8 h-8" />,
     title: 'Share in Community',
     description:
-      'Publish your one best story in a month to the community page where other young writers, mentors, and admins can read and comment.',
+      'Publish your 3 best stories in a month to the community page where other young writers, mentors, and admins can read and comment.',
     gradient: 'from-indigo-500 to-purple-600',
     features: [
       'Public Story Showcase',
