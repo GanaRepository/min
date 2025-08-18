@@ -52,11 +52,6 @@
 //   category: { // Added this field
 //     type: String,
 //     default: 'general',
-//   },
-//   isPublic: { // Added this field
-//     type: Boolean,
-//     default: true,
-//   },
 //   isResolved: {
 //     type: Boolean,
 //     default: false,
@@ -137,11 +132,6 @@ const StoryCommentSchema = new Schema<IStoryComment>({
     ref: 'User',
     required: true,
     index: true,
-  },
-  authorRole: {
-    type: String,
-    enum: ['admin', 'mentor', 'child'], // 🆕 Added 'child'
-    required: true,
   },
   content: {
     type: String,

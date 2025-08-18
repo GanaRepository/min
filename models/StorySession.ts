@@ -1038,7 +1038,6 @@ const StorySessionSchema = new Schema<IStorySession>({
   isFeatured: {
     type: Boolean,
     default: false,
-    index: true,
   },
   tags: [{
     type: String,
