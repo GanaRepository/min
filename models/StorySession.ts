@@ -1,5 +1,5 @@
-// // models/StorySession.ts - COMPLETELY FIXED VERSION
-// import mongoose, { Schema, Document } from 'mongoose';
+// // models/StorySession.ts - COMPLETE VERSION WITH PHYSICAL ANTHOLOGY
+//  import mongoose, { Schema, Document } from 'mongoose';
 
 // export interface IStorySession extends Document {
 //   _id: mongoose.Types.ObjectId;
@@ -47,7 +47,6 @@
 //       };
 //       integrityRisk?: 'low' | 'medium' | 'high' | 'critical';
 //     };
-//     // FIXED: Make these fields required but with defaults
 //     integrityStatus: {
 //       status: 'PASS' | 'WARNING' | 'FAIL';
 //       message: string;
@@ -64,9 +63,18 @@
   
 //   // Publication fields
 //   isPublished: boolean;
+//   publishedAt?: Date;
 //   publicationDate?: Date;
 //   publicationFee?: number;
 //   competitionEligible: boolean;
+  
+//   // Physical Anthology fields - REQUIRED FIELD
+//   physicalAnthology?: {
+//     purchased: boolean;
+//     purchaseDate?: Date;
+//     stripeSessionId?: string;
+//     amount?: number;
+//   };
   
 //   // Competition fields
 //   competitionEntries?: Array<{
@@ -145,7 +153,7 @@
 //     index: true,
 //   },
 
-//   // Assessment fields - FIXED: Make integrityStatus required with defaults
+//   // Assessment fields
 //   assessment: {
 //     grammarScore: { type: Number, min: 0, max: 100 },
 //     creativityScore: { type: Number, min: 0, max: 100 },
@@ -181,18 +189,17 @@
 //         enum: ['low', 'medium', 'high', 'critical'],
 //       },
 //     },
-//     // FIXED: Required fields with default values to prevent validation errors
 //     integrityStatus: {
 //       status: {
 //         type: String,
 //         enum: ['PASS', 'WARNING', 'FAIL'],
 //         required: true,
-//         default: 'PASS', // Add default value
+//         default: 'PASS',
 //       },
 //       message: {
 //         type: String,
 //         required: true,
-//         default: 'Assessment pending...', // Add default value
+//         default: 'Assessment pending...',
 //       },
 //     },
 //     assessmentDate: { type: Date },
@@ -220,6 +227,9 @@
 //     default: false,
 //     index: true,
 //   },
+//   publishedAt: {
+//     type: Date,
+//   },
 //   publicationDate: {
 //     type: Date,
 //   },
@@ -230,6 +240,23 @@
 //     type: Boolean,
 //     default: true,
 //     index: true,
+//   },
+
+//   // Physical Anthology fields - REQUIRED SCHEMA FIELD
+//   physicalAnthology: {
+//     purchased: {
+//       type: Boolean,
+//       default: false,
+//     },
+//     purchaseDate: { 
+//       type: Date 
+//     },
+//     stripeSessionId: { 
+//       type: String 
+//     },
+//     amount: { 
+//       type: Number 
+//     },
 //   },
 
 //   // Competition fields
@@ -279,37 +306,16 @@
 //   toObject: { virtuals: true },
 // });
 
-// // FIXED: Pre-save middleware to ensure integrityStatus is always set
-// StorySessionSchema.pre('save', function(next) {
-//   if (this.assessment && !this.assessment.integrityStatus) {
-//     this.assessment.integrityStatus = {
-//       status: 'PASS',
-//       message: 'Assessment pending...'
-//     };
-//   }
-//   next();
-// });
-
-// // FIXED: Pre-validate middleware to set defaults before validation
-// StorySessionSchema.pre('validate', function(next) {
-//   if (this.assessment && !this.assessment.integrityStatus) {
-//     this.assessment.integrityStatus = {
-//       status: 'PASS',
-//       message: 'Assessment pending...'
-//     };
-//   }
-//   next();
-// });
-
 // // Indexes
 // StorySessionSchema.index({ childId: 1, createdAt: -1 });
 // StorySessionSchema.index({ childId: 1, status: 1 });
 // StorySessionSchema.index({ childId: 1, isPublished: 1 });
 // StorySessionSchema.index({ childId: 1, storyType: 1 });
+// StorySessionSchema.index({ 'physicalAnthology.purchased': 1 });
 
 // export default mongoose.models?.StorySession || mongoose.model<IStorySession>('StorySession', StorySessionSchema);
 
-// models/StorySession.ts - COMPLETE VERSION WITH PHYSICAL ANTHOLOGY
+// models/StorySession.ts - COMPLETELY FIXED VERSION THAT RESOLVES ALL TYPESCRIPT ERRORS
 import mongoose, { Schema, Document } from 'mongoose';
 
 export interface IStorySession extends Document {
@@ -318,9 +324,11 @@ export interface IStorySession extends Document {
   storyNumber: number;
   title: string;
   aiOpening?: string;
+  content?: string; // For uploaded stories
   currentTurn: number;
   totalWords: number;
   childWords: number;
+  aiWords?: number;
   apiCallsUsed: number;
   maxApiCalls: number;
   status: 'active' | 'completed' | 'paused' | 'flagged' | 'review';
@@ -368,18 +376,17 @@ export interface IStorySession extends Document {
     errorMessage?: string;
   };
   
+  // Legacy assessment fields (for backward compatibility)
+  overallScore?: number;
+  creativityScore?: number;
+  grammarScore?: number;
+  feedback?: string;
+  
   assessmentAttempts: number;
   isUploadedForAssessment: boolean;
   lastAssessedAt?: Date;
   
-  // Publication fields
-  isPublished: boolean;
-  publishedAt?: Date;
-  publicationDate?: Date;
-  publicationFee?: number;
-  competitionEligible: boolean;
-  
-  // Physical Anthology fields - REQUIRED FIELD
+  // Physical anthology fields
   physicalAnthology?: {
     purchased: boolean;
     purchaseDate?: Date;
@@ -390,10 +397,14 @@ export interface IStorySession extends Document {
   // Competition fields
   competitionEntries?: Array<{
     competitionId: mongoose.Types.ObjectId;
+    competitionName?: string;
+    month?: string;
     submittedAt: Date;
     phase: 'submission' | 'judging' | 'results';
     rank?: number;
     score?: number;
+    isWinner?: boolean;
+    position?: number;
   }>;
   
   // Story type identification
@@ -408,6 +419,16 @@ export interface IStorySession extends Document {
     mood?: string;
     tone?: string;
   };
+
+  // 🆕 COMMUNITY FEATURES - ALL OPTIONAL TO PREVENT TYPESCRIPT ERRORS
+  isPublished?: boolean;
+  publishedAt?: Date;
+  views?: number;
+  likes?: mongoose.Types.ObjectId[];
+  bookmarks?: mongoose.Types.ObjectId[];
+  isFeatured?: boolean;
+  tags?: string[];
+  genre?: string;
   
   // Timestamps
   createdAt: Date;
@@ -437,6 +458,9 @@ const StorySessionSchema = new Schema<IStorySession>({
     type: String,
     default: 'Start writing your story here...',
   },
+  content: {
+    type: String, // For uploaded stories
+  },
   currentTurn: {
     type: Number,
     default: 1,
@@ -446,6 +470,10 @@ const StorySessionSchema = new Schema<IStorySession>({
     default: 0,
   },
   childWords: {
+    type: Number,
+    default: 0,
+  },
+  aiWords: {
     type: Number,
     default: 0,
   },
@@ -504,12 +532,10 @@ const StorySessionSchema = new Schema<IStorySession>({
       status: {
         type: String,
         enum: ['PASS', 'WARNING', 'FAIL'],
-        required: true,
         default: 'PASS',
       },
       message: {
         type: String,
-        required: true,
         default: 'Assessment pending...',
       },
     },
@@ -519,6 +545,12 @@ const StorySessionSchema = new Schema<IStorySession>({
     errorMessage: { type: String },
   },
 
+  // Legacy assessment fields (for backward compatibility)
+  overallScore: { type: Number, min: 0, max: 100 },
+  creativityScore: { type: Number, min: 0, max: 100 },
+  grammarScore: { type: Number, min: 0, max: 100 },
+  feedback: { type: String },
+
   assessmentAttempts: {
     type: Number,
     default: 0,
@@ -526,34 +558,12 @@ const StorySessionSchema = new Schema<IStorySession>({
   isUploadedForAssessment: {
     type: Boolean,
     default: false,
-    index: true,
   },
   lastAssessedAt: {
     type: Date,
   },
 
-  // Publication fields
-  isPublished: {
-    type: Boolean,
-    default: false,
-    index: true,
-  },
-  publishedAt: {
-    type: Date,
-  },
-  publicationDate: {
-    type: Date,
-  },
-  publicationFee: {
-    type: Number,
-  },
-  competitionEligible: {
-    type: Boolean,
-    default: true,
-    index: true,
-  },
-
-  // Physical Anthology fields - REQUIRED SCHEMA FIELD
+  // Physical anthology fields
   physicalAnthology: {
     purchased: {
       type: Boolean,
@@ -576,6 +586,12 @@ const StorySessionSchema = new Schema<IStorySession>({
       type: Schema.Types.ObjectId,
       ref: 'Competition',
     },
+    competitionName: {
+      type: String,
+    },
+    month: {
+      type: String,
+    },
     submittedAt: {
       type: Date,
       default: Date.now,
@@ -587,6 +603,11 @@ const StorySessionSchema = new Schema<IStorySession>({
     },
     rank: { type: Number },
     score: { type: Number },
+    isWinner: {
+      type: Boolean,
+      default: false,
+    },
+    position: { type: Number },
   }],
 
   // Story type identification
@@ -607,6 +628,44 @@ const StorySessionSchema = new Schema<IStorySession>({
     tone: { type: String },
   },
 
+  // 🆕 COMMUNITY FEATURES - ALL OPTIONAL WITH DEFAULTS
+  isPublished: {
+    type: Boolean,
+    default: false,
+    index: true,
+  },
+  publishedAt: {
+    type: Date,
+    index: true,
+  },
+  views: {
+    type: Number,
+    default: 0,
+    index: true,
+  },
+  likes: [{
+    type: Schema.Types.ObjectId,
+    ref: 'User'
+  }],
+  bookmarks: [{
+    type: Schema.Types.ObjectId,
+    ref: 'User'
+  }],
+  isFeatured: {
+    type: Boolean,
+    default: false,
+    index: true,
+  },
+  tags: [{
+    type: String,
+    trim: true
+  }],
+  genre: {
+    type: String,
+    default: 'Adventure',
+    index: true,
+  },
+
   // Timestamps
   completedAt: { type: Date },
   pausedAt: { type: Date },
@@ -617,11 +676,38 @@ const StorySessionSchema = new Schema<IStorySession>({
   toObject: { virtuals: true },
 });
 
-// Indexes
+// FIXED: Pre-save middleware to ensure integrityStatus is always set
+StorySessionSchema.pre('save', function(next) {
+  if (this.assessment && !this.assessment.integrityStatus) {
+    this.assessment.integrityStatus = {
+      status: 'PASS',
+      message: 'Assessment pending...'
+    };
+  }
+  next();
+});
+
+// FIXED: Pre-validate middleware to set defaults before validation
+StorySessionSchema.pre('validate', function(next) {
+  if (this.assessment && !this.assessment.integrityStatus) {
+    this.assessment.integrityStatus = {
+      status: 'PASS',
+      message: 'Assessment pending...'
+    };
+  }
+  next();
+});
+
+// Existing indexes
 StorySessionSchema.index({ childId: 1, createdAt: -1 });
 StorySessionSchema.index({ childId: 1, status: 1 });
-StorySessionSchema.index({ childId: 1, isPublished: 1 });
 StorySessionSchema.index({ childId: 1, storyType: 1 });
 StorySessionSchema.index({ 'physicalAnthology.purchased': 1 });
+
+// 🆕 NEW COMMUNITY INDEXES (only if fields exist)
+StorySessionSchema.index({ isPublished: 1, publishedAt: -1 });
+StorySessionSchema.index({ views: -1 });
+StorySessionSchema.index({ 'assessment.overallScore': -1 });
+StorySessionSchema.index({ 'elements.genre': 1 });
 
 export default mongoose.models?.StorySession || mongoose.model<IStorySession>('StorySession', StorySessionSchema);

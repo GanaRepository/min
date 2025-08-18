@@ -1,4 +1,4 @@
-// app/children-dashboard/community/[id]/page.tsx - INDIVIDUAL STORY VIEW
+// app/children-dashboard/community/[id]/page.tsx - FIXED INDIVIDUAL STORY VIEW
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -102,6 +102,7 @@ export default function CommunityStoryView() {
           method: 'POST',
         });
       } else {
+        console.error('Failed to fetch story:', await response.text());
         router.push('/children-dashboard/community');
       }
     } catch (error) {
@@ -114,6 +115,11 @@ export default function CommunityStoryView() {
 
   const toggleLike = async () => {
     if (!story) return;
+    
+    if (!session) {
+      router.push('/auth/signin');
+      return;
+    }
     
     try {
       const response = await fetch(`/api/community/stories/${storyId}/like`, {
@@ -139,6 +145,11 @@ export default function CommunityStoryView() {
   const toggleBookmark = async () => {
     if (!story) return;
     
+    if (!session) {
+      router.push('/auth/signin');
+      return;
+    }
+    
     try {
       const response = await fetch(`/api/community/stories/${storyId}/bookmark`, {
         method: 'POST',
@@ -163,6 +174,11 @@ export default function CommunityStoryView() {
   const submitComment = async () => {
     if (!newComment.trim() || submittingComment) return;
 
+    if (!session) {
+      router.push('/auth/signin');
+      return;
+    }
+
     try {
       setSubmittingComment(true);
       
@@ -183,11 +199,20 @@ export default function CommunityStoryView() {
           }
         } : null);
         setNewComment('');
+      } else {
+        console.error('Failed to submit comment:', await response.text());
       }
     } catch (error) {
       console.error('Error submitting comment:', error);
     } finally {
       setSubmittingComment(false);
+    }
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      submitComment();
     }
   };
 
@@ -246,212 +271,222 @@ export default function CommunityStoryView() {
               <Crown className="w-4 h-4" />
               {story.competitionWinner.position === 1 ? '🥇 1st Place' : 
                story.competitionWinner.position === 2 ? '🥈 2nd Place' : '🥉 3rd Place'}
-              <span className="ml-1">{story.competitionWinner.competitionName}</span>
             </div>
           )}
+          <div className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium bg-blue-500/20 text-blue-400">
+            {story.storyType === 'competition' ? 'Competition Entry' : 
+             story.storyType === 'uploaded' ? 'Uploaded Story' : 'Freestyle Story'}
+          </div>
         </div>
 
         {/* Author Info */}
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-4">
-            <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-              <span className="text-white text-xl font-medium">
-                {story.author.firstName[0]}{story.author.lastName[0]}
-              </span>
-            </div>
-            <div>
-              <h3 className="text-xl font-semibold text-white">
-                {story.author.firstName} {story.author.lastName}
-              </h3>
-              <div className="text-gray-400 text-sm">
-                {story.author.ageGroup} • {story.author.totalStories} stories published
-              </div>
-              <div className="text-gray-500 text-sm">
-                Published on {new Date(story.publishedAt).toLocaleDateString()}
-              </div>
-            </div>
+        <div className="flex items-center gap-4 mb-4">
+          <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+            <User className="w-6 h-6 text-white" />
           </div>
+          <div>
+            <h3 className="text-lg font-semibold text-white">
+              {story.author.firstName} {story.author.lastName}
+            </h3>
+            <p className="text-gray-400 text-sm">
+              Age Group: {story.author.ageGroup} • Genre: {story.genre}
+            </p>
+          </div>
+        </div>
 
-          {/* Actions */}
+        {/* Story Stats */}
+        <div className="grid grid-cols-4 gap-4 mb-4">
+          <div className="text-center">
+            <div className="text-xl font-bold text-blue-400">{story.stats.views}</div>
+            <div className="text-sm text-gray-400">Views</div>
+          </div>
+          <div className="text-center">
+            <div className="text-xl font-bold text-red-400">{story.stats.likes}</div>
+            <div className="text-sm text-gray-400">Likes</div>
+          </div>
+          <div className="text-center">
+            <div className="text-xl font-bold text-green-400">{story.stats.comments}</div>
+            <div className="text-sm text-gray-400">Comments</div>
+          </div>
+          <div className="text-center">
+            <div className="text-xl font-bold text-purple-400">{story.wordCount}</div>
+            <div className="text-sm text-gray-400">Words</div>
+          </div>
+        </div>
+
+        {/* Assessment Scores */}
+        <div className="grid grid-cols-3 md:grid-cols-6 gap-4 mb-6">
+          <div className="text-center">
+            <div className="text-2xl font-bold text-blue-400">{story.assessment.overallScore}</div>
+            <div className="text-xs text-gray-400">Overall</div>
+          </div>
+          <div className="text-center">
+            <div className="text-2xl font-bold text-purple-400">{story.assessment.creativity}</div>
+            <div className="text-xs text-gray-400">Creativity</div>
+          </div>
+          <div className="text-center">
+            <div className="text-2xl font-bold text-green-400">{story.assessment.grammar}</div>
+            <div className="text-xs text-gray-400">Grammar</div>
+          </div>
+          <div className="text-center">
+            <div className="text-2xl font-bold text-yellow-400">{story.assessment.vocabulary}</div>
+            <div className="text-xs text-gray-400">Vocabulary</div>
+          </div>
+          <div className="text-center">
+            <div className="text-2xl font-bold text-orange-400">{story.assessment.structure}</div>
+            <div className="text-xs text-gray-400">Structure</div>
+          </div>
+          <div className="text-center">
+            <div className="text-2xl font-bold text-pink-400">{story.assessment.characterDevelopment}</div>
+            <div className="text-xs text-gray-400">Character</div>
+          </div>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <button
               onClick={toggleLike}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                 story.isLikedByUser
                   ? 'bg-red-500/20 text-red-400'
                   : 'bg-gray-700 text-gray-400 hover:bg-red-500/20 hover:text-red-400'
               }`}
             >
-              <Heart className={`w-5 h-5 ${story.isLikedByUser ? 'fill-current' : ''}`} />
-              {story.stats.likes}
+              <Heart className={`w-4 h-4 ${story.isLikedByUser ? 'fill-current' : ''}`} />
+              {story.stats.likes} Likes
             </button>
 
             <button
               onClick={toggleBookmark}
-              className={`p-2 rounded-lg transition-colors ${
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                 story.isBookmarkedByUser
                   ? 'bg-yellow-500/20 text-yellow-400'
                   : 'bg-gray-700 text-gray-400 hover:bg-yellow-500/20 hover:text-yellow-400'
               }`}
             >
-              <Bookmark className={`w-5 h-5 ${story.isBookmarkedByUser ? 'fill-current' : ''}`} />
+              <Bookmark className={`w-4 h-4 ${story.isBookmarkedByUser ? 'fill-current' : ''}`} />
+              {story.isBookmarkedByUser ? 'Bookmarked' : 'Bookmark'}
             </button>
 
-            <button className="p-2 bg-gray-700 hover:bg-gray-600 text-gray-400 hover:text-white rounded-lg transition-colors">
-              <Share2 className="w-5 h-5" />
+            <button className="flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-gray-400 hover:text-white rounded-lg text-sm font-medium transition-colors">
+              <Share2 className="w-4 h-4" />
+              Share
             </button>
           </div>
-        </div>
 
-        {/* Story Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-          <div className="text-center">
-            <div className="text-2xl font-bold text-white">{story.wordCount.toLocaleString()}</div>
-            <div className="text-gray-400 text-sm">Words</div>
-          </div>
-          <div className="text-center">
-            <div className="text-2xl font-bold text-green-400">{story.assessment.overallScore.toFixed(1)}/10</div>
-            <div className="text-gray-400 text-sm">Overall Score</div>
-          </div>
-          <div className="text-center">
-            <div className="text-2xl font-bold text-blue-400">{story.stats.views.toLocaleString()}</div>
-            <div className="text-gray-400 text-sm">Views</div>
-          </div>
-          <div className="text-center">
-            <div className="text-2xl font-bold text-purple-400">{story.stats.comments}</div>
-            <div className="text-gray-400 text-sm">Comments</div>
+          <div className="text-sm text-gray-400">
+            Published {new Date(story.publishedAt).toLocaleDateString()}
           </div>
         </div>
-
-        {/* Assessment Breakdown */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="text-center">
-            <div className="text-lg font-bold text-green-400">{story.assessment.creativity.toFixed(1)}</div>
-            <div className="text-gray-400 text-sm">Creativity</div>
-          </div>
-          <div className="text-center">
-            <div className="text-lg font-bold text-blue-400">{story.assessment.grammar.toFixed(1)}</div>
-            <div className="text-gray-400 text-sm">Grammar</div>
-          </div>
-          <div className="text-center">
-            <div className="text-lg font-bold text-purple-400">{story.assessment.vocabulary.toFixed(1)}</div>
-            <div className="text-gray-400 text-sm">Vocabulary</div>
-          </div>
-          <div className="text-center">
-            <div className="text-lg font-bold text-orange-400">{story.assessment.structure.toFixed(1)}</div>
-            <div className="text-gray-400 text-sm">Structure</div>
-          </div>
-        </div>
-
-        {/* Tags */}
-        {story.tags.length > 0 && (
-          <div className="mt-6">
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-gray-400 text-sm">Tags:</span>
-              {story.tags.map((tag, index) => (
-                <span
-                  key={index}
-                  className="px-3 py-1 bg-gray-700 text-gray-300 rounded-full text-sm"
-                >
-                  #{tag}
-                </span>
-              ))}
-            </div>
-          </div>
-        )}
       </div>
 
       {/* Story Content */}
-      <div className="bg-gray-800 rounded-xl p-8">
-        <div className="prose prose-invert max-w-none">
-          <div className="text-gray-300 leading-relaxed text-lg whitespace-pre-wrap">
-            {story.content}
-          </div>
+      <div className="bg-gray-800 rounded-xl p-6">
+        <h2 className="text-xl font-semibold text-white mb-4">Story</h2>
+        <div className="prose prose-gray max-w-none">
+          {story.content.split('\n\n').map((paragraph, index) => (
+            <p key={index} className="text-gray-300 leading-relaxed mb-4">
+              {paragraph}
+            </p>
+          ))}
         </div>
       </div>
 
       {/* Comments Section */}
       <div className="bg-gray-800 rounded-xl p-6">
-        <h3 className="text-xl font-semibold text-white mb-6 flex items-center gap-2">
-          <MessageCircle className="w-6 h-6" />
+        <h2 className="text-xl font-semibold text-white mb-4">
           Comments ({story.stats.comments})
-        </h3>
+        </h2>
 
         {/* Add Comment */}
-        {session && (
+        {session ? (
           <div className="mb-6">
             <div className="flex gap-3">
-              <div className="w-10 h-10 bg-gradient-to-r from-green-500 to-blue-600 rounded-full flex items-center justify-center">
-                <span className="text-white text-sm font-medium">
-                  {session.user.firstName?.[0]}{session.user.lastName?.[0]}
-                </span>
+              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center flex-shrink-0">
+                <User className="w-5 h-5 text-white" />
               </div>
               <div className="flex-1">
                 <textarea
                   value={newComment}
                   onChange={(e) => setNewComment(e.target.value)}
-                  placeholder="Write a comment..."
-                  className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                  onKeyPress={handleKeyPress}
+                  placeholder="Share your thoughts about this story..."
+                  className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none resize-none"
                   rows={3}
                 />
                 <div className="flex justify-between items-center mt-2">
-                  <div className="text-gray-400 text-sm">
-                    {newComment.length}/500 characters
+                  <div className="text-sm text-gray-400">
+                    Press Enter to submit, Shift+Enter for new line
                   </div>
                   <button
                     onClick={submitComment}
                     disabled={!newComment.trim() || submittingComment}
-                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 text-white rounded-lg transition-colors flex items-center gap-2"
+                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 text-white rounded-lg text-sm font-medium transition-colors"
                   >
-                    <Send className="w-4 h-4" />
+                    {submittingComment ? (
+                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    ) : (
+                      <Send className="w-4 h-4" />
+                    )}
                     {submittingComment ? 'Posting...' : 'Post Comment'}
                   </button>
                 </div>
               </div>
             </div>
           </div>
+        ) : (
+          <div className="mb-6 p-4 bg-gray-700 rounded-lg text-center">
+            <p className="text-gray-400 mb-3">Sign in to join the conversation!</p>
+            <Link href="/auth/signin">
+              <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
+                Sign In
+              </button>
+            </Link>
+          </div>
         )}
 
         {/* Comments List */}
         <div className="space-y-4">
-          {story.comments.map((comment, index) => (
-            <motion.div
-              key={comment._id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.05 }}
-              className="flex gap-3 p-4 bg-gray-700 rounded-lg"
-            >
-              <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-600 rounded-full flex items-center justify-center">
-                <span className="text-white text-sm font-medium">
-                  {comment.authorName.split(' ').map(n => n[0]).join('')}
-                </span>
-              </div>
-              <div className="flex-1">
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="text-white font-medium">{comment.authorName}</span>
-                  <span className="text-gray-400 text-sm">
-                    {new Date(comment.createdAt).toLocaleDateString()}
-                  </span>
-                </div>
-                <p className="text-gray-300 mb-3">{comment.content}</p>
-                <div className="flex items-center gap-3">
-                  <button className="flex items-center gap-1 text-gray-400 hover:text-red-400 transition-colors">
-                    <Heart className="w-4 h-4" />
-                    {comment.likes}
-                  </button>
-                  <button className="text-gray-400 hover:text-white transition-colors">
-                    Reply
-                  </button>
-                </div>
-              </div>
-            </motion.div>
-          ))}
-
-          {story.comments.length === 0 && (
-            <div className="text-center text-gray-400 py-8">
-              No comments yet. Be the first to share your thoughts!
+          {story.comments.length === 0 ? (
+            <div className="text-center py-8">
+              <MessageCircle className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+              <p className="text-gray-400">No comments yet. Be the first to share your thoughts!</p>
             </div>
+          ) : (
+            story.comments.map((comment) => (
+              <motion.div
+                key={comment._id}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="flex gap-3 p-4 bg-gray-700/50 rounded-lg"
+              >
+                <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
+                  <User className="w-5 h-5 text-white" />
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="font-medium text-white">{comment.authorName}</span>
+                    <span className="text-sm text-gray-400">
+                      {new Date(comment.createdAt).toLocaleDateString()}
+                    </span>
+                  </div>
+                  <p className="text-gray-300 leading-relaxed">{comment.content}</p>
+                  <div className="flex items-center gap-2 mt-2">
+                    <button className="flex items-center gap-1 text-sm text-gray-400 hover:text-red-400 transition-colors">
+                      <ThumbsUp className="w-4 h-4" />
+                      {comment.likes}
+                    </button>
+                    <button className="text-sm text-gray-400 hover:text-white transition-colors">
+                      Reply
+                    </button>
+                    <button className="text-sm text-gray-400 hover:text-yellow-400 transition-colors">
+                      <Flag className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+            ))
           )}
         </div>
       </div>

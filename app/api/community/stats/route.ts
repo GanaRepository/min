@@ -2,7 +2,6 @@
 import { NextResponse } from 'next/server';
 import { connectToDatabase } from '@/utils/db';
 import StorySession from '@/models/StorySession';
-import User from '@/models/User';
 
 export const dynamic = 'force-dynamic';
 
@@ -29,7 +28,10 @@ export async function GET() {
         { $group: { _id: null, totalLikes: { $sum: { $size: { $ifNull: ['$likes', []] } } } } }
       ]),
       StorySession.countDocuments({ isPublished: true, isFeatured: true }),
-      StorySession.countDocuments({ isPublished: true, 'competitionEntries.isWinner': true })
+      StorySession.countDocuments({ 
+        isPublished: true, 
+        'competitionEntries.isWinner': true 
+      })
     ]);
 
     const totalViews = totalViewsResult[0]?.totalViews || 0;
