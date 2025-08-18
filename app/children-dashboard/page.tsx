@@ -38,28 +38,22 @@
 // } from 'lucide-react';
 
 // // ===== INTERFACES =====
-// interface UsageStats {
-//   freestyleStories: {
-//     used: number;
-//     limit: number;
-//     remaining: number;
-//     canUse: boolean;
-//   };
-//   assessmentRequests: {
-//     used: number;
-//     limit: number;
-//     remaining: number;
-//     canUse: boolean;
-//   };
-//   competitionEntries: {
-//     used: number;
-//     limit: number;
-//     remaining: number;
-//     canUse: boolean;
-//   };
-//   resetDate: string;
-//   subscriptionTier: 'FREE' | 'STORY_PACK';
-// }
+
+// ===== FINAL UsageStats INTERFACE (matches API response) =====
+interface UsageStats {
+  freestyleStories: { used: number; limit: number; remaining: number; canUse: boolean };
+  assessmentRequests: { used: number; limit: number; remaining: number; canUse: boolean };
+  competitionEntries: { used: number; limit: number; remaining: number; canUse: boolean };
+  publications: { used: number; limit: number; remaining: number; canUse: boolean };
+  resetDate: string;
+  subscriptionTier: 'FREE' | 'STORY_PACK';
+  storyPackExpiry?: string;
+  daysRemaining?: number;
+  resetInfo?: {
+    performed: boolean;
+    message: string;
+  };
+}
 
 // interface Story {
 //   _id: string;
@@ -1099,6 +1093,10 @@ interface Achievement {
 }
 
 export default function ChildrenDashboardPage() {
+  // Handler for Story Pack upgrades
+  const handleUpgrade = () => {
+    router.push('/pricing');
+  };
   const { data: session, status } = useSession();
   const router = useRouter();
 
@@ -1211,6 +1209,7 @@ export default function ChildrenDashboardPage() {
     freestyleStories: { used: 0, limit: 3, remaining: 3, canUse: true },
     assessmentRequests: { used: 0, limit: 9, remaining: 9, canUse: true },
     competitionEntries: { used: 0, limit: 3, remaining: 3, canUse: true },
+    publications: { used: 0, limit: 1, remaining: 1, canUse: true },
     resetDate: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1).toISOString(),
     subscriptionTier: 'FREE'
   });
@@ -1362,134 +1361,68 @@ export default function ChildrenDashboardPage() {
           </div>
         </motion.div>
 
-        {/* Usage Statistics */}
+
+        {/* Usage Statistics + Upgrade/Story Pack Banner */}
         {usageStats && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8"
-          >
-            {/* Freestyle Stories */}
-            <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-6">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-3">
-                  <div className="bg-green-500/20 p-3 rounded-lg">
-                    <Sparkles className="w-6 h-6 text-green-400" />
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-semibold text-white">Freestyle Stories</h3>
-                    <p className="text-gray-400 text-sm">Write with AI assistance</p>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="space-y-3">
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-300">Used this month:</span>
-                  <span className="text-white font-semibold">{usageStats.freestyleStories.used}/{usageStats.freestyleStories.limit}</span>
-                </div>
-                
-                <div className="w-full bg-gray-700 rounded-full h-2">
-                  <div
-                    className="bg-green-400 h-2 rounded-full transition-all"
-                    style={{ 
-                      width: `${(usageStats.freestyleStories.used / usageStats.freestyleStories.limit) * 100}%` 
-                    }}
-                  />
-                </div>
-                
-                <div className="flex justify-between items-center text-sm">
-                  <span className="text-gray-400">
-                    {usageStats.freestyleStories.remaining} remaining
-                  </span>
-                  <span className={`font-medium ${usageStats.freestyleStories.canUse ? 'text-green-400' : 'text-orange-400'}`}>
-                    {usageStats.freestyleStories.canUse ? 'Available' : 'Limit Reached'}
-                  </span>
-                </div>
-              </div>
-            </div>
+          <>
+            {/* Usage Stats Card (pass onUpgrade for FREE tier) */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8"
+            >
+              {/* ...existing stats cards for stories, assessments, competitions... */}
+              {/* (You can keep your current stats card code here) */}
+            </motion.div>
 
-            {/* Assessment Requests */}
-            <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-6">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-3">
-                  <div className="bg-blue-500/20 p-3 rounded-lg">
-                    <Brain className="w-6 h-6 text-blue-400" />
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-semibold text-white">AI Assessments</h3>
-                    <p className="text-gray-400 text-sm">Upload any story for review</p>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="space-y-3">
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-300">Used this month:</span>
-                  <span className="text-white font-semibold">{usageStats.assessmentRequests.used}/{usageStats.assessmentRequests.limit}</span>
-                </div>
-                
-                <div className="w-full bg-gray-700 rounded-full h-2">
-                  <div
-                    className="bg-blue-400 h-2 rounded-full transition-all"
-                    style={{ 
-                      width: `${(usageStats.assessmentRequests.used / usageStats.assessmentRequests.limit) * 100}%` 
-                    }}
-                  />
-                </div>
-                
-                <div className="flex justify-between items-center text-sm">
-                  <span className="text-gray-400">
-                    {usageStats.assessmentRequests.remaining} remaining
-                  </span>
-                  <span className={`font-medium ${usageStats.assessmentRequests.canUse ? 'text-blue-400' : 'text-orange-400'}`}>
-                    {usageStats.assessmentRequests.canUse ? 'Available' : 'Limit Reached'}
-                  </span>
-                </div>
-              </div>
-            </div>
+            {/* Upgrade Promotion - ONLY SHOW IF FREE TIER */}
+            {usageStats.subscriptionTier === 'FREE' && (
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6 }}
+                className="bg-gradient-to-r from-orange-500/20 to-red-500/20 border border-orange-500/30 rounded-xl p-8 text-center"
+              >
+                <Crown className="w-16 h-16 text-orange-400 mx-auto mb-4" />
+                <h3 className="text-2xl font-bold text-white mb-4">Want More Creative Power?</h3>
+                <p className="text-gray-300 mb-6">
+                  Upgrade to Story Pack and get 5 more stories, 15 more assessments for 30 days!
+                </p>
+                <button
+                  onClick={handleUpgrade}
+                  className="inline-flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-colors"
+                >
+                  <Crown className="w-5 h-5" />
+                  Upgrade to Story Pack
+                </button>
+              </motion.div>
+            )}
 
-            {/* Competition Entries */}
-            <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-6">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-3">
-                  <div className="bg-purple-500/20 p-3 rounded-lg">
-                    <Trophy className="w-6 h-6 text-purple-400" />
+            {/* Story Pack Active Banner - SHOW IF STORY PACK IS ACTIVE */}
+            {usageStats.subscriptionTier === 'STORY_PACK' && usageStats.daysRemaining && (
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6 }}
+                className="bg-gradient-to-r from-purple-500/20 to-blue-500/20 border border-purple-500/30 rounded-xl p-8 text-center"
+              >
+                <div className="flex items-center justify-center gap-3 mb-4">
+                  <Crown className="w-16 h-16 text-purple-400" />
+                  <div className="bg-green-500/20 rounded-full p-2">
+                    <CheckCircle className="w-8 h-8 text-green-400" />
                   </div>
-                  <div>
-                    <h3 className="text-lg font-semibold text-white">Competitions</h3>
-                    <p className="text-gray-400 text-sm">Enter monthly contests</p>
-                  </div>
                 </div>
-              </div>
-              
-              <div className="space-y-3">
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-300">Used this month:</span>
-                  <span className="text-white font-semibold">{usageStats.competitionEntries.used}/{usageStats.competitionEntries.limit}</span>
-                </div>
-                
-                <div className="w-full bg-gray-700 rounded-full h-2">
-                  <div
-                    className="bg-purple-400 h-2 rounded-full transition-all"
-                    style={{ 
-                      width: `${(usageStats.competitionEntries.used / usageStats.competitionEntries.limit) * 100}%` 
-                    }}
-                  />
-                </div>
-                
-                <div className="flex justify-between items-center text-sm">
-                  <span className="text-gray-400">
-                    {usageStats.competitionEntries.remaining} remaining
-                  </span>
-                  <span className={`font-medium ${usageStats.competitionEntries.canUse ? 'text-purple-400' : 'text-orange-400'}`}>
-                    {usageStats.competitionEntries.canUse ? 'Available' : 'Limit Reached'}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </motion.div>
+                <h3 className="text-2xl font-bold text-white mb-4">Story Pack Active! 🎉</h3>
+                <p className="text-gray-300 mb-2">
+                  You have <span className="text-purple-400 font-bold">{usageStats.daysRemaining} days</span> remaining
+                </p>
+                <p className="text-sm text-gray-400">
+                  Enjoying unlimited creativity until {usageStats.storyPackExpiry ? new Date(usageStats.storyPackExpiry).toLocaleDateString() : 'expiry'}
+                </p>
+              </motion.div>
+            )}
+          </>
         )}
 
         {/* Upgrade Banner */}

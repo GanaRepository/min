@@ -1,4 +1,4 @@
-// // app/api/user/usage/route.ts - COMPLETE WORKING VERSION RESTORED
+// // app/api/user/usage/route.ts - UPDATED FOR 30-DAY STORY PACK SYSTEM
 // import { NextRequest, NextResponse } from 'next/server';
 // import { getServerSession } from 'next-auth';
 // import { authOptions } from '@/utils/authOptions';
@@ -25,50 +25,44 @@
 //       );
 //     }
 
-
 //     // 🌟 AUTOMATIC MONTHLY RESET - Check internet date and reset if needed
+//     // This only resets FREE tier counters, preserves Story Pack purchases
 //     const { checkAndPerformMonthlyReset } = await import('@/utils/autoReset');
 //     const resetPerformed = await checkAndPerformMonthlyReset();
 //     if (resetPerformed) {
-//       console.log('🎉 Monthly reset completed automatically via internet date');
+//       console.log('🎉 Monthly reset completed automatically via internet date (Story Packs preserved)');
 //     }
 
 //     console.log('📊 Fetching usage statistics for user:', session.user.id);
 //     await connectToDatabase();
+    
 //     // Get current month dates
 //     const now = new Date();
 //     const currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+    
 //     // Get user data
 //     const user = await User.findById(session.user.id);
 //     if (!user) {
 //       return NextResponse.json({ error: 'User not found' }, { status: 404 });
 //     }
-//     // Use existing UsageManager logic but include monthlyLimits
+    
+//     // Use NEW enhanced UsageManager that calculates limits from 30-day purchases
 //     const usageStats = await UsageManager.getUserUsageStats(session.user.id);
-//     // If user has monthlyLimits, override the calculated limits
-//     if (user.monthlyLimits) {
-//       usageStats.freestyleStories.limit = user.monthlyLimits.freestyleStories;
-//       usageStats.assessmentRequests.limit = user.monthlyLimits.assessmentRequests;
-//       usageStats.competitionEntries.limit = user.monthlyLimits.competitionEntries;
-//       usageStats.freestyleStories.remaining = Math.max(0, user.monthlyLimits.freestyleStories - usageStats.freestyleStories.used);
-//       usageStats.freestyleStories.canUse = usageStats.freestyleStories.used < user.monthlyLimits.freestyleStories;
-//       usageStats.assessmentRequests.remaining = Math.max(0, user.monthlyLimits.assessmentRequests - usageStats.assessmentRequests.used);
-//       usageStats.assessmentRequests.canUse = usageStats.assessmentRequests.used < user.monthlyLimits.assessmentRequests;
-//       usageStats.competitionEntries.remaining = Math.max(0, user.monthlyLimits.competitionEntries - usageStats.competitionEntries.used);
-//       usageStats.competitionEntries.canUse = usageStats.competitionEntries.used < user.monthlyLimits.competitionEntries;
-//     }
+    
 //     // Add reset info if it just happened
 //     if (resetPerformed) {
 //       usageStats.resetInfo = {
 //         performed: true,
-//         message: 'Monthly limits have been reset to FREE tier'
+//         message: 'Monthly limits reset complete (Story Pack purchases preserved)'
 //       };
 //     }
+    
 //     // Count publications this month
 //     const monthlyPublications = await PublishedStory.countDocuments({
 //       childId: session.user.id,
 //       publishedAt: { $gte: currentMonthStart }
 //     });
+    
 //     // Add publications to the usage stats
 //     const completeUsageStats = {
 //       ...usageStats,
@@ -83,6 +77,7 @@
 //         year: 'numeric' 
 //       })
 //     };
+    
 //     console.log('✅ Complete usage statistics:', completeUsageStats);
 //     return NextResponse.json({
 //       success: true,
@@ -116,7 +111,7 @@
 //   }
 // }
 
-// app/api/user/usage/route.ts - UPDATED FOR 30-DAY STORY PACK SYSTEM
+// app/api/user/usage/route.ts - FIXED TO INCLUDE STORY PACK DATA
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/utils/authOptions';
@@ -144,7 +139,6 @@ export async function GET(request: NextRequest) {
     }
 
     // 🌟 AUTOMATIC MONTHLY RESET - Check internet date and reset if needed
-    // This only resets FREE tier counters, preserves Story Pack purchases
     const { checkAndPerformMonthlyReset } = await import('@/utils/autoReset');
     const resetPerformed = await checkAndPerformMonthlyReset();
     if (resetPerformed) {
@@ -164,7 +158,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
     
-    // Use NEW enhanced UsageManager that calculates limits from 30-day purchases
+    // Use ENHANCED UsageManager that calculates limits from 30-day purchases
     const usageStats = await UsageManager.getUserUsageStats(session.user.id);
     
     // Add reset info if it just happened
