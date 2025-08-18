@@ -1806,8 +1806,8 @@ function StoryCard({ story, onPublish, onPurchase, publishingStory }: StoryCardP
         </Link>
 
         <div className="grid grid-cols-2 gap-2">
-          {/* Publish Button - Show for ALL completed stories (including flagged) */}
-          {story.status === 'completed' && !story.isPublished ? (
+          {/* Publish Button - Show for ALL completed and flagged stories */}
+          {(story.status === 'completed' || story.status === 'flagged') && !story.isPublished ? (
             <button
               onClick={onPublish}
               disabled={publishingStory === story._id}
@@ -1825,8 +1825,8 @@ function StoryCard({ story, onPublish, onPurchase, publishingStory }: StoryCardP
             <div></div>
           )}
 
-          {/* Purchase Button - Show for ALL completed stories */}
-          {story.status === 'completed' && (
+          {/* Purchase Button - Show for ALL completed and flagged stories */}
+          {(story.status === 'completed' || story.status === 'flagged') && (
             <button
               onClick={onPurchase}
               className="bg-yellow-600 hover:bg-yellow-700 text-white py-2 rounded-lg text-xs font-medium transition-colors flex items-center justify-center gap-1"
@@ -1974,8 +1974,8 @@ function StoryListItem({ story, onPublish, onPurchase, publishingStory }: StoryC
             View
           </Link>
 
-          {/* Publish Button - Show for ALL completed stories (including flagged) */}
-          {story.status === 'completed' && !story.isPublished && (
+          {/* Publish Button - Show for ALL stories with content (unpublished) */}
+          {!story.isPublished && (
             <button
               onClick={onPublish}
               disabled={publishingStory === story._id}
@@ -1995,16 +1995,14 @@ function StoryListItem({ story, onPublish, onPurchase, publishingStory }: StoryC
             </button>
           )}
 
-          {/* Purchase Button - Show for ALL completed stories */}
-          {story.status === 'completed' && (
-            <button
-              onClick={onPurchase}
-              className="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
-            >
-              <DollarSign size={16} />
-              Purchase $10
-            </button>
-          )}
+          {/* Purchase Button - Show for ALL stories */}
+          <button
+            onClick={onPurchase}
+            className="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
+          >
+            <DollarSign size={16} />
+            Purchase $10
+          </button>
 
           {/* More Actions Dropdown - NO ACTIONS */}
           <div className="relative group">
