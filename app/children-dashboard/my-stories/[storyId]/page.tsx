@@ -1472,7 +1472,7 @@ export default function StoryDetailPage() {
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<
     'overview' | 'assessment' | 'content' | 'comments'
-  >('overview');
+  >('content');
 
   // Action states
   const [publishingStory, setPublishingStory] = useState(false);
@@ -1487,6 +1487,19 @@ export default function StoryDetailPage() {
       fetchStoryDetails();
     }
   }, [status, storyId]);
+
+  // Add useEffect to set correct default tab after story loads
+  useEffect(() => {
+    if (story) {
+      if (isCompetitionNonWinner()) {
+        setActiveTab('content');
+      } else if (shouldShowOverview()) {
+        setActiveTab('overview');
+      } else {
+        setActiveTab('content');
+      }
+    }
+  }, [story]);
 
   // ===== API CALLS =====
   const fetchStoryDetails = async () => {
@@ -1652,23 +1665,53 @@ export default function StoryDetailPage() {
     return !!story.assessment;
   };
 
+  // Add this new function after shouldShowAssessment:
+  const shouldShowOverview = () => {
+    if (!story) return false;
+    
+    // For competition stories, only show overview if they're a winner
+    if (story.competitionEntries && story.competitionEntries.length > 0) {
+      return story.competitionEntries.some(entry => entry.isWinner || (entry.rank && entry.rank <= 3));
+    }
+    
+    // For non-competition stories, always show overview
+    return true;
+  };
+
+  // Add this new function to check if story is competition entry:
+  const isCompetitionNonWinner = () => {
+    if (!story) return false;
+    const isCompetitionEntry = story.competitionEntries && story.competitionEntries.length > 0;
+    const isWinner = isCompetitionEntry && story.competitionEntries.some(entry => entry.isWinner || (entry.rank && entry.rank <= 3));
+    return isCompetitionEntry && !isWinner;
+  };
+
   // Get available tabs based on story type and status
   const getAvailableTabs = () => {
-    const baseTabs = [
-      { id: 'overview', label: 'Overview', icon: Eye },
-      { id: 'content', label: 'Content', icon: BookOpen },
-      { id: 'comments', label: 'Comments', icon: MessageSquare },
-    ];
-
-    // Add assessment tab only if user should see it
-    if (shouldShowAssessment()) {
-      baseTabs.splice(1, 0, {
-        id: 'assessment',
-        label: 'Assessment',
-        icon: Brain,
-      });
+    if (isCompetitionNonWinner()) {
+      // Competition non-winners: only show content and comments
+      return [
+        { id: 'content', label: 'Content', icon: BookOpen },
+        { id: 'comments', label: 'Comments', icon: MessageSquare }
+      ];
     }
-
+    
+    // Winners and non-competition stories: show tabs as appropriate
+    const baseTabs = [];
+    
+    if (shouldShowOverview()) {
+      baseTabs.push({ id: 'overview', label: 'Overview', icon: Eye });
+    }
+    
+    if (shouldShowAssessment()) {
+      baseTabs.push({ id: 'assessment', label: 'Assessment', icon: Brain });
+    }
+    
+    baseTabs.push(
+      { id: 'content', label: 'Content', icon: BookOpen },
+      { id: 'comments', label: 'Comments', icon: MessageSquare }
+    );
+    
     return baseTabs;
   };
 

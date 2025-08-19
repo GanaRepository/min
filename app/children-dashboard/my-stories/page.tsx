@@ -1440,6 +1440,26 @@ export default function MyStoriesPage() {
     return 'text-orange-400';
   };
 
+  const getStoryDisplayInfo = (story: Story) => {
+    const isCompetitionEntry = story.competitionEntries && story.competitionEntries.length > 0;
+    const isWinner = isCompetitionEntry && story.competitionEntries.some((entry: any) => entry.isWinner || (entry.rank && entry.rank <= 3));
+    
+    if (isCompetitionEntry && !isWinner) {
+      return {
+        showScores: false,
+        badge: "Competition Entry",
+        badgeColor: "bg-purple-500/20 text-purple-400 border-purple-500/30"
+      };
+    }
+    
+    return {
+      showScores: true,
+      overallScore: story.assessment?.overallScore || 0,
+      grammar: story.assessment?.grammar || 0,
+      creativity: story.assessment?.creativity || 0
+    };
+  };
+
   // ===== LOADING STATE =====
   if (status === 'loading' || loading) {
     return (
@@ -1714,6 +1734,26 @@ function StoryCard({
       borderColor: 'border-green-500/30',
     };
   };
+
+  const getStoryDisplayInfo = (story: Story) => {
+    const isCompetitionEntry = story.competitionEntries && story.competitionEntries.length > 0;
+    const isWinner = isCompetitionEntry && story.competitionEntries.some((entry: any) => entry.isWinner || (entry.rank && entry.rank <= 3));
+    
+    if (isCompetitionEntry && !isWinner) {
+      return {
+        showScores: false,
+        badge: "Competition Entry",
+        badgeColor: "bg-purple-500/20 text-purple-400 border-purple-500/30"
+      };
+    }
+    
+    return {
+      showScores: true,
+      overallScore: story.assessment?.overallScore || 0,
+      grammar: story.assessment?.grammar || 0,
+      creativity: story.assessment?.creativity || 0
+    };
+  };
   const getIntegrityIcon = (integrityRisk?: string) => {
     switch (integrityRisk) {
       case 'low':
@@ -1759,25 +1799,41 @@ function StoryCard({
       </div>
 
       {/* Assessment Score (if available) */}
-      {story.assessment && (
-        <div className="mb-4">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-gray-300">Overall Score</span>
-            <div className="flex items-center gap-2">
-              {getIntegrityIcon(story.assessment.integrityRisk)}
-              <span
-                className={` ${getScoreColor(story.assessment.overallScore)}`}
-              >
-                {story.assessment.overallScore}%
-              </span>
+      {(() => {
+        const displayInfo = getStoryDisplayInfo(story);
+        
+        if (!displayInfo.showScores) {
+          return (
+            <div className="text-center mb-4">
+              <div className={`inline-block px-3 py-1 rounded-full text-xs font-medium border ${displayInfo.badgeColor}`}>
+                {displayInfo.badge}
+              </div>
+            </div>
+          );
+        }
+        
+        if (!story.assessment) return null;
+        
+        return (
+          <div className="mb-4">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-gray-300">Overall Score</span>
+              <div className="flex items-center gap-2">
+                {getIntegrityIcon(story.assessment.integrityRisk)}
+                <span
+                  className={` ${getScoreColor(story.assessment.overallScore)}`}
+                >
+                  {story.assessment.overallScore}%
+                </span>
+              </div>
+            </div>
+            <div className="flex gap-4 text-xs text-gray-400">
+              <span>Grammar: {story.assessment.grammar}%</span>
+              <span>Creativity: {story.assessment.creativity}%</span>
             </div>
           </div>
-          <div className="flex gap-4 text-xs text-gray-400">
-            <span>Grammar: {story.assessment.grammar}%</span>
-            <span>Creativity: {story.assessment.creativity}%</span>
-          </div>
-        </div>
-      )}
+        );
+      })()}
 
       {/* Status Badges */}
       <div className="flex flex-wrap gap-2 mb-4">
@@ -1925,6 +1981,26 @@ function StoryListItem({
     return 'text-orange-400';
   };
 
+  const getStoryDisplayInfo = (story: Story) => {
+    const isCompetitionEntry = story.competitionEntries && story.competitionEntries.length > 0;
+    const isWinner = isCompetitionEntry && story.competitionEntries.some((entry: any) => entry.isWinner || (entry.rank && entry.rank <= 3));
+    
+    if (isCompetitionEntry && !isWinner) {
+      return {
+        showScores: false,
+        badge: "Competition Entry",
+        badgeColor: "bg-purple-500/20 text-purple-400 border-purple-500/30"
+      };
+    }
+    
+    return {
+      showScores: true,
+      overallScore: story.assessment?.overallScore || 0,
+      grammar: story.assessment?.grammar || 0,
+      creativity: story.assessment?.creativity || 0
+    };
+  };
+
   const typeInfo = getStoryTypeInfo(story);
 
   return (
@@ -1974,16 +2050,32 @@ function StoryListItem({
             <span>{new Date(story.createdAt).toLocaleDateString()}</span>
 
             {/* Assessment Score */}
-            {story.assessment && (
-              <div className="flex items-center gap-2">
-                {getIntegrityIcon(story.assessment.integrityRisk)}
-                <span
-                  className={` ${getScoreColor(story.assessment.overallScore)}`}
-                >
-                  {story.assessment.overallScore}% Score
-                </span>
-              </div>
-            )}
+            {(() => {
+              const displayInfo = getStoryDisplayInfo(story);
+              
+              if (!displayInfo.showScores) {
+                return (
+                  <div className="flex items-center gap-2">
+                    <span className={`inline-block px-2 py-1 rounded text-xs font-medium ${displayInfo.badgeColor}`}>
+                      {displayInfo.badge}
+                    </span>
+                  </div>
+                );
+              }
+              
+              if (!story.assessment) return null;
+              
+              return (
+                <div className="flex items-center gap-2">
+                  {getIntegrityIcon(story.assessment.integrityRisk)}
+                  <span
+                    className={` ${getScoreColor(story.assessment.overallScore)}`}
+                  >
+                    {story.assessment.overallScore}% Score
+                  </span>
+                </div>
+              );
+            })()}
           </div>
         </div>
 

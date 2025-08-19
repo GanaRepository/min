@@ -20,6 +20,9 @@ import {
   Send,
   ThumbsUp,
   Flag,
+  BookOpen,
+  Brain,
+  MessageSquare,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -164,6 +167,66 @@ export default function CommunityStoryView() {
     }
   };
 
+  // Helper functions for competition story logic
+  const shouldShowAssessment = () => {
+    if (!story) return false;
+    
+    // For competition stories, only show assessment if they're a winner
+    if (story.storyType === 'competition') {
+      return story.competitionWinner;
+    }
+    
+    // For non-competition stories, show if assessment exists
+    return !!story.assessment;
+  };
+
+  const shouldShowOverview = () => {
+    if (!story) return false;
+    
+    // For competition stories, only show overview if they're a winner
+    if (story.storyType === 'competition') {
+      return story.competitionWinner;
+    }
+    
+    // For non-competition stories, always show overview
+    return true;
+  };
+
+  const isCompetitionNonWinner = () => {
+    if (!story) return false;
+    const isCompetitionEntry = story.storyType === 'competition';
+    const isWinner = isCompetitionEntry && story.competitionWinner;
+    return isCompetitionEntry && !isWinner;
+  };
+
+  const getAvailableTabs = () => {
+    if (isCompetitionNonWinner()) {
+      // Competition non-winners: only show content and comments
+      return [
+        { id: 'content', label: 'Content', icon: BookOpen },
+        { id: 'comments', label: 'Comments', icon: MessageSquare }
+      ];
+    }
+    
+    // Winners and non-competition stories: show tabs as appropriate
+    const baseTabs = [];
+    
+    if (shouldShowOverview()) {
+      baseTabs.push({ id: 'overview', label: 'Overview', icon: Eye });
+    }
+    
+    if (shouldShowAssessment()) {
+      baseTabs.push({ id: 'assessment', label: 'Assessment', icon: Brain });
+    }
+    
+    baseTabs.push(
+      { id: 'content', label: 'Content', icon: BookOpen },
+      { id: 'comments', label: 'Comments', icon: MessageSquare }
+    );
+    
+    return baseTabs;
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -272,45 +335,59 @@ export default function CommunityStoryView() {
           </div>
         </div>
 
-        {/* Assessment Scores */}
-        <div className="grid grid-cols-3 md:grid-cols-6 gap-4 mb-6">
-          <div className="text-center">
-            <div className="text-2xl  text-blue-400">
-              {story.assessment.overallScore}
+        {/* Assessment Scores - Only show for competition winners and non-competition stories */}
+        {shouldShowAssessment() && (
+          <div className="grid grid-cols-3 md:grid-cols-6 gap-4 mb-6">
+            <div className="text-center">
+              <div className="text-2xl  text-blue-400">
+                {story.assessment.overallScore}
+              </div>
+              <div className="text-xs text-gray-400">Overall</div>
             </div>
-            <div className="text-xs text-gray-400">Overall</div>
-          </div>
-          <div className="text-center">
-            <div className="text-2xl  text-purple-400">
-              {story.assessment.creativity}
+            <div className="text-center">
+              <div className="text-2xl  text-purple-400">
+                {story.assessment.creativity}
+              </div>
+              <div className="text-xs text-gray-400">Creativity</div>
             </div>
-            <div className="text-xs text-gray-400">Creativity</div>
-          </div>
-          <div className="text-center">
-            <div className="text-2xl  text-green-400">
-              {story.assessment.grammar}
+            <div className="text-center">
+              <div className="text-2xl  text-green-400">
+                {story.assessment.grammar}
+              </div>
+              <div className="text-xs text-gray-400">Grammar</div>
             </div>
-            <div className="text-xs text-gray-400">Grammar</div>
-          </div>
-          <div className="text-center">
-            <div className="text-2xl  text-yellow-400">
-              {story.assessment.vocabulary}
+            <div className="text-center">
+              <div className="text-2xl  text-yellow-400">
+                {story.assessment.vocabulary}
+              </div>
+              <div className="text-xs text-gray-400">Vocabulary</div>
             </div>
-            <div className="text-xs text-gray-400">Vocabulary</div>
-          </div>
-          <div className="text-center">
-            <div className="text-2xl  text-orange-400">
-              {story.assessment.structure}
+            <div className="text-center">
+              <div className="text-2xl  text-orange-400">
+                {story.assessment.structure}
+              </div>
+              <div className="text-xs text-gray-400">Structure</div>
             </div>
-            <div className="text-xs text-gray-400">Structure</div>
-          </div>
-          <div className="text-center">
-            <div className="text-2xl  text-pink-400">
-              {story.assessment.characterDevelopment}
+            <div className="text-center">
+              <div className="text-2xl  text-pink-400">
+                {story.assessment.characterDevelopment}
+              </div>
+              <div className="text-xs text-gray-400">Character</div>
             </div>
-            <div className="text-xs text-gray-400">Character</div>
           </div>
-        </div>
+        )}
+
+        {/* Competition Entry Badge for non-winners */}
+        {isCompetitionNonWinner() && (
+          <div className="text-center mb-6">
+            <div className="inline-block px-4 py-2 rounded-full text-lg font-medium bg-purple-500/20 text-purple-400 border border-purple-500/30">
+              Competition Entry
+            </div>
+            <p className="text-gray-400 text-sm mt-2">
+              Assessment scores are only shown for competition winners
+            </p>
+          </div>
+        )}
 
         {/* Action Buttons */}
         <div className="flex items-center justify-between">

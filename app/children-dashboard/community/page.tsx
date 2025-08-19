@@ -177,6 +177,27 @@ export default function CommunityPage() {
     setSortBy('newest');
   };
 
+  const getCommunityDisplayInfo = (story: PublishedStory) => {
+    const isCompetitionEntry = story.storyType === 'competition';
+    const isWinner = isCompetitionEntry && story.competitionWinner;
+    
+    if (isCompetitionEntry && !isWinner) {
+      return {
+        showScores: false,
+        badge: "Competition Entry",
+        badgeColor: "bg-purple-500/20 text-purple-400"
+      };
+    }
+    
+    return {
+      showScores: true,
+      overall: story.assessment?.overallScore || 0,
+      creativity: story.assessment?.creativity || 0,
+      grammar: story.assessment?.grammar || 0,
+      vocabulary: story.assessment?.vocabulary || 0
+    };
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -427,28 +448,44 @@ export default function CommunityPage() {
                       </div>
 
                       {/* Assessment Scores */}
-                      <div className="grid grid-cols-3 gap-2 mb-4">
-                        <div className="text-center">
-                          <div className="text-lg  text-blue-400">
-                            {story.assessment.overallScore}
+                      {(() => {
+                        const displayInfo = getCommunityDisplayInfo(story);
+                        
+                        if (!displayInfo.showScores) {
+                          return (
+                            <div className="text-center mb-4">
+                              <div className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${displayInfo.badgeColor}`}>
+                                {displayInfo.badge}
+                              </div>
+                            </div>
+                          );
+                        }
+                        
+                        return (
+                          <div className="grid grid-cols-3 gap-2 mb-4">
+                            <div className="text-center">
+                              <div className="text-lg  text-blue-400">
+                                {displayInfo.overall}
+                              </div>
+                              <div className="text-xs text-gray-400">Overall</div>
+                            </div>
+                            <div className="text-center">
+                              <div className="text-lg  text-purple-400">
+                                {displayInfo.creativity}
+                              </div>
+                              <div className="text-xs text-gray-400">
+                                Creativity
+                              </div>
+                            </div>
+                            <div className="text-center">
+                              <div className="text-lg  text-green-400">
+                                {displayInfo.grammar}
+                              </div>
+                              <div className="text-xs text-gray-400">Grammar</div>
+                            </div>
                           </div>
-                          <div className="text-xs text-gray-400">Overall</div>
-                        </div>
-                        <div className="text-center">
-                          <div className="text-lg  text-purple-400">
-                            {story.assessment.creativity}
-                          </div>
-                          <div className="text-xs text-gray-400">
-                            Creativity
-                          </div>
-                        </div>
-                        <div className="text-center">
-                          <div className="text-lg  text-green-400">
-                            {story.assessment.grammar}
-                          </div>
-                          <div className="text-xs text-gray-400">Grammar</div>
-                        </div>
-                      </div>
+                        );
+                      })()}
 
                       {/* Stats */}
                       <div className="flex items-center justify-between mb-3">
@@ -560,28 +597,44 @@ export default function CommunityPage() {
                       </div>
                     </div>
 
-                    <div className="w-32 text-center">
-                      <div className="text-lg  text-blue-400">
-                        {story.assessment.overallScore}
-                      </div>
-                      <div className="text-xs text-gray-400 mb-2">
-                        Overall Score
-                      </div>
-                      <div className="grid grid-cols-1 gap-1 text-xs">
-                        <div>
-                          <span className="text-purple-400">
-                            {story.assessment.creativity}
-                          </span>
-                          <div className="text-gray-500">Creativity</div>
+                    {(() => {
+                      const displayInfo = getCommunityDisplayInfo(story);
+                      
+                      if (!displayInfo.showScores) {
+                        return (
+                          <div className="w-32 text-center">
+                            <div className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${displayInfo.badgeColor}`}>
+                              {displayInfo.badge}
+                            </div>
+                          </div>
+                        );
+                      }
+                      
+                      return (
+                        <div className="w-32 text-center">
+                          <div className="text-lg  text-blue-400">
+                            {displayInfo.overall}
+                          </div>
+                          <div className="text-xs text-gray-400 mb-2">
+                            Overall Score
+                          </div>
+                          <div className="grid grid-cols-1 gap-1 text-xs">
+                            <div>
+                              <span className="text-purple-400">
+                                {displayInfo.creativity}
+                              </span>
+                              <div className="text-gray-500">Creativity</div>
+                            </div>
+                            <div>
+                              <span className="text-green-400">
+                                {displayInfo.grammar}
+                              </span>
+                              <div className="text-gray-500">Grammar</div>
+                            </div>
+                          </div>
                         </div>
-                        <div>
-                          <span className="text-green-400">
-                            {story.assessment.grammar}
-                          </span>
-                          <div className="text-gray-500">Grammar</div>
-                        </div>
-                      </div>
-                    </div>
+                      );
+                    })()}
                   </div>
                 )}
               </motion.div>
