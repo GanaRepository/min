@@ -85,6 +85,9 @@ export default function CommunityStoryView() {
   const [loading, setLoading] = useState(true);
   const [newComment, setNewComment] = useState('');
   const [submittingComment, setSubmittingComment] = useState(false);
+  // Pagination for comments
+  const [currentCommentsPage, setCurrentCommentsPage] = useState(1);
+  const commentsPerPage = 6;
 
   useEffect(() => {
     fetchStoryDetails();
@@ -253,6 +256,10 @@ export default function CommunityStoryView() {
       </div>
     );
   }
+
+  // Pagination logic for comments
+  const totalCommentsPages = story ? Math.ceil(story.comments.length / commentsPerPage) : 1;
+  const paginatedComments = story ? story.comments.slice((currentCommentsPage - 1) * commentsPerPage, currentCommentsPage * commentsPerPage) : [];
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
@@ -483,7 +490,7 @@ export default function CommunityStoryView() {
               </p>
             </div>
           ) : (
-            story.comments.map((comment) => (
+            paginatedComments.map((comment) => (
               <motion.div
                 key={comment._id}
                 initial={{ opacity: 0, y: 10 }}
@@ -520,6 +527,41 @@ export default function CommunityStoryView() {
             ))
           )}
         </div>
+
+        {/* Pagination Controls for Comments */}
+        {totalCommentsPages > 1 && (
+          <div className="flex justify-center mt-6">
+            <nav className="inline-flex items-center gap-2" aria-label="Pagination">
+              <button
+                onClick={() => setCurrentCommentsPage((p) => Math.max(1, p - 1))}
+                disabled={currentCommentsPage === 1}
+                className="px-3 py-1 bg-gray-700 text-white disabled:bg-gray-900 disabled:text-gray-500"
+              >
+                Prev
+              </button>
+              {Array.from({ length: totalCommentsPages }, (_, i) => i + 1).map((page) => (
+                <button
+                  key={page}
+                  onClick={() => setCurrentCommentsPage(page)}
+                  className={`px-3 py-1 ${
+                    page === currentCommentsPage
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                  }`}
+                >
+                  {page}
+                </button>
+              ))}
+              <button
+                onClick={() => setCurrentCommentsPage((p) => Math.min(totalCommentsPages, p + 1))}
+                disabled={currentCommentsPage === totalCommentsPages}
+                className="px-3 py-1 bg-gray-700 text-white disabled:bg-gray-900 disabled:text-gray-500"
+              >
+                Next
+              </button>
+            </nav>
+          </div>
+        )}
       </div>
     </div>
   );

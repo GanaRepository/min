@@ -209,94 +209,97 @@
 //     let filtered = [...stories];
 
 //     // Search filter
-//     if (filters.search.trim()) {
-//       const searchTerm = filters.search.toLowerCase();
-//       filtered = filtered.filter(story =>
-//         story.title.toLowerCase().includes(searchTerm) ||
-//         story.assessment?.feedback?.toLowerCase().includes(searchTerm)
-//       );
+//   // ===== PAGINATION STATE =====
+//   const [currentPage, setCurrentPage] = useState(1);
+//   const itemsPerPage = 6;
+
+//   // ===== PAGINATION LOGIC =====
+//   const totalPages = Math.ceil(filteredStories.length / itemsPerPage);
+//   const paginatedStories = filteredStories.slice(
+//     (currentPage - 1) * itemsPerPage,
+//     currentPage * itemsPerPage
+//   );
+
+//   useEffect(() => {
+//     if (currentPage > totalPages && totalPages > 0) {
+//       setCurrentPage(totalPages);
 //     }
+//   }, [filteredStories.length, totalPages]);
 
-//     // Status filter
-//     if (filters.status !== 'all') {
-//       filtered = filtered.filter(story => story.status === filters.status);
-//     }
+//   // ===== MAIN RENDER =====
+//   return (
+//     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 py-20">
+//       <div className="max-w-7xl mx-auto px-6">
+//         ...existing code...
 
-//     // Type filter
-//     if (filters.type !== 'all') {
-//       filtered = filtered.filter(story => story.storyType === filters.type);
-//     }
-
-//     // Published filter
-//     if (filters.published !== 'all') {
-//       filtered = filtered.filter(story =>
-//         filters.published === 'published' ? story.isPublished : !story.isPublished
-//       );
-//     }
-
-//     // Sort by most recent
-//     filtered.sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
-
-//     setFilteredStories(filtered);
-//   };
-
-//   // ===== HELPER FUNCTIONS =====
-//   const getStoryTypeInfo = (story: Story) => {
-//     switch (story.storyType) {
-//       case 'competition':
-//         return {
-//           label: 'COMPETITION ENTRY',
-//           icon: Trophy,
-//           color: 'text-purple-400',
-//           bgColor: 'bg-purple-500/20',
-//           borderColor: 'border-purple-500/30'
-//         };
-//       case 'uploaded':
-//         return {
-//           label: 'UPLOADED FOR ASSESSMENT',
-//           icon: Upload,
-//           color: 'text-blue-400',
-//           bgColor: 'bg-blue-500/20',
-//           borderColor: 'border-blue-500/30'
-//         };
-//       default:
-//         return {
-//           label: 'FREESTYLE STORY',
-//           icon: Sparkles,
-//           color: 'text-green-400',
-//           bgColor: 'bg-green-500/20',
-//           borderColor: 'border-green-500/30'
-//         };
-//     }
-//   };
-
-//   const getStatusInfo = (status: string) => {
-//     switch (status) {
-//       case 'completed':
-//         return { icon: CheckCircle, color: 'text-green-400', label: 'Completed' };
-//       case 'active':
-//         return { icon: Clock, color: 'text-blue-400', label: 'In Progress' };
-//       case 'flagged':
-//         return { icon: XCircle, color: 'text-red-400', label: 'Flagged' };
-//       case 'review':
-//         return { icon: AlertTriangle, color: 'text-yellow-400', label: 'Under Review' };
-//       default:
-//         return { icon: FileText, color: 'text-gray-400', label: 'Unknown' };
-//     }
-//   };
-
-//   const getIntegrityIcon = (integrityRisk?: string) => {
-//     switch (integrityRisk) {
-//       case 'low':
-//         return <CheckCircle className="w-4 h-4 text-green-400" />;
-//       case 'medium':
-//         return <AlertTriangle className="w-4 h-4 text-yellow-400" />;
-//       case 'high':
-//         return <AlertTriangle className="w-4 h-4 text-orange-400" />;
-//       case 'critical':
-//         return <XCircle className="w-4 h-4 text-red-400" />;
-//       default:
-//         return <Shield className="w-4 h-4 text-gray-400" />;
+//         {/* ===== STORIES DISPLAY ===== */}
+//         {filteredStories.length === 0 ? (
+//           ...existing code...
+//         ) : (
+//           <>
+//             <motion.div
+//               initial={{ opacity: 0, y: 20 }}
+//               animate={{ opacity: 1, y: 0 }}
+//               transition={{ delay: 0.3 }}
+//               className={
+//                 viewType === 'grid'
+//                   ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'
+//                   : 'space-y-4'
+//               }
+//             >
+//               {paginatedStories.map((story, index) => (
+//                 <StoryCard
+//                   key={story._id}
+//                   story={story}
+//                   viewType={viewType}
+//                   index={index + (currentPage - 1) * itemsPerPage}
+//                   onPublish={() => handlePublishStory(story._id)}
+//                   onPurchase={() => handlePurchaseStory(story._id)}
+//                   onDelete={() => handleDeleteStory(story._id, story.title)}
+//                   onReassess={() => handleReassessStory(story._id)}
+//                   publishingStory={publishingStory}
+//                   deletingStory={deletingStory}
+//                   reassessingStory={reassessingStory}
+//                   getStoryTypeInfo={getStoryTypeInfo}
+//                   getStatusInfo={getStatusInfo}
+//                   getIntegrityIcon={getIntegrityIcon}
+//                   getScoreColor={getScoreColor}
+//                 />
+//               ))}
+//             </motion.div>
+//             {/* PAGINATION CONTROLS */}
+//             {totalPages > 1 && (
+//               <div className="flex justify-center items-center gap-2 mt-8">
+//                 <button
+//                   onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+//                   disabled={currentPage === 1}
+//                   className="px-3 py-1 bg-gray-700 text-white disabled:opacity-50"
+//                 >
+//                   Prev
+//                 </button>
+//                 {Array.from({ length: totalPages }, (_, i) => (
+//                   <button
+//                     key={i + 1}
+//                     onClick={() => setCurrentPage(i + 1)}
+//                     className={`px-3 py-1 ${currentPage === i + 1 ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-200'}`}
+//                   >
+//                     {i + 1}
+//                   </button>
+//                 ))}
+//                 <button
+//                   onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+//                   disabled={currentPage === totalPages}
+//                   className="px-3 py-1 bg-gray-700 text-white disabled:opacity-50"
+//                 >
+//                   Next
+//                 </button>
+//               </div>
+//             )}
+//           </>
+//         )}
+//       </div>
+//     </div>
+//   );
 //     }
 //   };
 

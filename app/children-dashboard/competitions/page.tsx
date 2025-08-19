@@ -138,6 +138,12 @@ export default function CompetitionsPage() {
   const [showCertificate, setShowCertificate] = useState(false);
   const [certificateData, setCertificateData] = useState<any>(null);
 
+  // Pagination for past competitions
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const itemsPerPage = 6;
+  const totalPages = Math.ceil(pastCompetitions.length / itemsPerPage);
+  const paginatedCompetitions = pastCompetitions.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
   // ===== EFFECTS =====
   useEffect(() => {
     if (status === 'loading') return;
@@ -858,14 +864,14 @@ export default function CompetitionsPage() {
             <h2 className="text-2xl  text-white mb-6">Past Competitions</h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {pastCompetitions.map((competition, index) => (
-                <motion.div
-                  key={competition._id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3 + index * 0.1 }}
-                  className="bg-gray-800/40 backdrop-blur-xl border border-gray-600/30  p-6"
-                >
+              {paginatedCompetitions.map((competition: Competition, index: number) => (
+                  <motion.div
+                    key={competition._id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3 + index * 0.1 }}
+                    className="bg-gray-800/40 backdrop-blur-xl border border-gray-600/30  p-6"
+                  >
                   <div className="flex items-center gap-3 mb-4">
                     <Trophy className="w-6 h-6 text-purple-400" />
                     <h3 className="text-lg  text-white">
@@ -897,7 +903,7 @@ export default function CompetitionsPage() {
                     <div className="border-t border-gray-600/30 pt-4">
                       <div className="text-sm text-gray-400 mb-2">Winners:</div>
                       <div className="space-y-1">
-                        {competition.winners.slice(0, 3).map((winner) => (
+                        {competition.winners.slice(0, 3).map((winner: { position: number; childName: string }) => (
                           <div
                             key={winner.position}
                             className="flex items-center gap-2 text-sm"
@@ -924,6 +930,41 @@ export default function CompetitionsPage() {
                 </motion.div>
               ))}
             </div>
+
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+              <div className="flex justify-center mt-6">
+                <nav className="inline-flex items-center gap-2" aria-label="Pagination">
+                  <button
+                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                    disabled={currentPage === 1}
+                    className="px-3 py-1 bg-gray-700 text-white disabled:bg-gray-900 disabled:text-gray-500"
+                  >
+                    Prev
+                  </button>
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                    <button
+                      key={page}
+                      onClick={() => setCurrentPage(page)}
+                      className={`px-3 py-1 ${
+                        page === currentPage
+                          ? 'bg-blue-600 text-white'
+                          : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  ))}
+                  <button
+                    onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                    disabled={currentPage === totalPages}
+                    className="px-3 py-1 bg-gray-700 text-white disabled:bg-gray-900 disabled:text-gray-500"
+                  >
+                    Next
+                  </button>
+                </nav>
+              </div>
+            )}
           </motion.div>
         )}
 

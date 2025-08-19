@@ -28,6 +28,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
+
 interface PublishedStory {
   _id: string;
   title: string;
@@ -61,7 +62,6 @@ interface PublishedStory {
     competitionName: string;
     month: string;
   };
-  // ...existing code...
 }
 
 interface CommunityStats {
@@ -78,11 +78,13 @@ export default function CommunityPage() {
   const router = useRouter();
 
   const [stories, setStories] = useState<PublishedStory[]>([]);
+  // CommunityStats interface must be defined before this line
   const [stats, setStats] = useState<CommunityStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 6;
 
   // Filters
   const [searchTerm, setSearchTerm] = useState('');
@@ -198,6 +200,10 @@ export default function CommunityPage() {
     };
   };
 
+  // Pagination logic
+  const totalPages = Math.ceil(stories.length / itemsPerPage);
+  const paginatedStories = stories.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -279,7 +285,7 @@ export default function CommunityPage() {
             <div className="text-sm text-gray-400">Competition Winners</div>
           </div>
         </div>
-      )}
+  )}
 
       {/* Filters */}
       <div className="bg-gray-800  p-6">
@@ -371,296 +377,100 @@ export default function CommunityPage() {
           </Link>
         </div>
       ) : (
-        <div
-          className={
-            viewMode === 'grid'
-              ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'
-              : 'space-y-4'
-          }
-        >
-          <AnimatePresence>
-            {stories.map((story, index) => (
-              <motion.div
-                key={story._id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-                className={
-                  viewMode === 'grid'
-                    ? 'bg-gray-800  overflow-hidden hover:bg-gray-750 transition-colors'
-                    : 'bg-gray-800  p-6 hover:bg-gray-750 transition-colors'
-                }
-              >
-                {viewMode === 'grid' ? (
-                  // Grid View
-                  <>
-                    {/* Badges */}
-                    <div className="p-4 pb-0">
-                      <div className="flex items-center gap-2 mb-3">
-                        {story.isFeatured && (
-                          <div className="inline-flex items-center gap-1 px-2 py-1  text-xs  bg-yellow-500/20 text-yellow-400">
-                            <Star className="w-3 h-3" />
-                            FEATURED
-                          </div>
-                        )}
-                        {story.competitionWinner && (
-                          <div className="inline-flex items-center gap-1 px-2 py-1  text-xs  bg-orange-500/20 text-orange-400">
-                            <Crown className="w-3 h-3" />
-                            {story.competitionWinner.position === 1
-                              ? '🥇'
-                              : story.competitionWinner.position === 2
-                                ? '🥈'
-                                : '🥉'}
-                          </div>
-                        )}
-                        <div className="inline-flex items-center gap-1 px-2 py-1  text-xs  bg-blue-500/20 text-blue-400">
-                          {story.storyType === 'competition'
-                            ? 'Competition'
-                            : story.storyType === 'uploaded'
-                              ? 'Uploaded'
-                              : 'Freestyle'}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Story Content */}
-                    <div className="p-4">
-                      <Link href={`/children-dashboard/community/${story._id}`}>
-                        <h3 className="text-lg  text-white mb-2 hover:text-blue-400 transition-colors cursor-pointer line-clamp-2">
-                          {story.title}
-                        </h3>
-                      </Link>
-
-                      <p className="text-gray-400 text-sm mb-3 line-clamp-3">
-                        {story.excerpt}
-                      </p>
-
-                      {/* Author & Genre */}
-                      <div className="flex items-center gap-2 text-sm text-gray-400 mb-3">
-                        <User className="w-4 h-4" />
-                        <span>
-                          {story.author.firstName} {story.author.lastName}
-                        </span>
-                        <span>•</span>
-                        <span>{story.genre}</span>
-                        <span>•</span>
-                        <span>{story.wordCount} words</span>
-                      </div>
-
-                      {/* Assessment Scores */}
-                      {(() => {
-                        const displayInfo = getCommunityDisplayInfo(story);
-                        
-                        if (!displayInfo.showScores) {
-                          return (
-                            <div className="text-center mb-4">
-                              <div className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${displayInfo.badgeColor}`}>
-                                {displayInfo.badge}
-                              </div>
-                            </div>
-                          );
-                        }
-                        
-                        return (
-                          <div className="grid grid-cols-3 gap-2 mb-4">
-                            <div className="text-center">
-                              <div className="text-lg  text-blue-400">
-                                {displayInfo.overall}
-                              </div>
-                              <div className="text-xs text-gray-400">Overall</div>
-                            </div>
-                            <div className="text-center">
-                              <div className="text-lg  text-purple-400">
-                                {displayInfo.creativity}
-                              </div>
-                              <div className="text-xs text-gray-400">
-                                Creativity
-                              </div>
-                            </div>
-                            <div className="text-center">
-                              <div className="text-lg  text-green-400">
-                                {displayInfo.grammar}
-                              </div>
-                              <div className="text-xs text-gray-400">Grammar</div>
-                            </div>
-                          </div>
-                        );
-                      })()}
-
-                      {/* Stats */}
-                      <div className="flex items-center justify-between mb-3">
-                        <div className="flex items-center gap-4 text-sm text-gray-400">
-                          <div className="flex items-center gap-1">
-                            <Eye className="w-4 h-4" />
-                            {story.stats.views}
-                          </div>
-                          <div className="flex items-center gap-1">
-                            <MessageCircle className="w-4 h-4" />
-                            {story.stats.comments}
-                          </div>
-                        </div>
-                        <div className="text-xs text-gray-500">
-                          {new Date(story.publishedAt).toLocaleDateString()}
-                        </div>
-                      </div>
-
-                      {/* Actions */}
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          {/* Like and Bookmark buttons removed */}
-                        </div>
-
-                        <Link
-                          href={`/children-dashboard/community/${story._id}`}
-                        >
-                          <button className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-sm  transition-colors">
-                            Read Story
-                          </button>
-                        </Link>
-                      </div>
-                    </div>
-                  </>
-                ) : (
-                  // List View
-                  <div className="flex gap-6">
-                    <div className="flex-1">
-                      {/* Badges */}
-                      <div className="flex items-center gap-2 mb-2">
-                        {story.isFeatured && (
-                          <div className="inline-flex items-center gap-1 px-2 py-1  text-xs  bg-yellow-500/20 text-yellow-400">
-                            <Star className="w-3 h-3" />
-                            FEATURED
-                          </div>
-                        )}
-                        {story.competitionWinner && (
-                          <div className="inline-flex items-center gap-1 px-2 py-1  text-xs  bg-orange-500/20 text-orange-400">
-                            <Crown className="w-3 h-3" />
-                            {story.competitionWinner.position === 1
-                              ? '🥇'
-                              : story.competitionWinner.position === 2
-                                ? '🥈'
-                                : '🥉'}
-                          </div>
-                        )}
-                        <div className="inline-flex items-center gap-1 px-2 py-1  text-xs  bg-blue-500/20 text-blue-400">
-                          {story.storyType === 'competition'
-                            ? 'Competition'
-                            : story.storyType === 'uploaded'
-                              ? 'Uploaded'
-                              : 'Freestyle'}
-                        </div>
-                      </div>
-
-                      <Link href={`/children-dashboard/community/${story._id}`}>
-                        <h3 className="text-xl  text-white mb-2 hover:text-blue-400 transition-colors cursor-pointer">
-                          {story.title}
-                        </h3>
-                      </Link>
-
-                      <p className="text-gray-400 mb-3">{story.excerpt}</p>
-
-                      <div className="flex items-center gap-4 text-sm text-gray-400 mb-3">
-                        <div className="flex items-center gap-1">
-                          <User className="w-4 h-4" />
-                          {story.author.firstName} {story.author.lastName}
-                        </div>
-                        <span>{story.genre}</span>
-                        <span>{story.wordCount} words</span>
-                        <span>
-                          {new Date(story.publishedAt).toLocaleDateString()}
-                        </span>
-                      </div>
-
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-4 text-sm text-gray-400">
-                          <div className="flex items-center gap-1">
-                            <Eye className="w-4 h-4" />
-                            {story.stats.views}
-                          </div>
-                          <div className="flex items-center gap-1">
-                            <MessageCircle className="w-4 h-4" />
-                            {story.stats.comments}
-                          </div>
-                        </div>
-
-                        <div className="flex items-center gap-2">
-                          {/* Like and Bookmark buttons removed */}
-
-                          <Link
-                            href={`/children-dashboard/community/${story._id}`}
-                          >
-                            <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white  transition-colors">
-                              Read Story
-                            </button>
-                          </Link>
-                        </div>
-                      </div>
-                    </div>
-
-                    {(() => {
-                      const displayInfo = getCommunityDisplayInfo(story);
-                      
-                      if (!displayInfo.showScores) {
-                        return (
-                          <div className="w-32 text-center">
-                            <div className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${displayInfo.badgeColor}`}>
-                              {displayInfo.badge}
-                            </div>
-                          </div>
-                        );
-                      }
-                      
-                      return (
-                        <div className="w-32 text-center">
-                          <div className="text-lg  text-blue-400">
-                            {displayInfo.overall}
-                          </div>
-                          <div className="text-xs text-gray-400 mb-2">
-                            Overall Score
-                          </div>
-                          <div className="grid grid-cols-1 gap-1 text-xs">
-                            <div>
-                              <span className="text-purple-400">
-                                {displayInfo.creativity}
-                              </span>
-                              <div className="text-gray-500">Creativity</div>
-                            </div>
-                            <div>
-                              <span className="text-green-400">
-                                {displayInfo.grammar}
-                              </span>
-                              <div className="text-gray-500">Grammar</div>
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })()}
-                  </div>
-                )}
-              </motion.div>
-            ))}
-          </AnimatePresence>
-        </div>
-      )}
-
-      {/* Load More Button */}
-      {hasMore && stories.length > 0 && (
-        <div className="text-center">
-          <button
-            onClick={loadMoreStories}
-            disabled={loadingMore}
-            className="px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 text-white  transition-colors"
+        <>
+          <div
+            className={
+              viewMode === 'grid'
+                ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'
+                : 'space-y-4'
+            }
           >
-            {loadingMore ? (
-              <div className="flex items-center gap-2">
-                <div className="w-4 h-4 border-2 border-white/30 border-t-white  animate-spin"></div>
-                Loading More...
-              </div>
-            ) : (
-              'Load More Stories'
-            )}
-          </button>
-        </div>
+            <AnimatePresence>
+              {paginatedStories.map((story, index) => (
+                <motion.div
+                  key={story._id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                  className={
+                    viewMode === 'grid'
+                      ? 'bg-gray-800  overflow-hidden hover:bg-gray-750 transition-colors'
+                      : 'bg-gray-800  p-6 hover:bg-gray-750 transition-colors'
+                  }
+                >
+                  <div className="p-4">
+                    <Link href={`/children-dashboard/community/${story._id}`}>
+                      <h3 className="text-lg text-white mb-2 hover:text-blue-400 transition-colors cursor-pointer">
+                        {story.title}
+                      </h3>
+                    </Link>
+                    <p className="text-gray-400 text-sm mb-3">{story.excerpt}</p>
+                    <div className="flex items-center gap-2 text-sm text-gray-400 mb-3">
+                      <User className="w-4 h-4" />
+                      <span>{story.author.firstName} {story.author.lastName}</span>
+                      <span>•</span>
+                      <span>{story.genre}</span>
+                      <span>•</span>
+                      <span>{story.wordCount} words</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-4 text-sm text-gray-400">
+                        <div className="flex items-center gap-1">
+                          <Eye className="w-4 h-4" />
+                          {story.stats.views}
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <MessageCircle className="w-4 h-4" />
+                          {story.stats.comments}
+                        </div>
+                      </div>
+                      <Link href={`/children-dashboard/community/${story._id}`}>
+                        <button className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-sm transition-colors">
+                          Read Story
+                        </button>
+                      </Link>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </div>
+          
+          {/* Pagination Controls */}
+          {totalPages > 1 && (
+            <div className="flex justify-center mt-6">
+              <nav className="inline-flex items-center gap-2" aria-label="Pagination">
+                <button
+                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
+                  className="px-3 py-1 bg-gray-700 text-white disabled:bg-gray-900 disabled:text-gray-500"
+                >
+                  Prev
+                </button>
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                  <button
+                    key={page}
+                    onClick={() => setCurrentPage(page)}
+                    className={`px-3 py-1 ${
+                      page === currentPage
+                        ? 'bg-blue-600 text-white'
+                        : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                    }`}
+                  >
+                    {page}
+                  </button>
+                ))}
+                <button
+                  onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                  disabled={currentPage === totalPages}
+                  className="px-3 py-1 bg-gray-700 text-white disabled:bg-gray-900 disabled:text-gray-500"
+                >
+                  Next
+                </button>
+              </nav>
+            </div>
+          )}
+        </>
       )}
     </div>
   );
