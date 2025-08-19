@@ -42,6 +42,8 @@ export default function MentorComments() {
   const [comments, setComments] = useState<Comment[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 6;
   const [typeFilter, setTypeFilter] = useState('all');
   const [resolvedFilter, setResolvedFilter] = useState('all');
 
@@ -91,6 +93,7 @@ export default function MentorComments() {
     }
   };
 
+
   const filteredComments = comments.filter((comment) => {
     const matchesSearch =
       comment.comment.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -101,6 +104,17 @@ export default function MentorComments() {
 
     return matchesSearch;
   });
+
+  const totalPages = Math.ceil(filteredComments.length / itemsPerPage);
+  const paginatedComments = filteredComments.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  // Reset to first page if search/filter changes and currentPage is out of range
+  useEffect(() => {
+    if (currentPage > totalPages) setCurrentPage(1);
+  }, [searchTerm, comments, totalPages]);
 
   if (loading) {
     return (
@@ -115,7 +129,7 @@ export default function MentorComments() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-white mb-1 sm:mb-2">
+          <h1 className="text-xl sm:text-2xl text-white mb-1 sm:mb-2">
             My Comments & Reviews
           </h1>
           <p className="text-gray-400 text-sm sm:text-base">
@@ -132,21 +146,21 @@ export default function MentorComments() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
-        <div className="bg-gray-800 rounded-xl p-4 sm:p-6">
+        <div className="bg-gray-800 p-4 sm:p-6">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-400 text-sm">Total Comments</p>
-              <p className="text-2xl font-bold text-white">{comments.length}</p>
+              <p className="text-2xl text-white">{comments.length}</p>
             </div>
             <MessageSquare className="w-8 h-8 text-blue-400" />
           </div>
         </div>
 
-        <div className="bg-gray-800 rounded-xl p-4 sm:p-6">
+        <div className="bg-gray-800 p-4 sm:p-6">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-400 text-sm">Suggestions</p>
-              <p className="text-2xl font-bold text-white">
+              <p className="text-2xl text-white">
                 {comments.filter((c) => c.commentType === 'suggestion').length}
               </p>
             </div>
@@ -154,11 +168,11 @@ export default function MentorComments() {
           </div>
         </div>
 
-        <div className="bg-gray-800 rounded-xl p-4 sm:p-6">
+        <div className="bg-gray-800 p-4 sm:p-6">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-400 text-sm">Resolved</p>
-              <p className="text-2xl font-bold text-white">
+              <p className="text-2xl text-white">
                 {comments.filter((c) => c.isResolved).length}
               </p>
             </div>
@@ -166,11 +180,11 @@ export default function MentorComments() {
           </div>
         </div>
 
-        <div className="bg-gray-800 rounded-xl p-4 sm:p-6">
+        <div className="bg-gray-800 p-4 sm:p-6">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-400 text-sm">Pending</p>
-              <p className="text-2xl font-bold text-white">
+              <p className="text-2xl text-white">
                 {comments.filter((c) => !c.isResolved).length}
               </p>
             </div>
@@ -180,7 +194,7 @@ export default function MentorComments() {
       </div>
 
       {/* Filters */}
-      <div className="bg-gray-800 rounded-xl p-3 sm:p-6">
+      <div className="bg-gray-800 p-3 sm:p-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
@@ -189,14 +203,14 @@ export default function MentorComments() {
               placeholder="Search comments, stories, or students..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full bg-gray-700 border border-gray-600 rounded-lg pl-10 pr-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="w-full bg-gray-700 border border-gray-600 pl-10 pr-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500"
             />
           </div>
 
           <select
             value={typeFilter}
             onChange={(e) => setTypeFilter(e.target.value)}
-            className="bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-green-500"
+            className="bg-gray-700 border border-gray-600 px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-green-500"
           >
             <option value="all">All Types</option>
             <option value="general">General</option>
@@ -208,7 +222,7 @@ export default function MentorComments() {
           <select
             value={resolvedFilter}
             onChange={(e) => setResolvedFilter(e.target.value)}
-            className="bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-green-500"
+            className="bg-gray-700 border border-gray-600 px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-green-500"
           >
             <option value="all">All Status</option>
             <option value="false">Unresolved</option>
@@ -219,19 +233,19 @@ export default function MentorComments() {
 
       {/* Comments List - 3 columns on desktop */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
-        {filteredComments.map((comment, index) => (
+        {paginatedComments.map((comment, index) => (
           <motion.div
             key={comment._id}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.05 }}
-            className="bg-gray-800 rounded-xl p-4 sm:p-6 hover:bg-gray-750 transition-colors flex flex-col justify-between"
+            className="bg-gray-800 p-4 sm:p-6 hover:bg-gray-750 transition-colors flex flex-col justify-between"
           >
             <div>
               {/* Comment Header */}
               <div className="flex flex-wrap items-center gap-2 mb-2 sm:mb-3">
                 <span
-                  className={`px-2 py-1 rounded-full text-xs border ${getCommentTypeColor(comment.commentType)}`}
+                  className={`px-2 py-1 text-xs border ${getCommentTypeColor(comment.commentType)}`}
                 >
                   {comment.commentType}
                 </span>
@@ -250,7 +264,7 @@ export default function MentorComments() {
               </div>
 
               {/* Story Info */}
-              <div className="mb-2 sm:mb-3 p-2 sm:p-3 bg-gray-700/50 rounded-lg">
+              <div className="mb-2 sm:mb-3 p-2 sm:p-3 bg-gray-700/50">
                 <div className="flex flex-wrap items-center gap-1 sm:gap-2 text-xs sm:text-sm text-gray-300">
                   <BookOpen className="w-4 h-4" />
                   <span>
@@ -288,7 +302,7 @@ export default function MentorComments() {
               <div className="flex items-center gap-1 sm:gap-2">
                 {!comment.isResolved && (
                   <button
-                    className="text-green-400 hover:text-green-300 p-1.5 sm:p-2 rounded-lg hover:bg-gray-700 transition-colors border border-green-600 text-xs sm:text-sm"
+                    className="text-green-400 hover:text-green-300 p-1.5 sm:p-2 hover:bg-gray-700 transition-colors border border-green-600 text-xs sm:text-sm"
                     onClick={async () => {
                       try {
                         const res = await fetch(
@@ -322,14 +336,14 @@ export default function MentorComments() {
                 )}
                 <Link href={`/mentor-dashboard/stories/${comment.storyId._id}`}>
                   <button
-                    className="text-blue-400 hover:text-blue-300 p-1.5 sm:p-2 rounded-lg hover:bg-gray-700 transition-colors"
+                    className="text-blue-400 hover:text-blue-300 p-1.5 sm:p-2 hover:bg-gray-700 transition-colors"
                     title="View Story"
                   >
                     <Eye className="w-4 h-4" />
                   </button>
                 </Link>
                 <button
-                  className="text-gray-400 hover:text-gray-300 p-1.5 sm:p-2 rounded-lg hover:bg-gray-700 transition-colors"
+                  className="text-gray-400 hover:text-gray-300 p-1.5 sm:p-2 hover:bg-gray-700 transition-colors"
                   title="Edit (coming soon)"
                 >
                   <Edit className="w-4 h-4" />
@@ -345,10 +359,39 @@ export default function MentorComments() {
         ))}
       </div>
 
+      {/* Pagination Controls */}
+      {totalPages > 1 && (
+        <div className="flex justify-center items-center gap-2 mt-4">
+          <button
+            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+            disabled={currentPage === 1}
+            className="px-3 py-1 bg-gray-700 text-white disabled:opacity-50"
+          >
+            Prev
+          </button>
+          {Array.from({ length: totalPages }, (_, i) => (
+            <button
+              key={i + 1}
+              onClick={() => setCurrentPage(i + 1)}
+              className={`px-3 py-1 ${currentPage === i + 1 ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-200'}`}
+            >
+              {i + 1}
+            </button>
+          ))}
+          <button
+            onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+            disabled={currentPage === totalPages}
+            className="px-3 py-1 bg-gray-700 text-white disabled:opacity-50"
+          >
+            Next
+          </button>
+        </div>
+      )}
+
       {filteredComments.length === 0 && !loading && (
         <div className="text-center py-8 sm:py-12">
           <MessageSquare className="w-12 h-12 sm:w-16 sm:h-16 text-gray-600 mx-auto mb-2 sm:mb-4" />
-          <h3 className="text-lg sm:text-xl font-medium text-gray-400 mb-1 sm:mb-2">
+          <h3 className="text-lg sm:text-xl text-gray-400 mb-1 sm:mb-2">
             No comments found
           </h3>
           <p className="text-gray-500 text-xs sm:text-base">

@@ -581,25 +581,53 @@ export async function GET(
       );
     }
 
-    // Get story turns if it's a collaborative story
+    // CRITICAL FIX: Get the actual turns from the Turn collection
     const turns = await Turn.find({ sessionId: storyId })
       .sort({ turnNumber: 1 })
       .lean();
 
-    // Get comments
+    // CRITICAL FIX: Get story comments
     const comments = (await StoryComment.find({ storyId })
       .populate('authorId', 'firstName lastName role')
       .sort({ createdAt: -1 })
       .lean()) as unknown as CommentDocument[];
 
+    console.log(`📝 Found ${turns.length} turns for story`);
+    console.log(`💬 Found ${comments.length} comments for story`);
+
+    // CRITICAL FIX: Build proper content structure
+    let storyContent = '';
+    let childWords = 0;
+    let aiWords = 0;
+
+    if (story.isUploadedForAssessment) {
+      // For uploaded stories, content is in aiOpening
+      storyContent = story.aiOpening || story.content || '';
+      childWords = storyContent.split(/\s+/).filter(Boolean).length;
+    } else {
+      // For collaborative stories, combine turns
+      turns.forEach((turn: any) => {
+        if (turn.childInput) {
+          storyContent += turn.childInput + '\n\n';
+          childWords += turn.childInput.split(/\s+/).filter(Boolean).length;
+        }
+        if (turn.aiResponse) {
+          storyContent += turn.aiResponse + '\n\n';
+          aiWords += turn.aiResponse.split(/\s+/).filter(Boolean).length;
+        }
+      });
+    }
+
+    // Calculate total words
+    const totalWords = childWords + aiWords;
     // Format the response with proper type safety
     const formattedStory = {
       _id: story._id.toString(),
       title: story.title,
       status: story.status,
-      totalWords: story.totalWords || 0,
-      childWords: story.childWords || 0,
-      aiWords: story.aiWords || 0,
+      totalWords: totalWords || story.totalWords || 0,
+      childWords: childWords || story.childWords || 0,
+      aiWords: aiWords || story.aiWords || 0,
       storyType: story.storyType || 'freestyle',
       isUploadedForAssessment: story.isUploadedForAssessment || false,
       isPublished: story.isPublished || false,
@@ -608,7 +636,7 @@ export async function GET(
       competitionEntries: story.competitionEntries || [],
       assessment: story.assessment || null,
       assessmentAttempts: story.assessmentAttempts || 0,
-      content: story.content || null,
+      content: storyContent.trim() || story.content || '',
       aiOpening: story.aiOpening || null,
       elements: story.elements || {},
       createdAt: story.createdAt,
@@ -622,7 +650,7 @@ export async function GET(
       comments: comments.map((comment) => ({
         _id: comment._id.toString(),
         content: comment.content,
-        author: comment.authorId,
+        authorId: comment.authorId,
         createdAt: comment.createdAt,
       })),
     };

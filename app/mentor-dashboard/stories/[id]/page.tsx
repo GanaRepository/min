@@ -15,7 +15,8 @@ import {
 
 interface Comment {
   _id: string;
-  comment: string;
+  comment?: string; // legacy, optional
+  content?: string; // new, required for new comments
   commentType: string;
   createdAt: string;
   updatedAt: string;
@@ -90,7 +91,7 @@ export default function MentorStoryDetail() {
 
   const handleEditClick = (comment: Comment) => {
     setEditingId(comment._id);
-    setEditValue(comment.comment);
+    setEditValue(comment.content ?? comment.comment ?? '');
   };
 
   const handleEditSave = async (comment: Comment) => {
@@ -136,11 +137,11 @@ export default function MentorStoryDetail() {
     return (
       <div className="text-center py-12">
         <BookOpen className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-        <h3 className="text-xl font-medium text-gray-400 mb-2">
+        <h3 className="text-xl text-gray-400 mb-2">
           Story not found
         </h3>
         <Link href="/mentor-dashboard/stories">
-          <button className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+          <button className="mt-4 bg-blue-600 text-white px-4 py-2 hover:bg-blue-700 transition-colors">
             Back to Stories
           </button>
         </Link>
@@ -153,16 +154,16 @@ export default function MentorStoryDetail() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
         <Link href="/mentor-dashboard/stories">
-          <button className="text-gray-800 hover:text-blue-600 transition-colors bg-white p-2 rounded-lg text-xs sm:text-base">
+          <button className="text-gray-800 hover:text-blue-600 transition-colors bg-white p-2 text-xs sm:text-base">
             ← Back To Stories
           </button>
         </Link>
       </div>
 
       {/* Story Content */}
-      <div className="bg-gray-800 rounded-xl p-3 sm:p-6 mb-4 sm:mb-6">
+      <div className="bg-gray-800 p-3 sm:p-6 mb-4 sm:mb-6">
         <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-2">
-          <span className="px-2 py-1 rounded-full text-xs border bg-blue-500/20 text-blue-300 border-blue-500/30">
+          <span className="px-2 py-1 text-xs border bg-blue-500/20 text-blue-300 border-blue-500/30">
             {story.status}
           </span>
           <span className="text-gray-400 text-xs">
@@ -179,8 +180,8 @@ export default function MentorStoryDetail() {
       </div>
 
       {/* Comments Section */}
-      <div className="bg-gray-800 rounded-xl p-3 sm:p-6">
-        <h3 className="text-base sm:text-lg font-medium text-white mb-2 sm:mb-4">
+      <div className="bg-gray-800 p-3 sm:p-6">
+        <h3 className="text-base sm:text-lg text-white mb-2 sm:mb-4">
           Comments & Reviews
         </h3>
         {/* Add Comment */}
@@ -190,11 +191,11 @@ export default function MentorStoryDetail() {
             value={newComment}
             onChange={(e) => setNewComment(e.target.value)}
             placeholder="Add a comment..."
-            className="flex-1 bg-gray-700 border border-gray-600 rounded-lg px-2 sm:px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 text-xs sm:text-base"
+            className="flex-1 bg-gray-700 border border-gray-600 px-2 sm:px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 text-xs sm:text-base"
           />
           <button
             onClick={handleAddComment}
-            className="bg-blue-600 text-white px-3 sm:px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-xs sm:text-base"
+            className="bg-blue-600 text-white px-3 sm:px-4 py-2 hover:bg-blue-700 transition-colors text-xs sm:text-base"
           >
             Add
           </button>
@@ -207,14 +208,14 @@ export default function MentorStoryDetail() {
           {comments.map((comment) => (
             <div
               key={comment._id}
-              className="flex flex-col sm:flex-row items-start gap-2 sm:gap-3 bg-gray-700/50 rounded-lg p-2 sm:p-3"
+              className="flex flex-col sm:flex-row items-start gap-2 sm:gap-3 bg-gray-700/50 p-2 sm:p-3"
             >
-              <div className="flex-shrink-0 w-7 h-7 sm:w-8 sm:h-8 bg-gray-600 rounded-full flex items-center justify-center">
+              <div className="flex-shrink-0 w-7 h-7 sm:w-8 sm:h-8 bg-gray-600 flex items-center justify-center">
                 <User className="w-4 h-4 text-white" />
               </div>
               <div className="flex-1">
                 <div className="flex flex-wrap items-center gap-1 sm:gap-2">
-                  <span className="text-white font-medium text-xs sm:text-sm">
+                  <span className="text-white text-xs sm:text-sm">
                     {comment.authorId?.firstName} {comment.authorId?.lastName}
                   </span>
                   <span className="text-gray-400 text-[10px] sm:text-xs">
@@ -227,24 +228,24 @@ export default function MentorStoryDetail() {
                       type="text"
                       value={editValue}
                       onChange={(e) => setEditValue(e.target.value)}
-                      className="flex-1 bg-gray-700 border border-gray-600 rounded-lg px-2 sm:px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 text-xs sm:text-base"
+                      className="flex-1 bg-gray-700 border border-gray-600 px-2 sm:px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 text-xs sm:text-base"
                     />
                     <button
                       onClick={() => handleEditSave(comment)}
-                      className="bg-green-600 text-white px-2 sm:px-3 py-1 rounded-lg hover:bg-green-700 transition-colors text-xs sm:text-base"
+                      className="bg-green-600 text-white px-2 sm:px-3 py-1 hover:bg-green-700 transition-colors text-xs sm:text-base"
                     >
                       Save
                     </button>
                     <button
                       onClick={() => setEditingId(null)}
-                      className="bg-gray-600 text-white px-2 sm:px-3 py-1 rounded-lg hover:bg-gray-700 transition-colors text-xs sm:text-base"
+                      className="bg-gray-600 text-white px-2 sm:px-3 py-1 hover:bg-gray-700 transition-colors text-xs sm:text-base"
                     >
                       Cancel
                     </button>
                   </div>
                 ) : (
                   <p className="text-gray-200 mt-2 text-xs sm:text-base">
-                    {comment.comment}
+                    {comment.content}
                   </p>
                 )}
               </div>

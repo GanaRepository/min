@@ -144,10 +144,10 @@ export default function MentorDashboard() {
   }
 
   return (
-    <div className="p-2 sm:p-4 md:p-6 space-y-4 sm:space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Welcome Header */}
-      <div className="bg-gradient-to-r from-gray-800 to-gray-700 rounded-xl p-4 sm:p-6">
-        <h1 className="text-2xl sm:text-3xl font-bold text-white mb-1 sm:mb-2">
+      <div className="bg-gradient-to-r from-gray-800 to-gray-700 p-4 sm:p-6">
+        <h1 className="text-2xl sm:text-3xl text-white mb-1 sm:mb-2">
           Welcome back, {session?.user.firstName}!
         </h1>
         <p className="text-gray-300 text-sm sm:text-base">
@@ -168,18 +168,18 @@ export default function MentorDashboard() {
               transition={{ delay: index * 0.1 }}
             >
               <Link href={card.href}>
-                <div className="bg-gray-800 rounded-xl p-4 sm:p-6 hover:bg-gray-750 transition-all duration-200 cursor-pointer group">
+                <div className="bg-gray-800 p-4 sm:p-6 hover:bg-gray-750 transition-all duration-200 cursor-pointer group">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-gray-400 text-xs sm:text-sm font-medium">
+                      <p className="text-gray-400 text-xs sm:text-sm">
                         {card.title}
                       </p>
-                      <p className="text-2xl sm:text-3xl font-bold text-white mt-1 sm:mt-2">
+                      <p className="text-2xl sm:text-3xl text-white mt-1 sm:mt-2">
                         {card.value.toLocaleString()}
                       </p>
                     </div>
                     <div
-                      className={`w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r ${card.color} rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-200`}
+                      className={`w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r ${card.color} flex items-center justify-center group-hover:scale-110 transition-transform duration-200`}
                     >
                       <Icon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                     </div>
@@ -194,9 +194,9 @@ export default function MentorDashboard() {
       {/* Monthly Stats & Top Students */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-6">
         {/* Monthly Performance */}
-        <div className="bg-gray-800 rounded-xl p-4 sm:p-6">
+        <div className="bg-gray-800 p-4 sm:p-6">
           <div className="flex items-center justify-between mb-2 sm:mb-4">
-            <h3 className="text-base sm:text-lg font-semibold text-white">
+            <h3 className="text-base sm:text-lg text-white">
               This Month
             </h3>
             <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5 text-green-400" />
@@ -206,7 +206,7 @@ export default function MentorDashboard() {
               <span className="text-gray-400 text-xs sm:text-base">
                 New Stories
               </span>
-              <span className="text-white font-medium text-xs sm:text-base">
+              <span className="text-white text-xs sm:text-base">
                 {stats?.monthlyStats.newStories || 0}
               </span>
             </div>
@@ -214,7 +214,7 @@ export default function MentorDashboard() {
               <span className="text-gray-400 text-xs sm:text-base">
                 Comments Given
               </span>
-              <span className="text-white font-medium text-xs sm:text-base">
+              <span className="text-white text-xs sm:text-base">
                 {stats?.monthlyStats.commentsGiven || 0}
               </span>
             </div>
@@ -222,7 +222,7 @@ export default function MentorDashboard() {
               <span className="text-gray-400 text-xs sm:text-base">
                 Assessments
               </span>
-              <span className="text-white font-medium text-xs sm:text-base">
+              <span className="text-white text-xs sm:text-base">
                 {stats?.monthlyStats.assessmentsCompleted || 0}
               </span>
             </div>
@@ -230,8 +230,8 @@ export default function MentorDashboard() {
         </div>
 
         {/* Top Students */}
-        <div className="bg-gray-800 rounded-xl p-4 sm:p-6">
-          <h3 className="text-base sm:text-lg font-semibold text-white mb-2 sm:mb-4">
+        <div className="bg-gray-800 p-4 sm:p-6">
+          <h3 className="text-base sm:text-lg text-white mb-2 sm:mb-4">
             Active Students
           </h3>
           <div className="space-y-2 sm:space-y-4">
@@ -240,14 +240,14 @@ export default function MentorDashboard() {
                 key={student._id}
                 className="flex items-center gap-2 sm:gap-3"
               >
-                <div className="w-7 h-7 sm:w-8 sm:h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center">
-                  <span className="text-white text-xs sm:text-sm font-medium">
+                <div className="w-7 h-7 sm:w-8 sm:h-8 bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
+                  <span className="text-white text-xs sm:text-sm">
                     {student.firstName[0]}
                     {student.lastName[0]}
                   </span>
                 </div>
                 <div className="flex-1">
-                  <p className="text-white text-xs sm:text-sm font-medium">
+                  <p className="text-white text-xs sm:text-sm">
                     {student.firstName} {student.lastName}
                   </p>
                   <p className="text-gray-400 text-[10px] sm:text-xs">
@@ -272,9 +272,9 @@ export default function MentorDashboard() {
       </div>
 
       {/* Recent Activity */}
-      <div className="bg-gray-800 rounded-xl p-4 sm:p-6">
+      <div className="bg-gray-800 p-4 sm:p-6">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 sm:mb-6 gap-2 sm:gap-0">
-          <h3 className="text-lg sm:text-xl font-semibold text-white">
+          <h3 className="text-lg sm:text-xl text-white">
             Recent Activity
           </h3>
           <Link
@@ -293,10 +293,10 @@ export default function MentorDashboard() {
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.05 }}
-                className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 p-3 sm:p-4 bg-gray-700/50 rounded-lg"
+                className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 p-3 sm:p-4 bg-gray-700/50"
               >
                 <div
-                  className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center ${getActivityColor(activity.type)}`}
+                  className={`w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center ${getActivityColor(activity.type)}`}
                 >
                   {getActivityIcon(activity.type)}
                 </div>

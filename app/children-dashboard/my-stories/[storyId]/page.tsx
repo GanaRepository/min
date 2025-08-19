@@ -1458,6 +1458,18 @@ interface Story {
     aiResponse: string;
     timestamp: string;
   }>;
+  comments?: Array<{
+    _id: string;
+    content: string;
+    authorId: {
+      _id: string;
+      firstName: string;
+      lastName: string;
+      role: string;
+    } | null;
+    createdAt: string;
+    rating?: number;
+  }>;
 }
 
 export default function StoryDetailPage() {
@@ -1476,6 +1488,11 @@ export default function StoryDetailPage() {
 
   // Action states
   const [publishingStory, setPublishingStory] = useState(false);
+
+  // Comment states
+  const [newComment, setNewComment] = useState('');
+  const [commentRating, setCommentRating] = useState(0);
+  const [addingComment, setAddingComment] = useState(false);
 
   // ===== EFFECTS =====
   useEffect(() => {
@@ -1597,6 +1614,37 @@ export default function StoryDetailPage() {
   const handleContinueWriting = () => {
     if (!story) return;
     router.push(`/children-dashboard/story/${story._id}`);
+  };
+
+  const handleAddComment = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newComment.trim()) return;
+    
+    try {
+      setAddingComment(true);
+      
+      const response = await fetch(`/api/stories/${story?._id}/comments`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          content: newComment.trim(),
+          rating: commentRating || undefined
+        })
+      });
+      
+      if (response.ok) {
+        setNewComment('');
+        setCommentRating(0);
+        fetchStoryDetails(); // Refresh story data to show new comment
+      } else {
+        throw new Error('Failed to add comment');
+      }
+    } catch (error) {
+      console.error('Error adding comment:', error);
+      alert('Failed to add comment. Please try again.');
+    } finally {
+      setAddingComment(false);
+    }
   };
 
   // ===== HELPER FUNCTIONS =====
@@ -2453,31 +2501,114 @@ export default function StoryDetailPage() {
           {activeTab === 'comments' && (
             <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-8">
               <h2 className="text-2xl  text-white mb-6 flex items-center gap-2">
-                <MessageSquare className="w-6 h-6 text-yellow-400" />
+                <MessageSquare className="w-6 h-6 text-blue-400" />
                 Comments & Discussion
               </h2>
-
-              <div className="text-center py-12">
-                <MessageSquare className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg  text-white mb-2">
-                  Comments Coming Soon
-                </h3>
-                <p className="text-gray-400 mb-6">
-                  The comments system is being developed. You'll be able to
-                  receive feedback from peers and mentors here.
-                </p>
-
-                {/* Placeholder for future comment system */}
-                <div className="bg-gray-700/30  p-6 text-left max-w-2xl mx-auto">
-                  <h4 className="text-white  mb-3">Future Features:</h4>
-                  <ul className="text-gray-300 space-y-2 text-sm">
-                    <li>• Peer feedback and reviews</li>
-                    <li>• Mentor comments and suggestions</li>
-                    <li>• Community discussions</li>
-                    <li>• Writing tips and encouragement</li>
-                  </ul>
-                </div>
+              
+              {/* Comments List */}
+              <div className="space-y-4 mb-6">
+                {story.comments && story.comments.length > 0 ? (
+                  story.comments.map((comment) => (
+                    <div key={comment._id} className="bg-gray-700/30  p-4">
+                      <div className="flex items-start justify-between mb-2">
+                        <div className="flex items-center gap-2">
+                          <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600  flex items-center justify-center">
+                            <span className="text-white text-xs ">
+                              {comment.authorId?.firstName?.[0]}{comment.authorId?.lastName?.[0]}
+                            </span>
+                          </div>
+                          <div>
+                            <div className="text-white  text-sm">
+                              {comment.authorId?.firstName} {comment.authorId?.lastName}
+                              <span className={`ml-2 px-2 py-1  text-xs ${
+                                comment.authorId?.role === 'admin' 
+                                  ? 'bg-red-500/20 text-red-400' 
+                                  : comment.authorId?.role === 'mentor'
+                                  ? 'bg-blue-500/20 text-blue-400'
+                                  : 'bg-green-500/20 text-green-400'
+                              }`}>
+                                {comment.authorId?.role}
+                              </span>
+                            </div>
+                            <div className="text-gray-400 text-xs">
+                              {new Date(comment.createdAt).toLocaleDateString()}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="text-gray-300 leading-relaxed">
+                        {comment.content}
+                      </div>
+                      {comment.rating && (
+                        <div className="flex items-center gap-1 mt-2">
+                          {[...Array(5)].map((_, i) => (
+                            <Star 
+                              key={i} 
+                              className={`w-4 h-4 ${
+                                i < comment.rating! ? 'text-yellow-400 fill-current' : 'text-gray-600'
+                              }`} 
+                            />
+                          ))}
+                          <span className="text-sm text-gray-400 ml-1">({comment.rating}/5)</span>
+                        </div>
+                      )}
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-center py-8">
+                    <MessageSquare className="w-16 h-16 text-gray-500 mx-auto mb-4" />
+                    <h3 className="text-lg  text-gray-400 mb-2">No Comments Yet</h3>
+                    <p className="text-gray-500">
+                      This story hasn't received any comments from mentors or admins yet.
+                    </p>
+                  </div>
+                )}
               </div>
+              
+              {/* Comment Form (only for mentors/admins) */}
+              {session?.user?.role === 'mentor' || session?.user?.role === 'admin' ? (
+                <div className="border-t border-gray-600/30 pt-6">
+                  <form onSubmit={handleAddComment} className="space-y-4">
+                    <textarea
+                      value={newComment}
+                      onChange={(e) => setNewComment(e.target.value)}
+                      placeholder="Add your feedback or comment..."
+                      className="w-full p-3 bg-gray-700/50 border border-gray-600/30  text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      rows={4}
+                    />
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <span className="text-gray-400 text-sm">Rating:</span>
+                        <div className="flex gap-1">
+                          {[1, 2, 3, 4, 5].map((star) => (
+                            <button
+                              key={star}
+                              type="button"
+                              onClick={() => setCommentRating(star)}
+                              className={`p-1 ${
+                                star <= commentRating ? 'text-yellow-400' : 'text-gray-600'
+                              }`}
+                            >
+                              <Star className="w-5 h-5" fill={star <= commentRating ? 'currentColor' : 'none'} />
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                      <button
+                        type="submit"
+                        disabled={!newComment.trim() || addingComment}
+                        className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 text-white px-6 py-2   transition-colors"
+                      >
+                        {addingComment ? 'Adding...' : 'Add Comment'}
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              ) : (
+                <div className="border-t border-gray-600/30 pt-6 text-center">
+                  <p className="text-gray-400">Only mentors and admins can add comments.</p>
+                </div>
+              )}
             </div>
           )}
         </motion.div>

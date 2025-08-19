@@ -51,6 +51,8 @@ export default function MentorStories() {
   const [stories, setStories] = useState<Story[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 6;
   const [statusFilter, setStatusFilter] = useState(
     searchParams.get('filter') || 'all'
   );
@@ -115,6 +117,7 @@ export default function MentorStories() {
     }
   };
 
+
   const filteredStories = stories.filter(
     (story) =>
       story.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -123,9 +126,20 @@ export default function MentorStories() {
         .includes(searchTerm.toLowerCase())
   );
 
+  const totalPages = Math.ceil(filteredStories.length / itemsPerPage);
+  const paginatedStories = filteredStories.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
   const pendingReviewCount = stories.filter(
     (s) => s.needsReview || s.unresolvedComments > 0
   ).length;
+
+  // Reset to first page if search/filter changes and currentPage is out of range
+  useEffect(() => {
+    if (currentPage > totalPages) setCurrentPage(1);
+  }, [searchTerm, stories, totalPages]);
 
   if (loading) {
     return (
@@ -140,7 +154,7 @@ export default function MentorStories() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-white mb-1 sm:mb-2">
+          <h1 className="text-xl sm:text-2xl text-white mb-1 sm:mb-2">
             Student Stories
           </h1>
           <p className="text-gray-400 text-sm sm:text-base">
@@ -149,7 +163,7 @@ export default function MentorStories() {
         </div>
         <div className="mt-2 sm:mt-0 flex items-center gap-2 sm:gap-4">
           {pendingReviewCount > 0 && (
-            <div className="bg-orange-500/20 text-orange-300 px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm">
+            <div className="bg-orange-500/20 text-orange-300 px-2 sm:px-3 py-1 text-xs sm:text-sm">
               {pendingReviewCount} need review
             </div>
           )}
@@ -161,21 +175,21 @@ export default function MentorStories() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
-        <div className="bg-gray-800 rounded-xl p-4 sm:p-6">
+        <div className="bg-gray-800 p-4 sm:p-6">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-400 text-sm">Total Stories</p>
-              <p className="text-2xl font-bold text-white">{stories.length}</p>
+              <p className="text-2xl text-white">{stories.length}</p>
             </div>
             <BookOpen className="w-8 h-8 text-blue-400" />
           </div>
         </div>
 
-        <div className="bg-gray-800 rounded-xl p-4 sm:p-6">
+        <div className="bg-gray-800 p-4 sm:p-6">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-400 text-sm">Active Stories</p>
-              <p className="text-2xl font-bold text-white">
+              <p className="text-2xl text-white">
                 {stories.filter((s) => s.status === 'active').length}
               </p>
             </div>
@@ -183,11 +197,11 @@ export default function MentorStories() {
           </div>
         </div>
 
-        <div className="bg-gray-800 rounded-xl p-4 sm:p-6">
+        <div className="bg-gray-800 p-4 sm:p-6">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-400 text-sm">Completed</p>
-              <p className="text-2xl font-bold text-white">
+              <p className="text-2xl text-white">
                 {stories.filter((s) => s.status === 'completed').length}
               </p>
             </div>
@@ -195,11 +209,11 @@ export default function MentorStories() {
           </div>
         </div>
 
-        <div className="bg-gray-800 rounded-xl p-4 sm:p-6">
+        <div className="bg-gray-800 p-4 sm:p-6">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-400 text-sm">Need Review</p>
-              <p className="text-2xl font-bold text-white">
+              <p className="text-2xl text-white">
                 {pendingReviewCount}
               </p>
             </div>
@@ -209,7 +223,7 @@ export default function MentorStories() {
       </div>
 
       {/* Filters */}
-      <div className="bg-gray-800 rounded-xl p-3 sm:p-6">
+      <div className="bg-gray-800 p-3 sm:p-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
@@ -218,14 +232,14 @@ export default function MentorStories() {
               placeholder="Search stories or students..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full bg-gray-700 border border-gray-600 rounded-lg pl-10 pr-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="w-full bg-gray-700 border border-gray-600 pl-10 pr-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500"
             />
           </div>
 
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-green-500"
+            className="bg-gray-700 border border-gray-600 px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-green-500"
           >
             <option value="all">All Status</option>
             <option value="active">Active</option>
@@ -237,7 +251,7 @@ export default function MentorStories() {
           <select
             value={studentFilter}
             onChange={(e) => setStudentFilter(e.target.value)}
-            className="bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-green-500"
+            className="bg-gray-700 border border-gray-600 px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-green-500"
           >
             <option value="all">All Students</option>
             {/* This would be populated with actual student data */}
@@ -247,18 +261,18 @@ export default function MentorStories() {
 
       {/* Stories Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4 sm:gap-6">
-        {filteredStories.map((story, index) => (
+        {paginatedStories.map((story, index) => (
           <motion.div
             key={story._id}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.1 }}
-            className="bg-gray-800 rounded-xl p-3 sm:p-6 hover:bg-gray-750 transition-all duration-200"
+            className="bg-gray-800 p-3 sm:p-6 hover:bg-gray-750 transition-all duration-200"
           >
             {/* Story Header */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-0 mb-3 sm:mb-4">
               <div className="flex-1">
-                <h3 className="text-white font-medium text-base sm:text-lg mb-0.5 sm:mb-1">
+                <h3 className="text-white text-base sm:text-lg mb-0.5 sm:mb-1">
                   {story.title}
                 </h3>
                 <p className="text-gray-400 text-xs sm:text-sm">
@@ -267,10 +281,10 @@ export default function MentorStories() {
               </div>
               <div className="flex items-center gap-1 sm:gap-2 mt-2 sm:mt-0">
                 {(story.needsReview || story.unresolvedComments > 0) && (
-                  <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 bg-orange-400 rounded-full"></div>
+                  <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 bg-orange-400"></div>
                 )}
                 <span
-                  className={`inline-flex items-center gap-0.5 sm:gap-1 px-2 py-1 rounded-full text-xs border ${getStatusColor(story.status)}`}
+                  className={`inline-flex items-center gap-0.5 sm:gap-1 px-2 py-1 text-xs border ${getStatusColor(story.status)}`}
                 >
                   {getStatusIcon(story.status)}
                   <span className="capitalize">{story.status}</span>
@@ -279,15 +293,15 @@ export default function MentorStories() {
             </div>
 
             {/* Student Info */}
-            <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4 p-2 sm:p-3 bg-gray-700/50 rounded-lg">
-              <div className="w-7 h-7 sm:w-8 sm:h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center">
-                <span className="text-white text-xs sm:text-sm font-medium">
+            <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4 p-2 sm:p-3 bg-gray-700/50">
+              <div className="w-7 h-7 sm:w-8 sm:h-8 bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
+                <span className="text-white text-xs sm:text-sm">
                   {story.child.firstName[0]}
                   {story.child.lastName[0]}
                 </span>
               </div>
               <div>
-                <p className="text-white text-xs sm:text-sm font-medium">
+                <p className="text-white text-xs sm:text-sm">
                   {story.child.firstName} {story.child.lastName}
                 </p>
                 <p className="text-gray-400 text-[10px] sm:text-xs">
@@ -299,7 +313,7 @@ export default function MentorStories() {
             {/* Story Stats */}
             <div className="grid grid-cols-3 gap-2 sm:gap-4 mb-3 sm:mb-4">
               <div className="text-center">
-                <div className="text-base sm:text-lg font-bold text-white">
+                <div className="text-base sm:text-lg text-white">
                   {story.totalWords}
                 </div>
                 <div className="text-gray-400 text-[10px] sm:text-xs">
@@ -307,7 +321,7 @@ export default function MentorStories() {
                 </div>
               </div>
               <div className="text-center">
-                <div className="text-base sm:text-lg font-bold text-blue-400">
+                <div className="text-base sm:text-lg text-blue-400">
                   {story.mentorCommentCount}
                 </div>
                 <div className="text-gray-400 text-[10px] sm:text-xs">
@@ -315,7 +329,7 @@ export default function MentorStories() {
                 </div>
               </div>
               <div className="text-center">
-                <div className="text-base sm:text-lg font-bold text-orange-400">
+                <div className="text-base sm:text-lg text-orange-400">
                   {story.unresolvedComments}
                 </div>
                 <div className="text-gray-400 text-[10px] sm:text-xs">
@@ -332,9 +346,9 @@ export default function MentorStories() {
                   {story.apiCallsUsed}/{story.maxApiCalls}
                 </span>
               </div>
-              <div className="w-full bg-gray-700 rounded-full h-1.5 sm:h-2">
+              <div className="w-full bg-gray-700 h-1.5 sm:h-2">
                 <div
-                  className="bg-gradient-to-r from-green-400 to-green-500 h-1.5 sm:h-2 rounded-full"
+                  className="bg-gradient-to-r from-green-400 to-green-500 h-1.5 sm:h-2"
                   style={{
                     width: `${Math.min((story.apiCallsUsed / story.maxApiCalls) * 100, 100)}%`,
                   }}
@@ -362,7 +376,7 @@ export default function MentorStories() {
                 href={`/mentor-dashboard/stories/${story._id}`}
                 className="flex-1"
               >
-                <button className="w-full bg-gradient-to-r from-green-600 to-green-700 text-white py-2 px-3 rounded-lg hover:from-green-700 hover:to-green-800 transition-all duration-200 flex items-center justify-center gap-1 sm:gap-2 text-xs sm:text-base">
+                <button className="w-full bg-gradient-to-r from-green-600 to-green-700 text-white py-2 px-3 hover:from-green-700 hover:to-green-800 transition-all duration-200 flex items-center justify-center gap-1 sm:gap-2 text-xs sm:text-base">
                   <Eye className="w-4 h-4" />
                   <span>Review Story</span>
                 </button>
@@ -371,7 +385,7 @@ export default function MentorStories() {
 
             {/* Last Comment Preview */}
             {story.lastMentorComment && (
-              <div className="mt-2 sm:mt-3 p-2 sm:p-3 bg-gray-700/30 rounded-lg">
+              <div className="mt-2 sm:mt-3 p-2 sm:p-3 bg-gray-700/30">
                 <p className="text-gray-400 text-[10px] sm:text-xs mb-0.5 sm:mb-1">
                   Your last comment:
                 </p>
@@ -384,10 +398,39 @@ export default function MentorStories() {
         ))}
       </div>
 
+      {/* Pagination Controls */}
+      {totalPages > 1 && (
+        <div className="flex justify-center items-center gap-2 mt-4">
+          <button
+            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+            disabled={currentPage === 1}
+            className="px-3 py-1 bg-gray-700 text-white disabled:opacity-50"
+          >
+            Prev
+          </button>
+          {Array.from({ length: totalPages }, (_, i) => (
+            <button
+              key={i + 1}
+              onClick={() => setCurrentPage(i + 1)}
+              className={`px-3 py-1 ${currentPage === i + 1 ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-200'}`}
+            >
+              {i + 1}
+            </button>
+          ))}
+          <button
+            onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+            disabled={currentPage === totalPages}
+            className="px-3 py-1 bg-gray-700 text-white disabled:opacity-50"
+          >
+            Next
+          </button>
+        </div>
+      )}
+
       {filteredStories.length === 0 && !loading && (
         <div className="text-center py-8 sm:py-12">
           <BookOpen className="w-12 h-12 sm:w-16 sm:h-16 text-gray-600 mx-auto mb-2 sm:mb-4" />
-          <h3 className="text-lg sm:text-xl font-medium text-gray-400 mb-1 sm:mb-2">
+          <h3 className="text-lg sm:text-xl text-gray-400 mb-1 sm:mb-2">
             No stories found
           </h3>
           <p className="text-gray-500 text-xs sm:text-base">

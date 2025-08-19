@@ -62,11 +62,11 @@ export default function MentorStudentProfile() {
     return (
       <div className="text-center py-12">
         <Users className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-        <h3 className="text-xl font-medium text-gray-400 mb-2">
+        <h3 className="text-xl text-gray-400 mb-2">
           Student not found
         </h3>
         <Link href="/mentor-dashboard/students">
-          <button className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+          <button className="mt-4 bg-blue-600 text-white px-4 py-2 hover:bg-blue-700 transition-colors">
             Back to Students
           </button>
         </Link>
@@ -84,7 +84,7 @@ export default function MentorStudentProfile() {
           </button>
         </Link>
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-white">
+          <h1 className="text-xl sm:text-2xl text-white">
             {student.firstName} {student.lastName}
           </h1>
           <p className="text-gray-400 text-xs sm:text-base">Student Profile</p>
@@ -92,23 +92,23 @@ export default function MentorStudentProfile() {
       </div>
 
       {/* Student Info Card */}
-      <div className="bg-gray-800 rounded-xl p-3 sm:p-6 flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
-        <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center">
-          <span className="text-white font-bold text-lg sm:text-xl">
+      <div className="bg-gray-800 p-3 sm:p-6 flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
+        <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
+          <span className="text-white text-lg sm:text-xl">
             {student.firstName[0]}
             {student.lastName[0]}
           </span>
         </div>
         <div>
-          <h2 className="text-lg sm:text-xl font-bold text-white">
+          <h2 className="text-lg sm:text-xl text-white">
             {student.firstName} {student.lastName}
           </h2>
           <p className="text-gray-400 text-xs sm:text-base">{student.email}</p>
           <div className="flex flex-wrap items-center gap-2 mt-2">
-            <span className="px-2 py-1 rounded-full text-xs bg-green-500/20 text-green-300 border border-green-500/30">
+            <span className="px-2 py-1 text-xs bg-green-500/20 text-green-300 border border-green-500/30">
               Active
             </span>
-            <span className="px-2 py-1 rounded-full text-xs bg-purple-500/20 text-purple-300 border border-purple-500/30">
+            <span className="px-2 py-1 text-xs bg-purple-500/20 text-purple-300 border border-purple-500/30">
               Stories: {student.totalStories}
             </span>
           </div>
@@ -127,8 +127,8 @@ export default function MentorStudentProfile() {
       </div>
 
       {/* Student Stories */}
-      <div className="bg-gray-800 rounded-xl p-3 sm:p-6">
-        <h3 className="text-base sm:text-lg font-medium text-white mb-2 sm:mb-4">
+      <div className="bg-gray-800 p-3 sm:p-6">
+        <h3 className="text-base sm:text-lg text-white mb-2 sm:mb-4">
           Stories by {student.firstName}
         </h3>
         <div className="space-y-2 sm:space-y-3">
@@ -138,14 +138,14 @@ export default function MentorStudentProfile() {
           {student.stories.map((story) => (
             <div
               key={story._id}
-              className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-4 p-2 sm:p-3 bg-gray-700/50 rounded-lg"
+              className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-4 p-2 sm:p-3 bg-gray-700/50"
             >
               <div>
-                <p className="text-white text-xs sm:text-sm font-medium">
+                <p className="text-white text-xs sm:text-sm">
                   {story.title}
                 </p>
                 <div className="flex flex-wrap items-center gap-1 sm:gap-2 mt-1">
-                  <span className="px-2 py-1 rounded-full text-xs border bg-blue-500/20 text-blue-300 border-blue-500/30">
+                  <span className="px-2 py-1 text-xs border bg-blue-500/20 text-blue-300 border-blue-500/30">
                     {story.status}
                   </span>
                   <span className="text-gray-400 text-[10px] sm:text-xs">

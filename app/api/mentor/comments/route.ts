@@ -96,7 +96,7 @@ export async function POST(request: Request) {
 
     const newComment = await StoryComment.create({
       storyId,
-      comment,
+      content: comment,
       commentType: commentType || 'general',
       authorId: session.user.id,
       authorRole: 'mentor',
