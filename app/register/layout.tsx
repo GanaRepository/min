@@ -2,9 +2,9 @@
 import React from 'react';
 
 export const metadata = {
-  title: 'Register - PioneerIT',
+  title: 'Register - Mintoons',
   description:
-    'Create your PioneerIT account to access our services and opportunities.',
+    'Create your Mintoons account to access our services and opportunities.',
 };
 
 export default function RegisterLayout({

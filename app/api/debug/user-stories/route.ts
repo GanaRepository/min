@@ -8,7 +8,7 @@ import mongoose from 'mongoose';
 export async function GET(request: Request) {
   try {
     const session = await getServerSession(authOptions);
-    
+
     if (!session || session.user?.role !== 'child') {
       console.log('Session check failed:', session?.user?.role);
       return NextResponse.json(
@@ -25,14 +25,17 @@ export async function GET(request: Request) {
     const limit = parseInt(searchParams.get('limit') || '10');
     const page = parseInt(searchParams.get('page') || '1');
     const skip = (page - 1) * limit;
-    
+
     await connectToDatabase();
-    
+
     const db = mongoose.connection.db;
-    
+
     if (!db) {
       console.error('Database connection failed');
-      return NextResponse.json({ error: 'Database connection failed' }, { status: 500 });
+      return NextResponse.json(
+        { error: 'Database connection failed' },
+        { status: 500 }
+      );
     }
 
     let stories: any[] = [];
@@ -43,21 +46,23 @@ export async function GET(request: Request) {
       try {
         const objectId = new mongoose.Types.ObjectId(session.user.id);
         console.log('Using ObjectId query:', objectId);
-        
+
         // Get stories
-        stories = await db.collection('storysessions')
+        stories = await db
+          .collection('storysessions')
           .find({ childId: objectId })
           .sort({ createdAt: -1 })
           .limit(limit)
           .skip(skip)
           .toArray();
-        
+
         // Get total count
-        totalCount = await db.collection('storysessions').countDocuments({ childId: objectId });
-        
+        totalCount = await db
+          .collection('storysessions')
+          .countDocuments({ childId: objectId });
+
         console.log('✅ Found stories:', stories.length);
         console.log('✅ Total count:', totalCount);
-        
       } catch (error) {
         console.error('ObjectId query failed:', error);
         return NextResponse.json(
@@ -66,7 +71,10 @@ export async function GET(request: Request) {
         );
       }
     } else {
-      console.error('Invalid user ID for ObjectId conversion:', session.user.id);
+      console.error(
+        'Invalid user ID for ObjectId conversion:',
+        session.user.id
+      );
       return NextResponse.json(
         { error: 'Invalid user ID format' },
         { status: 400 }
@@ -75,11 +83,12 @@ export async function GET(request: Request) {
 
     // Format stories for frontend
     const formattedStories = stories.map((story: any) => {
-      const hasCompetitionEntry = story.competitionEntries && 
-        Array.isArray(story.competitionEntries) && 
+      const hasCompetitionEntry =
+        story.competitionEntries &&
+        Array.isArray(story.competitionEntries) &&
         story.competitionEntries.length > 0;
 
-      const latestCompetitionEntry = hasCompetitionEntry 
+      const latestCompetitionEntry = hasCompetitionEntry
         ? story.competitionEntries[story.competitionEntries.length - 1]
         : null;
 
@@ -99,13 +108,15 @@ export async function GET(request: Request) {
         competitionEntries: story.competitionEntries || [],
         submittedToCompetition: hasCompetitionEntry,
         competitionSubmissionDate: latestCompetitionEntry?.submittedAt || null,
-        competitionId: latestCompetitionEntry?.competitionId?.toString() || null,
+        competitionId:
+          latestCompetitionEntry?.competitionId?.toString() || null,
         createdAt: story.createdAt,
         updatedAt: story.updatedAt,
         completedAt: story.completedAt,
         overallScore: story.assessment?.overallScore || story.overallScore || 0,
         grammarScore: story.assessment?.grammarScore || story.grammarScore || 0,
-        creativityScore: story.assessment?.creativityScore || story.creativityScore || 0,
+        creativityScore:
+          story.assessment?.creativityScore || story.creativityScore || 0,
         feedback: story.assessment?.feedback || story.feedback || '',
       };
     });
@@ -122,11 +133,14 @@ export async function GET(request: Request) {
       },
       stats: {
         total: formattedStories.length,
-        completed: formattedStories.filter((s) => s.status === 'completed').length,
+        completed: formattedStories.filter((s) => s.status === 'completed')
+          .length,
         active: formattedStories.filter((s) => s.status === 'active').length,
         published: formattedStories.filter((s) => s.isPublished).length,
-        submittedToCompetition: formattedStories.filter((s) => s.submittedToCompetition).length,
-      }
+        submittedToCompetition: formattedStories.filter(
+          (s) => s.submittedToCompetition
+        ).length,
+      },
     };
 
     console.log('=== API RESPONSE ===');
@@ -134,13 +148,12 @@ export async function GET(request: Request) {
     console.log('Total items:', response.pagination.totalItems);
 
     return NextResponse.json(response);
-
   } catch (error) {
     console.error('Error in stories API:', error);
     return NextResponse.json(
-      { 
+      {
         error: 'Failed to fetch stories',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        details: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
     );

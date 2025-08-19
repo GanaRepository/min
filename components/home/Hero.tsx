@@ -346,127 +346,127 @@ export default function Home() {
   // ];
 
   const steps = [
-  {
-    number: '01',
-    icon: <PenTool className="w-8 h-8" />,
-    title: 'Start Writing Freely',
-    description:
-      'Begin your story with complete creative freedom. Write about anything that sparks your imagination - no limits!',
-    gradient: 'from-green-500 to-teal-600',
-    features: [
-      'Any Genre Welcome',
-      'No Story Restrictions',
-      'Real-time AI Help',
-      'Word Count Tracking',
-    ],
-    image: '/kid9.jpg',
-  },
-  {
-    number: '02',
-    icon: <Sparkles className="w-8 h-8" />,
-    title: 'Collaborate with AI',
-    description:
-      'Get suggestions and ideas from AI as you write. The AI helps develop your story while you stay in complete control.',
-    gradient: 'from-blue-500 to-cyan-600',
-    features: [
-      'Plot Suggestions',
-      'Character Development',
-      'Creative Prompts',
-      'Writing Guidance',
-    ],
-    image: '/kid10.jpg',
-  },
-  {
-    number: '03',
-    icon: <BookOpen className="w-8 h-8" />,
-    title: 'Complete Your Story',
-    description:
-      'Finish your masterpiece! Stories can be any length - from short tales to epic adventures (350 words to 600 words).',
-    gradient: 'from-purple-500 to-indigo-600',
-    features: [
-      'Max 600 Words Length',
-      'Auto-save Progress',
-      'Draft Management',
-      'Story Preview',
-    ],
-    image: '/kid11.jpg',
-  },
-  {
-    number: '04',
-    icon: <Upload className="w-8 h-8" />,
-    title: 'Upload for Assessment',
-    description:
-      'Submit your completed story for detailed AI analysis and personalized feedback to improve your writing.',
-    gradient: 'from-orange-500 to-red-600',
-    features: [
-      'Just Paste Your Story',
-      'Instant Processing',
-      'Multiple Attempts',
-      'Plagiarism Detection',
-    ],
-    image: '/kid12.jpg',
-  },
-  {
-    number: '05',
-    icon: <Award className="w-8 h-8" />,
-    title: 'Get Feedback & Compete',
-    description:
-      'Receive comprehensive feedback to improve your writing and enter monthly competitions with other young writers.',
-    gradient: 'from-pink-500 to-purple-600',
-    features: [
-      'Grammar Analysis',
-      'Creativity Scores',
-      'Competition Entry',
-      'Progress Tracking',
-    ],
-    image: '/kid14.jpg',
-  },
-  {
-    number: '06',
-    icon: <Trophy className="w-8 h-8" />,
-    title: 'Join Competitions',
-    description:
-      'Participate in monthly writing competitions! Compete with writers worldwide and improve your skills.',
-    gradient: 'from-yellow-500 to-orange-600',
-    features: [
-      'Monthly Challenges',
-      'Upload Your 3 Best Stories',
-      'Ai Picks Top 3 Winners',
-      'Winner Will be Considered for Free Spot in Anthology Books',
-    ],
-    image: '/kid15.jpg', // Add this image
-  },
-  {
-    number: '07',
-    icon: <Users className="w-8 h-8" />,
-    title: 'Share in Community',
-    description:
-      'Publish your 3 best stories in a month to the community page where other young writers, mentors, and admins can read and comment.',
-    gradient: 'from-indigo-500 to-purple-600',
-    features: [
-      'Public Story Showcase',
-      'Reader Comments',
-      'Story Ratings',
-      'Author Profiles',
-    ],
-    image: '/kid16.jpg', // Add this image
-  },
-  {
-    number: '08',
-    icon: <BookMarked className="w-8 h-8" />,
-    title: 'Reserve & Order Physical Books',
-    description:
-      'Reserve your anthology spot for $10 per Story, then contact admin through our form to order the actual printed book at custom pricing.',
-    gradient: 'from-emerald-500 to-teal-600',
-    features: [
-      '$10 Per Story for Spot Reservation',
-      'Custom Book Pricing',
-      'Contact Admin for Orders',
-      'Professional Anthology',
-    ],
-    image: '/kid17.jpg', // Add this image
-  },
-];
+    {
+      number: '01',
+      icon: <PenTool className="w-8 h-8" />,
+      title: 'Start Writing Freely',
+      description:
+        'Begin your story with complete creative freedom. Write about anything that sparks your imagination - no limits!',
+      gradient: 'from-green-500 to-teal-600',
+      features: [
+        'Any Genre Welcome',
+        'No Story Restrictions',
+        'Real-time AI Help',
+        'Word Count Tracking',
+      ],
+      image: '/kid9.jpg',
+    },
+    {
+      number: '02',
+      icon: <Sparkles className="w-8 h-8" />,
+      title: 'Collaborate with AI',
+      description:
+        'Get suggestions and ideas from AI as you write. The AI helps develop your story while you stay in complete control.',
+      gradient: 'from-blue-500 to-cyan-600',
+      features: [
+        'Plot Suggestions',
+        'Character Development',
+        'Creative Prompts',
+        'Writing Guidance',
+      ],
+      image: '/kid10.jpg',
+    },
+    {
+      number: '03',
+      icon: <BookOpen className="w-8 h-8" />,
+      title: 'Complete Your Story',
+      description:
+        'Finish your masterpiece! Stories can be any length - from short tales to epic adventures (350 words to 600 words).',
+      gradient: 'from-purple-500 to-indigo-600',
+      features: [
+        'Max 600 Words Length',
+        'Auto-save Progress',
+        'Draft Management',
+        'Story Preview',
+      ],
+      image: '/kid11.jpg',
+    },
+    {
+      number: '04',
+      icon: <Upload className="w-8 h-8" />,
+      title: 'Upload for Assessment',
+      description:
+        'Submit your completed story for detailed AI analysis and personalized feedback to improve your writing.',
+      gradient: 'from-orange-500 to-red-600',
+      features: [
+        'Just Paste Your Story',
+        'Instant Processing',
+        'Multiple Attempts',
+        'Plagiarism Detection',
+      ],
+      image: '/kid12.jpg',
+    },
+    {
+      number: '05',
+      icon: <Award className="w-8 h-8" />,
+      title: 'Get Feedback & Compete',
+      description:
+        'Receive comprehensive feedback to improve your writing and enter monthly competitions with other young writers.',
+      gradient: 'from-pink-500 to-purple-600',
+      features: [
+        'Grammar Analysis',
+        'Creativity Scores',
+        'Competition Entry',
+        'Progress Tracking',
+      ],
+      image: '/kid14.jpg',
+    },
+    {
+      number: '06',
+      icon: <Trophy className="w-8 h-8" />,
+      title: 'Join Competitions',
+      description:
+        'Participate in monthly writing competitions! Compete with writers worldwide and improve your skills.',
+      gradient: 'from-yellow-500 to-orange-600',
+      features: [
+        'Monthly Challenges',
+        'Upload Your 3 Best Stories',
+        'Ai Picks Top 3 Winners',
+        'Winner Will be Considered for Free Spot in Anthology Books',
+      ],
+      image: '/kid15.jpg', // Add this image
+    },
+    {
+      number: '07',
+      icon: <Users className="w-8 h-8" />,
+      title: 'Share in Community',
+      description:
+        'Publish your 3 best stories in a month to the community page where other young writers, mentors, and admins can read and comment.',
+      gradient: 'from-indigo-500 to-purple-600',
+      features: [
+        'Public Story Showcase',
+        'Reader Comments',
+        'Story Ratings',
+        'Author Profiles',
+      ],
+      image: '/kid16.jpg', // Add this image
+    },
+    {
+      number: '08',
+      icon: <BookMarked className="w-8 h-8" />,
+      title: 'Reserve & Order Physical Books',
+      description:
+        'Reserve your anthology spot for $10 per Story, then contact admin through our form to order the actual printed book at custom pricing.',
+      gradient: 'from-emerald-500 to-teal-600',
+      features: [
+        '$10 Per Story for Spot Reservation',
+        'Custom Book Pricing',
+        'Contact Admin for Orders',
+        'Professional Anthology',
+      ],
+      image: '/kid17.jpg', // Add this image
+    },
+  ];
 
   // Updated values for current system
   const values = [

@@ -27,24 +27,24 @@ export async function GET() {
     // Count actual stories created this month
     const allStoriesThisMonth = await StorySession.find({
       childId: user._id,
-      createdAt: { $gte: currentMonthStart }
+      createdAt: { $gte: currentMonthStart },
     }).lean();
 
-    const regularStoriesThisMonth = allStoriesThisMonth.filter(story => 
-      !story.isUploadedForAssessment
+    const regularStoriesThisMonth = allStoriesThisMonth.filter(
+      (story) => !story.isUploadedForAssessment
     );
 
-    const assessmentStoriesThisMonth = allStoriesThisMonth.filter(story => 
-      story.isUploadedForAssessment === true
+    const assessmentStoriesThisMonth = allStoriesThisMonth.filter(
+      (story) => story.isUploadedForAssessment === true
     );
 
-    const competitionStoriesThisMonth = allStoriesThisMonth.filter(story => 
-      story.competitionEntries && story.competitionEntries.length > 0
+    const competitionStoriesThisMonth = allStoriesThisMonth.filter(
+      (story) => story.competitionEntries && story.competitionEntries.length > 0
     );
 
     // Get all stories for this user (not just this month)
     const allUserStories = await StorySession.find({
-      childId: user._id
+      childId: user._id,
     }).lean();
 
     const debugData = {
@@ -73,36 +73,49 @@ export async function GET() {
         competitionEntriesThisMonth: user.competitionEntriesThisMonth || 0,
       },
       storiesBreakdown: {
-        allStoriesThisMonth: allStoriesThisMonth.map(story => ({
+        allStoriesThisMonth: allStoriesThisMonth.map((story) => ({
           id: story._id,
           title: story.title,
           createdAt: story.createdAt,
           isUploadedForAssessment: story.isUploadedForAssessment,
-          hasCompetitionEntries: !!(story.competitionEntries && story.competitionEntries.length > 0),
+          hasCompetitionEntries: !!(
+            story.competitionEntries && story.competitionEntries.length > 0
+          ),
           status: story.status,
         })),
-        allStoriesAllTime: allUserStories.map(story => ({
+        allStoriesAllTime: allUserStories.map((story) => ({
           id: story._id,
           title: story.title,
           createdAt: story.createdAt,
           isUploadedForAssessment: story.isUploadedForAssessment,
-          hasCompetitionEntries: !!(story.competitionEntries && story.competitionEntries.length > 0),
+          hasCompetitionEntries: !!(
+            story.competitionEntries && story.competitionEntries.length > 0
+          ),
           status: story.status,
-        }))
+        })),
       },
       mismatch: {
-        storiesMismatch: (user.storiesCreatedThisMonth || 0) !== regularStoriesThisMonth.length,
-        assessmentMismatch: (user.assessmentUploadsThisMonth || 0) !== assessmentStoriesThisMonth.length,
-        competitionMismatch: (user.competitionEntriesThisMonth || 0) !== competitionStoriesThisMonth.length,
-      }
+        storiesMismatch:
+          (user.storiesCreatedThisMonth || 0) !==
+          regularStoriesThisMonth.length,
+        assessmentMismatch:
+          (user.assessmentUploadsThisMonth || 0) !==
+          assessmentStoriesThisMonth.length,
+        competitionMismatch:
+          (user.competitionEntriesThisMonth || 0) !==
+          competitionStoriesThisMonth.length,
+      },
     };
 
     return NextResponse.json(debugData);
   } catch (error) {
     console.error('Error in debug stats:', error);
-    return NextResponse.json({ 
-      error: 'Failed to get debug stats',
-      details: error instanceof Error ? error.message : 'Unknown error'
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        error: 'Failed to get debug stats',
+        details: error instanceof Error ? error.message : 'Unknown error',
+      },
+      { status: 500 }
+    );
   }
 }

@@ -1,4 +1,3 @@
-
 // import { NextResponse } from 'next/server';
 // import { getServerSession } from 'next-auth';
 // import { authOptions } from '@/utils/authOptions';
@@ -113,7 +112,6 @@
 //   }
 // }
 
-
 // app/api/stories/publish/route.ts - COMPLETE FIXED VERSION
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
@@ -142,10 +140,7 @@ export async function POST(request: Request) {
     // Check monthly publication limit (1 per month)
     const canPublish = await UsageManager.canPublishStory(session.user.id);
     if (!canPublish.allowed) {
-      return NextResponse.json(
-        { error: canPublish.reason },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: canPublish.reason }, { status: 400 });
     }
 
     // Get story session and turns
@@ -191,28 +186,28 @@ export async function POST(request: Request) {
 
     // FIXED: Use assessment data with fallbacks to existing story assessment or defaults
     const finalAssessment = assessment || storySession.assessment || {};
-    
+
     // Create published story with proper null checks
     const publishedStory = await PublishedStory.create({
       sessionId,
       childId: session.user.id,
       title: storySession.title,
       content: fullContent.join('\n\n'),
-  elements: storySession.elements,
-  totalWords: storySession.totalWords,
-  childWords: storySession.childWords,
-  grammarScore: finalAssessment.grammarScore || 0,
-  creativityScore: finalAssessment.creativityScore || 0,
-  overallScore: finalAssessment.overallScore || 0,
-  aiFeeback: finalAssessment.feedback || 'No feedback provided',
+      elements: storySession.elements,
+      totalWords: storySession.totalWords,
+      childWords: storySession.childWords,
+      grammarScore: finalAssessment.grammarScore || 0,
+      creativityScore: finalAssessment.creativityScore || 0,
+      overallScore: finalAssessment.overallScore || 0,
+      aiFeeback: finalAssessment.feedback || 'No feedback provided',
     });
 
     // ALSO set the flag in StorySession for community page
     await StorySession.findByIdAndUpdate(sessionId, {
       $set: {
-          aiFeeback: assessment.feedback,
-        publishedAt: new Date()
-      }
+        aiFeeback: assessment.feedback,
+        publishedAt: new Date(),
+      },
     });
 
     return NextResponse.json({

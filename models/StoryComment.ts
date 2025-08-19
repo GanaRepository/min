@@ -91,7 +91,14 @@ export interface IStoryComment extends Document {
   authorId: mongoose.Types.ObjectId;
   authorRole: 'admin' | 'mentor' | 'child'; // 🆕 Added 'child' for community comments
   content: string;
-  commentType: 'general' | 'grammar' | 'creativity' | 'structure' | 'suggestion' | 'admin_feedback' | 'community'; // 🆕 Added 'community'
+  commentType:
+    | 'general'
+    | 'grammar'
+    | 'creativity'
+    | 'structure'
+    | 'suggestion'
+    | 'admin_feedback'
+    | 'community'; // 🆕 Added 'community'
   category: string;
   isPublic: boolean;
   isResolved: boolean;
@@ -120,102 +127,117 @@ export interface IStoryComment extends Document {
   updatedAt: Date;
 }
 
-const StoryCommentSchema = new Schema<IStoryComment>({
-  storyId: {
-    type: Schema.Types.ObjectId,
-    ref: 'StorySession',
-    required: true,
-    index: true,
-  },
-  authorId: {
-    type: Schema.Types.ObjectId,
-    ref: 'User',
-    required: true,
-    index: true,
-  },
-  content: {
-    type: String,
-    required: true,
-    maxlength: 1000,
-    trim: true,
-  },
-  commentType: {
-    type: String,
-    enum: ['general', 'grammar', 'creativity', 'structure', 'suggestion', 'admin_feedback', 'community'], // 🆕 Added 'community'
-    default: 'general',
-  },
-  category: {
-    type: String,
-    enum: ['grammar', 'creativity', 'structure', 'general', 'community'], // 🆕 Added 'community'
-    default: 'general',
-  },
-  isPublic: {
-    type: Boolean,
-    default: false, // 🆕 Default to false for safety
-  },
-  isResolved: {
-    type: Boolean,
-    default: false,
-    index: true,
-  },
-  resolvedAt: {
-    type: Date,
-  },
-  resolvedBy: {
-    type: Schema.Types.ObjectId,
-    ref: 'User',
-  },
-  parentCommentId: {
-    type: Schema.Types.ObjectId,
-    ref: 'StoryComment',
-    index: true, // 🆕 Added index for replies
-  },
-  position: {
-    paragraph: { type: Number },
-    sentence: { type: Number },
-  },
-
-  // 🆕 COMMUNITY FEATURES - ALL OPTIONAL WITH DEFAULTS
-  likes: [{
-    type: Schema.Types.ObjectId,
-    ref: 'User'
-  }],
-  isModerated: {
-    type: Boolean,
-    default: false,
-  },
-  moderatedBy: {
-    type: Schema.Types.ObjectId,
-    ref: 'User',
-  },
-  moderatedAt: {
-    type: Date,
-  },
-  moderationReason: {
-    type: String,
-  },
-  reports: [{
-    reportedBy: {
+const StoryCommentSchema = new Schema<IStoryComment>(
+  {
+    storyId: {
+      type: Schema.Types.ObjectId,
+      ref: 'StorySession',
+      required: true,
+      index: true,
+    },
+    authorId: {
       type: Schema.Types.ObjectId,
       ref: 'User',
       required: true,
+      index: true,
     },
-    reason: {
+    content: {
       type: String,
-      enum: ['inappropriate', 'spam', 'harassment', 'other'],
       required: true,
+      maxlength: 1000,
+      trim: true,
     },
-    description: {
+    commentType: {
+      type: String,
+      enum: [
+        'general',
+        'grammar',
+        'creativity',
+        'structure',
+        'suggestion',
+        'admin_feedback',
+        'community',
+      ], // 🆕 Added 'community'
+      default: 'general',
+    },
+    category: {
+      type: String,
+      enum: ['grammar', 'creativity', 'structure', 'general', 'community'], // 🆕 Added 'community'
+      default: 'general',
+    },
+    isPublic: {
+      type: Boolean,
+      default: false, // 🆕 Default to false for safety
+    },
+    isResolved: {
+      type: Boolean,
+      default: false,
+      index: true,
+    },
+    resolvedAt: {
+      type: Date,
+    },
+    resolvedBy: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+    },
+    parentCommentId: {
+      type: Schema.Types.ObjectId,
+      ref: 'StoryComment',
+      index: true, // 🆕 Added index for replies
+    },
+    position: {
+      paragraph: { type: Number },
+      sentence: { type: Number },
+    },
+
+    // 🆕 COMMUNITY FEATURES - ALL OPTIONAL WITH DEFAULTS
+    likes: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+      },
+    ],
+    isModerated: {
+      type: Boolean,
+      default: false,
+    },
+    moderatedBy: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+    },
+    moderatedAt: {
+      type: Date,
+    },
+    moderationReason: {
       type: String,
     },
-    reportedAt: {
-      type: Date,
-      default: Date.now,
-    }
-  }]
-}, {
-  timestamps: true,
-});
+    reports: [
+      {
+        reportedBy: {
+          type: Schema.Types.ObjectId,
+          ref: 'User',
+          required: true,
+        },
+        reason: {
+          type: String,
+          enum: ['inappropriate', 'spam', 'harassment', 'other'],
+          required: true,
+        },
+        description: {
+          type: String,
+        },
+        reportedAt: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
+  },
+  {
+    timestamps: true,
+  }
+);
 
 // Existing indexes
 StoryCommentSchema.index({ storyId: 1, createdAt: -1 });
@@ -227,4 +249,5 @@ StoryCommentSchema.index({ parentCommentId: 1 });
 StoryCommentSchema.index({ isModerated: 1 });
 StoryCommentSchema.index({ 'reports.reportedBy': 1 });
 
-export default mongoose.models?.StoryComment || mongoose.model<IStoryComment>('StoryComment', StoryCommentSchema);
+export default mongoose.models?.StoryComment ||
+  mongoose.model<IStoryComment>('StoryComment', StoryCommentSchema);

@@ -32,11 +32,11 @@
 //       case 'checkout.session.completed':
 //         await handleCheckoutCompleted(event.data.object as Stripe.Checkout.Session);
 //         break;
-      
+
 //       case 'payment_intent.succeeded':
 //         console.log('💰 Payment succeeded:', event.data.object.id);
 //         break;
-        
+
 //       case 'payment_intent.payment_failed':
 //         console.log('❌ Payment failed:', event.data.object.id);
 //         break;
@@ -199,7 +199,10 @@ export async function POST(request: NextRequest) {
     event = stripe.webhooks.constructEvent(body, sig!, endpointSecret);
   } catch (err: any) {
     console.error('❌ Webhook signature verification failed:', err.message);
-    return NextResponse.json({ error: `Webhook Error: ${err.message}` }, { status: 400 });
+    return NextResponse.json(
+      { error: `Webhook Error: ${err.message}` },
+      { status: 400 }
+    );
   }
 
   console.log('🎉 Received webhook event:', event.type);
@@ -207,13 +210,15 @@ export async function POST(request: NextRequest) {
   try {
     switch (event.type) {
       case 'checkout.session.completed':
-        await handleCheckoutCompleted(event.data.object as Stripe.Checkout.Session);
+        await handleCheckoutCompleted(
+          event.data.object as Stripe.Checkout.Session
+        );
         break;
-      
+
       case 'payment_intent.succeeded':
         console.log('💰 Payment succeeded:', event.data.object.id);
         break;
-        
+
       case 'payment_intent.payment_failed':
         console.log('❌ Payment failed:', event.data.object.id);
         break;
@@ -253,7 +258,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
       productType,
       storyId,
       storyTitle,
-      amount: session.amount_total
+      amount: session.amount_total,
     });
 
     // Determine purchase details based on product type
@@ -261,20 +266,25 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     if (productType === 'story_pack') {
       purchaseData = {
         type: 'story_pack' as const,
-        amount: 15.00,
+        amount: 15.0,
         itemDetails: {
           storiesAdded: 5,
           assessmentsAdded: 15,
         },
       };
-    } else if (productType === 'individual_story' || productType === 'story_purchase') {
+    } else if (
+      productType === 'individual_story' ||
+      productType === 'story_purchase'
+    ) {
       purchaseData = {
         type: 'individual_story' as const, // Always save as 'individual_story' for schema compatibility
-        amount: 10.00,
+        amount: 10.0,
         itemDetails: {
           storyId: storyId ? new mongoose.Types.ObjectId(storyId) : undefined,
           storyTitle: storyTitle || 'Unknown Story',
-          ...(productType === 'story_purchase' ? { physicalBookInclusion: true } : {}),
+          ...(productType === 'story_purchase'
+            ? { physicalBookInclusion: true }
+            : {}),
         },
       };
     } else {
@@ -306,24 +316,33 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
 
     // Handle specific product actions
     if (productType === 'story_pack') {
-      console.log('📦 Story pack purchased: 30-day benefits activated for user', userId);
-      
+      console.log(
+        '📦 Story pack purchased: 30-day benefits activated for user',
+        userId
+      );
+
       // NO LONGER SET monthlyLimits or subscriptionTier here
       // These are now calculated dynamically from purchaseHistory
       const purchaseDate = new Date();
-      const expiryDate = new Date(purchaseDate.getTime() + (30 * 24 * 60 * 60 * 1000));
-      
-      console.log(`⏰ Story Pack active from ${purchaseDate.toISOString()} to ${expiryDate.toISOString()}`);
-      
+      const expiryDate = new Date(
+        purchaseDate.getTime() + 30 * 24 * 60 * 60 * 1000
+      );
+
+      console.log(
+        `⏰ Story Pack active from ${purchaseDate.toISOString()} to ${expiryDate.toISOString()}`
+      );
     } else if (productType === 'individual_story' && storyId) {
-      console.log('📖 Individual story purchased for physical anthology:', storyId);
+      console.log(
+        '📖 Individual story purchased for physical anthology:',
+        storyId
+      );
       // Mark story for physical anthology
       await StorySession.findByIdAndUpdate(storyId, {
         physicalAnthology: {
           purchased: true,
           purchaseDate: new Date(),
           stripeSessionId: session.id,
-          amount: 10.00,
+          amount: 10.0,
         },
       });
     } else if (productType === 'story_purchase' && storyId) {
@@ -337,7 +356,6 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     }
 
     console.log('🎉 Checkout completed successfully for', userId);
-
   } catch (error) {
     console.error('❌ Error processing checkout completion:', error);
     throw error;

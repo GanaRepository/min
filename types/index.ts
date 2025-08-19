@@ -76,7 +76,7 @@ export interface Story extends BaseDocument {
   status: 'active' | 'completed' | 'flagged' | 'review';
   storyType: 'freestyle' | 'uploaded' | 'competition';
   storyNumber: number;
-  
+
   // Content and Progress
   aiOpening?: string;
   currentTurn: number;
@@ -84,24 +84,24 @@ export interface Story extends BaseDocument {
   apiCallsUsed: number;
   totalWords: number;
   childWords: number;
-  
+
   // Story elements
   elements?: StoryElements;
-  
+
   // Publication
   isPublished: boolean;
   publicationDate?: Date;
   publicationFee?: number;
-  
+
   // Competition
   competitionEligible: boolean;
   competitionEntries?: CompetitionEntry[];
-  
+
   // Assessment
   isUploadedForAssessment: boolean;
   assessmentAttempts: number;
   assessment?: StoryAssessment;
-  
+
   // Timing
   completedAt?: Date;
   pausedAt?: Date;
@@ -122,21 +122,21 @@ export interface Competition extends BaseDocument {
   year: number;
   phase: 'submission' | 'judging' | 'results';
   isActive: boolean;
-  
+
   // Timing
   submissionStart?: Date;
   submissionEnd?: Date;
   judgingEnd?: Date;
   resultsDate?: Date;
-  
+
   // Stats
   totalSubmissions?: number;
   totalParticipants?: number;
-  
+
   // Results
   winners?: CompetitionWinner[];
   judgingCriteria?: Record<string, number>;
-  
+
   // Entries
   entries?: Array<{
     storyId: mongoose.Types.ObjectId;
@@ -144,7 +144,7 @@ export interface Competition extends BaseDocument {
     score?: number;
     rank?: number;
   }>;
-  
+
   // Archive
   archivedAt?: Date;
 }
@@ -219,7 +219,11 @@ export interface StorySessionRequest {
 }
 
 export interface CompetitionAction {
-  action: 'advance_phase' | 'create_new_competition' | 'update_settings' | 'run_judging';
+  action:
+    | 'advance_phase'
+    | 'create_new_competition'
+    | 'update_settings'
+    | 'run_judging';
   competitionId?: string;
   data?: Record<string, any>;
 }
@@ -271,8 +275,12 @@ export interface FileInfo {
 }
 
 // MongoDB Lean Document Types (for fixing FlattenMaps errors)
-export type StoryLean = mongoose.FlattenMaps<Story> & { _id: mongoose.Types.ObjectId };
-export type CompetitionLean = mongoose.FlattenMaps<Competition> & { _id: mongoose.Types.ObjectId };
+export type StoryLean = mongoose.FlattenMaps<Story> & {
+  _id: mongoose.Types.ObjectId;
+};
+export type CompetitionLean = mongoose.FlattenMaps<Competition> & {
+  _id: mongoose.Types.ObjectId;
+};
 
 // Utility Types
 export type StoryStatus = 'active' | 'completed' | 'flagged' | 'review';

@@ -35,20 +35,20 @@
 
 // //     console.log('📊 Fetching usage statistics for user:', session.user.id);
 // //     await connectToDatabase();
-    
+
 // //     // Get current month dates
 // //     const now = new Date();
 // //     const currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
-    
+
 // //     // Get user data
 // //     const user = await User.findById(session.user.id);
 // //     if (!user) {
 // //       return NextResponse.json({ error: 'User not found' }, { status: 404 });
 // //     }
-    
+
 // //     // Use NEW enhanced UsageManager that calculates limits from 30-day purchases
 // //     const usageStats = await UsageManager.getUserUsageStats(session.user.id);
-    
+
 // //     // Add reset info if it just happened
 // //     if (resetPerformed) {
 // //       usageStats.resetInfo = {
@@ -56,13 +56,13 @@
 // //         message: 'Monthly limits reset complete (Story Pack purchases preserved)'
 // //       };
 // //     }
-    
+
 // //     // Count publications this month
 // //     const monthlyPublications = await PublishedStory.countDocuments({
 // //       childId: session.user.id,
 // //       publishedAt: { $gte: currentMonthStart }
 // //     });
-    
+
 // //     // Add publications to the usage stats
 // //     const completeUsageStats = {
 // //       ...usageStats,
@@ -72,12 +72,12 @@
 // //         remaining: Math.max(0, 1 - monthlyPublications),
 // //         canUse: monthlyPublications < 1
 // //       },
-// //       currentPeriod: now.toLocaleDateString('en-US', { 
-// //         month: 'long', 
-// //         year: 'numeric' 
+// //       currentPeriod: now.toLocaleDateString('en-US', {
+// //         month: 'long',
+// //         year: 'numeric'
 // //       })
 // //     };
-    
+
 // //     console.log('✅ Complete usage statistics:', completeUsageStats);
 // //     return NextResponse.json({
 // //       success: true,
@@ -87,7 +87,7 @@
 
 // //   } catch (error) {
 // //     console.error('❌ Error fetching usage statistics:', error);
-    
+
 // //     // Return safe defaults for new users if error occurs
 // //     const defaultStats = {
 // //       freestyleStories: { used: 0, limit: 3, remaining: 3, canUse: true },
@@ -96,9 +96,9 @@
 // //       publications: { used: 0, limit: 1, remaining: 1, canUse: true },
 // //       subscriptionTier: 'FREE',
 // //       resetDate: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1).toISOString(),
-// //       currentPeriod: new Date().toLocaleDateString('en-US', { 
-// //         month: 'long', 
-// //         year: 'numeric' 
+// //       currentPeriod: new Date().toLocaleDateString('en-US', {
+// //         month: 'long',
+// //         year: 'numeric'
 // //       })
 // //     };
 
@@ -147,20 +147,20 @@
 
 //     console.log('📊 Fetching usage statistics for user:', session.user.id);
 //     await connectToDatabase();
-    
+
 //     // Get current month dates
 //     const now = new Date();
 //     const currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
-    
+
 //     // Get user data
 //     const user = await User.findById(session.user.id);
 //     if (!user) {
 //       return NextResponse.json({ error: 'User not found' }, { status: 404 });
 //     }
-    
+
 //     // Use ENHANCED UsageManager that calculates limits from 30-day purchases
 //     const usageStats = await UsageManager.getUserUsageStats(session.user.id);
-    
+
 //     // Add reset info if it just happened
 //     if (resetPerformed) {
 //       usageStats.resetInfo = {
@@ -168,13 +168,13 @@
 //         message: 'Monthly limits reset complete (Story Pack purchases preserved)'
 //       };
 //     }
-    
+
 //     // Count publications this month
 //     const monthlyPublications = await PublishedStory.countDocuments({
 //       childId: session.user.id,
 //       publishedAt: { $gte: currentMonthStart }
 //     });
-    
+
 //     // Add publications to the usage stats
 //     const completeUsageStats = {
 //       ...usageStats,
@@ -184,12 +184,12 @@
 //         remaining: Math.max(0, 3 - monthlyPublications),
 //         canUse: monthlyPublications < 3
 //       },
-//       currentPeriod: now.toLocaleDateString('en-US', { 
-//         month: 'long', 
-//         year: 'numeric' 
+//       currentPeriod: now.toLocaleDateString('en-US', {
+//         month: 'long',
+//         year: 'numeric'
 //       })
 //     };
-    
+
 //     console.log('✅ Complete usage statistics:', completeUsageStats);
 //     return NextResponse.json({
 //       success: true,
@@ -199,7 +199,7 @@
 
 //   } catch (error) {
 //     console.error('❌ Error fetching usage statistics:', error);
-    
+
 //     // Return safe defaults for new users if error occurs
 //     const defaultStats = {
 //       freestyleStories: { used: 0, limit: 3, remaining: 3, canUse: true },
@@ -208,9 +208,9 @@
 //   publications: { used: 0, limit: 3, remaining: 3, canUse: true },
 //       subscriptionTier: 'FREE',
 //       resetDate: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1).toISOString(),
-//       currentPeriod: new Date().toLocaleDateString('en-US', { 
-//         month: 'long', 
-//         year: 'numeric' 
+//       currentPeriod: new Date().toLocaleDateString('en-US', {
+//         month: 'long',
+//         year: 'numeric'
 //       })
 //     };
 
@@ -233,10 +233,30 @@ import StorySession from '@/models/StorySession';
 
 // Simple, fast interface
 interface UsageStats {
-  freestyleStories: { used: number; limit: number; remaining: number; canUse: boolean };
-  assessmentRequests: { used: number; limit: number; remaining: number; canUse: boolean };
-  competitionEntries: { used: number; limit: number; remaining: number; canUse: boolean };
-  publications: { used: number; limit: number; remaining: number; canUse: boolean };
+  freestyleStories: {
+    used: number;
+    limit: number;
+    remaining: number;
+    canUse: boolean;
+  };
+  assessmentRequests: {
+    used: number;
+    limit: number;
+    remaining: number;
+    canUse: boolean;
+  };
+  competitionEntries: {
+    used: number;
+    limit: number;
+    remaining: number;
+    canUse: boolean;
+  };
+  publications: {
+    used: number;
+    limit: number;
+    remaining: number;
+    canUse: boolean;
+  };
   subscriptionTier: 'FREE' | 'STORY_PACK';
   resetDate: string;
 }
@@ -244,7 +264,7 @@ interface UsageStats {
 export async function GET(request: NextRequest) {
   const startTime = Date.now();
   console.log('🚀 Starting usage API call...');
-  
+
   try {
     const session = await getServerSession(authOptions);
 
@@ -263,20 +283,20 @@ export async function GET(request: NextRequest) {
     }
 
     await connectToDatabase();
-    
+
     // OPTIMIZED: Get current month dates once
     const now = new Date();
     const currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
     const nextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
-    
+
     console.log('⚡ Connected to DB in', Date.now() - startTime, 'ms');
-    
+
     // OPTIMIZED: Single user query with lean() for speed and type assertion
-    const user = await User.findById(session.user.id).lean() as any;
+    const user = (await User.findById(session.user.id).lean()) as any;
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
-    
+
     console.log('⚡ Got user in', Date.now() - startTime, 'ms');
 
     // OPTIMIZED: Simple default limits (no complex calculations)
@@ -284,25 +304,28 @@ export async function GET(request: NextRequest) {
       freestyleStories: 3,
       assessmentRequests: 9,
       competitionEntries: 3,
-      publications: 1
+      publications: 1,
     };
 
     // OPTIMIZED: Check for story pack purchases this month (simple filter)
     let hasStoryPack = false;
     if (user.purchaseHistory && Array.isArray(user.purchaseHistory)) {
-      hasStoryPack = user.purchaseHistory.some((purchase: any) => 
-        purchase.type === 'story_pack' && 
-        new Date(purchase.purchaseDate) >= currentMonthStart
+      hasStoryPack = user.purchaseHistory.some(
+        (purchase: any) =>
+          purchase.type === 'story_pack' &&
+          new Date(purchase.purchaseDate) >= currentMonthStart
       );
     }
 
     // OPTIMIZED: Apply story pack bonus if applicable
-    const limits = hasStoryPack ? {
-      freestyleStories: defaultLimits.freestyleStories + 10, // Story pack adds 10
-      assessmentRequests: defaultLimits.assessmentRequests + 30, // Story pack adds 30
-      competitionEntries: defaultLimits.competitionEntries,
-      publications: defaultLimits.publications + 2 // Story pack adds 2
-    } : defaultLimits;
+    const limits = hasStoryPack
+      ? {
+          freestyleStories: defaultLimits.freestyleStories + 10, // Story pack adds 10
+          assessmentRequests: defaultLimits.assessmentRequests + 30, // Story pack adds 30
+          competitionEntries: defaultLimits.competitionEntries,
+          publications: defaultLimits.publications + 2, // Story pack adds 2
+        }
+      : defaultLimits;
 
     console.log('⚡ Calculated limits in', Date.now() - startTime, 'ms');
 
@@ -311,8 +334,8 @@ export async function GET(request: NextRequest) {
       {
         $match: {
           childId: session.user.id,
-          createdAt: { $gte: currentMonthStart }
-        }
+          createdAt: { $gte: currentMonthStart },
+        },
       },
       {
         $group: {
@@ -320,12 +343,8 @@ export async function GET(request: NextRequest) {
           // Count freestyle stories (not uploaded for assessment)
           freestyleCount: {
             $sum: {
-              $cond: [
-                { $ne: ['$isUploadedForAssessment', true] },
-                1,
-                0
-              ]
-            }
+              $cond: [{ $ne: ['$isUploadedForAssessment', true] }, 1, 0],
+            },
           },
           // Count assessment requests (uploaded or has assessment)
           assessmentCount: {
@@ -334,13 +353,13 @@ export async function GET(request: NextRequest) {
                 {
                   $or: [
                     { $eq: ['$isUploadedForAssessment', true] },
-                    { $ne: ['$assessment', null] }
-                  ]
+                    { $ne: ['$assessment', null] },
+                  ],
                 },
                 1,
-                0
-              ]
-            }
+                0,
+              ],
+            },
           },
           // Count competition entries
           competitionCount: {
@@ -349,28 +368,37 @@ export async function GET(request: NextRequest) {
                 {
                   $and: [
                     { $ne: ['$competitionEntries', null] },
-                    { $gt: [{ $size: { $ifNull: ['$competitionEntries', []] } }, 0] }
-                  ]
+                    {
+                      $gt: [
+                        { $size: { $ifNull: ['$competitionEntries', []] } },
+                        0,
+                      ],
+                    },
+                  ],
                 },
                 1,
-                0
-              ]
-            }
-          }
-        }
-      }
+                0,
+              ],
+            },
+          },
+        },
+      },
     ]);
 
     console.log('⚡ Got usage data in', Date.now() - startTime, 'ms');
 
     // Extract counts (default to 0 if no data)
-    const counts = usageData[0] || { freestyleCount: 0, assessmentCount: 0, competitionCount: 0 };
-    
+    const counts = usageData[0] || {
+      freestyleCount: 0,
+      assessmentCount: 0,
+      competitionCount: 0,
+    };
+
     // OPTIMIZED: Count published stories (simple query)
     const publishedCount = await StorySession.countDocuments({
       childId: session.user.id,
       createdAt: { $gte: currentMonthStart },
-      isPublished: true
+      isPublished: true,
     });
 
     console.log('⚡ Got published count in', Date.now() - startTime, 'ms');
@@ -381,28 +409,34 @@ export async function GET(request: NextRequest) {
         used: counts.freestyleCount,
         limit: limits.freestyleStories,
         remaining: Math.max(0, limits.freestyleStories - counts.freestyleCount),
-        canUse: counts.freestyleCount < limits.freestyleStories
+        canUse: counts.freestyleCount < limits.freestyleStories,
       },
       assessmentRequests: {
         used: counts.assessmentCount,
         limit: limits.assessmentRequests,
-        remaining: Math.max(0, limits.assessmentRequests - counts.assessmentCount),
-        canUse: counts.assessmentCount < limits.assessmentRequests
+        remaining: Math.max(
+          0,
+          limits.assessmentRequests - counts.assessmentCount
+        ),
+        canUse: counts.assessmentCount < limits.assessmentRequests,
       },
       competitionEntries: {
         used: counts.competitionCount,
         limit: limits.competitionEntries,
-        remaining: Math.max(0, limits.competitionEntries - counts.competitionCount),
-        canUse: counts.competitionCount < limits.competitionEntries
+        remaining: Math.max(
+          0,
+          limits.competitionEntries - counts.competitionCount
+        ),
+        canUse: counts.competitionCount < limits.competitionEntries,
       },
       publications: {
         used: publishedCount,
         limit: limits.publications,
         remaining: Math.max(0, limits.publications - publishedCount),
-        canUse: publishedCount < limits.publications
+        canUse: publishedCount < limits.publications,
       },
       subscriptionTier: hasStoryPack ? 'STORY_PACK' : 'FREE',
-      resetDate: nextMonth.toISOString()
+      resetDate: nextMonth.toISOString(),
     };
 
     const totalTime = Date.now() - startTime;
@@ -415,18 +449,17 @@ export async function GET(request: NextRequest) {
         responseTime: totalTime,
         counts,
         hasStoryPack,
-        limits
-      }
+        limits,
+      },
     });
-
   } catch (error) {
     const totalTime = Date.now() - startTime;
     console.error('❌ Usage API error after', totalTime, 'ms:', error);
-    
+
     return NextResponse.json(
       {
         error: 'Failed to fetch usage statistics',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        details: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
     );

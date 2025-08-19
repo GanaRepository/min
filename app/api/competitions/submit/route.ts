@@ -47,7 +47,7 @@ interface UserDocument {
 export async function POST(request: Request) {
   try {
     const session = await getServerSession(authOptions);
-    
+
     if (!session || session.user?.role !== 'child') {
       return NextResponse.json(
         { error: 'Access denied. Children only.' },
@@ -69,14 +69,12 @@ export async function POST(request: Request) {
     // Check competition eligibility using simplified system
     const canEnter = await UsageManager.canEnterCompetition(session.user.id);
     if (!canEnter.allowed) {
-      return NextResponse.json(
-        { error: canEnter.reason },
-        { status: 403 }
-      );
+      return NextResponse.json({ error: canEnter.reason }, { status: 403 });
     }
 
     // Get current competition
-    const currentCompetition = await competitionManager.getCurrentCompetition() as CompetitionDocument | null;
+    const currentCompetition =
+      (await competitionManager.getCurrentCompetition()) as CompetitionDocument | null;
 
     if (!currentCompetition) {
       return NextResponse.json(
@@ -93,10 +91,10 @@ export async function POST(request: Request) {
     }
 
     // Get the story and verify ownership
-    const story = await StorySession.findOne({
+    const story = (await StorySession.findOne({
       _id: storyId,
-      childId: session.user.id
-    }).lean() as StoryDocument | null;
+      childId: session.user.id,
+    }).lean()) as StoryDocument | null;
 
     if (!story) {
       return NextResponse.json(
@@ -123,14 +121,20 @@ export async function POST(request: Request) {
 
     if (story.totalWords < 350) {
       return NextResponse.json(
-        { error: 'Story must be at least 350 words to be eligible for competition' },
+        {
+          error:
+            'Story must be at least 350 words to be eligible for competition',
+        },
         { status: 400 }
       );
     }
 
     if (story.totalWords > 2000) {
       return NextResponse.json(
-        { error: 'Story exceeds maximum word limit of 2000 words for competition' },
+        {
+          error:
+            'Story exceeds maximum word limit of 2000 words for competition',
+        },
         { status: 400 }
       );
     }
@@ -138,31 +142,42 @@ export async function POST(request: Request) {
     // Check if story was uploaded for assessment (not allowed in competition)
     if (story.isUploadedForAssessment) {
       return NextResponse.json(
-        { error: 'Stories uploaded for assessment cannot be submitted to competitions' },
+        {
+          error:
+            'Stories uploaded for assessment cannot be submitted to competitions',
+        },
         { status: 400 }
       );
     }
 
     // Check if story is already submitted to this competition
     const existingEntry = story.competitionEntries?.find(
-      entry => entry.competitionId.toString() === currentCompetition._id.toString()
+      (entry) =>
+        entry.competitionId.toString() === currentCompetition._id.toString()
     );
 
     if (existingEntry) {
       return NextResponse.json(
-        { error: 'This story has already been submitted to the current competition' },
+        {
+          error:
+            'This story has already been submitted to the current competition',
+        },
         { status: 400 }
       );
     }
 
     // Legacy check (now redundant since UsageManager handles this)
-    const user = await User.findById(session.user.id).lean() as UserDocument | null;
+    const user = (await User.findById(
+      session.user.id
+    ).lean()) as UserDocument | null;
     const userEntriesThisMonth = user?.competitionEntriesThisMonth || 0;
     const monthlyLimit = 3;
 
     if (userEntriesThisMonth >= monthlyLimit) {
       return NextResponse.json(
-        { error: `You have reached the monthly limit of ${monthlyLimit} competition entries` },
+        {
+          error: `You have reached the monthly limit of ${monthlyLimit} competition entries`,
+        },
         { status: 400 }
       );
     }
@@ -174,30 +189,30 @@ export async function POST(request: Request) {
       competitionId: currentCompetition._id,
       submittedAt: new Date(),
       rank: null,
-      score: null
+      score: null,
     };
 
     // Update story with competition entry
     await StorySession.findByIdAndUpdate(storyId, {
       $push: {
-        competitionEntries: submissionData
+        competitionEntries: submissionData,
       },
       $set: {
-        updatedAt: new Date()
-      }
+        updatedAt: new Date(),
+      },
     });
 
     // Update user's monthly competition counter
     await User.findByIdAndUpdate(session.user.id, {
       $inc: {
-        competitionEntriesThisMonth: 1
-      }
+        competitionEntriesThisMonth: 1,
+      },
     });
 
     // ✅ FIXED: Update competition stats
     const userSubmissionsCount = await StorySession.countDocuments({
       childId: session.user.id,
-      'competitionEntries.competitionId': currentCompetition._id
+      'competitionEntries.competitionId': currentCompetition._id,
     });
 
     const isFirstSubmissionFromUser = userSubmissionsCount === 1;
@@ -205,11 +220,13 @@ export async function POST(request: Request) {
     await Competition.findByIdAndUpdate(currentCompetition._id, {
       $inc: {
         totalSubmissions: 1,
-        ...(isFirstSubmissionFromUser && { totalParticipants: 1 })
-      }
+        ...(isFirstSubmissionFromUser && { totalParticipants: 1 }),
+      },
     });
 
-    console.log(`📊 Updated competition: +1 submission${isFirstSubmissionFromUser ? ', +1 participant' : ''}`);
+    console.log(
+      `📊 Updated competition: +1 submission${isFirstSubmissionFromUser ? ', +1 participant' : ''}`
+    );
 
     // Increment competition entry in simplified system
     await UsageManager.incrementCompetitionEntry(session.user.id);
@@ -226,21 +243,22 @@ export async function POST(request: Request) {
         competitionName: `${currentCompetition.month} ${currentCompetition.year}`,
         submittedAt: submissionData.submittedAt,
         userEntriesUsed: userEntriesThisMonth + 1,
-        userEntriesLimit: monthlyLimit
+        userEntriesLimit: monthlyLimit,
       },
       usage: {
         competitionEntries: canEnter.currentUsage.competitionEntries + 1,
         limit: canEnter.limits.competitionEntries,
-        remaining: canEnter.limits.competitionEntries - (canEnter.currentUsage.competitionEntries + 1)
-      }
+        remaining:
+          canEnter.limits.competitionEntries -
+          (canEnter.currentUsage.competitionEntries + 1),
+      },
     });
-
   } catch (error) {
     console.error('❌ Error submitting story to competition:', error);
     return NextResponse.json(
-      { 
+      {
         error: 'Failed to submit story to competition',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        details: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
     );
@@ -251,7 +269,7 @@ export async function POST(request: Request) {
 export async function GET(request: Request) {
   try {
     const session = await getServerSession(authOptions);
-    
+
     if (!session || session.user?.role !== 'child') {
       return NextResponse.json(
         { error: 'Access denied. Children only.' },
@@ -272,37 +290,46 @@ export async function GET(request: Request) {
     await connectToDatabase();
 
     const canEnter = await UsageManager.canEnterCompetition(session.user.id);
-    const currentCompetition = await competitionManager.getCurrentCompetition() as CompetitionDocument | null;
+    const currentCompetition =
+      (await competitionManager.getCurrentCompetition()) as CompetitionDocument | null;
 
     if (!currentCompetition) {
       return NextResponse.json({
         eligible: false,
         reason: 'No active competition found',
         competition: null,
-        usage: canEnter.allowed ? {
-          competitionEntries: canEnter.currentUsage.competitionEntries,
-          limit: canEnter.limits.competitionEntries,
-          remaining: canEnter.limits.competitionEntries - canEnter.currentUsage.competitionEntries
-        } : null
+        usage: canEnter.allowed
+          ? {
+              competitionEntries: canEnter.currentUsage.competitionEntries,
+              limit: canEnter.limits.competitionEntries,
+              remaining:
+                canEnter.limits.competitionEntries -
+                canEnter.currentUsage.competitionEntries,
+            }
+          : null,
       });
     }
 
     // Get the story
-    const story = await StorySession.findOne({
+    const story = (await StorySession.findOne({
       _id: storyId,
-      childId: session.user.id
-    }).lean() as StoryDocument | null;
+      childId: session.user.id,
+    }).lean()) as StoryDocument | null;
 
     if (!story) {
       return NextResponse.json({
         eligible: false,
         reason: 'Story not found or access denied',
         competition: null,
-        usage: canEnter.allowed ? {
-          competitionEntries: canEnter.currentUsage.competitionEntries,
-          limit: canEnter.limits.competitionEntries,
-          remaining: canEnter.limits.competitionEntries - canEnter.currentUsage.competitionEntries
-        } : null
+        usage: canEnter.allowed
+          ? {
+              competitionEntries: canEnter.currentUsage.competitionEntries,
+              limit: canEnter.limits.competitionEntries,
+              remaining:
+                canEnter.limits.competitionEntries -
+                canEnter.currentUsage.competitionEntries,
+            }
+          : null,
       });
     }
 
@@ -314,25 +341,35 @@ export async function GET(request: Request) {
       wordCountValid: story.totalWords >= 350 && story.totalWords <= 2000,
       notAssessmentStory: !story.isUploadedForAssessment,
       notAlreadySubmitted: !story.competitionEntries?.some(
-        entry => entry.competitionId.toString() === currentCompetition._id.toString()
+        (entry) =>
+          entry.competitionId.toString() === currentCompetition._id.toString()
       ),
-      hasEntriesLeft: canEnter.allowed
+      hasEntriesLeft: canEnter.allowed,
     };
 
-    const user = await User.findById(session.user.id).lean() as UserDocument | null;
+    const user = (await User.findById(
+      session.user.id
+    ).lean()) as UserDocument | null;
     const userEntriesThisMonth = user?.competitionEntriesThisMonth || 0;
     const monthlyLimit = 3;
 
     const eligible = Object.values(checks).every(Boolean);
 
     let reason = '';
-    if (!checks.competitionActive) reason = 'Competition submission period has ended';
-    else if (!checks.storyEligible) reason = 'Story is not marked as competition eligible';
-    else if (!checks.storyCompleted) reason = 'Only completed stories can be submitted';
-    else if (!checks.wordCountValid) reason = 'Story must be between 350-2000 words';
-    else if (!checks.notAssessmentStory) reason = 'Assessment stories cannot be submitted';
-    else if (!checks.notAlreadySubmitted) reason = 'Story already submitted to this competition';
-    else if (!checks.hasEntriesLeft) reason = canEnter.reason || 'Competition entry limit reached';
+    if (!checks.competitionActive)
+      reason = 'Competition submission period has ended';
+    else if (!checks.storyEligible)
+      reason = 'Story is not marked as competition eligible';
+    else if (!checks.storyCompleted)
+      reason = 'Only completed stories can be submitted';
+    else if (!checks.wordCountValid)
+      reason = 'Story must be between 350-2000 words';
+    else if (!checks.notAssessmentStory)
+      reason = 'Assessment stories cannot be submitted';
+    else if (!checks.notAlreadySubmitted)
+      reason = 'Story already submitted to this competition';
+    else if (!checks.hasEntriesLeft)
+      reason = canEnter.reason || 'Competition entry limit reached';
 
     return NextResponse.json({
       eligible,
@@ -341,21 +378,24 @@ export async function GET(request: Request) {
         id: currentCompetition._id,
         month: currentCompetition.month,
         year: currentCompetition.year,
-        phase: currentCompetition.phase
+        phase: currentCompetition.phase,
       },
-      usage: canEnter.allowed ? {
-        competitionEntries: canEnter.currentUsage.competitionEntries,
-        limit: canEnter.limits.competitionEntries,
-        remaining: canEnter.limits.competitionEntries - canEnter.currentUsage.competitionEntries
-      } : null
+      usage: canEnter.allowed
+        ? {
+            competitionEntries: canEnter.currentUsage.competitionEntries,
+            limit: canEnter.limits.competitionEntries,
+            remaining:
+              canEnter.limits.competitionEntries -
+              canEnter.currentUsage.competitionEntries,
+          }
+        : null,
     });
-
   } catch (error) {
     console.error('❌ Error checking submission eligibility:', error);
     return NextResponse.json(
-      { 
+      {
         error: 'Failed to check submission eligibility',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        details: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
     );

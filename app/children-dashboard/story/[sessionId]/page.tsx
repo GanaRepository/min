@@ -26,7 +26,7 @@ import {
   Star,
   MessageCircle,
   FileText,
-  Wand2
+  Wand2,
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
@@ -130,7 +130,8 @@ export default function StoryWritingInterface({
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto';
-      textareaRef.current.style.height = textareaRef.current.scrollHeight + 'px';
+      textareaRef.current.style.height =
+        textareaRef.current.scrollHeight + 'px';
     }
   }, [currentInput]);
 
@@ -145,17 +146,18 @@ export default function StoryWritingInterface({
   // Scroll to bottom of timeline
   useEffect(() => {
     if (storyTimelineRef.current) {
-      storyTimelineRef.current.scrollTop = storyTimelineRef.current.scrollHeight;
+      storyTimelineRef.current.scrollTop =
+        storyTimelineRef.current.scrollHeight;
     }
   }, [turns, isAIGenerating]);
 
   const fetchStoryData = async () => {
     try {
       setIsLoading(true);
-      
+
       const [sessionResponse, turnsResponse] = await Promise.all([
         fetch(`/api/stories/session/${sessionId}`),
-        fetch(`/api/stories/session/${sessionId}/turns`)
+        fetch(`/api/stories/session/${sessionId}/turns`),
       ]);
 
       if (!sessionResponse.ok || !turnsResponse.ok) {
@@ -167,7 +169,7 @@ export default function StoryWritingInterface({
 
       // FIXED: Extract session from the nested response structure
       const actualSession = sessionData.session || sessionData;
-      
+
       setStorySession(actualSession);
       setTurns(turnsData.turns || []);
       setEditedTitle(actualSession.title || '');
@@ -176,13 +178,12 @@ export default function StoryWritingInterface({
       if (actualSession.status === 'completed' && actualSession.assessment) {
         setAssessment(actualSession.assessment);
       }
-
     } catch (error) {
       console.error('Error fetching story data:', error);
       toast({
-        title: "Error",
-        description: "Failed to load story. Please try again.",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Failed to load story. Please try again.',
+        variant: 'destructive',
       });
       router.push('/children-dashboard');
     } finally {
@@ -209,18 +210,20 @@ export default function StoryWritingInterface({
       });
 
       if (response.ok) {
-        setStorySession(prev => prev ? { ...prev, title: editedTitle.trim() } : null);
+        setStorySession((prev) =>
+          prev ? { ...prev, title: editedTitle.trim() } : null
+        );
         setIsEditingTitle(false);
         toast({
-          title: "Success",
-          description: "Story title updated successfully!",
+          title: 'Success',
+          description: 'Story title updated successfully!',
         });
       }
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to update title. Please try again.",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Failed to update title. Please try again.',
+        variant: 'destructive',
       });
     } finally {
       setIsSavingTitle(false);
@@ -251,15 +254,23 @@ export default function StoryWritingInterface({
       }
 
       // Update session and add new turn
-      setStorySession(prev => prev ? {
-        ...prev,
-        currentTurn: data.newTurn.turnNumber,
-        totalWords: prev.totalWords + data.newTurn.childWordCount + (data.newTurn.aiWordCount || 0),
-        childWords: prev.childWords + data.newTurn.childWordCount,
-        status: data.newTurn.turnNumber >= maxTurns ? 'completed' : 'active'
-      } : null);
+      setStorySession((prev) =>
+        prev
+          ? {
+              ...prev,
+              currentTurn: data.newTurn.turnNumber,
+              totalWords:
+                prev.totalWords +
+                data.newTurn.childWordCount +
+                (data.newTurn.aiWordCount || 0),
+              childWords: prev.childWords + data.newTurn.childWordCount,
+              status:
+                data.newTurn.turnNumber >= maxTurns ? 'completed' : 'active',
+            }
+          : null
+      );
 
-      setTurns(prev => [...prev, data.newTurn]);
+      setTurns((prev) => [...prev, data.newTurn]);
       setCurrentInput('');
       setWordCount(0);
       setIsValid(false);
@@ -270,16 +281,16 @@ export default function StoryWritingInterface({
       }
 
       toast({
-        title: "Success",
+        title: 'Success',
         description: `Turn ${data.newTurn.turnNumber} submitted successfully!`,
       });
-
     } catch (error: any) {
       console.error('Error submitting turn:', error);
       toast({
-        title: "Error",
-        description: error.message || "Failed to submit turn. Please try again.",
-        variant: "destructive",
+        title: 'Error',
+        description:
+          error.message || 'Failed to submit turn. Please try again.',
+        variant: 'destructive',
       });
     } finally {
       setIsSubmitting(false);
@@ -291,23 +302,31 @@ export default function StoryWritingInterface({
     if (!storySession) return;
 
     try {
-      const response = await fetch(`/api/stories/assessment/${storySession._id}`, {
-        method: 'POST',
-      });
+      const response = await fetch(
+        `/api/stories/assessment/${storySession._id}`,
+        {
+          method: 'POST',
+        }
+      );
 
       const data = await response.json();
 
       if (response.ok) {
         setAssessment(data.assessment);
-        setStorySession(prev => prev ? {
-          ...prev,
-          assessment: data.assessment,
-          status: 'completed'
-        } : null);
-        
+        setStorySession((prev) =>
+          prev
+            ? {
+                ...prev,
+                assessment: data.assessment,
+                status: 'completed',
+              }
+            : null
+        );
+
         toast({
-          title: "Story Complete!",
-          description: "Your story has been assessed. Click 'View Assessment' to see your results!",
+          title: 'Story Complete!',
+          description:
+            "Your story has been assessed. Click 'View Assessment' to see your results!",
         });
       }
     } catch (error) {
@@ -320,23 +339,26 @@ export default function StoryWritingInterface({
 
     setIsSaving(true);
     try {
-      const response = await fetch(`/api/stories/session/${storySession._id}/draft`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ draftContent: currentInput }),
-      });
+      const response = await fetch(
+        `/api/stories/session/${storySession._id}/draft`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ draftContent: currentInput }),
+        }
+      );
 
       if (response.ok) {
         toast({
-          title: "Draft Saved",
-          description: "Your progress has been saved.",
+          title: 'Draft Saved',
+          description: 'Your progress has been saved.',
         });
       }
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to save draft.",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Failed to save draft.',
+        variant: 'destructive',
       });
     } finally {
       setIsSaving(false);
@@ -364,7 +386,6 @@ export default function StoryWritingInterface({
     );
   }
 
-
   const isCompleted = storySession.status === 'completed';
   // More robust canWrite logic - check each condition separately
   const statusIsActive = storySession.status === 'active';
@@ -372,7 +393,9 @@ export default function StoryWritingInterface({
   const canWrite = !isCompleted && statusIsActive && turnNotExceeded;
 
   // Fix: Always show the correct turn number and progress
-  const turnsCompleted = isCompleted ? maxTurns : Math.min(storySession.currentTurn, maxTurns);
+  const turnsCompleted = isCompleted
+    ? maxTurns
+    : Math.min(storySession.currentTurn, maxTurns);
   const progressPercentage = isCompleted
     ? 100
     : Math.round((turnsCompleted / maxTurns) * 100);
@@ -385,7 +408,7 @@ export default function StoryWritingInterface({
     canWrite,
     isCompleted,
     turnsCompleted,
-    progressPercentage
+    progressPercentage,
   });
 
   return (
@@ -401,12 +424,12 @@ export default function StoryWritingInterface({
               >
                 <ArrowLeft className="w-5 h-5 text-gray-400" />
               </button>
-              
+
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-600  flex items-center justify-center">
                   <BookOpen className="w-5 h-5 text-white" />
                 </div>
-                
+
                 {isEditingTitle ? (
                   <div className="flex items-center gap-2">
                     <input
@@ -460,7 +483,7 @@ export default function StoryWritingInterface({
                   View Assessment
                 </button>
               )}
-              
+
               <div className="text-right">
                 <div className="text-sm text-gray-400">
                   Turn {turnsCompleted} of {maxTurns}
@@ -485,7 +508,7 @@ export default function StoryWritingInterface({
                 className="bg-gradient-to-r from-purple-500 to-pink-600 h-2 "
                 initial={{ width: 0 }}
                 animate={{ width: `${progressPercentage}%` }}
-                transition={{ duration: 0.5, ease: "easeOut" }}
+                transition={{ duration: 0.5, ease: 'easeOut' }}
               />
             </div>
           </div>
@@ -494,7 +517,6 @@ export default function StoryWritingInterface({
 
       <div className="container mx-auto px-4 py-6">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          
           {/* Story Timeline - Main Content */}
           <div className="lg:col-span-2">
             <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-6">
@@ -510,7 +532,7 @@ export default function StoryWritingInterface({
               </div>
 
               {/* Timeline */}
-              <div 
+              <div
                 ref={storyTimelineRef}
                 className="space-y-6 max-h-[130vh] overflow-y-auto pr-4 custom-scrollbar"
               >
@@ -525,7 +547,9 @@ export default function StoryWritingInterface({
                       <div className="bg-gradient-to-r from-green-500/20 to-emerald-600/20 border border-green-500/30  p-4 rounded-br-none">
                         <div className="flex items-center gap-2 mb-2">
                           <Bot className="w-4 h-4 text-green-400" />
-                          <span className="text-green-300  text-sm">AI Writing Partner</span>
+                          <span className="text-green-300  text-sm">
+                            AI Writing Partner
+                          </span>
                         </div>
                         <p className="text-gray-200 leading-relaxed">
                           {storySession.aiOpening}
@@ -555,8 +579,12 @@ export default function StoryWritingInterface({
                         <div className="bg-purple-500/20 border border-purple-500/30  p-4 rounded-bl-none">
                           <div className="flex items-center justify-between mb-2">
                             <div className="flex items-center gap-2">
-                              <span className="text-purple-300  text-sm">You</span>
-                              <span className="text-xs text-gray-400">Turn {turn.turnNumber}</span>
+                              <span className="text-purple-300  text-sm">
+                                You
+                              </span>
+                              <span className="text-xs text-gray-400">
+                                Turn {turn.turnNumber}
+                              </span>
                             </div>
                             <span className="text-xs text-gray-500">
                               {turn.childWordCount} words
@@ -574,7 +602,7 @@ export default function StoryWritingInterface({
                       <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: (index * 0.1) + 0.05 }}
+                        transition={{ delay: index * 0.1 + 0.05 }}
                         className="flex justify-end"
                       >
                         <div className="flex items-start space-x-3 max-w-[85%]">
@@ -582,7 +610,9 @@ export default function StoryWritingInterface({
                             <div className="flex items-center justify-between mb-2">
                               <div className="flex items-center gap-2">
                                 <Bot className="w-4 h-4 text-green-400" />
-                                <span className="text-green-300  text-sm">AI Partner</span>
+                                <span className="text-green-300  text-sm">
+                                  AI Partner
+                                </span>
                               </div>
                               <span className="text-xs text-gray-500">
                                 {turn.aiWordCount || 0} words
@@ -612,13 +642,23 @@ export default function StoryWritingInterface({
                       <div className="bg-gradient-to-r from-green-500/20 to-emerald-600/20 border border-green-500/30  p-4 rounded-br-none">
                         <div className="flex items-center gap-2">
                           <Bot className="w-4 h-4 text-green-400" />
-                          <span className="text-green-300  text-sm">AI Partner</span>
+                          <span className="text-green-300  text-sm">
+                            AI Partner
+                          </span>
                         </div>
                         <div className="flex items-center space-x-1 mt-2">
                           <div className="w-2 h-2 bg-green-400  animate-bounce"></div>
-                          <div className="w-2 h-2 bg-green-400  animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                          <div className="w-2 h-2 bg-green-400  animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                          <span className="text-green-300 text-sm ml-2">Writing response...</span>
+                          <div
+                            className="w-2 h-2 bg-green-400  animate-bounce"
+                            style={{ animationDelay: '0.1s' }}
+                          ></div>
+                          <div
+                            className="w-2 h-2 bg-green-400  animate-bounce"
+                            style={{ animationDelay: '0.2s' }}
+                          ></div>
+                          <span className="text-green-300 text-sm ml-2">
+                            Writing response...
+                          </span>
                         </div>
                       </div>
                       <div className="w-8 h-8 bg-gradient-to-r from-green-500 to-emerald-600  flex items-center justify-center flex-shrink-0">
@@ -641,7 +681,8 @@ export default function StoryWritingInterface({
                         Ready to Start Your Story!
                       </h3>
                       <p className="text-gray-300 mb-4">
-                        Write your opening scene below (60-100 words). What adventure will you create?
+                        Write your opening scene below (60-100 words). What
+                        adventure will you create?
                       </p>
                     </div>
                   </motion.div>
@@ -660,7 +701,8 @@ export default function StoryWritingInterface({
                         🎉 Story Complete!
                       </h3>
                       <p className="text-gray-300 mb-4">
-                        Amazing work! You've completed all {maxTurns} turns of your collaborative story.
+                        Amazing work! You've completed all {maxTurns} turns of
+                        your collaborative story.
                       </p>
                       {assessment && (
                         <button
@@ -683,14 +725,20 @@ export default function StoryWritingInterface({
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-white  text-lg flex items-center gap-2">
                     <Edit3 className="w-5 h-5 text-purple-400" />
-                    {storySession.currentTurn === 1 ? 'Start Your Story!' : `Your Turn ${storySession.currentTurn}`}
+                    {storySession.currentTurn === 1
+                      ? 'Start Your Story!'
+                      : `Your Turn ${storySession.currentTurn}`}
                   </h3>
                   <div className="flex items-center gap-4">
-                    <div className={`text-sm  ${
-                      isValid ? 'text-green-400' : 
-                      wordCount > 100 ? 'text-red-400' : 
-                      'text-gray-400'
-                    }`}>
+                    <div
+                      className={`text-sm  ${
+                        isValid
+                          ? 'text-green-400'
+                          : wordCount > 100
+                            ? 'text-red-400'
+                            : 'text-gray-400'
+                      }`}
+                    >
                       {wordCount}/60-100 words
                     </div>
                     {currentInput.trim() && (
@@ -711,20 +759,25 @@ export default function StoryWritingInterface({
                     ref={textareaRef}
                     value={currentInput}
                     onChange={(e) => handleInputChange(e.target.value)}
-                    placeholder={storySession.currentTurn === 1 
-                      ? "Start your amazing story here! Introduce your character, setting, or situation..."
-                      : "Continue your story here... What happens next in your adventure?"
+                    placeholder={
+                      storySession.currentTurn === 1
+                        ? 'Start your amazing story here! Introduce your character, setting, or situation...'
+                        : 'Continue your story here... What happens next in your adventure?'
                     }
                     className="w-full bg-gray-900/50 border border-gray-600  p-4 text-white placeholder-gray-400 focus:border-purple-500 focus:outline-none resize-none min-h-[120px]"
                     disabled={isSubmitting}
                   />
-                  
+
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2 text-sm text-gray-400">
                       <Lightbulb className="w-4 h-4" />
-                      Write 60-100 words to {storySession.currentTurn === 1 ? 'begin' : 'continue'} your story
+                      Write 60-100 words to{' '}
+                      {storySession.currentTurn === 1
+                        ? 'begin'
+                        : 'continue'}{' '}
+                      your story
                     </div>
-                    
+
                     <button
                       onClick={submitTurn}
                       disabled={!isValid || isSubmitting}
@@ -742,7 +795,9 @@ export default function StoryWritingInterface({
                       ) : (
                         <>
                           <Send className="w-4 h-4" />
-                          {storySession.currentTurn === 1 ? 'Start Story!' : 'Submit Turn'}
+                          {storySession.currentTurn === 1
+                            ? 'Start Story!'
+                            : 'Submit Turn'}
                         </>
                       )}
                     </button>
@@ -750,20 +805,17 @@ export default function StoryWritingInterface({
                 </div>
               </div>
             )}
-
-     
           </div>
 
           {/* Sidebar */}
           <div className="space-y-6">
-            
             {/* Story Stats */}
             <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-6">
               <h3 className="text-white  text-lg mb-4 flex items-center gap-2">
                 <Target className="w-5 h-5 text-blue-400" />
                 Story Stats
               </h3>
-              
+
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <span className="text-gray-400">Current Turn</span>
@@ -771,26 +823,24 @@ export default function StoryWritingInterface({
                     {storySession.currentTurn} / {maxTurns}
                   </span>
                 </div>
-                
+
                 <div className="flex items-center justify-between">
                   <span className="text-gray-400">Your Words</span>
-                  <span className="text-white ">
-                    {storySession.childWords}
-                  </span>
+                  <span className="text-white ">{storySession.childWords}</span>
                 </div>
-                
+
                 <div className="flex items-center justify-between">
                   <span className="text-gray-400">Total Words</span>
-                  <span className="text-white ">
-                    {storySession.totalWords}
-                  </span>
+                  <span className="text-white ">{storySession.totalWords}</span>
                 </div>
-                
+
                 <div className="flex items-center justify-between">
                   <span className="text-gray-400">Status</span>
-                  <span className={` ${
-                    isCompleted ? 'text-green-400' : 'text-blue-400'
-                  }`}>
+                  <span
+                    className={` ${
+                      isCompleted ? 'text-green-400' : 'text-blue-400'
+                    }`}
+                  >
                     {isCompleted ? 'Completed' : 'In Progress'}
                   </span>
                 </div>
@@ -803,33 +853,35 @@ export default function StoryWritingInterface({
                 <Lightbulb className="w-5 h-5 text-yellow-400" />
                 Writing Tips
               </h3>
-              
+
               <div className="space-y-3 text-sm">
                 <div className="flex items-start gap-3">
                   <Star className="w-4 h-4 text-purple-400 mt-0.5 flex-shrink-0" />
                   <p className="text-gray-300">
-                    Be creative! Add unique details that make your story special.
+                    Be creative! Add unique details that make your story
+                    special.
                   </p>
                 </div>
-                
+
                 <div className="flex items-start gap-3">
                   <Brain className="w-4 h-4 text-blue-400 mt-0.5 flex-shrink-0" />
                   <p className="text-gray-300">
                     Think about what your characters are feeling and why.
                   </p>
                 </div>
-                
+
                 <div className="flex items-start gap-3">
                   <Zap className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" />
                   <p className="text-gray-300">
                     Use exciting action words to make scenes come alive.
                   </p>
                 </div>
-                
+
                 <div className="flex items-start gap-3">
                   <Trophy className="w-4 h-4 text-yellow-400 mt-0.5 flex-shrink-0" />
                   <p className="text-gray-300">
-                    Remember: 60-100 words per turn works best for great stories!
+                    Remember: 60-100 words per turn works best for great
+                    stories!
                   </p>
                 </div>
               </div>
@@ -841,41 +893,48 @@ export default function StoryWritingInterface({
                 <FileText className="w-5 h-5 text-green-400" />
                 Turn Guidelines
               </h3>
-              
+
               <div className="space-y-3 text-sm">
                 {[1, 2, 3, 4, 5, 6, 7].map((turnNum) => (
-                  <div 
+                  <div
                     key={turnNum}
                     className={`flex items-center gap-3 p-2  transition-colors ${
                       storySession.currentTurn === turnNum - 1 && !isCompleted
                         ? 'bg-purple-500/20 border border-purple-500/30'
                         : storySession.currentTurn >= turnNum || isCompleted
-                        ? 'bg-green-500/10'
-                        : 'bg-gray-700/30'
+                          ? 'bg-green-500/10'
+                          : 'bg-gray-700/30'
                     }`}
                   >
-                    <div className={`w-6 h-6  flex items-center justify-center text-xs  ${
-                      storySession.currentTurn >= turnNum || isCompleted
-                        ? 'bg-green-500 text-white'
-                        : storySession.currentTurn === turnNum - 1 && !isCompleted
-                        ? 'bg-purple-500 text-white'
-                        : 'bg-gray-600 text-gray-300'
-                    }`}>
+                    <div
+                      className={`w-6 h-6  flex items-center justify-center text-xs  ${
+                        storySession.currentTurn >= turnNum || isCompleted
+                          ? 'bg-green-500 text-white'
+                          : storySession.currentTurn === turnNum - 1 &&
+                              !isCompleted
+                            ? 'bg-purple-500 text-white'
+                            : 'bg-gray-600 text-gray-300'
+                      }`}
+                    >
                       {storySession.currentTurn >= turnNum || isCompleted ? (
                         <CheckCircle className="w-3 h-3" />
                       ) : (
                         turnNum
                       )}
                     </div>
-                    
-                    <span className={`${
-                      storySession.currentTurn === turnNum - 1 && !isCompleted
-                        ? 'text-purple-300 '
-                        : storySession.currentTurn >= turnNum || isCompleted
-                        ? 'text-green-300'
-                        : 'text-gray-400'
-                    }`}>
-                      {turnNum === 7 ? 'Final Turn & Assessment' : `Turn ${turnNum}`}
+
+                    <span
+                      className={`${
+                        storySession.currentTurn === turnNum - 1 && !isCompleted
+                          ? 'text-purple-300 '
+                          : storySession.currentTurn >= turnNum || isCompleted
+                            ? 'text-green-300'
+                            : 'text-gray-400'
+                      }`}
+                    >
+                      {turnNum === 7
+                        ? 'Final Turn & Assessment'
+                        : `Turn ${turnNum}`}
                     </span>
                   </div>
                 ))}
@@ -889,7 +948,7 @@ export default function StoryWritingInterface({
                   <Award className="w-5 h-5 text-yellow-400" />
                   Assessment Ready!
                 </h3>
-                
+
                 <div className="space-y-3 mb-4">
                   <div className="flex items-center justify-between">
                     <span className="text-gray-300">Overall Score</span>
@@ -897,14 +956,14 @@ export default function StoryWritingInterface({
                       {assessment.overallScore}%
                     </span>
                   </div>
-                  
+
                   <div className="flex items-center justify-between">
                     <span className="text-gray-300">Creativity</span>
                     <span className="text-green-400 ">
                       {assessment.categoryScores?.creativity || 0}%
                     </span>
                   </div>
-                  
+
                   <div className="flex items-center justify-between">
                     <span className="text-gray-300">Grammar</span>
                     <span className="text-blue-400 ">
@@ -912,7 +971,7 @@ export default function StoryWritingInterface({
                     </span>
                   </div>
                 </div>
-                
+
                 <button
                   onClick={() => setShowAssessment(true)}
                   className="w-full px-4 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white   hover:from-green-600 hover:to-emerald-700 transition-all flex items-center justify-center gap-2"
@@ -929,7 +988,7 @@ export default function StoryWritingInterface({
                 <Wand2 className="w-5 h-5 text-purple-400" />
                 Quick Actions
               </h3>
-              
+
               <div className="space-y-3">
                 <button
                   onClick={() => router.push('/children-dashboard/my-stories')}
@@ -938,17 +997,21 @@ export default function StoryWritingInterface({
                   <BookOpen className="w-4 h-4" />
                   My Stories
                 </button>
-                
+
                 <button
-                  onClick={() => router.push('/children-dashboard/create-stories')}
+                  onClick={() =>
+                    router.push('/children-dashboard/create-stories')
+                  }
                   className="w-full px-4 py-2 bg-gray-700 hover:bg-gray-600 text-gray-300  transition-colors flex items-center gap-2"
                 >
                   <Edit3 className="w-4 h-4" />
                   New Story
                 </button>
-                
+
                 <button
-                  onClick={() => router.push('/children-dashboard/competitions')}
+                  onClick={() =>
+                    router.push('/children-dashboard/competitions')
+                  }
                   className="w-full px-4 py-2 bg-gray-700 hover:bg-gray-600 text-gray-300  transition-colors flex items-center gap-2"
                 >
                   <Trophy className="w-4 h-4" />
@@ -984,10 +1047,12 @@ export default function StoryWritingInterface({
                   </div>
                   <div>
                     <h2 className="text-white text-2xl ">Story Assessment</h2>
-                    <p className="text-gray-400">Your creative writing analysis</p>
+                    <p className="text-gray-400">
+                      Your creative writing analysis
+                    </p>
                   </div>
                 </div>
-                
+
                 <button
                   onClick={() => setShowAssessment(false)}
                   className="p-2 hover:bg-gray-800  transition-colors"
@@ -999,7 +1064,10 @@ export default function StoryWritingInterface({
               {/* Overall Score */}
               <div className="text-center mb-8">
                 <div className="w-32 h-32 mx-auto mb-4 relative">
-                  <svg className="w-32 h-32 transform -rotate-90" viewBox="0 0 100 100">
+                  <svg
+                    className="w-32 h-32 transform -rotate-90"
+                    viewBox="0 0 100 100"
+                  >
                     <circle
                       cx="50"
                       cy="50"
@@ -1019,8 +1087,11 @@ export default function StoryWritingInterface({
                       strokeDasharray={`${2 * Math.PI * 40}`}
                       strokeDashoffset={`${2 * Math.PI * 40 * (1 - assessment.overallScore / 100)}`}
                       className={`transition-all duration-1000 ease-out ${
-                        assessment.overallScore >= 80 ? 'text-green-500' :
-                        assessment.overallScore >= 60 ? 'text-yellow-500' : 'text-red-500'
+                        assessment.overallScore >= 80
+                          ? 'text-green-500'
+                          : assessment.overallScore >= 60
+                            ? 'text-yellow-500'
+                            : 'text-red-500'
                       }`}
                       strokeLinecap="round"
                     />
@@ -1031,37 +1102,48 @@ export default function StoryWritingInterface({
                     </span>
                   </div>
                 </div>
-                
+
                 <h3 className="text-white text-xl  mb-2">
                   Overall Score: {assessment.overallScore}%
                 </h3>
                 <p className="text-gray-400">
-                  {assessment.overallScore >= 80 ? 'Excellent work!' :
-                   assessment.overallScore >= 60 ? 'Good job!' : 'Keep practicing!'}
+                  {assessment.overallScore >= 80
+                    ? 'Excellent work!'
+                    : assessment.overallScore >= 60
+                      ? 'Good job!'
+                      : 'Keep practicing!'}
                 </p>
               </div>
 
               {/* Category Scores */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-                {assessment.categoryScores && Object.entries(assessment.categoryScores).map(([category, score]) => (
-                  <div key={category} className="bg-gray-800/50  p-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-gray-300 capitalize">
-                        {category.replace(/([A-Z])/g, ' $1').trim()}
-                      </span>
-                      <span className="text-white ">{score as number}%</span>
-                    </div>
-                    <div className="w-full bg-gray-700  h-2">
-                      <div 
-                        className={`h-2  transition-all duration-1000 ease-out ${
-                          (score as number) >= 80 ? 'bg-green-500' :
-                          (score as number) >= 60 ? 'bg-yellow-500' : 'bg-red-500'
-                        }`}
-                        style={{ width: `${score}%` }}
-                      />
-                    </div>
-                  </div>
-                ))}
+                {assessment.categoryScores &&
+                  Object.entries(assessment.categoryScores).map(
+                    ([category, score]) => (
+                      <div key={category} className="bg-gray-800/50  p-4">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-gray-300 capitalize">
+                            {category.replace(/([A-Z])/g, ' $1').trim()}
+                          </span>
+                          <span className="text-white ">
+                            {score as number}%
+                          </span>
+                        </div>
+                        <div className="w-full bg-gray-700  h-2">
+                          <div
+                            className={`h-2  transition-all duration-1000 ease-out ${
+                              (score as number) >= 80
+                                ? 'bg-green-500'
+                                : (score as number) >= 60
+                                  ? 'bg-yellow-500'
+                                  : 'bg-red-500'
+                            }`}
+                            style={{ width: `${score}%` }}
+                          />
+                        </div>
+                      </div>
+                    )
+                  )}
               </div>
 
               {/* Integrity Status */}
@@ -1070,19 +1152,27 @@ export default function StoryWritingInterface({
                   <CheckCircle className="w-5 h-5 text-green-400" />
                   Integrity Analysis
                 </h4>
-                
+
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
                     <span className="text-gray-300">Content Status</span>
-                    <span className={` ${
-                      assessment.integrityStatus === 'original' ? 'text-green-400' :
-                      assessment.integrityStatus === 'questionable' ? 'text-yellow-400' : 'text-red-400'
-                    }`}>
-                      {assessment.integrityStatus === 'original' ? 'Original' :
-                       assessment.integrityStatus === 'questionable' ? 'Needs Review' : 'Flagged'}
+                    <span
+                      className={` ${
+                        assessment.integrityStatus === 'original'
+                          ? 'text-green-400'
+                          : assessment.integrityStatus === 'questionable'
+                            ? 'text-yellow-400'
+                            : 'text-red-400'
+                      }`}
+                    >
+                      {assessment.integrityStatus === 'original'
+                        ? 'Original'
+                        : assessment.integrityStatus === 'questionable'
+                          ? 'Needs Review'
+                          : 'Flagged'}
                     </span>
                   </div>
-                  
+
                   {assessment.aiDetectionScore !== undefined && (
                     <div className="flex items-center justify-between">
                       <span className="text-gray-300">AI Detection</span>
@@ -1115,7 +1205,7 @@ export default function StoryWritingInterface({
                 >
                   Close
                 </button>
-                
+
                 <button
                   onClick={() => {
                     setShowAssessment(false);

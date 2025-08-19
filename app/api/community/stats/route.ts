@@ -15,23 +15,30 @@ export async function GET() {
       totalViewsResult,
       totalLikesResult,
       featuredStories,
-      competitionWinners
+      competitionWinners,
     ] = await Promise.all([
       StorySession.countDocuments({ isPublished: true }),
-      StorySession.distinct('childId', { isPublished: true }).then(ids => ids.length),
+      StorySession.distinct('childId', { isPublished: true }).then(
+        (ids) => ids.length
+      ),
       StorySession.aggregate([
         { $match: { isPublished: true } },
-        { $group: { _id: null, totalViews: { $sum: '$views' } } }
+        { $group: { _id: null, totalViews: { $sum: '$views' } } },
       ]),
       StorySession.aggregate([
         { $match: { isPublished: true } },
-        { $group: { _id: null, totalLikes: { $sum: { $size: { $ifNull: ['$likes', []] } } } } }
+        {
+          $group: {
+            _id: null,
+            totalLikes: { $sum: { $size: { $ifNull: ['$likes', []] } } },
+          },
+        },
       ]),
       StorySession.countDocuments({ isPublished: true, isFeatured: true }),
-      StorySession.countDocuments({ 
-        isPublished: true, 
-        'competitionEntries.isWinner': true 
-      })
+      StorySession.countDocuments({
+        isPublished: true,
+        'competitionEntries.isWinner': true,
+      }),
     ]);
 
     const totalViews = totalViewsResult[0]?.totalViews || 0;
@@ -45,10 +52,9 @@ export async function GET() {
         totalViews,
         totalLikes,
         featuredStories,
-        competitionWinners
-      }
+        competitionWinners,
+      },
     });
-
   } catch (error) {
     console.error('Error fetching community stats:', error);
     return NextResponse.json(

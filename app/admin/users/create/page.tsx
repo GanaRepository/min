@@ -5,7 +5,16 @@ import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, Save, User, Mail, Lock, Shield, Calendar, School } from 'lucide-react';
+import {
+  ArrowLeft,
+  Save,
+  User,
+  Mail,
+  Lock,
+  Shield,
+  Calendar,
+  School,
+} from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function CreateUserPage() {
@@ -110,18 +119,16 @@ export default function CreateUserPage() {
   };
 
   return (
-  <div className="space-y-6 px-2 sm:px-4 md:px-8 lg:px-12 xl:px-20 py-4 sm:py-6 md:py-8 w-full min-w-0">
+    <div className="space-y-6 px-2 sm:px-4 md:px-8 lg:px-12 xl:px-20 py-4 sm:py-6 md:py-8 w-full min-w-0">
       {/* Header */}
-  <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:space-x-4 w-full min-w-0">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:space-x-4 w-full min-w-0">
         <Link href="/admin/users">
           <button className="p-2 text-gray-400 hover:text-white hover:bg-gray-700  transition-colors">
             <ArrowLeft size={20} />
           </button>
         </Link>
         <div>
-          <h1 className="text-2xl sm:text-3xl  text-white">
-            Create New User
-          </h1>
+          <h1 className="text-2xl sm:text-3xl  text-white">Create New User</h1>
           <p className="text-gray-400">Add a new user to the platform</p>
         </div>
       </div>
@@ -130,9 +137,9 @@ export default function CreateUserPage() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-  className="bg-gray-800  p-4 sm:p-6 w-full min-w-0"
+        className="bg-gray-800  p-4 sm:p-6 w-full min-w-0"
       >
-  <form onSubmit={handleSubmit} className="space-y-6 w-full min-w-0">
+        <form onSubmit={handleSubmit} className="space-y-6 w-full min-w-0">
           {/* General Error */}
           {errors.general && (
             <div className="bg-red-900/50 border border-red-500/50 text-red-200 p-3  text-sm">
@@ -245,11 +252,12 @@ export default function CreateUserPage() {
           {formData.role === 'child' && (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 w-full min-w-0">
               <div>
-                <label className="block text-sm  text-gray-300 mb-2">
-                  Age
-                </label>
+                <label className="block text-sm  text-gray-300 mb-2">Age</label>
                 <div className="relative">
-                  <Calendar size={20} className="absolute left-3 top-3 text-gray-400" />
+                  <Calendar
+                    size={20}
+                    className="absolute left-3 top-3 text-gray-400"
+                  />
                   <input
                     type="number"
                     min="3"
@@ -272,12 +280,17 @@ export default function CreateUserPage() {
                   School
                 </label>
                 <div className="relative">
-                  <School size={20} className="absolute left-3 top-3 text-gray-400" />
+                  <School
+                    size={20}
+                    className="absolute left-3 top-3 text-gray-400"
+                  />
                   <input
                     type="text"
                     required
                     value={formData.school}
-                    onChange={(e) => handleInputChange('school', e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange('school', e.target.value)
+                    }
                     className={`w-full pl-10 pr-4 py-3 bg-gray-700 border  text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                       errors.school ? 'border-red-500' : 'border-gray-600'
                     }`}

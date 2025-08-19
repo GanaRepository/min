@@ -203,18 +203,14 @@ export default function MentorsPage() {
                 <div className="flex items-center justify-center mb-1">
                   <BookOpen size={16} className="text-green-400" />
                 </div>
-                <p className="text-2xl  text-white">
-                  {mentor.totalStories}
-                </p>
+                <p className="text-2xl  text-white">{mentor.totalStories}</p>
                 <p className="text-xs text-gray-400">Stories</p>
               </div>
               <div className="text-center">
                 <div className="flex items-center justify-center mb-1">
                   <MessageSquare size={16} className="text-orange-400" />
                 </div>
-                <p className="text-2xl  text-white">
-                  {mentor.totalComments}
-                </p>
+                <p className="text-2xl  text-white">{mentor.totalComments}</p>
                 <p className="text-xs text-gray-400">Comments</p>
               </div>
             </div>
@@ -257,9 +253,7 @@ export default function MentorsPage() {
       {mentors.length === 0 && !loading && (
         <div className="text-center py-12">
           <Users size={48} className="text-gray-600 mx-auto mb-4" />
-          <h3 className="text-xl  text-gray-400 mb-2">
-            No mentors found
-          </h3>
+          <h3 className="text-xl  text-gray-400 mb-2">No mentors found</h3>
           <p className="text-gray-500 mb-6">
             {searchTerm
               ? 'Try adjusting your search'

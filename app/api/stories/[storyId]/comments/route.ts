@@ -23,10 +23,15 @@ export async function POST(
     }
 
     const { storyId } = params;
-    
+
     // ✅ FIXED: Parse request body
     const body = await request.json();
-    const { content, commentType = 'general', category = 'general', isPublic = true } = body;
+    const {
+      content,
+      commentType = 'general',
+      category = 'general',
+      isPublic = true,
+    } = body;
 
     // ✅ FIXED: Validate content
     if (!content || !content.trim()) {
@@ -41,10 +46,7 @@ export async function POST(
     // ✅ FIXED: Verify story exists
     const story = await StorySession.findById(storyId);
     if (!story) {
-      return NextResponse.json(
-        { error: 'Story not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Story not found' }, { status: 404 });
     }
 
     // ✅ FIXED: Check access permissions
@@ -87,7 +89,6 @@ export async function POST(
       comment,
       message: 'Comment added successfully',
     });
-
   } catch (error) {
     console.error('Error adding comment:', error);
     return NextResponse.json(
@@ -106,7 +107,10 @@ export async function GET(
     const session = await getServerSession(authOptions);
 
     if (!session) {
-      return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
+      return NextResponse.json(
+        { error: 'Authentication required' },
+        { status: 401 }
+      );
     }
 
     const { storyId } = params;

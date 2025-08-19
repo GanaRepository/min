@@ -193,12 +193,8 @@ export default function AdminDashboard() {
                     <ArrowUpRight className="w-4 h-4 text-gray-400 group-hover:text-white transition-colors" />
                   </div>
                   <div>
-                    <p className="text-gray-400 text-sm ">
-                      {card.title}
-                    </p>
-                    <p className="text-2xl  text-white mt-1">
-                      {card.value}
-                    </p>
+                    <p className="text-gray-400 text-sm ">{card.title}</p>
+                    <p className="text-2xl  text-white mt-1">{card.value}</p>
                     <p className="text-gray-500 text-xs mt-2">{card.change}</p>
                   </div>
                 </div>
@@ -213,9 +209,7 @@ export default function AdminDashboard() {
         {/* Recent Activity */}
         <div className="lg:col-span-2 bg-gray-800  p-6">
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-lg  text-white">
-              Platform Activity
-            </h3>
+            <h3 className="text-lg  text-white">Platform Activity</h3>
             <Activity className="w-5 h-5 text-gray-400" />
           </div>
 
@@ -233,9 +227,7 @@ export default function AdminDashboard() {
                 </div>
               </div>
               <div className="text-right">
-                <p className="text-white ">
-                  {stats?.users.activeToday || 0}
-                </p>
+                <p className="text-white ">{stats?.users.activeToday || 0}</p>
                 <p className="text-green-400 text-xs">+12% vs yesterday</p>
               </div>
             </div>
@@ -253,9 +245,7 @@ export default function AdminDashboard() {
                 </div>
               </div>
               <div className="text-right">
-                <p className="text-white ">
-                  {stats?.stories.thisWeek || 0}
-                </p>
+                <p className="text-white ">{stats?.stories.thisWeek || 0}</p>
                 <p className="text-green-400 text-xs">+8% vs last week</p>
               </div>
             </div>
@@ -271,9 +261,7 @@ export default function AdminDashboard() {
                 </div>
               </div>
               <div className="text-right">
-                <p className="text-white ">
-                  {stats?.comments.unresolved || 0}
-                </p>
+                <p className="text-white ">{stats?.comments.unresolved || 0}</p>
                 {(stats?.comments.unresolved || 0) > 0 && (
                   <p className="text-orange-400 text-xs">Requires attention</p>
                 )}
@@ -284,9 +272,7 @@ export default function AdminDashboard() {
 
         {/* Quick Actions */}
         <div className="bg-gray-800  p-6">
-          <h3 className="text-lg  text-white mb-6">
-            Quick Actions
-          </h3>
+          <h3 className="text-lg  text-white mb-6">Quick Actions</h3>
 
           <div className="space-y-3">
             {quickActions.map((action) => {
@@ -299,9 +285,7 @@ export default function AdminDashboard() {
                     <div className="flex items-center space-x-3">
                       <Icon className="w-5 h-5 text-white" />
                       <div>
-                        <p className="text-white  text-sm">
-                          {action.title}
-                        </p>
+                        <p className="text-white  text-sm">{action.title}</p>
                         <p className="text-white/80 text-xs">
                           {action.description}
                         </p>

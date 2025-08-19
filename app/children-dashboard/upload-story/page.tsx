@@ -206,9 +206,7 @@ export default function UploadStoryPage() {
               ) : (
                 <div className="text-gray-400">
                   <Upload className="w-12 h-12 mx-auto mb-3" />
-                  <p className=" text-lg">
-                    Click to upload your story
-                  </p>
+                  <p className=" text-lg">Click to upload your story</p>
                   <p className="text-sm">PDF or DOCX files only</p>
                   <p className="text-xs text-gray-500 mt-1">
                     Maximum file size: 10MB
@@ -223,9 +221,7 @@ export default function UploadStoryPage() {
         <div className="mb-6 bg-blue-600/20 border border-blue-500/30  p-4">
           <div className="flex items-center gap-2 mb-3">
             <Info className="w-5 h-5 text-blue-400" />
-            <span className="text-blue-400 ">
-              Story Requirements
-            </span>
+            <span className="text-blue-400 ">Story Requirements</span>
           </div>
           <ul className="text-gray-300 text-sm space-y-1">
             <li>• Story must be 100-2000 words</li>
@@ -239,9 +235,7 @@ export default function UploadStoryPage() {
         <div className="mb-6 bg-yellow-600/20 border border-yellow-500/30  p-4">
           <div className="flex items-center gap-2 mb-3">
             <DollarSign className="w-5 h-5 text-yellow-400" />
-            <span className="text-yellow-400 ">
-              Publishing & Competition
-            </span>
+            <span className="text-yellow-400 ">Publishing & Competition</span>
           </div>
           <div className="text-gray-300 text-sm space-y-2">
             <div className="flex items-center justify-between">
@@ -258,9 +252,7 @@ export default function UploadStoryPage() {
         <div className="mb-8 bg-purple-600/20 border border-purple-500/30  p-4">
           <div className="flex items-center gap-2 mb-3">
             <Trophy className="w-5 h-5 text-purple-400" />
-            <span className="text-purple-400 ">
-              Competition Benefits
-            </span>
+            <span className="text-purple-400 ">Competition Benefits</span>
           </div>
           <div className="text-gray-300 text-sm space-y-1">
             <div>• Submit up to 3 stories per month (FREE participation)</div>

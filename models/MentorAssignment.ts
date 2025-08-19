@@ -15,46 +15,52 @@ export interface IMentorAssignment extends Document {
   updatedAt: Date;
 }
 
-const MentorAssignmentSchema = new Schema<IMentorAssignment>({
-  mentorId: {
-    type: Schema.Types.ObjectId,
-    ref: 'User',
-    required: true,
-    index: true,
+const MentorAssignmentSchema = new Schema<IMentorAssignment>(
+  {
+    mentorId: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+      index: true,
+    },
+    childId: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+      index: true,
+    },
+    assignedBy: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+    },
+    isActive: {
+      type: Boolean,
+      default: true,
+      index: true,
+    },
+    assignmentDate: {
+      type: Date,
+      default: Date.now,
+    },
+    unassignedDate: {
+      // ✅ NEW FIELD
+      type: Date,
+    },
+    unassignedBy: {
+      // ✅ NEW FIELD
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+    },
   },
-  childId: {
-    type: Schema.Types.ObjectId,
-    ref: 'User',
-    required: true,
-    index: true,
-  },
-  assignedBy: {
-    type: Schema.Types.ObjectId,
-    ref: 'User',
-    required: true,
-  },
-  isActive: {
-    type: Boolean,
-    default: true,
-    index: true,
-  },
-  assignmentDate: {
-    type: Date,
-    default: Date.now,
-  },
-  unassignedDate: { // ✅ NEW FIELD
-    type: Date,
-  },
-  unassignedBy: { // ✅ NEW FIELD
-    type: Schema.Types.ObjectId,
-    ref: 'User',
-  },
-}, {
-  timestamps: true,
-});
+  {
+    timestamps: true,
+  }
+);
 
 // Indexes
 MentorAssignmentSchema.index({ mentorId: 1, isActive: 1 });
 MentorAssignmentSchema.index({ childId: 1, isActive: 1 });
 
-export default mongoose.models?.MentorAssignment || mongoose.model<IMentorAssignment>('MentorAssignment', MentorAssignmentSchema);
+export default mongoose.models?.MentorAssignment ||
+  mongoose.model<IMentorAssignment>('MentorAssignment', MentorAssignmentSchema);

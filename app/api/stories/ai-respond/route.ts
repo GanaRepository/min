@@ -99,7 +99,8 @@ export async function POST(req: NextRequest) {
         );
       } catch (error) {
         console.error('AI response generation failed:', error);
-        aiResponse = "That's a wonderful addition to your story! What happens next?";
+        aiResponse =
+          "That's a wonderful addition to your story! What happens next?";
       }
     }
 
@@ -140,7 +141,9 @@ export async function POST(req: NextRequest) {
     let assessment = null;
     if (isStoryComplete) {
       try {
-        console.log('🎯 Story completed! Auto-generating detailed assessment...');
+        console.log(
+          '🎯 Story completed! Auto-generating detailed assessment...'
+        );
 
         const allTurns = await Turn.find({ sessionId: actualSessionId })
           .sort({ turnNumber: 1 })
@@ -167,7 +170,8 @@ export async function POST(req: NextRequest) {
               overallScore: assessment.overallScore,
               vocabularyScore: assessment.categoryScores.vocabulary,
               structureScore: assessment.categoryScores.structure,
-              characterDevelopmentScore: assessment.categoryScores.characterDevelopment,
+              characterDevelopmentScore:
+                assessment.categoryScores.characterDevelopment,
               plotDevelopmentScore: assessment.categoryScores.plotDevelopment,
               readingLevel: assessment.categoryScores.readingLevel,
               feedback: assessment.educationalFeedback.teacherComment,
@@ -176,7 +180,7 @@ export async function POST(req: NextRequest) {
               vocabularyUsed: [],
               suggestedWords: [],
               educationalInsights: assessment.educationalFeedback.encouragement,
-              
+
               // Advanced fields
               integrityAnalysis: assessment.integrityAnalysis,
               recommendations: assessment.recommendations,
@@ -184,7 +188,10 @@ export async function POST(req: NextRequest) {
               assessmentVersion: '2.0',
               assessmentDate: new Date().toISOString(),
             },
-            status: assessment.integrityAnalysis.integrityRisk === 'critical' ? 'flagged' : 'completed',
+            status:
+              assessment.integrityAnalysis.integrityRisk === 'critical'
+                ? 'flagged'
+                : 'completed',
             lastAssessedAt: new Date(),
             assessmentAttempts: 1,
           },
@@ -198,7 +205,8 @@ export async function POST(req: NextRequest) {
           creativityScore: assessment.categoryScores.creativity,
           vocabularyScore: assessment.categoryScores.vocabulary,
           structureScore: assessment.categoryScores.structure,
-          characterDevelopmentScore: assessment.categoryScores.characterDevelopment,
+          characterDevelopmentScore:
+            assessment.categoryScores.characterDevelopment,
           plotDevelopmentScore: assessment.categoryScores.plotDevelopment,
           overallScore: assessment.overallScore,
           readingLevel: assessment.categoryScores.readingLevel,
@@ -220,11 +228,10 @@ export async function POST(req: NextRequest) {
       turn: newTurn,
       session: updatedSession,
       assessment,
-      message: isStoryComplete 
-        ? 'Story completed! Assessment generated.' 
+      message: isStoryComplete
+        ? 'Story completed! Assessment generated.'
         : 'Turn submitted successfully!',
     });
-
   } catch (error) {
     console.error('Story submission error:', error);
     return NextResponse.json(

@@ -19,8 +19,8 @@ export async function GET(request: NextRequest) {
     }
 
     const { searchParams } = new URL(request.url);
-  const page = parseInt(searchParams.get('page') || '1');
-  const limit = parseInt(searchParams.get('limit') || '6');
+    const page = parseInt(searchParams.get('page') || '1');
+    const limit = parseInt(searchParams.get('limit') || '6');
     const resolved = searchParams.get('resolved');
     const type = searchParams.get('type');
 
@@ -77,12 +77,12 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { 
-      storyId, 
-      content, 
-      commentType = 'admin_feedback', 
-      category = 'general', 
-      isPublic = true 
+    const {
+      storyId,
+      content,
+      commentType = 'admin_feedback',
+      category = 'general',
+      isPublic = true,
     } = body;
 
     // Validate required fields
@@ -99,10 +99,7 @@ export async function POST(request: NextRequest) {
     const StorySession = (await import('@/models/StorySession')).default;
     const story = await StorySession.findById(storyId);
     if (!story) {
-      return NextResponse.json(
-        { error: 'Story not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Story not found' }, { status: 404 });
     }
 
     // Create the admin comment
@@ -128,7 +125,6 @@ export async function POST(request: NextRequest) {
       comment,
       message: 'Admin comment added successfully',
     });
-
   } catch (error) {
     console.error('Error creating admin comment:', error);
     return NextResponse.json(

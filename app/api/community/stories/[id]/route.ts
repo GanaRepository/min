@@ -77,10 +77,12 @@ export async function GET(
     await connectToDatabase();
 
     // Find the published story
-    const story = await StorySession.findOne({
+    const story = (await StorySession.findOne({
       _id: id,
-      isPublished: true
-    }).populate('childId', 'firstName lastName ageGroup').lean() as StoryDocument | null;
+      isPublished: true,
+    })
+      .populate('childId', 'firstName lastName ageGroup')
+      .lean()) as StoryDocument | null;
 
     if (!story) {
       return NextResponse.json(
@@ -112,34 +114,50 @@ export async function GET(
     const completeContent = storyParts.join('\n\n');
 
     // Get comments for this story
-    const comments = await StoryComment.find({ 
+    const comments = (await StoryComment.find({
       storyId: id,
-      isPublic: true 
+      isPublic: true,
     })
       .populate('authorId', 'firstName lastName')
       .sort({ createdAt: -1 })
-      .lean() as unknown as CommentDocument[];
+      .lean()) as unknown as CommentDocument[];
 
     // Determine story type - safely handle competitionEntries
-    const storyType = (story.competitionEntries && story.competitionEntries.length > 0) ? 'competition' : 
-                     (story.isUploadedForAssessment) ? 'uploaded' : 'freestyle';
+    const storyType =
+      story.competitionEntries && story.competitionEntries.length > 0
+        ? 'competition'
+        : story.isUploadedForAssessment
+          ? 'uploaded'
+          : 'freestyle';
 
     // Check if user has liked/bookmarked (if logged in) - safely handle arrays
     const userId = session?.user?.id;
     const likesArray = story.likes || [];
     const bookmarksArray = story.bookmarks || [];
-    const isLikedByUser = userId ? likesArray.some((like: any) => like.toString() === userId) : false;
-    const isBookmarkedByUser = userId ? bookmarksArray.some((bookmark: any) => bookmark.toString() === userId) : false;
+    const isLikedByUser = userId
+      ? likesArray.some((like: any) => like.toString() === userId)
+      : false;
+    const isBookmarkedByUser = userId
+      ? bookmarksArray.some((bookmark: any) => bookmark.toString() === userId)
+      : false;
 
     // Format competition winner info - safely handle competitionEntries
     let competitionWinner;
     if (story.competitionEntries && story.competitionEntries.length > 0) {
-      const winningEntry = story.competitionEntries.find((entry: any) => entry.isWinner);
+      const winningEntry = story.competitionEntries.find(
+        (entry: any) => entry.isWinner
+      );
       if (winningEntry) {
         competitionWinner = {
           position: winningEntry.position || 1,
-          competitionName: winningEntry.competitionName || 'Monthly Competition',
-          month: winningEntry.month || new Date(story.publishedAt || story.updatedAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
+          competitionName:
+            winningEntry.competitionName || 'Monthly Competition',
+          month:
+            winningEntry.month ||
+            new Date(story.publishedAt || story.updatedAt).toLocaleDateString(
+              'en-US',
+              { month: 'long', year: 'numeric' }
+            ),
         };
       }
     }
@@ -157,25 +175,26 @@ export async function GET(
         firstName: story.childId.firstName,
         lastName: story.childId.lastName,
         ageGroup: story.childId.ageGroup || 'Unknown',
-        totalStories: 1 // We could calculate this with another query if needed
+        totalStories: 1, // We could calculate this with another query if needed
       },
       assessment: {
-        overallScore: (story.assessment?.overallScore) || story.overallScore || 0,
-        creativity: (story.assessment?.creativityScore) || story.creativityScore || 0,
-        grammar: (story.assessment?.grammarScore) || story.grammarScore || 0,
-        vocabulary: (story.assessment?.vocabularyScore) || 0,
-        structure: (story.assessment?.structureScore) || 0,
-        characterDevelopment: (story.assessment?.characterDevelopmentScore) || 0,
-        plotDevelopment: (story.assessment?.plotDevelopmentScore) || 0
+        overallScore: story.assessment?.overallScore || story.overallScore || 0,
+        creativity:
+          story.assessment?.creativityScore || story.creativityScore || 0,
+        grammar: story.assessment?.grammarScore || story.grammarScore || 0,
+        vocabulary: story.assessment?.vocabularyScore || 0,
+        structure: story.assessment?.structureScore || 0,
+        characterDevelopment: story.assessment?.characterDevelopmentScore || 0,
+        plotDevelopment: story.assessment?.plotDevelopmentScore || 0,
       },
       stats: {
         views: story.views || 0,
         likes: likesArray.length,
         comments: comments.length,
-        bookmarks: bookmarksArray.length
+        bookmarks: bookmarksArray.length,
       },
       tags: story.tags || [],
-      genre: story.genre || (story.elements?.genre) || 'Adventure',
+      genre: story.genre || story.elements?.genre || 'Adventure',
       isFeatured: story.isFeatured || false,
       competitionWinner,
       isLikedByUser,
@@ -189,16 +208,17 @@ export async function GET(
           content: comment.content,
           createdAt: comment.createdAt,
           likes: commentLikesArray.length,
-          isLikedByUser: userId ? commentLikesArray.some((like: any) => like.toString() === userId) : false
+          isLikedByUser: userId
+            ? commentLikesArray.some((like: any) => like.toString() === userId)
+            : false,
         };
-      })
+      }),
     };
 
     return NextResponse.json({
       success: true,
-      story: storyDetails
+      story: storyDetails,
     });
-
   } catch (error) {
     console.error('Error fetching story details:', error);
     return NextResponse.json(

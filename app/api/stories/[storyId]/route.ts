@@ -1,6 +1,5 @@
 //app/api/stories/[storyId]/route.ts
 
-
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/utils/authOptions';
@@ -8,7 +7,6 @@ import { connectToDatabase } from '@/utils/db';
 import StorySession from '@/models/StorySession';
 import StoryComment from '@/models/StoryComment';
 import Turn from '@/models/Turn';
-
 
 export const dynamic = 'force-dynamic';
 

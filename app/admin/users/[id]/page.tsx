@@ -240,9 +240,7 @@ export default function ViewUser() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {/* Monthly Usage */}
           <div className="bg-gray-800  p-6">
-            <h3 className="text-lg  text-white mb-4">
-              Monthly Usage
-            </h3>
+            <h3 className="text-lg  text-white mb-4">Monthly Usage</h3>
             <div className="space-y-3">
               <div className="flex justify-between">
                 <span className="text-gray-400">Stories:</span>
@@ -267,18 +265,14 @@ export default function ViewUser() {
 
           {/* Total Stats */}
           <div className="bg-gray-800  p-6">
-            <h3 className="text-lg  text-white mb-4">
-              Total Stats
-            </h3>
+            <h3 className="text-lg  text-white mb-4">Total Stats</h3>
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center">
                   <BookOpen size={16} className="text-blue-400 mr-2" />
                   <span className="text-gray-400">Stories:</span>
                 </div>
-                <span className="text-white ">
-                  {user.totalStoriesCreated}
-                </span>
+                <span className="text-white ">{user.totalStoriesCreated}</span>
               </div>
               <div className="flex items-center justify-between">
                 <div className="flex items-center">
@@ -295,9 +289,7 @@ export default function ViewUser() {
           {/* Revenue Generated */}
           {totalRevenue > 0 && (
             <div className="bg-gray-800  p-6">
-              <h3 className="text-lg  text-white mb-4">
-                Revenue Generated
-              </h3>
+              <h3 className="text-lg  text-white mb-4">Revenue Generated</h3>
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
@@ -319,9 +311,7 @@ export default function ViewUser() {
           {/* Assigned Mentor */}
           {user.assignedMentor && (
             <div className="bg-gray-800  p-6">
-              <h3 className="text-lg  text-white mb-4">
-                Assigned Mentor
-              </h3>
+              <h3 className="text-lg  text-white mb-4">Assigned Mentor</h3>
               <div className="flex items-center space-x-3">
                 <div className="bg-purple-600 p-2 ">
                   <Star size={16} className="text-white" />
@@ -344,9 +334,7 @@ export default function ViewUser() {
       {/* Purchase History */}
       {user.role === 'child' && user.purchaseHistory.length > 0 && (
         <div className="bg-gray-800  p-6">
-          <h3 className="text-lg  text-white mb-4">
-            Purchase History
-          </h3>
+          <h3 className="text-lg  text-white mb-4">Purchase History</h3>
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
@@ -412,9 +400,7 @@ export default function ViewUser() {
         user.recentStories &&
         user.recentStories.length > 0 && (
           <div className="bg-gray-800  p-6">
-            <h3 className="text-lg  text-white mb-4">
-              Recent Stories
-            </h3>
+            <h3 className="text-lg  text-white mb-4">Recent Stories</h3>
             <div className="space-y-3">
               {user.recentStories.slice(0, 5).map((story) => (
                 <div

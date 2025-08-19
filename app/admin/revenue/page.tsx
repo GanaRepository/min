@@ -120,9 +120,7 @@ export default function RevenuePage() {
                 size: 20,
                 className: getGrowthColor(revenueData.growth),
               })}
-              <span
-                className={`ml-1  ${getGrowthColor(revenueData.growth)}`}
-              >
+              <span className={`ml-1  ${getGrowthColor(revenueData.growth)}`}>
                 {revenueData.growth >= 0 ? '+' : ''}
                 {revenueData.growth.toFixed(1)}%
               </span>
@@ -195,16 +193,12 @@ export default function RevenuePage() {
       {/* Quick Actions */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <div className="bg-gray-800  p-6">
-          <h3 className="text-lg  text-white mb-4">
-            Revenue Management
-          </h3>
+          <h3 className="text-lg  text-white mb-4">Revenue Management</h3>
           <div className="space-y-3">
             <Link href="/admin/revenue/transactions">
               <button className="w-full text-left p-3 bg-gray-700/50  hover:bg-gray-700 transition-colors">
                 <div className="flex items-center justify-between">
-                  <span className="text-white ">
-                    Transaction History
-                  </span>
+                  <span className="text-white ">Transaction History</span>
                   <FileText size={16} className="text-blue-400" />
                 </div>
                 <p className="text-gray-400 text-sm mt-1">
@@ -216,9 +210,7 @@ export default function RevenuePage() {
             <Link href="/admin/revenue/refunds">
               <button className="w-full text-left p-3 bg-gray-700/50  hover:bg-gray-700 transition-colors">
                 <div className="flex items-center justify-between">
-                  <span className="text-white ">
-                    Refund Management
-                  </span>
+                  <span className="text-white ">Refund Management</span>
                   <CreditCard size={16} className="text-orange-400" />
                 </div>
                 <p className="text-gray-400 text-sm mt-1">
@@ -230,9 +222,7 @@ export default function RevenuePage() {
         </div>
 
         <div className="bg-gray-800  p-6">
-          <h3 className="text-lg  text-white mb-4">
-            Revenue Analytics
-          </h3>
+          <h3 className="text-lg  text-white mb-4">Revenue Analytics</h3>
           <div className="space-y-4">
             <div className="flex items-center justify-between p-3 bg-gray-700/50 ">
               <span className="text-gray-400">Average Order Value</span>
@@ -251,9 +241,7 @@ export default function RevenuePage() {
 
             <div className="flex items-center justify-between p-3 bg-gray-700/50 ">
               <span className="text-gray-400">Revenue Growth</span>
-              <span
-                className={` ${getGrowthColor(revenueData.growth)}`}
-              >
+              <span className={` ${getGrowthColor(revenueData.growth)}`}>
                 {revenueData.growth >= 0 ? '+' : ''}
                 {revenueData.growth.toFixed(1)}%
               </span>
@@ -262,9 +250,7 @@ export default function RevenuePage() {
         </div>
 
         <div className="bg-gray-800  p-6">
-          <h3 className="text-lg  text-white mb-4">
-            Top Paying Users
-          </h3>
+          <h3 className="text-lg  text-white mb-4">Top Paying Users</h3>
           <div className="space-y-3">
             {revenueData.topPayingUsers.slice(0, 3).map((user, index) => (
               <div

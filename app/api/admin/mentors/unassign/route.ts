@@ -33,10 +33,7 @@ export async function POST(request: NextRequest) {
     // Verify child exists
     const child = await User.findOne({ _id: childId, role: 'child' });
     if (!child) {
-      return NextResponse.json(
-        { error: 'Student not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Student not found' }, { status: 404 });
     }
 
     // Find and deactivate current assignment
@@ -58,13 +55,14 @@ export async function POST(request: NextRequest) {
     assignment.unassignedBy = session.user.id;
     await assignment.save();
 
-    console.log(`✅ Student ${child.firstName} ${child.lastName} unassigned from mentor ${assignment.mentorId.firstName} ${assignment.mentorId.lastName}`);
+    console.log(
+      `✅ Student ${child.firstName} ${child.lastName} unassigned from mentor ${assignment.mentorId.firstName} ${assignment.mentorId.lastName}`
+    );
 
     return NextResponse.json({
       success: true,
       message: `${child.firstName} ${child.lastName} unassigned from ${assignment.mentorId.firstName} ${assignment.mentorId.lastName}`,
     });
-
   } catch (error) {
     console.error('Error unassigning student from mentor:', error);
     return NextResponse.json(

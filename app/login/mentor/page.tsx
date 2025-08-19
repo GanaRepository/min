@@ -7,12 +7,12 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://www.pioneeritsystems.com'),
-  title: 'Employee Login | Pioneer IT Systems - Access Your Dashboard',
+  metadataBase: new URL('https://www.mintoons.com'),
+  title: 'Employee Login | Mintoons - Access Your Dashboard',
   description:
-    'Access your Pioneer IT Systems employee dashboard to manage timesheets, view company resources, and connect with your team members and clients.',
+    'Access your Mintoons employee dashboard to manage timesheets, view company resources, and connect with your team members and clients.',
   keywords: [
-    'Pioneer IT Systems',
+    'Mintoons',
     'employee login',
     'staff portal',
     'timesheet management',
@@ -29,17 +29,15 @@ export const metadata: Metadata = {
     'workforce management',
     'internal communications',
   ],
-  authors: [
-    { name: 'Pioneer IT Systems', url: 'https://www.pioneeritsystems.com' },
-  ],
-  creator: 'Pioneer IT Systems',
-  publisher: 'Pioneer IT Systems',
+  authors: [{ name: 'Mintoons', url: 'https://www.mintoons.com' }],
+  creator: 'Mintoons',
+  publisher: 'Mintoons',
   openGraph: {
-    title: 'Employee Login | Pioneer IT Systems - Access Your Dashboard',
+    title: 'Employee Login | Mintoons - Access Your Dashboard',
     description:
-      'Access your Pioneer IT Systems employee dashboard to manage timesheets, view company resources, and connect with your team members and clients.',
-    url: 'https://www.pioneeritsystems.com/login/employee',
-    siteName: 'Pioneer IT Systems',
+      'Access your Mintoons employee dashboard to manage timesheets, view company resources, and connect with your team members and clients.',
+    url: 'https://www.mintoons.com/login/employee',
+    siteName: 'Mintoons',
     type: 'website',
     locale: 'en_US',
     images: [
@@ -47,14 +45,14 @@ export const metadata: Metadata = {
         url: '/employee-login-og.jpg', // Update with your actual image path
         width: 1200,
         height: 630,
-        alt: 'Pioneer IT Systems - Employee Login',
+        alt: 'Mintoons - Employee Login',
       },
     ],
   },
   alternates: {
-    canonical: 'https://www.pioneeritsystems.com/login/employee',
+    canonical: 'https://www.mintoons.com/login/employee',
     languages: {
-      'en-US': 'https://www.pioneeritsystems.com/login/employee',
+      'en-US': 'https://www.mintoons.com/login/employee',
     },
   },
   robots: {
@@ -72,7 +70,7 @@ export const metadata: Metadata = {
   category: 'Technology',
   appleWebApp: {
     capable: true,
-    title: 'Pioneer IT Systems',
+    title: 'Mintoons',
     statusBarStyle: 'black-translucent',
   },
   formatDetection: {
@@ -86,7 +84,7 @@ export const metadata: Metadata = {
   },
   appLinks: {
     web: {
-      url: 'https://www.pioneeritsystems.com',
+      url: 'https://www.mintoons.com',
       should_fallback: true,
     },
   },

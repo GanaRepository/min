@@ -123,9 +123,7 @@ export default function CommentsPage() {
       if (data.success) {
         setComments(
           comments.map((comment) =>
-            comment._id === commentId
-              ? { ...comment, isResolved }
-              : comment
+            comment._id === commentId ? { ...comment, isResolved } : comment
           )
         );
       } else {
@@ -283,19 +281,22 @@ export default function CommentsPage() {
                 <div className="flex items-center space-x-3">
                   <div className="w-10 h-10 bg-gray-600  flex items-center justify-center">
                     <span className="text-sm  text-white">
-                      {comment.authorId.firstName[0]}{comment.authorId.lastName[0]}
+                      {comment.authorId.firstName[0]}
+                      {comment.authorId.lastName[0]}
                     </span>
                   </div>
                   <div>
                     <p className="text-white  text-sm">
                       {comment.authorId.firstName} {comment.authorId.lastName}
                     </p>
-                    <span className={`inline-block px-2 py-1 text-xs  ${getRoleColor(comment.authorId.role)}`}>
+                    <span
+                      className={`inline-block px-2 py-1 text-xs  ${getRoleColor(comment.authorId.role)}`}
+                    >
                       {comment.authorId.role}
                     </span>
                   </div>
                 </div>
-                
+
                 {/* Resolution Status */}
                 <div className="flex items-center">
                   {comment.isResolved ? (
@@ -314,7 +315,9 @@ export default function CommentsPage() {
 
               {/* Comment Type */}
               <div className="mb-3">
-                <span className={`inline-block px-2 py-1 text-xs  ${getCommentTypeColor(comment.commentType)}`}>
+                <span
+                  className={`inline-block px-2 py-1 text-xs  ${getCommentTypeColor(comment.commentType)}`}
+                >
                   {comment.commentType.replace('_', ' ')}
                 </span>
               </div>
@@ -341,13 +344,17 @@ export default function CommentsPage() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-1 text-xs text-gray-400">
                   <Calendar size={12} />
-                  <span>{new Date(comment.createdAt).toLocaleDateString()}</span>
+                  <span>
+                    {new Date(comment.createdAt).toLocaleDateString()}
+                  </span>
                 </div>
-                
+
                 <div className="flex items-center space-x-2">
                   {/* Toggle Resolution */}
                   <button
-                    onClick={() => updateCommentStatus(comment._id, !comment.isResolved)}
+                    onClick={() =>
+                      updateCommentStatus(comment._id, !comment.isResolved)
+                    }
                     className={`px-3 py-1 text-xs -md transition-colors ${
                       comment.isResolved
                         ? 'bg-yellow-600 hover:bg-yellow-700 text-white'
@@ -356,7 +363,7 @@ export default function CommentsPage() {
                   >
                     {comment.isResolved ? 'Unresolve' : 'Resolve'}
                   </button>
-                  
+
                   {/* View Details */}
                   <Link href={`/admin/comments/${comment._id}`}>
                     <button className="p-2 text-gray-400 hover:text-white hover:bg-gray-600  transition-colors">
@@ -388,23 +395,25 @@ export default function CommentsPage() {
           >
             <ChevronLeft size={20} />
           </button>
-          
+
           <div className="flex space-x-1">
-            {Array.from({ length: pagination.pages }, (_, i) => i + 1).map((pageNum) => (
-              <button
-                key={pageNum}
-                onClick={() => setPage(pageNum)}
-                className={`px-3 py-2 text-sm  transition-colors ${
-                  page === pageNum
-                    ? 'bg-blue-600 text-white'
-                    : 'text-gray-400 hover:text-white hover:bg-gray-700'
-                }`}
-              >
-                {pageNum}
-              </button>
-            ))}
+            {Array.from({ length: pagination.pages }, (_, i) => i + 1).map(
+              (pageNum) => (
+                <button
+                  key={pageNum}
+                  onClick={() => setPage(pageNum)}
+                  className={`px-3 py-2 text-sm  transition-colors ${
+                    page === pageNum
+                      ? 'bg-blue-600 text-white'
+                      : 'text-gray-400 hover:text-white hover:bg-gray-700'
+                  }`}
+                >
+                  {pageNum}
+                </button>
+              )
+            )}
           </div>
-          
+
           <button
             onClick={() => setPage(page + 1)}
             disabled={page === pagination.pages}

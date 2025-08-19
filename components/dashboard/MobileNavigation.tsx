@@ -8,7 +8,9 @@ interface MobileNavigationProps {
   setSidebarOpen: (open: boolean) => void;
 }
 
-export default function MobileNavigation({ setSidebarOpen }: MobileNavigationProps) {
+export default function MobileNavigation({
+  setSidebarOpen,
+}: MobileNavigationProps) {
   const { data: session } = useSession();
 
   return (

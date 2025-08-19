@@ -443,9 +443,7 @@ export default function StoriesExportPage() {
             transition={{ delay: 0.4 }}
             className="bg-gray-800  p-6"
           >
-            <h3 className="text-lg  text-white mb-4">
-              Ready to Export
-            </h3>
+            <h3 className="text-lg  text-white mb-4">Ready to Export</h3>
 
             <div className="bg-blue-900/20 border border-blue-500/30  p-4 mb-6">
               <p className="text-blue-300 text-sm">

@@ -8,13 +8,12 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://www.pioneeritsystems.com'),
-  title:
-    'Pioneer IT Systems | Premier IT Staff Augmentation & Technology Services',
+  metadataBase: new URL('https://www.mintoons.com'),
+  title: 'Mintoons | Premier IT Staff Augmentation & Technology Services',
   description:
-    'Pioneer IT Systems offers professional IT staffing solutions, software development services, and technology consulting to help mentors innovate and achieve their digital transformation goals.',
+    'Mintoons offers professional IT staffing solutions, software development services, and technology consulting to help mentors innovate and achieve their digital transformation goals.',
   keywords: [
-    'Pioneer IT Systems',
+    'Mintoons',
     'IT staffing solutions',
     'technology staffing',
     'staff augmentation',
@@ -31,18 +30,15 @@ export const metadata: Metadata = {
     'IT project solutions',
     'technology partner',
   ],
-  authors: [
-    { name: 'Pioneer IT Systems', url: 'https://www.pioneeritsystems.com' },
-  ],
-  creator: 'Pioneer IT Systems',
-  publisher: 'Pioneer IT Systems',
+  authors: [{ name: 'Mintoons', url: 'https://www.mintoons.com' }],
+  creator: 'Mintoons',
+  publisher: 'Mintoons',
   openGraph: {
-    title:
-      'Pioneer IT Systems | Premier IT Staff Augmentation & Technology Services',
+    title: 'Mintoons | Premier IT Staff Augmentation & Technology Services',
     description:
-      'Pioneer IT Systems offers professional IT staffing solutions, software development services, and technology consulting to help mentors innovate and achieve their digital transformation goals.',
-    url: 'https://www.pioneeritsystems.com',
-    siteName: 'Pioneer IT Systems',
+      'Mintoons offers professional IT staffing solutions, software development services, and technology consulting to help mentors innovate and achieve their digital transformation goals.',
+    url: 'https://www.mintoons.com',
+    siteName: 'Mintoons',
     type: 'website',
     locale: 'en_US',
     images: [
@@ -50,14 +46,14 @@ export const metadata: Metadata = {
         url: '/imag5.jpg',
         width: 1200,
         height: 630,
-        alt: 'Pioneer IT Systems - Home',
+        alt: 'Mintoons - Home',
       },
     ],
   },
   alternates: {
-    canonical: 'https://www.pioneeritsystems.com',
+    canonical: 'https://www.mintoons.com',
     languages: {
-      'en-US': 'https://www.pioneeritsystems.com',
+      'en-US': 'https://www.mintoons.com',
     },
   },
   robots: {
@@ -75,7 +71,7 @@ export const metadata: Metadata = {
   category: 'Technology',
   appleWebApp: {
     capable: true,
-    title: 'Pioneer IT Systems',
+    title: 'Mintoons',
     statusBarStyle: 'black-translucent',
   },
   formatDetection: {
@@ -89,7 +85,7 @@ export const metadata: Metadata = {
   },
   appLinks: {
     web: {
-      url: 'https://www.pioneeritsystems.com',
+      url: 'https://www.mintoons.com',
       should_fallback: true,
     },
   },

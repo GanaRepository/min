@@ -10,7 +10,10 @@ export async function POST() {
 
     const adminUser = await User.findOne({ role: 'admin' });
     if (!adminUser) {
-      return NextResponse.json({ error: 'No admin user found' }, { status: 404 });
+      return NextResponse.json(
+        { error: 'No admin user found' },
+        { status: 404 }
+      );
     }
 
     // Create test past competitions
@@ -30,7 +33,7 @@ export async function POST() {
             storyId: adminUser._id,
             title: 'The Secret Garden Adventure',
             score: 96,
-            aiJudgingNotes: 'Excellent creativity and grammar'
+            aiJudgingNotes: 'Excellent creativity and grammar',
           },
           {
             position: 2,
@@ -39,7 +42,7 @@ export async function POST() {
             storyId: adminUser._id,
             title: 'Dragon Quest',
             score: 89,
-            aiJudgingNotes: 'Great storytelling'
+            aiJudgingNotes: 'Great storytelling',
           },
           {
             position: 3,
@@ -48,8 +51,8 @@ export async function POST() {
             storyId: adminUser._id,
             title: 'Space Explorer',
             score: 84,
-            aiJudgingNotes: 'Good plot development'
-          }
+            aiJudgingNotes: 'Good plot development',
+          },
         ],
         submissionStart: new Date('2025-07-01'),
         submissionEnd: new Date('2025-07-25'),
@@ -58,7 +61,7 @@ export async function POST() {
         resultsDate: new Date('2025-07-31'),
         createdBy: adminUser._id,
         createdAt: new Date('2025-07-01'),
-        updatedAt: new Date('2025-07-31')
+        updatedAt: new Date('2025-07-31'),
       },
       {
         month: 'June',
@@ -75,7 +78,7 @@ export async function POST() {
             storyId: adminUser._id,
             title: 'The Magical Forest',
             score: 94,
-            aiJudgingNotes: 'Outstanding creativity'
+            aiJudgingNotes: 'Outstanding creativity',
           },
           {
             position: 2,
@@ -84,7 +87,7 @@ export async function POST() {
             storyId: adminUser._id,
             title: 'Robot Friends',
             score: 87,
-            aiJudgingNotes: 'Great character development'
+            aiJudgingNotes: 'Great character development',
           },
           {
             position: 3,
@@ -93,8 +96,8 @@ export async function POST() {
             storyId: adminUser._id,
             title: 'Ocean Mystery',
             score: 82,
-            aiJudgingNotes: 'Engaging plot'
-          }
+            aiJudgingNotes: 'Engaging plot',
+          },
         ],
         submissionStart: new Date('2025-06-01'),
         submissionEnd: new Date('2025-06-25'),
@@ -103,8 +106,8 @@ export async function POST() {
         resultsDate: new Date('2025-06-30'),
         createdBy: adminUser._id,
         createdAt: new Date('2025-06-01'),
-        updatedAt: new Date('2025-06-30')
-      }
+        updatedAt: new Date('2025-06-30'),
+      },
     ];
 
     await Competition.insertMany(pastCompetitions);
@@ -112,11 +115,13 @@ export async function POST() {
     return NextResponse.json({
       success: true,
       message: 'Test past competitions created',
-      count: pastCompetitions.length
+      count: pastCompetitions.length,
     });
-
   } catch (error) {
     console.error('Error creating test competitions:', error);
-    return NextResponse.json({ error: 'Failed to create test competitions' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to create test competitions' },
+      { status: 500 }
+    );
   }
 }

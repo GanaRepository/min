@@ -48,18 +48,16 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900">
       {/* Sidebar */}
       <DashboardSidebar open={sidebarOpen} setOpen={setSidebarOpen} />
-      
+
       {/* Main content with proper margin for sidebar */}
       <div className="lg:ml-64">
         {/* Mobile header */}
         <div className="lg:hidden">
           <MobileNavigation setSidebarOpen={setSidebarOpen} />
         </div>
-        
+
         {/* Page content */}
-        <main className="p-4 lg:p-8">
-          {children}
-        </main>
+        <main className="p-4 lg:p-8">{children}</main>
       </div>
     </div>
   );

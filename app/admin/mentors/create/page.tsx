@@ -295,9 +295,7 @@ export default function CreateMentorPage() {
 
           {/* Bio */}
           <div>
-            <label className="block text-sm  text-gray-300 mb-2">
-              Bio
-            </label>
+            <label className="block text-sm  text-gray-300 mb-2">Bio</label>
             <div className="relative">
               <FileText
                 size={20}

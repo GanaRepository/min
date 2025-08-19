@@ -138,7 +138,7 @@
 //   if (price === 0) {
 //     return 'FREE';
 //   }
-  
+
 //   return new Intl.NumberFormat('en-US', {
 //     style: 'currency',
 //     currency: currency,
@@ -200,7 +200,7 @@
 // } {
 //   return {
 //     storiesAdded: 5,           // 3 → 8 total
-//     assessmentsAdded: 5,       // 3 → 8 total  
+//     assessmentsAdded: 5,       // 3 → 8 total
 //     totalAssessmentAttemptsAdded: 15, // 9 → 24 total
 //     competitionEntriesAdded: 0 // Competition stays at 1
 //   };
@@ -212,7 +212,7 @@
 //   ALLOWED_TYPES: ['.txt', '.pdf', '.docx'],
 //   ALLOWED_MIME_TYPES: [
 //     'text/plain',
-//     'application/pdf', 
+//     'application/pdf',
 //     'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
 //   ]
 // };
@@ -226,7 +226,6 @@
 //   JUDGING_PERIOD: 5, // Days 26-30
 //   RESULTS_DAY: 31
 // };
-
 
 // config/pricing.ts - CORRECTED FOR SIMPLIFIED SYSTEM
 export interface PricingTier {
@@ -333,7 +332,7 @@ export const FEATURE_FLAGS = {
   perStoryAssessmentLimits: false, // No more per-story limits
   storyReassessment: false, // No more reassess button
   childStoryDeletion: false, // Children can't delete stories
-  
+
   // ENABLED FEATURES
   poolBasedAssessments: true, // Use assessment pool however you want
   flaggedStoryPublishing: true, // Can publish flagged stories
@@ -348,11 +347,11 @@ export const USER_ACTIONS = {
   uploadForAssessment: true, // Uses assessment pool
   createFreestyleStory: true,
   enterCompetition: true,
-  
+
   // REMOVED ACTIONS FOR CHILDREN
   deleteStory: false, // Safety measure
   reassessStory: false, // Simplified - upload again instead
-  
+
   // ADMIN ONLY ACTIONS
   adminDeleteStory: true,
   moderateContent: true,
@@ -361,29 +360,30 @@ export const USER_ACTIONS = {
 
 export const PRICING_EXPLANATIONS = {
   assessmentSystem: {
-    title: "Simple Assessment Pool",
-    description: "Use your 9 free assessments however you want - same story multiple times, or different stories. No confusing per-story limits!",
+    title: 'Simple Assessment Pool',
+    description:
+      'Use your 9 free assessments however you want - same story multiple times, or different stories. No confusing per-story limits!',
     examples: [
-      "Upload 9 different stories for assessment",
-      "Upload same story 9 times to see improvement",
-      "Mix: 3 stories assessed twice each + 3 new stories",
-    ]
+      'Upload 9 different stories for assessment',
+      'Upload same story 9 times to see improvement',
+      'Mix: 3 stories assessed twice each + 3 new stories',
+    ],
   },
   storyPackValue: {
-    title: "$15 Story Pack Benefits",
+    title: '$15 Story Pack Benefits',
     breakdown: {
-      freestyleStories: "5 more collaborative stories ($3 each)",
-      assessments: "15 more AI assessments ($1 each)", 
-      total: "Total value: $30 for just $15!"
-    }
+      freestyleStories: '5 more collaborative stories ($3 each)',
+      assessments: '15 more AI assessments ($1 each)',
+      total: 'Total value: $30 for just $15!',
+    },
   },
   safetyFeatures: {
-    title: "Child Safety Measures",
+    title: 'Child Safety Measures',
     features: [
-      "No delete buttons - prevents accidental loss",
-      "No confusing reassess options", 
-      "Simple interface with clear actions",
-      "Admin oversight for flagged content"
-    ]
-  }
+      'No delete buttons - prevents accidental loss',
+      'No confusing reassess options',
+      'Simple interface with clear actions',
+      'Admin oversight for flagged content',
+    ],
+  },
 };

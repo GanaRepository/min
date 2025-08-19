@@ -55,7 +55,7 @@
 //   currentTurn: number;
 //   maxTurns: number;
 //   apiCallsUsed: number;
-  
+
 //   // Publication & Competition
 //   isPublished: boolean;
 //   competitionEligible: boolean;
@@ -65,7 +65,7 @@
 //     rank?: number;
 //     score?: number;
 //   }>;
-  
+
 //   // Assessment
 //   isUploadedForAssessment: boolean;
 //   assessmentAttempts: number;
@@ -97,7 +97,7 @@
 //       message: string;
 //     };
 //   };
-  
+
 //   // Story Elements
 //   elements?: {
 //     genre?: string;
@@ -150,7 +150,7 @@
 //   const [selectedStories, setSelectedStories] = useState<Set<string>>(new Set());
 //   const [showFilters, setShowFilters] = useState(false);
 //   const [error, setError] = useState<string | null>(null);
-  
+
 //   // Action states
 //   const [publishingStory, setPublishingStory] = useState<string | null>(null);
 //   const [deletingStory, setDeletingStory] = useState<string | null>(null);
@@ -179,13 +179,13 @@
 //       console.log('📚 Fetching all user stories...');
 
 //       const response = await fetch('/api/user/stories?limit=100');
-      
+
 //       if (!response.ok) {
 //         throw new Error('Failed to fetch stories');
 //       }
 
 //       const data = await response.json();
-      
+
 //       if (data.success) {
 //         setStories(data.stories || []);
 //         setSummary(data.summary);
@@ -229,7 +229,7 @@
 
 //     // Published filter
 //     if (filters.published !== 'all') {
-//       filtered = filtered.filter(story => 
+//       filtered = filtered.filter(story =>
 //         filters.published === 'published' ? story.isPublished : !story.isPublished
 //       );
 //     }
@@ -310,9 +310,9 @@
 //   // ===== STORY ACTIONS =====
 //   const handlePublishStory = async (storyId: string) => {
 //     if (!session?.user?.id) return;
-    
+
 //     setPublishingStory(storyId);
-    
+
 //     try {
 //       const response = await fetch('/api/stories/publish', {
 //         method: 'POST',
@@ -321,7 +321,7 @@
 //       });
 
 //       const data = await response.json();
-      
+
 //       if (data.success) {
 //         alert('🎉 Story published to community showcase!');
 //         fetchStories(); // Refresh data
@@ -338,7 +338,7 @@
 
 //   const handlePurchaseStory = async (storyId: string) => {
 //     if (!session?.user?.id) return;
-    
+
 //     try {
 //       const response = await fetch('/api/stripe/checkout', {
 //         method: 'POST',
@@ -351,7 +351,7 @@
 //       });
 
 //       const data = await response.json();
-      
+
 //       if (data.success && data.checkoutUrl) {
 //         window.location.href = data.checkoutUrl;
 //       } else {
@@ -369,7 +369,7 @@
 //     }
 
 //     setDeletingStory(storyId);
-    
+
 //     try {
 //       const response = await fetch('/api/user/stories', {
 //         method: 'POST',
@@ -381,7 +381,7 @@
 //       });
 
 //       const data = await response.json();
-      
+
 //       if (data.success) {
 //         alert('Story deleted successfully');
 //         fetchStories(); // Refresh data
@@ -398,7 +398,7 @@
 
 //   const handleReassessStory = async (storyId: string) => {
 //     setReassessingStory(storyId);
-    
+
 //     try {
 //       const response = await fetch('/api/user/stories', {
 //         method: 'POST',
@@ -410,7 +410,7 @@
 //       });
 
 //       const data = await response.json();
-      
+
 //       if (data.success) {
 //         alert('Reassessment requested! Your story will be re-evaluated.');
 //         fetchStories(); // Refresh data
@@ -460,7 +460,7 @@
 //   return (
 //     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 py-20">
 //       <div className="max-w-7xl mx-auto px-6">
-        
+
 //         {/* ===== HEADER ===== */}
 //         <motion.div
 //           initial={{ opacity: 0, y: 20 }}
@@ -510,29 +510,29 @@
 //               <div className="text-2xl  text-blue-400">{summary.total}</div>
 //               <div className="text-sm text-blue-300">Total Stories</div>
 //             </div>
-            
+
 //             <div className="bg-green-500/20 border border-green-500/30  p-4 text-center">
 //               <div className="text-2xl  text-green-400">{summary.completed}</div>
 //               <div className="text-sm text-green-300">Completed</div>
 //             </div>
-            
+
 //             <div className="bg-yellow-500/20 border border-yellow-500/30  p-4 text-center">
 //               <div className="text-2xl  text-yellow-400">{summary.active}</div>
 //               <div className="text-sm text-yellow-300">In Progress</div>
 //             </div>
-            
+
 //             <div className="bg-purple-500/20 border border-purple-500/30  p-4 text-center">
 //               <div className="text-2xl  text-purple-400">{summary.published}</div>
 //               <div className="text-sm text-purple-300">Published</div>
 //             </div>
-            
+
 //             <div className="bg-orange-500/20 border border-orange-500/30  p-4 text-center">
 //               <div className="text-2xl  text-orange-400">
 //                 {summary.totalChildWords.toLocaleString()}
 //               </div>
 //               <div className="text-sm text-orange-300">Words Written</div>
 //             </div>
-            
+
 //             <div className="bg-pink-500/20 border border-pink-500/30  p-4 text-center">
 //               <div className="text-2xl  text-pink-400">
 //                 {summary.averageScore ? `${summary.averageScore}%` : 'N/A'}
@@ -550,7 +550,7 @@
 //           className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-6 mb-8"
 //         >
 //           <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
-            
+
 //             {/* Search */}
 //             <div className="flex-1 max-w-md relative">
 //               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -577,8 +577,8 @@
 //                 <button
 //                   onClick={() => setViewType('grid')}
 //                   className={`p-2  transition-colors ${
-//                     viewType === 'grid' 
-//                       ? 'bg-blue-600 text-white' 
+//                     viewType === 'grid'
+//                       ? 'bg-blue-600 text-white'
 //                       : 'bg-gray-700/50 text-gray-400 hover:text-white'
 //                   }`}
 //                 >
@@ -587,8 +587,8 @@
 //                 <button
 //                   onClick={() => setViewType('list')}
 //                   className={`p-2  transition-colors ${
-//                     viewType === 'list' 
-//                       ? 'bg-blue-600 text-white' 
+//                     viewType === 'list'
+//                       ? 'bg-blue-600 text-white'
 //                       : 'bg-gray-700/50 text-gray-400 hover:text-white'
 //                   }`}
 //                 >
@@ -610,7 +610,7 @@
 //           {showFilters && (
 //             <div className="mt-6 pt-6 border-t border-gray-600/40">
 //               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                
+
 //                 {/* Status Filter */}
 //                 <div>
 //                   <label className="block text-sm  text-gray-300 mb-2">Status</label>
@@ -673,7 +673,7 @@
 //               {stories.length === 0 ? 'No stories yet' : 'No stories match your filters'}
 //             </h3>
 //             <p className="text-gray-500 mb-8 max-w-md mx-auto">
-//               {stories.length === 0 
+//               {stories.length === 0
 //                 ? 'Start your creative writing journey by creating your first story!'
 //                 : 'Try adjusting your filters or search terms to find your stories.'
 //               }
@@ -917,7 +917,7 @@
 //                   <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
 //                 </svg>
 //               </button>
-              
+
 //               <div className="absolute right-0 top-full mt-2 w-48 bg-gray-800 border border-gray-600  shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10">
 //                 {story.assessment && story.assessmentAttempts < 5 && (
 //                   <button
@@ -933,7 +933,7 @@
 //                     Reassess Story
 //                   </button>
 //                 )}
-                
+
 //                 {!story.isPublished && !story.competitionEntries?.length && (
 //                   <button
 //                     onClick={onDelete}
@@ -972,7 +972,7 @@
 //             {typeInfo.label}
 //           </span>
 //         </div>
-        
+
 //         <div className="flex items-center gap-2">
 //           <statusInfo.icon className={`w-4 h-4 ${statusInfo.color}`} />
 //         </div>
@@ -987,14 +987,14 @@
 //           <span className="text-gray-400">Words:</span>
 //           <span className="text-white ">{story.totalWords}</span>
 //         </div>
-        
+
 //         {story.storyType === 'freestyle' && (
 //           <div className="flex items-center justify-between text-sm">
 //             <span className="text-gray-400">Progress:</span>
 //             <span className="text-white ">{story.currentTurn}/{story.maxTurns} turns</span>
 //           </div>
 //         )}
-        
+
 //         <div className="flex items-center justify-between text-sm">
 //           <span className="text-gray-400">Created:</span>
 //           <span className="text-white ">
@@ -1012,7 +1012,7 @@
 //               {story.assessment.overallScore}%
 //             </span>
 //           </div>
-          
+
 //           <div className="grid grid-cols-3 gap-2 text-xs">
 //             <div className="text-center">
 //               <div className={` ${getScoreColor(story.assessment.grammarScore)}`}>
@@ -1114,7 +1114,7 @@
 //               <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
 //             </svg>
 //           </button>
-          
+
 //           <div className="absolute right-0 top-full mt-1 w-40 bg-gray-800 border border-gray-600  shadow-xl opacity-0 invisible group-hover/menu:opacity-100 group-hover/menu:visible transition-all z-20">
 //             {story.assessment && story.assessmentAttempts < 5 && (
 //               <button
@@ -1130,7 +1130,7 @@
 //                 Reassess
 //               </button>
 //             )}
-            
+
 //             {!story.isPublished && !story.competitionEntries?.length && (
 //               <button
 //                 onClick={onDelete}
@@ -1151,7 +1151,6 @@
 //     </motion.div>
 //   );
 // }
-
 
 // app/children-dashboard/my-stories/page.tsx - FINAL VERSION
 'use client';
@@ -1260,9 +1259,15 @@ export default function MyStoriesPage() {
   const [error, setError] = useState<string | null>(null);
 
   // Filters & Search
-  const [searchTerm, setSearchTerm] = useState(searchParams.get('search') || '');
-  const [statusFilter, setStatusFilter] = useState<string>(searchParams.get('status') || 'all');
-  const [typeFilter, setTypeFilter] = useState<string>(searchParams.get('type') || 'all');
+  const [searchTerm, setSearchTerm] = useState(
+    searchParams.get('search') || ''
+  );
+  const [statusFilter, setStatusFilter] = useState<string>(
+    searchParams.get('status') || 'all'
+  );
+  const [typeFilter, setTypeFilter] = useState<string>(
+    searchParams.get('type') || 'all'
+  );
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -1322,7 +1327,7 @@ export default function MyStoriesPage() {
       const response = await fetch('/api/stories/publish', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ sessionId: storyId })
+        body: JSON.stringify({ sessionId: storyId }),
       });
 
       const data = await response.json();
@@ -1333,8 +1338,13 @@ export default function MyStoriesPage() {
       } else {
         // Handle API errors properly
         const errorMessage = data.error || 'Failed to publish story';
-        if (errorMessage.includes('3 stories per month') || errorMessage.includes('publish 3 stories')) {
-          alert(`📚 Monthly Publication Limit Reached!\n\nYou can only publish 3 stories per month for free.\n\nYour limit will reset on the 1st of next month.`);
+        if (
+          errorMessage.includes('3 stories per month') ||
+          errorMessage.includes('publish 3 stories')
+        ) {
+          alert(
+            `📚 Monthly Publication Limit Reached!\n\nYou can only publish 3 stories per month for free.\n\nYour limit will reset on the 1st of next month.`
+          );
         } else if (errorMessage.includes('already published')) {
           alert('ℹ️ This story is already published to the community.');
         } else {
@@ -1344,7 +1354,9 @@ export default function MyStoriesPage() {
     } catch (error) {
       // Only catch actual network/connection errors
       console.error('❌ Network error:', error);
-      alert('❌ Connection Error\n\nPlease check your internet connection and try again.');
+      alert(
+        '❌ Connection Error\n\nPlease check your internet connection and try again.'
+      );
     } finally {
       setPublishingStory(null);
     }
@@ -1352,7 +1364,7 @@ export default function MyStoriesPage() {
 
   const handlePurchaseStory = async (storyId: string) => {
     if (!session?.user?.id) return;
-    
+
     try {
       const response = await fetch('/api/stripe/checkout', {
         method: 'POST',
@@ -1360,12 +1372,12 @@ export default function MyStoriesPage() {
         body: JSON.stringify({
           productType: 'story_purchase',
           storyId: storyId,
-          userId: session.user.id
-        })
+          userId: session.user.id,
+        }),
       });
 
       const data = await response.json();
-      
+
       if (data.success && data.checkoutUrl) {
         window.location.href = data.checkoutUrl;
       } else {
@@ -1380,29 +1392,29 @@ export default function MyStoriesPage() {
   // ===== HELPER FUNCTIONS =====
   const getStoryTypeInfo = (story: Story) => {
     if (story.competitionEntries && story.competitionEntries.length > 0) {
-      return { 
-        label: "COMPETITION ENTRY", 
-        icon: Trophy, 
-        color: "text-purple-400",
-        bgColor: "bg-purple-500/20",
-        borderColor: "border-purple-500/30"
+      return {
+        label: 'COMPETITION ENTRY',
+        icon: Trophy,
+        color: 'text-purple-400',
+        bgColor: 'bg-purple-500/20',
+        borderColor: 'border-purple-500/30',
       };
     }
     if (story.isUploadedForAssessment) {
-      return { 
-        label: "UPLOADED FOR ASSESSMENT", 
-        icon: Upload, 
-        color: "text-blue-400",
-        bgColor: "bg-blue-500/20",
-        borderColor: "border-blue-500/30"
+      return {
+        label: 'UPLOADED FOR ASSESSMENT',
+        icon: Upload,
+        color: 'text-blue-400',
+        bgColor: 'bg-blue-500/20',
+        borderColor: 'border-blue-500/30',
       };
     }
-    return { 
-      label: "FREESTYLE STORY", 
-      icon: Sparkles, 
-      color: "text-green-400",
-      bgColor: "bg-green-500/20",
-      borderColor: "border-green-500/30"
+    return {
+      label: 'FREESTYLE STORY',
+      icon: Sparkles,
+      color: 'text-green-400',
+      bgColor: 'bg-green-500/20',
+      borderColor: 'border-green-500/30',
     };
   };
 
@@ -1444,18 +1456,18 @@ export default function MyStoriesPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-blue-900">
       <div className="container mx-auto px-6 py-8">
-        
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
-
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
             <div className="flex flex-col gap-2">
               <h1 className="text-4xl  text-white mb-2">My Stories</h1>
-              <p className="text-gray-300">Manage and track your creative writing journey</p>
+              <p className="text-gray-300">
+                Manage and track your creative writing journey
+              </p>
             </div>
             <Link
               href="/create-stories"
@@ -1466,16 +1478,26 @@ export default function MyStoriesPage() {
             </Link>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 w-full md:w-auto mt-6 md:mt-0">
               <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-4 flex flex-col items-center">
-                <div className="text-2xl  text-purple-400">{summary?.published ?? 0}</div>
+                <div className="text-2xl  text-purple-400">
+                  {summary?.published ?? 0}
+                </div>
                 <div className="text-gray-300 text-sm">Published</div>
               </div>
               <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-4 flex flex-col items-center">
-                <div className="text-2xl  text-blue-400">{summary?.totalChildWords ? summary.totalChildWords.toLocaleString() : '0'}</div>
+                <div className="text-2xl  text-blue-400">
+                  {summary?.totalChildWords
+                    ? summary.totalChildWords.toLocaleString()
+                    : '0'}
+                </div>
                 <div className="text-gray-300 text-sm">Words Written</div>
               </div>
-       
+
               <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-4 flex flex-col items-center">
-                <div className={`text-2xl  ${summary?.averageScore ? getScoreColor(summary.averageScore) : 'text-gray-400'}`}>{summary?.averageScore ? `${summary.averageScore}%` : 'N/A'}</div>
+                <div
+                  className={`text-2xl  ${summary?.averageScore ? getScoreColor(summary.averageScore) : 'text-gray-400'}`}
+                >
+                  {summary?.averageScore ? `${summary.averageScore}%` : 'N/A'}
+                </div>
                 <div className="text-gray-300 text-sm">Avg Score</div>
               </div>
             </div>
@@ -1490,10 +1512,12 @@ export default function MyStoriesPage() {
           className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-6 mb-8"
         >
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            
             {/* Search */}
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+              <Search
+                className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                size={20}
+              />
               <input
                 type="text"
                 placeholder="Search stories..."
@@ -1503,7 +1527,6 @@ export default function MyStoriesPage() {
               />
             </div>
 
-
             {/* Status Filter dropdown and other controls remain here as before */}
 
             {/* View Mode */}
@@ -1511,7 +1534,9 @@ export default function MyStoriesPage() {
               <button
                 onClick={() => setViewMode('grid')}
                 className={`flex-1 py-3 px-4  transition-colors flex items-center justify-center gap-2 ${
-                  viewMode === 'grid' ? 'bg-blue-600 text-white' : 'text-gray-300 hover:text-white'
+                  viewMode === 'grid'
+                    ? 'bg-blue-600 text-white'
+                    : 'text-gray-300 hover:text-white'
                 }`}
               >
                 <Grid size={16} />
@@ -1520,14 +1545,15 @@ export default function MyStoriesPage() {
               <button
                 onClick={() => setViewMode('list')}
                 className={`flex-1 py-3 px-4  transition-colors flex items-center justify-center gap-2 ${
-                  viewMode === 'list' ? 'bg-blue-600 text-white' : 'text-gray-300 hover:text-white'
+                  viewMode === 'list'
+                    ? 'bg-blue-600 text-white'
+                    : 'text-gray-300 hover:text-white'
                 }`}
               >
                 <List size={16} />
                 List
               </button>
             </div>
-
           </div>
         </motion.div>
 
@@ -1551,7 +1577,9 @@ export default function MyStoriesPage() {
             <div className="text-center py-12">
               <BookOpen className="w-24 h-24 text-gray-400 mx-auto mb-6" />
               <h3 className="text-xl  text-white mb-4">No Stories Yet</h3>
-              <p className="text-gray-300 mb-6">Start your creative writing journey today!</p>
+              <p className="text-gray-300 mb-6">
+                Start your creative writing journey today!
+              </p>
               <Link
                 href="/create-stories"
                 className="bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white px-8 py-4   transition-all inline-flex items-center gap-2"
@@ -1600,14 +1628,14 @@ export default function MyStoriesPage() {
             className="mt-8 flex justify-center items-center gap-4"
           >
             <button
-              onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+              onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
               disabled={!pagination.hasPrev}
               className="flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 disabled:bg-gray-800 disabled:opacity-50 text-white  transition-colors"
             >
               <ChevronLeft size={16} />
               Previous
             </button>
-            
+
             <div className="flex items-center gap-2">
               {Array.from({ length: Math.min(5, pagination.pages) }, (_, i) => {
                 const page = i + 1;
@@ -1626,9 +1654,11 @@ export default function MyStoriesPage() {
                 );
               })}
             </div>
-            
+
             <button
-              onClick={() => setCurrentPage(prev => Math.min(pagination.pages, prev + 1))}
+              onClick={() =>
+                setCurrentPage((prev) => Math.min(pagination.pages, prev + 1))
+              }
               disabled={!pagination.hasNext}
               className="flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 disabled:bg-gray-800 disabled:opacity-50 text-white  transition-colors"
             >
@@ -1650,42 +1680,52 @@ interface StoryCardProps {
   publishingStory: string | null;
 }
 
-function StoryCard({ story, onPublish, onPurchase, publishingStory }: StoryCardProps) {
+function StoryCard({
+  story,
+  onPublish,
+  onPurchase,
+  publishingStory,
+}: StoryCardProps) {
   // Helper functions in scope
   const getStoryTypeInfo = (story: Story) => {
     if (story.competitionEntries && story.competitionEntries.length > 0) {
       return {
-        label: "COMPETITION",
+        label: 'COMPETITION',
         icon: Trophy,
-        color: "text-purple-400",
-        bgColor: "bg-purple-500/20",
-        borderColor: "border-purple-500/30"
+        color: 'text-purple-400',
+        bgColor: 'bg-purple-500/20',
+        borderColor: 'border-purple-500/30',
       };
     }
     if (story.isUploadedForAssessment) {
       return {
-        label: "ASSESSMENT",
+        label: 'ASSESSMENT',
         icon: Upload,
-        color: "text-blue-400",
-        bgColor: "bg-blue-500/20",
-        borderColor: "border-blue-500/30"
+        color: 'text-blue-400',
+        bgColor: 'bg-blue-500/20',
+        borderColor: 'border-blue-500/30',
       };
     }
     return {
-      label: "FREESTYLE",
+      label: 'FREESTYLE',
       icon: Sparkles,
-      color: "text-green-400",
-      bgColor: "bg-green-500/20",
-      borderColor: "border-green-500/30"
+      color: 'text-green-400',
+      bgColor: 'bg-green-500/20',
+      borderColor: 'border-green-500/30',
     };
   };
   const getIntegrityIcon = (integrityRisk?: string) => {
     switch (integrityRisk) {
-      case 'low': return <CheckCircle className="w-4 h-4 text-green-400" />;
-      case 'medium': return <AlertTriangle className="w-4 h-4 text-yellow-400" />;
-      case 'high': return <AlertTriangle className="w-4 h-4 text-orange-400" />;
-      case 'critical': return <XCircle className="w-4 h-4 text-red-400" />;
-      default: return <Shield className="w-4 h-4 text-gray-400" />;
+      case 'low':
+        return <CheckCircle className="w-4 h-4 text-green-400" />;
+      case 'medium':
+        return <AlertTriangle className="w-4 h-4 text-yellow-400" />;
+      case 'high':
+        return <AlertTriangle className="w-4 h-4 text-orange-400" />;
+      case 'critical':
+        return <XCircle className="w-4 h-4 text-red-400" />;
+      default:
+        return <Shield className="w-4 h-4 text-gray-400" />;
     }
   };
   const getScoreColor = (score: number) => {
@@ -1703,7 +1743,9 @@ function StoryCard({ story, onPublish, onPurchase, publishingStory }: StoryCardP
       className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-6 hover:border-gray-500/50 transition-all group relative"
     >
       {/* Story Type Badge */}
-      <div className={`inline-flex items-center gap-1 px-2 py-1  text-xs  mb-4 ${typeInfo.bgColor} ${typeInfo.color} ${typeInfo.borderColor} border`}>
+      <div
+        className={`inline-flex items-center gap-1 px-2 py-1  text-xs  mb-4 ${typeInfo.bgColor} ${typeInfo.color} ${typeInfo.borderColor} border`}
+      >
         <typeInfo.icon size={12} />
         {typeInfo.label}
       </div>
@@ -1723,7 +1765,9 @@ function StoryCard({ story, onPublish, onPurchase, publishingStory }: StoryCardP
             <span className="text-sm text-gray-300">Overall Score</span>
             <div className="flex items-center gap-2">
               {getIntegrityIcon(story.assessment.integrityRisk)}
-              <span className={` ${getScoreColor(story.assessment.overallScore)}`}>
+              <span
+                className={` ${getScoreColor(story.assessment.overallScore)}`}
+              >
                 {story.assessment.overallScore}%
               </span>
             </div>
@@ -1749,7 +1793,11 @@ function StoryCard({ story, onPublish, onPurchase, publishingStory }: StoryCardP
             Spot Reserved in Physical Book
             {story.physicalAnthology.purchaseDate && (
               <span className="text-xs ml-2">
-                ({new Date(story.physicalAnthology.purchaseDate).toLocaleDateString()})
+                (
+                {new Date(
+                  story.physicalAnthology.purchaseDate
+                ).toLocaleDateString()}
+                )
               </span>
             )}
           </span>
@@ -1821,42 +1869,52 @@ function StoryCard({ story, onPublish, onPurchase, publishingStory }: StoryCardP
 }
 
 // ===== STORY LIST ITEM COMPONENT =====
-function StoryListItem({ story, onPublish, onPurchase, publishingStory }: StoryCardProps) {
+function StoryListItem({
+  story,
+  onPublish,
+  onPurchase,
+  publishingStory,
+}: StoryCardProps) {
   const getStoryTypeInfo = (story: Story) => {
     if (story.competitionEntries && story.competitionEntries.length > 0) {
-      return { 
-        label: "COMPETITION ENTRY", 
-        icon: Trophy, 
-        color: "text-purple-400",
-        bgColor: "bg-purple-500/20",
-        borderColor: "border-purple-500/30"
+      return {
+        label: 'COMPETITION ENTRY',
+        icon: Trophy,
+        color: 'text-purple-400',
+        bgColor: 'bg-purple-500/20',
+        borderColor: 'border-purple-500/30',
       };
     }
     if (story.isUploadedForAssessment) {
-      return { 
-        label: "UPLOADED FOR ASSESSMENT", 
-        icon: Upload, 
-        color: "text-blue-400",
-        bgColor: "bg-blue-500/20",
-        borderColor: "border-blue-500/30"
+      return {
+        label: 'UPLOADED FOR ASSESSMENT',
+        icon: Upload,
+        color: 'text-blue-400',
+        bgColor: 'bg-blue-500/20',
+        borderColor: 'border-blue-500/30',
       };
     }
-    return { 
-      label: "FREESTYLE STORY", 
-      icon: Sparkles, 
-      color: "text-green-400",
-      bgColor: "bg-green-500/20",
-      borderColor: "border-green-500/30"
+    return {
+      label: 'FREESTYLE STORY',
+      icon: Sparkles,
+      color: 'text-green-400',
+      bgColor: 'bg-green-500/20',
+      borderColor: 'border-green-500/30',
     };
   };
 
   const getIntegrityIcon = (integrityRisk?: string) => {
     switch (integrityRisk) {
-      case 'low': return <CheckCircle className="w-4 h-4 text-green-400" />;
-      case 'medium': return <AlertTriangle className="w-4 h-4 text-yellow-400" />;
-      case 'high': return <AlertTriangle className="w-4 h-4 text-orange-400" />;
-      case 'critical': return <XCircle className="w-4 h-4 text-red-400" />;
-      default: return <Shield className="w-4 h-4 text-gray-400" />;
+      case 'low':
+        return <CheckCircle className="w-4 h-4 text-green-400" />;
+      case 'medium':
+        return <AlertTriangle className="w-4 h-4 text-yellow-400" />;
+      case 'high':
+        return <AlertTriangle className="w-4 h-4 text-orange-400" />;
+      case 'critical':
+        return <XCircle className="w-4 h-4 text-red-400" />;
+      default:
+        return <Shield className="w-4 h-4 text-gray-400" />;
     }
   };
 
@@ -1881,7 +1939,7 @@ function StoryListItem({ story, onPublish, onPurchase, publishingStory }: StoryC
           <div className="flex items-center gap-3 mb-2">
             <typeInfo.icon className={`w-5 h-5 ${typeInfo.color}`} />
             <h3 className="text-lg  text-white">{story.title}</h3>
-            
+
             {/* Status Badges */}
             <div className="flex gap-2">
               {story.isPublished && (
@@ -1890,12 +1948,13 @@ function StoryListItem({ story, onPublish, onPurchase, publishingStory }: StoryC
                   Published
                 </span>
               )}
-              {story.competitionEntries && story.competitionEntries.length > 0 && (
-                <span className="bg-purple-500/20 text-purple-300 px-3 py-1  text-xs  border border-purple-500/30 flex items-center gap-1">
-                  <Trophy size={12} />
-                  In Competition
-                </span>
-              )}
+              {story.competitionEntries &&
+                story.competitionEntries.length > 0 && (
+                  <span className="bg-purple-500/20 text-purple-300 px-3 py-1  text-xs  border border-purple-500/30 flex items-center gap-1">
+                    <Trophy size={12} />
+                    In Competition
+                  </span>
+                )}
               {story.status === 'flagged' && (
                 <span className="bg-red-500/20 text-red-400 px-3 py-1  text-xs  border border-red-500/30">
                   Flagged
@@ -1913,12 +1972,14 @@ function StoryListItem({ story, onPublish, onPurchase, publishingStory }: StoryC
             <span>{story.totalWords} words total</span>
             <span>{story.childWords} your words</span>
             <span>{new Date(story.createdAt).toLocaleDateString()}</span>
-            
+
             {/* Assessment Score */}
             {story.assessment && (
               <div className="flex items-center gap-2">
                 {getIntegrityIcon(story.assessment.integrityRisk)}
-                <span className={` ${getScoreColor(story.assessment.overallScore)}`}>
+                <span
+                  className={` ${getScoreColor(story.assessment.overallScore)}`}
+                >
                   {story.assessment.overallScore}% Score
                 </span>
               </div>
@@ -1973,7 +2034,7 @@ function StoryListItem({ story, onPublish, onPurchase, publishingStory }: StoryC
                 <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
               </svg>
             </button>
-            
+
             <div className="absolute right-0 top-full mt-2 w-48 bg-gray-800 border border-gray-600  shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10">
               {/* NO ACTIONS - No reassess, no delete */}
               <div className="px-4 py-2 text-gray-400 text-sm text-center">

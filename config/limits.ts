@@ -227,16 +227,21 @@ export function calculateUserLimits(
     competitionEntriesAdded?: number;
   }>
 ): UsageLimits {
-  const storyPackPurchases = purchases.filter(p => p.type === 'story_pack');
-  
+  const storyPackPurchases = purchases.filter((p) => p.type === 'story_pack');
+
   return {
-    freestyleStories: baseLimits.freestyleStories + 
+    freestyleStories:
+      baseLimits.freestyleStories +
       storyPackPurchases.reduce((sum, p) => sum + (p.storiesAdded || 0), 0),
-    
-    assessmentRequests: baseLimits.assessmentRequests + 
-      storyPackPurchases.reduce((sum, p) => sum + (p.assessmentRequestsAdded || 0), 0),
-    
-    competitionEntries: baseLimits.competitionEntries // Always stays the same
+
+    assessmentRequests:
+      baseLimits.assessmentRequests +
+      storyPackPurchases.reduce(
+        (sum, p) => sum + (p.assessmentRequestsAdded || 0),
+        0
+      ),
+
+    competitionEntries: baseLimits.competitionEntries, // Always stays the same
   };
 }
 
@@ -244,23 +249,23 @@ export function calculateUserLimits(
  * Assessment system explanation for documentation
  */
 export const ASSESSMENT_SYSTEM_INFO = {
-  description: "Simplified pool-based assessment system",
+  description: 'Simplified pool-based assessment system',
   rules: [
-    "Users get 9 free assessment requests per month",
-    "Story Pack adds 15 more requests (24 total)",
-    "Requests can be used for ANY combination of:",
-    "  - Uploading new stories for assessment",
-    "  - Kids can upload same story multiple times if they want",
-    "No per-story limits - use your pool however you want",
-    "Pool resets monthly",
-    "NO REASSESS BUTTON - kids upload story again if they want new assessment"
+    'Users get 9 free assessment requests per month',
+    'Story Pack adds 15 more requests (24 total)',
+    'Requests can be used for ANY combination of:',
+    '  - Uploading new stories for assessment',
+    '  - Kids can upload same story multiple times if they want',
+    'No per-story limits - use your pool however you want',
+    'Pool resets monthly',
+    'NO REASSESS BUTTON - kids upload story again if they want new assessment',
   ],
   examples: [
-    "Upload 9 different stories for assessment (uses all 9 free requests)",
-    "Upload same story 9 times for assessment (uses all 9 free requests)",
-    "Upload 5 stories, then upload 4 more stories (uses all 9 free requests)",
-    "Any combination that adds up to your total limit"
-  ]
+    'Upload 9 different stories for assessment (uses all 9 free requests)',
+    'Upload same story 9 times for assessment (uses all 9 free requests)',
+    'Upload 5 stories, then upload 4 more stories (uses all 9 free requests)',
+    'Any combination that adds up to your total limit',
+  ],
 };
 
 /**
@@ -270,18 +275,19 @@ export const COMPETITION_ASSESSMENT_RULES = {
   forNonWinners: {
     showTabs: ['content', 'comments'],
     hideTabs: ['overview', 'assessment'],
-    reason: 'Competition stories go through filter mechanism first, only winners get full AI assessment'
+    reason:
+      'Competition stories go through filter mechanism first, only winners get full AI assessment',
   },
   forWinners: {
     showTabs: ['overview', 'assessment', 'content', 'comments'],
     hideTabs: [],
-    reason: 'Winners receive full AI assessment and can see all details'
+    reason: 'Winners receive full AI assessment and can see all details',
   },
   winnerCriteria: [
     'Rank 1, 2, or 3 in competition',
     'isWinner flag set to true',
-    'Competition entry has rank <= 3'
-  ]
+    'Competition entry has rank <= 3',
+  ],
 };
 
 /**
@@ -291,30 +297,30 @@ export const SYSTEM_REQUIREMENTS = {
   assessments: {
     free: 9,
     paid: 24,
-    description: "Total assessment pool - use on any story, any combination"
+    description: 'Total assessment pool - use on any story, any combination',
   },
   freestyleStories: {
     free: 3,
     paid: 8,
-    description: "Collaborative story writing sessions with AI"
+    description: 'Collaborative story writing sessions with AI',
   },
   competitions: {
     free: 3,
     paid: 3,
-    description: "Competition entries per month (no upgrade available)"
+    description: 'Competition entries per month (no upgrade available)',
   },
   publish: {
     free: 1,
     paid: 1,
-    description: "Free story publication to community (1 per month)"
+    description: 'Free story publication to community (1 per month)',
   },
   purchase: {
     price: 10,
-    description: "Physical anthology purchase for any completed story"
+    description: 'Physical anthology purchase for any completed story',
   },
   buttons: {
-    removed: ["delete", "reassess"],
-    kept: ["view", "publish", "purchase"],
-    description: "Simplified interface - no delete or reassess buttons"
-  }
+    removed: ['delete', 'reassess'],
+    kept: ['view', 'publish', 'purchase'],
+    description: 'Simplified interface - no delete or reassess buttons',
+  },
 };

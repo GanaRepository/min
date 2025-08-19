@@ -7,12 +7,12 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://www.pioneeritsystems.com'),
-  title: 'Candidate Registration | Pioneer IT Systems - Join Our Talent Pool',
+  metadataBase: new URL('https://www.mintoons.com'),
+  title: 'Candidate Registration | Mintoons - Join Our Talent Pool',
   description:
-    'Create your candidate profile with Pioneer IT Systems to access job opportunities in technology, connect with top employers, and advance your career in the tech industry.',
+    'Create your candidate profile with Mintoons to access job opportunities in technology, connect with top employers, and advance your career in the tech industry.',
   keywords: [
-    'Pioneer IT Systems',
+    'Mintoons',
     'candidate registration',
     'tech job opportunities',
     'talent pool',
@@ -29,17 +29,15 @@ export const metadata: Metadata = {
     'job search',
     'technology employment',
   ],
-  authors: [
-    { name: 'Pioneer IT Systems', url: 'https://www.pioneeritsystems.com' },
-  ],
-  creator: 'Pioneer IT Systems',
-  publisher: 'Pioneer IT Systems',
+  authors: [{ name: 'Mintoons', url: 'https://www.mintoons.com' }],
+  creator: 'Mintoons',
+  publisher: 'Mintoons',
   openGraph: {
-    title: 'Candidate Registration | Pioneer IT Systems - Join Our Talent Pool',
+    title: 'Candidate Registration | Mintoons - Join Our Talent Pool',
     description:
-      'Create your candidate profile with Pioneer IT Systems to access job opportunities in technology, connect with top employers, and advance your career in the tech industry.',
-    url: 'https://www.pioneeritsystems.com/register/candidate',
-    siteName: 'Pioneer IT Systems',
+      'Create your candidate profile with Mintoons to access job opportunities in technology, connect with top employers, and advance your career in the tech industry.',
+    url: 'https://www.mintoons.com/register/candidate',
+    siteName: 'Mintoons',
     type: 'website',
     locale: 'en_US',
     images: [
@@ -47,14 +45,14 @@ export const metadata: Metadata = {
         url: '/candidate-register-og.jpg', // Update with your actual image path
         width: 1200,
         height: 630,
-        alt: 'Pioneer IT Systems - Candidate Registration',
+        alt: 'Mintoons - Candidate Registration',
       },
     ],
   },
   alternates: {
-    canonical: 'https://www.pioneeritsystems.com/register/candidate',
+    canonical: 'https://www.mintoons.com/register/candidate',
     languages: {
-      'en-US': 'https://www.pioneeritsystems.com/register/candidate',
+      'en-US': 'https://www.mintoons.com/register/candidate',
     },
   },
   robots: {
@@ -72,7 +70,7 @@ export const metadata: Metadata = {
   category: 'Technology',
   appleWebApp: {
     capable: true,
-    title: 'Pioneer IT Systems',
+    title: 'Mintoons',
     statusBarStyle: 'black-translucent',
   },
   formatDetection: {
@@ -86,7 +84,7 @@ export const metadata: Metadata = {
   },
   appLinks: {
     web: {
-      url: 'https://www.pioneeritsystems.com',
+      url: 'https://www.mintoons.com',
       should_fallback: true,
     },
   },

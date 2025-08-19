@@ -21,7 +21,10 @@ interface DashboardSidebarProps {
   setOpen: (open: boolean) => void;
 }
 
-export default function DashboardSidebar({ open, setOpen }: DashboardSidebarProps) {
+export default function DashboardSidebar({
+  open,
+  setOpen,
+}: DashboardSidebarProps) {
   const { data: session } = useSession();
   const pathname = usePathname();
 
@@ -61,19 +64,21 @@ export default function DashboardSidebar({ open, setOpen }: DashboardSidebarProp
     <>
       {/* Mobile backdrop */}
       {open && (
-        <div 
+        <div
           className="fixed inset-0 bg-black/50 z-40 lg:hidden"
           onClick={() => setOpen(false)}
         />
       )}
 
       {/* Sidebar */}
-      <div className={`
+      <div
+        className={`
         fixed top-0 left-0 z-50 h-full w-64 bg-gray-800 border-r border-gray-700
         transform transition-transform duration-200 ease-in-out
         ${open ? 'translate-x-0' : '-translate-x-full'}
         lg:translate-x-0
-      `}>
+      `}
+      >
         {/* Header */}
         <div className="flex items-center justify-between h-16 px-6 border-b border-gray-700">
           <div className="flex items-center space-x-3">
@@ -110,17 +115,18 @@ export default function DashboardSidebar({ open, setOpen }: DashboardSidebarProp
           {navigation.map((item) => {
             const isActive = pathname === item.href;
             const Icon = item.icon;
-            
+
             return (
-              <Link 
-                key={item.name} 
+              <Link
+                key={item.name}
                 href={item.href}
                 onClick={() => setOpen(false)}
                 className={`
                   flex items-center space-x-3 px-3 py-3 text-sm font-medium rounded-lg
-                  ${isActive 
-                    ? 'bg-green-500/20 text-green-400 border border-green-500/30' 
-                    : 'text-gray-300 hover:text-white hover:bg-gray-700'
+                  ${
+                    isActive
+                      ? 'bg-green-500/20 text-green-400 border border-green-500/30'
+                      : 'text-gray-300 hover:text-white hover:bg-gray-700'
                   }
                 `}
               >
@@ -133,8 +139,6 @@ export default function DashboardSidebar({ open, setOpen }: DashboardSidebarProp
 
         {/* Bottom section */}
         <div className="p-3 border-t border-gray-700">
-  
-          
           <button
             onClick={handleSignOut}
             className="w-full flex items-center space-x-3 px-3 py-3 text-sm font-medium rounded-lg text-gray-300 hover:text-white hover:bg-red-600/20 mt-1"

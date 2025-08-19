@@ -427,9 +427,7 @@ export default function AdminLogin() {
           >
             {/* Email field */}
             <div className="space-y-2">
-              <label className="text-white/80 text-sm ">
-                Admin Email
-              </label>
+              <label className="text-white/80 text-sm ">Admin Email</label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/40 w-5 h-5" />
                 <input
@@ -445,9 +443,7 @@ export default function AdminLogin() {
 
             {/* Password field */}
             <div className="space-y-2">
-              <label className="text-white/80 text-sm ">
-                Password
-              </label>
+              <label className="text-white/80 text-sm ">Password</label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/40 w-5 h-5" />
                 <input

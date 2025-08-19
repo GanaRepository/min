@@ -65,10 +65,10 @@ export async function POST(request: NextRequest) {
     // Deactivate any existing assignment for this child
     await MentorAssignment.updateMany(
       { childId, isActive: true },
-      { 
-        isActive: false, 
+      {
+        isActive: false,
         unassignedDate: new Date(),
-        unassignedBy: session.user.id // ✅ ADDED: Track who unassigned
+        unassignedBy: session.user.id, // ✅ ADDED: Track who unassigned
       }
     );
 
@@ -83,7 +83,9 @@ export async function POST(request: NextRequest) {
 
     await assignment.save();
 
-    console.log(`✅ Assignment created: ${child.firstName} ${child.lastName} → ${mentor.firstName} ${mentor.lastName} (by Admin: ${session.user.id})`);
+    console.log(
+      `✅ Assignment created: ${child.firstName} ${child.lastName} → ${mentor.firstName} ${mentor.lastName} (by Admin: ${session.user.id})`
+    );
 
     return NextResponse.json({
       success: true,

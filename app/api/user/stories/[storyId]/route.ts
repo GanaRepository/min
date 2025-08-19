@@ -109,7 +109,7 @@
 // ) {
 //   try {
 //     const session = await getServerSession(authOptions);
-    
+
 //     if (!session || session.user?.role !== 'child') {
 //       return NextResponse.json(
 //         { error: 'Access denied. Children only.' },
@@ -201,20 +201,20 @@
 //       createdAt: story.createdAt ? new Date(story.createdAt).toISOString() : new Date().toISOString(),
 //       updatedAt: story.updatedAt ? new Date(story.updatedAt).toISOString() : new Date().toISOString(),
 //       completedAt: story.completedAt ? new Date(story.completedAt).toISOString() : undefined,
-      
+
 //       // Word counts and progress
 //       totalWords: story.totalWords || 0,
 //       childWords: story.childWords || 0,
 //       currentTurn: story.currentTurn || 1,
 //       maxTurns: story.maxApiCalls || 7,
 //       apiCallsUsed: story.apiCallsUsed || 0,
-      
+
 //       // FIXED: All the missing properties that were causing errors
 //       aiOpening: story.aiOpening || '',
 //       storyNumber: story.storyNumber || 0,
 //       pausedAt: story.pausedAt ? new Date(story.pausedAt).toISOString() : undefined,
 //       resumedAt: story.resumedAt ? new Date(story.resumedAt).toISOString() : undefined,
-      
+
 //       // Content
 //       content: fullContent.trim(),
 //       turns: turns.map(turn => ({
@@ -224,13 +224,13 @@
 //         wordCount: turn.wordCount || 0,
 //         timestamp: turn.createdAt ? new Date(turn.createdAt).toISOString() : new Date().toISOString()
 //       })),
-      
+
 //       // Publication status
 //       isPublished,
 //       publishedAt: publishedStory?.publishedAt ? new Date(publishedStory.publishedAt).toISOString() : undefined,
 //       publicationDate: publishedStory?.publishedAt ? new Date(publishedStory.publishedAt).toISOString() : undefined,
 //       publicationFee: story.publicationFee || undefined,
-      
+
 //       // Assessment data - FIXED with proper null checking
 //       isUploadedForAssessment: story.isUploadedForAssessment || false,
 //       assessmentAttempts: story.assessmentAttempts || 0,
@@ -247,13 +247,13 @@
 //         dialogueScore: story.assessment.dialogueScore || 0,
 //         descriptiveScore: story.assessment.descriptiveScore || 0,
 //         pacingScore: story.assessment.pacingScore || 0,
-        
+
 //         // Reading level and feedback
 //         readingLevel: story.assessment.readingLevel || 'Unknown',
 //         feedback: story.assessment.feedback || '',
 //         strengths: story.assessment.strengths || [],
 //         improvements: story.assessment.improvements || [],
-        
+
 //         // Integrity analysis - FIXED with proper structure
 //         integrityAnalysis: story.assessment.integrityAnalysis ? {
 //           plagiarismResult: {
@@ -266,22 +266,22 @@
 //           },
 //           integrityRisk: story.assessment.integrityAnalysis.integrityRisk || 'low'
 //         } : undefined,
-        
+
 //         integrityStatus: story.assessment.integrityStatus || {
 //           status: 'PASS' as const,
 //           message: 'Story passed all integrity checks'
 //         }
 //       } : undefined,
-      
+
 //       // Competition data - FIXED
 //       competitionEligible: story.competitionEligible || false,
 //       competitionEntries: story.competitionEntries || [],
 //       latestCompetitionEntry,
 //       submittedToCompetition: !!latestCompetitionEntry,
-      
+
 //       // Story elements - FIXED
 //       elements: story.elements || {},
-      
+
 //       // Comments from mentors/admin - FIXED with proper property names
 //       comments: comments.map((comment) => ({
 //         _id: comment._id.toString(),
@@ -308,7 +308,7 @@
 //   } catch (error) {
 //     console.error('❌ Error fetching story details:', error);
 //     return NextResponse.json(
-//       { 
+//       {
 //         error: 'Failed to fetch story details',
 //         details: error instanceof Error ? error.message : 'Unknown error'
 //       },
@@ -324,7 +324,7 @@
 // ) {
 //   try {
 //     const session = await getServerSession(authOptions);
-    
+
 //     if (!session || session.user?.role !== 'child') {
 //       return NextResponse.json(
 //         { error: 'Access denied. Children only.' },
@@ -390,7 +390,7 @@
 //   } catch (error) {
 //     console.error('❌ Error updating story:', error);
 //     return NextResponse.json(
-//       { 
+//       {
 //         error: 'Failed to update story',
 //         details: error instanceof Error ? error.message : 'Unknown error'
 //       },
@@ -406,7 +406,7 @@
 // ) {
 //   try {
 //     const session = await getServerSession(authOptions);
-    
+
 //     if (!session || session.user?.role !== 'child') {
 //       return NextResponse.json(
 //         { error: 'Access denied. Children only.' },
@@ -473,7 +473,7 @@
 //   } catch (error) {
 //     console.error('❌ Error deleting story:', error);
 //     return NextResponse.json(
-//       { 
+//       {
 //         error: 'Failed to delete story',
 //         details: error instanceof Error ? error.message : 'Unknown error'
 //       },
@@ -552,7 +552,7 @@ export async function GET(
 ) {
   try {
     const session = await getServerSession(authOptions);
-    
+
     if (!session || session.user?.role !== 'child') {
       return NextResponse.json(
         { error: 'Access denied. Children only.' },
@@ -563,19 +563,16 @@ export async function GET(
     const { storyId } = params;
 
     if (!storyId || !mongoose.Types.ObjectId.isValid(storyId)) {
-      return NextResponse.json(
-        { error: 'Invalid story ID' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Invalid story ID' }, { status: 400 });
     }
 
     await connectToDatabase();
 
     // Get the story and verify ownership
-    const story = await StorySession.findOne({
+    const story = (await StorySession.findOne({
       _id: storyId,
-      childId: session.user.id
-    }).lean() as StoryDocument | null;
+      childId: session.user.id,
+    }).lean()) as StoryDocument | null;
 
     if (!story) {
       return NextResponse.json(
@@ -590,10 +587,10 @@ export async function GET(
       .lean();
 
     // Get comments
-    const comments = await StoryComment.find({ storyId })
+    const comments = (await StoryComment.find({ storyId })
       .populate('authorId', 'firstName lastName role')
       .sort({ createdAt: -1 })
-      .lean() as unknown as CommentDocument[];
+      .lean()) as unknown as CommentDocument[];
 
     // Format the response with proper type safety
     const formattedStory = {
@@ -616,31 +613,30 @@ export async function GET(
       elements: story.elements || {},
       createdAt: story.createdAt,
       updatedAt: story.updatedAt,
-      turns: turns.map(turn => ({
+      turns: turns.map((turn) => ({
         turnNumber: (turn as any).turnNumber,
         childInput: (turn as any).childInput,
         aiResponse: (turn as any).aiResponse,
-        timestamp: (turn as any).createdAt
+        timestamp: (turn as any).createdAt,
       })),
-      comments: comments.map(comment => ({
+      comments: comments.map((comment) => ({
         _id: comment._id.toString(),
         content: comment.content,
         author: comment.authorId,
-        createdAt: comment.createdAt
-      }))
+        createdAt: comment.createdAt,
+      })),
     };
 
     return NextResponse.json({
       success: true,
-      story: formattedStory
+      story: formattedStory,
     });
-
   } catch (error) {
     console.error('❌ Error fetching story:', error);
     return NextResponse.json(
-      { 
+      {
         error: 'Failed to fetch story',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        details: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
     );
@@ -654,7 +650,7 @@ export async function PUT(
 ) {
   try {
     const session = await getServerSession(authOptions);
-    
+
     if (!session || session.user?.role !== 'child') {
       return NextResponse.json(
         { error: 'Access denied. Children only.' },
@@ -666,10 +662,7 @@ export async function PUT(
     const body = await request.json();
 
     if (!storyId || !mongoose.Types.ObjectId.isValid(storyId)) {
-      return NextResponse.json(
-        { error: 'Invalid story ID' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Invalid story ID' }, { status: 400 });
     }
 
     await connectToDatabase();
@@ -677,7 +670,7 @@ export async function PUT(
     // Verify story ownership
     const story = await StorySession.findOne({
       _id: storyId,
-      childId: session.user.id
+      childId: session.user.id,
     });
 
     if (!story) {
@@ -713,16 +706,15 @@ export async function PUT(
         _id: story._id,
         title: story.title,
         competitionEligible: (story as any).competitionEligible,
-        elements: (story as any).elements
-      }
+        elements: (story as any).elements,
+      },
     });
-
   } catch (error) {
     console.error('❌ Error updating story:', error);
     return NextResponse.json(
-      { 
+      {
         error: 'Failed to update story',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        details: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
     );
@@ -736,9 +728,11 @@ export async function DELETE(
   { params }: { params: { storyId: string } }
 ) {
   return NextResponse.json(
-    { 
-      error: 'Story deletion is not allowed for children\'s safety. Contact an admin if you need assistance.',
-      message: 'Delete functionality has been disabled to protect your creative work.'
+    {
+      error:
+        "Story deletion is not allowed for children's safety. Contact an admin if you need assistance.",
+      message:
+        'Delete functionality has been disabled to protect your creative work.',
     },
     { status: 403 }
   );

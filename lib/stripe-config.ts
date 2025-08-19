@@ -43,17 +43,17 @@ export const MINTOONS_PRODUCTS = {
     price: 15.0,
     currency: 'USD',
     benefits: {
-      storiesAdded: 5,           // 3 + 5 = 8 total
-      assessmentsAdded: 5,       // 3 + 5 = 8 total
+      storiesAdded: 5, // 3 + 5 = 8 total
+      assessmentsAdded: 5, // 3 + 5 = 8 total
       totalAssessmentAttemptsAdded: 15, // 9 + 15 = 24 total
-      competitionEntriesAdded: 0 // Competition limit stays 1
+      competitionEntriesAdded: 0, // Competition limit stays 1
     },
     stripeProductId: process.env.STRIPE_STORY_PACK_PRODUCT_ID,
     stripePriceId: process.env.STRIPE_STORY_PACK_PRICE_ID,
   },
-  
+
   STORY_PUBLICATION: {
-    id: 'story_publication', 
+    id: 'story_publication',
     name: 'Story Publication',
     description: 'Publish story to community showcase',
     price: 0.0, // FREE - 1 per month
@@ -61,24 +61,24 @@ export const MINTOONS_PRODUCTS = {
     benefits: {
       communityShowcase: true,
       commentsEnabled: true,
-      publicVisibility: true
-    }
+      publicVisibility: true,
+    },
   },
 
   STORY_PURCHASE: {
     id: 'story_purchase',
-    name: 'Physical Anthology Purchase', 
+    name: 'Physical Anthology Purchase',
     description: 'Reserve spot in physical book anthology',
     price: 10.0,
     currency: 'USD',
     benefits: {
       physicalBookInclusion: true,
       premiumShowcase: true,
-      customBookPricing: true // Contact admin for pricing
+      customBookPricing: true, // Contact admin for pricing
     },
     stripeProductId: process.env.STRIPE_PURCHASE_PRODUCT_ID,
     stripePriceId: process.env.STRIPE_PURCHASE_PRICE_ID,
-  }
+  },
 };
 
 // Create Stripe checkout session for Story Pack
@@ -100,9 +100,12 @@ export async function createStoryPackCheckout(
     metadata: {
       userId,
       productType: 'story_pack',
-      storiesAdded: MINTOONS_PRODUCTS.STORY_PACK.benefits.storiesAdded.toString(),
-      assessmentsAdded: MINTOONS_PRODUCTS.STORY_PACK.benefits.assessmentsAdded.toString(),
-      totalAssessmentAttemptsAdded: MINTOONS_PRODUCTS.STORY_PACK.benefits.totalAssessmentAttemptsAdded.toString(),
+      storiesAdded:
+        MINTOONS_PRODUCTS.STORY_PACK.benefits.storiesAdded.toString(),
+      assessmentsAdded:
+        MINTOONS_PRODUCTS.STORY_PACK.benefits.assessmentsAdded.toString(),
+      totalAssessmentAttemptsAdded:
+        MINTOONS_PRODUCTS.STORY_PACK.benefits.totalAssessmentAttemptsAdded.toString(),
     },
     success_url: successUrl,
     cancel_url: cancelUrl,
@@ -138,9 +141,11 @@ export async function createStoryPurchaseCheckout(
 }
 
 // Process successful payment webhook
-export async function processSuccessfulPayment(session: Stripe.Checkout.Session) {
+export async function processSuccessfulPayment(
+  session: Stripe.Checkout.Session
+) {
   const { userId, productType, storyId } = session.metadata || {};
-  
+
   if (!userId) {
     throw new Error('Missing userId in session metadata');
   }
@@ -148,7 +153,7 @@ export async function processSuccessfulPayment(session: Stripe.Checkout.Session)
   // Import here to avoid circular dependency
   const { connectToDatabase } = await import('@/utils/db');
   const User = (await import('@/models/User')).default;
-  
+
   await connectToDatabase();
 
   if (productType === 'story_pack') {
@@ -162,24 +167,26 @@ export async function processSuccessfulPayment(session: Stripe.Checkout.Session)
           stripeSessionId: session.id,
           metadata: {
             storiesAdded: MINTOONS_PRODUCTS.STORY_PACK.benefits.storiesAdded,
-            assessmentsAdded: MINTOONS_PRODUCTS.STORY_PACK.benefits.assessmentsAdded,
-            totalAssessmentAttemptsAdded: MINTOONS_PRODUCTS.STORY_PACK.benefits.totalAssessmentAttemptsAdded,
-          }
-        }
-      }
+            assessmentsAdded:
+              MINTOONS_PRODUCTS.STORY_PACK.benefits.assessmentsAdded,
+            totalAssessmentAttemptsAdded:
+              MINTOONS_PRODUCTS.STORY_PACK.benefits
+                .totalAssessmentAttemptsAdded,
+          },
+        },
+      },
     });
-    
   } else if (productType === 'story_purchase' && storyId) {
     // Mark story for physical book inclusion
     const StorySession = (await import('@/models/StorySession')).default;
-    
+
     await Promise.all([
       StorySession.findByIdAndUpdate(storyId, {
         $set: {
           purchasedForPhysicalBook: true,
           physicalBookPurchaseDate: new Date(),
-          physicalBookStripeSessionId: session.id
-        }
+          physicalBookStripeSessionId: session.id,
+        },
       }),
       User.findByIdAndUpdate(userId, {
         $push: {
@@ -190,11 +197,11 @@ export async function processSuccessfulPayment(session: Stripe.Checkout.Session)
             stripeSessionId: session.id,
             storyId,
             metadata: {
-              physicalBookInclusion: true
-            }
-          }
-        }
-      })
+              physicalBookInclusion: true,
+            },
+          },
+        },
+      }),
     ]);
   }
 }

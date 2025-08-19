@@ -1,4 +1,3 @@
-
 // // app/children-dashboard/page.tsx - UPDATED WITH SIMPLIFIED SYSTEM
 // 'use client';
 
@@ -229,26 +228,26 @@
 
 //   const getStoryTypeInfo = (story: Story) => {
 //     if (story.competitionEntries && story.competitionEntries.length > 0) {
-//       return { 
-//         label: "COMPETITION ENTRY", 
-//         icon: Trophy, 
+//       return {
+//         label: "COMPETITION ENTRY",
+//         icon: Trophy,
 //         color: "text-green-400",
 //         bgColor: "bg-green-500/20",
 //         borderColor: "border-green-500/30"
 //       };
 //     }
 //     if (story.isUploadedForAssessment) {
-//       return { 
-//         label: "UPLOADED FOR ASSESSMENT", 
-//         icon: Upload, 
+//       return {
+//         label: "UPLOADED FOR ASSESSMENT",
+//         icon: Upload,
 //         color: "text-blue-400",
 //         bgColor: "bg-blue-500/20",
 //         borderColor: "border-blue-500/30"
 //       };
 //     }
-//     return { 
-//       label: "FREESTYLE STORY", 
-//       icon: Sparkles, 
+//     return {
+//       label: "FREESTYLE STORY",
+//       icon: Sparkles,
 //       color: "text-green-400",
 //       bgColor: "bg-green-500/20",
 //       borderColor: "border-green-500/30"
@@ -278,12 +277,12 @@
 //   };
 
 //   // ===== STORY ACTIONS =====
-  // Publish handler (must be inside component to access state)
-  // ...existing code...
+// Publish handler (must be inside component to access state)
+// ...existing code...
 
 //   const handlePurchaseStory = async (storyId: string) => {
 //     if (!session?.user?.id) return;
-    
+
 //     try {
 //       const response = await fetch('/api/stripe/checkout', {
 //         method: 'POST',
@@ -296,7 +295,7 @@
 //       });
 
 //       const data = await response.json();
-      
+
 //       if (data.success && data.checkoutUrl) {
 //         window.location.href = data.checkoutUrl;
 //       } else {
@@ -324,7 +323,7 @@
 //   return (
 //     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900">
 //       <div className="container mx-auto px-6 py-8">
-        
+
 //         {/* Header */}
 //         <motion.div
 //           initial={{ opacity: 0, y: -20 }}
@@ -338,7 +337,7 @@
 //               </h1>
 //               <p className="text-gray-300">Ready to continue your creative writing journey?</p>
 //             </div>
-            
+
 //             <Link
 //               href="/create-stories"
 //               className="bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white px-6 py-3   transition-all flex items-center gap-2 shadow-lg"
@@ -348,7 +347,6 @@
 //             </Link>
 //           </div>
 //         </motion.div>
-
 
 //         {/* Usage Statistics + Upgrade/Story Pack Banner */}
 //         {usageStats && (
@@ -647,26 +645,26 @@
 // function StoryCard({ story, onPublish, onPurchase, publishingStory }: StoryCardProps) {
 //   const getStoryTypeInfo = (story: Story) => {
 //     if (story.competitionEntries && story.competitionEntries.length > 0) {
-//       return { 
-//         label: "COMPETITION", 
-//         icon: Trophy, 
+//       return {
+//         label: "COMPETITION",
+//         icon: Trophy,
 //         color: "text-green-400",
 //         bgColor: "bg-green-500/20",
 //         borderColor: "border-green-500/30"
 //       };
 //     }
 //     if (story.isUploadedForAssessment) {
-//       return { 
-//         label: "ASSESSMENT", 
-//         icon: Upload, 
+//       return {
+//         label: "ASSESSMENT",
+//         icon: Upload,
 //         color: "text-blue-400",
 //         bgColor: "bg-blue-500/20",
 //         borderColor: "border-blue-500/30"
 //       };
 //     }
-//     return { 
-//       label: "FREESTYLE", 
-//       icon: Sparkles, 
+//     return {
+//       label: "FREESTYLE",
+//       icon: Sparkles,
 //       color: "text-green-400",
 //       bgColor: "bg-green-500/20",
 //       borderColor: "border-green-500/30"
@@ -707,7 +705,7 @@
 
 //       {/* Title & Metadata */}
 //       <h3 className="text-lg  text-white mb-2 line-clamp-2">{story.title}</h3>
-      
+
 //       <div className="flex items-center gap-4 text-sm text-gray-400 mb-4">
 //         <span>{story.totalWords} words</span>
 //         <span>•</span>
@@ -827,10 +825,30 @@ import { motion } from 'framer-motion';
 import UsageStatsCard from '@/components/dashboard/UsageStatsCard';
 
 interface UsageStats {
-  freestyleStories: { used: number; limit: number; remaining: number; canUse: boolean };
-  assessmentRequests: { used: number; limit: number; remaining: number; canUse: boolean };
-  competitionEntries: { used: number; limit: number; remaining: number; canUse: boolean };
-  publications: { used: number; limit: number; remaining: number; canUse: boolean };
+  freestyleStories: {
+    used: number;
+    limit: number;
+    remaining: number;
+    canUse: boolean;
+  };
+  assessmentRequests: {
+    used: number;
+    limit: number;
+    remaining: number;
+    canUse: boolean;
+  };
+  competitionEntries: {
+    used: number;
+    limit: number;
+    remaining: number;
+    canUse: boolean;
+  };
+  publications: {
+    used: number;
+    limit: number;
+    remaining: number;
+    canUse: boolean;
+  };
   resetDate: string;
   subscriptionTier: 'FREE' | 'STORY_PACK';
   storyPackExpiry?: string;
@@ -881,7 +899,7 @@ const getSampleActivities = (): Achievement[] => [
     description: 'Started a new collaborative story',
     icon: '✍️',
     unlockedAt: new Date().toISOString(),
-    category: 'writing'
+    category: 'writing',
   },
   {
     _id: '2',
@@ -889,7 +907,7 @@ const getSampleActivities = (): Achievement[] => [
     description: 'Received AI feedback on your story',
     icon: '🎯',
     unlockedAt: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
-    category: 'assessment'
+    category: 'assessment',
   },
   {
     _id: '3',
@@ -897,7 +915,7 @@ const getSampleActivities = (): Achievement[] => [
     description: 'Unlocked additional writing resources',
     icon: '👑',
     unlockedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-    category: 'upgrade'
+    category: 'upgrade',
   },
   {
     _id: '4',
@@ -905,7 +923,7 @@ const getSampleActivities = (): Achievement[] => [
     description: 'Submitted story to monthly competition',
     icon: '🏆',
     unlockedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
-    category: 'competition'
+    category: 'competition',
   },
   {
     _id: '5',
@@ -913,8 +931,8 @@ const getSampleActivities = (): Achievement[] => [
     description: 'Reached 1000 words written this month',
     icon: '🌟',
     unlockedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
-    category: 'milestone'
-  }
+    category: 'milestone',
+  },
 ];
 
 export default function ChildrenDashboardPage() {
@@ -924,8 +942,11 @@ export default function ChildrenDashboardPage() {
   // ===== STATE =====
   const [usageStats, setUsageStats] = useState<UsageStats | null>(null);
   const [resetNotification, setResetNotification] = useState<boolean>(false);
-  const [currentCompetition, setCurrentCompetition] = useState<Competition | null>(null);
-  const [recentAchievements, setRecentAchievements] = useState<Achievement[]>([]);
+  const [currentCompetition, setCurrentCompetition] =
+    useState<Competition | null>(null);
+  const [recentAchievements, setRecentAchievements] = useState<Achievement[]>(
+    []
+  );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -947,7 +968,11 @@ export default function ChildrenDashboardPage() {
     competitionEntries: { used: 0, limit: 3, remaining: 3, canUse: true },
     publications: { used: 0, limit: 1, remaining: 1, canUse: true },
     subscriptionTier: 'FREE',
-    resetDate: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1).toISOString(),
+    resetDate: new Date(
+      new Date().getFullYear(),
+      new Date().getMonth() + 1,
+      1
+    ).toISOString(),
   });
 
   // ===== API CALLS =====
@@ -959,7 +984,7 @@ export default function ChildrenDashboardPage() {
       // Fetch dashboard data in parallel (removed stories API call)
       const [usageResponse, competitionResponse] = await Promise.all([
         fetch('/api/user/usage'),
-        fetch('/api/competitions/current')
+        fetch('/api/competitions/current'),
       ]);
 
       // Handle usage stats
@@ -980,7 +1005,10 @@ export default function ChildrenDashboardPage() {
       // Handle current competition
       if (competitionResponse.ok) {
         const competitionData = await competitionResponse.json();
-        console.log('🏆 Competition data loaded:', competitionData.competition?.month);
+        console.log(
+          '🏆 Competition data loaded:',
+          competitionData.competition?.month
+        );
         setCurrentCompetition(competitionData.competition);
       } else {
         console.error('❌ Failed to fetch competition data');
@@ -989,10 +1017,14 @@ export default function ChildrenDashboardPage() {
 
       // Try to fetch real achievements, fallback to sample data
       try {
-        const achievementsResponse = await fetch('/api/user/achievements?recent=5');
+        const achievementsResponse = await fetch(
+          '/api/user/achievements?recent=5'
+        );
         if (achievementsResponse.ok) {
           const achievementsData = await achievementsResponse.json();
-          setRecentAchievements(achievementsData.achievements || getSampleActivities());
+          setRecentAchievements(
+            achievementsData.achievements || getSampleActivities()
+          );
         } else {
           // Use sample data if API doesn't exist
           setRecentAchievements(getSampleActivities());
@@ -1001,7 +1033,6 @@ export default function ChildrenDashboardPage() {
         console.log('ℹ️ Using sample activities data');
         setRecentAchievements(getSampleActivities());
       }
-
     } catch (error) {
       console.error('❌ Dashboard data fetch error:', error);
       setError('Failed to load dashboard data. Please refresh the page.');
@@ -1057,7 +1088,6 @@ export default function ChildrenDashboardPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 p-6">
       <div className="max-w-7xl mx-auto space-y-8">
-        
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -1082,40 +1112,45 @@ export default function ChildrenDashboardPage() {
             <span className="text-2xl">🔄</span>
             <div>
               <strong>Monthly Reset Complete!</strong>
-              <p className="text-sm text-blue-200">Your limits have been reset (Story Pack purchases preserved)</p>
+              <p className="text-sm text-blue-200">
+                Your limits have been reset (Story Pack purchases preserved)
+              </p>
             </div>
           </motion.div>
         )}
 
         <div className="grid lg:grid-cols-3 gap-8">
-          
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-8">
-            
             {/* Story Pack Status */}
-            {usageStats && usageStats.subscriptionTier === 'STORY_PACK' && usageStats.daysRemaining && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="bg-green-800/60 backdrop-blur-xl border border-green-600/40  p-4"
-              >
-                <div className="flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-green-400" />
-                  <div className="flex-1">
-                    <h4 className=" text-green-200">Story Pack Active!</h4>
-                    <div className="flex items-center gap-2 text-sm text-green-300">
-                      <Clock className="w-4 h-4" />
-                      <span>{usageStats.daysRemaining} days remaining</span>
+            {usageStats &&
+              usageStats.subscriptionTier === 'STORY_PACK' &&
+              usageStats.daysRemaining && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="bg-green-800/60 backdrop-blur-xl border border-green-600/40  p-4"
+                >
+                  <div className="flex items-center gap-3">
+                    <CheckCircle className="w-5 h-5 text-green-400" />
+                    <div className="flex-1">
+                      <h4 className=" text-green-200">Story Pack Active!</h4>
+                      <div className="flex items-center gap-2 text-sm text-green-300">
+                        <Clock className="w-4 h-4" />
+                        <span>{usageStats.daysRemaining} days remaining</span>
+                      </div>
+                      {usageStats.storyPackExpiry && (
+                        <p className="text-xs text-green-400 mt-1">
+                          Expires:{' '}
+                          {new Date(
+                            usageStats.storyPackExpiry
+                          ).toLocaleDateString()}
+                        </p>
+                      )}
                     </div>
-                    {usageStats.storyPackExpiry && (
-                      <p className="text-xs text-green-400 mt-1">
-                        Expires: {new Date(usageStats.storyPackExpiry).toLocaleDateString()}
-                      </p>
-                    )}
                   </div>
-                </div>
-              </motion.div>
-            )}
+                </motion.div>
+              )}
 
             {/* Competition */}
             {currentCompetition && (
@@ -1129,13 +1164,19 @@ export default function ChildrenDashboardPage() {
                   <Crown className="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" />
                   <div className="flex-1">
                     <h4 className=" text-green-200 mb-1">
-                      {currentCompetition.month} {currentCompetition.year} Competition
+                      {currentCompetition.month} {currentCompetition.year}{' '}
+                      Competition
                     </h4>
                     <div className="flex items-center gap-2 text-sm text-green-300">
                       <Clock className="w-4 h-4" />
                       <span>{currentCompetition.daysLeft} days left</span>
-                      <span>• {currentCompetition.totalParticipants} participants</span>
-                      <span>• Your entries: {currentCompetition.userStats?.entriesUsed || 0}/3</span>
+                      <span>
+                        • {currentCompetition.totalParticipants} participants
+                      </span>
+                      <span>
+                        • Your entries:{' '}
+                        {currentCompetition.userStats?.entriesUsed || 0}/3
+                      </span>
                     </div>
                   </div>
                   <Link
@@ -1160,7 +1201,7 @@ export default function ChildrenDashboardPage() {
                   <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>
-              
+
               <div className="space-y-3">
                 {recentAchievements.map((achievement, index) => (
                   <motion.div
@@ -1176,9 +1217,13 @@ export default function ChildrenDashboardPage() {
                       </div>
                       <div className="flex-1">
                         <h3 className=" text-white">{achievement.title}</h3>
-                        <p className="text-sm text-gray-300">{achievement.description}</p>
+                        <p className="text-sm text-gray-300">
+                          {achievement.description}
+                        </p>
                         <p className="text-xs text-gray-400 mt-1">
-                          {new Date(achievement.unlockedAt).toLocaleDateString()}
+                          {new Date(
+                            achievement.unlockedAt
+                          ).toLocaleDateString()}
                         </p>
                       </div>
                       <div className="text-right">
@@ -1204,7 +1249,11 @@ export default function ChildrenDashboardPage() {
               >
                 <UsageStatsCard
                   usageStats={usageStats}
-                  onUpgrade={usageStats.subscriptionTier === 'FREE' ? handleUpgrade : undefined}
+                  onUpgrade={
+                    usageStats.subscriptionTier === 'FREE'
+                      ? handleUpgrade
+                      : undefined
+                  }
                   loading={false}
                 />
               </motion.div>
@@ -1222,7 +1271,9 @@ export default function ChildrenDashboardPage() {
                     <Sparkles className="w-6 h-6 text-green-400 group-hover:scale-110 transition-transform" />
                     <div>
                       <h3 className=" text-white text-sm">Write with AI</h3>
-                      <p className="text-green-300 text-xs">Start a collaborative story</p>
+                      <p className="text-green-300 text-xs">
+                        Start a collaborative story
+                      </p>
                     </div>
                   </div>
                 </Link>
@@ -1235,7 +1286,9 @@ export default function ChildrenDashboardPage() {
                     <FileText className="w-6 h-6 text-blue-400 group-hover:scale-110 transition-transform" />
                     <div>
                       <h3 className=" text-white text-sm">Get AI Assessment</h3>
-                      <p className="text-blue-300 text-xs">Upload your story for review</p>
+                      <p className="text-blue-300 text-xs">
+                        Upload your story for review
+                      </p>
                     </div>
                   </div>
                 </Link>
@@ -1248,7 +1301,9 @@ export default function ChildrenDashboardPage() {
                     <Trophy className="w-6 h-6 text-green-400 group-hover:scale-110 transition-transform" />
                     <div>
                       <h3 className=" text-white text-sm">Join Competition</h3>
-                      <p className="text-green-300 text-xs">Compete with other writers</p>
+                      <p className="text-green-300 text-xs">
+                        Compete with other writers
+                      </p>
                     </div>
                   </div>
                 </Link>

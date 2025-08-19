@@ -38,7 +38,7 @@ export async function POST(
     // Verify story exists and is published
     const story = await StorySession.findOne({
       _id: id,
-      isPublished: true
+      isPublished: true,
     });
 
     if (!story) {
@@ -57,7 +57,7 @@ export async function POST(
       commentType: 'community',
       category: 'community',
       isPublic: true,
-      createdAt: new Date()
+      createdAt: new Date(),
     });
 
     await comment.save();
@@ -72,15 +72,14 @@ export async function POST(
       content: comment.content,
       createdAt: comment.createdAt,
       likes: 0,
-      isLikedByUser: false
+      isLikedByUser: false,
     };
 
     return NextResponse.json({
       success: true,
       comment: formattedComment,
-      message: 'Comment added successfully'
+      message: 'Comment added successfully',
     });
-
   } catch (error) {
     console.error('Error adding comment:', error);
     return NextResponse.json(
@@ -104,7 +103,7 @@ export async function GET(
     // Verify story exists and is published
     const story = await StorySession.findOne({
       _id: id,
-      isPublished: true
+      isPublished: true,
     });
 
     if (!story) {
@@ -117,28 +116,27 @@ export async function GET(
     // Get public comments for this story
     const comments = await StoryComment.find({
       storyId: id,
-      isPublic: true
+      isPublic: true,
     })
       .populate('authorId', 'firstName lastName')
       .sort({ createdAt: -1 });
 
     const userId = session?.user?.id;
 
-    const formattedComments = comments.map(comment => ({
+    const formattedComments = comments.map((comment) => ({
       _id: comment._id.toString(),
       authorId: comment.authorId._id.toString(),
       authorName: `${comment.authorId.firstName} ${comment.authorId.lastName}`,
       content: comment.content,
       createdAt: comment.createdAt,
       likes: (comment.likes || []).length,
-      isLikedByUser: userId ? ((comment.likes || []).includes(userId)) : false
+      isLikedByUser: userId ? (comment.likes || []).includes(userId) : false,
     }));
 
     return NextResponse.json({
       success: true,
-      comments: formattedComments
+      comments: formattedComments,
     });
-
   } catch (error) {
     console.error('Error fetching comments:', error);
     return NextResponse.json(

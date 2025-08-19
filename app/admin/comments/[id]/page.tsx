@@ -547,10 +547,7 @@ export default function ViewComment() {
           </h3>
           <div className="space-y-4">
             {comment.replies.map((reply, index) => (
-              <div
-                key={reply._id}
-                className="bg-gray-700/30  p-4 ml-6"
-              >
+              <div key={reply._id} className="bg-gray-700/30  p-4 ml-6">
                 <div className="flex items-center space-x-2 mb-2">
                   <span className="text-white ">
                     {reply.authorId.firstName} {reply.authorId.lastName}

@@ -16,13 +16,10 @@ export async function GET(request: Request) {
 
     // Get all past competitions (not active or in results phase)
     const pastCompetitions = await Competition.find({
-      $or: [
-        { isActive: false },
-        { phase: 'results' }
-      ]
+      $or: [{ isActive: false }, { phase: 'results' }],
     })
-    .sort({ year: -1, createdAt: -1 })
-    .lean();
+      .sort({ year: -1, createdAt: -1 })
+      .lean();
 
     console.log(`📊 Found ${pastCompetitions.length} past competitions`);
 
@@ -32,16 +29,20 @@ export async function GET(request: Request) {
     // Calculate real-time stats for each past competition
     const formattedCompetitions = await Promise.all(
       pastCompetitions.map(async (competition: any) => {
-        console.log(`📈 Calculating stats for ${competition.month} ${competition.year}...`);
+        console.log(
+          `📈 Calculating stats for ${competition.month} ${competition.year}...`
+        );
 
         // 🔧 CALCULATE REAL-TIME STATISTICS
         const submissions = await StorySession.find({
-          'competitionEntries.competitionId': competition._id
-        }).select('childId competitionEntries').lean();
+          'competitionEntries.competitionId': competition._id,
+        })
+          .select('childId competitionEntries')
+          .lean();
 
         const realTotalSubmissions = submissions.length;
         const realTotalParticipants = new Set(
-          submissions.map(submission => submission.childId.toString())
+          submissions.map((submission) => submission.childId.toString())
         ).size;
 
         // User participation data (if logged in as child)
@@ -51,22 +52,27 @@ export async function GET(request: Request) {
         if (session && session.user?.role === 'child') {
           const userStories = await StorySession.find({
             childId: session.user.id,
-            'competitionEntries.competitionId': competition._id
-          }).select('title competitionEntries createdAt').lean();
+            'competitionEntries.competitionId': competition._id,
+          })
+            .select('title competitionEntries createdAt')
+            .lean();
 
           if (userStories.length > 0) {
             userParticipated = true;
-            userEntries = userStories.map(story => {
+            userEntries = userStories.map((story) => {
               const competitionEntry = story.competitionEntries?.find(
-                (entry: any) => entry.competitionId.toString() === competition._id.toString()
+                (entry: any) =>
+                  entry.competitionId.toString() === competition._id.toString()
               );
 
               return {
-                storyId: (story._id as string | { toString(): string }).toString(),
+                storyId: (
+                  story._id as string | { toString(): string }
+                ).toString(),
                 title: story.title,
                 submittedAt: competitionEntry?.submittedAt || story.createdAt,
                 rank: competitionEntry?.rank || null,
-                score: competitionEntry?.score || null
+                score: competitionEntry?.score || null,
               };
             });
           }
@@ -75,7 +81,8 @@ export async function GET(request: Request) {
         // Calculate days since completion
         const completedDate = competition.resultsDate || competition.updatedAt;
         const daysSinceCompletion = Math.floor(
-          (Date.now() - new Date(completedDate).getTime()) / (1000 * 60 * 60 * 24)
+          (Date.now() - new Date(completedDate).getTime()) /
+            (1000 * 60 * 60 * 24)
         );
 
         return {
@@ -83,34 +90,35 @@ export async function GET(request: Request) {
           month: competition.month,
           year: competition.year,
           phase: competition.phase,
-          
+
           // 🔧 REAL-TIME STATS (not stored values)
           totalSubmissions: realTotalSubmissions,
           totalParticipants: realTotalParticipants,
-          
+
           // Dates
           submissionStart: competition.submissionStart?.toISOString(),
           submissionEnd: competition.submissionEnd?.toISOString(),
           resultsDate: competition.resultsDate?.toISOString(),
           completedAt: completedDate?.toISOString(),
           daysSinceCompletion,
-          
+
           // Status
           isActive: competition.isActive || false,
-          
+
           // Winners (top 3)
-          winners: competition.winners?.slice(0, 3).map((winner: any) => ({
-            position: winner.position,
-            childId: winner.childId?.toString() || '',
-            childName: winner.childName || 'Anonymous',
-            title: winner.title || 'Untitled Story',
-            score: winner.score || 0
-          })) || [],
-          
+          winners:
+            competition.winners?.slice(0, 3).map((winner: any) => ({
+              position: winner.position,
+              childId: winner.childId?.toString() || '',
+              childName: winner.childName || 'Anonymous',
+              title: winner.title || 'Untitled Story',
+              score: winner.score || 0,
+            })) || [],
+
           // User participation (if logged in)
           userParticipated,
           userEntries,
-          
+
           // Judging criteria
           judgingCriteria: competition.judgingCriteria || {
             grammar: 12,
@@ -121,8 +129,8 @@ export async function GET(request: Request) {
             vocabulary: 10,
             originality: 8,
             engagement: 5,
-            aiDetection: 3
-          }
+            aiDetection: 3,
+          },
         };
       })
     );
@@ -131,20 +139,26 @@ export async function GET(request: Request) {
     const summary = {
       totalCompetitions: formattedCompetitions.length,
       totalSubmissions: formattedCompetitions.reduce(
-        (sum, comp) => sum + comp.totalSubmissions, 0
+        (sum, comp) => sum + comp.totalSubmissions,
+        0
       ),
       totalParticipants: formattedCompetitions.reduce(
-        (sum, comp) => sum + comp.totalParticipants, 0
+        (sum, comp) => sum + comp.totalParticipants,
+        0
       ),
-      averageSubmissions: formattedCompetitions.length > 0 
-        ? Math.round(
-            formattedCompetitions.reduce((sum, comp) => sum + comp.totalSubmissions, 0) / 
-            formattedCompetitions.length
-          )
-        : 0,
-      userParticipationCount: session && session.user?.role === 'child' 
-        ? formattedCompetitions.filter(comp => comp.userParticipated).length
-        : 0
+      averageSubmissions:
+        formattedCompetitions.length > 0
+          ? Math.round(
+              formattedCompetitions.reduce(
+                (sum, comp) => sum + comp.totalSubmissions,
+                0
+              ) / formattedCompetitions.length
+            )
+          : 0,
+      userParticipationCount:
+        session && session.user?.role === 'child'
+          ? formattedCompetitions.filter((comp) => comp.userParticipated).length
+          : 0,
     };
 
     console.log('✅ Past competitions formatted with real-time stats');
@@ -153,15 +167,14 @@ export async function GET(request: Request) {
       success: true,
       competitions: formattedCompetitions,
       summary,
-      message: `Retrieved ${formattedCompetitions.length} past competitions with real-time statistics`
+      message: `Retrieved ${formattedCompetitions.length} past competitions with real-time statistics`,
     });
-
   } catch (error) {
     console.error('❌ Error fetching past competitions:', error);
     return NextResponse.json(
-      { 
+      {
         error: 'Failed to fetch past competitions',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        details: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
     );
@@ -172,7 +185,7 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   try {
     const session = await getServerSession(authOptions);
-    
+
     if (!session || session.user?.role !== 'admin') {
       return NextResponse.json(
         { error: 'Admin access required' },
@@ -216,20 +229,16 @@ export async function POST(request: Request) {
             _id: competition._id,
             month: competition.month,
             year: competition.year,
-            winners: competition.winners
-          }
+            winners: competition.winners,
+          },
         };
         break;
 
       default:
-        return NextResponse.json(
-          { error: 'Invalid action' },
-          { status: 400 }
-        );
+        return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
     }
 
     return NextResponse.json(result);
-
   } catch (error) {
     console.error('❌ Error in past competitions action:', error);
     return NextResponse.json(

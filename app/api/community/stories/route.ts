@@ -70,7 +70,7 @@ export async function GET(request: NextRequest) {
       filter.$or = [
         { title: { $regex: search, $options: 'i' } },
         { 'elements.genre': { $regex: search, $options: 'i' } },
-        { tags: { $in: [new RegExp(search, 'i')] } }
+        { tags: { $in: [new RegExp(search, 'i')] } },
       ];
     }
 
@@ -88,7 +88,7 @@ export async function GET(request: NextRequest) {
         sortQuery = { views: -1 };
         break;
       case 'most_liked':
-        sortQuery = { 'likes': -1 };
+        sortQuery = { likes: -1 };
         break;
       case 'most_viewed':
         sortQuery = { views: -1 };
@@ -109,86 +109,110 @@ export async function GET(request: NextRequest) {
         .sort(sortQuery)
         .skip((page - 1) * limit)
         .limit(limit)
-        .lean() as unknown) as StoryDocument[],
-      StorySession.countDocuments(filter)
+        .lean()) as unknown as StoryDocument[],
+      StorySession.countDocuments(filter),
     ]);
 
     // Transform stories for community display
-    const transformedStories = await Promise.all(stories.map(async (story: StoryDocument) => {
-      // Get story type - safely handle competitionEntries
-      const storyType = (story.competitionEntries && story.competitionEntries.length > 0) ? 'competition' : 
-                      (story.isUploadedForAssessment) ? 'uploaded' : 'freestyle';
+    const transformedStories = await Promise.all(
+      stories.map(async (story: StoryDocument) => {
+        // Get story type - safely handle competitionEntries
+        const storyType =
+          story.competitionEntries && story.competitionEntries.length > 0
+            ? 'competition'
+            : story.isUploadedForAssessment
+              ? 'uploaded'
+              : 'freestyle';
 
-      // Create excerpt from first turn or content
-      let excerpt = '';
-      if (story.content) {
-        excerpt = story.content.substring(0, 200) + '...';
-      } else if (story.aiOpening) {
-        excerpt = story.aiOpening.substring(0, 200) + '...';
-      } else {
-        // Get first turn for excerpt
-        const firstTurn = await Turn.findOne({ sessionId: story._id })
-          .sort({ turnNumber: 1 })
-          .lean() as any;
-        if (firstTurn?.childInput) {
-          excerpt = firstTurn.childInput.substring(0, 200) + '...';
+        // Create excerpt from first turn or content
+        let excerpt = '';
+        if (story.content) {
+          excerpt = story.content.substring(0, 200) + '...';
+        } else if (story.aiOpening) {
+          excerpt = story.aiOpening.substring(0, 200) + '...';
         } else {
-          excerpt = 'No preview available';
+          // Get first turn for excerpt
+          const firstTurn = (await Turn.findOne({ sessionId: story._id })
+            .sort({ turnNumber: 1 })
+            .lean()) as any;
+          if (firstTurn?.childInput) {
+            excerpt = firstTurn.childInput.substring(0, 200) + '...';
+          } else {
+            excerpt = 'No preview available';
+          }
         }
-      }
 
-      // Check if user has liked/bookmarked (if logged in) - safely handle arrays
-      const likesArray = story.likes || [];
-      const bookmarksArray = story.bookmarks || [];
-      const isLikedByUser = userId ? likesArray.some((like: any) => like.toString() === userId) : false;
-      const isBookmarkedByUser = userId ? bookmarksArray.some((bookmark: any) => bookmark.toString() === userId) : false;
+        // Check if user has liked/bookmarked (if logged in) - safely handle arrays
+        const likesArray = story.likes || [];
+        const bookmarksArray = story.bookmarks || [];
+        const isLikedByUser = userId
+          ? likesArray.some((like: any) => like.toString() === userId)
+          : false;
+        const isBookmarkedByUser = userId
+          ? bookmarksArray.some(
+              (bookmark: any) => bookmark.toString() === userId
+            )
+          : false;
 
-      // Format competition winner info - safely handle competitionEntries
-      let competitionWinner;
-      if (story.competitionEntries && story.competitionEntries.length > 0) {
-        const winningEntry = story.competitionEntries.find((entry: any) => entry.isWinner);
-        if (winningEntry) {
-          competitionWinner = {
-            position: winningEntry.position || 1,
-            competitionName: winningEntry.competitionName || 'Monthly Competition',
-            month: winningEntry.month || new Date(story.publishedAt || story.updatedAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
-          };
+        // Format competition winner info - safely handle competitionEntries
+        let competitionWinner;
+        if (story.competitionEntries && story.competitionEntries.length > 0) {
+          const winningEntry = story.competitionEntries.find(
+            (entry: any) => entry.isWinner
+          );
+          if (winningEntry) {
+            competitionWinner = {
+              position: winningEntry.position || 1,
+              competitionName:
+                winningEntry.competitionName || 'Monthly Competition',
+              month:
+                winningEntry.month ||
+                new Date(
+                  story.publishedAt || story.updatedAt
+                ).toLocaleDateString('en-US', {
+                  month: 'long',
+                  year: 'numeric',
+                }),
+            };
+          }
         }
-      }
 
-      return {
-        _id: story._id.toString(),
-        title: story.title || 'Untitled Story',
-        excerpt,
-        wordCount: story.totalWords || story.childWords || 0,
-        storyType,
-        publishedAt: story.publishedAt || story.updatedAt,
-        author: {
-          _id: story.childId._id.toString(),
-          firstName: story.childId.firstName,
-          lastName: story.childId.lastName,
-          ageGroup: story.childId.ageGroup || 'Unknown'
-        },
-        assessment: {
-          overallScore: (story.assessment?.overallScore) || story.overallScore || 0,
-          creativity: (story.assessment?.creativityScore) || story.creativityScore || 0,
-          grammar: (story.assessment?.grammarScore) || story.grammarScore || 0,
-          vocabulary: (story.assessment?.vocabularyScore) || 0
-        },
-        stats: {
-          views: story.views || 0,
-          likes: likesArray.length,
-          comments: 0, // Could be calculated with another query if needed
-          bookmarks: bookmarksArray.length
-        },
-        tags: story.tags || [],
-        genre: story.genre || (story.elements?.genre) || 'Adventure',
-        isFeatured: story.isFeatured || false,
-        competitionWinner,
-        isLikedByUser,
-        isBookmarkedByUser
-      };
-    }));
+        return {
+          _id: story._id.toString(),
+          title: story.title || 'Untitled Story',
+          excerpt,
+          wordCount: story.totalWords || story.childWords || 0,
+          storyType,
+          publishedAt: story.publishedAt || story.updatedAt,
+          author: {
+            _id: story.childId._id.toString(),
+            firstName: story.childId.firstName,
+            lastName: story.childId.lastName,
+            ageGroup: story.childId.ageGroup || 'Unknown',
+          },
+          assessment: {
+            overallScore:
+              story.assessment?.overallScore || story.overallScore || 0,
+            creativity:
+              story.assessment?.creativityScore || story.creativityScore || 0,
+            grammar: story.assessment?.grammarScore || story.grammarScore || 0,
+            vocabulary: story.assessment?.vocabularyScore || 0,
+          },
+          stats: {
+            views: story.views || 0,
+            likes: likesArray.length,
+            comments: 0, // Could be calculated with another query if needed
+            bookmarks: bookmarksArray.length,
+          },
+          tags: story.tags || [],
+          genre: story.genre || story.elements?.genre || 'Adventure',
+          isFeatured: story.isFeatured || false,
+          competitionWinner,
+          isLikedByUser,
+          isBookmarkedByUser,
+        };
+      })
+    );
 
     const hasMore = page * limit < totalStories;
 
@@ -199,11 +223,10 @@ export async function GET(request: NextRequest) {
         page,
         limit,
         total: totalStories,
-        pages: Math.ceil(totalStories / limit)
+        pages: Math.ceil(totalStories / limit),
       },
-      hasMore
+      hasMore,
     });
-
   } catch (error) {
     console.error('Error fetching community stories:', error);
     return NextResponse.json(

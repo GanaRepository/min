@@ -22,12 +22,17 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.log(`🚀 Admin advancing competition phase for ID: ${competitionId}`);
+    console.log(
+      `🚀 Admin advancing competition phase for ID: ${competitionId}`
+    );
 
     // 🔧 FIX: Use forceAdvancePhase instead of advancePhase
-    const updatedCompetition = await competitionManager.forceAdvancePhase(competitionId);
+    const updatedCompetition =
+      await competitionManager.forceAdvancePhase(competitionId);
 
-    console.log(`✅ Competition advanced: ${updatedCompetition.month} ${updatedCompetition.year} → ${updatedCompetition.phase}`);
+    console.log(
+      `✅ Competition advanced: ${updatedCompetition.month} ${updatedCompetition.year} → ${updatedCompetition.phase}`
+    );
 
     return NextResponse.json({
       success: true,
@@ -37,9 +42,9 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('❌ Error advancing competition phase:', error);
     return NextResponse.json(
-      { 
+      {
         error: 'Failed to advance competition phase',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        details: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
     );

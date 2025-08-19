@@ -276,7 +276,6 @@ export default function MintoonsContactPage() {
         </div>
 
         <div className="w-full lg:w-1/2 flex items-center justify-center p-4 sm:p-8 lg:p-4">
-          
           <div className="w-full max-w-xs sm:max-w-lg">
             <div className="bg-gradient-to-br from-gray-800/60 to-gray-700/60 backdrop-blur-xl border border-gray-600/40  p-4 sm:p-8 lg:p-10 shadow-2xl">
               <div className="text-center mb-6 sm:mb-8">

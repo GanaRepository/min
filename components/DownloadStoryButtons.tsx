@@ -67,7 +67,7 @@ export const DownloadStoryButtons: React.FC<Props> = ({ story }) => {
         onClick={handleDownloadPDF}
         className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white px-6 py-2 rounded-lg font-semibold shadow-md transition-all"
       >
-         PDF
+        PDF
       </button>
     </div>
   );

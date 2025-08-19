@@ -397,9 +397,7 @@ export default function ModerationPage() {
         ) : (
           <div className="text-center py-12">
             <MessageSquare size={48} className="text-gray-600 mx-auto mb-4" />
-            <h3 className="text-xl  text-gray-400 mb-2">
-              No comments found
-            </h3>
+            <h3 className="text-xl  text-gray-400 mb-2">No comments found</h3>
             <p className="text-gray-500">
               Try adjusting your filters or search terms
             </p>

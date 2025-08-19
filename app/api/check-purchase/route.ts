@@ -11,7 +11,7 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const storyId = searchParams.get('storyId');
     const userId = searchParams.get('userId');
-    
+
     if (!storyId || !userId) {
       return NextResponse.json(
         { error: 'storyId and userId required' },
@@ -23,14 +23,14 @@ export async function GET(req: NextRequest) {
 
     // Check story purchase status
     const story = await StorySession.findById(storyId);
-    
+
     // Check user purchase history
     const user = await User.findById(userId);
     const purchases = user?.purchaseHistory || [];
-    
+
     // Find recent purchases for this story
-    const storyPurchases = purchases.filter((p: any) => 
-      p.itemDetails?.storyId?.toString() === storyId
+    const storyPurchases = purchases.filter(
+      (p: any) => p.itemDetails?.storyId?.toString() === storyId
     );
 
     return NextResponse.json({
@@ -46,9 +46,9 @@ export async function GET(req: NextRequest) {
         storyPurchases: storyPurchases.length,
         latestPurchase: purchases[purchases.length - 1],
       },
-      webhookProcessed: storyPurchases.length > 0 && story?.purchasedForPhysicalBook,
+      webhookProcessed:
+        storyPurchases.length > 0 && story?.purchasedForPhysicalBook,
     });
-
   } catch (error) {
     console.error('Error checking purchase:', error);
     return NextResponse.json(

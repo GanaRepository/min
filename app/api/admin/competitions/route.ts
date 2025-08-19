@@ -36,7 +36,7 @@ export async function GET(request: NextRequest) {
     if (search) {
       query.$or = [
         { month: { $regex: search, $options: 'i' } },
-        { year: parseInt(search) || 0 }
+        { year: parseInt(search) || 0 },
       ];
     }
 
@@ -74,11 +74,13 @@ export async function GET(request: NextRequest) {
       competitions.map(async (comp: any) => {
         // Get submissions for this competition
         const submissions = await StorySession.find({
-          'competitionEntries.competitionId': comp._id
+          'competitionEntries.competitionId': comp._id,
         })
-        .populate('childId', 'firstName lastName')
-        .select('title totalWords childWords competitionEntries childId createdAt')
-        .lean();
+          .populate('childId', 'firstName lastName')
+          .select(
+            'title totalWords childWords competitionEntries childId createdAt'
+          )
+          .lean();
 
         // Format submissions with entry details
         const formattedSubmissions = submissions.map((story: any) => {
@@ -106,25 +108,28 @@ export async function GET(request: NextRequest) {
     );
 
     // Get comprehensive stats
-    const [totalSubmissions, avgParticipants, activeCompetitions] = await Promise.all([
-      Competition.aggregate([
-        { $group: { _id: null, total: { $sum: '$totalSubmissions' } } }
-      ]),
-      Competition.aggregate([
-        { $group: { _id: null, avg: { $avg: '$totalParticipants' } } }
-      ]),
-      Competition.countDocuments({ isActive: true })
-    ]);
+    const [totalSubmissions, avgParticipants, activeCompetitions] =
+      await Promise.all([
+        Competition.aggregate([
+          { $group: { _id: null, total: { $sum: '$totalSubmissions' } } },
+        ]),
+        Competition.aggregate([
+          { $group: { _id: null, avg: { $avg: '$totalParticipants' } } },
+        ]),
+        Competition.countDocuments({ isActive: true }),
+      ]);
 
     const stats = {
       totalCompetitions,
       activeCompetitions,
       totalSubmissions: totalSubmissions[0]?.total || 0,
       avgParticipants: Math.round(avgParticipants[0]?.avg || 0),
-      completedCompetitions: await Competition.countDocuments({ phase: 'results' }),
-      inProgressCompetitions: await Competition.countDocuments({ 
-        phase: { $in: ['submission', 'judging'] } 
-      })
+      completedCompetitions: await Competition.countDocuments({
+        phase: 'results',
+      }),
+      inProgressCompetitions: await Competition.countDocuments({
+        phase: { $in: ['submission', 'judging'] },
+      }),
     };
 
     return NextResponse.json({
@@ -184,7 +189,7 @@ export async function POST(request: NextRequest) {
         }
 
         const adminUser = await User.findOne({ _id: session.user.id });
-        
+
         const newCompetition = new Competition({
           month,
           year,
@@ -202,7 +207,7 @@ export async function POST(request: NextRequest) {
             vocabulary: 10,
             originality: 8,
             engagement: 5,
-            aiDetection: 3
+            aiDetection: 3,
           },
           submissionStart: new Date(),
           submissionEnd: new Date(year, new Date().getMonth() + 1, 25), // 25th of month
@@ -222,7 +227,7 @@ export async function POST(request: NextRequest) {
 
       case 'bulk_update_phases':
         const { competitionIds, newPhase } = data;
-        
+
         if (!competitionIds || !Array.isArray(competitionIds) || !newPhase) {
           return NextResponse.json(
             { error: 'Competition IDs and new phase are required' },
@@ -248,7 +253,7 @@ export async function POST(request: NextRequest) {
           .sort({ createdAt: -1 })
           .lean();
 
-        const exportData = allCompetitions.map(comp => ({
+        const exportData = allCompetitions.map((comp) => ({
           month: comp.month,
           year: comp.year,
           phase: comp.phase,
@@ -267,10 +272,7 @@ export async function POST(request: NextRequest) {
         });
 
       default:
-        return NextResponse.json(
-          { error: 'Invalid action' },
-          { status: 400 }
-        );
+        return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
     }
   } catch (error) {
     console.error('❌ Error in admin competitions POST:', error);

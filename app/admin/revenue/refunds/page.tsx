@@ -209,9 +209,7 @@ export default function RefundsPage() {
                   </div>
 
                   <div className="bg-gray-700/50  p-4 mb-4">
-                    <h5 className="text-white  mb-2">
-                      Refund Reason:
-                    </h5>
+                    <h5 className="text-white  mb-2">Refund Reason:</h5>
                     <p className="text-gray-300">{refund.reason}</p>
                   </div>
 
@@ -268,9 +266,7 @@ export default function RefundsPage() {
       {refunds.length === 0 && !loading && (
         <div className="text-center py-12">
           <DollarSign size={48} className="text-gray-600 mx-auto mb-4" />
-          <h3 className="text-xl  text-gray-400 mb-2">
-            No refund requests
-          </h3>
+          <h3 className="text-xl  text-gray-400 mb-2">No refund requests</h3>
           <p className="text-gray-500">
             {statusFilter !== 'all'
               ? `No ${statusFilter} refund requests at this time`

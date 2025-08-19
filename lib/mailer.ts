@@ -835,7 +835,8 @@ export const sendWinnerCongratulationsEmail = async (
   const transporter = createTransporter();
 
   const medal = place === '1st' ? '🥇' : place === '2nd' ? '🥈' : '🥉';
-  const placeColor = place === '1st' ? '#FFD700' : place === '2nd' ? '#C0C0C0' : '#CD7F32';
+  const placeColor =
+    place === '1st' ? '#FFD700' : place === '2nd' ? '#C0C0C0' : '#CD7F32';
 
   const mailOptions = {
     from: `"Mintoons Competition" <${process.env.EMAIL_USER}>`,

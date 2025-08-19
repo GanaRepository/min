@@ -172,9 +172,7 @@ export default function EditMentor() {
           </button>
         </Link>
         <div>
-          <h1 className="text-2xl sm:text-3xl  text-white">
-            Edit Mentor
-          </h1>
+          <h1 className="text-2xl sm:text-3xl  text-white">Edit Mentor</h1>
           <p className="text-gray-400">
             Modify mentor information and settings
           </p>
@@ -270,9 +268,7 @@ export default function EditMentor() {
 
           {/* Bio */}
           <div>
-            <label className="block text-sm  text-gray-300 mb-2">
-              Bio
-            </label>
+            <label className="block text-sm  text-gray-300 mb-2">Bio</label>
             <div className="relative">
               <FileText
                 size={20}

@@ -11,7 +11,9 @@ export async function GET() {
     }
 
     const eligibility = await CompetitionManager.canUserSubmit(session.user.id);
-    const userEntries = await CompetitionManager.getUserCompetitionEntries(session.user.id);
+    const userEntries = await CompetitionManager.getUserCompetitionEntries(
+      session.user.id
+    );
 
     return NextResponse.json({
       success: true,

@@ -215,14 +215,10 @@ export default function StoriesPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <div className="bg-gray-800  p-6">
             <div className="flex items-center justify-between mb-2">
-              <h3 className="text-sm  text-gray-400">
-                Total Stories
-              </h3>
+              <h3 className="text-sm  text-gray-400">Total Stories</h3>
               <BookOpen size={20} className="text-blue-400" />
             </div>
-            <p className="text-2xl  text-white">
-              {stats.totalStories}
-            </p>
+            <p className="text-2xl  text-white">{stats.totalStories}</p>
           </div>
 
           <div className="bg-gray-800  p-6">
@@ -230,9 +226,7 @@ export default function StoriesPage() {
               <h3 className="text-sm  text-gray-400">Completed</h3>
               <BarChart3 size={20} className="text-green-400" />
             </div>
-            <p className="text-2xl  text-white">
-              {stats.completedStories}
-            </p>
+            <p className="text-2xl  text-white">{stats.completedStories}</p>
             <p className="text-xs text-gray-500 mt-1">
               {stats.totalStories > 0
                 ? Math.round(
@@ -248,9 +242,7 @@ export default function StoriesPage() {
               <h3 className="text-sm  text-gray-400">Active</h3>
               <BookOpen size={20} className="text-blue-400" />
             </div>
-            <p className="text-2xl  text-white">
-              {stats.activeStories}
-            </p>
+            <p className="text-2xl  text-white">{stats.activeStories}</p>
           </div>
 
           <div className="bg-gray-800  p-6">
@@ -258,9 +250,7 @@ export default function StoriesPage() {
               <h3 className="text-sm  text-gray-400">Comments</h3>
               <MessageSquare size={20} className="text-purple-400" />
             </div>
-            <p className="text-2xl  text-white">
-              {stats.totalComments}
-            </p>
+            <p className="text-2xl  text-white">{stats.totalComments}</p>
             {stats.totalUnresolvedComments > 0 && (
               <p className="text-xs text-red-400 mt-1">
                 {stats.totalUnresolvedComments} unresolved
@@ -477,9 +467,7 @@ export default function StoriesPage() {
         {stories.length === 0 && !loading && (
           <div className="text-center py-12">
             <BookOpen size={48} className="text-gray-600 mx-auto mb-4" />
-            <h3 className="text-xl  text-gray-400 mb-2">
-              No stories found
-            </h3>
+            <h3 className="text-xl  text-gray-400 mb-2">No stories found</h3>
             <p className="text-gray-500">
               {statusFilter !== 'all' || authorFilter
                 ? 'Try adjusting your filters'

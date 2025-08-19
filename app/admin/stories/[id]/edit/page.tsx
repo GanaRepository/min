@@ -149,9 +149,7 @@ export default function EditStory() {
           </button>
         </Link>
         <div>
-          <h1 className="text-2xl sm:text-3xl  text-white">
-            Edit Story
-          </h1>
+          <h1 className="text-2xl sm:text-3xl  text-white">Edit Story</h1>
           <p className="text-gray-400">Modify story settings and metadata</p>
         </div>
       </div>
@@ -191,9 +189,7 @@ export default function EditStory() {
 
           {/* Status */}
           <div>
-            <label className="block text-sm  text-gray-300 mb-2">
-              Status
-            </label>
+            <label className="block text-sm  text-gray-300 mb-2">Status</label>
             <select
               value={formData.status}
               onChange={(e) => handleInputChange('status', e.target.value)}
@@ -237,9 +233,7 @@ export default function EditStory() {
 
           {/* Competition Settings */}
           <div className="space-y-4">
-            <h3 className="text-lg  text-white">
-              Competition Settings
-            </h3>
+            <h3 className="text-lg  text-white">Competition Settings</h3>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
@@ -315,9 +309,7 @@ export default function EditStory() {
                   }
                   className="w-5 h-5 bg-gray-700 border-gray-600  focus:ring-blue-500 focus:ring-2"
                 />
-                <span className="text-white ">
-                  Competition Entry
-                </span>
+                <span className="text-white ">Competition Entry</span>
               </label>
               <p className="text-gray-400 text-sm mt-1">
                 Story is entered in competition

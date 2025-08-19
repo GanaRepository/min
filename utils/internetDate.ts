@@ -11,7 +11,9 @@ export async function getInternetDate(): Promise<Date> {
         const dateString = data.datetime || data.dateTime || data.date_time_utc;
         if (dateString) return new Date(dateString);
       }
-    } catch { continue; }
+    } catch {
+      continue;
+    }
   }
   return new Date();
 }

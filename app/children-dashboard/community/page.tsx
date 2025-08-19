@@ -91,14 +91,22 @@ export default function CommunityPage() {
   const [sortBy, setSortBy] = useState('newest');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
-  const genres = ['Adventure', 'Fantasy', 'Mystery', 'Sci-Fi', 'Comedy', 'Drama', 'Horror'];
+  const genres = [
+    'Adventure',
+    'Fantasy',
+    'Mystery',
+    'Sci-Fi',
+    'Comedy',
+    'Drama',
+    'Horror',
+  ];
   const ageGroups = ['6-8', '9-11', '12-14', '15-17'];
   const sortOptions = [
     { value: 'newest', label: 'Newest First' },
     { value: 'popular', label: 'Most Popular' },
     { value: 'most_liked', label: 'Most Liked' },
     { value: 'most_viewed', label: 'Most Viewed' },
-    { value: 'highest_rated', label: 'Highest Rated' }
+    { value: 'highest_rated', label: 'Highest Rated' },
   ];
 
   useEffect(() => {
@@ -119,18 +127,18 @@ export default function CommunityPage() {
         sort: sortBy,
         ...(searchTerm && { search: searchTerm }),
         ...(selectedGenre && { genre: selectedGenre }),
-        ...(selectedAgeGroup && { ageGroup: selectedAgeGroup })
+        ...(selectedAgeGroup && { ageGroup: selectedAgeGroup }),
       });
 
       const [storiesRes, statsRes] = await Promise.all([
         fetch(`/api/community/stories?${params}`),
-        page === 1 ? fetch('/api/community/stats') : Promise.resolve(null)
+        page === 1 ? fetch('/api/community/stats') : Promise.resolve(null),
       ]);
 
       if (storiesRes.ok) {
         const storiesData = await storiesRes.json();
         if (append) {
-          setStories(prev => [...prev, ...storiesData.stories]);
+          setStories((prev) => [...prev, ...storiesData.stories]);
         } else {
           setStories(storiesData.stories || []);
         }
@@ -145,7 +153,6 @@ export default function CommunityPage() {
         const statsData = await statsRes.json();
         setStats(statsData.stats);
       }
-
     } catch (error) {
       console.error('Error fetching community data:', error);
       setStories([]);
@@ -187,13 +194,17 @@ export default function CommunityPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl  text-white mb-2">Community Showcase</h1>
-          <p className="text-gray-400">Discover amazing stories from young writers around the world</p>
+          <p className="text-gray-400">
+            Discover amazing stories from young writers around the world
+          </p>
         </div>
         <div className="flex items-center gap-2">
           <button
             onClick={() => setViewMode('grid')}
             className={`p-2  transition-colors ${
-              viewMode === 'grid' ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-400'
+              viewMode === 'grid'
+                ? 'bg-blue-600 text-white'
+                : 'bg-gray-700 text-gray-400'
             }`}
           >
             <Grid3X3 className="w-5 h-5" />
@@ -201,7 +212,9 @@ export default function CommunityPage() {
           <button
             onClick={() => setViewMode('list')}
             className={`p-2  transition-colors ${
-              viewMode === 'list' ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-400'
+              viewMode === 'list'
+                ? 'bg-blue-600 text-white'
+                : 'bg-gray-700 text-gray-400'
             }`}
           >
             <List className="w-5 h-5" />
@@ -213,7 +226,9 @@ export default function CommunityPage() {
       {stats && (
         <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
           <div className="bg-gray-800  p-4 text-center">
-            <div className="text-2xl  text-blue-400">{stats.totalPublishedStories}</div>
+            <div className="text-2xl  text-blue-400">
+              {stats.totalPublishedStories}
+            </div>
             <div className="text-sm text-gray-400">Published Stories</div>
           </div>
           <div className="bg-gray-800  p-4 text-center">
@@ -221,7 +236,9 @@ export default function CommunityPage() {
             <div className="text-sm text-gray-400">Young Authors</div>
           </div>
           <div className="bg-gray-800  p-4 text-center">
-            <div className="text-2xl  text-purple-400">{stats.totalViews.toLocaleString()}</div>
+            <div className="text-2xl  text-purple-400">
+              {stats.totalViews.toLocaleString()}
+            </div>
             <div className="text-sm text-gray-400">Total Views</div>
           </div>
           <div className="bg-gray-800  p-4 text-center">
@@ -229,11 +246,15 @@ export default function CommunityPage() {
             <div className="text-sm text-gray-400">Total Likes</div>
           </div>
           <div className="bg-gray-800  p-4 text-center">
-            <div className="text-2xl  text-yellow-400">{stats.featuredStories}</div>
+            <div className="text-2xl  text-yellow-400">
+              {stats.featuredStories}
+            </div>
             <div className="text-sm text-gray-400">Featured Stories</div>
           </div>
           <div className="bg-gray-800  p-4 text-center">
-            <div className="text-2xl  text-orange-400">{stats.competitionWinners}</div>
+            <div className="text-2xl  text-orange-400">
+              {stats.competitionWinners}
+            </div>
             <div className="text-sm text-gray-400">Competition Winners</div>
           </div>
         </div>
@@ -263,8 +284,10 @@ export default function CommunityPage() {
             className="px-4 py-2 bg-gray-700 border border-gray-600  text-white focus:border-blue-500 focus:outline-none"
           >
             <option value="">All Genres</option>
-            {genres.map(genre => (
-              <option key={genre} value={genre}>{genre}</option>
+            {genres.map((genre) => (
+              <option key={genre} value={genre}>
+                {genre}
+              </option>
             ))}
           </select>
 
@@ -275,8 +298,10 @@ export default function CommunityPage() {
             className="px-4 py-2 bg-gray-700 border border-gray-600  text-white focus:border-blue-500 focus:outline-none"
           >
             <option value="">All Ages</option>
-            {ageGroups.map(age => (
-              <option key={age} value={age}>{age}</option>
+            {ageGroups.map((age) => (
+              <option key={age} value={age}>
+                {age}
+              </option>
             ))}
           </select>
 
@@ -286,13 +311,18 @@ export default function CommunityPage() {
             onChange={(e) => setSortBy(e.target.value)}
             className="px-4 py-2 bg-gray-700 border border-gray-600  text-white focus:border-blue-500 focus:outline-none"
           >
-            {sortOptions.map(option => (
-              <option key={option.value} value={option.value}>{option.label}</option>
+            {sortOptions.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
             ))}
           </select>
 
           {/* Clear Filters */}
-          {(searchTerm || selectedGenre || selectedAgeGroup || sortBy !== 'newest') && (
+          {(searchTerm ||
+            selectedGenre ||
+            selectedAgeGroup ||
+            sortBy !== 'newest') && (
             <button
               onClick={clearFilters}
               className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white  transition-colors"
@@ -309,9 +339,9 @@ export default function CommunityPage() {
           <BookOpen className="w-16 h-16 text-gray-400 mx-auto mb-4" />
           <h3 className="text-xl  text-white mb-2">No Stories Found</h3>
           <p className="text-gray-400 mb-4">
-            {searchTerm || selectedGenre || selectedAgeGroup 
-              ? "Try adjusting your filters to see more stories." 
-              : "Be the first to publish a story to the community!"}
+            {searchTerm || selectedGenre || selectedAgeGroup
+              ? 'Try adjusting your filters to see more stories.'
+              : 'Be the first to publish a story to the community!'}
           </p>
           <Link href="/children-dashboard/my-stories">
             <button className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white  transition-colors">
@@ -320,10 +350,13 @@ export default function CommunityPage() {
           </Link>
         </div>
       ) : (
-        <div className={viewMode === 'grid' 
-          ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" 
-          : "space-y-4"
-        }>
+        <div
+          className={
+            viewMode === 'grid'
+              ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'
+              : 'space-y-4'
+          }
+        >
           <AnimatePresence>
             {stories.map((story, index) => (
               <motion.div
@@ -331,9 +364,10 @@ export default function CommunityPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
-                className={viewMode === 'grid' 
-                  ? "bg-gray-800  overflow-hidden hover:bg-gray-750 transition-colors" 
-                  : "bg-gray-800  p-6 hover:bg-gray-750 transition-colors"
+                className={
+                  viewMode === 'grid'
+                    ? 'bg-gray-800  overflow-hidden hover:bg-gray-750 transition-colors'
+                    : 'bg-gray-800  p-6 hover:bg-gray-750 transition-colors'
                 }
               >
                 {viewMode === 'grid' ? (
@@ -351,13 +385,19 @@ export default function CommunityPage() {
                         {story.competitionWinner && (
                           <div className="inline-flex items-center gap-1 px-2 py-1  text-xs  bg-orange-500/20 text-orange-400">
                             <Crown className="w-3 h-3" />
-                            {story.competitionWinner.position === 1 ? '🥇' : 
-                             story.competitionWinner.position === 2 ? '🥈' : '🥉'}
+                            {story.competitionWinner.position === 1
+                              ? '🥇'
+                              : story.competitionWinner.position === 2
+                                ? '🥈'
+                                : '🥉'}
                           </div>
                         )}
                         <div className="inline-flex items-center gap-1 px-2 py-1  text-xs  bg-blue-500/20 text-blue-400">
-                          {story.storyType === 'competition' ? 'Competition' : 
-                           story.storyType === 'uploaded' ? 'Uploaded' : 'Freestyle'}
+                          {story.storyType === 'competition'
+                            ? 'Competition'
+                            : story.storyType === 'uploaded'
+                              ? 'Uploaded'
+                              : 'Freestyle'}
                         </div>
                       </div>
                     </div>
@@ -369,7 +409,7 @@ export default function CommunityPage() {
                           {story.title}
                         </h3>
                       </Link>
-                      
+
                       <p className="text-gray-400 text-sm mb-3 line-clamp-3">
                         {story.excerpt}
                       </p>
@@ -377,7 +417,9 @@ export default function CommunityPage() {
                       {/* Author & Genre */}
                       <div className="flex items-center gap-2 text-sm text-gray-400 mb-3">
                         <User className="w-4 h-4" />
-                        <span>{story.author.firstName} {story.author.lastName}</span>
+                        <span>
+                          {story.author.firstName} {story.author.lastName}
+                        </span>
                         <span>•</span>
                         <span>{story.genre}</span>
                         <span>•</span>
@@ -387,15 +429,23 @@ export default function CommunityPage() {
                       {/* Assessment Scores */}
                       <div className="grid grid-cols-3 gap-2 mb-4">
                         <div className="text-center">
-                          <div className="text-lg  text-blue-400">{story.assessment.overallScore}</div>
+                          <div className="text-lg  text-blue-400">
+                            {story.assessment.overallScore}
+                          </div>
                           <div className="text-xs text-gray-400">Overall</div>
                         </div>
                         <div className="text-center">
-                          <div className="text-lg  text-purple-400">{story.assessment.creativity}</div>
-                          <div className="text-xs text-gray-400">Creativity</div>
+                          <div className="text-lg  text-purple-400">
+                            {story.assessment.creativity}
+                          </div>
+                          <div className="text-xs text-gray-400">
+                            Creativity
+                          </div>
                         </div>
                         <div className="text-center">
-                          <div className="text-lg  text-green-400">{story.assessment.grammar}</div>
+                          <div className="text-lg  text-green-400">
+                            {story.assessment.grammar}
+                          </div>
                           <div className="text-xs text-gray-400">Grammar</div>
                         </div>
                       </div>
@@ -423,7 +473,9 @@ export default function CommunityPage() {
                           {/* Like and Bookmark buttons removed */}
                         </div>
 
-                        <Link href={`/children-dashboard/community/${story._id}`}>
+                        <Link
+                          href={`/children-dashboard/community/${story._id}`}
+                        >
                           <button className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-sm  transition-colors">
                             Read Story
                           </button>
@@ -446,13 +498,19 @@ export default function CommunityPage() {
                         {story.competitionWinner && (
                           <div className="inline-flex items-center gap-1 px-2 py-1  text-xs  bg-orange-500/20 text-orange-400">
                             <Crown className="w-3 h-3" />
-                            {story.competitionWinner.position === 1 ? '🥇' : 
-                             story.competitionWinner.position === 2 ? '🥈' : '🥉'}
+                            {story.competitionWinner.position === 1
+                              ? '🥇'
+                              : story.competitionWinner.position === 2
+                                ? '🥈'
+                                : '🥉'}
                           </div>
                         )}
                         <div className="inline-flex items-center gap-1 px-2 py-1  text-xs  bg-blue-500/20 text-blue-400">
-                          {story.storyType === 'competition' ? 'Competition' : 
-                           story.storyType === 'uploaded' ? 'Uploaded' : 'Freestyle'}
+                          {story.storyType === 'competition'
+                            ? 'Competition'
+                            : story.storyType === 'uploaded'
+                              ? 'Uploaded'
+                              : 'Freestyle'}
                         </div>
                       </div>
 
@@ -461,10 +519,8 @@ export default function CommunityPage() {
                           {story.title}
                         </h3>
                       </Link>
-                      
-                      <p className="text-gray-400 mb-3">
-                        {story.excerpt}
-                      </p>
+
+                      <p className="text-gray-400 mb-3">{story.excerpt}</p>
 
                       <div className="flex items-center gap-4 text-sm text-gray-400 mb-3">
                         <div className="flex items-center gap-1">
@@ -473,7 +529,9 @@ export default function CommunityPage() {
                         </div>
                         <span>{story.genre}</span>
                         <span>{story.wordCount} words</span>
-                        <span>{new Date(story.publishedAt).toLocaleDateString()}</span>
+                        <span>
+                          {new Date(story.publishedAt).toLocaleDateString()}
+                        </span>
                       </div>
 
                       <div className="flex items-center justify-between">
@@ -491,7 +549,9 @@ export default function CommunityPage() {
                         <div className="flex items-center gap-2">
                           {/* Like and Bookmark buttons removed */}
 
-                          <Link href={`/children-dashboard/community/${story._id}`}>
+                          <Link
+                            href={`/children-dashboard/community/${story._id}`}
+                          >
                             <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white  transition-colors">
                               Read Story
                             </button>
@@ -501,15 +561,23 @@ export default function CommunityPage() {
                     </div>
 
                     <div className="w-32 text-center">
-                      <div className="text-lg  text-blue-400">{story.assessment.overallScore}</div>
-                      <div className="text-xs text-gray-400 mb-2">Overall Score</div>
+                      <div className="text-lg  text-blue-400">
+                        {story.assessment.overallScore}
+                      </div>
+                      <div className="text-xs text-gray-400 mb-2">
+                        Overall Score
+                      </div>
                       <div className="grid grid-cols-1 gap-1 text-xs">
                         <div>
-                          <span className="text-purple-400">{story.assessment.creativity}</span>
+                          <span className="text-purple-400">
+                            {story.assessment.creativity}
+                          </span>
                           <div className="text-gray-500">Creativity</div>
                         </div>
                         <div>
-                          <span className="text-green-400">{story.assessment.grammar}</span>
+                          <span className="text-green-400">
+                            {story.assessment.grammar}
+                          </span>
                           <div className="text-gray-500">Grammar</div>
                         </div>
                       </div>

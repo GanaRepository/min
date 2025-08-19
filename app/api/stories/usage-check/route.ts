@@ -15,7 +15,6 @@
 //       );
 //     }
 
-
 //   // Auto-reset check before usage validation
 //   const { checkAndPerformMonthlyReset } = await import('@/utils/autoReset');
 //   await checkAndPerformMonthlyReset();
@@ -77,7 +76,6 @@
 //   }
 // }
 
-
 // app/api/stories/usage-check/route.ts - COMPLETE PRESERVED VERSION
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
@@ -132,7 +130,7 @@ export async function POST(request: Request) {
       default:
         return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
     }
-    
+
     if (result.allowed) {
       return NextResponse.json({
         allowed: true,

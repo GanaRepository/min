@@ -2,7 +2,7 @@
 import { MetadataRoute } from 'next';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://www.pioneeritsystems.com';
+  const baseUrl = 'https://www.mintoons.com';
   const today = new Date().toISOString();
 
   return [

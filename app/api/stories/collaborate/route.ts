@@ -75,7 +75,7 @@
 
 //     // Build story context
 //     let storyContext = '';
-    
+
 //     // Include AI opening if exists
 //     if (storySession.aiOpening) {
 //       storyContext += `AI Opening: ${storySession.aiOpening}\n\n`;
@@ -97,20 +97,20 @@
 //     // Generate AI response (unless it's the final turn)
 //     let aiResponse = '';
 //     let aiWordCount = 0;
-    
+
 //     if (turnNumber < 7) {
 //       console.log(`🤖 Generating AI response for turn ${turnNumber}`);
-      
+
 //       try {
 //         aiResponse = await collaborationEngine.generateFreeformResponse(
 //           childInput,
 //           storyContext,
 //           turnNumber
 //         );
-        
+
 //         aiWordCount = aiResponse.split(/\s+/).filter(Boolean).length;
 //         console.log(`✅ AI response generated: ${aiWordCount} words`);
-        
+
 //       } catch (error) {
 //         console.error('AI response generation failed:', error);
 //         // Provide a fallback response
@@ -255,7 +255,10 @@ export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
+      return NextResponse.json(
+        { error: 'Authentication required' },
+        { status: 401 }
+      );
     }
 
     const body = await request.json();
@@ -274,7 +277,7 @@ export async function POST(request: NextRequest) {
     const storySession = await StorySession.findOne({
       _id: sessionId,
       childId: session.user.id,
-      status: 'active'
+      status: 'active',
     });
 
     if (!storySession) {
@@ -302,7 +305,7 @@ export async function POST(request: NextRequest) {
 
     // Build story context
     let storyContext = '';
-    
+
     // Include AI opening if exists
     if (storySession.aiOpening) {
       storyContext += `AI Opening: ${storySession.aiOpening}\n\n`;
@@ -323,27 +326,30 @@ export async function POST(request: NextRequest) {
 
     // Generate AI response (unless it's the final turn)
     let aiResponse = '';
-    
+
     if (turnNumber < 7) {
       console.log(`🤖 Generating AI response for turn ${turnNumber}`);
-      
+
       try {
         aiResponse = await collaborationEngine.generateFreeformResponse(
           childInput,
           storyContext,
           turnNumber
         );
-        
-        console.log(`✅ AI response generated: ${aiResponse.split(/\s+/).filter(Boolean).length} words`);
-        
+
+        console.log(
+          `✅ AI response generated: ${aiResponse.split(/\s+/).filter(Boolean).length} words`
+        );
       } catch (error) {
         console.error('AI response generation failed:', error);
         // Provide a fallback response
-        aiResponse = "That's an interesting development! I'm excited to see where you take the story next. What happens next in your adventure?";
+        aiResponse =
+          "That's an interesting development! I'm excited to see where you take the story next. What happens next in your adventure?";
       }
     } else {
       // Final turn - assessment message
-      aiResponse = "🎉 Amazing work on your story! You've completed all 7 turns and created something wonderful. Your story is now ready for detailed assessment. Great job on this creative writing adventure!";
+      aiResponse =
+        "🎉 Amazing work on your story! You've completed all 7 turns and created something wonderful. Your story is now ready for detailed assessment. Great job on this creative writing adventure!";
     }
 
     // Create the child's turn first
@@ -363,7 +369,7 @@ export async function POST(request: NextRequest) {
     let aiTurn = null;
     if (turnNumber < 7 && aiResponse) {
       const aiWordCount = aiResponse.split(/\s+/).filter(Boolean).length;
-      
+
       aiTurn = new Turn({
         sessionId,
         turnNumber: turnNumber + 0.5, // Use .5 to distinguish AI responses
@@ -380,10 +386,13 @@ export async function POST(request: NextRequest) {
     // Update story session
     const updateData: any = {
       currentTurn: turnNumber,
-      totalWords: storySession.totalWords + childWords.length + (aiResponse ? aiResponse.split(/\s+/).filter(Boolean).length : 0),
+      totalWords:
+        storySession.totalWords +
+        childWords.length +
+        (aiResponse ? aiResponse.split(/\s+/).filter(Boolean).length : 0),
       childWords: storySession.childWords + childWords.length,
       apiCallsUsed: storySession.apiCallsUsed + 1,
-      updatedAt: new Date()
+      updatedAt: new Date(),
     };
 
     // If this is the final turn, mark as completed
@@ -404,21 +413,22 @@ export async function POST(request: NextRequest) {
         childInput: childTurn.childInput,
         aiResponse: aiResponse,
         childWordCount: childWords.length,
-        aiWordCount: aiResponse ? aiResponse.split(/\s+/).filter(Boolean).length : 0,
-        timestamp: childTurn.createdAt
+        aiWordCount: aiResponse
+          ? aiResponse.split(/\s+/).filter(Boolean).length
+          : 0,
+        timestamp: childTurn.createdAt,
       },
       sessionStatus: {
         currentTurn: turnNumber,
         totalWords: updateData.totalWords,
         childWords: updateData.childWords,
         status: updateData.status || 'active',
-        isCompleted: turnNumber >= 7
-      }
+        isCompleted: turnNumber >= 7,
+      },
     };
 
     console.log(`✅ Turn ${turnNumber} processed successfully`);
     return NextResponse.json(responseData);
-
   } catch (error) {
     console.error('Error in story collaboration:', error);
     return NextResponse.json(

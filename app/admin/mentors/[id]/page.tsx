@@ -217,9 +217,7 @@ export default function ViewMentor() {
       {/* Mentor Profile */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="bg-gray-800  p-6">
-          <h3 className="text-lg  text-white mb-4">
-            Profile Information
-          </h3>
+          <h3 className="text-lg  text-white mb-4">Profile Information</h3>
           <div className="space-y-4">
             <div>
               <label className="text-sm text-gray-400">Bio</label>
@@ -252,9 +250,7 @@ export default function ViewMentor() {
         </div>
 
         <div className="bg-gray-800  p-6">
-          <h3 className="text-lg  text-white mb-4">
-            Account Status
-          </h3>
+          <h3 className="text-lg  text-white mb-4">Account Status</h3>
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <span className="text-gray-400">Account Status</span>
@@ -282,9 +278,7 @@ export default function ViewMentor() {
       {/* Assigned Students */}
       {mentor.assignedChildren && mentor.assignedChildren.length > 0 && (
         <div className="bg-gray-800  p-6">
-          <h3 className="text-lg  text-white mb-4">
-            Assigned Students
-          </h3>
+          <h3 className="text-lg  text-white mb-4">Assigned Students</h3>
           <div className="space-y-3">
             {mentor.assignedChildren.map((student) => (
               <div
@@ -317,9 +311,7 @@ export default function ViewMentor() {
       {/* Recent Activity */}
       {mentor.recentActivity && mentor.recentActivity.length > 0 && (
         <div className="bg-gray-800  p-6">
-          <h3 className="text-lg  text-white mb-4">
-            Recent Activity
-          </h3>
+          <h3 className="text-lg  text-white mb-4">Recent Activity</h3>
           <div className="space-y-3">
             {mentor.recentActivity.slice(0, 10).map((activity, index) => (
               <div

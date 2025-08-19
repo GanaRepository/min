@@ -20,7 +20,7 @@ import {
   Search,
   Download,
   Plus,
-  BarChart3
+  BarChart3,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -65,11 +65,13 @@ export default function AdminCompetitionsPage() {
   const router = useRouter();
 
   const [competitions, setCompetitions] = useState<Competition[]>([]);
-  const [currentCompetition, setCurrentCompetition] = useState<Competition | null>(null);
+  const [currentCompetition, setCurrentCompetition] =
+    useState<Competition | null>(null);
   const [stats, setStats] = useState<CompetitionStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [advancingPhase, setAdvancingPhase] = useState(false);
-  const [selectedCompetition, setSelectedCompetition] = useState<Competition | null>(null);
+  const [selectedCompetition, setSelectedCompetition] =
+    useState<Competition | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterPhase, setFilterPhase] = useState<string>('all');
   const [sortBy, setSortBy] = useState<string>('newest');
@@ -89,7 +91,7 @@ export default function AdminCompetitionsPage() {
       // Use existing APIs
       const [currentResponse, pastResponse] = await Promise.all([
         fetch('/api/competitions/current'),
-        fetch('/api/competitions/past')
+        fetch('/api/competitions/past'),
       ]);
       const currentData = await currentResponse.json();
       const pastData = await pastResponse.json();
@@ -109,28 +111,43 @@ export default function AdminCompetitionsPage() {
       }
       // Add past competitions, but EXCLUDE the current competition to prevent duplicates
       if (pastData.success && pastData.competitions) {
-        const filteredPastCompetitions = pastData.competitions.filter((comp: Competition) => {
-          // If there's no current competition, include all past competitions
-          if (!currentComp) return true;
-          // Otherwise, exclude any competition that matches the current competition ID
-          return comp._id !== currentComp._id;
-        });
+        const filteredPastCompetitions = pastData.competitions.filter(
+          (comp: Competition) => {
+            // If there's no current competition, include all past competitions
+            if (!currentComp) return true;
+            // Otherwise, exclude any competition that matches the current competition ID
+            return comp._id !== currentComp._id;
+          }
+        );
         allCompetitions.push(...filteredPastCompetitions);
       }
 
-      console.log(`📊 [ADMIN] Loaded ${allCompetitions.length} competitions total`);
-      console.log(`📊 [ADMIN] Current: ${currentComp ? 1 : 0}, Past: ${pastData.competitions?.length || 0}, Filtered: ${allCompetitions.length}`);
+      console.log(
+        `📊 [ADMIN] Loaded ${allCompetitions.length} competitions total`
+      );
+      console.log(
+        `📊 [ADMIN] Current: ${currentComp ? 1 : 0}, Past: ${pastData.competitions?.length || 0}, Filtered: ${allCompetitions.length}`
+      );
 
       setCompetitions(allCompetitions);
 
       // Calculate stats from existing data
       const statsData = {
         totalCompetitions: allCompetitions.length,
-        activeCompetitions: allCompetitions.filter(c => c.isActive).length,
-        totalSubmissions: allCompetitions.reduce((sum, c) => sum + (c.totalSubmissions || 0), 0),
-        avgParticipants: allCompetitions.length > 0 
-          ? Math.round(allCompetitions.reduce((sum, c) => sum + (c.totalParticipants || 0), 0) / allCompetitions.length)
-          : 0,
+        activeCompetitions: allCompetitions.filter((c) => c.isActive).length,
+        totalSubmissions: allCompetitions.reduce(
+          (sum, c) => sum + (c.totalSubmissions || 0),
+          0
+        ),
+        avgParticipants:
+          allCompetitions.length > 0
+            ? Math.round(
+                allCompetitions.reduce(
+                  (sum, c) => sum + (c.totalParticipants || 0),
+                  0
+                ) / allCompetitions.length
+              )
+            : 0,
       };
 
       setStats(statsData);
@@ -142,22 +159,26 @@ export default function AdminCompetitionsPage() {
   };
 
   const handleAdvancePhase = async (competitionId: string) => {
-    if (!confirm('Are you sure you want to advance this competition to the next phase?')) {
+    if (
+      !confirm(
+        'Are you sure you want to advance this competition to the next phase?'
+      )
+    ) {
       return;
     }
 
     try {
       setAdvancingPhase(true);
-      
+
       // Use existing advance-phase API
       const response = await fetch('/api/admin/competitions/advance-phase', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ competitionId })
+        body: JSON.stringify({ competitionId }),
       });
 
       const data = await response.json();
-      
+
       if (data.success) {
         await fetchData(); // Refresh data
         alert(data.message);
@@ -174,36 +195,49 @@ export default function AdminCompetitionsPage() {
 
   const getPhaseColor = (phase: string) => {
     switch (phase) {
-      case 'submission': return 'bg-green-100 text-green-800';
-      case 'judging': return 'bg-yellow-100 text-yellow-800';
-      case 'results': return 'bg-blue-100 text-blue-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'submission':
+        return 'bg-green-100 text-green-800';
+      case 'judging':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'results':
+        return 'bg-blue-100 text-blue-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
   const getPhaseIcon = (phase: string) => {
     switch (phase) {
-      case 'submission': return <FileText className="w-4 h-4" />;
-      case 'judging': return <Clock className="w-4 h-4" />;
-      case 'results': return <Trophy className="w-4 h-4" />;
-      default: return <AlertCircle className="w-4 h-4" />;
+      case 'submission':
+        return <FileText className="w-4 h-4" />;
+      case 'judging':
+        return <Clock className="w-4 h-4" />;
+      case 'results':
+        return <Trophy className="w-4 h-4" />;
+      default:
+        return <AlertCircle className="w-4 h-4" />;
     }
   };
 
   // Filter and sort competitions
   const filteredCompetitions = competitions
-    .filter(comp => {
-      const matchesSearch = comp.month.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           comp.year.toString().includes(searchTerm);
+    .filter((comp) => {
+      const matchesSearch =
+        comp.month.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        comp.year.toString().includes(searchTerm);
       const matchesPhase = filterPhase === 'all' || comp.phase === filterPhase;
       return matchesSearch && matchesPhase;
     })
     .sort((a, b) => {
       switch (sortBy) {
         case 'newest':
-          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+          return (
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          );
         case 'oldest':
-          return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+          return (
+            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+          );
         case 'submissions':
           return (b.totalSubmissions || 0) - (a.totalSubmissions || 0);
         case 'participants':
@@ -225,14 +259,14 @@ export default function AdminCompetitionsPage() {
   }
 
   return (
-  <div className="min-h-screen bg-gray-900 p-2 sm:p-4 md:p-6">
+    <div className="min-h-screen bg-gray-900 p-2 sm:p-4 md:p-6">
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         className="mb-8 w-full"
       >
-  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4 w-full min-w-0">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4 w-full min-w-0">
           <div>
             <h1 className="text-2xl sm:text-4xl  text-white mb-2 break-words">
               🏆 Competition Management
@@ -264,7 +298,9 @@ export default function AdminCompetitionsPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-400 text-sm">Total Competitions</p>
-                <p className="text-3xl  text-white">{stats.totalCompetitions}</p>
+                <p className="text-3xl  text-white">
+                  {stats.totalCompetitions}
+                </p>
               </div>
               <Trophy className="w-12 h-12 text-blue-400" />
             </div>
@@ -274,7 +310,9 @@ export default function AdminCompetitionsPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-400 text-sm">Active Competitions</p>
-                <p className="text-3xl  text-green-400">{stats.activeCompetitions}</p>
+                <p className="text-3xl  text-green-400">
+                  {stats.activeCompetitions}
+                </p>
               </div>
               <Clock className="w-12 h-12 text-green-400" />
             </div>
@@ -284,7 +322,9 @@ export default function AdminCompetitionsPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-400 text-sm">Total Submissions</p>
-                <p className="text-3xl  text-blue-400">{stats.totalSubmissions}</p>
+                <p className="text-3xl  text-blue-400">
+                  {stats.totalSubmissions}
+                </p>
               </div>
               <FileText className="w-12 h-12 text-blue-400" />
             </div>
@@ -294,7 +334,9 @@ export default function AdminCompetitionsPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-400 text-sm">Avg Participants</p>
-                <p className="text-3xl  text-orange-400">{stats.avgParticipants}</p>
+                <p className="text-3xl  text-orange-400">
+                  {stats.avgParticipants}
+                </p>
               </div>
               <Users className="w-12 h-12 text-orange-400" />
             </div>
@@ -312,7 +354,8 @@ export default function AdminCompetitionsPage() {
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between w-full min-w-0">
             <div>
               <h2 className="text-lg sm:text-2xl  mb-2 break-words">
-                Current Competition: {currentCompetition.month} {currentCompetition.year}
+                Current Competition: {currentCompetition.month}{' '}
+                {currentCompetition.year}
               </h2>
               <div className="flex flex-wrap items-center gap-2 sm:space-x-4 text-blue-100 min-w-0">
                 <span className="flex items-center break-words">
@@ -323,13 +366,19 @@ export default function AdminCompetitionsPage() {
                   <FileText className="w-4 h-4 mr-1" />
                   {currentCompetition.totalSubmissions || 0} submissions
                 </span>
-                <span className={`px-2 sm:px-3 py-1  text-xs  ${
-                  currentCompetition.phase === 'submission' ? 'bg-green-500/20 text-green-100' :
-                  currentCompetition.phase === 'judging' ? 'bg-yellow-500/20 text-yellow-100' :
-                  'bg-blue-500/20 text-blue-100'
-                }`}>
+                <span
+                  className={`px-2 sm:px-3 py-1  text-xs  ${
+                    currentCompetition.phase === 'submission'
+                      ? 'bg-green-500/20 text-green-100'
+                      : currentCompetition.phase === 'judging'
+                        ? 'bg-yellow-500/20 text-yellow-100'
+                        : 'bg-blue-500/20 text-blue-100'
+                  }`}
+                >
                   {getPhaseIcon(currentCompetition.phase)}
-                  <span className="ml-1 capitalize">{currentCompetition.phase}</span>
+                  <span className="ml-1 capitalize">
+                    {currentCompetition.phase}
+                  </span>
                 </span>
               </div>
             </div>
@@ -347,7 +396,10 @@ export default function AdminCompetitionsPage() {
                 ) : (
                   <div className="flex items-center">
                     <Play className="w-4 h-4 mr-2" />
-                    Advance to {currentCompetition.phase === 'submission' ? 'Judging' : 'Results'}
+                    Advance to{' '}
+                    {currentCompetition.phase === 'submission'
+                      ? 'Judging'
+                      : 'Results'}
                   </div>
                 )}
               </button>
@@ -357,11 +409,11 @@ export default function AdminCompetitionsPage() {
       )}
 
       {/* Filters and Search */}
-  <motion.div
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-  className="bg-gray-800  p-4 sm:p-6 shadow-lg border border-gray-700 mb-8 overflow-x-auto w-full min-w-0"
-  >
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="bg-gray-800  p-4 sm:p-6 shadow-lg border border-gray-700 mb-8 overflow-x-auto w-full min-w-0"
+      >
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div>
             <label className="block text-sm  text-gray-700 mb-2">Search</label>
@@ -421,16 +473,20 @@ export default function AdminCompetitionsPage() {
       </motion.div>
 
       {/* Competitions List */}
-  <motion.div
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-  className="space-y-6 overflow-x-auto w-full min-w-0"
-  >
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="space-y-6 overflow-x-auto w-full min-w-0"
+      >
         {filteredCompetitions.length === 0 ? (
           <div className="bg-gray-800  p-12 shadow-lg border border-gray-700 text-center">
             <Trophy className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-gray-300 mb-2">No competitions found</h3>
-            <p className="text-gray-400">Try adjusting your search or filter criteria</p>
+            <h3 className="text-xl font-semibold text-gray-300 mb-2">
+              No competitions found
+            </h3>
+            <p className="text-gray-400">
+              Try adjusting your search or filter criteria
+            </p>
           </div>
         ) : (
           filteredCompetitions.map((competition, index) => (
@@ -456,7 +512,9 @@ export default function AdminCompetitionsPage() {
                   </div>
                 </div>
                 <div className="flex items-center gap-2 sm:space-x-3 min-w-0">
-                  <span className={`px-2 sm:px-3 py-1  text-xs sm:text-sm  ${getPhaseColor(competition.phase)} break-words`}>
+                  <span
+                    className={`px-2 sm:px-3 py-1  text-xs sm:text-sm  ${getPhaseColor(competition.phase)} break-words`}
+                  >
                     {getPhaseIcon(competition.phase)}
                     <span className="ml-1 capitalize">{competition.phase}</span>
                   </span>
@@ -470,22 +528,38 @@ export default function AdminCompetitionsPage() {
 
               <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-4 sm:gap-4 mb-4 w-full">
                 <div className="text-center">
-                  <p className="text-lg sm:text-2xl  text-blue-400 break-words">{competition.totalParticipants || 0}</p>
-                  <p className="text-xs sm:text-sm text-gray-400 break-words">Participants</p>
+                  <p className="text-lg sm:text-2xl  text-blue-400 break-words">
+                    {competition.totalParticipants || 0}
+                  </p>
+                  <p className="text-xs sm:text-sm text-gray-400 break-words">
+                    Participants
+                  </p>
                 </div>
                 <div className="text-center">
-                  <p className="text-lg sm:text-2xl  text-blue-400 break-words">{competition.totalSubmissions || 0}</p>
-                  <p className="text-xs sm:text-sm text-gray-400 break-words">Submissions</p>
+                  <p className="text-lg sm:text-2xl  text-blue-400 break-words">
+                    {competition.totalSubmissions || 0}
+                  </p>
+                  <p className="text-xs sm:text-sm text-gray-400 break-words">
+                    Submissions
+                  </p>
                 </div>
                 <div className="text-center">
-                  <p className="text-lg sm:text-2xl  text-green-400 break-words">{competition.winners?.length || 0}</p>
-                  <p className="text-xs sm:text-sm text-gray-400 break-words">Winners</p>
+                  <p className="text-lg sm:text-2xl  text-green-400 break-words">
+                    {competition.winners?.length || 0}
+                  </p>
+                  <p className="text-xs sm:text-sm text-gray-400 break-words">
+                    Winners
+                  </p>
                 </div>
                 <div className="text-center">
                   <p className="text-lg sm:text-2xl  text-orange-400 break-words">
-                    {competition.resultsDate ? new Date(competition.resultsDate).toLocaleDateString() : 'TBD'}
+                    {competition.resultsDate
+                      ? new Date(competition.resultsDate).toLocaleDateString()
+                      : 'TBD'}
                   </p>
-                  <p className="text-xs sm:text-sm text-gray-400 break-words">Results Date</p>
+                  <p className="text-xs sm:text-sm text-gray-400 break-words">
+                    Results Date
+                  </p>
                 </div>
               </div>
 
@@ -503,15 +577,27 @@ export default function AdminCompetitionsPage() {
                         className="flex items-center space-x-3 p-3 bg-gray-700 "
                       >
                         <div className="flex-shrink-0">
-                          {winner.position === 1 && <span className="text-2xl">🥇</span>}
-                          {winner.position === 2 && <span className="text-2xl">🥈</span>}
-                          {winner.position === 3 && <span className="text-2xl">🥉</span>}
+                          {winner.position === 1 && (
+                            <span className="text-2xl">🥇</span>
+                          )}
+                          {winner.position === 2 && (
+                            <span className="text-2xl">🥈</span>
+                          )}
+                          {winner.position === 3 && (
+                            <span className="text-2xl">🥉</span>
+                          )}
                         </div>
                         <div className="flex-1 min-w-0 break-words">
-                          <p className=" text-white truncate">{winner.childName}</p>
-                          <p className="text-sm text-gray-400 truncate">{winner.title}</p>
+                          <p className=" text-white truncate">
+                            {winner.childName}
+                          </p>
+                          <p className="text-sm text-gray-400 truncate">
+                            {winner.title}
+                          </p>
                           {winner.score && (
-                            <p className="text-xs text-blue-400 ">Score: {winner.score}/100</p>
+                            <p className="text-xs text-blue-400 ">
+                              Score: {winner.score}/100
+                            </p>
                           )}
                         </div>
                       </div>
@@ -523,7 +609,8 @@ export default function AdminCompetitionsPage() {
               {/* Action Buttons */}
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pt-4 border-t border-gray-700 gap-2 w-full min-w-0">
                 <div className="text-sm text-gray-400">
-                  Created: {new Date(competition.createdAt).toLocaleDateString()}
+                  Created:{' '}
+                  {new Date(competition.createdAt).toLocaleDateString()}
                 </div>
                 <div className="flex space-x-2">
                   <button
@@ -552,7 +639,7 @@ export default function AdminCompetitionsPage() {
 
       {/* Competition Details Modal */}
       {selectedCompetition && (
-  <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-1 sm:p-4 z-50">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-1 sm:p-4 z-50">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -561,7 +648,8 @@ export default function AdminCompetitionsPage() {
             <div className="p-6 border-b border-gray-700">
               <div className="flex items-center justify-between">
                 <h2 className="text-2xl  text-white">
-                  {selectedCompetition.month} {selectedCompetition.year} Competition Details
+                  {selectedCompetition.month} {selectedCompetition.year}{' '}
+                  Competition Details
                 </h2>
                 <button
                   onClick={() => setSelectedCompetition(null)}
@@ -571,38 +659,54 @@ export default function AdminCompetitionsPage() {
                 </button>
               </div>
             </div>
-            
+
             <div className="p-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Competition Info */}
                 <div>
-                  <h3 className="font-semibold text-white mb-3">Competition Information</h3>
+                  <h3 className="font-semibold text-white mb-3">
+                    Competition Information
+                  </h3>
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
                       <span className="text-gray-400">Phase:</span>
-                      <span className={`px-2 py-1  text-xs  ${getPhaseColor(selectedCompetition.phase)}`}>
+                      <span
+                        className={`px-2 py-1  text-xs  ${getPhaseColor(selectedCompetition.phase)}`}
+                      >
                         {selectedCompetition.phase}
                       </span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-400">Status:</span>
-                      <span className={`px-2 py-1  text-xs  ${
-                        selectedCompetition.isActive ? 'bg-green-900 text-green-300' : 'bg-gray-800 text-gray-400'
-                      }`}>
+                      <span
+                        className={`px-2 py-1  text-xs  ${
+                          selectedCompetition.isActive
+                            ? 'bg-green-900 text-green-300'
+                            : 'bg-gray-800 text-gray-400'
+                        }`}
+                      >
                         {selectedCompetition.isActive ? 'Active' : 'Inactive'}
                       </span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-400">Participants:</span>
-                      <span className=" text-white">{selectedCompetition.totalParticipants || 0}</span>
+                      <span className=" text-white">
+                        {selectedCompetition.totalParticipants || 0}
+                      </span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-400">Submissions:</span>
-                      <span className=" text-white">{selectedCompetition.totalSubmissions || 0}</span>
+                      <span className=" text-white">
+                        {selectedCompetition.totalSubmissions || 0}
+                      </span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-400">Created:</span>
-                      <span className=" text-white">{new Date(selectedCompetition.createdAt).toLocaleDateString()}</span>
+                      <span className=" text-white">
+                        {new Date(
+                          selectedCompetition.createdAt
+                        ).toLocaleDateString()}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -610,55 +714,76 @@ export default function AdminCompetitionsPage() {
                 {/* Judging Criteria */}
                 {selectedCompetition.judgingCriteria && (
                   <div>
-                    <h3 className="font-semibold text-white mb-3">Judging Criteria</h3>
+                    <h3 className="font-semibold text-white mb-3">
+                      Judging Criteria
+                    </h3>
                     <div className="space-y-2 text-sm">
-                      {Object.entries(selectedCompetition.judgingCriteria).map(([key, value]) => (
-                        <div key={key} className="flex justify-between">
-                          <span className="text-gray-400 capitalize">{key.replace(/([A-Z])/g, ' $1')}:</span>
-                          <span className=" text-white">{String(value)} points</span>
-                        </div>
-                      ))}
+                      {Object.entries(selectedCompetition.judgingCriteria).map(
+                        ([key, value]) => (
+                          <div key={key} className="flex justify-between">
+                            <span className="text-gray-400 capitalize">
+                              {key.replace(/([A-Z])/g, ' $1')}:
+                            </span>
+                            <span className=" text-white">
+                              {String(value)} points
+                            </span>
+                          </div>
+                        )
+                      )}
                     </div>
                   </div>
                 )}
               </div>
 
               {/* Winners Details */}
-              {selectedCompetition.winners && selectedCompetition.winners.length > 0 && (
-                <div className="mt-6">
-                  <h3 className="font-semibold text-white mb-4">Competition Winners</h3>
-                  <div className="space-y-3">
-                    {selectedCompetition.winners.map((winner) => (
-                      <div key={winner.position} className="p-4 bg-gray-800 ">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center space-x-3">
-                            <div className="text-2xl">
-                              {winner.position === 1 && '🥇'}
-                              {winner.position === 2 && '🥈'}
-                              {winner.position === 3 && '🥉'}
+              {selectedCompetition.winners &&
+                selectedCompetition.winners.length > 0 && (
+                  <div className="mt-6">
+                    <h3 className="font-semibold text-white mb-4">
+                      Competition Winners
+                    </h3>
+                    <div className="space-y-3">
+                      {selectedCompetition.winners.map((winner) => (
+                        <div key={winner.position} className="p-4 bg-gray-800 ">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center space-x-3">
+                              <div className="text-2xl">
+                                {winner.position === 1 && '🥇'}
+                                {winner.position === 2 && '🥈'}
+                                {winner.position === 3 && '🥉'}
+                              </div>
+                              <div>
+                                <p className=" text-white">
+                                  {winner.childName}
+                                </p>
+                                <p className="text-sm text-gray-400">
+                                  {winner.title}
+                                </p>
+                              </div>
                             </div>
-                            <div>
-                              <p className=" text-white">{winner.childName}</p>
-                              <p className="text-sm text-gray-400">{winner.title}</p>
-                            </div>
+                            {winner.score && (
+                              <div className="text-right">
+                                <p className="text-lg  text-blue-400">
+                                  {winner.score}/100
+                                </p>
+                                <p className="text-xs text-gray-400">
+                                  Final Score
+                                </p>
+                              </div>
+                            )}
                           </div>
-                          {winner.score && (
-                            <div className="text-right">
-                              <p className="text-lg  text-blue-400">{winner.score}/100</p>
-                              <p className="text-xs text-gray-400">Final Score</p>
+                          {winner.aiJudgingNotes && (
+                            <div className="mt-3 p-3 bg-gray-900  border-l-4 border-blue-500">
+                              <p className="text-sm text-gray-300">
+                                {winner.aiJudgingNotes}
+                              </p>
                             </div>
                           )}
                         </div>
-                        {winner.aiJudgingNotes && (
-                          <div className="mt-3 p-3 bg-gray-900  border-l-4 border-blue-500">
-                            <p className="text-sm text-gray-300">{winner.aiJudgingNotes}</p>
-                          </div>
-                        )}
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
             </div>
           </motion.div>
         </div>

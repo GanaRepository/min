@@ -5,10 +5,10 @@
 // import { Progress } from '@/components/ui/progress';
 // import { Badge } from '@/components/ui/badge';
 // import { Button } from '@/components/ui/button';
-// import { 
-//   Sparkles, 
-//   FileText, 
-//   Trophy, 
+// import {
+//   Sparkles,
+//   FileText,
+//   Trophy,
 //   Crown,
 //   ArrowRight,
 //   Info,
@@ -66,9 +66,9 @@
 
 //   const formatResetDate = (dateString: string) => {
 //     const date = new Date(dateString);
-//     return date.toLocaleDateString('en-US', { 
-//       month: 'long', 
-//       day: 'numeric' 
+//     return date.toLocaleDateString('en-US', {
+//       month: 'long',
+//       day: 'numeric'
 //     });
 //   };
 
@@ -104,10 +104,10 @@
 //             <FileText className="w-5 h-5" />
 //             Monthly Usage
 //           </CardTitle>
-//           <Badge 
+//           <Badge
 //             variant={usageStats.subscriptionTier === 'STORY_PACK' ? 'default' : 'secondary'}
-//             className={usageStats.subscriptionTier === 'STORY_PACK' 
-//               ? 'bg-purple-600 text-white' 
+//             className={usageStats.subscriptionTier === 'STORY_PACK'
+//               ? 'bg-purple-600 text-white'
 //               : 'bg-gray-200 text-gray-700'
 //             }
 //           >
@@ -115,9 +115,9 @@
 //           </Badge>
 //         </div>
 //       </CardHeader>
-      
+
 //       <CardContent className="space-y-6">
-        
+
 //         {/* Story Pack Status Banner */}
 //         {isStoryPackActive && (
 //           <div className="bg-gradient-to-r from-purple-100 to-blue-100 rounded-lg p-4 border border-purple-200">
@@ -147,7 +147,7 @@
 //               {usageStats.freestyleStories.used}/{usageStats.freestyleStories.limit}
 //             </span>
 //           </div>
-//           <Progress 
+//           <Progress
 //             value={(usageStats.freestyleStories.used / usageStats.freestyleStories.limit) * 100}
 //             className="h-2"
 //           />
@@ -164,7 +164,7 @@
 //               {usageStats.assessmentRequests.used}/{usageStats.assessmentRequests.limit}
 //             </span>
 //           </div>
-//           <Progress 
+//           <Progress
 //             value={(usageStats.assessmentRequests.used / usageStats.assessmentRequests.limit) * 100}
 //             className="h-2"
 //           />
@@ -181,7 +181,7 @@
 //               {usageStats.competitionEntries.used}/{usageStats.competitionEntries.limit}
 //             </span>
 //           </div>
-//           <Progress 
+//           <Progress
 //             value={(usageStats.competitionEntries.used / usageStats.competitionEntries.limit) * 100}
 //             className="h-2"
 //           />
@@ -202,7 +202,7 @@
 //                 <p className="text-sm text-purple-700 mb-3">
 //                   Get 5 more freestyle stories and 15 more assessment requests for 30 days!
 //                 </p>
-//                 <Button 
+//                 <Button
 //                   onClick={onUpgrade}
 //                   size="sm"
 //                   className="bg-purple-600 hover:bg-purple-700 text-white"
@@ -244,16 +244,16 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { 
-  Sparkles, 
-  FileText, 
-  Trophy, 
+import {
+  Sparkles,
+  FileText,
+  Trophy,
   Crown,
   ArrowRight,
   Info,
   Zap,
   Clock,
-  CheckCircle
+  CheckCircle,
 } from 'lucide-react';
 
 interface UsageStats {
@@ -293,8 +293,15 @@ interface UsageStatsCardProps {
   loading?: boolean;
 }
 
-export default function UsageStatsCard({ usageStats, onUpgrade, loading = false }: UsageStatsCardProps) {
-  const isStoryPackActive = usageStats.subscriptionTier === 'STORY_PACK' && usageStats.daysRemaining && usageStats.daysRemaining > 0;
+export default function UsageStatsCard({
+  usageStats,
+  onUpgrade,
+  loading = false,
+}: UsageStatsCardProps) {
+  const isStoryPackActive =
+    usageStats.subscriptionTier === 'STORY_PACK' &&
+    usageStats.daysRemaining &&
+    usageStats.daysRemaining > 0;
 
   const getProgressColor = (used: number, limit: number) => {
     const percentage = (used / limit) * 100;
@@ -305,9 +312,9 @@ export default function UsageStatsCard({ usageStats, onUpgrade, loading = false 
 
   const formatResetDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { 
-      month: 'long', 
-      day: 'numeric' 
+    return date.toLocaleDateString('en-US', {
+      month: 'long',
+      day: 'numeric',
     });
   };
 
@@ -343,34 +350,43 @@ export default function UsageStatsCard({ usageStats, onUpgrade, loading = false 
             <FileText className="w-5 h-5" />
             Monthly Usage
           </CardTitle>
-          <Badge 
-            variant={usageStats.subscriptionTier === 'STORY_PACK' ? 'default' : 'secondary'}
-            className={usageStats.subscriptionTier === 'STORY_PACK' 
-              ? 'bg-purple-800/80 text-purple-200 border border-purple-600/40' 
-              : 'bg-gray-700/80 text-gray-300 border border-gray-600/40'
+          <Badge
+            variant={
+              usageStats.subscriptionTier === 'STORY_PACK'
+                ? 'default'
+                : 'secondary'
+            }
+            className={
+              usageStats.subscriptionTier === 'STORY_PACK'
+                ? 'bg-purple-800/80 text-purple-200 border border-purple-600/40'
+                : 'bg-gray-700/80 text-gray-300 border border-gray-600/40'
             }
           >
-            {usageStats.subscriptionTier === 'STORY_PACK' ? '✨ Story Pack' : '🆓 Free Tier'}
+            {usageStats.subscriptionTier === 'STORY_PACK'
+              ? '✨ Story Pack'
+              : '🆓 Free Tier'}
           </Badge>
         </div>
       </CardHeader>
-      
+
       <CardContent className="space-y-6">
-        
         {/* Story Pack Status Banner */}
         {isStoryPackActive && (
           <div className="bg-green-800/60 backdrop-blur-xl border border-green-600/40 rounded-xl p-4">
             <div className="flex items-center gap-3">
               <CheckCircle className="w-5 h-5 text-green-400" />
               <div className="flex-1">
-                <h4 className="font-semibold text-green-200">Story Pack Active!</h4>
+                <h4 className="font-semibold text-green-200">
+                  Story Pack Active!
+                </h4>
                 <div className="flex items-center gap-2 text-sm text-green-300">
                   <Clock className="w-4 h-4" />
                   <span>{usageStats.daysRemaining} days remaining</span>
                 </div>
                 {usageStats.storyPackExpiry && (
                   <p className="text-xs text-green-400 mt-1">
-                    Expires: {new Date(usageStats.storyPackExpiry).toLocaleDateString()}
+                    Expires:{' '}
+                    {new Date(usageStats.storyPackExpiry).toLocaleDateString()}
                   </p>
                 )}
               </div>
@@ -381,51 +397,75 @@ export default function UsageStatsCard({ usageStats, onUpgrade, loading = false 
         {/* Freestyle Stories */}
         <div className="space-y-2">
           <div className="flex justify-between items-center">
-            <span className="text-sm font-medium text-gray-300">Freestyle Stories</span>
+            <span className="text-sm font-medium text-gray-300">
+              Freestyle Stories
+            </span>
             <span className="text-sm font-semibold text-gray-200">
-              {usageStats.freestyleStories.used}/{usageStats.freestyleStories.limit}
+              {usageStats.freestyleStories.used}/
+              {usageStats.freestyleStories.limit}
             </span>
           </div>
-          <Progress 
-            value={(usageStats.freestyleStories.used / usageStats.freestyleStories.limit) * 100}
+          <Progress
+            value={
+              (usageStats.freestyleStories.used /
+                usageStats.freestyleStories.limit) *
+              100
+            }
             className="h-2 bg-gray-700"
           />
           <p className="text-xs text-gray-400">
-            Monthly collaborative stories • {usageStats.freestyleStories.remaining} remaining
+            Monthly collaborative stories •{' '}
+            {usageStats.freestyleStories.remaining} remaining
           </p>
         </div>
 
         {/* Assessment Requests */}
         <div className="space-y-2">
           <div className="flex justify-between items-center">
-            <span className="text-sm font-medium text-gray-300">AI Assessments</span>
+            <span className="text-sm font-medium text-gray-300">
+              AI Assessments
+            </span>
             <span className="text-sm font-semibold text-gray-200">
-              {usageStats.assessmentRequests.used}/{usageStats.assessmentRequests.limit}
+              {usageStats.assessmentRequests.used}/
+              {usageStats.assessmentRequests.limit}
             </span>
           </div>
-          <Progress 
-            value={(usageStats.assessmentRequests.used / usageStats.assessmentRequests.limit) * 100}
+          <Progress
+            value={
+              (usageStats.assessmentRequests.used /
+                usageStats.assessmentRequests.limit) *
+              100
+            }
             className="h-2 bg-gray-700"
           />
           <p className="text-xs text-gray-400">
-            Monthly assessment requests • {usageStats.assessmentRequests.remaining} remaining
+            Monthly assessment requests •{' '}
+            {usageStats.assessmentRequests.remaining} remaining
           </p>
         </div>
 
         {/* Competition Entries */}
         <div className="space-y-2">
           <div className="flex justify-between items-center">
-            <span className="text-sm font-medium text-gray-300">Competition Entries</span>
+            <span className="text-sm font-medium text-gray-300">
+              Competition Entries
+            </span>
             <span className="text-sm font-semibold text-gray-200">
-              {usageStats.competitionEntries.used}/{usageStats.competitionEntries.limit}
+              {usageStats.competitionEntries.used}/
+              {usageStats.competitionEntries.limit}
             </span>
           </div>
-          <Progress 
-            value={(usageStats.competitionEntries.used / usageStats.competitionEntries.limit) * 100}
+          <Progress
+            value={
+              (usageStats.competitionEntries.used /
+                usageStats.competitionEntries.limit) *
+              100
+            }
             className="h-2 bg-gray-700"
           />
           <p className="text-xs text-gray-400">
-            Monthly competition submissions • {usageStats.competitionEntries.remaining} remaining
+            Monthly competition submissions •{' '}
+            {usageStats.competitionEntries.remaining} remaining
           </p>
         </div>
 
@@ -439,9 +479,10 @@ export default function UsageStatsCard({ usageStats, onUpgrade, loading = false 
                   Unlock More Stories
                 </h4>
                 <p className="text-sm text-purple-300 mb-3">
-                  Get 5 more freestyle stories and 15 more assessment requests for 30 days!
+                  Get 5 more freestyle stories and 15 more assessment requests
+                  for 30 days!
                 </p>
-                <Button 
+                <Button
                   onClick={onUpgrade}
                   size="sm"
                   className="bg-purple-600 hover:bg-purple-700 text-white border border-purple-500/40"
@@ -465,7 +506,10 @@ export default function UsageStatsCard({ usageStats, onUpgrade, loading = false 
                 <li>• Story Pack lasts exactly 30 days from purchase</li>
                 <li>• Competition entries are always FREE (no upgrades)</li>
                 {isStoryPackActive && (
-                  <li>• Your Story Pack benefits expire in {usageStats.daysRemaining} days</li>
+                  <li>
+                    • Your Story Pack benefits expire in{' '}
+                    {usageStats.daysRemaining} days
+                  </li>
                 )}
               </ul>
             </div>

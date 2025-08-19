@@ -2,9 +2,9 @@
 import React from 'react';
 
 export const metadata = {
-  title: 'Login - PioneerIT',
+  title: 'Login - Mintoons',
   description:
-    'Access your PioneerIT account to manage your profile and services.',
+    'Access your Mintoons account to manage your profile and services.',
 };
 
 export default function LoginLayout({

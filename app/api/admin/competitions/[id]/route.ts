@@ -40,18 +40,20 @@ export async function GET(
 
     // Get all submissions for this competition
     const submissions = await StorySession.find({
-      'competitionEntries.competitionId': id
+      'competitionEntries.competitionId': id,
     })
-    .populate('childId', 'firstName lastName email')
-    .select('title story totalWords childWords competitionEntries childId createdAt updatedAt')
-    .lean();
+      .populate('childId', 'firstName lastName email')
+      .select(
+        'title story totalWords childWords competitionEntries childId createdAt updatedAt'
+      )
+      .lean();
 
     // Format submissions with detailed entry information
     const detailedSubmissions = submissions.map((story: any) => {
       const entry = story.competitionEntries.find(
         (e: any) => e.competitionId.toString() === id
       );
-      
+
       return {
         storyId: story._id,
         title: story.title,
@@ -71,7 +73,7 @@ export async function GET(
           createdAt: story.createdAt,
           updatedAt: story.updatedAt,
           storyLength: story.story?.length || 0,
-        }
+        },
       };
     });
 
@@ -80,41 +82,52 @@ export async function GET(
       // Winners first (rank exists and is low)
       if (a.submissionDetails.rank && !b.submissionDetails.rank) return -1;
       if (!a.submissionDetails.rank && b.submissionDetails.rank) return 1;
-      
+
       // If both have ranks, sort by rank
       if (a.submissionDetails.rank && b.submissionDetails.rank) {
         return a.submissionDetails.rank - b.submissionDetails.rank;
       }
-      
+
       // If both have scores, sort by score (highest first)
       if (a.submissionDetails.score && b.submissionDetails.score) {
         return b.submissionDetails.score - a.submissionDetails.score;
       }
-      
+
       // Finally, sort by submission date (earliest first)
-      return new Date(a.submissionDetails.submittedAt || 0).getTime() - 
-             new Date(b.submissionDetails.submittedAt || 0).getTime();
+      return (
+        new Date(a.submissionDetails.submittedAt || 0).getTime() -
+        new Date(b.submissionDetails.submittedAt || 0).getTime()
+      );
     });
 
     // Calculate competition analytics
     const analytics = {
       totalSubmissions: detailedSubmissions.length,
-      totalParticipants: new Set(detailedSubmissions.map(s => s.childInfo.id)).size,
-      averageWordCount: detailedSubmissions.length > 0 
-        ? Math.round(detailedSubmissions.reduce((sum, s) => sum + s.wordCount, 0) / detailedSubmissions.length)
-        : 0,
-      winners: detailedSubmissions.filter(s => s.submissionDetails.rank && s.submissionDetails.rank <= 3),
-      scoredSubmissions: detailedSubmissions.filter(s => s.submissionDetails.score).length,
+      totalParticipants: new Set(detailedSubmissions.map((s) => s.childInfo.id))
+        .size,
+      averageWordCount:
+        detailedSubmissions.length > 0
+          ? Math.round(
+              detailedSubmissions.reduce((sum, s) => sum + s.wordCount, 0) /
+                detailedSubmissions.length
+            )
+          : 0,
+      winners: detailedSubmissions.filter(
+        (s) => s.submissionDetails.rank && s.submissionDetails.rank <= 3
+      ),
+      scoredSubmissions: detailedSubmissions.filter(
+        (s) => s.submissionDetails.score
+      ).length,
       submissionsByDay: getSubmissionsByDay(detailedSubmissions),
       topScores: detailedSubmissions
-        .filter(s => s.submissionDetails.score)
+        .filter((s) => s.submissionDetails.score)
         .slice(0, 10)
-        .map(s => ({
+        .map((s) => ({
           childName: s.childInfo.name,
           title: s.title,
           score: s.submissionDetails.score,
-          rank: s.submissionDetails.rank
-        }))
+          rank: s.submissionDetails.rank,
+        })),
     };
 
     return NextResponse.json({
@@ -123,9 +136,8 @@ export async function GET(
         ...competition,
         analytics,
         submissions: detailedSubmissions,
-      }
+      },
     });
-
   } catch (error) {
     console.error('❌ Error fetching competition details:', error);
     return NextResponse.json(
@@ -164,8 +176,9 @@ export async function POST(
 
     switch (action) {
       case 'advance_phase':
-        const updatedCompetition = await competitionManager.forceAdvancePhase(id);
-        
+        const updatedCompetition =
+          await competitionManager.forceAdvancePhase(id);
+
         return NextResponse.json({
           success: true,
           message: `Competition advanced to ${updatedCompetition.phase} phase`,
@@ -174,7 +187,7 @@ export async function POST(
 
       case 'set_winners':
         const { winners } = data;
-        
+
         if (!winners || !Array.isArray(winners)) {
           return NextResponse.json(
             { error: 'Winners array is required' },
@@ -197,11 +210,12 @@ export async function POST(
               $set: {
                 'competitionEntries.$[elem].rank': winner.position,
                 'competitionEntries.$[elem].score': winner.score,
-                'competitionEntries.$[elem].aiJudgingNotes': winner.aiJudgingNotes || '',
-              }
+                'competitionEntries.$[elem].aiJudgingNotes':
+                  winner.aiJudgingNotes || '',
+              },
             },
             {
-              arrayFilters: [{ 'elem.competitionId': id }]
+              arrayFilters: [{ 'elem.competitionId': id }],
             }
           );
         }
@@ -214,12 +228,12 @@ export async function POST(
 
       case 'update_dates':
         const { submissionEnd, judgingStart, judgingEnd, resultsDate } = data;
-        
+
         if (submissionEnd) competition.submissionEnd = new Date(submissionEnd);
         if (judgingStart) competition.judgingStart = new Date(judgingStart);
         if (judgingEnd) competition.judgingEnd = new Date(judgingEnd);
         if (resultsDate) competition.resultsDate = new Date(resultsDate);
-        
+
         await competition.save();
 
         return NextResponse.json({
@@ -230,7 +244,7 @@ export async function POST(
 
       case 'update_criteria':
         const { judgingCriteria } = data;
-        
+
         if (!judgingCriteria) {
           return NextResponse.json(
             { error: 'Judging criteria is required' },
@@ -250,11 +264,11 @@ export async function POST(
       case 'recalculate_stats':
         // Recalculate competition statistics
         const submissions = await StorySession.find({
-          'competitionEntries.competitionId': id
+          'competitionEntries.competitionId': id,
         });
 
         const participantIds = new Set();
-        submissions.forEach(story => {
+        submissions.forEach((story) => {
           story.competitionEntries.forEach((entry: any) => {
             if (entry.competitionId.toString() === id) {
               participantIds.add(story.childId.toString());
@@ -272,23 +286,23 @@ export async function POST(
           stats: {
             totalSubmissions: competition.totalSubmissions,
             totalParticipants: competition.totalParticipants,
-          }
+          },
         });
 
       case 'export_submissions':
         // Export all submissions for this competition
         const exportSubmissions = await StorySession.find({
-          'competitionEntries.competitionId': id
+          'competitionEntries.competitionId': id,
         })
-        .populate('childId', 'firstName lastName email')
-        .select('title story totalWords competitionEntries childId createdAt')
-        .lean();
+          .populate('childId', 'firstName lastName email')
+          .select('title story totalWords competitionEntries childId createdAt')
+          .lean();
 
         const exportData = exportSubmissions.map((story: any) => {
           const entry = story.competitionEntries.find(
             (e: any) => e.competitionId.toString() === id
           );
-          
+
           return {
             title: story.title,
             childName: `${story.childId.firstName} ${story.childId.lastName}`,
@@ -308,16 +322,12 @@ export async function POST(
             month: competition.month,
             year: competition.year,
             exportedAt: new Date().toISOString(),
-          }
+          },
         });
 
       default:
-        return NextResponse.json(
-          { error: 'Invalid action' },
-          { status: 400 }
-        );
+        return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
     }
-
   } catch (error) {
     console.error('❌ Error in competition action:', error);
     return NextResponse.json(
@@ -365,7 +375,6 @@ export async function DELETE(
       success: true,
       message: 'Competition deleted successfully',
     });
-
   } catch (error) {
     console.error('❌ Error deleting competition:', error);
     return NextResponse.json(
@@ -378,14 +387,16 @@ export async function DELETE(
 // Helper function to get submissions by day
 function getSubmissionsByDay(submissions: any[]) {
   const submissionsByDay: { [key: string]: number } = {};
-  
-  submissions.forEach(submission => {
+
+  submissions.forEach((submission) => {
     if (submission.submissionDetails.submittedAt) {
-      const date = new Date(submission.submissionDetails.submittedAt).toISOString().split('T')[0];
+      const date = new Date(submission.submissionDetails.submittedAt)
+        .toISOString()
+        .split('T')[0];
       submissionsByDay[date] = (submissionsByDay[date] || 0) + 1;
     }
   });
-  
+
   return Object.entries(submissionsByDay)
     .map(([date, count]) => ({ date, count }))
     .sort((a, b) => a.date.localeCompare(b.date));

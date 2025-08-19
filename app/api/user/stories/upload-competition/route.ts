@@ -194,28 +194,32 @@ import mammoth from 'mammoth';
 async function extractTextFromFile(file: File): Promise<string> {
   const fileName = file.name.toLowerCase();
   const fileType = file.type.toLowerCase();
-  
+
   try {
     if (fileType === 'text/plain' || fileName.endsWith('.txt')) {
       return await file.text();
-    } 
-    else if (fileType.includes('pdf') || fileName.endsWith('.pdf')) {
+    } else if (fileType.includes('pdf') || fileName.endsWith('.pdf')) {
       const arrayBuffer = await file.arrayBuffer();
       const buffer = Buffer.from(arrayBuffer);
       const pdfData = await pdfParse(buffer);
       return pdfData.text.trim();
-    } 
-    else if (fileName.endsWith('.docx') || fileType.includes('wordprocessingml')) {
+    } else if (
+      fileName.endsWith('.docx') ||
+      fileType.includes('wordprocessingml')
+    ) {
       const arrayBuffer = await file.arrayBuffer();
       const buffer = Buffer.from(arrayBuffer);
       const result = await mammoth.extractRawText({ buffer });
       return result.value.trim();
-    } 
-    else {
-      throw new Error('Unsupported file type. Please upload .txt, .pdf, or .docx files only.');
+    } else {
+      throw new Error(
+        'Unsupported file type. Please upload .txt, .pdf, or .docx files only.'
+      );
     }
   } catch (error) {
-    throw new Error('Failed to extract text from file. Please try a different file or paste text directly.');
+    throw new Error(
+      'Failed to extract text from file. Please try a different file or paste text directly.'
+    );
   }
 }
 
@@ -234,7 +238,9 @@ export async function POST(request: NextRequest) {
     await connectToDatabase();
 
     // Check competition eligibility
-    const competitionCheck = await UsageManager.canEnterCompetition(session.user.id);
+    const competitionCheck = await UsageManager.canEnterCompetition(
+      session.user.id
+    );
     if (!competitionCheck.allowed) {
       return NextResponse.json(
         { error: competitionCheck.reason },
@@ -283,17 +289,20 @@ export async function POST(request: NextRequest) {
         storyContent = storyContent.trim().replace(/\s+/g, ' ');
       } catch (error) {
         return NextResponse.json(
-          { error: `Failed to read ${file.name}. Please try uploading a different file or paste text directly.` },
+          {
+            error: `Failed to read ${file.name}. Please try uploading a different file or paste text directly.`,
+          },
           { status: 400 }
         );
       }
-    } 
-    else if (content?.trim()) {
+    } else if (content?.trim()) {
       storyContent = content.trim();
-    } 
-    else {
+    } else {
       return NextResponse.json(
-        { error: 'Please provide story content by uploading a file or pasting text.' },
+        {
+          error:
+            'Please provide story content by uploading a file or pasting text.',
+        },
         { status: 400 }
       );
     }
@@ -307,7 +316,7 @@ export async function POST(request: NextRequest) {
 
     // Word count validation for competition
     const wordCount = storyContent.trim().split(/\s+/).filter(Boolean).length;
-    
+
     if (wordCount < 100) {
       return NextResponse.json(
         { error: 'Competition stories must be at least 100 words' },
@@ -329,10 +338,12 @@ export async function POST(request: NextRequest) {
     }
 
     // Get next story number
-    const lastSession = await StorySession.findOne({ childId: session.user.id })
+    const lastSession = (await StorySession.findOne({
+      childId: session.user.id,
+    })
       .sort({ storyNumber: -1 })
       .select('storyNumber')
-      .lean() as { storyNumber?: number } | null;
+      .lean()) as { storyNumber?: number } | null;
 
     const nextStoryNumber = (lastSession?.storyNumber || 0) + 1;
 
@@ -355,8 +366,8 @@ export async function POST(request: NextRequest) {
       assessment: {
         integrityStatus: {
           status: 'PASS',
-          message: 'Competition entry integrity check passed'
-        }
+          message: 'Competition entry integrity check passed',
+        },
       },
       competitionEntries: [
         {
@@ -373,7 +384,7 @@ export async function POST(request: NextRequest) {
     // Count existing submissions for this user to determine if this is their first submission
     const userSubmissionsCount = await StorySession.countDocuments({
       childId: session.user.id,
-      'competitionEntries.competitionId': currentCompetition._id
+      'competitionEntries.competitionId': currentCompetition._id,
     });
 
     const isFirstSubmissionFromUser = userSubmissionsCount === 1;
@@ -382,11 +393,13 @@ export async function POST(request: NextRequest) {
     await Competition.findByIdAndUpdate(currentCompetition._id, {
       $inc: {
         totalSubmissions: 1,
-        ...(isFirstSubmissionFromUser && { totalParticipants: 1 })
-      }
+        ...(isFirstSubmissionFromUser && { totalParticipants: 1 }),
+      },
     });
 
-    console.log(`📊 Updated competition stats: +1 submission${isFirstSubmissionFromUser ? ', +1 participant' : ''}`);
+    console.log(
+      `📊 Updated competition stats: +1 submission${isFirstSubmissionFromUser ? ', +1 participant' : ''}`
+    );
 
     // Increment competition entry counter
     await UsageManager.incrementCompetitionEntry(session.user.id);
@@ -407,11 +420,10 @@ export async function POST(request: NextRequest) {
       competition: {
         id: currentCompetition._id,
         month: currentCompetition.month,
-        phase: currentCompetition.phase
+        phase: currentCompetition.phase,
       },
       message: 'Story uploaded and submitted to competition successfully!',
     });
-
   } catch (error) {
     console.error('Competition upload error:', error);
     return NextResponse.json(

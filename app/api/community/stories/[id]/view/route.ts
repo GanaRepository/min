@@ -16,15 +16,15 @@ export async function POST(
 
     // Find and update the story to increment views
     const story = await StorySession.findOneAndUpdate(
-      { 
+      {
         _id: id,
-        isPublished: true 
+        isPublished: true,
       },
-      { 
-        $inc: { views: 1 } 
+      {
+        $inc: { views: 1 },
       },
-      { 
-        new: true 
+      {
+        new: true,
       }
     );
 
@@ -37,9 +37,8 @@ export async function POST(
 
     return NextResponse.json({
       success: true,
-      views: story.views || 1
+      views: story.views || 1,
     });
-
   } catch (error) {
     console.error('Error tracking view:', error);
     return NextResponse.json(

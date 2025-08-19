@@ -18,11 +18,17 @@ export async function PATCH(
     const { title } = await request.json();
 
     if (!title || typeof title !== 'string' || title.trim().length === 0) {
-      return NextResponse.json({ error: 'Valid title is required' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Valid title is required' },
+        { status: 400 }
+      );
     }
 
     if (title.trim().length > 100) {
-      return NextResponse.json({ error: 'Title too long (max 100 characters)' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Title too long (max 100 characters)' },
+        { status: 400 }
+      );
     }
 
     await connectToDatabase();
@@ -44,9 +50,11 @@ export async function PATCH(
       title: storySession.title,
       message: 'Title updated successfully',
     });
-
   } catch (error) {
     console.error('Error updating story title:', error);
-    return NextResponse.json({ error: 'Failed to update title' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to update title' },
+      { status: 500 }
+    );
   }
 }

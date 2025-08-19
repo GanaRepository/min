@@ -206,9 +206,7 @@ export default function UsersPage() {
             <h3 className="text-sm  text-gray-400">Total Users</h3>
             <Users size={20} className="text-blue-400" />
           </div>
-          <p className="text-2xl  text-white">
-            {pagination?.total || 0}
-          </p>
+          <p className="text-2xl  text-white">{pagination?.total || 0}</p>
         </div>
 
         <div className="bg-gray-800  p-6">

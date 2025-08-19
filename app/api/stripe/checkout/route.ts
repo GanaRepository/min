@@ -153,7 +153,6 @@
 //   }
 // }
 
-
 // app/api/stripe/checkout/route.ts - FIXED VERSION
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
@@ -188,8 +187,12 @@ export async function POST(req: NextRequest) {
 
     console.log('🔍 Checkout request:', { productType, storyId, userId });
     console.log('🔍 Environment variables check:', {
-      STRIPE_STORY_PACK_PRICE_ID: process.env.STRIPE_STORY_PACK_PRICE_ID ? '✅ Set' : '❌ Missing',
-      STRIPE_PURCHASE_PRICE_ID: process.env.STRIPE_PURCHASE_PRICE_ID ? '✅ Set' : '❌ Missing'
+      STRIPE_STORY_PACK_PRICE_ID: process.env.STRIPE_STORY_PACK_PRICE_ID
+        ? '✅ Set'
+        : '❌ Missing',
+      STRIPE_PURCHASE_PRICE_ID: process.env.STRIPE_PURCHASE_PRICE_ID
+        ? '✅ Set'
+        : '❌ Missing',
     });
 
     if (!productType || !userId) {
@@ -231,7 +234,7 @@ export async function POST(req: NextRequest) {
         metadata.attemptsAdded = '15';
         break;
 
-      case 'story_purchase':  // THIS WAS THE BUG - Missing case!
+      case 'story_purchase': // THIS WAS THE BUG - Missing case!
         if (!process.env.STRIPE_PURCHASE_PRICE_ID) {
           console.error('❌ STRIPE_PURCHASE_PRICE_ID not configured');
           return NextResponse.json(
@@ -257,7 +260,7 @@ export async function POST(req: NextRequest) {
         }
 
         priceId = process.env.STRIPE_PURCHASE_PRICE_ID;
-        productName = "Physical Anthology Purchase";
+        productName = 'Physical Anthology Purchase';
         metadata.storyId = storyId;
         metadata.storyTitle = purchaseStory.title;
         break;

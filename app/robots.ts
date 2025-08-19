@@ -45,7 +45,7 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ['/'],
       },
     ],
-    sitemap: 'https://www.pioneeritsystems.com/sitemap.xml',
-    host: 'https://www.pioneeritsystems.com',
+    sitemap: 'https://www.mintoons.com/sitemap.xml',
+    host: 'https://www.mintoons.com',
   };
 }

@@ -53,7 +53,7 @@ interface StoryDetails {
   }>;
   comments: Array<{
     _id: string;
-    content: string;        // ✅ FIXED: Changed from 'comment' to 'content'
+    content: string; // ✅ FIXED: Changed from 'comment' to 'content'
     commentType: string;
     authorId: {
       _id: string;
@@ -192,15 +192,15 @@ export default function ViewStory() {
 
     try {
       setAddingComment(true);
-      
+
       // ✅ FIXED: Use admin comments API instead of general stories API
       const response = await fetch(`/api/admin/comments`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          storyId: storyId,           // ✅ Pass storyId as separate field
-          content: newComment,        // ✅ Use 'content' field (not 'comment')
-          commentType: commentType,   // ✅ Include comment type
+          storyId: storyId, // ✅ Pass storyId as separate field
+          content: newComment, // ✅ Use 'content' field (not 'comment')
+          commentType: commentType, // ✅ Include comment type
         }),
       });
 
@@ -319,9 +319,7 @@ export default function ViewStory() {
             </button>
           </Link>
           <div>
-            <h1 className="text-2xl sm:text-3xl  text-white">
-              {story.title}
-            </h1>
+            <h1 className="text-2xl sm:text-3xl  text-white">{story.title}</h1>
             <p className="text-gray-400">Story #{story._id}</p>
           </div>
         </div>
@@ -447,16 +445,21 @@ export default function ViewStory() {
                       <div className="flex items-center justify-between mb-2">
                         <span
                           className={`text-sm  ${
-                            turn.type === 'child' ? 'text-blue-400' : 'text-purple-400'
+                            turn.type === 'child'
+                              ? 'text-blue-400'
+                              : 'text-purple-400'
                           }`}
                         >
-                          Turn {turn.turnNumber} - {turn.type === 'child' ? 'Child' : 'AI'}
+                          Turn {turn.turnNumber} -{' '}
+                          {turn.type === 'child' ? 'Child' : 'AI'}
                         </span>
                         <span className="text-gray-400 text-xs">
                           {new Date(turn.createdAt).toLocaleString()}
                         </span>
                       </div>
-                      <p className="text-gray-300 whitespace-pre-wrap">{turn.content}</p>
+                      <p className="text-gray-300 whitespace-pre-wrap">
+                        {turn.content}
+                      </p>
                     </div>
                   ))}
                 </div>
@@ -472,9 +475,7 @@ export default function ViewStory() {
           {activeTab === 'comments' && (
             <div className="space-y-6">
               <div className="flex items-center justify-between">
-                <h3 className="text-lg  text-white">
-                  Comments & Feedback
-                </h3>
+                <h3 className="text-lg  text-white">Comments & Feedback</h3>
                 <span className="text-sm text-gray-400">
                   {story.comments.length} comment
                   {story.comments.length !== 1 ? 's' : ''}
@@ -483,9 +484,7 @@ export default function ViewStory() {
 
               {/* Add Comment Form */}
               <div className="bg-gray-700/30  p-4">
-                <h4 className="text-white  mb-3">
-                  Add Admin Comment
-                </h4>
+                <h4 className="text-white  mb-3">Add Admin Comment</h4>
 
                 {/* Comment Type Selector */}
                 <div className="mb-4">
@@ -572,12 +571,17 @@ export default function ViewStory() {
                       <div className="flex items-start justify-between mb-2">
                         <div className="flex items-center space-x-2">
                           <span className="text-white ">
-                            {comment.authorId.firstName} {comment.authorId.lastName}
+                            {comment.authorId.firstName}{' '}
+                            {comment.authorId.lastName}
                           </span>
-                          <span className={`px-2 py-1 text-xs  ${getRoleColor(comment.authorId.role)}`}>
+                          <span
+                            className={`px-2 py-1 text-xs  ${getRoleColor(comment.authorId.role)}`}
+                          >
                             {comment.authorId.role}
                           </span>
-                          <span className={`px-2 py-1 text-xs  ${getCommentTypeColor(comment.commentType)}`}>
+                          <span
+                            className={`px-2 py-1 text-xs  ${getCommentTypeColor(comment.commentType)}`}
+                          >
                             {comment.commentType}
                           </span>
                         </div>
@@ -593,7 +597,8 @@ export default function ViewStory() {
                         </div>
                       </div>
                       <p className="text-gray-300 whitespace-pre-wrap">
-                        {comment.content}  {/* ✅ FIXED: Using comment.content instead of comment.comment */}
+                        {comment.content}{' '}
+                        {/* ✅ FIXED: Using comment.content instead of comment.comment */}
                       </p>
                     </div>
                   ))
@@ -631,7 +636,9 @@ export default function ViewStory() {
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-400">API Calls Used:</span>
-                      <span className="text-white">{story.apiCallsUsed}/{story.maxApiCalls}</span>
+                      <span className="text-white">
+                        {story.apiCallsUsed}/{story.maxApiCalls}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -641,26 +648,42 @@ export default function ViewStory() {
                   <div className="space-y-2">
                     <div className="flex justify-between">
                       <span className="text-gray-400">Published:</span>
-                      <span className={story.isPublished ? 'text-green-400' : 'text-red-400'}>
+                      <span
+                        className={
+                          story.isPublished ? 'text-green-400' : 'text-red-400'
+                        }
+                      >
                         {story.isPublished ? 'Yes' : 'No'}
                       </span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-400">Competition Entry:</span>
-                      <span className={story.submittedToCompetition ? 'text-green-400' : 'text-red-400'}>
+                      <span
+                        className={
+                          story.submittedToCompetition
+                            ? 'text-green-400'
+                            : 'text-red-400'
+                        }
+                      >
                         {story.submittedToCompetition ? 'Yes' : 'No'}
                       </span>
                     </div>
                     {story.competitionScore && (
                       <div className="flex justify-between">
-                        <span className="text-gray-400">Competition Score:</span>
-                        <span className="text-white">{story.competitionScore}</span>
+                        <span className="text-gray-400">
+                          Competition Score:
+                        </span>
+                        <span className="text-white">
+                          {story.competitionScore}
+                        </span>
                       </div>
                     )}
                     {story.competitionRank && (
                       <div className="flex justify-between">
                         <span className="text-gray-400">Competition Rank:</span>
-                        <span className="text-white">#{story.competitionRank}</span>
+                        <span className="text-white">
+                          #{story.competitionRank}
+                        </span>
                       </div>
                     )}
                   </div>

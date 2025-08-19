@@ -367,7 +367,6 @@
 
 // export default Navbar;
 
-
 // components/Navbar.tsx - UPDATED VERSION (Remove admin route check since it's handled in layout)
 'use client';
 
@@ -464,23 +463,25 @@ const Navbar = () => {
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled
-          ? 'bg-white/95 backdrop-blur-md shadow-lg'
-          : 'bg-transparent'
+        isScrolled ? 'bg-white/95 backdrop-blur-md shadow-lg' : 'bg-transparent'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-20">
+        <div className="flex justify-between items-center h-22">
           {/* Logo */}
           <div className="flex items-center">
             <Link
               href="/"
-              className="flex items-center space-x-3 group transition-all duration-300 hover:scale-105"
+              className="mt-3 flex items-center space-x-3 group transition-all duration-300 hover:scale-105"
             >
-           
-              <span className="text-2xl font-bold bg-gradient-to-r from-contact-teal to-contact-purple bg-clip-text text-transparent">
-                Mintoons
-              </span>
+              <span className="sr-only">Mintoons</span>
+              <Image
+                src="/min_logo3.png"
+                alt="Mintoons Logo"
+                width={240}
+                height={240}
+                priority
+              />
             </Link>
           </div>
 
@@ -492,8 +493,8 @@ const Navbar = () => {
                 pathname === '/'
                   ? 'text-contact-teal border-b-2 border-contact-teal pb-1'
                   : isScrolled
-                  ? 'text-gray-700 hover:text-contact-teal'
-                  : 'text-white hover:text-contact-teal'
+                    ? 'text-gray-700 hover:text-contact-teal'
+                    : 'text-white hover:text-contact-teal'
               }`}
             >
               Home
@@ -505,8 +506,8 @@ const Navbar = () => {
                 pathname === '/create-stories'
                   ? 'text-contact-teal border-b-2 border-contact-teal pb-1'
                   : isScrolled
-                  ? 'text-gray-700 hover:text-contact-teal'
-                  : 'text-white hover:text-contact-teal'
+                    ? 'text-gray-700 hover:text-contact-teal'
+                    : 'text-white hover:text-contact-teal'
               }`}
             >
               Create Stories
@@ -518,8 +519,8 @@ const Navbar = () => {
                 pathname === '/contact-us'
                   ? 'text-contact-teal border-b-2 border-contact-teal pb-1'
                   : isScrolled
-                  ? 'text-gray-700 hover:text-contact-teal'
-                  : 'text-white hover:text-contact-teal'
+                    ? 'text-gray-700 hover:text-contact-teal'
+                    : 'text-white hover:text-contact-teal'
               }`}
             >
               Contact Us
@@ -531,8 +532,8 @@ const Navbar = () => {
                 pathname === '/pricing'
                   ? 'text-contact-teal border-b-2 border-contact-teal pb-1'
                   : isScrolled
-                  ? 'text-gray-700 hover:text-contact-teal'
-                  : 'text-white hover:text-contact-teal'
+                    ? 'text-gray-700 hover:text-contact-teal'
+                    : 'text-white hover:text-contact-teal'
               }`}
             >
               Pricing
@@ -544,8 +545,8 @@ const Navbar = () => {
                 pathname === '/competitions'
                   ? 'text-contact-teal border-b-2 border-contact-teal pb-1'
                   : isScrolled
-                  ? 'text-gray-700 hover:text-contact-teal'
-                  : 'text-white hover:text-contact-teal'
+                    ? 'text-gray-700 hover:text-contact-teal'
+                    : 'text-white hover:text-contact-teal'
               }`}
             >
               Competitions

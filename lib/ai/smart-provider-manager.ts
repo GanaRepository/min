@@ -54,7 +54,10 @@ export class SmartProviderManager {
 
     // NEW: Check if we're starting in failure mode
     if (!this.activeProvider) {
-      this.trackFailure('System initialization failed - No providers available', 'INITIALIZATION');
+      this.trackFailure(
+        'System initialization failed - No providers available',
+        'INITIALIZATION'
+      );
     }
   }
 
@@ -161,18 +164,25 @@ export class SmartProviderManager {
   }
 
   // NEW: Track failures and trigger alerts
-  private async trackFailure(errorMessage: string, failureType: 'API_CALL' | 'INITIALIZATION' | 'PROVIDER_SWITCH' = 'API_CALL'): Promise<void> {
+  private async trackFailure(
+    errorMessage: string,
+    failureType: 'API_CALL' | 'INITIALIZATION' | 'PROVIDER_SWITCH' = 'API_CALL'
+  ): Promise<void> {
     this.failureTracker.count++;
     this.failureTracker.consecutiveFailures++;
     this.failureTracker.lastFailure = new Date();
-    this.failureTracker.errors.push(`[${new Date().toISOString()}] ${failureType}: ${errorMessage}`);
+    this.failureTracker.errors.push(
+      `[${new Date().toISOString()}] ${failureType}: ${errorMessage}`
+    );
 
     // Keep only last 20 errors to prevent memory bloat
     if (this.failureTracker.errors.length > 20) {
       this.failureTracker.errors = this.failureTracker.errors.slice(-20);
     }
 
-    console.warn(`⚠️ [AI-FAILURE-TRACKER] Failure #${this.failureTracker.consecutiveFailures}: ${errorMessage}`);
+    console.warn(
+      `⚠️ [AI-FAILURE-TRACKER] Failure #${this.failureTracker.consecutiveFailures}: ${errorMessage}`
+    );
 
     // Check if we should send an alert
     await this.checkAndSendAlert(failureType);
@@ -181,7 +191,9 @@ export class SmartProviderManager {
   // NEW: Reset failure count on successful API call
   private resetFailureTracker(): void {
     if (this.failureTracker.consecutiveFailures > 0) {
-      console.log(`✅ [AI-FAILURE-TRACKER] Resetting failure count after ${this.failureTracker.consecutiveFailures} consecutive failures`);
+      console.log(
+        `✅ [AI-FAILURE-TRACKER] Resetting failure count after ${this.failureTracker.consecutiveFailures} consecutive failures`
+      );
       this.failureTracker.consecutiveFailures = 0;
     }
   }
@@ -192,14 +204,18 @@ export class SmartProviderManager {
     const shouldSendAlert = this.shouldSendAlert(now);
 
     if (shouldSendAlert) {
-      console.error(`🚨 [AI-ALERT] Sending admin alert for ${this.failureTracker.consecutiveFailures} consecutive failures`);
-      
+      console.error(
+        `🚨 [AI-ALERT] Sending admin alert for ${this.failureTracker.consecutiveFailures} consecutive failures`
+      );
+
       try {
         await this.sendAdminAlert(failureType);
         this.failureTracker.alertsSent++;
         this.failureTracker.lastAlertSent = now;
-        
-        console.log(`📧 [AI-ALERT] Admin alert sent successfully (Alert #${this.failureTracker.alertsSent})`);
+
+        console.log(
+          `📧 [AI-ALERT] Admin alert sent successfully (Alert #${this.failureTracker.alertsSent})`
+        );
       } catch (emailError) {
         console.error(`❌ [AI-ALERT] Failed to send admin alert:`, emailError);
       }
@@ -214,25 +230,37 @@ export class SmartProviderManager {
     }
 
     // Always send critical alerts
-    if (this.failureTracker.consecutiveFailures >= this.CRITICAL_FAILURE_THRESHOLD) {
-      console.error(`🆘 [AI-ALERT] CRITICAL THRESHOLD REACHED: ${this.failureTracker.consecutiveFailures} failures`);
+    if (
+      this.failureTracker.consecutiveFailures >= this.CRITICAL_FAILURE_THRESHOLD
+    ) {
+      console.error(
+        `🆘 [AI-ALERT] CRITICAL THRESHOLD REACHED: ${this.failureTracker.consecutiveFailures} failures`
+      );
       return true;
     }
 
     // Check cooldown period
     if (this.failureTracker.lastAlertSent) {
-      const timeSinceLastAlert = now.getTime() - this.failureTracker.lastAlertSent.getTime();
+      const timeSinceLastAlert =
+        now.getTime() - this.failureTracker.lastAlertSent.getTime();
       if (timeSinceLastAlert < this.ALERT_COOLDOWN) {
-        console.log(`⏰ [AI-ALERT] Skipping alert - cooldown period (${Math.round(timeSinceLastAlert / 1000)}s remaining)`);
+        console.log(
+          `⏰ [AI-ALERT] Skipping alert - cooldown period (${Math.round(timeSinceLastAlert / 1000)}s remaining)`
+        );
         return false;
       }
     }
 
     // Check rate limiting (max alerts per hour)
     const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
-    if (this.failureTracker.lastAlertSent && this.failureTracker.lastAlertSent > oneHourAgo) {
+    if (
+      this.failureTracker.lastAlertSent &&
+      this.failureTracker.lastAlertSent > oneHourAgo
+    ) {
       if (this.failureTracker.alertsSent >= this.MAX_ALERTS_PER_HOUR) {
-        console.log(`🚫 [AI-ALERT] Rate limit reached - max ${this.MAX_ALERTS_PER_HOUR} alerts per hour`);
+        console.log(
+          `🚫 [AI-ALERT] Rate limit reached - max ${this.MAX_ALERTS_PER_HOUR} alerts per hour`
+        );
         return false;
       }
     } else {
@@ -245,9 +273,10 @@ export class SmartProviderManager {
 
   // NEW: Send alert email using nodemailer directly (matching your mailer style)
   private async sendAdminAlert(failureType: string): Promise<void> {
-    const subject = this.failureTracker.consecutiveFailures >= this.CRITICAL_FAILURE_THRESHOLD
-      ? `🆘 CRITICAL: AI System Complete Failure (${this.failureTracker.consecutiveFailures} failures)`
-      : `⚠️ AI System Alert: ${this.failureTracker.consecutiveFailures} Consecutive API Failures`;
+    const subject =
+      this.failureTracker.consecutiveFailures >= this.CRITICAL_FAILURE_THRESHOLD
+        ? `🆘 CRITICAL: AI System Complete Failure (${this.failureTracker.consecutiveFailures} failures)`
+        : `⚠️ AI System Alert: ${this.failureTracker.consecutiveFailures} Consecutive API Failures`;
 
     const statusSummary = this.generateStatusSummary();
     const recentErrors = this.failureTracker.errors.slice(-5).join('\n');
@@ -303,18 +332,24 @@ export class SmartProviderManager {
               <li><strong>Check Network:</strong> Ensure server can reach AI provider endpoints</li>
               <li><strong>Check Quotas:</strong> Verify API usage limits haven't been exceeded</li>
               <li><strong>Monitor Users:</strong> Students are currently receiving template responses only</li>
-              ${this.failureTracker.consecutiveFailures >= this.CRITICAL_FAILURE_THRESHOLD ? 
-                '<li><strong>URGENT:</strong> System is completely down - immediate intervention required</li>' : 
-                '<li><strong>Status:</strong> System may auto-recover if provider issues resolve</li>'
+              ${
+                this.failureTracker.consecutiveFailures >=
+                this.CRITICAL_FAILURE_THRESHOLD
+                  ? '<li><strong>URGENT:</strong> System is completely down - immediate intervention required</li>'
+                  : '<li><strong>Status:</strong> System may auto-recover if provider issues resolve</li>'
               }
             </ol>
           </div>
 
           <div class="status-box">
             <h3>🔍 Provider Details</h3>
-            ${this.providers.map(provider => `
+            ${this.providers
+              .map(
+                (provider) => `
               <p><strong>${provider.name}</strong>: ${provider.isAvailable() ? '✅ Available' : '❌ Unavailable'} (${provider.model})</p>
-            `).join('')}
+            `
+              )
+              .join('')}
           </div>
         </div>
 
@@ -352,10 +387,13 @@ This is an automated alert from the AI System Monitor.
 
     // Use nodemailer directly with your email config
     const transporter = this.createEmailTransporter();
-    
+
     const mailOptions = {
       from: `"Mintoons AI System" <${process.env.EMAIL_USER}>`,
-      to: process.env.ADMIN_EMAIL || process.env.EMAIL_USER || 'admin@yourdomain.com',
+      to:
+        process.env.ADMIN_EMAIL ||
+        process.env.EMAIL_USER ||
+        'admin@yourdomain.com',
       subject,
       html: htmlContent,
       text: textContent,
@@ -366,9 +404,12 @@ This is an automated alert from the AI System Monitor.
 
   // NEW: Generate detailed status summary
   private generateStatusSummary(): string {
-    const providerStatus = this.providers.map(p => 
-      `${p.name}: ${p.isAvailable() ? 'Available' : 'Unavailable'} (${p.model})`
-    ).join('\n');
+    const providerStatus = this.providers
+      .map(
+        (p) =>
+          `${p.name}: ${p.isAvailable() ? 'Available' : 'Unavailable'} (${p.model})`
+      )
+      .join('\n');
 
     const envStatus = [
       `GOOGLE_AI_API_KEY: ${process.env.GOOGLE_AI_API_KEY ? 'Set' : 'Missing'}`,
@@ -516,16 +557,15 @@ FAILURE TRACKING:
 
       return response.content;
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
       console.error(
         `❌ [AI-REQUEST-${requestId}] ${this.activeProvider.name} FAILED`
       );
       console.error(
         `   🐛 Error type: ${error instanceof Error ? error.constructor.name : typeof error}`
       );
-      console.error(
-        `   📄 Error message: ${errorMessage}`
-      );
+      console.error(`   📄 Error message: ${errorMessage}`);
 
       if (error instanceof Error && error.stack) {
         console.error(
@@ -557,7 +597,10 @@ FAILURE TRACKING:
       }
 
       // Track failure
-      await this.trackFailure(`${this.activeProvider.name}: ${errorMessage}`, 'API_CALL');
+      await this.trackFailure(
+        `${this.activeProvider.name}: ${errorMessage}`,
+        'API_CALL'
+      );
 
       return await this.tryFallbackProvider(prompt, requestId, error);
     }
@@ -580,7 +623,10 @@ FAILURE TRACKING:
       );
       console.warn(`   📋 All AI providers exhausted, using template response`);
 
-      await this.trackFailure('All fallback attempts exhausted', 'PROVIDER_SWITCH');
+      await this.trackFailure(
+        'All fallback attempts exhausted',
+        'PROVIDER_SWITCH'
+      );
 
       const fallbackResponse = this.getFallbackResponse(prompt);
       console.log(
@@ -603,19 +649,25 @@ FAILURE TRACKING:
         `🔄 [AI-REQUEST-${requestId}] Switching to fallback provider: ${nextProvider.name}`
       );
       this.activeProvider = nextProvider;
-      
+
       // Track provider switch
-      await this.trackFailure(`Switched to ${nextProvider.name} after failure`, 'PROVIDER_SWITCH');
-      
+      await this.trackFailure(
+        `Switched to ${nextProvider.name} after failure`,
+        'PROVIDER_SWITCH'
+      );
+
       return await this.generateResponse(prompt);
     }
 
     console.warn(
       `⚠️  [AI-REQUEST-${requestId}] No more fallback providers available`
     );
-    
-    await this.trackFailure('No more fallback providers available', 'PROVIDER_SWITCH');
-    
+
+    await this.trackFailure(
+      'No more fallback providers available',
+      'PROVIDER_SWITCH'
+    );
+
     const fallbackResponse = this.getFallbackResponse(prompt);
     console.log(
       `📤 [AI-REQUEST-${requestId}] Template response generated (${fallbackResponse.length} chars)`
@@ -709,9 +761,13 @@ FAILURE TRACKING:
     systemHealth: 'healthy' | 'degraded' | 'critical';
   } {
     let systemHealth: 'healthy' | 'degraded' | 'critical' = 'healthy';
-    if (this.failureTracker.consecutiveFailures >= this.CRITICAL_FAILURE_THRESHOLD) {
+    if (
+      this.failureTracker.consecutiveFailures >= this.CRITICAL_FAILURE_THRESHOLD
+    ) {
       systemHealth = 'critical';
-    } else if (this.failureTracker.consecutiveFailures >= this.FAILURE_THRESHOLD) {
+    } else if (
+      this.failureTracker.consecutiveFailures >= this.FAILURE_THRESHOLD
+    ) {
       systemHealth = 'degraded';
     }
 
@@ -719,7 +775,10 @@ FAILURE TRACKING:
       consecutiveFailures: this.failureTracker.consecutiveFailures,
       totalFailures: this.failureTracker.count,
       alertsSent: this.failureTracker.alertsSent,
-      lastFailure: this.failureTracker.count > 0 ? this.failureTracker.lastFailure : undefined,
+      lastFailure:
+        this.failureTracker.count > 0
+          ? this.failureTracker.lastFailure
+          : undefined,
       lastAlert: this.failureTracker.lastAlertSent,
       systemHealth,
     };
@@ -743,35 +802,48 @@ FAILURE TRACKING:
         'An incredible journey is about to begin! Your hero stands at the edge of something extraordinary. What catches their attention and draws them into the adventure?',
         'The adventure starts now! Your character is ready for whatever challenges await. What mysterious thing appears before them?',
         'Once upon a time, in a world full of magic and mystery, your brave character begins their quest. What amazing sight greets them?',
-        'Your story begins with endless possibilities! The main character is about to discover something that will change everything. What do they find?'
+        'Your story begins with endless possibilities! The main character is about to discover something that will change everything. What do they find?',
       ];
-      response = openingFallbacks[Math.floor(Math.random() * openingFallbacks.length)];
-    } else if (prompt.includes('assessment') || prompt.includes('feedback') || prompt.includes('Grammar:')) {
+      response =
+        openingFallbacks[Math.floor(Math.random() * openingFallbacks.length)];
+    } else if (
+      prompt.includes('assessment') ||
+      prompt.includes('feedback') ||
+      prompt.includes('Grammar:')
+    ) {
       fallbackType = 'assessment';
       const assessmentFallbacks = [
         'What an exciting story! Your creativity and imagination really shine through. Keep up the fantastic work!',
-        'Excellent storytelling! You\'ve created such an engaging adventure. Your writing skills are developing beautifully.',
+        "Excellent storytelling! You've created such an engaging adventure. Your writing skills are developing beautifully.",
         'Wonderful work! Your story has great characters and an exciting plot. Keep exploring your creative ideas!',
-        'Amazing writing! You\'ve woven together all the story elements perfectly. Your imagination knows no bounds!',
-        'Fantastic storytelling! Your adventure is full of excitement and wonder. Continue developing your unique voice!'
+        "Amazing writing! You've woven together all the story elements perfectly. Your imagination knows no bounds!",
+        'Fantastic storytelling! Your adventure is full of excitement and wonder. Continue developing your unique voice!',
       ];
-      response = assessmentFallbacks[Math.floor(Math.random() * assessmentFallbacks.length)];
+      response =
+        assessmentFallbacks[
+          Math.floor(Math.random() * assessmentFallbacks.length)
+        ];
     } else {
       // Regular turn responses
       fallbackType = 'turn';
       const turnFallbacks = [
         'What an exciting development! Your character shows such bravery and creativity. What challenge comes next?',
-        'Amazing storytelling! You\'re weaving together all the elements beautifully. Your creativity really shines through. What does your brave character do now?',
-        'Wonderful work! I love how you\'re building the excitement in your story. You have such great ideas. How will this adventure continue to unfold?',
+        "Amazing storytelling! You're weaving together all the elements beautifully. Your creativity really shines through. What does your brave character do now?",
+        "Wonderful work! I love how you're building the excitement in your story. You have such great ideas. How will this adventure continue to unfold?",
         'Fantastic writing! Your story is full of surprises and adventure. Your character is so brave and clever. What happens next in this thrilling tale?',
-        'Excellent imagination! You\'re creating such a vivid and exciting world. Your storytelling skills are really impressive. Where does the adventure lead next?'
+        "Excellent imagination! You're creating such a vivid and exciting world. Your storytelling skills are really impressive. Where does the adventure lead next?",
       ];
-      response = turnFallbacks[Math.floor(Math.random() * turnFallbacks.length)];
+      response =
+        turnFallbacks[Math.floor(Math.random() * turnFallbacks.length)];
     }
 
-    console.log(`📋 [AI-FALLBACK] Using template response type: ${fallbackType}`);
+    console.log(
+      `📋 [AI-FALLBACK] Using template response type: ${fallbackType}`
+    );
     console.log(`   📏 Template length: ${response.length} chars`);
-    console.log(`   🔧 To fix: Configure AI provider API keys in environment variables`);
+    console.log(
+      `   🔧 To fix: Configure AI provider API keys in environment variables`
+    );
 
     return response;
   }

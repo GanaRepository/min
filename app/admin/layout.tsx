@@ -57,7 +57,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     { name: 'Dashboard', href: '/admin', icon: Crown },
     { name: 'Users', href: '/admin/users', icon: Users },
     { name: 'Mentors', href: '/admin/mentors', icon: UserCheck },
-     { name: 'Assign Mentor', href: '/admin/mentors/assign', icon: UserPlus },
+    { name: 'Assign Mentor', href: '/admin/mentors/assign', icon: UserPlus },
     { name: 'Stories', href: '/admin/stories', icon: BookOpen },
     { name: 'Comments', href: '/admin/comments', icon: MessageSquare },
     { name: 'Competitions', href: '/admin/competitions', icon: Award },

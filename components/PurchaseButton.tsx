@@ -102,7 +102,6 @@
 //   );
 // }
 
-
 // components/PurchaseButton.tsx - Updated for Competition Stories
 'use client';
 
@@ -112,7 +111,7 @@ import { useRouter } from 'next/navigation';
 import { CreditCard, Loader2, DollarSign, BookOpen } from 'lucide-react';
 
 interface PurchaseButtonProps {
-  productType: 'story_pack'  | 'story_purchase';
+  productType: 'story_pack' | 'story_purchase';
   storyId?: string;
   className?: string;
   children?: React.ReactNode;
@@ -144,7 +143,8 @@ export default function PurchaseButton({
 
   const variantClasses = {
     default: 'bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400',
-    gradient: 'bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 disabled:from-green-400 disabled:to-emerald-400',
+    gradient:
+      'bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 disabled:from-green-400 disabled:to-emerald-400',
   };
 
   const handlePurchase = async () => {

@@ -1,4 +1,4 @@
-// models/Purchase.ts - FIXED VERSION  
+// models/Purchase.ts - FIXED VERSION
 import mongoose, { Schema, Document } from 'mongoose';
 
 export interface IPurchase extends Document {
@@ -19,52 +19,56 @@ export interface IPurchase extends Document {
   updatedAt: Date;
 }
 
-const PurchaseSchema = new Schema<IPurchase>({
-  childId: {
-    type: Schema.Types.ObjectId,
-    ref: 'User',
-    required: true,
-    index: true,
-  },
-  type: {
-    type: String,
-    enum: ['story_pack', 'individual_story'],
-    required: true,
-  },
-  amount: {
-    type: Number,
-    required: true,
-    min: 0,
-  },
-  stripePaymentId: {
-    type: String,
-    index: true,
-  },
-  stripeSessionId: {
-    type: String,
-    index: true,
-  },
-  paymentStatus: {
-    type: String,
-    enum: ['pending', 'completed', 'failed'],
-    required: true,
-    default: 'pending',
-  },
-  itemDetails: {
-    storyId: {
+const PurchaseSchema = new Schema<IPurchase>(
+  {
+    childId: {
       type: Schema.Types.ObjectId,
-      ref: 'StorySession',
+      ref: 'User',
+      required: true,
+      index: true,
     },
-    storyTitle: { type: String },
-    storiesAdded: { type: Number },
-    assessmentsAdded: { type: Number },
+    type: {
+      type: String,
+      enum: ['story_pack', 'individual_story'],
+      required: true,
+    },
+    amount: {
+      type: Number,
+      required: true,
+      min: 0,
+    },
+    stripePaymentId: {
+      type: String,
+      index: true,
+    },
+    stripeSessionId: {
+      type: String,
+      index: true,
+    },
+    paymentStatus: {
+      type: String,
+      enum: ['pending', 'completed', 'failed'],
+      required: true,
+      default: 'pending',
+    },
+    itemDetails: {
+      storyId: {
+        type: Schema.Types.ObjectId,
+        ref: 'StorySession',
+      },
+      storyTitle: { type: String },
+      storiesAdded: { type: Number },
+      assessmentsAdded: { type: Number },
+    },
   },
-}, {
-  timestamps: true,
-});
+  {
+    timestamps: true,
+  }
+);
 
 // Indexes
 PurchaseSchema.index({ childId: 1, createdAt: -1 });
 PurchaseSchema.index({ paymentStatus: 1 });
 
-export default mongoose.models?.Purchase || mongoose.model<IPurchase>('Purchase', PurchaseSchema);
+export default mongoose.models?.Purchase ||
+  mongoose.model<IPurchase>('Purchase', PurchaseSchema);

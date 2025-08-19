@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
     // Build date filter
     let dateFilter: any = {};
     const now = new Date();
-    
+
     switch (timeframe) {
       case 'last6months':
         const sixMonthsAgo = new Date();
@@ -41,15 +41,12 @@ export async function GET(request: NextRequest) {
     }
 
     // 1. Basic Competition Stats
-    const [
-      totalCompetitions,
-      activeCompetitions,
-      completedCompetitions
-    ] = await Promise.all([
-      Competition.countDocuments(dateFilter),
-      Competition.countDocuments({ ...dateFilter, isActive: true }),
-      Competition.countDocuments({ ...dateFilter, phase: 'results' })
-    ]);
+    const [totalCompetitions, activeCompetitions, completedCompetitions] =
+      await Promise.all([
+        Competition.countDocuments(dateFilter),
+        Competition.countDocuments({ ...dateFilter, isActive: true }),
+        Competition.countDocuments({ ...dateFilter, phase: 'results' }),
+      ]);
 
     // 2. Get all competitions for analysis
     const competitions = await Competition.find(dateFilter)
@@ -57,10 +54,22 @@ export async function GET(request: NextRequest) {
       .lean();
 
     // 3. Calculate totals manually
-    const totalSubmissions = competitions.reduce((sum, comp) => sum + (comp.totalSubmissions || 0), 0);
-    const totalParticipants = competitions.reduce((sum, comp) => sum + (comp.totalParticipants || 0), 0);
-    const avgSubmissions = totalCompetitions > 0 ? Math.round(totalSubmissions / totalCompetitions) : 0;
-    const avgParticipants = totalCompetitions > 0 ? Math.round(totalParticipants / totalCompetitions) : 0;
+    const totalSubmissions = competitions.reduce(
+      (sum, comp) => sum + (comp.totalSubmissions || 0),
+      0
+    );
+    const totalParticipants = competitions.reduce(
+      (sum, comp) => sum + (comp.totalParticipants || 0),
+      0
+    );
+    const avgSubmissions =
+      totalCompetitions > 0
+        ? Math.round(totalSubmissions / totalCompetitions)
+        : 0;
+    const avgParticipants =
+      totalCompetitions > 0
+        ? Math.round(totalParticipants / totalCompetitions)
+        : 0;
 
     // 4. Phase Distribution
     const phaseDistribution = competitions.reduce((acc: any, comp) => {
@@ -76,7 +85,7 @@ export async function GET(request: NextRequest) {
           period: key,
           competitions: 0,
           submissions: 0,
-          participants: 0
+          participants: 0,
         };
       }
       acc[key].competitions += 1;
@@ -91,20 +100,20 @@ export async function GET(request: NextRequest) {
     const topCompetitions = competitions
       .sort((a, b) => (b.totalSubmissions || 0) - (a.totalSubmissions || 0))
       .slice(0, 10)
-      .map(comp => ({
+      .map((comp) => ({
         _id: comp._id,
         month: comp.month,
         year: comp.year,
         totalSubmissions: comp.totalSubmissions || 0,
         totalParticipants: comp.totalParticipants || 0,
         phase: comp.phase,
-        winnersCount: comp.winners?.length || 0
+        winnersCount: comp.winners?.length || 0,
       }));
 
     // 7. Winner Analysis - Get from competitions with winners
     const winnersData = competitions
-      .filter(comp => comp.winners && comp.winners.length > 0)
-      .flatMap(comp => comp.winners || []);
+      .filter((comp) => comp.winners && comp.winners.length > 0)
+      .flatMap((comp) => comp.winners || []);
 
     const winnerAnalysis = winnersData.reduce((acc: any, winner) => {
       const name = winner.childName;
@@ -114,7 +123,7 @@ export async function GET(request: NextRequest) {
           totalWins: 0,
           positions: [],
           avgScore: 0,
-          scores: []
+          scores: [],
         };
       }
       acc[name].totalWins += 1;
@@ -129,32 +138,37 @@ export async function GET(request: NextRequest) {
     Object.values(winnerAnalysis).forEach((winner: any) => {
       if (winner.scores.length > 0) {
         winner.avgScore = Math.round(
-          winner.scores.reduce((sum: number, score: number) => sum + score, 0) / winner.scores.length
+          winner.scores.reduce((sum: number, score: number) => sum + score, 0) /
+            winner.scores.length
         );
       }
       delete winner.scores; // Remove raw scores from response
     });
 
     const topWinners = Object.values(winnerAnalysis)
-      .sort((a: any, b: any) => b.totalWins - a.totalWins || b.avgScore - a.avgScore)
+      .sort(
+        (a: any, b: any) => b.totalWins - a.totalWins || b.avgScore - a.avgScore
+      )
       .slice(0, 10);
 
     // 8. Simple Scoring Analytics
     let scoringAnalytics = {
       totalScored: 0,
       avgScore: 0,
-      scoreDistribution: {}
+      scoreDistribution: {},
     };
 
     try {
       const submissionsWithScores = await StorySession.find({
-        'competitionEntries.score': { $exists: true, $ne: null }
-      }).select('competitionEntries').lean();
+        'competitionEntries.score': { $exists: true, $ne: null },
+      })
+        .select('competitionEntries')
+        .lean();
 
       const allScores = submissionsWithScores
-        .flatMap(story => story.competitionEntries || [])
-        .filter(entry => entry.score != null)
-        .map(entry => entry.score);
+        .flatMap((story) => story.competitionEntries || [])
+        .filter((entry) => entry.score != null)
+        .map((entry) => entry.score);
 
       if (allScores.length > 0) {
         scoringAnalytics.totalScored = allScores.length;
@@ -168,10 +182,10 @@ export async function GET(request: NextRequest) {
           '21-40': 0,
           '41-60': 0,
           '61-80': 0,
-          '81-100': 0
+          '81-100': 0,
         };
 
-        allScores.forEach(score => {
+        allScores.forEach((score) => {
           if (score <= 20) distribution['0-20']++;
           else if (score <= 40) distribution['21-40']++;
           else if (score <= 60) distribution['41-60']++;
@@ -195,29 +209,33 @@ export async function GET(request: NextRequest) {
         totalParticipants,
         avgSubmissions,
         avgParticipants,
-        completionRate: totalCompetitions > 0 ? Math.round((completedCompetitions / totalCompetitions) * 100) : 0
+        completionRate:
+          totalCompetitions > 0
+            ? Math.round((completedCompetitions / totalCompetitions) * 100)
+            : 0,
       },
       trends: {
         competitionTrends,
-        phaseDistribution: Object.entries(phaseDistribution).map(([phase, count]) => ({
-          phase,
-          count
-        }))
+        phaseDistribution: Object.entries(phaseDistribution).map(
+          ([phase, count]) => ({
+            phase,
+            count,
+          })
+        ),
       },
       performance: {
         topCompetitions,
-        topWinners
+        topWinners,
       },
       scoring: scoringAnalytics,
       timeframe,
-      generatedAt: new Date().toISOString()
+      generatedAt: new Date().toISOString(),
     };
 
     return NextResponse.json({
       success: true,
-      analytics
+      analytics,
     });
-
   } catch (error) {
     console.error('❌ Error generating competition analytics:', error);
     return NextResponse.json(
@@ -245,13 +263,13 @@ export async function POST(request: NextRequest) {
 
     // Build query
     let query: any = {};
-    
+
     if (startDate || endDate) {
       query.createdAt = {};
       if (startDate) query.createdAt.$gte = new Date(startDate);
       if (endDate) query.createdAt.$lte = new Date(endDate);
     }
-    
+
     if (competitionIds && competitionIds.length > 0) {
       query._id = { $in: competitionIds };
     }
@@ -262,7 +280,7 @@ export async function POST(request: NextRequest) {
       .lean();
 
     // Format for export
-    const exportData = competitions.map(comp => ({
+    const exportData = competitions.map((comp) => ({
       month: comp.month,
       year: comp.year,
       phase: comp.phase,
@@ -271,7 +289,7 @@ export async function POST(request: NextRequest) {
       totalParticipants: comp.totalParticipants || 0,
       winnersCount: comp.winners?.length || 0,
       createdAt: comp.createdAt,
-      resultsDate: comp.resultsDate || null
+      resultsDate: comp.resultsDate || null,
     }));
 
     return NextResponse.json({
@@ -279,12 +297,17 @@ export async function POST(request: NextRequest) {
       data: exportData,
       summary: {
         totalCompetitions: competitions.length,
-        totalSubmissions: competitions.reduce((sum, comp) => sum + (comp.totalSubmissions || 0), 0),
-        totalParticipants: competitions.reduce((sum, comp) => sum + (comp.totalParticipants || 0), 0)
+        totalSubmissions: competitions.reduce(
+          (sum, comp) => sum + (comp.totalSubmissions || 0),
+          0
+        ),
+        totalParticipants: competitions.reduce(
+          (sum, comp) => sum + (comp.totalParticipants || 0),
+          0
+        ),
       },
-      generatedAt: new Date().toISOString()
+      generatedAt: new Date().toISOString(),
     });
-
   } catch (error) {
     console.error('❌ Error generating custom report:', error);
     return NextResponse.json(

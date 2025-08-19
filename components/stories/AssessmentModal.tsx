@@ -110,7 +110,9 @@ export default function AssessmentModal({
   const mountedRef = useRef(true);
   const [isPublishing, setIsPublishing] = useState(false);
   const [isReassessing, setIsReassessing] = useState(false);
-  const [activeTab, setActiveTab] = useState<'overview' | 'detailed' | 'integrity'>('overview');
+  const [activeTab, setActiveTab] = useState<
+    'overview' | 'detailed' | 'integrity'
+  >('overview');
 
   useEffect(() => {
     mountedRef.current = true;
@@ -152,11 +154,16 @@ export default function AssessmentModal({
 
   const getIntegrityColor = (risk: string) => {
     switch (risk) {
-      case 'low': return 'text-green-400 bg-green-500/20 border-green-500/30';
-      case 'medium': return 'text-yellow-400 bg-yellow-500/20 border-yellow-500/30';
-      case 'high': return 'text-orange-400 bg-orange-500/20 border-orange-500/30';
-      case 'critical': return 'text-red-400 bg-red-500/20 border-red-500/30';
-      default: return 'text-gray-400 bg-gray-500/20 border-gray-500/30';
+      case 'low':
+        return 'text-green-400 bg-green-500/20 border-green-500/30';
+      case 'medium':
+        return 'text-yellow-400 bg-yellow-500/20 border-yellow-500/30';
+      case 'high':
+        return 'text-orange-400 bg-orange-500/20 border-orange-500/30';
+      case 'critical':
+        return 'text-red-400 bg-red-500/20 border-red-500/30';
+      default:
+        return 'text-gray-400 bg-gray-500/20 border-gray-500/30';
     }
   };
 
@@ -173,8 +180,8 @@ export default function AssessmentModal({
         body: JSON.stringify({
           productType: 'story_publication',
           storyId: storySession._id,
-          userId: 'user-id' // This should come from session
-        })
+          userId: 'user-id', // This should come from session
+        }),
       });
 
       const data = await response.json();
@@ -233,8 +240,16 @@ export default function AssessmentModal({
     { label: 'Creativity', score: assessment.creativityScore, icon: Sparkles },
     { label: 'Vocabulary', score: assessment.vocabularyScore, icon: BookOpen },
     { label: 'Structure', score: assessment.structureScore, icon: Target },
-    { label: 'Character Development', score: assessment.characterDevelopmentScore, icon: Award },
-    { label: 'Plot Development', score: assessment.plotDevelopmentScore, icon: TrendingUp },
+    {
+      label: 'Character Development',
+      score: assessment.characterDevelopmentScore,
+      icon: Award,
+    },
+    {
+      label: 'Plot Development',
+      score: assessment.plotDevelopmentScore,
+      icon: TrendingUp,
+    },
   ];
 
   return (
@@ -261,32 +276,45 @@ export default function AssessmentModal({
         <div className="p-6 bg-gradient-to-r from-purple-600/20 to-blue-600/20 border-b border-gray-700">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-6">
-              <div className={`p-6 rounded-2xl border ${getScoreBgColor(assessment.overallScore)}`}>
-                <div className={`text-4xl font-bold ${getScoreColor(assessment.overallScore)}`}>
+              <div
+                className={`p-6 rounded-2xl border ${getScoreBgColor(assessment.overallScore)}`}
+              >
+                <div
+                  className={`text-4xl font-bold ${getScoreColor(assessment.overallScore)}`}
+                >
                   {assessment.overallScore}%
                 </div>
                 <div className="text-sm text-gray-300 mt-1">Overall Score</div>
               </div>
-              
+
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
                   <Star className="w-5 h-5 text-yellow-400" />
                   <span className="text-white font-medium">
-                    {assessment.overallScore >= 90 ? 'Excellent Work!' :
-                     assessment.overallScore >= 80 ? 'Great Job!' :
-                     assessment.overallScore >= 70 ? 'Good Effort!' : 'Keep Improving!'}
+                    {assessment.overallScore >= 90
+                      ? 'Excellent Work!'
+                      : assessment.overallScore >= 80
+                        ? 'Great Job!'
+                        : assessment.overallScore >= 70
+                          ? 'Good Effort!'
+                          : 'Keep Improving!'}
                   </span>
                 </div>
-                
+
                 {assessment.integrityAnalysis && (
-                  <div className={`flex items-center gap-2 px-3 py-1 rounded-full border ${getIntegrityColor(assessment.integrityAnalysis.integrityRisk)}`}>
-                    {getIntegrityIcon(assessment.integrityAnalysis.integrityRisk)}
+                  <div
+                    className={`flex items-center gap-2 px-3 py-1 rounded-full border ${getIntegrityColor(assessment.integrityAnalysis.integrityRisk)}`}
+                  >
+                    {getIntegrityIcon(
+                      assessment.integrityAnalysis.integrityRisk
+                    )}
                     <span className="text-sm font-medium">
-                      Integrity: {assessment.integrityAnalysis.integrityRisk.toUpperCase()}
+                      Integrity:{' '}
+                      {assessment.integrityAnalysis.integrityRisk.toUpperCase()}
                     </span>
                   </div>
                 )}
-                
+
                 <div className="text-sm text-gray-400">
                   Reading Level: Grade {assessment.readingLevel}
                 </div>
@@ -295,25 +323,26 @@ export default function AssessmentModal({
 
             {/* Action Buttons */}
             <div className="flex flex-col gap-3">
-              {!storySession.isPublished && storySession.status === 'completed' && (
-                <button
-                  onClick={handlePublishStory}
-                  disabled={isPublishing}
-                  className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 disabled:from-green-400 disabled:to-emerald-400 text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 transition-all"
-                >
-                  {isPublishing ? (
-                    <>
-                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                      Publishing...
-                    </>
-                  ) : (
-                    <>
-                      <DollarSign size={16} />
-                      Publish for $10
-                    </>
-                  )}
-                </button>
-              )}
+              {!storySession.isPublished &&
+                storySession.status === 'completed' && (
+                  <button
+                    onClick={handlePublishStory}
+                    disabled={isPublishing}
+                    className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 disabled:from-green-400 disabled:to-emerald-400 text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 transition-all"
+                  >
+                    {isPublishing ? (
+                      <>
+                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        Publishing...
+                      </>
+                    ) : (
+                      <>
+                        <DollarSign size={16} />
+                        Publish for $10
+                      </>
+                    )}
+                  </button>
+                )}
 
               {onReassess && storySession.assessmentAttempts < 3 && (
                 <button
@@ -386,20 +415,31 @@ export default function AssessmentModal({
                 </h3>
                 <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
                   {categoryScores.map(({ label, score, icon: Icon }) => (
-                    <div key={label} className={`p-4 rounded-lg border ${getScoreBgColor(score)}`}>
+                    <div
+                      key={label}
+                      className={`p-4 rounded-lg border ${getScoreBgColor(score)}`}
+                    >
                       <div className="flex items-center justify-between mb-2">
                         <Icon size={20} className={getScoreColor(score)} />
-                        <span className={`text-2xl font-bold ${getScoreColor(score)}`}>
+                        <span
+                          className={`text-2xl font-bold ${getScoreColor(score)}`}
+                        >
                           {score}%
                         </span>
                       </div>
-                      <div className="text-sm text-gray-300 font-medium">{label}</div>
+                      <div className="text-sm text-gray-300 font-medium">
+                        {label}
+                      </div>
                       <div className="w-full bg-gray-700 rounded-full h-2 mt-2">
                         <div
                           className={`h-2 rounded-full transition-all ${
-                            score >= 90 ? 'bg-green-400' :
-                            score >= 80 ? 'bg-blue-400' :
-                            score >= 70 ? 'bg-yellow-400' : 'bg-orange-400'
+                            score >= 90
+                              ? 'bg-green-400'
+                              : score >= 80
+                                ? 'bg-blue-400'
+                                : score >= 70
+                                  ? 'bg-yellow-400'
+                                  : 'bg-orange-400'
                           }`}
                           style={{ width: `${score}%` }}
                         ></div>
@@ -416,7 +456,9 @@ export default function AssessmentModal({
                   Teacher's Comment
                 </h3>
                 <div className="bg-blue-500/10 border border-blue-500/30 rounded-xl p-6">
-                  <p className="text-blue-100 leading-relaxed text-lg">{assessment.feedback}</p>
+                  <p className="text-blue-100 leading-relaxed text-lg">
+                    {assessment.feedback}
+                  </p>
                 </div>
               </div>
 
@@ -429,9 +471,15 @@ export default function AssessmentModal({
                   </h3>
                   <div className="space-y-2">
                     {assessment.strengths.map((strength, index) => (
-                      <div key={index} className="bg-green-500/10 border border-green-500/30 rounded-lg p-3">
+                      <div
+                        key={index}
+                        className="bg-green-500/10 border border-green-500/30 rounded-lg p-3"
+                      >
                         <span className="text-green-300 flex items-start gap-2">
-                          <CheckCircle size={16} className="mt-0.5 flex-shrink-0" />
+                          <CheckCircle
+                            size={16}
+                            className="mt-0.5 flex-shrink-0"
+                          />
                           {strength}
                         </span>
                       </div>
@@ -446,7 +494,10 @@ export default function AssessmentModal({
                   </h3>
                   <div className="space-y-2">
                     {assessment.improvements.map((improvement, index) => (
-                      <div key={index} className="bg-orange-500/10 border border-orange-500/30 rounded-lg p-3">
+                      <div
+                        key={index}
+                        className="bg-orange-500/10 border border-orange-500/30 rounded-lg p-3"
+                      >
                         <span className="text-orange-300 flex items-start gap-2">
                           <Target size={16} className="mt-0.5 flex-shrink-0" />
                           {improvement}
@@ -465,7 +516,9 @@ export default function AssessmentModal({
                     Educational Insights
                   </h3>
                   <div className="bg-purple-500/10 border border-purple-500/30 rounded-xl p-6">
-                    <p className="text-purple-100 leading-relaxed">{assessment.educationalInsights}</p>
+                    <p className="text-purple-100 leading-relaxed">
+                      {assessment.educationalInsights}
+                    </p>
                   </div>
                 </div>
               )}
@@ -488,41 +541,56 @@ export default function AssessmentModal({
                           Immediate Actions
                         </h4>
                         <div className="space-y-2">
-                          {assessment.recommendations.immediate.map((rec, index) => (
-                            <div key={index} className="bg-red-500/10 border border-red-500/30 rounded-lg p-3">
-                              <p className="text-red-300 text-sm">{rec}</p>
-                            </div>
-                          ))}
+                          {assessment.recommendations.immediate.map(
+                            (rec, index) => (
+                              <div
+                                key={index}
+                                className="bg-red-500/10 border border-red-500/30 rounded-lg p-3"
+                              >
+                                <p className="text-red-300 text-sm">{rec}</p>
+                              </div>
+                            )
+                          )}
                         </div>
                       </div>
                     )}
-                    
+
                     {assessment.recommendations.longTerm && (
                       <div>
                         <h4 className="text-sm font-semibold text-blue-300 mb-3 uppercase tracking-wide">
                           Long-term Goals
                         </h4>
                         <div className="space-y-2">
-                          {assessment.recommendations.longTerm.map((rec, index) => (
-                            <div key={index} className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-3">
-                              <p className="text-blue-300 text-sm">{rec}</p>
-                            </div>
-                          ))}
+                          {assessment.recommendations.longTerm.map(
+                            (rec, index) => (
+                              <div
+                                key={index}
+                                className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-3"
+                              >
+                                <p className="text-blue-300 text-sm">{rec}</p>
+                              </div>
+                            )
+                          )}
                         </div>
                       </div>
                     )}
-                    
+
                     {assessment.recommendations.practiceExercises && (
                       <div>
                         <h4 className="text-sm font-semibold text-green-300 mb-3 uppercase tracking-wide">
                           Practice Exercises
                         </h4>
                         <div className="space-y-2">
-                          {assessment.recommendations.practiceExercises.map((rec, index) => (
-                            <div key={index} className="bg-green-500/10 border border-green-500/30 rounded-lg p-3">
-                              <p className="text-green-300 text-sm">{rec}</p>
-                            </div>
-                          ))}
+                          {assessment.recommendations.practiceExercises.map(
+                            (rec, index) => (
+                              <div
+                                key={index}
+                                className="bg-green-500/10 border border-green-500/30 rounded-lg p-3"
+                              >
+                                <p className="text-green-300 text-sm">{rec}</p>
+                              </div>
+                            )
+                          )}
                         </div>
                       </div>
                     )}
@@ -540,31 +608,50 @@ export default function AssessmentModal({
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     {assessment.progressTracking.scoreChange && (
                       <div className="bg-gray-800/50 border border-gray-700/50 rounded-lg p-4">
-                        <h4 className="text-white font-medium mb-2">Score Change</h4>
-                        <div className={`text-2xl font-bold ${
-                          assessment.progressTracking.scoreChange > 0 ? 'text-green-400' : 'text-red-400'
-                        }`}>
-                          {assessment.progressTracking.scoreChange > 0 ? '+' : ''}{assessment.progressTracking.scoreChange}%
+                        <h4 className="text-white font-medium mb-2">
+                          Score Change
+                        </h4>
+                        <div
+                          className={`text-2xl font-bold ${
+                            assessment.progressTracking.scoreChange > 0
+                              ? 'text-green-400'
+                              : 'text-red-400'
+                          }`}
+                        >
+                          {assessment.progressTracking.scoreChange > 0
+                            ? '+'
+                            : ''}
+                          {assessment.progressTracking.scoreChange}%
                         </div>
                         <p className="text-gray-400 text-sm">
-                          {assessment.progressTracking.improvementSince && `Since ${assessment.progressTracking.improvementSince}`}
+                          {assessment.progressTracking.improvementSince &&
+                            `Since ${assessment.progressTracking.improvementSince}`}
                         </p>
                       </div>
                     )}
 
-                    {assessment.progressTracking.strengthsGained && assessment.progressTracking.strengthsGained.length > 0 && (
-                      <div className="bg-gray-800/50 border border-gray-700/50 rounded-lg p-4">
-                        <h4 className="text-white font-medium mb-2">New Strengths</h4>
-                        <div className="space-y-1">
-                          {assessment.progressTracking.strengthsGained.map((strength, index) => (
-                            <div key={index} className="text-green-300 text-sm flex items-center gap-2">
-                              <CheckCircle size={14} />
-                              {strength}
-                            </div>
-                          ))}
+                    {assessment.progressTracking.strengthsGained &&
+                      assessment.progressTracking.strengthsGained.length >
+                        0 && (
+                        <div className="bg-gray-800/50 border border-gray-700/50 rounded-lg p-4">
+                          <h4 className="text-white font-medium mb-2">
+                            New Strengths
+                          </h4>
+                          <div className="space-y-1">
+                            {assessment.progressTracking.strengthsGained.map(
+                              (strength, index) => (
+                                <div
+                                  key={index}
+                                  className="text-green-300 text-sm flex items-center gap-2"
+                                >
+                                  <CheckCircle size={14} />
+                                  {strength}
+                                </div>
+                              )
+                            )}
+                          </div>
                         </div>
-                      </div>
-                    )}
+                      )}
                   </div>
                 </div>
               )}
@@ -577,30 +664,45 @@ export default function AssessmentModal({
                 </h3>
                 <div className="space-y-4">
                   {categoryScores.map(({ label, score, icon: Icon }) => (
-                    <div key={label} className="bg-gray-800/50 border border-gray-700/50 rounded-lg p-4">
+                    <div
+                      key={label}
+                      className="bg-gray-800/50 border border-gray-700/50 rounded-lg p-4"
+                    >
                       <div className="flex items-center justify-between mb-3">
                         <div className="flex items-center gap-3">
                           <Icon size={20} className={getScoreColor(score)} />
-                          <span className="text-white font-medium">{label}</span>
+                          <span className="text-white font-medium">
+                            {label}
+                          </span>
                         </div>
-                        <span className={`text-xl font-bold ${getScoreColor(score)}`}>
+                        <span
+                          className={`text-xl font-bold ${getScoreColor(score)}`}
+                        >
                           {score}%
                         </span>
                       </div>
                       <div className="w-full bg-gray-700 rounded-full h-3">
                         <div
                           className={`h-3 rounded-full transition-all ${
-                            score >= 90 ? 'bg-green-400' :
-                            score >= 80 ? 'bg-blue-400' :
-                            score >= 70 ? 'bg-yellow-400' : 'bg-orange-400'
+                            score >= 90
+                              ? 'bg-green-400'
+                              : score >= 80
+                                ? 'bg-blue-400'
+                                : score >= 70
+                                  ? 'bg-yellow-400'
+                                  : 'bg-orange-400'
                           }`}
                           style={{ width: `${score}%` }}
                         ></div>
                       </div>
                       <div className="mt-2 text-sm text-gray-400">
-                        {score >= 90 ? 'Excellent - Keep up the great work!' :
-                         score >= 80 ? 'Good - Minor improvements needed' :
-                         score >= 70 ? 'Fair - Some areas need attention' : 'Needs improvement - Focus on this area'}
+                        {score >= 90
+                          ? 'Excellent - Keep up the great work!'
+                          : score >= 80
+                            ? 'Good - Minor improvements needed'
+                            : score >= 70
+                              ? 'Fair - Some areas need attention'
+                              : 'Needs improvement - Focus on this area'}
                       </div>
                     </div>
                   ))}
@@ -612,21 +714,24 @@ export default function AssessmentModal({
           {activeTab === 'integrity' && assessment.integrityAnalysis && (
             <div className="p-6 space-y-6">
               {/* Integrity Overview */}
-              <div className={`border rounded-xl p-6 ${getIntegrityColor(assessment.integrityAnalysis.integrityRisk)}`}>
+              <div
+                className={`border rounded-xl p-6 ${getIntegrityColor(assessment.integrityAnalysis.integrityRisk)}`}
+              >
                 <div className="flex items-center gap-3 mb-4">
                   {getIntegrityIcon(assessment.integrityAnalysis.integrityRisk)}
                   <h3 className="text-xl font-bold">
-                    Integrity Risk: {assessment.integrityAnalysis.integrityRisk.toUpperCase()}
+                    Integrity Risk:{' '}
+                    {assessment.integrityAnalysis.integrityRisk.toUpperCase()}
                   </h3>
                 </div>
                 <p className="opacity-90">
-                  {assessment.integrityAnalysis.integrityRisk === 'low' && 
+                  {assessment.integrityAnalysis.integrityRisk === 'low' &&
                     'Your story shows excellent originality and authentic writing. Great work!'}
-                  {assessment.integrityAnalysis.integrityRisk === 'medium' && 
+                  {assessment.integrityAnalysis.integrityRisk === 'medium' &&
                     'Your story is mostly original with minor concerns. Review the analysis below.'}
-                  {assessment.integrityAnalysis.integrityRisk === 'high' && 
+                  {assessment.integrityAnalysis.integrityRisk === 'high' &&
                     'Your story has some originality concerns that should be addressed.'}
-                  {assessment.integrityAnalysis.integrityRisk === 'critical' && 
+                  {assessment.integrityAnalysis.integrityRisk === 'critical' &&
                     'Your story has significant originality issues that need immediate attention.'}
                 </p>
               </div>
@@ -638,7 +743,9 @@ export default function AssessmentModal({
                   <div className="text-3xl font-bold text-green-400 mb-1">
                     {assessment.integrityAnalysis.originalityScore}%
                   </div>
-                  <div className="text-sm text-green-300">Originality Score</div>
+                  <div className="text-sm text-green-300">
+                    Originality Score
+                  </div>
                   <p className="text-xs text-green-200 mt-2">
                     Measures how unique and original your content is
                   </p>
@@ -649,7 +756,9 @@ export default function AssessmentModal({
                   <div className="text-3xl font-bold text-blue-400 mb-1">
                     {assessment.integrityAnalysis.aiDetectionScore}%
                   </div>
-                  <div className="text-sm text-blue-300">AI Detection Score</div>
+                  <div className="text-sm text-blue-300">
+                    AI Detection Score
+                  </div>
                   <p className="text-xs text-blue-200 mt-2">
                     Likelihood that content was generated by AI
                   </p>
@@ -660,7 +769,9 @@ export default function AssessmentModal({
                   <div className="text-3xl font-bold text-purple-400 mb-1">
                     {100 - assessment.integrityAnalysis.plagiarismScore}%
                   </div>
-                  <div className="text-sm text-purple-300">Uniqueness Score</div>
+                  <div className="text-sm text-purple-300">
+                    Uniqueness Score
+                  </div>
                   <p className="text-xs text-purple-200 mt-2">
                     How much of your content is unique
                   </p>
@@ -677,7 +788,9 @@ export default function AssessmentModal({
                   <div className="bg-gray-800/50 border border-gray-700/50 rounded-lg p-6">
                     <div className="grid grid-cols-2 gap-4 mb-4">
                       <div>
-                        <div className="text-sm text-gray-400">Detection Score</div>
+                        <div className="text-sm text-gray-400">
+                          Detection Score
+                        </div>
                         <div className="text-xl font-bold text-white">
                           {assessment.integrityAnalysis.plagiarismResult.score}%
                         </div>
@@ -685,15 +798,24 @@ export default function AssessmentModal({
                       <div>
                         <div className="text-sm text-gray-400">Risk Level</div>
                         <div className="text-xl font-bold text-white">
-                          {assessment.integrityAnalysis.plagiarismResult.riskLevel}
+                          {
+                            assessment.integrityAnalysis.plagiarismResult
+                              .riskLevel
+                          }
                         </div>
                       </div>
                     </div>
-                    {assessment.integrityAnalysis.plagiarismResult.detailedAnalysis && (
+                    {assessment.integrityAnalysis.plagiarismResult
+                      .detailedAnalysis && (
                       <div className="bg-gray-700/50 rounded-lg p-4">
-                        <div className="text-sm text-gray-400 mb-2">Detailed Analysis</div>
+                        <div className="text-sm text-gray-400 mb-2">
+                          Detailed Analysis
+                        </div>
                         <p className="text-gray-300 text-sm leading-relaxed">
-                          {assessment.integrityAnalysis.plagiarismResult.detailedAnalysis}
+                          {
+                            assessment.integrityAnalysis.plagiarismResult
+                              .detailedAnalysis
+                          }
                         </p>
                       </div>
                     )}
@@ -710,15 +832,24 @@ export default function AssessmentModal({
                   <div className="bg-gray-800/50 border border-gray-700/50 rounded-lg p-6">
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <div className="text-sm text-gray-400">Overall Score</div>
+                        <div className="text-sm text-gray-400">
+                          Overall Score
+                        </div>
                         <div className="text-xl font-bold text-white">
-                          {assessment.integrityAnalysis.aiDetectionResult.overallScore}%
+                          {
+                            assessment.integrityAnalysis.aiDetectionResult
+                              .overallScore
+                          }
+                          %
                         </div>
                       </div>
                       <div>
                         <div className="text-sm text-gray-400">Likelihood</div>
                         <div className="text-xl font-bold text-white">
-                          {assessment.integrityAnalysis.aiDetectionResult.likelihood}
+                          {
+                            assessment.integrityAnalysis.aiDetectionResult
+                              .likelihood
+                          }
                         </div>
                       </div>
                     </div>

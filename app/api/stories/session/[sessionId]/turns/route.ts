@@ -13,13 +13,19 @@ export async function GET(
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
+      return NextResponse.json(
+        { error: 'Authentication required' },
+        { status: 401 }
+      );
     }
 
     const { sessionId } = params;
-    
+
     if (!sessionId) {
-      return NextResponse.json({ error: 'Session ID required' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Session ID required' },
+        { status: 400 }
+      );
     }
 
     await connectToDatabase();
@@ -27,38 +33,51 @@ export async function GET(
     // Verify session ownership
     const storySession = await StorySession.findOne({
       _id: sessionId,
-      childId: session.user.id
+      childId: session.user.id,
     });
 
     if (!storySession) {
-      return NextResponse.json({ error: 'Story session not found' }, { status: 404 });
+      return NextResponse.json(
+        { error: 'Story session not found' },
+        { status: 404 }
+      );
     }
 
     // Get all turns for this session
-    const turns = await Turn.find({ sessionId })
-      .sort({ turnNumber: 1 })
-      .lean();
+    const turns = await Turn.find({ sessionId }).sort({ turnNumber: 1 }).lean();
 
     // Calculate statistics
     const stats = {
       totalTurns: turns.length,
-      totalWords: turns.reduce((sum, turn) => sum + (turn.childWordCount || 0) + (turn.aiWordCount || 0), 0),
-      childWords: turns.reduce((sum, turn) => sum + (turn.childWordCount || 0), 0),
+      totalWords: turns.reduce(
+        (sum, turn) =>
+          sum + (turn.childWordCount || 0) + (turn.aiWordCount || 0),
+        0
+      ),
+      childWords: turns.reduce(
+        (sum, turn) => sum + (turn.childWordCount || 0),
+        0
+      ),
       aiWords: turns.reduce((sum, turn) => sum + (turn.aiWordCount || 0), 0),
-      averageWordsPerTurn: turns.length > 0 ? 
-        Math.round(turns.reduce((sum, turn) => sum + (turn.childWordCount || 0), 0) / turns.length) : 0
+      averageWordsPerTurn:
+        turns.length > 0
+          ? Math.round(
+              turns.reduce((sum, turn) => sum + (turn.childWordCount || 0), 0) /
+                turns.length
+            )
+          : 0,
     };
 
     return NextResponse.json({
       success: true,
-      turns: turns.map(turn => ({
+      turns: turns.map((turn) => ({
         _id: turn._id,
         turnNumber: turn.turnNumber,
         childInput: turn.childInput,
         aiResponse: turn.aiResponse,
         childWordCount: turn.childWordCount,
         aiWordCount: turn.aiWordCount,
-        timestamp: turn.timestamp
+        timestamp: turn.timestamp,
       })),
       stats,
       sessionInfo: {
@@ -66,10 +85,10 @@ export async function GET(
         status: storySession.status,
         currentTurn: storySession.currentTurn,
         maxTurns: 7,
-        canContinue: storySession.status === 'active' && storySession.currentTurn < 7
-      }
+        canContinue:
+          storySession.status === 'active' && storySession.currentTurn < 7,
+      },
     });
-
   } catch (error) {
     console.error('Error fetching turns:', error);
     return NextResponse.json(
@@ -86,7 +105,10 @@ export async function POST(
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
+      return NextResponse.json(
+        { error: 'Authentication required' },
+        { status: 401 }
+      );
     }
 
     const { sessionId } = params;
@@ -98,11 +120,14 @@ export async function POST(
     // Verify session ownership
     const storySession = await StorySession.findOne({
       _id: sessionId,
-      childId: session.user.id
+      childId: session.user.id,
     });
 
     if (!storySession) {
-      return NextResponse.json({ error: 'Story session not found' }, { status: 404 });
+      return NextResponse.json(
+        { error: 'Story session not found' },
+        { status: 404 }
+      );
     }
 
     switch (action) {
@@ -126,29 +151,37 @@ export async function POST(
         // Update the turn
         const updatedTurn = await Turn.findOneAndUpdate(
           { _id: turnId, sessionId },
-          { 
+          {
             childInput: content.trim(),
             childWordCount: words.length,
-            updatedAt: new Date()
+            updatedAt: new Date(),
           },
           { new: true }
         );
 
         if (!updatedTurn) {
-          return NextResponse.json({ error: 'Turn not found' }, { status: 404 });
+          return NextResponse.json(
+            { error: 'Turn not found' },
+            { status: 404 }
+          );
         }
 
         // Recalculate session word counts
         const allTurns = await Turn.find({ sessionId });
-        const totalChildWords = allTurns.reduce((sum, turn) => sum + (turn.childWordCount || 0), 0);
-        const totalWords = allTurns.reduce((sum, turn) => 
-          sum + (turn.childWordCount || 0) + (turn.aiWordCount || 0), 0
+        const totalChildWords = allTurns.reduce(
+          (sum, turn) => sum + (turn.childWordCount || 0),
+          0
+        );
+        const totalWords = allTurns.reduce(
+          (sum, turn) =>
+            sum + (turn.childWordCount || 0) + (turn.aiWordCount || 0),
+          0
         );
 
         await StorySession.findByIdAndUpdate(sessionId, {
           childWords: totalChildWords,
           totalWords: totalWords,
-          lastModifiedAt: new Date()
+          lastModifiedAt: new Date(),
         });
 
         return NextResponse.json({
@@ -160,13 +193,16 @@ export async function POST(
             aiResponse: updatedTurn.aiResponse,
             childWordCount: updatedTurn.childWordCount,
             aiWordCount: updatedTurn.aiWordCount,
-            timestamp: updatedTurn.timestamp
-          }
+            timestamp: updatedTurn.timestamp,
+          },
         });
 
       case 'delete_turn':
         if (!turnId) {
-          return NextResponse.json({ error: 'Turn ID required for deletion' }, { status: 400 });
+          return NextResponse.json(
+            { error: 'Turn ID required for deletion' },
+            { status: 400 }
+          );
         }
 
         // Only allow deletion of the last turn and only if story is not completed
@@ -179,7 +215,10 @@ export async function POST(
 
         const turnToDelete = await Turn.findOne({ _id: turnId, sessionId });
         if (!turnToDelete) {
-          return NextResponse.json({ error: 'Turn not found' }, { status: 404 });
+          return NextResponse.json(
+            { error: 'Turn not found' },
+            { status: 404 }
+          );
         }
 
         if (turnToDelete.turnNumber !== storySession.currentTurn) {
@@ -194,9 +233,14 @@ export async function POST(
         // Update session to previous turn
         const remainingTurns = await Turn.find({ sessionId });
         const newCurrentTurn = remainingTurns.length;
-        const newChildWords = remainingTurns.reduce((sum, turn) => sum + (turn.childWordCount || 0), 0);
-        const newTotalWords = remainingTurns.reduce((sum, turn) => 
-          sum + (turn.childWordCount || 0) + (turn.aiWordCount || 0), 0
+        const newChildWords = remainingTurns.reduce(
+          (sum, turn) => sum + (turn.childWordCount || 0),
+          0
+        );
+        const newTotalWords = remainingTurns.reduce(
+          (sum, turn) =>
+            sum + (turn.childWordCount || 0) + (turn.aiWordCount || 0),
+          0
         );
 
         await StorySession.findByIdAndUpdate(sessionId, {
@@ -204,19 +248,18 @@ export async function POST(
           childWords: newChildWords,
           totalWords: newTotalWords,
           status: 'active', // Reactivate if it was completed
-          lastModifiedAt: new Date()
+          lastModifiedAt: new Date(),
         });
 
         return NextResponse.json({
           success: true,
           deletedTurnNumber: turnToDelete.turnNumber,
-          newCurrentTurn: newCurrentTurn
+          newCurrentTurn: newCurrentTurn,
         });
 
       default:
         return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
     }
-
   } catch (error) {
     console.error('Error managing turns:', error);
     return NextResponse.json(

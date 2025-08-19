@@ -7,17 +7,17 @@ export interface ICompetition extends Document {
   year: number;
   phase: 'submission' | 'judging' | 'results';
   daysLeft: number;
-  
+
   // Dates
   submissionDeadline: Date;
   judgingDeadline: Date;
   resultsDate: Date;
-  
+
   // Status
   isActive: boolean;
   totalSubmissions: number;
   totalParticipants: number;
-  
+
   // User-specific data (populated dynamically)
   userStats?: {
     entriesUsed: number;
@@ -31,7 +31,7 @@ export interface ICompetition extends Document {
       score?: number;
     }>;
   };
-  
+
   // Winners
   winners?: Array<{
     position: number;
@@ -40,7 +40,7 @@ export interface ICompetition extends Document {
     title: string;
     score: number;
   }>;
-  
+
   // Judging criteria
   judgingCriteria: {
     grammar: number;
@@ -53,85 +53,91 @@ export interface ICompetition extends Document {
     engagement: number;
     aiDetection: number;
   };
-  
+
   // Timestamps
   createdAt: Date;
   updatedAt: Date;
 }
 
-const CompetitionSchema = new Schema<ICompetition>({
-  month: {
-    type: String,
-    required: true,
+const CompetitionSchema = new Schema<ICompetition>(
+  {
+    month: {
+      type: String,
+      required: true,
+    },
+    year: {
+      type: Number,
+      required: true,
+    },
+    phase: {
+      type: String,
+      enum: ['submission', 'judging', 'results'],
+      default: 'submission',
+    },
+    daysLeft: {
+      type: Number,
+      default: 0,
+    },
+
+    // Dates
+    submissionDeadline: {
+      type: Date,
+      required: true,
+    },
+    judgingDeadline: {
+      type: Date,
+      required: true,
+    },
+    resultsDate: {
+      type: Date,
+      required: true,
+    },
+
+    // Status
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
+    totalSubmissions: {
+      type: Number,
+      default: 0,
+    },
+    totalParticipants: {
+      type: Number,
+      default: 0,
+    },
+
+    // Winners
+    winners: [
+      {
+        position: { type: Number },
+        childId: { type: String },
+        childName: { type: String },
+        title: { type: String },
+        score: { type: Number },
+      },
+    ],
+
+    // Judging criteria
+    judgingCriteria: {
+      grammar: { type: Number, default: 15 },
+      creativity: { type: Number, default: 25 },
+      structure: { type: Number, default: 15 },
+      character: { type: Number, default: 10 },
+      plot: { type: Number, default: 15 },
+      vocabulary: { type: Number, default: 10 },
+      originality: { type: Number, default: 7 },
+      engagement: { type: Number, default: 10 },
+      aiDetection: { type: Number, default: -3 },
+    },
   },
-  year: {
-    type: Number,
-    required: true,
-  },
-  phase: {
-    type: String,
-    enum: ['submission', 'judging', 'results'],
-    default: 'submission',
-  },
-  daysLeft: {
-    type: Number,
-    default: 0,
-  },
-  
-  // Dates
-  submissionDeadline: {
-    type: Date,
-    required: true,
-  },
-  judgingDeadline: {
-    type: Date,
-    required: true,
-  },
-  resultsDate: {
-    type: Date,
-    required: true,
-  },
-  
-  // Status
-  isActive: {
-    type: Boolean,
-    default: true,
-  },
-  totalSubmissions: {
-    type: Number,
-    default: 0,
-  },
-  totalParticipants: {
-    type: Number,
-    default: 0,
-  },
-  
-  // Winners
-  winners: [{
-    position: { type: Number },
-    childId: { type: String },
-    childName: { type: String },
-    title: { type: String },
-    score: { type: Number },
-  }],
-  
-  // Judging criteria
-  judgingCriteria: {
-    grammar: { type: Number, default: 15 },
-    creativity: { type: Number, default: 25 },
-    structure: { type: Number, default: 15 },
-    character: { type: Number, default: 10 },
-    plot: { type: Number, default: 15 },
-    vocabulary: { type: Number, default: 10 },
-    originality: { type: Number, default: 7 },
-    engagement: { type: Number, default: 10 },
-    aiDetection: { type: Number, default: -3 },
-  },
-}, {
-  timestamps: true,
-});
+  {
+    timestamps: true,
+  }
+);
 
 // Indexes
 CompetitionSchema.index({ month: 1, year: 1, isActive: 1 }, { unique: true });
 
-export default mongoose.models?.Competition || mongoose.model<ICompetition>('Competition', CompetitionSchema);
+export default mongoose.models?.Competition ||
+  mongoose.model<ICompetition>('Competition', CompetitionSchema);

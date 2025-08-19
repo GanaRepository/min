@@ -257,12 +257,15 @@ function logMiddleware(
 
 export async function middleware(request: NextRequest) {
   const { pathname: path } = request.nextUrl;
-  
+
   // TEMPORARY DEBUG: Add special logging for upload route
   if (path === '/api/stories/upload') {
     console.log('🔧 [MW] SPECIAL DEBUG FOR UPLOAD ROUTE');
     console.log('🔧 [MW] Request method:', request.method);
-    console.log('🔧 [MW] Request headers:', Object.fromEntries(request.headers.entries()));
+    console.log(
+      '🔧 [MW] Request headers:',
+      Object.fromEntries(request.headers.entries())
+    );
     console.log('🔧 [MW] Will process normally...');
   }
 

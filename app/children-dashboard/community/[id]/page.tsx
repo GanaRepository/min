@@ -93,7 +93,7 @@ export default function CommunityStoryView() {
       if (response.ok) {
         const data = await response.json();
         setStory(data.story);
-        
+
         // Track view
         await fetch(`/api/community/stories/${storyId}/view`, {
           method: 'POST',
@@ -122,23 +122,30 @@ export default function CommunityStoryView() {
 
     try {
       setSubmittingComment(true);
-      
-      const response = await fetch(`/api/community/stories/${storyId}/comments`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content: newComment.trim() }),
-      });
+
+      const response = await fetch(
+        `/api/community/stories/${storyId}/comments`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ content: newComment.trim() }),
+        }
+      );
 
       if (response.ok) {
         const data = await response.json();
-        setStory(prev => prev ? {
-          ...prev,
-          comments: [data.comment, ...prev.comments],
-          stats: {
-            ...prev.stats,
-            comments: prev.stats.comments + 1
-          }
-        } : null);
+        setStory((prev) =>
+          prev
+            ? {
+                ...prev,
+                comments: [data.comment, ...prev.comments],
+                stats: {
+                  ...prev.stats,
+                  comments: prev.stats.comments + 1,
+                },
+              }
+            : null
+        );
         setNewComment('');
       } else {
         console.error('Failed to submit comment:', await response.text());
@@ -172,7 +179,9 @@ export default function CommunityStoryView() {
     return (
       <div className="text-center py-12">
         <h3 className="text-xl  text-white mb-2">Story Not Found</h3>
-        <p className="text-gray-400 mb-4">The story you're looking for doesn't exist or has been removed.</p>
+        <p className="text-gray-400 mb-4">
+          The story you're looking for doesn't exist or has been removed.
+        </p>
         <Link href="/children-dashboard/community">
           <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white  transition-colors">
             Back to Community
@@ -210,13 +219,19 @@ export default function CommunityStoryView() {
           {story.competitionWinner && (
             <div className="inline-flex items-center gap-1 px-3 py-1  text-sm  bg-orange-500/20 text-orange-400">
               <Crown className="w-4 h-4" />
-              {story.competitionWinner.position === 1 ? '🥇 1st Place' : 
-               story.competitionWinner.position === 2 ? '🥈 2nd Place' : '🥉 3rd Place'}
+              {story.competitionWinner.position === 1
+                ? '🥇 1st Place'
+                : story.competitionWinner.position === 2
+                  ? '🥈 2nd Place'
+                  : '🥉 3rd Place'}
             </div>
           )}
           <div className="inline-flex items-center gap-1 px-3 py-1  text-sm  bg-blue-500/20 text-blue-400">
-            {story.storyType === 'competition' ? 'Competition Entry' : 
-             story.storyType === 'uploaded' ? 'Uploaded Story' : 'Freestyle Story'}
+            {story.storyType === 'competition'
+              ? 'Competition Entry'
+              : story.storyType === 'uploaded'
+                ? 'Uploaded Story'
+                : 'Freestyle Story'}
           </div>
         </div>
 
@@ -246,7 +261,9 @@ export default function CommunityStoryView() {
             <div className="text-sm text-gray-400">Likes</div>
           </div>
           <div className="text-center">
-            <div className="text-xl  text-green-400">{story.stats.comments}</div>
+            <div className="text-xl  text-green-400">
+              {story.stats.comments}
+            </div>
             <div className="text-sm text-gray-400">Comments</div>
           </div>
           <div className="text-center">
@@ -258,27 +275,39 @@ export default function CommunityStoryView() {
         {/* Assessment Scores */}
         <div className="grid grid-cols-3 md:grid-cols-6 gap-4 mb-6">
           <div className="text-center">
-            <div className="text-2xl  text-blue-400">{story.assessment.overallScore}</div>
+            <div className="text-2xl  text-blue-400">
+              {story.assessment.overallScore}
+            </div>
             <div className="text-xs text-gray-400">Overall</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl  text-purple-400">{story.assessment.creativity}</div>
+            <div className="text-2xl  text-purple-400">
+              {story.assessment.creativity}
+            </div>
             <div className="text-xs text-gray-400">Creativity</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl  text-green-400">{story.assessment.grammar}</div>
+            <div className="text-2xl  text-green-400">
+              {story.assessment.grammar}
+            </div>
             <div className="text-xs text-gray-400">Grammar</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl  text-yellow-400">{story.assessment.vocabulary}</div>
+            <div className="text-2xl  text-yellow-400">
+              {story.assessment.vocabulary}
+            </div>
             <div className="text-xs text-gray-400">Vocabulary</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl  text-orange-400">{story.assessment.structure}</div>
+            <div className="text-2xl  text-orange-400">
+              {story.assessment.structure}
+            </div>
             <div className="text-xs text-gray-400">Structure</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl  text-pink-400">{story.assessment.characterDevelopment}</div>
+            <div className="text-2xl  text-pink-400">
+              {story.assessment.characterDevelopment}
+            </div>
             <div className="text-xs text-gray-400">Character</div>
           </div>
         </div>
@@ -356,7 +385,9 @@ export default function CommunityStoryView() {
           </div>
         ) : (
           <div className="mb-6 p-4 bg-gray-700  text-center">
-            <p className="text-gray-400 mb-3">Sign in to join the conversation!</p>
+            <p className="text-gray-400 mb-3">
+              Sign in to join the conversation!
+            </p>
             <Link href="/auth/signin">
               <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white  transition-colors">
                 Sign In
@@ -370,7 +401,9 @@ export default function CommunityStoryView() {
           {story.comments.length === 0 ? (
             <div className="text-center py-8">
               <MessageCircle className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-              <p className="text-gray-400">No comments yet. Be the first to share your thoughts!</p>
+              <p className="text-gray-400">
+                No comments yet. Be the first to share your thoughts!
+              </p>
             </div>
           ) : (
             story.comments.map((comment) => (
@@ -390,7 +423,9 @@ export default function CommunityStoryView() {
                       {new Date(comment.createdAt).toLocaleDateString()}
                     </span>
                   </div>
-                  <p className="text-gray-300 leading-relaxed">{comment.content}</p>
+                  <p className="text-gray-300 leading-relaxed">
+                    {comment.content}
+                  </p>
                   <div className="flex items-center gap-2 mt-2">
                     <button className="flex items-center gap-1 text-sm text-gray-400 hover:text-red-400 transition-colors">
                       <ThumbsUp className="w-4 h-4" />

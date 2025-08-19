@@ -12,7 +12,7 @@ export interface Story {
   currentTurn: number;
   maxTurns: number;
   apiCallsUsed: number;
-  
+
   // Publication & Competition
   isPublished: boolean;
   competitionEligible: boolean;
@@ -22,7 +22,7 @@ export interface Story {
     rank?: number;
     score?: number;
   }>;
-  
+
   // Assessment
   isUploadedForAssessment: boolean;
   assessmentAttempts: number;
@@ -58,7 +58,7 @@ export interface Story {
       message: string;
     };
   };
-  
+
   // ADD ALL MISSING PROPERTIES FROM ERRORS:
   aiOpening?: string;
   publicationDate?: string;
@@ -66,7 +66,7 @@ export interface Story {
   pausedAt?: string;
   resumedAt?: string;
   storyNumber?: number;
-  
+
   // Story Elements
   elements?: {
     genre?: string;

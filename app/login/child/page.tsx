@@ -7,12 +7,12 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://www.pioneeritsystems.com'),
-  title: 'Candidate Login | Pioneer IT Systems - Access Your Profile',
+  metadataBase: new URL('https://www.mintoons.com'),
+  title: 'Candidate Login | Mintoons - Access Your Profile',
   description:
-    'Access your Pioneer IT Systems candidate profile to apply for tech jobs, track applications, and connect with top employers in the technology industry.',
+    'Access your Mintoons candidate profile to apply for tech jobs, track applications, and connect with top employers in the technology industry.',
   keywords: [
-    'Pioneer IT Systems',
+    'Mintoons',
     'candidate login',
     'job seeker portal',
     'tech jobs access',
@@ -29,17 +29,15 @@ export const metadata: Metadata = {
     'tech recruitment',
     'IT staffing',
   ],
-  authors: [
-    { name: 'Pioneer IT Systems', url: 'https://www.pioneeritsystems.com' },
-  ],
-  creator: 'Pioneer IT Systems',
-  publisher: 'Pioneer IT Systems',
+  authors: [{ name: 'Mintoons', url: 'https://www.mintoons.com' }],
+  creator: 'Mintoons',
+  publisher: 'Mintoons',
   openGraph: {
-    title: 'Candidate Login | Pioneer IT Systems - Access Your Profile',
+    title: 'Candidate Login | Mintoons - Access Your Profile',
     description:
-      'Access your Pioneer IT Systems candidate profile to apply for tech jobs, track applications, and connect with top employers in the technology industry.',
-    url: 'https://www.pioneeritsystems.com/login/candidate',
-    siteName: 'Pioneer IT Systems',
+      'Access your Mintoons candidate profile to apply for tech jobs, track applications, and connect with top employers in the technology industry.',
+    url: 'https://www.mintoons.com/login/candidate',
+    siteName: 'Mintoons',
     type: 'website',
     locale: 'en_US',
     images: [
@@ -47,14 +45,14 @@ export const metadata: Metadata = {
         url: '/candidate-login-og.jpg', // Update with your actual image path
         width: 1200,
         height: 630,
-        alt: 'Pioneer IT Systems - Candidate Login',
+        alt: 'Mintoons - Candidate Login',
       },
     ],
   },
   alternates: {
-    canonical: 'https://www.pioneeritsystems.com/login/candidate',
+    canonical: 'https://www.mintoons.com/login/candidate',
     languages: {
-      'en-US': 'https://www.pioneeritsystems.com/login/candidate',
+      'en-US': 'https://www.mintoons.com/login/candidate',
     },
   },
   robots: {
@@ -72,7 +70,7 @@ export const metadata: Metadata = {
   category: 'Technology',
   appleWebApp: {
     capable: true,
-    title: 'Pioneer IT Systems',
+    title: 'Mintoons',
     statusBarStyle: 'black-translucent',
   },
   formatDetection: {
@@ -86,7 +84,7 @@ export const metadata: Metadata = {
   },
   appLinks: {
     web: {
-      url: 'https://www.pioneeritsystems.com',
+      url: 'https://www.mintoons.com',
       should_fallback: true,
     },
   },

@@ -13,7 +13,7 @@
 // export async function GET(request: Request) {
 //   try {
 //     const session = await getServerSession(authOptions);
-    
+
 //     if (!session || session.user?.role !== 'child') {
 //       return NextResponse.json(
 //         { error: 'Access denied. Children only.' },
@@ -30,12 +30,12 @@
 //     const recent = searchParams.get('recent') === 'true';
 //     const status = searchParams.get('status');
 //     const type = searchParams.get('type'); // 'freestyle', 'uploaded', 'competition'
-    
+
 //     await connectToDatabase();
 
 //     // Build query
 //     const query: any = { childId: new mongoose.Types.ObjectId(session.user.id) };
-    
+
 //     if (status) {
 //       query.status = status;
 //     }
@@ -142,26 +142,26 @@
 //         currentTurn: story.currentTurn || 1,
 //         maxTurns: story.maxApiCalls || 7,
 //         apiCallsUsed: story.apiCallsUsed || 0,
-        
+
 //         // Publication status
 //         isPublished,
-        
+
 //         // Assessment data
 //         isUploadedForAssessment: story.isUploadedForAssessment || false,
 //         assessmentAttempts: story.assessmentAttempts || 0,
 //         assessment,
-        
+
 //         // Competition data
 //         competitionEligible: story.competitionEligible || false,
 //         competitionEntries: story.competitionEntries || [],
 //         latestCompetitionEntry,
-        
+
 //         // Story elements (if any)
 //         elements: story.elements || {},
-        
+
 //         // AI opening
 //         aiOpening: story.aiOpening || '',
-        
+
 //         // Legacy compatibility
 //         submittedToCompetition: latestCompetitionEntry ? true : false
 //       };
@@ -214,7 +214,7 @@
 //   } catch (error) {
 //     console.error('❌ Error fetching user stories:', error);
 //     return NextResponse.json(
-//       { 
+//       {
 //         error: 'Failed to fetch stories',
 //         details: error instanceof Error ? error.message : 'Unknown error'
 //       },
@@ -227,7 +227,7 @@
 // export async function POST(request: Request) {
 //   try {
 //     const session = await getServerSession(authOptions);
-    
+
 //     if (!session || session.user?.role !== 'child') {
 //       return NextResponse.json(
 //         { error: 'Access denied. Children only.' },
@@ -270,10 +270,10 @@
 //             { status: 400 }
 //           );
 //         }
-        
+
 //         story.title = data.title.trim();
 //         await story.save();
-        
+
 //         result = {
 //           success: true,
 //           message: 'Story title updated',
@@ -295,10 +295,10 @@
 
 //         // Delete associated turns
 //         await Turn.deleteMany({ sessionId: storyId });
-        
+
 //         // Delete the story
 //         await StorySession.findByIdAndDelete(storyId);
-        
+
 //         result = {
 //           success: true,
 //           message: 'Story deleted successfully'
@@ -308,7 +308,7 @@
 //       case 'toggle_competition_eligibility':
 //         story.competitionEligible = !story.competitionEligible;
 //         await story.save();
-        
+
 //         result = {
 //           success: true,
 //           message: `Story ${story.competitionEligible ? 'marked as' : 'removed from'} competition eligible`,
@@ -332,7 +332,7 @@
 
 //         // Trigger reassessment (would call assessment engine)
 //         // This is a placeholder - actual implementation would trigger AI assessment
-        
+
 //         result = {
 //           success: true,
 //           message: 'Reassessment requested',
@@ -354,7 +354,7 @@
 //   } catch (error) {
 //     console.error('❌ Error processing story action:', error);
 //     return NextResponse.json(
-//       { 
+//       {
 //         error: 'Failed to process story action',
 //         details: error instanceof Error ? error.message : 'Unknown error'
 //       },
@@ -367,7 +367,7 @@
 // export async function DELETE(request: Request) {
 //   try {
 //     const session = await getServerSession(authOptions);
-    
+
 //     if (!session || session.user?.role !== 'admin') {
 //       return NextResponse.json(
 //         { error: 'Admin access required' },
@@ -453,7 +453,7 @@
 //   } catch (error) {
 //     console.error('❌ Error in bulk story deletion:', error);
 //     return NextResponse.json(
-//       { 
+//       {
 //         error: 'Failed to delete stories',
 //         details: error instanceof Error ? error.message : 'Unknown error'
 //       },
@@ -461,7 +461,6 @@
 //     );
 //   }
 // }
-
 
 // app/api/user/stories/route.ts - REMOVE REASSESS AND DELETE ACTIONS
 import { NextResponse } from 'next/server';
@@ -477,7 +476,7 @@ import mongoose from 'mongoose';
 export async function GET(request: Request) {
   try {
     const session = await getServerSession(authOptions);
-    
+
     if (!session || session.user?.role !== 'child') {
       return NextResponse.json(
         { error: 'Access denied. Children only.' },
@@ -532,12 +531,14 @@ export async function GET(request: Request) {
 
     const stories = await storiesQuery;
 
-    console.log(`📚 Found ${stories.length} stories for user ${session.user.id}`);
+    console.log(
+      `📚 Found ${stories.length} stories for user ${session.user.id}`
+    );
 
     // Format stories for response
-    const formattedStories = stories.map(story => {
+    const formattedStories = stories.map((story) => {
       const storyObj = story as any;
-      
+
       return {
         _id: storyObj._id.toString(),
         title: storyObj.title || 'Untitled Story',
@@ -557,31 +558,44 @@ export async function GET(request: Request) {
         createdAt: storyObj.createdAt,
         updatedAt: storyObj.updatedAt,
         canDelete: false, // UPDATED: Children can no longer delete stories
-        canReassess: false // UPDATED: No more reassess functionality
+        canReassess: false, // UPDATED: No more reassess functionality
       };
     });
 
     // Calculate summary statistics
     const summary = {
       total: totalCount,
-      completed: formattedStories.filter(s => s.status === 'completed').length,
-      active: formattedStories.filter(s => s.status === 'active').length,
-      flagged: formattedStories.filter(s => s.status === 'flagged').length,
-      review: formattedStories.filter(s => s.status === 'review').length,
-      published: formattedStories.filter(s => s.isPublished).length,
-      freestyle: formattedStories.filter(s => s.storyType === 'freestyle').length,
-      uploaded: formattedStories.filter(s => s.storyType === 'uploaded').length,
-      competition: formattedStories.filter(s => s.storyType === 'competition').length,
+      completed: formattedStories.filter((s) => s.status === 'completed')
+        .length,
+      active: formattedStories.filter((s) => s.status === 'active').length,
+      flagged: formattedStories.filter((s) => s.status === 'flagged').length,
+      review: formattedStories.filter((s) => s.status === 'review').length,
+      published: formattedStories.filter((s) => s.isPublished).length,
+      freestyle: formattedStories.filter((s) => s.storyType === 'freestyle')
+        .length,
+      uploaded: formattedStories.filter((s) => s.storyType === 'uploaded')
+        .length,
+      competition: formattedStories.filter((s) => s.storyType === 'competition')
+        .length,
       totalWords: formattedStories.reduce((sum, s) => sum + s.totalWords, 0),
-      totalChildWords: formattedStories.reduce((sum, s) => sum + s.childWords, 0),
-      averageScore: formattedStories.length > 0 && formattedStories.some(s => s.assessment?.overallScore)
-        ? Math.round(
-            formattedStories
-              .filter(s => s.assessment?.overallScore)
-              .reduce((sum, s) => sum + (s.assessment?.overallScore || 0), 0) /
-            formattedStories.filter(s => s.assessment?.overallScore).length
-          )
-        : null
+      totalChildWords: formattedStories.reduce(
+        (sum, s) => sum + s.childWords,
+        0
+      ),
+      averageScore:
+        formattedStories.length > 0 &&
+        formattedStories.some((s) => s.assessment?.overallScore)
+          ? Math.round(
+              formattedStories
+                .filter((s) => s.assessment?.overallScore)
+                .reduce(
+                  (sum, s) => sum + (s.assessment?.overallScore || 0),
+                  0
+                ) /
+                formattedStories.filter((s) => s.assessment?.overallScore)
+                  .length
+            )
+          : null,
     };
 
     console.log('📊 Story summary:', summary);
@@ -595,22 +609,21 @@ export async function GET(request: Request) {
         total: totalCount,
         pages: Math.ceil(totalCount / limit),
         hasNext: skip + limit < totalCount,
-        hasPrev: page > 1
+        hasPrev: page > 1,
       },
       summary,
       filters: {
         status,
         type,
-        recent
-      }
+        recent,
+      },
     });
-
   } catch (error) {
     console.error('❌ Error fetching user stories:', error);
     return NextResponse.json(
-      { 
+      {
         error: 'Failed to fetch stories',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        details: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
     );
@@ -621,7 +634,7 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   try {
     const session = await getServerSession(authOptions);
-    
+
     if (!session || session.user?.role !== 'child') {
       return NextResponse.json(
         { error: 'Access denied. Children only.' },
@@ -640,10 +653,7 @@ export async function POST(request: Request) {
     }
 
     if (!mongoose.Types.ObjectId.isValid(storyId)) {
-      return NextResponse.json(
-        { error: 'Invalid story ID' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Invalid story ID' }, { status: 400 });
     }
 
     await connectToDatabase();
@@ -651,7 +661,7 @@ export async function POST(request: Request) {
     // Get the story and verify ownership
     const story = await StorySession.findOne({
       _id: storyId,
-      childId: session.user.id
+      childId: session.user.id,
     });
 
     if (!story) {
@@ -667,37 +677,44 @@ export async function POST(request: Request) {
       case 'toggle_competition_eligibility':
         story.competitionEligible = !story.competitionEligible;
         await story.save();
-        
+
         result = {
           success: true,
           message: `Story ${story.competitionEligible ? 'marked as' : 'removed from'} competition eligible`,
-          competitionEligible: story.competitionEligible
+          competitionEligible: story.competitionEligible,
         };
         break;
 
       // REMOVED: request_reassessment action
       case 'request_reassessment':
         return NextResponse.json(
-          { 
-            error: 'Reassessment functionality has been simplified. Please upload your story again for a new assessment.',
-            message: 'To get a new assessment, go to Create Stories > Upload for Assessment and submit your story again.'
+          {
+            error:
+              'Reassessment functionality has been simplified. Please upload your story again for a new assessment.',
+            message:
+              'To get a new assessment, go to Create Stories > Upload for Assessment and submit your story again.',
           },
           { status: 400 }
         );
 
-      // REMOVED: delete_story action  
+      // REMOVED: delete_story action
       case 'delete_story':
         return NextResponse.json(
-          { 
-            error: 'Story deletion is not allowed for children\'s safety. Contact an admin if you need assistance.',
-            message: 'Delete functionality has been disabled to protect your creative work.'
+          {
+            error:
+              "Story deletion is not allowed for children's safety. Contact an admin if you need assistance.",
+            message:
+              'Delete functionality has been disabled to protect your creative work.',
           },
           { status: 403 }
         );
 
       default:
         return NextResponse.json(
-          { error: 'Invalid action specified. Only toggle_competition_eligibility is supported.' },
+          {
+            error:
+              'Invalid action specified. Only toggle_competition_eligibility is supported.',
+          },
           { status: 400 }
         );
     }
@@ -705,13 +722,12 @@ export async function POST(request: Request) {
     console.log(`✅ Story action completed: ${action} for story ${storyId}`);
 
     return NextResponse.json(result);
-
   } catch (error) {
     console.error('❌ Error processing story action:', error);
     return NextResponse.json(
-      { 
+      {
         error: 'Failed to process story action',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        details: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
     );
@@ -722,11 +738,14 @@ export async function POST(request: Request) {
 export async function DELETE(request: Request) {
   try {
     const session = await getServerSession(authOptions);
-    
+
     // UPDATED: Only admins can delete stories now
     if (!session || session.user?.role !== 'admin') {
       return NextResponse.json(
-        { error: 'Admin access required. Children cannot delete stories for safety.' },
+        {
+          error:
+            'Admin access required. Children cannot delete stories for safety.',
+        },
         { status: 403 }
       );
     }
@@ -745,7 +764,9 @@ export async function DELETE(request: Request) {
     }
 
     if (storyIds && storyIds.length > 0) {
-      deleteQuery._id = { $in: storyIds.map(id => new mongoose.Types.ObjectId(id)) };
+      deleteQuery._id = {
+        $in: storyIds.map((id) => new mongoose.Types.ObjectId(id)),
+      };
     }
 
     if (deleteType) {
@@ -778,13 +799,13 @@ export async function DELETE(request: Request) {
 
     // Get stories to be deleted
     const storiesToDelete = await StorySession.find(deleteQuery).select('_id');
-    const storyIdsToDelete = storiesToDelete.map(s => s._id);
+    const storyIdsToDelete = storiesToDelete.map((s) => s._id);
 
     if (storyIdsToDelete.length === 0) {
       return NextResponse.json({
         success: true,
         message: 'No stories found matching deletion criteria',
-        deletedCount: 0
+        deletedCount: 0,
       });
     }
 
@@ -803,15 +824,14 @@ export async function DELETE(request: Request) {
       success: true,
       message: `Successfully deleted ${deleteResult.deletedCount} stories`,
       deletedCount: deleteResult.deletedCount,
-      deletedStoryIds: storyIdsToDelete
+      deletedStoryIds: storyIdsToDelete,
     });
-
   } catch (error) {
     console.error('❌ Error in admin story deletion:', error);
     return NextResponse.json(
-      { 
+      {
         error: 'Failed to delete stories',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        details: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
     );

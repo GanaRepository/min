@@ -165,9 +165,7 @@ export default function EditUser() {
           </button>
         </Link>
         <div>
-          <h1 className="text-2xl sm:text-3xl  text-white">
-            Edit User
-          </h1>
+          <h1 className="text-2xl sm:text-3xl  text-white">Edit User</h1>
           <p className="text-gray-400">Modify user information and settings</p>
         </div>
       </div>
@@ -264,9 +262,7 @@ export default function EditUser() {
             </div>
 
             <div>
-              <label className="block text-sm  text-gray-300 mb-2">
-                Role
-              </label>
+              <label className="block text-sm  text-gray-300 mb-2">Role</label>
               <div className="relative">
                 <Shield
                   size={20}

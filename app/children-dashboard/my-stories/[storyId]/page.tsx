@@ -56,7 +56,7 @@
 //   structureScore: number;
 //   characterDevelopmentScore: number;
 //   plotDevelopmentScore: number;
-  
+
 //   // Additional details
 //   readingLevel: string;
 //   feedback: string;
@@ -64,11 +64,11 @@
 //   improvements: string[];
 //   encouragement: string;
 //   educationalInsights: string;
-  
+
 //   // Vocabulary analysis
 //   vocabularyUsed: string[];
 //   suggestedWords: string[];
-  
+
 //   // Integrity analysis
 //   integrityAnalysis?: {
 //     originalityScore: number;
@@ -84,19 +84,19 @@
 //     };
 //     integrityRisk: 'low' | 'medium' | 'high' | 'critical';
 //   };
-  
+
 //   integrityStatus: {
 //     status: 'PASS' | 'WARNING' | 'FAIL';
 //     message: string;
 //   };
-  
+
 //   // Recommendations
 //   recommendations?: {
 //     immediate: string[];
 //     longTerm: string[];
 //     practiceExercises: string[];
 //   };
-  
+
 //   // Progress tracking
 //   progressTracking?: {
 //     improvementSince?: string;
@@ -135,19 +135,19 @@
 //   createdAt: string;
 //   updatedAt: string;
 //   completedAt?: string;
-  
+
 //   // Progress tracking
 //   totalWords: number;
 //   childWords: number;
 //   currentTurn: number;
 //   maxTurns: number;
 //   apiCallsUsed: number;
-  
+
 //   // Content
 //   content: string;
 //   aiOpening: string;
 //   turns: Turn[];
-  
+
 //   // Publication & Competition
 //   isPublished: boolean;
 //   publishedAt?: string;
@@ -158,12 +158,12 @@
 //     rank?: number;
 //     score?: number;
 //   }>;
-  
+
 //   // Assessment
 //   isUploadedForAssessment: boolean;
 //   assessmentAttempts: number;
 //   assessment?: Assessment;
-  
+
 //   // Story elements
 //   elements: {
 //     genre?: string;
@@ -173,10 +173,10 @@
 //     mood?: string;
 //     tone?: string;
 //   };
-  
+
 //   // Comments from mentors/admin
 //   comments: Comment[];
-  
+
 //   // Metadata
 //   storyNumber: number;
 //   pausedAt?: string;
@@ -196,13 +196,13 @@
 //   const [loading, setLoading] = useState(true);
 //   const [activeTab, setActiveTab] = useState<'overview' | 'assessment' | 'content' | 'comments'>('overview');
 //   const [error, setError] = useState<string | null>(null);
-  
+
 //   // Action states
 //   const [publishingStory, setPublishingStory] = useState(false);
 //   const [purchasingStory, setPurchasingStory] = useState(false);
 //   const [reassessingStory, setReassessingStory] = useState(false);
 //   const [deletingStory, setDeletingStory] = useState(false);
-  
+
 //   // UI states
 //   const [showFullContent, setShowFullContent] = useState(false);
 //   const [editingTitle, setEditingTitle] = useState(false);
@@ -238,7 +238,7 @@
 //       }
 
 //       const data = await response.json();
-      
+
 //       if (data.success) {
 //         setStory(data.story);
 //         setNewTitle(data.story.title);
@@ -339,9 +339,9 @@
 //   // ===== STORY ACTIONS =====
 //   const handlePublishStory = async () => {
 //     if (!story) return;
-    
+
 //     setPublishingStory(true);
-    
+
 //     try {
 //       const response = await fetch('/api/stories/publish', {
 //         method: 'POST',
@@ -350,7 +350,7 @@
 //       });
 
 //       const data = await response.json();
-      
+
 //       if (data.success) {
 //         alert('🎉 Story published to community showcase!');
 //         fetchStory(); // Refresh data
@@ -367,9 +367,9 @@
 
 //   const handlePurchaseStory = async () => {
 //     if (!story || !session?.user?.id) return;
-    
+
 //     setPurchasingStory(true);
-    
+
 //     try {
 //       const response = await fetch('/api/stripe/checkout', {
 //         method: 'POST',
@@ -382,7 +382,7 @@
 //       });
 
 //       const data = await response.json();
-      
+
 //       if (data.success && data.checkoutUrl) {
 //         window.location.href = data.checkoutUrl;
 //       } else {
@@ -398,9 +398,9 @@
 
 //   const handleReassessStory = async () => {
 //     if (!story) return;
-    
+
 //     setReassessingStory(true);
-    
+
 //     try {
 //       const response = await fetch(`/api/user/stories/${story._id}`, {
 //         method: 'POST',
@@ -409,7 +409,7 @@
 //       });
 
 //       const data = await response.json();
-      
+
 //       if (data.success) {
 //         alert('Reassessment requested! Your story will be re-evaluated.');
 //         fetchStory(); // Refresh data
@@ -430,7 +430,7 @@
 //       setNewTitle(story?.title || '');
 //       return;
 //     }
-    
+
 //     try {
 //       const response = await fetch(`/api/user/stories/${story._id}`, {
 //         method: 'PUT',
@@ -439,7 +439,7 @@
 //       });
 
 //       const data = await response.json();
-      
+
 //       if (data.success) {
 //         setStory(prev => prev ? { ...prev, title: newTitle.trim() } : null);
 //         setEditingTitle(false);
@@ -458,16 +458,16 @@
 //     if (!story || !confirm(`Are you sure you want to delete "${story.title}"? This action cannot be undone.`)) {
 //       return;
 //     }
-    
+
 //     setDeletingStory(true);
-    
+
 //     try {
 //       const response = await fetch(`/api/user/stories/${story._id}`, {
 //         method: 'DELETE'
 //       });
 
 //       const data = await response.json();
-      
+
 //       if (data.success) {
 //         alert('Story deleted successfully');
 //         router.push('/children-dashboard/my-stories');
@@ -526,7 +526,7 @@
 //   return (
 //     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 py-20">
 //       <div className="max-w-6xl mx-auto px-6">
-        
+
 //         {/* ===== HEADER ===== */}
 //         <motion.div
 //           initial={{ opacity: 0, y: 20 }}
@@ -580,7 +580,7 @@
 //                 </h1>
 //               </div>
 //             )}
-            
+
 //             {/* Story Metadata */}
 //             <div className="flex items-center justify-center gap-6 text-gray-300 mb-6 flex-wrap">
 //               <span className="flex items-center gap-1">
@@ -675,17 +675,17 @@
 //         >
 //           {activeTab === 'overview' && (
 //             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              
+
 //               {/* Left Column: Story Stats */}
 //               <div className="lg:col-span-1 space-y-6">
-                
+
 //                 {/* Progress Card */}
 //                 <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-6">
 //                   <h3 className="text-lg  text-white mb-4 flex items-center gap-2">
 //                     <TrendingUp className="w-5 h-5 text-blue-400" />
 //                     Story Progress
 //                   </h3>
-                  
+
 //                   <div className="space-y-4">
 //                     {story.storyType === 'freestyle' && (
 //                       <div>
@@ -701,7 +701,7 @@
 //                         </div>
 //                       </div>
 //                     )}
-                    
+
 //                     <div>
 //                       <div className="flex justify-between text-sm mb-2">
 //                         <span className="text-gray-400">Words Written:</span>
@@ -714,7 +714,7 @@
 //                         />
 //                       </div>
 //                     </div>
-                    
+
 //                     {story.storyType === 'freestyle' && (
 //                       <div>
 //                         <div className="flex justify-between text-sm mb-2">
@@ -750,7 +750,7 @@
 //                       <Brain className="w-5 h-5 text-green-400" />
 //                       Assessment Score
 //                     </h3>
-                    
+
 //                     <div className="text-center mb-6">
 //                       <div className={`text-4xl  ${getScoreColor(story.assessment.overallScore)} mb-2`}>
 //                         {story.assessment.overallScore}%
@@ -803,7 +803,7 @@
 //                     <Zap className="w-5 h-5 text-yellow-400" />
 //                     Actions
 //                   </h3>
-                  
+
 //                   <div className="space-y-3">
 //                     {/* Publish Story */}
 //                     {story.status === 'completed' && !story.isPublished && (
@@ -894,7 +894,7 @@
 
 //               {/* Right Column: Story Details */}
 //               <div className="lg:col-span-2 space-y-6">
-                
+
 //                 {/* Story Elements */}
 //                 {Object.keys(story.elements).length > 0 && (
 //                   <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-6">
@@ -902,7 +902,7 @@
 //                       <Palette className="w-5 h-5 text-purple-400" />
 //                       Story Elements
 //                     </h3>
-                    
+
 //                     <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
 //                       {Object.entries(story.elements).map(([key, value]) => (
 //                         value && (
@@ -922,32 +922,32 @@
 //                     <Clock className="w-5 h-5 text-blue-400" />
 //                     Story Timeline
 //                   </h3>
-                  
+
 //                   <div className="space-y-4">
 //                     <div className="flex items-center justify-between">
 //                       <span className="text-gray-400">Created:</span>
 //                       <span className="text-white">{new Date(story.createdAt).toLocaleString()}</span>
 //                     </div>
-                    
+
 //                     <div className="flex items-center justify-between">
 //                       <span className="text-gray-400">Last Updated:</span>
 //                       <span className="text-white">{new Date(story.updatedAt).toLocaleString()}</span>
 //                     </div>
-                    
+
 //                     {story.completedAt && (
 //                       <div className="flex items-center justify-between">
 //                         <span className="text-gray-400">Completed:</span>
 //                         <span className="text-white">{new Date(story.completedAt).toLocaleString()}</span>
 //                       </div>
 //                     )}
-                    
+
 //                     {story.publishedAt && (
 //                       <div className="flex items-center justify-between">
 //                         <span className="text-gray-400">Published:</span>
 //                         <span className="text-white">{new Date(story.publishedAt).toLocaleString()}</span>
 //                       </div>
 //                     )}
-                    
+
 //                     {story.pausedAt && (
 //                       <div className="flex items-center justify-between">
 //                         <span className="text-gray-400">Paused:</span>
@@ -963,17 +963,17 @@
 //                     <div className="text-2xl  text-blue-400">{story.totalWords}</div>
 //                     <div className="text-sm text-gray-400">Total Words</div>
 //                   </div>
-                  
+
 //                   <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-4 text-center">
 //                     <div className="text-2xl  text-green-400">{story.childWords}</div>
 //                     <div className="text-sm text-gray-400">Your Words</div>
 //                   </div>
-                  
+
 //                   <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-4 text-center">
 //                     <div className="text-2xl  text-purple-400">{story.turns.length}</div>
 //                     <div className="text-sm text-gray-400">Writing Turns</div>
 //                   </div>
-                  
+
 //                   <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-4 text-center">
 //                     <div className="text-2xl  text-yellow-400">{story.assessmentAttempts}</div>
 //                     <div className="text-sm text-gray-400">Assessments</div>
@@ -985,7 +985,7 @@
 
 //           {activeTab === 'assessment' && story.assessment && (
 //             <div className="space-y-8">
-              
+
 //               {/* Overall Assessment */}
 //               <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-8">
 //                 <div className="text-center mb-8">
@@ -1026,7 +1026,7 @@
 //                       <Shield className="w-5 h-5 text-blue-400" />
 //                       Integrity Analysis
 //                     </h3>
-                    
+
 //                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
 //                       <div className="text-center">
 //                         <div className="text-2xl  text-green-400 mb-1">
@@ -1034,14 +1034,14 @@
 //                         </div>
 //                         <div className="text-sm text-gray-400">Originality</div>
 //                       </div>
-                      
+
 //                       <div className="text-center">
 //                         <div className="text-2xl  text-blue-400 mb-1">
 //                           {story.assessment.integrityAnalysis.plagiarismResult.overallScore}%
 //                         </div>
 //                         <div className="text-sm text-gray-400">Plagiarism Check</div>
 //                       </div>
-                      
+
 //                       <div className="text-center">
 //                         <div className="flex items-center justify-center gap-2 mb-1">
 //                           {getIntegrityIcon(story.assessment.integrityAnalysis.integrityRisk)}
@@ -1054,7 +1054,7 @@
 //                     </div>
 
 //                     <div className={`mt-4 p-4  ${
-//                       story.assessment.integrityStatus.status === 'PASS' 
+//                       story.assessment.integrityStatus.status === 'PASS'
 //                         ? 'bg-green-500/20 border border-green-500/30'
 //                         : story.assessment.integrityStatus.status === 'WARNING'
 //                         ? 'bg-yellow-500/20 border border-yellow-500/30'
@@ -1084,7 +1084,7 @@
 
 //               {/* Detailed Feedback */}
 //               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                
+
 //                 {/* Feedback & Insights */}
 //                 <div className="space-y-6">
 //                   {story.assessment.feedback && (
@@ -1159,7 +1159,7 @@
 //                         <BookOpen className="w-5 h-5 text-purple-400" />
 //                         Vocabulary Analysis
 //                       </h3>
-                      
+
 //                       {(story.assessment.vocabularyUsed?.length || 0) > 0 && (
 //                         <div className="mb-4">
 //                           <h4 className=" text-purple-300 mb-2">Great Words You Used:</h4>
@@ -1172,7 +1172,7 @@
 //                           </div>
 //                         </div>
 //                       )}
-                      
+
 //                       {(story.assessment.suggestedWords?.length || 0) > 0 && (
 //                         <div>
 //                           <h4 className=" text-blue-300 mb-2">Suggested Words to Try:</h4>
@@ -1197,7 +1197,7 @@
 //                     <Target className="w-5 h-5 text-blue-400" />
 //                     Personalized Recommendations
 //                   </h3>
-                  
+
 //                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 //                     {story.assessment.recommendations.immediate.length > 0 && (
 //                       <div>
@@ -1211,7 +1211,7 @@
 //                         </div>
 //                       </div>
 //                     )}
-                    
+
 //                     {story.assessment.recommendations.longTerm.length > 0 && (
 //                       <div>
 //                         <h4 className=" text-blue-300 mb-3">Long-term Goals</h4>
@@ -1224,7 +1224,7 @@
 //                         </div>
 //                       </div>
 //                     )}
-                    
+
 //                     {story.assessment.recommendations.practiceExercises.length > 0 && (
 //                       <div>
 //                         <h4 className=" text-green-300 mb-3">Practice Exercises</h4>
@@ -1250,7 +1250,7 @@
 //                   <BookOpen className="w-5 h-5 text-blue-400" />
 //                   Full Story Content
 //                 </h3>
-                
+
 //                 <div className="flex items-center gap-3">
 //                   <button
 //                     onClick={() => setShowFullContent(!showFullContent)}
@@ -1259,7 +1259,7 @@
 //                     <Eye size={16} />
 //                     {showFullContent ? 'Hide' : 'Show'} Content
 //                   </button>
-                  
+
 //                   <button
 //                     onClick={() => {
 //                       const element = document.createElement('a');
@@ -1310,7 +1310,7 @@
 //                             {turn.wordCount} words • {new Date(turn.timestamp).toLocaleDateString()}
 //                           </span>
 //                         </div>
-                        
+
 //                         {turn.childInput && (
 //                           <div className="mb-3">
 //                             <div className="text-green-300 text-sm  mb-1">Your Writing:</div>
@@ -1319,7 +1319,7 @@
 //                             </p>
 //                           </div>
 //                         )}
-                        
+
 //                         {turn.aiResponse && (
 //                           <div>
 //                             <div className="text-purple-300 text-sm  mb-1">AI Response:</div>
@@ -1342,7 +1342,7 @@
 //                 <MessageSquare className="w-5 h-5 text-blue-400" />
 //                 Mentor & Teacher Comments
 //               </h3>
-              
+
 //               {story.comments.length > 0 ? (
 //                 <div className="space-y-4">
 //                   {story.comments.map((comment) => (
@@ -1470,7 +1470,9 @@ export default function StoryDetailPage() {
   const [story, setStory] = useState<Story | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'overview' | 'assessment' | 'content' | 'comments'>('overview');
+  const [activeTab, setActiveTab] = useState<
+    'overview' | 'assessment' | 'content' | 'comments'
+  >('overview');
 
   // Action states
   const [publishingStory, setPublishingStory] = useState(false);
@@ -1517,7 +1519,7 @@ export default function StoryDetailPage() {
       const response = await fetch('/api/stories/publish', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ sessionId: story._id })
+        body: JSON.stringify({ sessionId: story._id }),
       });
 
       const data = await response.json();
@@ -1528,8 +1530,13 @@ export default function StoryDetailPage() {
       } else {
         // Handle API errors properly
         const errorMessage = data.error || 'Failed to publish story';
-        if (errorMessage.includes('3 stories per month') || errorMessage.includes('publish 3 stories')) {
-          alert(`📚 Monthly Publication Limit Reached!\n\nYou can only publish 3 stories per month for free.\n\nYour limit will reset on the 1st of next month.`);
+        if (
+          errorMessage.includes('3 stories per month') ||
+          errorMessage.includes('publish 3 stories')
+        ) {
+          alert(
+            `📚 Monthly Publication Limit Reached!\n\nYou can only publish 3 stories per month for free.\n\nYour limit will reset on the 1st of next month.`
+          );
         } else if (errorMessage.includes('already published')) {
           alert('ℹ️ This story is already published to the community.');
         } else {
@@ -1539,7 +1546,9 @@ export default function StoryDetailPage() {
     } catch (error) {
       // Only catch actual network/connection errors
       console.error('❌ Network error:', error);
-      alert('❌ Connection Error\n\nPlease check your internet connection and try again.');
+      alert(
+        '❌ Connection Error\n\nPlease check your internet connection and try again.'
+      );
     } finally {
       setPublishingStory(false);
     }
@@ -1547,7 +1556,7 @@ export default function StoryDetailPage() {
 
   const handlePurchaseStory = async () => {
     if (!story || !session?.user?.id) return;
-    
+
     try {
       const response = await fetch('/api/stripe/checkout', {
         method: 'POST',
@@ -1555,12 +1564,12 @@ export default function StoryDetailPage() {
         body: JSON.stringify({
           productType: 'story_purchase',
           storyId: story._id,
-          userId: session.user.id
-        })
+          userId: session.user.id,
+        }),
       });
 
       const data = await response.json();
-      
+
       if (data.success && data.checkoutUrl) {
         window.location.href = data.checkoutUrl;
       } else {
@@ -1580,29 +1589,29 @@ export default function StoryDetailPage() {
   // ===== HELPER FUNCTIONS =====
   const getStoryTypeInfo = (story: Story) => {
     if (story.competitionEntries && story.competitionEntries.length > 0) {
-      return { 
-        label: "Competition Entry", 
-        icon: Trophy, 
-        color: "text-purple-400",
-        bgColor: "bg-purple-500/20",
-        borderColor: "border-purple-500/30"
+      return {
+        label: 'Competition Entry',
+        icon: Trophy,
+        color: 'text-purple-400',
+        bgColor: 'bg-purple-500/20',
+        borderColor: 'border-purple-500/30',
       };
     }
     if (story.isUploadedForAssessment) {
-      return { 
-        label: "Uploaded for Assessment", 
-        icon: Upload, 
-        color: "text-blue-400",
-        bgColor: "bg-blue-500/20",
-        borderColor: "border-blue-500/30"
+      return {
+        label: 'Uploaded for Assessment',
+        icon: Upload,
+        color: 'text-blue-400',
+        bgColor: 'bg-blue-500/20',
+        borderColor: 'border-blue-500/30',
       };
     }
-    return { 
-      label: "Freestyle Story", 
-      icon: Sparkles, 
-      color: "text-green-400",
-      bgColor: "bg-green-500/20",
-      borderColor: "border-green-500/30"
+    return {
+      label: 'Freestyle Story',
+      icon: Sparkles,
+      color: 'text-green-400',
+      bgColor: 'bg-green-500/20',
+      borderColor: 'border-green-500/30',
     };
   };
 
@@ -1615,23 +1624,30 @@ export default function StoryDetailPage() {
 
   const getIntegrityIcon = (integrityRisk?: string) => {
     switch (integrityRisk) {
-      case 'low': return <CheckCircle className="w-5 h-5 text-green-400" />;
-      case 'medium': return <AlertTriangle className="w-5 h-5 text-yellow-400" />;
-      case 'high': return <AlertTriangle className="w-5 h-5 text-orange-400" />;
-      case 'critical': return <XCircle className="w-5 h-5 text-red-400" />;
-      default: return <CheckCircle className="w-5 h-5 text-gray-400" />;
+      case 'low':
+        return <CheckCircle className="w-5 h-5 text-green-400" />;
+      case 'medium':
+        return <AlertTriangle className="w-5 h-5 text-yellow-400" />;
+      case 'high':
+        return <AlertTriangle className="w-5 h-5 text-orange-400" />;
+      case 'critical':
+        return <XCircle className="w-5 h-5 text-red-400" />;
+      default:
+        return <CheckCircle className="w-5 h-5 text-gray-400" />;
     }
   };
 
   // Check if user should see assessment tab based on competition status
   const shouldShowAssessment = () => {
     if (!story) return false;
-    
+
     // For competition stories, only show assessment if they're a winner
     if (story.competitionEntries && story.competitionEntries.length > 0) {
-      return story.competitionEntries.some(entry => entry.isWinner || (entry.rank && entry.rank <= 3));
+      return story.competitionEntries.some(
+        (entry) => entry.isWinner || (entry.rank && entry.rank <= 3)
+      );
     }
-    
+
     // For non-competition stories, show if assessment exists
     return !!story.assessment;
   };
@@ -1641,12 +1657,16 @@ export default function StoryDetailPage() {
     const baseTabs = [
       { id: 'overview', label: 'Overview', icon: Eye },
       { id: 'content', label: 'Content', icon: BookOpen },
-      { id: 'comments', label: 'Comments', icon: MessageSquare }
+      { id: 'comments', label: 'Comments', icon: MessageSquare },
     ];
 
     // Add assessment tab only if user should see it
     if (shouldShowAssessment()) {
-      baseTabs.splice(1, 0, { id: 'assessment', label: 'Assessment', icon: Brain });
+      baseTabs.splice(1, 0, {
+        id: 'assessment',
+        label: 'Assessment',
+        icon: Brain,
+      });
     }
 
     return baseTabs;
@@ -1671,7 +1691,10 @@ export default function StoryDetailPage() {
         <div className="text-center max-w-md mx-auto px-6">
           <XCircle className="w-16 h-16 text-red-400 mx-auto mb-4" />
           <h2 className="text-xl  text-white mb-2">Story Not Found</h2>
-          <p className="text-gray-300 mb-6">{error || 'The story you\'re looking for doesn\'t exist or you don\'t have access to it.'}</p>
+          <p className="text-gray-300 mb-6">
+            {error ||
+              "The story you're looking for doesn't exist or you don't have access to it."}
+          </p>
           <Link
             href="/children-dashboard/my-stories"
             className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3  transition-colors inline-flex items-center gap-2"
@@ -1690,7 +1713,6 @@ export default function StoryDetailPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900">
       <div className="container mx-auto px-6 py-8">
-        
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -1707,12 +1729,15 @@ export default function StoryDetailPage() {
             <div className="flex-1">
               <h1 className="text-3xl  text-white mb-1">{story.title}</h1>
               <div className="flex items-center gap-3">
-                <div className={`inline-flex items-center gap-2 px-3 py-1  text-sm  ${typeInfo.bgColor} ${typeInfo.color} ${typeInfo.borderColor} border`}>
+                <div
+                  className={`inline-flex items-center gap-2 px-3 py-1  text-sm  ${typeInfo.bgColor} ${typeInfo.color} ${typeInfo.borderColor} border`}
+                >
                   <typeInfo.icon size={14} />
                   {typeInfo.label}
                 </div>
                 <span className="text-gray-400 text-sm">
-                  {story.totalWords} words • Created {new Date(story.createdAt).toLocaleDateString()}
+                  {story.totalWords} words • Created{' '}
+                  {new Date(story.createdAt).toLocaleDateString()}
                 </span>
               </div>
             </div>
@@ -1733,8 +1758,12 @@ export default function StoryDetailPage() {
               <div className="text-gray-300 text-sm">AI Words</div>
             </div>
             <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-4">
-              <div className={`text-lg  ${story.assessment ? getScoreColor(story.assessment.overallScore) : 'text-gray-400'}`}>
-                {story.assessment ? `${story.assessment.overallScore}%` : 'Not Assessed'}
+              <div
+                className={`text-lg  ${story.assessment ? getScoreColor(story.assessment.overallScore) : 'text-gray-400'}`}
+              >
+                {story.assessment
+                  ? `${story.assessment.overallScore}%`
+                  : 'Not Assessed'}
               </div>
               <div className="text-gray-300 text-sm">Overall Score</div>
             </div>
@@ -1754,41 +1783,42 @@ export default function StoryDetailPage() {
                   )}
                 </span>
               )}
-              
-              {story.competitionEntries && story.competitionEntries.length > 0 && (
-                <div className="flex gap-2">
-                  {story.competitionEntries.map((entry, index) => (
-                    <span
-                      key={index}
-                      className="bg-purple-500/20 text-purple-300 px-3 py-1  text-sm  border border-purple-500/30 flex items-center gap-2"
-                    >
-                      <Trophy size={14} />
-                      Competition Entry
-                      {entry.rank && entry.rank <= 3 && (
-                        <Crown size={14} className="text-yellow-400" />
-                      )}
-                      {entry.rank && (
-                        <span className="text-xs bg-purple-600/40 px-2 py-0.5 rounded">
-                          Rank #{entry.rank}
-                        </span>
-                      )}
-                    </span>
-                  ))}
-                </div>
-              )}
-              
+
+              {story.competitionEntries &&
+                story.competitionEntries.length > 0 && (
+                  <div className="flex gap-2">
+                    {story.competitionEntries.map((entry, index) => (
+                      <span
+                        key={index}
+                        className="bg-purple-500/20 text-purple-300 px-3 py-1  text-sm  border border-purple-500/30 flex items-center gap-2"
+                      >
+                        <Trophy size={14} />
+                        Competition Entry
+                        {entry.rank && entry.rank <= 3 && (
+                          <Crown size={14} className="text-yellow-400" />
+                        )}
+                        {entry.rank && (
+                          <span className="text-xs bg-purple-600/40 px-2 py-0.5 rounded">
+                            Rank #{entry.rank}
+                          </span>
+                        )}
+                      </span>
+                    ))}
+                  </div>
+                )}
+
               {story.status === 'flagged' && (
                 <span className="bg-red-500/20 text-red-400 px-3 py-1  text-sm  border border-red-500/30">
                   Flagged for Review
                 </span>
               )}
-              
+
               {story.status === 'review' && (
                 <span className="bg-yellow-500/20 text-yellow-400 px-3 py-1  text-sm  border border-yellow-500/30">
                   Under Review
                 </span>
               )}
-              
+
               {story.status === 'active' && (
                 <span className="bg-blue-500/20 text-blue-400 px-3 py-1  text-sm  border border-blue-500/30">
                   In Progress
@@ -1856,15 +1886,21 @@ export default function StoryDetailPage() {
                 <Trophy className="w-5 h-5 text-purple-400" />
                 Competition Details
               </h3>
-              
+
               <div className="space-y-4">
                 {story.competitionEntries.map((entry, index) => (
-                  <div key={index} className="flex items-center justify-between bg-purple-500/5  p-4">
+                  <div
+                    key={index}
+                    className="flex items-center justify-between bg-purple-500/5  p-4"
+                  >
                     <div>
                       <div className="text-white ">
-                        Submitted on {new Date(entry.submittedAt).toLocaleDateString()}
+                        Submitted on{' '}
+                        {new Date(entry.submittedAt).toLocaleDateString()}
                       </div>
-                      <div className="text-purple-300 text-sm">Competition Entry #{index + 1}</div>
+                      <div className="text-purple-300 text-sm">
+                        Competition Entry #{index + 1}
+                      </div>
                     </div>
                     <div className="text-right">
                       {entry.rank && entry.rank <= 3 && (
@@ -1928,29 +1964,44 @@ export default function StoryDetailPage() {
           {activeTab === 'overview' && (
             <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-8">
               <h2 className="text-2xl  text-white mb-6">Story Overview</h2>
-              
+
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Left Column */}
                 <div className="space-y-6">
                   <div>
-                    <h3 className="text-lg  text-white mb-3">Writing Statistics</h3>
+                    <h3 className="text-lg  text-white mb-3">
+                      Writing Statistics
+                    </h3>
                     <div className="space-y-3">
                       <div className="flex justify-between items-center">
                         <span className="text-gray-300">Total Words:</span>
                         <span className="text-white ">{story.totalWords}</span>
                       </div>
                       <div className="flex justify-between items-center">
-                        <span className="text-gray-300">Your Contribution:</span>
-                        <span className="text-green-400 ">{story.childWords} words</span>
+                        <span className="text-gray-300">
+                          Your Contribution:
+                        </span>
+                        <span className="text-green-400 ">
+                          {story.childWords} words
+                        </span>
                       </div>
                       <div className="flex justify-between items-center">
                         <span className="text-gray-300">AI Assistance:</span>
-                        <span className="text-blue-400 ">{story.aiWords} words</span>
+                        <span className="text-blue-400 ">
+                          {story.aiWords} words
+                        </span>
                       </div>
                       <div className="flex justify-between items-center">
-                        <span className="text-gray-300">Your Contribution:</span>
+                        <span className="text-gray-300">
+                          Your Contribution:
+                        </span>
                         <span className="text-yellow-400 ">
-                          {story.totalWords > 0 ? Math.round((story.childWords / story.totalWords) * 100) : 0}%
+                          {story.totalWords > 0
+                            ? Math.round(
+                                (story.childWords / story.totalWords) * 100
+                              )
+                            : 0}
+                          %
                         </span>
                       </div>
                     </div>
@@ -1961,26 +2012,37 @@ export default function StoryDetailPage() {
                     <div className="space-y-3">
                       <div className="flex justify-between items-center">
                         <span className="text-gray-300">Created:</span>
-                        <span className="text-white">{new Date(story.createdAt).toLocaleDateString()}</span>
+                        <span className="text-white">
+                          {new Date(story.createdAt).toLocaleDateString()}
+                        </span>
                       </div>
                       <div className="flex justify-between items-center">
                         <span className="text-gray-300">Last Updated:</span>
-                        <span className="text-white">{new Date(story.updatedAt).toLocaleDateString()}</span>
+                        <span className="text-white">
+                          {new Date(story.updatedAt).toLocaleDateString()}
+                        </span>
                       </div>
                       <div className="flex justify-between items-center">
                         <span className="text-gray-300">Status:</span>
-                        <span className={` capitalize ${
-                          story.status === 'completed' ? 'text-green-400' :
-                          story.status === 'active' ? 'text-blue-400' :
-                          story.status === 'flagged' ? 'text-red-400' :
-                          'text-yellow-400'
-                        }`}>
+                        <span
+                          className={` capitalize ${
+                            story.status === 'completed'
+                              ? 'text-green-400'
+                              : story.status === 'active'
+                                ? 'text-blue-400'
+                                : story.status === 'flagged'
+                                  ? 'text-red-400'
+                                  : 'text-yellow-400'
+                          }`}
+                        >
                           {story.status}
                         </span>
                       </div>
                       <div className="flex justify-between items-center">
                         <span className="text-gray-300">Type:</span>
-                        <span className="text-white capitalize">{story.storyType}</span>
+                        <span className="text-white capitalize">
+                          {story.storyType}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -2000,28 +2062,54 @@ export default function StoryDetailPage() {
                           <span className="text-gray-300">Overall Score:</span>
                           <div className="flex items-center gap-2">
                             {getIntegrityIcon(story.assessment.integrityRisk)}
-                            <span className={`text-xl  ${getScoreColor(story.assessment.overallScore)}`}>
+                            <span
+                              className={`text-xl  ${getScoreColor(story.assessment.overallScore)}`}
+                            >
                               {story.assessment.overallScore}%
                             </span>
                           </div>
                         </div>
-                        
+
                         <div className="grid grid-cols-2 gap-4 text-sm">
                           <div className="flex justify-between">
                             <span className="text-gray-400">Grammar:</span>
-                            <span className={getScoreColor(story.assessment.grammar)}>{story.assessment.grammar}%</span>
+                            <span
+                              className={getScoreColor(
+                                story.assessment.grammar
+                              )}
+                            >
+                              {story.assessment.grammar}%
+                            </span>
                           </div>
                           <div className="flex justify-between">
                             <span className="text-gray-400">Creativity:</span>
-                            <span className={getScoreColor(story.assessment.creativity)}>{story.assessment.creativity}%</span>
+                            <span
+                              className={getScoreColor(
+                                story.assessment.creativity
+                              )}
+                            >
+                              {story.assessment.creativity}%
+                            </span>
                           </div>
                           <div className="flex justify-between">
                             <span className="text-gray-400">Vocabulary:</span>
-                            <span className={getScoreColor(story.assessment.vocabulary)}>{story.assessment.vocabulary}%</span>
+                            <span
+                              className={getScoreColor(
+                                story.assessment.vocabulary
+                              )}
+                            >
+                              {story.assessment.vocabulary}%
+                            </span>
                           </div>
                           <div className="flex justify-between">
                             <span className="text-gray-400">Structure:</span>
-                            <span className={getScoreColor(story.assessment.structure || 0)}>{story.assessment.structure || 'N/A'}</span>
+                            <span
+                              className={getScoreColor(
+                                story.assessment.structure || 0
+                              )}
+                            >
+                              {story.assessment.structure || 'N/A'}
+                            </span>
                           </div>
                         </div>
                       </div>
@@ -2029,38 +2117,50 @@ export default function StoryDetailPage() {
                   )}
 
                   {/* Competition Status */}
-                  {story.competitionEntries && story.competitionEntries.length > 0 && (
-                    <div>
-                      <h3 className="text-lg  text-white mb-3 flex items-center gap-2">
-                        <Trophy className="w-5 h-5 text-purple-400" />
-                        Competition Status
-                      </h3>
-                      <div className="bg-purple-500/10  p-4 space-y-3">
-                        {story.competitionEntries.map((entry, index) => (
-                          <div key={index} className="flex items-center justify-between">
-                            <div>
-                              <div className="text-white ">Entry #{index + 1}</div>
-                              <div className="text-purple-300 text-sm">
-                                {new Date(entry.submittedAt).toLocaleDateString()}
+                  {story.competitionEntries &&
+                    story.competitionEntries.length > 0 && (
+                      <div>
+                        <h3 className="text-lg  text-white mb-3 flex items-center gap-2">
+                          <Trophy className="w-5 h-5 text-purple-400" />
+                          Competition Status
+                        </h3>
+                        <div className="bg-purple-500/10  p-4 space-y-3">
+                          {story.competitionEntries.map((entry, index) => (
+                            <div
+                              key={index}
+                              className="flex items-center justify-between"
+                            >
+                              <div>
+                                <div className="text-white ">
+                                  Entry #{index + 1}
+                                </div>
+                                <div className="text-purple-300 text-sm">
+                                  {new Date(
+                                    entry.submittedAt
+                                  ).toLocaleDateString()}
+                                </div>
+                              </div>
+                              <div className="text-right">
+                                {entry.rank && entry.rank <= 3 ? (
+                                  <div className="flex items-center gap-2 text-yellow-400 ">
+                                    <Crown size={16} />
+                                    Winner!
+                                  </div>
+                                ) : entry.rank ? (
+                                  <div className="text-purple-300">
+                                    Rank #{entry.rank}
+                                  </div>
+                                ) : (
+                                  <div className="text-gray-400">
+                                    Results Pending
+                                  </div>
+                                )}
                               </div>
                             </div>
-                            <div className="text-right">
-                              {entry.rank && entry.rank <= 3 ? (
-                                <div className="flex items-center gap-2 text-yellow-400 ">
-                                  <Crown size={16} />
-                                  Winner!
-                                </div>
-                              ) : entry.rank ? (
-                                <div className="text-purple-300">Rank #{entry.rank}</div>
-                              ) : (
-                                <div className="text-gray-400">Results Pending</div>
-                              )}
-                            </div>
-                          </div>
-                        ))}
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    )}
 
                   {/* Publication Status */}
                   {story.isPublished && (
@@ -2073,7 +2173,9 @@ export default function StoryDetailPage() {
                         <div className="flex items-center justify-between">
                           <span className="text-gray-300">Published:</span>
                           <span className="text-green-400 ">
-                            {story.publishedAt ? new Date(story.publishedAt).toLocaleDateString() : 'Yes'}
+                            {story.publishedAt
+                              ? new Date(story.publishedAt).toLocaleDateString()
+                              : 'Yes'}
                           </span>
                         </div>
                         <div className="mt-2">
@@ -2092,102 +2194,140 @@ export default function StoryDetailPage() {
             </div>
           )}
 
-          {activeTab === 'assessment' && shouldShowAssessment() && story.assessment && (
-            <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-8">
-              <h2 className="text-2xl  text-white mb-6 flex items-center gap-2">
-                <Brain className="w-6 h-6 text-blue-400" />
-                AI Assessment Results
-              </h2>
-              
-              <div className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                  <div className="bg-gray-700/30  p-4 text-center">
-                    <div className={`text-2xl  ${getScoreColor(story.assessment.overallScore)}`}>
-                      {story.assessment.overallScore}%
-                    </div>
-                    <div className="text-gray-300 text-sm">Overall Score</div>
-                  </div>
-                  <div className="bg-gray-700/30  p-4 text-center">
-                    <div className={`text-2xl  ${getScoreColor(story.assessment.grammar)}`}>
-                      {story.assessment.grammar}%
-                    </div>
-                    <div className="text-gray-300 text-sm">Grammar</div>
-                  </div>
-                  <div className="bg-gray-700/30  p-4 text-center">
-                    <div className={`text-2xl  ${getScoreColor(story.assessment.creativity)}`}>
-                      {story.assessment.creativity}%
-                    </div>
-                    <div className="text-gray-300 text-sm">Creativity</div>
-                  </div>
-                  <div className="bg-gray-700/30  p-4 text-center">
-                    <div className={`text-2xl  ${getScoreColor(story.assessment.vocabulary)}`}>
-                      {story.assessment.vocabulary}%
-                    </div>
-                    <div className="text-gray-300 text-sm">Vocabulary</div>
-                  </div>
-                </div>
+          {activeTab === 'assessment' &&
+            shouldShowAssessment() &&
+            story.assessment && (
+              <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-8">
+                <h2 className="text-2xl  text-white mb-6 flex items-center gap-2">
+                  <Brain className="w-6 h-6 text-blue-400" />
+                  AI Assessment Results
+                </h2>
 
-                {/* Feedback */}
-                {story.assessment.feedback && (
-                  <div className="bg-blue-500/10 border border-blue-500/20  p-6">
-                    <h3 className="text-lg  text-white mb-3">AI Feedback</h3>
-                    <p className="text-gray-300 leading-relaxed">{story.assessment.feedback}</p>
-                  </div>
-                )}
-
-                {/* Recommendations */}
-                {story.assessment.recommendations && (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {story.assessment.recommendations.strengths && story.assessment.recommendations.strengths.length > 0 && (
-                      <div className="bg-green-500/10 border border-green-500/20  p-6">
-                        <h3 className="text-lg  text-green-400 mb-3">Strengths</h3>
-                        <ul className="space-y-2">
-                          {story.assessment.recommendations.strengths.map((strength, index) => (
-                            <li key={index} className="text-gray-300 flex items-start gap-2">
-                              <CheckCircle className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" />
-                              {strength}
-                            </li>
-                          ))}
-                        </ul>
+                <div className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div className="bg-gray-700/30  p-4 text-center">
+                      <div
+                        className={`text-2xl  ${getScoreColor(story.assessment.overallScore)}`}
+                      >
+                        {story.assessment.overallScore}%
                       </div>
-                    )}
-
-                    {story.assessment.recommendations.improvements && story.assessment.recommendations.improvements.length > 0 && (
-                      <div className="bg-yellow-500/10 border border-yellow-500/20  p-6">
-                        <h3 className="text-lg  text-yellow-400 mb-3">Areas for Improvement</h3>
-                        <ul className="space-y-2">
-                          {story.assessment.recommendations.improvements.map((improvement, index) => (
-                            <li key={index} className="text-gray-300 flex items-start gap-2">
-                              <TrendingUp className="w-4 h-4 text-yellow-400 mt-0.5 flex-shrink-0" />
-                              {improvement}
-                            </li>
-                          ))}
-                        </ul>
+                      <div className="text-gray-300 text-sm">Overall Score</div>
+                    </div>
+                    <div className="bg-gray-700/30  p-4 text-center">
+                      <div
+                        className={`text-2xl  ${getScoreColor(story.assessment.grammar)}`}
+                      >
+                        {story.assessment.grammar}%
                       </div>
-                    )}
+                      <div className="text-gray-300 text-sm">Grammar</div>
+                    </div>
+                    <div className="bg-gray-700/30  p-4 text-center">
+                      <div
+                        className={`text-2xl  ${getScoreColor(story.assessment.creativity)}`}
+                      >
+                        {story.assessment.creativity}%
+                      </div>
+                      <div className="text-gray-300 text-sm">Creativity</div>
+                    </div>
+                    <div className="bg-gray-700/30  p-4 text-center">
+                      <div
+                        className={`text-2xl  ${getScoreColor(story.assessment.vocabulary)}`}
+                      >
+                        {story.assessment.vocabulary}%
+                      </div>
+                      <div className="text-gray-300 text-sm">Vocabulary</div>
+                    </div>
                   </div>
-                )}
 
-                {/* Integrity Analysis */}
-                <div className="bg-gray-700/30  p-6">
-                  <h3 className="text-lg  text-white mb-3 flex items-center gap-2">
-                    Content Integrity
-                    {getIntegrityIcon(story.assessment.integrityRisk)}
-                  </h3>
-                  <div className="text-gray-300">
-                    Risk Level: <span className={` ${
-                      story.assessment.integrityRisk === 'low' ? 'text-green-400' :
-                      story.assessment.integrityRisk === 'medium' ? 'text-yellow-400' :
-                      story.assessment.integrityRisk === 'high' ? 'text-orange-400' :
-                      'text-red-400'
-                    }`}>
-                      {(story.assessment.integrityRisk || 'unknown').toUpperCase()}
-                    </span>
+                  {/* Feedback */}
+                  {story.assessment.feedback && (
+                    <div className="bg-blue-500/10 border border-blue-500/20  p-6">
+                      <h3 className="text-lg  text-white mb-3">AI Feedback</h3>
+                      <p className="text-gray-300 leading-relaxed">
+                        {story.assessment.feedback}
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Recommendations */}
+                  {story.assessment.recommendations && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {story.assessment.recommendations.strengths &&
+                        story.assessment.recommendations.strengths.length >
+                          0 && (
+                          <div className="bg-green-500/10 border border-green-500/20  p-6">
+                            <h3 className="text-lg  text-green-400 mb-3">
+                              Strengths
+                            </h3>
+                            <ul className="space-y-2">
+                              {story.assessment.recommendations.strengths.map(
+                                (strength, index) => (
+                                  <li
+                                    key={index}
+                                    className="text-gray-300 flex items-start gap-2"
+                                  >
+                                    <CheckCircle className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" />
+                                    {strength}
+                                  </li>
+                                )
+                              )}
+                            </ul>
+                          </div>
+                        )}
+
+                      {story.assessment.recommendations.improvements &&
+                        story.assessment.recommendations.improvements.length >
+                          0 && (
+                          <div className="bg-yellow-500/10 border border-yellow-500/20  p-6">
+                            <h3 className="text-lg  text-yellow-400 mb-3">
+                              Areas for Improvement
+                            </h3>
+                            <ul className="space-y-2">
+                              {story.assessment.recommendations.improvements.map(
+                                (improvement, index) => (
+                                  <li
+                                    key={index}
+                                    className="text-gray-300 flex items-start gap-2"
+                                  >
+                                    <TrendingUp className="w-4 h-4 text-yellow-400 mt-0.5 flex-shrink-0" />
+                                    {improvement}
+                                  </li>
+                                )
+                              )}
+                            </ul>
+                          </div>
+                        )}
+                    </div>
+                  )}
+
+                  {/* Integrity Analysis */}
+                  <div className="bg-gray-700/30  p-6">
+                    <h3 className="text-lg  text-white mb-3 flex items-center gap-2">
+                      Content Integrity
+                      {getIntegrityIcon(story.assessment.integrityRisk)}
+                    </h3>
+                    <div className="text-gray-300">
+                      Risk Level:{' '}
+                      <span
+                        className={` ${
+                          story.assessment.integrityRisk === 'low'
+                            ? 'text-green-400'
+                            : story.assessment.integrityRisk === 'medium'
+                              ? 'text-yellow-400'
+                              : story.assessment.integrityRisk === 'high'
+                                ? 'text-orange-400'
+                                : 'text-red-400'
+                        }`}
+                      >
+                        {(
+                          story.assessment.integrityRisk || 'unknown'
+                        ).toUpperCase()}
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          )}
+            )}
 
           {activeTab === 'content' && (
             <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-8">
@@ -2195,7 +2335,7 @@ export default function StoryDetailPage() {
                 <BookOpen className="w-6 h-6 text-green-400" />
                 Story Content
               </h2>
-              
+
               <div className="space-y-6">
                 {/* Story Content Display */}
                 {story.isUploadedForAssessment && story.aiOpening ? (
@@ -2211,26 +2351,32 @@ export default function StoryDetailPage() {
                 ) : story.turns && story.turns.length > 0 ? (
                   // Collaborative story with turns
                   <div className="space-y-4">
-                    <h3 className="text-lg  text-white mb-4">Collaborative Story</h3>
+                    <h3 className="text-lg  text-white mb-4">
+                      Collaborative Story
+                    </h3>
                     {story.turns.map((turn, index) => (
                       <div key={index} className="space-y-3">
                         {turn.childInput && (
                           <div className="bg-green-500/10 border-l-4 border-green-500 rounded-r-lg p-4">
                             <div className="flex items-center gap-2 mb-2">
                               <User className="w-4 h-4 text-green-400" />
-                              <span className="text-green-400  text-sm">Your Turn {turn.turnNumber}</span>
+                              <span className="text-green-400  text-sm">
+                                Your Turn {turn.turnNumber}
+                              </span>
                             </div>
                             <div className="text-gray-300 leading-relaxed whitespace-pre-wrap">
                               {turn.childInput}
                             </div>
                           </div>
                         )}
-                        
+
                         {turn.aiResponse && (
                           <div className="bg-blue-500/10 border-l-4 border-blue-500 rounded-r-lg p-4">
                             <div className="flex items-center gap-2 mb-2">
                               <Brain className="w-4 h-4 text-blue-400" />
-                              <span className="text-blue-400  text-sm">AI Response</span>
+                              <span className="text-blue-400  text-sm">
+                                AI Response
+                              </span>
                             </div>
                             <div className="text-gray-300 leading-relaxed whitespace-pre-wrap">
                               {turn.aiResponse}
@@ -2252,7 +2398,9 @@ export default function StoryDetailPage() {
                 ) : (
                   <div className="text-center py-12">
                     <FileText className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                    <p className="text-gray-400">No content available to display.</p>
+                    <p className="text-gray-400">
+                      No content available to display.
+                    </p>
                   </div>
                 )}
               </div>
@@ -2265,14 +2413,17 @@ export default function StoryDetailPage() {
                 <MessageSquare className="w-6 h-6 text-yellow-400" />
                 Comments & Discussion
               </h2>
-              
+
               <div className="text-center py-12">
                 <MessageSquare className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg  text-white mb-2">Comments Coming Soon</h3>
+                <h3 className="text-lg  text-white mb-2">
+                  Comments Coming Soon
+                </h3>
                 <p className="text-gray-400 mb-6">
-                  The comments system is being developed. You'll be able to receive feedback from peers and mentors here.
+                  The comments system is being developed. You'll be able to
+                  receive feedback from peers and mentors here.
                 </p>
-                
+
                 {/* Placeholder for future comment system */}
                 <div className="bg-gray-700/30  p-6 text-left max-w-2xl mx-auto">
                   <h4 className="text-white  mb-3">Future Features:</h4>

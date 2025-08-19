@@ -61,7 +61,6 @@
 // export default mongoose.models.Turn ||
 //   mongoose.model<ITurn>('Turn', TurnSchema);
 
-
 // models/Turn.ts - COMPLETE FIXED VERSION
 import mongoose, { Schema, Document } from 'mongoose';
 
@@ -87,61 +86,67 @@ export interface ITurn extends Document {
   updatedAt: Date;
 }
 
-const TurnSchema = new Schema<ITurn>({
-  sessionId: {
-    type: Schema.Types.ObjectId,
-    ref: 'StorySession',
-    required: true,
-    index: true,
+const TurnSchema = new Schema<ITurn>(
+  {
+    sessionId: {
+      type: Schema.Types.ObjectId,
+      ref: 'StorySession',
+      required: true,
+      index: true,
+    },
+    turnNumber: {
+      type: Number,
+      required: true,
+      min: 1,
+    },
+    author: {
+      type: String,
+      enum: ['child', 'ai'],
+      required: true,
+    },
+    childInput: {
+      type: String,
+      trim: true,
+    },
+    aiResponse: {
+      type: String,
+      trim: true,
+    },
+    content: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    wordCount: {
+      type: Number,
+      required: true,
+      min: 0,
+    },
+    isValid: {
+      type: Boolean,
+      default: true,
+    },
+    validationErrors: [
+      {
+        type: String,
+      },
+    ],
+    metadata: {
+      writingTime: { type: Number },
+      aiModel: { type: String },
+      promptTokens: { type: Number },
+      completionTokens: { type: Number },
+      timestamp: { type: Date, default: Date.now },
+    },
   },
-  turnNumber: {
-    type: Number,
-    required: true,
-    min: 1,
-  },
-  author: {
-    type: String,
-    enum: ['child', 'ai'],
-    required: true,
-  },
-  childInput: {
-    type: String,
-    trim: true,
-  },
-  aiResponse: {
-    type: String,
-    trim: true,
-  },
-  content: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  wordCount: {
-    type: Number,
-    required: true,
-    min: 0,
-  },
-  isValid: {
-    type: Boolean,
-    default: true,
-  },
-  validationErrors: [{
-    type: String,
-  }],
-  metadata: {
-    writingTime: { type: Number },
-    aiModel: { type: String },
-    promptTokens: { type: Number },
-    completionTokens: { type: Number },
-    timestamp: { type: Date, default: Date.now },
-  },
-}, {
-  timestamps: true,
-});
+  {
+    timestamps: true,
+  }
+);
 
 // Indexes for performance
 TurnSchema.index({ sessionId: 1, turnNumber: 1 }, { unique: true });
 TurnSchema.index({ sessionId: 1, createdAt: 1 });
 
-export default mongoose.models?.Turn || mongoose.model<ITurn>('Turn', TurnSchema);
+export default mongoose.models?.Turn ||
+  mongoose.model<ITurn>('Turn', TurnSchema);

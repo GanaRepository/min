@@ -215,9 +215,9 @@
 
 //         // Required integrityStatus field
 //         integrityStatus: {
-//           status: assessment.integrityAnalysis.integrityRisk === 'critical' ? 'FAIL' : 
+//           status: assessment.integrityAnalysis.integrityRisk === 'critical' ? 'FAIL' :
 //                   assessment.integrityAnalysis.integrityRisk === 'high' ? 'WARNING' : 'PASS',
-//           message: assessment.integrityAnalysis.integrityRisk === 'critical' ? 
+//           message: assessment.integrityAnalysis.integrityRisk === 'critical' ?
 //                    'Critical integrity issues detected' :
 //                    assessment.integrityAnalysis.integrityRisk === 'high' ?
 //                    'High integrity risk detected' :
@@ -427,15 +427,15 @@
 //     if (!storySession.assessment) {
 //       // SIMPLIFIED: Check if user can make assessment requests instead of per-story attempts
 //       const canAssess = await UsageManager.canRequestAssessment(userSession.user.id);
-      
+
 //       return NextResponse.json(
 //         {
 //           error: 'No assessment available for this story',
 //           canAssess: storySession.status === 'completed' && canAssess.allowed,
 //           usage: canAssess.currentUsage,
 //           limits: canAssess.limits,
-//           message: canAssess.allowed ? 
-//             'You can request an assessment for this story' : 
+//           message: canAssess.allowed ?
+//             'You can request an assessment for this story' :
 //             canAssess.reason
 //         },
 //         { status: 404 }
@@ -547,7 +547,9 @@ export async function POST(
     }
 
     // SIMPLIFIED POOL SYSTEM: Check total pool of assessments
-    const canAssess = await UsageManager.canRequestAssessment(userSession.user.id);
+    const canAssess = await UsageManager.canRequestAssessment(
+      userSession.user.id
+    );
     if (!canAssess.allowed) {
       console.log(`❌ Assessment request denied: ${canAssess.reason}`);
       return NextResponse.json(
@@ -555,7 +557,7 @@ export async function POST(
           error: canAssess.reason,
           upgradeRequired: canAssess.upgradeRequired,
           usage: canAssess.currentUsage,
-          limits: canAssess.limits
+          limits: canAssess.limits,
         },
         { status: 403 }
       );
@@ -589,7 +591,8 @@ export async function POST(
       console.log('❌ Story not completed:', storySession.status);
       return NextResponse.json(
         {
-          error: 'Story not completed. Please finish writing before requesting assessment.',
+          error:
+            'Story not completed. Please finish writing before requesting assessment.',
         },
         { status: 400 }
       );
@@ -602,13 +605,19 @@ export async function POST(
       console.log('🔄 Re-assessment requested for session:', actualSessionId);
       console.log('ℹ️ Using simple pool system - no per-story limits');
     } else {
-      console.log('🆕 Initial assessment requested for session:', actualSessionId);
+      console.log(
+        '🆕 Initial assessment requested for session:',
+        actualSessionId
+      );
     }
 
     // Get story content based on story type
     let storyContent = '';
 
-    if ((storySession as any).isUploadedForAssessment && (storySession as any).aiOpening) {
+    if (
+      (storySession as any).isUploadedForAssessment &&
+      (storySession as any).aiOpening
+    ) {
       // For uploaded stories, content is in aiOpening
       storyContent = (storySession as any).aiOpening;
       console.log('📄 Processing uploaded story content');
@@ -623,7 +632,8 @@ export async function POST(
       if (turns.length === 0) {
         return NextResponse.json(
           {
-            error: 'No story content found. Please write some content before requesting assessment.',
+            error:
+              'No story content found. Please write some content before requesting assessment.',
           },
           { status: 400 }
         );
@@ -646,7 +656,10 @@ export async function POST(
 
     if (!storyContent.trim()) {
       return NextResponse.json(
-        { error: 'Story content is empty. Please add content before assessment.' },
+        {
+          error:
+            'Story content is empty. Please add content before assessment.',
+        },
         { status: 400 }
       );
     }
@@ -655,21 +668,30 @@ export async function POST(
 
     // CORRECTED: Use exact method signature from your existing code
     console.log('🤖 Starting AI assessment...');
-    
+
     const assessment = await AIAssessmentEngine.assessStory(
-      storyContent,        // Parameter 1: storyContent
-      actualSessionId,     // Parameter 2: sessionId  
-      userSession.user.id  // Parameter 3: userId
+      storyContent, // Parameter 1: storyContent
+      actualSessionId, // Parameter 2: sessionId
+      userSession.user.id // Parameter 3: userId
     );
 
     console.log('✅ Assessment completed successfully');
     console.log(`📈 Overall Score: ${assessment.overallScore}%`);
-    console.log(`🔍 Plagiarism Score: ${assessment.integrityAnalysis.originalityScore}%`);
-    console.log(`🤖 AI Detection Score: ${assessment.integrityAnalysis.aiDetectionResult.overallScore}%`);
-    console.log(`⚠️ Integrity Risk: ${assessment.integrityAnalysis.integrityRisk}`);
+    console.log(
+      `🔍 Plagiarism Score: ${assessment.integrityAnalysis.originalityScore}%`
+    );
+    console.log(
+      `🤖 AI Detection Score: ${assessment.integrityAnalysis.aiDetectionResult.overallScore}%`
+    );
+    console.log(
+      `⚠️ Integrity Risk: ${assessment.integrityAnalysis.integrityRisk}`
+    );
 
     // POOL SYSTEM: Record assessment request (any type - upload or re-assess)
-  await UsageManager.incrementAssessmentRequest(userSession.user.id, actualSessionId);
+    await UsageManager.incrementAssessmentRequest(
+      userSession.user.id,
+      actualSessionId
+    );
 
     // Prepare assessment data for storage (matching your existing structure)
     const assessmentData = {
@@ -691,7 +713,8 @@ export async function POST(
 
       // Advanced fields
       plagiarismScore: assessment.integrityAnalysis.originalityScore,
-      aiDetectionScore: assessment.integrityAnalysis.aiDetectionResult.overallScore,
+      aiDetectionScore:
+        assessment.integrityAnalysis.aiDetectionResult.overallScore,
       integrityRisk: assessment.integrityAnalysis.integrityRisk,
       integrityAnalysis: assessment.integrityAnalysis,
       recommendations: assessment.recommendations,
@@ -707,9 +730,12 @@ export async function POST(
       grammarScore: assessment.categoryScores.grammar,
       creativityScore: assessment.categoryScores.creativity,
       lastAssessedAt: new Date(),
-      status: assessment.integrityAnalysis.integrityRisk === 'critical' ? 'flagged' : 'completed',
+      status:
+        assessment.integrityAnalysis.integrityRisk === 'critical'
+          ? 'flagged'
+          : 'completed',
       // POOL SYSTEM: Just increment total attempts, no per-story restrictions
-      $inc: { assessmentAttempts: 1 }
+      $inc: { assessmentAttempts: 1 },
     };
 
     await StorySession.findByIdAndUpdate(actualSessionId, updateData);
@@ -724,16 +750,21 @@ export async function POST(
       isReassessment,
       attemptsUsed: ((storySession as any).assessmentAttempts || 0) + 1,
       // POOL SYSTEM: Can reassess any story as long as pool has credits
-      canRequestMore: canAssess.currentUsage?.assessmentRequests < canAssess.limits?.assessmentRequests,
-      poolCreditsRemaining: canAssess.limits?.assessmentRequests - (canAssess.currentUsage?.assessmentRequests || 0) - 1
+      canRequestMore:
+        canAssess.currentUsage?.assessmentRequests <
+        canAssess.limits?.assessmentRequests,
+      poolCreditsRemaining:
+        canAssess.limits?.assessmentRequests -
+        (canAssess.currentUsage?.assessmentRequests || 0) -
+        1,
     });
-
   } catch (error) {
     console.error('❌ Assessment error:', error);
     return NextResponse.json(
-      { 
-        error: 'Assessment service temporarily unavailable. Please try again later.',
-        details: error instanceof Error ? error.message : 'Unknown error'
+      {
+        error:
+          'Assessment service temporarily unavailable. Please try again later.',
+        details: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
     );
@@ -758,7 +789,9 @@ export async function GET(
     }
 
     // Check if user can request assessment using pool system
-    const canAssess = await UsageManager.canRequestAssessment(userSession.user.id);
+    const canAssess = await UsageManager.canRequestAssessment(
+      userSession.user.id
+    );
 
     // Find the story
     let storySession = null;
@@ -791,13 +824,17 @@ export async function GET(
       isReassessment: hasAssessment,
       usage: canAssess.currentUsage,
       limits: canAssess.limits,
-      reason: !canAssess.allowed ? canAssess.reason : 
-              !isCompleted ? 'Story must be completed before assessment' : undefined,
+      reason: !canAssess.allowed
+        ? canAssess.reason
+        : !isCompleted
+          ? 'Story must be completed before assessment'
+          : undefined,
       upgradeRequired: canAssess.upgradeRequired,
       currentAttempts: (storySession as any).assessmentAttempts || 0,
-      poolCreditsRemaining: canAssess.limits?.assessmentRequests - (canAssess.currentUsage?.assessmentRequests || 0)
+      poolCreditsRemaining:
+        canAssess.limits?.assessmentRequests -
+        (canAssess.currentUsage?.assessmentRequests || 0),
     });
-
   } catch (error) {
     console.error('❌ Error checking assessment eligibility:', error);
     return NextResponse.json(
