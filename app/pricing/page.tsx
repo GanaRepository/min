@@ -110,7 +110,7 @@ export default function PricingPage() {
               <div className="bg-green-500/20 rounded-full p-4 w-16 h-16 flex items-center justify-center mx-auto mb-4">
                 <BookOpen className="text-green-400" size={24} />
               </div>
-              <h3 className="text-white font-medium mb-2">3 Story Creations</h3>
+              <h3 className="text-white  mb-2">3 Story Creations</h3>
               <p className="text-gray-400">
                 Write 3 original stories per month
               </p>
@@ -120,7 +120,7 @@ export default function PricingPage() {
               <div className="bg-blue-500/20 rounded-full p-4 w-16 h-16 flex items-center justify-center mx-auto mb-4">
                 <FileText className="text-blue-400" size={24} />
               </div>
-              <h3 className="text-white font-medium mb-2">3 AI Assessments</h3>
+              <h3 className="text-white  mb-2">3 AI Assessments</h3>
               <p className="text-gray-400">
                 Upload existing stories for professional feedback
               </p>
@@ -130,7 +130,7 @@ export default function PricingPage() {
               <div className="bg-purple-500/20 rounded-full p-4 w-16 h-16 flex items-center justify-center mx-auto mb-4">
                 <Trophy className="text-purple-400" size={24} />
               </div>
-              <h3 className="text-white font-medium mb-2">
+              <h3 className="text-white  mb-2">
                 3 Competition Entries
               </h3>
               <p className="text-gray-400">
@@ -140,7 +140,7 @@ export default function PricingPage() {
           </div>
 
           <div className="bg-gray-800/50  p-6">
-            <h4 className="text-white font-medium mb-4">What's Included:</h4>
+            <h4 className="text-white  mb-4">What's Included:</h4>
             <div className="grid md:grid-cols-2 gap-3 text-left">
               {[
                 'Advanced AI writing companion',
@@ -238,7 +238,7 @@ export default function PricingPage() {
             <button
               onClick={() => handlePurchase('story_pack')}
               disabled={loading === 'story_pack'}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 border-2 border-blue-500 transition-colors font-medium text-lg flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 border-2 border-blue-500 transition-colors  text-lg flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading === 'story_pack' ? (
                 <>
@@ -317,7 +317,7 @@ export default function PricingPage() {
                   session ? '/children-dashboard/my-stories' : '/login/child'
                 )
               }
-              className="w-full bg-purple-600 hover:bg-purple-700 text-white py-3 px-6 border-2 border-purple-500 transition-colors font-medium text-lg flex items-center justify-center gap-2"
+              className="w-full bg-purple-600 hover:bg-purple-700 text-white py-3 px-6 border-2 border-purple-500 transition-colors  text-lg flex items-center justify-center gap-2"
             >
               <BookOpen size={20} />
               {session ? 'View My Stories' : 'Login to Publish'}
@@ -346,7 +346,7 @@ export default function PricingPage() {
 
           <div className="grid md:grid-cols-3 gap-6 mb-8">
             <div className="bg-gray-800/50  p-6">
-              <h3 className="text-white font-medium mb-3">Individual Books</h3>
+              <h3 className="text-white  mb-3">Individual Books</h3>
               <p className="text-gray-300 text-sm mb-4">
                 Custom printed book featuring your child's story with
                 professional layout and cover design.
@@ -355,7 +355,7 @@ export default function PricingPage() {
             </div>
 
             <div className="bg-gray-800/50  p-6">
-              <h3 className="text-white font-medium mb-3">Class Collections</h3>
+              <h3 className="text-white  mb-3">Class Collections</h3>
               <p className="text-gray-300 text-sm mb-4">
                 Compilation books featuring stories from an entire classroom.
                 Great for schools!
@@ -364,7 +364,7 @@ export default function PricingPage() {
             </div>
 
             <div className="bg-gray-800/50  p-6">
-              <h3 className="text-white font-medium mb-3">
+              <h3 className="text-white  mb-3">
                 Competition Winners
               </h3>
               <p className="text-gray-300 text-sm mb-4">
@@ -377,7 +377,7 @@ export default function PricingPage() {
 
           <button
             onClick={() => router.push('/contact-us')}
-            className="bg-yellow-600 hover:bg-yellow-700 text-white px-8 py-3 border-2 border-yellow-500 transition-colors font-medium text-lg"
+            className="bg-yellow-600 hover:bg-yellow-700 text-white px-8 py-3 border-2 border-yellow-500 transition-colors  text-lg"
           >
             Request Book Quote
           </button>
@@ -427,7 +427,7 @@ export default function PricingPage() {
               transition={{ duration: 0.4, delay: index * 0.1 }}
               className="bg-gray-800/50  p-6 border border-gray-700"
             >
-              <h3 className="text-white font-medium mb-3">{faq.question}</h3>
+              <h3 className="text-white  mb-3">{faq.question}</h3>
               <p className="text-gray-300 leading-relaxed">{faq.answer}</p>
             </motion.div>
           ))}

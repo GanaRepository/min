@@ -56,14 +56,14 @@ export default function GoalsTracker({ goals }: GoalsTrackerProps) {
       transition={{ delay: 0.8 }}
       className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-6"
     >
-      <h3 className="text-white font-semibold text-lg mb-6 flex items-center">
+      <h3 className="text-white  text-lg mb-6 flex items-center">
         🎯 Goals & Challenges
       </h3>
 
       <div className="space-y-6">
         {/* Current Goals */}
         <div>
-          <h4 className="text-green-400 font-medium mb-4">Current Goals:</h4>
+          <h4 className="text-green-400  mb-4">Current Goals:</h4>
           <div className="space-y-4">
             {goals.map((goal, index) => (
               <motion.div
@@ -76,7 +76,7 @@ export default function GoalsTracker({ goals }: GoalsTrackerProps) {
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center space-x-3">
                     <span className="text-xl">{getGoalIcon(goal.type)}</span>
-                    <h5 className="text-white font-medium">{goal.title}</h5>
+                    <h5 className="text-white ">{goal.title}</h5>
                   </div>
                   <div className="flex items-center space-x-2">
                     {goal.progress >= goal.target ? (
@@ -84,7 +84,7 @@ export default function GoalsTracker({ goals }: GoalsTrackerProps) {
                     ) : (
                       <Clock className="w-5 h-5 text-yellow-400" />
                     )}
-                    <span className="text-white font-medium">
+                    <span className="text-white ">
                       {goal.progress}/{goal.target}
                     </span>
                   </div>
@@ -111,7 +111,7 @@ export default function GoalsTracker({ goals }: GoalsTrackerProps) {
 
         {/* Weekly Challenges */}
         <div>
-          <h4 className="text-purple-400 font-medium mb-4">
+          <h4 className="text-purple-400  mb-4">
             Weekly Challenges:
           </h4>
           <div className="space-y-3">
@@ -130,7 +130,7 @@ export default function GoalsTracker({ goals }: GoalsTrackerProps) {
                   </span>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <span className="text-purple-400 text-sm font-medium">
+                  <span className="text-purple-400 text-sm ">
                     {challenge.progress}/{challenge.target}
                   </span>
                   {challenge.progress >= challenge.target && (

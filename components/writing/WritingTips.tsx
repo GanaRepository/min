@@ -62,7 +62,7 @@ export default function WritingTips({
       <div className="flex items-start space-x-3">
         <Lightbulb className="w-5 h-5 text-yellow-400 mt-0.5 flex-shrink-0" />
         <div>
-          <h4 className="text-yellow-300 font-medium text-sm mb-1">
+          <h4 className="text-yellow-300  text-sm mb-1">
             💡 Writing Tip for Turn {turnNumber}
           </h4>
           <p className="text-gray-200 text-sm leading-relaxed">{randomTip}</p>

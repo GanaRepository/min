@@ -49,7 +49,7 @@ export default function SkillProgress({
       transition={{ delay: 0.4 }}
       className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-6"
     >
-      <h3 className="text-white font-semibold text-lg mb-6 flex items-center">
+      <h3 className="text-white  text-lg mb-6 flex items-center">
         🎯 Skill Development
       </h3>
 
@@ -70,14 +70,14 @@ export default function SkillProgress({
                   <skill.icon className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <h4 className="text-white font-medium">{skill.name}</h4>
+                  <h4 className="text-white ">{skill.name}</h4>
                   <span className="text-green-400 text-sm">
                     {skill.improvement} this month
                   </span>
                 </div>
               </div>
               <div className="text-right">
-                <div className="text-2xl font-bold text-white">
+                <div className="text-2xl  text-white">
                   {skill.score}%
                 </div>
               </div>
@@ -97,7 +97,7 @@ export default function SkillProgress({
 
             {/* Focus areas */}
             <div>
-              <h5 className="text-gray-300 text-sm font-medium mb-2">
+              <h5 className="text-gray-300 text-sm  mb-2">
                 Recent Focus:
               </h5>
               <div className="space-y-1">
@@ -108,7 +108,7 @@ export default function SkillProgress({
                   >
                     <span className="text-gray-300">• {item.item}</span>
                     <span
-                      className={`text-xs font-medium ${
+                      className={`text-xs  ${
                         item.status === 'completed'
                           ? 'text-green-400'
                           : item.status === 'excellent'

@@ -258,7 +258,7 @@ export default function AssessmentModal({
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-700">
           <div>
-            <h2 className="text-2xl font-bold text-white flex items-center gap-2">
+            <h2 className="text-2xl  text-white flex items-center gap-2">
               <Brain className="text-purple-400" />
               Story Assessment
             </h2>
@@ -280,7 +280,7 @@ export default function AssessmentModal({
                 className={`p-6 rounded-2xl border ${getScoreBgColor(assessment.overallScore)}`}
               >
                 <div
-                  className={`text-4xl font-bold ${getScoreColor(assessment.overallScore)}`}
+                  className={`text-4xl  ${getScoreColor(assessment.overallScore)}`}
                 >
                   {assessment.overallScore}%
                 </div>
@@ -290,7 +290,7 @@ export default function AssessmentModal({
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
                   <Star className="w-5 h-5 text-yellow-400" />
-                  <span className="text-white font-medium">
+                  <span className="text-white ">
                     {assessment.overallScore >= 90
                       ? 'Excellent Work!'
                       : assessment.overallScore >= 80
@@ -308,7 +308,7 @@ export default function AssessmentModal({
                     {getIntegrityIcon(
                       assessment.integrityAnalysis.integrityRisk
                     )}
-                    <span className="text-sm font-medium">
+                    <span className="text-sm ">
                       Integrity:{' '}
                       {assessment.integrityAnalysis.integrityRisk.toUpperCase()}
                     </span>
@@ -328,7 +328,7 @@ export default function AssessmentModal({
                   <button
                     onClick={handlePublishStory}
                     disabled={isPublishing}
-                    className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 disabled:from-green-400 disabled:to-emerald-400 text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 transition-all"
+                    className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 disabled:from-green-400 disabled:to-emerald-400 text-white px-6 py-3 rounded-xl  flex items-center gap-2 transition-all"
                   >
                     {isPublishing ? (
                       <>
@@ -348,7 +348,7 @@ export default function AssessmentModal({
                 <button
                   onClick={handleReassess}
                   disabled={isReassessing}
-                  className="bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white px-6 py-3 rounded-xl font-medium flex items-center gap-2 transition-all"
+                  className="bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white px-6 py-3 rounded-xl  flex items-center gap-2 transition-all"
                 >
                   {isReassessing ? (
                     <>
@@ -371,7 +371,7 @@ export default function AssessmentModal({
         <div className="flex border-b border-gray-700">
           <button
             onClick={() => setActiveTab('overview')}
-            className={`px-6 py-4 font-medium transition-colors ${
+            className={`px-6 py-4  transition-colors ${
               activeTab === 'overview'
                 ? 'border-b-2 border-purple-400 text-purple-400 bg-purple-500/10'
                 : 'text-gray-400 hover:text-white hover:bg-gray-800/50'
@@ -381,7 +381,7 @@ export default function AssessmentModal({
           </button>
           <button
             onClick={() => setActiveTab('detailed')}
-            className={`px-6 py-4 font-medium transition-colors ${
+            className={`px-6 py-4  transition-colors ${
               activeTab === 'detailed'
                 ? 'border-b-2 border-purple-400 text-purple-400 bg-purple-500/10'
                 : 'text-gray-400 hover:text-white hover:bg-gray-800/50'
@@ -392,7 +392,7 @@ export default function AssessmentModal({
           {assessment.integrityAnalysis && (
             <button
               onClick={() => setActiveTab('integrity')}
-              className={`px-6 py-4 font-medium transition-colors ${
+              className={`px-6 py-4  transition-colors ${
                 activeTab === 'integrity'
                   ? 'border-b-2 border-purple-400 text-purple-400 bg-purple-500/10'
                   : 'text-gray-400 hover:text-white hover:bg-gray-800/50'
@@ -409,7 +409,7 @@ export default function AssessmentModal({
             <div className="p-6 space-y-6">
               {/* Category Scores Grid */}
               <div>
-                <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                <h3 className="text-lg  text-white mb-4 flex items-center gap-2">
                   <BarChart3 className="text-blue-400" />
                   Category Scores
                 </h3>
@@ -422,12 +422,12 @@ export default function AssessmentModal({
                       <div className="flex items-center justify-between mb-2">
                         <Icon size={20} className={getScoreColor(score)} />
                         <span
-                          className={`text-2xl font-bold ${getScoreColor(score)}`}
+                          className={`text-2xl  ${getScoreColor(score)}`}
                         >
                           {score}%
                         </span>
                       </div>
-                      <div className="text-sm text-gray-300 font-medium">
+                      <div className="text-sm text-gray-300 ">
                         {label}
                       </div>
                       <div className="w-full bg-gray-700 rounded-full h-2 mt-2">
@@ -451,7 +451,7 @@ export default function AssessmentModal({
 
               {/* Quick Feedback */}
               <div>
-                <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                <h3 className="text-lg  text-white mb-4 flex items-center gap-2">
                   <Award className="text-yellow-400" />
                   Teacher's Comment
                 </h3>
@@ -465,7 +465,7 @@ export default function AssessmentModal({
               {/* Strengths and Improvements */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div>
-                  <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                  <h3 className="text-lg  text-white mb-4 flex items-center gap-2">
                     <CheckCircle className="text-green-400" />
                     Strengths
                   </h3>
@@ -488,7 +488,7 @@ export default function AssessmentModal({
                 </div>
 
                 <div>
-                  <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                  <h3 className="text-lg  text-white mb-4 flex items-center gap-2">
                     <Target className="text-orange-400" />
                     Areas for Improvement
                   </h3>
@@ -511,7 +511,7 @@ export default function AssessmentModal({
               {/* Educational Insights */}
               {assessment.educationalInsights && (
                 <div>
-                  <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                  <h3 className="text-lg  text-white mb-4 flex items-center gap-2">
                     <Lightbulb className="text-purple-400" />
                     Educational Insights
                   </h3>
@@ -530,14 +530,14 @@ export default function AssessmentModal({
               {/* Recommendations */}
               {assessment.recommendations && (
                 <div>
-                  <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                  <h3 className="text-lg  text-white mb-4 flex items-center gap-2">
                     <Lightbulb className="text-yellow-400" />
                     Personalized Recommendations
                   </h3>
                   <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     {assessment.recommendations.immediate && (
                       <div>
-                        <h4 className="text-sm font-semibold text-red-300 mb-3 uppercase tracking-wide">
+                        <h4 className="text-sm  text-red-300 mb-3 uppercase tracking-wide">
                           Immediate Actions
                         </h4>
                         <div className="space-y-2">
@@ -557,7 +557,7 @@ export default function AssessmentModal({
 
                     {assessment.recommendations.longTerm && (
                       <div>
-                        <h4 className="text-sm font-semibold text-blue-300 mb-3 uppercase tracking-wide">
+                        <h4 className="text-sm  text-blue-300 mb-3 uppercase tracking-wide">
                           Long-term Goals
                         </h4>
                         <div className="space-y-2">
@@ -577,7 +577,7 @@ export default function AssessmentModal({
 
                     {assessment.recommendations.practiceExercises && (
                       <div>
-                        <h4 className="text-sm font-semibold text-green-300 mb-3 uppercase tracking-wide">
+                        <h4 className="text-sm  text-green-300 mb-3 uppercase tracking-wide">
                           Practice Exercises
                         </h4>
                         <div className="space-y-2">
@@ -601,18 +601,18 @@ export default function AssessmentModal({
               {/* Progress Tracking */}
               {assessment.progressTracking && (
                 <div>
-                  <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                  <h3 className="text-lg  text-white mb-4 flex items-center gap-2">
                     <TrendingUp className="text-green-400" />
                     Progress Tracking
                   </h3>
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     {assessment.progressTracking.scoreChange && (
                       <div className="bg-gray-800/50 border border-gray-700/50 rounded-lg p-4">
-                        <h4 className="text-white font-medium mb-2">
+                        <h4 className="text-white  mb-2">
                           Score Change
                         </h4>
                         <div
-                          className={`text-2xl font-bold ${
+                          className={`text-2xl  ${
                             assessment.progressTracking.scoreChange > 0
                               ? 'text-green-400'
                               : 'text-red-400'
@@ -634,7 +634,7 @@ export default function AssessmentModal({
                       assessment.progressTracking.strengthsGained.length >
                         0 && (
                         <div className="bg-gray-800/50 border border-gray-700/50 rounded-lg p-4">
-                          <h4 className="text-white font-medium mb-2">
+                          <h4 className="text-white  mb-2">
                             New Strengths
                           </h4>
                           <div className="space-y-1">
@@ -658,7 +658,7 @@ export default function AssessmentModal({
 
               {/* Detailed Score Breakdown */}
               <div>
-                <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                <h3 className="text-lg  text-white mb-4 flex items-center gap-2">
                   <BarChart3 className="text-blue-400" />
                   Detailed Score Analysis
                 </h3>
@@ -671,12 +671,12 @@ export default function AssessmentModal({
                       <div className="flex items-center justify-between mb-3">
                         <div className="flex items-center gap-3">
                           <Icon size={20} className={getScoreColor(score)} />
-                          <span className="text-white font-medium">
+                          <span className="text-white ">
                             {label}
                           </span>
                         </div>
                         <span
-                          className={`text-xl font-bold ${getScoreColor(score)}`}
+                          className={`text-xl  ${getScoreColor(score)}`}
                         >
                           {score}%
                         </span>
@@ -719,7 +719,7 @@ export default function AssessmentModal({
               >
                 <div className="flex items-center gap-3 mb-4">
                   {getIntegrityIcon(assessment.integrityAnalysis.integrityRisk)}
-                  <h3 className="text-xl font-bold">
+                  <h3 className="text-xl ">
                     Integrity Risk:{' '}
                     {assessment.integrityAnalysis.integrityRisk.toUpperCase()}
                   </h3>
@@ -740,7 +740,7 @@ export default function AssessmentModal({
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-6 text-center">
                   <Shield className="w-8 h-8 text-green-400 mx-auto mb-3" />
-                  <div className="text-3xl font-bold text-green-400 mb-1">
+                  <div className="text-3xl  text-green-400 mb-1">
                     {assessment.integrityAnalysis.originalityScore}%
                   </div>
                   <div className="text-sm text-green-300">
@@ -753,7 +753,7 @@ export default function AssessmentModal({
 
                 <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-6 text-center">
                   <Brain className="w-8 h-8 text-blue-400 mx-auto mb-3" />
-                  <div className="text-3xl font-bold text-blue-400 mb-1">
+                  <div className="text-3xl  text-blue-400 mb-1">
                     {assessment.integrityAnalysis.aiDetectionScore}%
                   </div>
                   <div className="text-sm text-blue-300">
@@ -766,7 +766,7 @@ export default function AssessmentModal({
 
                 <div className="bg-purple-500/10 border border-purple-500/30 rounded-lg p-6 text-center">
                   <Award className="w-8 h-8 text-purple-400 mx-auto mb-3" />
-                  <div className="text-3xl font-bold text-purple-400 mb-1">
+                  <div className="text-3xl  text-purple-400 mb-1">
                     {100 - assessment.integrityAnalysis.plagiarismScore}%
                   </div>
                   <div className="text-sm text-purple-300">
@@ -781,7 +781,7 @@ export default function AssessmentModal({
               {/* Detailed Analysis */}
               {assessment.integrityAnalysis.plagiarismResult && (
                 <div>
-                  <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                  <h3 className="text-lg  text-white mb-4 flex items-center gap-2">
                     <Shield className="text-green-400" />
                     Plagiarism Analysis
                   </h3>
@@ -791,13 +791,13 @@ export default function AssessmentModal({
                         <div className="text-sm text-gray-400">
                           Detection Score
                         </div>
-                        <div className="text-xl font-bold text-white">
+                        <div className="text-xl  text-white">
                           {assessment.integrityAnalysis.plagiarismResult.score}%
                         </div>
                       </div>
                       <div>
                         <div className="text-sm text-gray-400">Risk Level</div>
-                        <div className="text-xl font-bold text-white">
+                        <div className="text-xl  text-white">
                           {
                             assessment.integrityAnalysis.plagiarismResult
                               .riskLevel
@@ -825,7 +825,7 @@ export default function AssessmentModal({
 
               {assessment.integrityAnalysis.aiDetectionResult && (
                 <div>
-                  <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                  <h3 className="text-lg  text-white mb-4 flex items-center gap-2">
                     <Brain className="text-blue-400" />
                     AI Detection Analysis
                   </h3>
@@ -835,7 +835,7 @@ export default function AssessmentModal({
                         <div className="text-sm text-gray-400">
                           Overall Score
                         </div>
-                        <div className="text-xl font-bold text-white">
+                        <div className="text-xl  text-white">
                           {
                             assessment.integrityAnalysis.aiDetectionResult
                               .overallScore
@@ -845,7 +845,7 @@ export default function AssessmentModal({
                       </div>
                       <div>
                         <div className="text-sm text-gray-400">Likelihood</div>
-                        <div className="text-xl font-bold text-white">
+                        <div className="text-xl  text-white">
                           {
                             assessment.integrityAnalysis.aiDetectionResult
                               .likelihood

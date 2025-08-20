@@ -124,7 +124,7 @@
 //             <div className="flex items-center gap-3">
 //               <CheckCircle className="w-5 h-5 text-green-600" />
 //               <div className="flex-1">
-//                 <h4 className="font-semibold text-purple-800">Story Pack Active!</h4>
+//                 <h4 className=" text-purple-800">Story Pack Active!</h4>
 //                 <div className="flex items-center gap-2 text-sm text-purple-700">
 //                   <Clock className="w-4 h-4" />
 //                   <span>{usageStats.daysRemaining} days remaining</span>
@@ -142,8 +142,8 @@
 //         {/* Freestyle Stories */}
 //         <div className="space-y-2">
 //           <div className="flex justify-between items-center">
-//             <span className="text-sm font-medium text-gray-700">Freestyle Stories</span>
-//             <span className="text-sm font-semibold text-gray-600">
+//             <span className="text-sm  text-gray-700">Freestyle Stories</span>
+//             <span className="text-sm  text-gray-600">
 //               {usageStats.freestyleStories.used}/{usageStats.freestyleStories.limit}
 //             </span>
 //           </div>
@@ -159,8 +159,8 @@
 //         {/* Assessment Requests */}
 //         <div className="space-y-2">
 //           <div className="flex justify-between items-center">
-//             <span className="text-sm font-medium text-gray-700">AI Assessments</span>
-//             <span className="text-sm font-semibold text-gray-600">
+//             <span className="text-sm  text-gray-700">AI Assessments</span>
+//             <span className="text-sm  text-gray-600">
 //               {usageStats.assessmentRequests.used}/{usageStats.assessmentRequests.limit}
 //             </span>
 //           </div>
@@ -176,8 +176,8 @@
 //         {/* Competition Entries */}
 //         <div className="space-y-2">
 //           <div className="flex justify-between items-center">
-//             <span className="text-sm font-medium text-gray-700">Competition Entries</span>
-//             <span className="text-sm font-semibold text-gray-600">
+//             <span className="text-sm  text-gray-700">Competition Entries</span>
+//             <span className="text-sm  text-gray-600">
 //               {usageStats.competitionEntries.used}/{usageStats.competitionEntries.limit}
 //             </span>
 //           </div>
@@ -196,7 +196,7 @@
 //             <div className="flex items-start gap-3">
 //               <Crown className="w-5 h-5 text-purple-600 mt-0.5 flex-shrink-0" />
 //               <div className="flex-1">
-//                 <h4 className="font-semibold text-purple-800 mb-1">
+//                 <h4 className=" text-purple-800 mb-1">
 //                   Unlock More Stories
 //                 </h4>
 //                 <p className="text-sm text-purple-700 mb-3">
@@ -220,7 +220,7 @@
 //           <div className="flex items-start gap-2">
 //             <Info className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" />
 //             <div className="text-xs text-blue-700">
-//               <p className="font-medium mb-1">Usage Tips:</p>
+//               <p className=" mb-1">Usage Tips:</p>
 //               <ul className="space-y-1">
 //                 <li>• FREE limits reset monthly on the 1st</li>
 //                 <li>• Story Pack lasts exactly 30 days from purchase</li>
@@ -376,7 +376,7 @@ export default function UsageStatsCard({
             <div className="flex items-center gap-3">
               <CheckCircle className="w-5 h-5 text-green-400" />
               <div className="flex-1">
-                <h4 className="font-semibold text-green-200">
+                <h4 className=" text-green-200">
                   Story Pack Active!
                 </h4>
                 <div className="flex items-center gap-2 text-sm text-green-300">
@@ -397,10 +397,10 @@ export default function UsageStatsCard({
         {/* Freestyle Stories */}
         <div className="space-y-2">
           <div className="flex justify-between items-center">
-            <span className="text-sm font-medium text-gray-300">
+            <span className="text-sm  text-gray-300">
               Freestyle Stories
             </span>
-            <span className="text-sm font-semibold text-gray-200">
+            <span className="text-sm  text-gray-200">
               {usageStats.freestyleStories.used}/
               {usageStats.freestyleStories.limit}
             </span>
@@ -422,10 +422,10 @@ export default function UsageStatsCard({
         {/* Assessment Requests */}
         <div className="space-y-2">
           <div className="flex justify-between items-center">
-            <span className="text-sm font-medium text-gray-300">
+            <span className="text-sm  text-gray-300">
               AI Assessments
             </span>
-            <span className="text-sm font-semibold text-gray-200">
+            <span className="text-sm  text-gray-200">
               {usageStats.assessmentRequests.used}/
               {usageStats.assessmentRequests.limit}
             </span>
@@ -447,10 +447,10 @@ export default function UsageStatsCard({
         {/* Competition Entries */}
         <div className="space-y-2">
           <div className="flex justify-between items-center">
-            <span className="text-sm font-medium text-gray-300">
+            <span className="text-sm  text-gray-300">
               Competition Entries
             </span>
-            <span className="text-sm font-semibold text-gray-200">
+            <span className="text-sm  text-gray-200">
               {usageStats.competitionEntries.used}/
               {usageStats.competitionEntries.limit}
             </span>
@@ -475,7 +475,7 @@ export default function UsageStatsCard({
             <div className="flex items-start gap-3">
               <Crown className="w-5 h-5 text-purple-400 mt-0.5 flex-shrink-0" />
               <div className="flex-1">
-                <h4 className="font-semibold text-purple-200 mb-1">
+                <h4 className=" text-purple-200 mb-1">
                   Unlock More Stories
                 </h4>
                 <p className="text-sm text-purple-300 mb-3">
@@ -500,7 +500,7 @@ export default function UsageStatsCard({
           <div className="flex items-start gap-2">
             <Info className="w-4 h-4 text-blue-400 mt-0.5 flex-shrink-0" />
             <div className="text-xs text-blue-300">
-              <p className="font-medium mb-1 text-blue-200">Usage Tips:</p>
+              <p className=" mb-1 text-blue-200">Usage Tips:</p>
               <ul className="space-y-1">
                 <li>• FREE limits reset monthly on the 1st</li>
                 <li>• Story Pack lasts exactly 30 days from purchase</li>

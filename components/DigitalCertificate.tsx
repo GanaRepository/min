@@ -82,7 +82,7 @@ export default function DigitalCertificate({
       >
         {/* Header */}
         <div className="text-center pt-8">
-          <h1 className="text-4xl font-bold text-gray-800 mb-2">
+          <h1 className="text-4xl  text-gray-800 mb-2">
             CERTIFICATE OF ACHIEVEMENT
           </h1>
           <div className="w-32 h-1 bg-yellow-400 mx-auto"></div>
@@ -96,7 +96,7 @@ export default function DigitalCertificate({
           <p className="text-xl text-gray-600 mb-4">This is to certify that</p>
 
           <h2
-            className="text-5xl font-bold text-gray-800 mb-6"
+            className="text-5xl  text-gray-800 mb-6"
             style={{ fontFamily: 'serif' }}
           >
             {winnerData.childName}
@@ -104,7 +104,7 @@ export default function DigitalCertificate({
 
           <p className="text-xl text-gray-600 mb-2">has been awarded</p>
 
-          <h3 className="text-3xl font-semibold text-purple-600 mb-4">
+          <h3 className="text-3xl  text-purple-600 mb-4">
             {getPositionText()}
           </h3>
 
@@ -114,7 +114,7 @@ export default function DigitalCertificate({
 
           <p className="text-lg text-gray-600 mb-2">
             for the story "
-            <span className="font-semibold text-gray-800">
+            <span className=" text-gray-800">
               {winnerData.title}
             </span>
             "
@@ -122,7 +122,7 @@ export default function DigitalCertificate({
 
           <p className="text-lg text-gray-600">
             with a score of{' '}
-            <span className="font-bold text-green-600">
+            <span className=" text-green-600">
               {winnerData.score}%
             </span>
           </p>
@@ -133,7 +133,7 @@ export default function DigitalCertificate({
           <div className="text-center">
             <div className="w-32 h-px bg-gray-400 mb-1"></div>
             <p className="text-sm text-gray-500">Date Awarded</p>
-            <p className="text-sm font-semibold">
+            <p className="text-sm ">
               {new Date().toLocaleDateString()}
             </p>
           </div>
@@ -141,7 +141,7 @@ export default function DigitalCertificate({
           <div className="text-center">
             <div className="w-32 h-px bg-gray-400 mb-1"></div>
             <p className="text-sm text-gray-500">Mintoons Platform</p>
-            <p className="text-sm font-semibold">Writing Competition</p>
+            <p className="text-sm ">Writing Competition</p>
           </div>
         </div>
 
@@ -154,7 +154,7 @@ export default function DigitalCertificate({
 
       <button
         onClick={downloadCertificate}
-        className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
+        className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg  transition-colors"
       >
         <Download size={20} />
         Download Certificate

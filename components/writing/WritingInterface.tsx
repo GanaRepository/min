@@ -60,7 +60,7 @@
 //   return (
 //     <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-6">
 //       <div className="mb-4">
-//         <h3 className="text-white font-semibold text-lg mb-2 flex items-center">
+//         <h3 className="text-white  text-lg mb-2 flex items-center">
 //           ✍️ Your Turn to Write
 //         </h3>
 //         <p className="text-gray-400 text-sm">{turnRequirement.guidance}</p>
@@ -118,7 +118,7 @@
 //         disabled={
 //           !validation.isValid || isSubmitting || session.status === 'completed'
 //         }
-//         className={`w-full flex items-center justify-center space-x-2 py-3 px-6 rounded-lg font-medium transition-all ${
+//         className={`w-full flex items-center justify-center space-x-2 py-3 px-6 rounded-lg  transition-all ${
 //           validation.isValid && !isSubmitting && session.status !== 'completed'
 //             ? 'bg-gradient-to-r from-green-500 to-blue-600 text-white hover:from-green-600 hover:to-blue-700'
 //             : 'bg-gray-600/50 text-gray-400 cursor-not-allowed'
@@ -212,7 +212,7 @@ export default function WritingInterface({
   return (
     <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-6">
       <div className="mb-4">
-        <h3 className="text-white font-semibold text-lg mb-2 flex items-center">
+        <h3 className="text-white  text-lg mb-2 flex items-center">
           ✍️ Your Turn to Write
         </h3>
         <p className="text-gray-400 text-sm">{turnRequirement.guidance}</p>
@@ -266,7 +266,7 @@ export default function WritingInterface({
         disabled={
           !validation.isValid || isSubmitting || session.status === 'completed'
         }
-        className={`w-full flex items-center justify-center space-x-2 py-3 px-6 rounded-lg font-medium transition-all ${
+        className={`w-full flex items-center justify-center space-x-2 py-3 px-6 rounded-lg  transition-all ${
           validation.isValid && !isSubmitting && session.status !== 'completed'
             ? 'bg-gradient-to-r from-green-500 to-blue-600 text-white hover:from-green-600 hover:to-blue-700'
             : 'bg-gray-600/50 text-gray-400 cursor-not-allowed'

@@ -81,7 +81,7 @@
 //       onClick={handlePurchase}
 //       disabled={disabled || loading}
 //       className={`
-//         flex items-center justify-center gap-2 font-medium transition-colors
+//         flex items-center justify-center gap-2  transition-colors
 //         disabled:opacity-50 disabled:cursor-not-allowed
 //         ${sizeClasses[size]}
 //         ${className}
@@ -204,7 +204,7 @@ export default function PurchaseButton({
       onClick={handlePurchase}
       disabled={disabled || loading}
       className={`
-        flex items-center justify-center gap-2 font-medium transition-all
+        flex items-center justify-center gap-2  transition-all
         disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl
         ${sizeClasses[size]}
         ${variantClasses[variant]}

@@ -167,7 +167,7 @@
 //                 {isUserMenuOpen && (
 //                   <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
 //                     <div className="px-4 py-2 border-b border-gray-100">
-//                       <p className="text-sm font-medium text-gray-900">
+//                       <p className="text-sm  text-gray-900">
 //                         {getUserDisplayName()}
 //                       </p>
 //                       <p className="text-xs text-gray-500">
@@ -223,7 +223,7 @@
 //                 {isUserMenuOpen && (
 //                   <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
 //                     <div className="px-4 py-2 border-b border-gray-100">
-//                       <p className="text-sm font-medium text-gray-900">
+//                       <p className="text-sm  text-gray-900">
 //                         {getUserDisplayName()}
 //                       </p>
 //                       <p className="text-xs text-gray-500">
@@ -274,13 +274,13 @@
 //                     className={`w-10 h-10 ${avatarInfo.color} rounded-full flex items-center justify-center text-white`}
 //                   >
 //                     {avatarInfo.icon || (
-//                       <span className="text-lg font-medium">
+//                       <span className="text-lg ">
 //                         {avatarInfo.initial}
 //                       </span>
 //                     )}
 //                   </div>
 //                   <div>
-//                     <p className="font-medium text-gray-900">
+//                     <p className=" text-gray-900">
 //                       {getUserDisplayName()}
 //                     </p>
 //                     <p className="text-xs text-gray-500 capitalize">
@@ -467,7 +467,7 @@ const Navbar = () => {
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-22">
+        <div className="flex justify-between items-center h-20">
           {/* Logo */}
           <div className="flex items-center">
             <Link
@@ -478,8 +478,8 @@ const Navbar = () => {
               <Image
                 src="/min_logo3.png"
                 alt="Mintoons Logo"
-                width={240}
-                height={240}
+                width={150}
+                height={150}
                 priority
               />
             </Link>
@@ -489,7 +489,7 @@ const Navbar = () => {
           <div className="hidden md:flex items-center space-x-8">
             <Link
               href="/"
-              className={`text-lg font-medium transition-all duration-300 hover:text-contact-teal ${
+              className={`text-lg  transition-all duration-300 hover:text-contact-teal ${
                 pathname === '/'
                   ? 'text-contact-teal border-b-2 border-contact-teal pb-1'
                   : isScrolled
@@ -502,7 +502,7 @@ const Navbar = () => {
 
             <Link
               href="/create-stories"
-              className={`text-lg font-medium transition-all duration-300 hover:text-contact-teal ${
+              className={`text-lg  transition-all duration-300 hover:text-contact-teal ${
                 pathname === '/create-stories'
                   ? 'text-contact-teal border-b-2 border-contact-teal pb-1'
                   : isScrolled
@@ -515,7 +515,7 @@ const Navbar = () => {
 
             <Link
               href="/contact-us"
-              className={`text-lg font-medium transition-all duration-300 hover:text-contact-teal ${
+              className={`text-lg  transition-all duration-300 hover:text-contact-teal ${
                 pathname === '/contact-us'
                   ? 'text-contact-teal border-b-2 border-contact-teal pb-1'
                   : isScrolled
@@ -528,7 +528,7 @@ const Navbar = () => {
 
             <Link
               href="/pricing"
-              className={`text-lg font-medium transition-all duration-300 hover:text-contact-teal ${
+              className={`text-lg  transition-all duration-300 hover:text-contact-teal ${
                 pathname === '/pricing'
                   ? 'text-contact-teal border-b-2 border-contact-teal pb-1'
                   : isScrolled
@@ -541,7 +541,7 @@ const Navbar = () => {
 
             <Link
               href="/competitions"
-              className={`text-lg font-medium transition-all duration-300 hover:text-contact-teal ${
+              className={`text-lg  transition-all duration-300 hover:text-contact-teal ${
                 pathname === '/competitions'
                   ? 'text-contact-teal border-b-2 border-contact-teal pb-1'
                   : isScrolled
@@ -564,7 +564,7 @@ const Navbar = () => {
                   }`}
                 >
                   <div
-                    className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold ${avatarInfo.color}`}
+                    className={`w-10 h-10 rounded-full flex items-center justify-center text-white  ${avatarInfo.color}`}
                   >
                     {avatarInfo.initial || avatarInfo.icon}
                   </div>
@@ -579,7 +579,7 @@ const Navbar = () => {
                 {isUserMenuOpen && (
                   <div className="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
                     <div className="px-4 py-3 border-b border-gray-200">
-                      <p className="text-sm font-medium text-gray-900">
+                      <p className="text-sm  text-gray-900">
                         {getUserDisplayName()}
                       </p>
                       <p className="text-sm text-gray-500 capitalize">
@@ -638,7 +638,7 @@ const Navbar = () => {
                 <Link href="/login">
                   <Button
                     variant="ghost"
-                    className={`text-lg font-medium transition-all duration-300 ${
+                    className={`text-lg  transition-all duration-300 ${
                       isScrolled
                         ? 'text-gray-300 hover:text-contact-teal hover:bg-contact-teal/10'
                         : 'text-white hover:text-contact-teal hover:bg-white/10'
@@ -677,7 +677,7 @@ const Navbar = () => {
             <div className="px-2 pt-2 pb-3 space-y-1">
               <Link
                 href="/"
-                className={`block px-3 py-2 text-base font-medium rounded-md transition-colors duration-200 ${
+                className={`block px-3 py-2 text-base  rounded-md transition-colors duration-200 ${
                   pathname === '/'
                     ? 'text-contact-teal bg-contact-teal/20'
                     : 'text-gray-300 hover:text-contact-teal hover:bg-gray-800'
@@ -689,7 +689,7 @@ const Navbar = () => {
 
               <Link
                 href="/create-stories"
-                className={`block px-3 py-2 text-base font-medium rounded-md transition-colors duration-200 ${
+                className={`block px-3 py-2 text-base  rounded-md transition-colors duration-200 ${
                   pathname === '/create-stories'
                     ? 'text-contact-teal bg-contact-teal/20'
                     : 'text-gray-300 hover:text-contact-teal hover:bg-gray-800'
@@ -701,7 +701,7 @@ const Navbar = () => {
 
               <Link
                 href="/contact-us"
-                className={`block px-3 py-2 text-base font-medium rounded-md transition-colors duration-200 ${
+                className={`block px-3 py-2 text-base  rounded-md transition-colors duration-200 ${
                   pathname === '/contact-us'
                     ? 'text-contact-teal bg-contact-teal/20'
                     : 'text-gray-300 hover:text-contact-teal hover:bg-gray-800'
@@ -713,7 +713,7 @@ const Navbar = () => {
 
               <Link
                 href="/pricing"
-                className={`block px-3 py-2 text-base font-medium rounded-md transition-colors duration-200 ${
+                className={`block px-3 py-2 text-base  rounded-md transition-colors duration-200 ${
                   pathname === '/pricing'
                     ? 'text-contact-teal bg-contact-teal/20'
                     : 'text-gray-300 hover:text-contact-teal hover:bg-gray-800'
@@ -725,7 +725,7 @@ const Navbar = () => {
 
               <Link
                 href="/competitions"
-                className={`block px-3 py-2 text-base font-medium rounded-md transition-colors duration-200 ${
+                className={`block px-3 py-2 text-base  rounded-md transition-colors duration-200 ${
                   pathname === '/competitions'
                     ? 'text-contact-teal bg-contact-teal/20'
                     : 'text-gray-300 hover:text-contact-teal hover:bg-gray-800'
@@ -738,7 +738,7 @@ const Navbar = () => {
               {!session && (
                 <Link
                   href="/login"
-                  className="block px-3 py-2 text-base font-medium text-gray-300 hover:text-contact-teal hover:bg-gray-800 rounded-md transition-colors duration-200"
+                  className="block px-3 py-2 text-base  text-gray-300 hover:text-contact-teal hover:bg-gray-800 rounded-md transition-colors duration-200"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   <FiLogIn className="w-5 h-5 mr-2 inline" />
@@ -751,12 +751,12 @@ const Navbar = () => {
               <div className="pt-4 pb-3 border-t border-gray-700">
                 <div className="flex items-center px-5">
                   <div
-                    className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold ${avatarInfo.color}`}
+                    className={`w-10 h-10 rounded-full flex items-center justify-center text-white  ${avatarInfo.color}`}
                   >
                     {avatarInfo.initial || avatarInfo.icon}
                   </div>
                   <div className="ml-3">
-                    <div className="text-base font-medium text-gray-200">
+                    <div className="text-base  text-gray-200">
                       {getUserDisplayName()}
                     </div>
                     <div className="text-sm text-gray-400 capitalize">
@@ -768,7 +768,7 @@ const Navbar = () => {
                   {session.user.role === 'child' && (
                     <Link
                       href="/children-dashboard"
-                      className="block px-3 py-2 text-base font-medium text-gray-300 hover:text-contact-teal hover:bg-gray-800 rounded-md transition-colors duration-200"
+                      className="block px-3 py-2 text-base  text-gray-300 hover:text-contact-teal hover:bg-gray-800 rounded-md transition-colors duration-200"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       Dashboard
@@ -778,7 +778,7 @@ const Navbar = () => {
                   {session.user.role === 'mentor' && (
                     <Link
                       href="/mentor-dashboard"
-                      className="block px-3 py-2 text-base font-medium text-gray-300 hover:text-contact-teal hover:bg-gray-800 rounded-md transition-colors duration-200"
+                      className="block px-3 py-2 text-base  text-gray-300 hover:text-contact-teal hover:bg-gray-800 rounded-md transition-colors duration-200"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       Mentor Dashboard
@@ -788,7 +788,7 @@ const Navbar = () => {
                   {session.user.role === 'admin' && (
                     <Link
                       href="/admin"
-                      className="block px-3 py-2 text-base font-medium text-gray-300 hover:text-contact-teal hover:bg-gray-800 rounded-md transition-colors duration-200"
+                      className="block px-3 py-2 text-base  text-gray-300 hover:text-contact-teal hover:bg-gray-800 rounded-md transition-colors duration-200"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       Admin Panel
@@ -800,7 +800,7 @@ const Navbar = () => {
                       setIsMobileMenuOpen(false);
                       // Handle sign out
                     }}
-                    className="block w-full text-left px-3 py-2 text-base font-medium text-red-400 hover:bg-red-900/20 rounded-md transition-colors duration-200"
+                    className="block w-full text-left px-3 py-2 text-base  text-red-400 hover:bg-red-900/20 rounded-md transition-colors duration-200"
                   >
                     Sign Out
                   </button>

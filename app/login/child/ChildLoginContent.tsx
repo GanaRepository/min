@@ -131,7 +131,7 @@ function ChildLoginContent() {
           {[...Array(50)].map((_, i) => (
             <div
               key={i}
-              className="absolute w-1 h-1 bg-white rounded-full opacity-60"
+              className="absolute w-1 h-1 bg-white  opacity-60"
               style={{
                 left: `${Math.random() * 100}%`,
                 top: `${Math.random() * 100}%`,
@@ -169,16 +169,16 @@ function ChildLoginContent() {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="flex-1 w-full max-w-md min-w-0 mb-8 lg:mb-0"
           >
-            <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-4 sm:p-6 shadow-2xl">
+            <div className="bg-white/10 backdrop-blur-xl border border-white/20  p-4 sm:p-6 shadow-2xl">
               {/* Story showcase with digital effects */}
-              <div className="relative mb-6 rounded-2xl overflow-hidden">
-                <div className="relative w-full h-56 sm:h-64 md:h-72 lg:h-80 bg-gradient-to-br from-purple-500 via-pink-600 to-orange-600 rounded-2xl overflow-hidden">
+              <div className="relative mb-6  overflow-hidden">
+                <div className="relative w-full h-56 sm:h-64 md:h-72 lg:h-80 bg-gradient-to-br from-purple-500 via-pink-600 to-orange-600  overflow-hidden">
                   {/* Child portrait - you can replace with actual image */}
                   <Image
                     src="/kid16.jpg" // Replace with actual child image
                     alt="Young storyteller"
                     fill
-                    className="absolute inset-0 rounded-2xl object-cover"
+                    className="absolute inset-0  object-cover"
                   />
 
                   {/* Digital overlay effects */}
@@ -284,7 +284,7 @@ function ChildLoginContent() {
               <Link href="/login">
                 <Button
                   variant="outline"
-                  className="mb-6 bg-white/10 border-white/20 text-white hover:bg-white/20 m-6 sm:m-8 md:m-10 flex justify-center"
+                  className="mb-6 bg-white/10 border-white/20 text-white hover:bg-gray-300 m-6 sm:m-8 md:m-10 flex justify-center"
                 >
                   <ArrowLeft className="w-4 h-4 mr-2" />
                   Back to options
@@ -306,11 +306,11 @@ function ChildLoginContent() {
                 initial={{ opacity: 0, scale: 0 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.6, delay: 0.6 }}
-                className="inline-flex items-center justify-center w-16 h-16 bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl mb-8"
+                className="inline-flex items-center justify-center w-16 h-16 bg-white/10 backdrop-blur-lg border border-white/20  mb-8"
               >
                 <div className="relative">
                   <BookOpen className="w-8 h-8 text-white" />
-                  <Sparkles className="w-4 h-4 text-orange-300 absolute -top-1 -right-1" />
+            
                 </div>
               </motion.div>
 
@@ -338,7 +338,7 @@ function ChildLoginContent() {
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-red-500/20 backdrop-blur-sm border border-red-500/30 text-red-200 p-2 sm:p-3 rounded-xl mb-4 text-xs sm:text-sm"
+                className="bg-red-500/20 backdrop-blur-sm border border-red-500/30 text-red-200 p-2 sm:p-3  mb-4 text-xs sm:text-sm"
               >
                 {error}
               </motion.div>
@@ -367,7 +367,7 @@ function ChildLoginContent() {
                   onChange={(e) => setEmail(e.target.value.toLowerCase())}
                   required
                   disabled={isLoading}
-                  className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition-all text-xs sm:text-base"
+                  className="w-full px-3 sm:px-4 py-2 sm:py-3  bg-white/10 backdrop-blur-sm border border-white/20 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition-all text-xs sm:text-base"
                 />
               </div>
 
@@ -395,7 +395,7 @@ function ChildLoginContent() {
                     onChange={(e) => setPassword(e.target.value)}
                     required
                     disabled={isLoading}
-                    className="w-full px-3 sm:px-4 py-2 sm:py-3 pr-10 sm:pr-12 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition-all text-xs sm:text-base"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-3 pr-10 sm:pr-12  bg-white/10 backdrop-blur-sm border border-white/20 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition-all text-xs sm:text-base"
                   />
                   <button
                     type="button"
@@ -412,13 +412,13 @@ function ChildLoginContent() {
               <motion.button
                 type="submit"
                 disabled={isLoading}
-                className="w-full bg-white hover:bg-orange-100 text-purple-900 py-3 sm:py-4 px-4 sm:px-6 rounded-xl font-medium transition-all duration-300 backdrop-blur-sm border border-white/30 disabled:opacity-50 disabled:cursor-not-allowed mt-4 sm:mt-6 text-xs sm:text-base"
+                className="w-full bg-white hover:bg-orange-100 text-purple-900 py-3 sm:py-4 px-4 sm:px-6   transition-all duration-300 backdrop-blur-sm border border-white/30 disabled:opacity-50 disabled:cursor-not-allowed mt-4 sm:mt-6 text-xs sm:text-base"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
                 {isLoading ? (
                   <div className="flex items-center justify-center">
-                    <div className="w-5 h-5 border-2 border-purple-900/20 border-t-purple-900 rounded-full animate-spin mr-2" />
+                    <div className="w-5 h-5 border-2 border-purple-900/20 border-t-purple-900  animate-spin mr-2" />
                     Starting your magical journey...
                   </div>
                 ) : (

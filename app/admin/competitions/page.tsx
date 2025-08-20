@@ -481,7 +481,7 @@ export default function AdminCompetitionsPage() {
         {filteredCompetitions.length === 0 ? (
           <div className="bg-gray-800  p-12 shadow-lg border border-gray-700 text-center">
             <Trophy className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-gray-300 mb-2">
+            <h3 className="text-xl  text-gray-300 mb-2">
               No competitions found
             </h3>
             <p className="text-gray-400">
@@ -566,7 +566,7 @@ export default function AdminCompetitionsPage() {
               {/* Winners Section */}
               {competition.winners && competition.winners.length > 0 && (
                 <div className="border-t border-gray-700 pt-4">
-                  <h4 className="font-semibold text-white mb-3 flex items-center">
+                  <h4 className=" text-white mb-3 flex items-center">
                     <Medal className="w-4 h-4 mr-2 text-yellow-400" />
                     Winners
                   </h4>
@@ -664,7 +664,7 @@ export default function AdminCompetitionsPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Competition Info */}
                 <div>
-                  <h3 className="font-semibold text-white mb-3">
+                  <h3 className=" text-white mb-3">
                     Competition Information
                   </h3>
                   <div className="space-y-2 text-sm">
@@ -714,7 +714,7 @@ export default function AdminCompetitionsPage() {
                 {/* Judging Criteria */}
                 {selectedCompetition.judgingCriteria && (
                   <div>
-                    <h3 className="font-semibold text-white mb-3">
+                    <h3 className=" text-white mb-3">
                       Judging Criteria
                     </h3>
                     <div className="space-y-2 text-sm">
@@ -739,7 +739,7 @@ export default function AdminCompetitionsPage() {
               {selectedCompetition.winners &&
                 selectedCompetition.winners.length > 0 && (
                   <div className="mt-6">
-                    <h3 className="font-semibold text-white mb-4">
+                    <h3 className=" text-white mb-4">
                       Competition Winners
                     </h3>
                     <div className="space-y-3">

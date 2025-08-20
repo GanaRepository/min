@@ -27,7 +27,7 @@ export default function ProviderDashboard() {
       animate={{ opacity: 1, y: 0 }}
       className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-6"
     >
-      <h3 className="text-white font-semibold text-lg mb-6 flex items-center">
+      <h3 className="text-white  text-lg mb-6 flex items-center">
         🤖 AI Provider Dashboard
       </h3>
 
@@ -38,7 +38,7 @@ export default function ProviderDashboard() {
             Active Provider:
           </span>
           <p
-            className={`font-medium text-lg ${
+            className={` text-lg ${
               providerInfo.active.includes('Google')
                 ? 'text-green-400'
                 : providerInfo.active.includes('OpenAI')
@@ -75,12 +75,12 @@ export default function ProviderDashboard() {
                       }`}
                     />
                     <div>
-                      <p className="text-white font-medium">{provider.name}</p>
+                      <p className="text-white ">{provider.name}</p>
                       <p className="text-gray-400 text-sm">{provider.model}</p>
                     </div>
                   </div>
                   <span
-                    className={`text-sm font-medium ${
+                    className={`text-sm  ${
                       provider.cost === 'FREE'
                         ? 'text-green-400'
                         : 'text-yellow-400'
@@ -117,7 +117,7 @@ export default function ProviderDashboard() {
 
         {/* Cost Comparison */}
         <div className="bg-gray-700/20 rounded-lg p-4">
-          <h4 className="text-white font-medium mb-3">
+          <h4 className="text-white  mb-3">
             💰 Cost Comparison (per 1M tokens):
           </h4>
           <div className="space-y-2 text-sm">
@@ -125,17 +125,17 @@ export default function ProviderDashboard() {
               <span className="text-green-400">
                 🆓 Google Gemini 1.5 Flash:
               </span>
-              <span className="text-green-400 font-medium">FREE</span>
+              <span className="text-green-400 ">FREE</span>
             </div>
             <div className="flex justify-between">
               <span className="text-blue-400">💰 OpenAI GPT-4o Mini:</span>
-              <span className="text-blue-400 font-medium">~$0.375</span>
+              <span className="text-blue-400 ">~$0.375</span>
             </div>
             <div className="flex justify-between">
               <span className="text-purple-400">
                 💎 Anthropic Claude 3.5 Haiku:
               </span>
-              <span className="text-purple-400 font-medium">~$0.775</span>
+              <span className="text-purple-400 ">~$0.775</span>
             </div>
           </div>
         </div>

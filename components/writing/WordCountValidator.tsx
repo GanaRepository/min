@@ -122,7 +122,7 @@ export default function WordCountValidator({
         animate={{ opacity: 1, y: 0 }}
         className="bg-blue-500/20 border border-blue-500/30 rounded-xl p-4"
       >
-        <h3 className="text-blue-300 font-semibold mb-2 flex items-center">
+        <h3 className="text-blue-300  mb-2 flex items-center">
           <Target className="w-5 h-5 mr-2" />
           Turn {turnNumber} Guidance
         </h3>
@@ -137,7 +137,7 @@ export default function WordCountValidator({
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center space-x-2">
             {getStatusIcon()}
-            <span className="font-semibold">
+            <span className="">
               Word Count: {wordCount} / {WORD_REQUIREMENTS.min}-
               {WORD_REQUIREMENTS.max}
             </span>
@@ -205,7 +205,7 @@ export default function WordCountValidator({
         transition={{ delay: 0.3 }}
         className="bg-purple-500/20 border border-purple-500/30 rounded-xl p-4"
       >
-        <h4 className="text-purple-300 font-semibold mb-2 flex items-center">
+        <h4 className="text-purple-300  mb-2 flex items-center">
           💡 Writing Tips for Turn {turnNumber}
         </h4>
         <ul className="text-purple-200 text-sm space-y-1">

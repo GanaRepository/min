@@ -60,7 +60,7 @@ export default class ErrorBoundary extends Component<Props, State> {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
-              className="text-2xl font-bold text-white mb-4"
+              className="text-2xl  text-white mb-4"
             >
               Oops! Something went wrong
             </motion.h2>
@@ -83,14 +83,14 @@ export default class ErrorBoundary extends Component<Props, State> {
             >
               <button
                 onClick={this.handleRetry}
-                className="w-full flex items-center justify-center space-x-2 bg-green-500 hover:bg-green-600 text-white py-3 px-6 rounded-xl font-medium transition-colors"
+                className="w-full flex items-center justify-center space-x-2 bg-green-500 hover:bg-green-600 text-white py-3 px-6 rounded-xl  transition-colors"
               >
                 <RefreshCw className="w-4 h-4" />
                 <span>Try Again</span>
               </button>
 
               <Link href="/children-dashboard">
-                <button className="w-full flex items-center justify-center space-x-2 bg-gray-600 hover:bg-gray-700 text-white py-3 px-6 rounded-xl font-medium transition-colors">
+                <button className="w-full flex items-center justify-center space-x-2 bg-gray-600 hover:bg-gray-700 text-white py-3 px-6 rounded-xl  transition-colors">
                   <Home className="w-4 h-4" />
                   <span>Go to Dashboard</span>
                 </button>

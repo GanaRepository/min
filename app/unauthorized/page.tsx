@@ -29,7 +29,7 @@ export default function UnauthorizedPage() {
             </div>
           </div>
 
-          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6 text-green-800">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl  mb-4 sm:mb-6 text-green-800">
             Access Denied
           </h1>
 
@@ -40,7 +40,7 @@ export default function UnauthorizedPage() {
             </p>
 
             <div className="p-2 sm:p-3 md:p-4 bg-secondary-50 border border-secondary-200 rounded-md sm:rounded-lg text-left mb-6 sm:mb-8">
-              <h3 className="text-sm sm:text-base md:text-lg font-medium text-secondary-800 mb-1 sm:mb-2">
+              <h3 className="text-sm sm:text-base md:text-lg  text-secondary-800 mb-1 sm:mb-2">
                 Why am I seeing this?
               </h3>
               <ul className="list-disc list-inside text-secondary-700 space-y-1 sm:space-y-2 text-xs sm:text-sm">

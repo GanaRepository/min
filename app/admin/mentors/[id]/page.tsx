@@ -176,7 +176,7 @@ export default function ViewMentor() {
             </div>
             <div>
               <p className="text-sm text-gray-400">Email</p>
-              <p className="text-white font-medium">{mentor.email}</p>
+              <p className="text-white ">{mentor.email}</p>
             </div>
           </div>
 
@@ -186,7 +186,7 @@ export default function ViewMentor() {
             </div>
             <div>
               <p className="text-sm text-gray-400">Assigned Students</p>
-              <p className="text-white font-medium">
+              <p className="text-white ">
                 {mentor.assignedStudents}
               </p>
             </div>
@@ -198,7 +198,7 @@ export default function ViewMentor() {
             </div>
             <div>
               <p className="text-sm text-gray-400">Student Stories</p>
-              <p className="text-white font-medium">{mentor.totalStories}</p>
+              <p className="text-white ">{mentor.totalStories}</p>
             </div>
           </div>
 
@@ -208,7 +208,7 @@ export default function ViewMentor() {
             </div>
             <div>
               <p className="text-sm text-gray-400">Comments Given</p>
-              <p className="text-white font-medium">{mentor.totalComments}</p>
+              <p className="text-white ">{mentor.totalComments}</p>
             </div>
           </div>
         </div>
@@ -287,7 +287,7 @@ export default function ViewMentor() {
               >
                 <div className="flex-1">
                   <Link href={`/admin/users/${student._id}`}>
-                    <h4 className="text-white font-medium hover:text-blue-400 cursor-pointer">
+                    <h4 className="text-white  hover:text-blue-400 cursor-pointer">
                       {student.firstName} {student.lastName}
                     </h4>
                   </Link>

@@ -47,7 +47,7 @@ export default function StoryFilters({
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             onClick={() => onFilterChange(option.value)}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+            className={`px-4 py-2 rounded-lg text-sm  transition-all ${
               activeFilter === option.value
                 ? 'bg-green-500 text-white'
                 : 'text-gray-300 hover:text-white hover:bg-gray-700/50'

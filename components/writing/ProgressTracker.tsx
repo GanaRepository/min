@@ -26,7 +26,7 @@
 // //       animate={{ opacity: 1, y: 0 }}
 // //       className={`bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-6 ${className}`}
 // //     >
-// //       <h3 className="text-white font-semibold text-lg mb-4 flex items-center">
+// //       <h3 className="text-white  text-lg mb-4 flex items-center">
 // //         📊 Story Progress
 // //       </h3>
 
@@ -38,7 +38,7 @@
 // //             <span className="text-sm text-gray-300">Turns</span>
 // //           </div>
 // //           <div className="flex items-center justify-between mb-1">
-// //             <span className="text-white font-medium">
+// //             <span className="text-white ">
 // //               {session.currentTurn - 1}/6 completed
 // //             </span>
 // //             <span className="text-blue-400 text-sm">
@@ -62,7 +62,7 @@
 // //             <span className="text-sm text-gray-300">Words</span>
 // //           </div>
 // //           <div className="flex items-center justify-between mb-1">
-// //             <span className="text-white font-medium">
+// //             <span className="text-white ">
 // //               {session.totalWords}/600 words
 // //             </span>
 // //             <span className="text-green-400 text-sm">
@@ -86,7 +86,7 @@
 // //             <span className="text-sm text-gray-300">AI Calls</span>
 // //           </div>
 // //           <div className="flex items-center justify-between mb-1">
-// //             <span className="text-white font-medium">
+// //             <span className="text-white ">
 // //               {session.apiCallsUsed}/{session.maxApiCalls} used
 // //             </span>
 // //             <span className="text-purple-400 text-sm">
@@ -175,7 +175,7 @@
 //       className={`bg-gray-800/40 backdrop-blur-xl border border-gray-600/40 rounded-xl p-6 ${className}`}
 //     >
 //       <div className="flex items-center justify-between mb-6">
-//         <h2 className="text-white font-semibold text-xl flex items-center">
+//         <h2 className="text-white  text-xl flex items-center">
 //           📊 Story Progress
 //         </h2>
 //         <div className="flex items-center space-x-2">
@@ -193,9 +193,9 @@
 //           <div className="flex items-center justify-between">
 //             <div className="flex items-center space-x-2">
 //               <Clock className="w-5 h-5 text-blue-400" />
-//               <span className="text-gray-300 font-medium">Turns</span>
+//               <span className="text-gray-300 ">Turns</span>
 //             </div>
-//             <span className="text-white font-semibold">
+//             <span className="text-white ">
 //               {session.currentTurn - 1}/6 completed
 //             </span>
 //           </div>
@@ -217,9 +217,9 @@
 //           <div className="flex items-center justify-between">
 //             <div className="flex items-center space-x-2">
 //               <BookOpen className="w-5 h-5 text-green-400" />
-//               <span className="text-gray-300 font-medium">Words</span>
+//               <span className="text-gray-300 ">Words</span>
 //             </div>
-//             <span className="text-white font-semibold">
+//             <span className="text-white ">
 //               {session.totalWords}/600 words
 //             </span>
 //           </div>
@@ -241,9 +241,9 @@
 //           <div className="flex items-center justify-between">
 //             <div className="flex items-center space-x-2">
 //               <Zap className="w-5 h-5 text-purple-400" />
-//               <span className="text-gray-300 font-medium">AI Calls</span>
+//               <span className="text-gray-300 ">AI Calls</span>
 //             </div>
-//             <span className="text-white font-semibold">
+//             <span className="text-white ">
 //               {session.apiCallsUsed || 0}/{session.maxApiCalls || 7} used
 //             </span>
 //           </div>
@@ -268,7 +268,7 @@
 //         transition={{ delay: 0.6 }}
 //         className="mt-6 p-4 bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-500/20 rounded-lg"
 //       >
-//         <p className="text-blue-300 font-medium">
+//         <p className="text-blue-300 ">
 //           {getEncouragementMessage()}
 //         </p>
 //         <p className="text-gray-400 text-sm mt-1">
@@ -354,7 +354,7 @@ export default function ProgressTracker({
       className={`bg-gray-800/40 backdrop-blur-xl border border-gray-600/40 rounded-xl p-6 ${className}`}
     >
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-white font-semibold text-xl flex items-center">
+        <h2 className="text-white  text-xl flex items-center">
           📊 Story Progress
         </h2>
         <div className="flex items-center space-x-2">
@@ -379,9 +379,9 @@ export default function ProgressTracker({
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <Clock className="w-5 h-5 text-blue-400" />
-              <span className="text-gray-300 font-medium">Turns</span>
+              <span className="text-gray-300 ">Turns</span>
             </div>
-            <span className="text-white font-semibold">
+            <span className="text-white ">
               {session.currentTurn - 1}/6 completed
             </span>
           </div>
@@ -401,9 +401,9 @@ export default function ProgressTracker({
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <BookOpen className="w-5 h-5 text-green-400" />
-              <span className="text-gray-300 font-medium">Words</span>
+              <span className="text-gray-300 ">Words</span>
             </div>
-            <span className="text-white font-semibold">
+            <span className="text-white ">
               {session.totalWords}/600 words
             </span>
           </div>
@@ -423,9 +423,9 @@ export default function ProgressTracker({
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <Zap className="w-5 h-5 text-purple-400" />
-              <span className="text-gray-300 font-medium">AI Calls</span>
+              <span className="text-gray-300 ">AI Calls</span>
             </div>
-            <span className="text-white font-semibold">
+            <span className="text-white ">
               {apiCallsUsed}/{maxApiCalls} used
             </span>
           </div>
@@ -452,7 +452,7 @@ export default function ProgressTracker({
         transition={{ delay: 0.6 }}
         className="mt-6 p-4 bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-500/20 rounded-lg"
       >
-        <p className="text-blue-300 font-medium">{getEncouragementMessage()}</p>
+        <p className="text-blue-300 ">{getEncouragementMessage()}</p>
         <p className="text-gray-400 text-sm mt-1">{getWordTarget()}</p>
       </motion.div>
     </motion.div>

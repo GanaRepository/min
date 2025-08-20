@@ -85,7 +85,7 @@ export default function DashboardSidebar({
             <div className="w-8 h-8 bg-gradient-to-br from-green-400 to-blue-500 rounded-lg flex items-center justify-center">
               <Sparkles className="w-5 h-5 text-white" />
             </div>
-            <span className="text-xl font-bold text-white">Mintoons</span>
+            <span className="text-xl  text-white">Mintoons</span>
           </div>
           <button
             onClick={() => setOpen(false)}
@@ -102,7 +102,7 @@ export default function DashboardSidebar({
               <User className="w-5 h-5 text-white" />
             </div>
             <div>
-              <p className="text-sm font-medium text-white">
+              <p className="text-sm  text-white">
                 {session?.user?.firstName} {session?.user?.lastName}
               </p>
               <p className="text-xs text-gray-400">Young Writer</p>
@@ -122,7 +122,7 @@ export default function DashboardSidebar({
                 href={item.href}
                 onClick={() => setOpen(false)}
                 className={`
-                  flex items-center space-x-3 px-3 py-3 text-sm font-medium rounded-lg
+                  flex items-center space-x-3 px-3 py-3 text-sm  rounded-lg
                   ${
                     isActive
                       ? 'bg-green-500/20 text-green-400 border border-green-500/30'
@@ -141,7 +141,7 @@ export default function DashboardSidebar({
         <div className="p-3 border-t border-gray-700">
           <button
             onClick={handleSignOut}
-            className="w-full flex items-center space-x-3 px-3 py-3 text-sm font-medium rounded-lg text-gray-300 hover:text-white hover:bg-red-600/20 mt-1"
+            className="w-full flex items-center space-x-3 px-3 py-3 text-sm  rounded-lg text-gray-300 hover:text-white hover:bg-red-600/20 mt-1"
           >
             <LogOut className="w-5 h-5" />
             <span>Sign Out</span>

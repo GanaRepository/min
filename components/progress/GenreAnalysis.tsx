@@ -25,7 +25,7 @@ export default function GenreAnalysis({ genreBreakdown }: GenreAnalysisProps) {
       transition={{ delay: 0.5 }}
       className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-6"
     >
-      <h3 className="text-white font-semibold text-lg mb-6 flex items-center">
+      <h3 className="text-white  text-lg mb-6 flex items-center">
         📚 Story Genre Analysis
       </h3>
 
@@ -67,7 +67,7 @@ export default function GenreAnalysis({ genreBreakdown }: GenreAnalysisProps) {
 
         {/* Genre List */}
         <div className="w-full lg:w-1/2 space-y-3">
-          <h4 className="text-white font-medium mb-3">Your Favorite Genres:</h4>
+          <h4 className="text-white  mb-3">Your Favorite Genres:</h4>
           {genreBreakdown.map((genre, index) => (
             <motion.div
               key={genre.genre}
@@ -93,7 +93,7 @@ export default function GenreAnalysis({ genreBreakdown }: GenreAnalysisProps) {
                     style={{ backgroundColor: COLORS[index % COLORS.length] }}
                   />
                 </div>
-                <span className="text-white text-sm font-medium w-12 text-right">
+                <span className="text-white text-sm  w-12 text-right">
                   {genre.count} stories
                 </span>
               </div>

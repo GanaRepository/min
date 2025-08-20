@@ -8,11 +8,11 @@
 //         <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-contact-purple to-contact-teal mb-4 font-playfair">
 //           Oops!
 //         </h1>
-//         <p className="text-base sm:text-lg md:text-xl lg:text-2xl mb-8 text-gray-800 font-montserrat font-bold">
+//         <p className="text-base sm:text-lg md:text-xl lg:text-2xl mb-8 text-gray-800 font-montserrat ">
 //           We can&apos;t seem to find the page you&apos;re looking for.
 //         </p>
 //         <Link href="/">
-//           <button className="inline-flex items-center px-6 sm:px-8 py-2 sm:py-3 bg-contact-purple text-white text-base sm:text-lg font-semibold rounded-full shadow-lg hover:bg-contact-teal transition-transform transform hover:scale-105 duration-300 font-serif">
+//           <button className="inline-flex items-center px-6 sm:px-8 py-2 sm:py-3 bg-contact-purple text-white text-base sm:text-lg  rounded-full shadow-lg hover:bg-contact-teal transition-transform transform hover:scale-105 duration-300 font-serif">
 //             Go Back Home
 //           </button>
 //         </Link>
@@ -123,10 +123,10 @@ const NotFound = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.6 }}
             >
-              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-4">
+              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl  text-white mb-4">
                 404
               </h1>
-              <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-white/90 mb-4">
+              <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl  text-white/90 mb-4">
                 Lost in Space?
               </h2>
               <p className="text-white/80 text-base sm:text-lg md:text-xl mb-8 leading-relaxed">
@@ -148,7 +148,7 @@ const NotFound = () => {
                 whileTap={{ scale: 0.98 }}
               >
                 <Link href="/">
-                  <button className="w-full bg-white hover:bg-gray-100 text-black py-3 sm:py-4 px-4 sm:px-6 rounded-xl font-medium transition-all duration-300 backdrop-blur-sm border border-white/20 flex items-center justify-center text-base sm:text-lg">
+                  <button className="w-full bg-white hover:bg-gray-100 text-black py-3 sm:py-4 px-4 sm:px-6 rounded-xl  transition-all duration-300 backdrop-blur-sm border border-white/20 flex items-center justify-center text-base sm:text-lg">
                     <Home className="h-5 w-5 mr-2" />
                     Return to Mintoons Home
                   </button>
@@ -161,7 +161,7 @@ const NotFound = () => {
               >
                 <button
                   onClick={() => window.history.back()}
-                  className="w-full bg-white/10 hover:bg-white/20 text-white py-3 sm:py-4 px-4 sm:px-6 rounded-xl font-medium transition-all duration-300 backdrop-blur-sm border border-white/20 flex items-center justify-center text-base sm:text-lg"
+                  className="w-full bg-white/10 hover:bg-white/20 text-white py-3 sm:py-4 px-4 sm:px-6 rounded-xl  transition-all duration-300 backdrop-blur-sm border border-white/20 flex items-center justify-center text-base sm:text-lg"
                 >
                   <ArrowLeft className="h-5 w-5 mr-2" />
                   Go Back

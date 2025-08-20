@@ -114,7 +114,7 @@
 //   return (
 //     <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-6">
 //       <div className="flex items-center justify-between mb-6">
-//         <h3 className="text-xl font-semibold text-white flex items-center">
+//         <h3 className="text-xl  text-white flex items-center">
 //           <MessageSquare className="w-6 h-6 mr-2 text-blue-400" />
 //           Teacher Feedback ({comments.length})
 //         </h3>
@@ -163,7 +163,7 @@
 //                       <User className="w-4 h-4 text-gray-300" />
 //                     </div>
 //                     <div>
-//                       <p className="text-white font-medium">
+//                       <p className="text-white ">
 //                         {comment.authorId.firstName} {comment.authorId.lastName}
 //                       </p>
 //                       <div className="flex items-center space-x-2 text-xs text-gray-400">
@@ -343,7 +343,7 @@ export default function StoryComments({
   return (
     <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-6">
       <div className="flex items-center justify-between mb-6">
-        <h3 className="text-xl font-semibold text-white flex items-center">
+        <h3 className="text-xl  text-white flex items-center">
           <MessageSquare className="w-6 h-6 mr-2 text-blue-400" />
           Teacher Feedback ({comments.length})
         </h3>
@@ -392,7 +392,7 @@ export default function StoryComments({
                       <User className="w-4 h-4 text-gray-300" />
                     </div>
                     <div>
-                      <p className="text-white font-medium">
+                      <p className="text-white ">
                         {comment.authorId.firstName} {comment.authorId.lastName}
                       </p>
                       <div className="flex items-center space-x-2 text-xs text-gray-400">

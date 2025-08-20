@@ -515,7 +515,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 text-white relative overflow-hidden px-8">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 text-white relative overflow-hidden px-8 lg:px-24 ">
       {/* Animated Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
         {[...Array(15)].map((_, i) => (
@@ -555,15 +555,15 @@ export default function Home() {
 
                 <p className="text-base sm:text-lg lg:text-xl text-gray-300 leading-relaxed">
                   A platform where children{' '}
-                  <span className="text-green-300 font-medium">
+                  <span className="text-green-300 ">
                     write freely
                   </span>{' '}
                   with{' '}
-                  <span className="text-teal-300 font-medium">
+                  <span className="text-teal-300 ">
                     AI collaboration
                   </span>{' '}
                   and get{' '}
-                  <span className="text-cyan-300 font-medium">
+                  <span className="text-cyan-300 ">
                     detailed feedback
                   </span>{' '}
                   to improve their writing skills.
@@ -572,41 +572,41 @@ export default function Home() {
 
               {/* CTA Buttons */}
               <motion.div
-                className="flex flex-col justify-center gap-4"
+                className="flex flex-col justify-center gap-4 w-full"
                 initial={{ opacity: 0, x: -50 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.8, delay: 0.8 }}
               >
-                <Link href="/create-stories">
-                  <motion.button
-                    className="group relative px-8 py-3 bg-gradient-to-r from-green-500 to-teal-600 rounded-xl text-base text-white shadow-lg shadow-green-500/25 overflow-hidden"
-                    whileHover={{
-                      scale: 1.05,
-                      boxShadow: '0 10px 25px -5px rgba(16, 185, 129, 0.4)',
-                    }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    <span className="relative z-10 flex items-center">
-                      <PenTool className="w-4 h-4 mr-2" />
-                      Start Writing Now →
-                    </span>
-                    <motion.div
-                      className="absolute inset-0 bg-gradient-to-r from-teal-600 to-green-500"
-                      initial={{ x: '-100%' }}
-                      whileHover={{ x: '0%' }}
-                      transition={{ duration: 0.3 }}
-                    />
-                  </motion.button>
-                </Link>
+                <div className="flex flex-col sm:flex-row gap-4 w-full"></div>
+                  <Link href="/create-stories" className="flex-1">
+                    <motion.button
+                      className="group relative w-full px-8 py-3 bg-gradient-to-r from-green-500 to-teal-600 rounded-xl text-base text-white shadow-lg shadow-green-500/25 overflow-hidden flex items-center justify-center"
+                      whileHover={{
+                        scale: 1.05,
+                        boxShadow: '0 10px 25px -5px rgba(16, 185, 129, 0.4)',
+                      }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      <span className="relative z-10 flex items-center justify-center">
+                        <PenTool className="w-4 h-4 mr-2" />
+                        Start Writing Now →
+                      </span>
+                      <motion.div
+                        className="absolute inset-0 bg-gradient-to-r from-teal-600 to-green-500"
+                        initial={{ x: '-100%' }}
+                        whileHover={{ x: '0%' }}
+                        transition={{ duration: 0.3 }}
+                      />
+                    </motion.button>
+                  </Link>
 
-                <Link href="/contact-us">
-                  <motion.button
-                    className="px-8 py-3 bg-gray-800/60 backdrop-blur-xl rounded-xl text-base text-white border border-gray-600/50 shadow-lg hover:bg-gray-700/60 transition-all duration-300"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    <span className="flex items-center">
-                      <BookOpen className="w-4 h-4 mr-2" />
+                  <Link href="/contact-us" className="flex-1">
+                    <motion.button
+                      className="w-full px-8 py-3 bg-gray-800/60 backdrop-blur-xl rounded-xl text-base text-white border border-gray-600/50 shadow-lg hover:bg-gray-700/60 transition-all duration-300 flex items-center justify-center"
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      <span className="flex items-center justify-center">
                       Know More About Us →
                     </span>
                   </motion.button>
@@ -693,7 +693,7 @@ export default function Home() {
                       <h3 className="text-lg sm:text-xl text-white mb-2">
                         Mintoons
                       </h3>
-                      <p className="text-green-300 text-xs sm:text-sm font-medium">
+                      <p className="text-green-300 text-xs sm:text-sm ">
                         Creative Writing Education Platform
                       </p>
                     </motion.div>
@@ -831,7 +831,7 @@ export default function Home() {
                       </div>
 
                       <motion.p
-                        className="text-green-400 text-xs font-medium"
+                        className="text-green-400 text-xs "
                         animate={{
                           opacity: [0.6, 1, 0.6],
                         }}
@@ -964,7 +964,7 @@ export default function Home() {
                     className={`relative h-48 bg-gradient-to-br ${story.gradient} overflow-hidden`}
                   >
                     {/* Genre Badge */}
-                    <div className="absolute top-4 left-4 px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-white text-xs font-medium">
+                    <div className="absolute top-4 left-4 px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-white text-xs ">
                       {story.genre}
                     </div>
 
@@ -1004,7 +1004,7 @@ export default function Home() {
                           </span>
                         </div>
                         <div>
-                          <p className="text-green-400 text-sm font-medium">
+                          <p className="text-green-400 text-sm ">
                             {story.author}
                           </p>
                           <p className="text-gray-400 text-xs">
@@ -1109,7 +1109,7 @@ export default function Home() {
                   >
                     <div className="relative z-10 text-center space-y-2">
                       <span className="text-2xl block">{genre.icon}</span>
-                      <span className="text-sm font-medium block">
+                      <span className="text-sm  block">
                         {genre.name}
                       </span>
                       <span className="text-xs text-gray-300 block">
@@ -1154,7 +1154,7 @@ export default function Home() {
                   >
                     <div className="relative z-10 text-center space-y-2">
                       <span className="text-2xl block">{theme.icon}</span>
-                      <span className="text-sm font-medium block">
+                      <span className="text-sm  block">
                         {theme.name}
                       </span>
                       <span className="text-xs text-gray-300 block">
@@ -1217,7 +1217,7 @@ export default function Home() {
           >
             <div className="inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-400/30 backdrop-blur-xl mb-4">
               <Sparkles className="w-4 h-4 text-purple-400 mr-2" />
-              <span className="text-purple-200 font-medium text-sm">
+              <span className="text-purple-200  text-sm">
                 Platform Features
               </span>
             </div>
@@ -1586,11 +1586,11 @@ export default function Home() {
 
               <p className="text-base sm:text-lg lg:text-xl text-gray-300 mb-6 sm:mb-8 leading-relaxed max-w-3xl mx-auto">
                 Join thousands of young writers creating amazing stories with{' '}
-                <span className="text-green-300 font-medium">
+                <span className="text-green-300 ">
                   complete creative freedom
                 </span>{' '}
                 and{' '}
-                <span className="text-teal-300 font-medium">
+                <span className="text-teal-300 ">
                   AI-powered feedback
                 </span>{' '}
                 to improve their skills. Start with 3 free stories and 9 free

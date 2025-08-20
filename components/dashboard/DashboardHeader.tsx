@@ -52,7 +52,7 @@ export default function DashboardHeader({
 
             {/* Welcome message */}
             <div className="hidden sm:block">
-              <h1 className="text-white font-semibold text-lg">
+              <h1 className="text-white  text-lg">
                 Welcome back, {user.firstName}!
               </h1>
               <p className="text-gray-400 text-sm">
@@ -100,12 +100,12 @@ export default function DashboardHeader({
                 className="flex items-center space-x-3 p-2 rounded-lg text-gray-300 hover:text-white hover:bg-gray-700/50 transition-colors"
               >
                 <div className="w-8 h-8 bg-gradient-to-r from-purple-400 to-pink-500 rounded-full flex items-center justify-center">
-                  <span className="text-white font-semibold text-sm">
+                  <span className="text-white  text-sm">
                     {user.firstName.charAt(0)}
                   </span>
                 </div>
                 <div className="hidden sm:block text-left">
-                  <p className="font-medium text-sm">{user.firstName}</p>
+                  <p className=" text-sm">{user.firstName}</p>
                   <p className="text-xs opacity-75">
                     {user.age ? `Age ${user.age}` : 'Writer'}
                   </p>

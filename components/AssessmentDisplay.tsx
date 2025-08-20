@@ -143,14 +143,14 @@ export default function AssessmentDisplay({
         <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-6 border border-blue-200">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-xl font-semibold text-gray-900 mb-1">
+              <h2 className="text-xl  text-gray-900 mb-1">
                 {storyInfo.title}
               </h2>
               <p className="text-gray-600">{storyInfo.wordCount} words</p>
             </div>
             <div className="text-right">
               <div className="text-sm text-gray-600">Assessment Attempts</div>
-              <div className="text-2xl font-bold text-blue-600">
+              <div className="text-2xl  text-blue-600">
                 {3 - storyInfo.attemptsRemaining}/3
               </div>
             </div>
@@ -166,12 +166,12 @@ export default function AssessmentDisplay({
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center space-x-2">
                 <Shield className="w-6 h-6 text-blue-600" />
-                <h3 className="text-xl font-semibold text-gray-900">
+                <h3 className="text-xl  text-gray-900">
                   Content Integrity
                 </h3>
               </div>
               <div
-                className={`px-3 py-1 rounded-full border text-sm font-medium ${getRiskColor(
+                className={`px-3 py-1 rounded-full border text-sm  ${getRiskColor(
                   assessment.integrityAnalysis?.integrityRisk ||
                     assessment.integrityRisk ||
                     'low'
@@ -197,7 +197,7 @@ export default function AssessmentDisplay({
               {/* Overall Integrity */}
               <div className="text-center p-4 bg-gray-50 rounded-lg">
                 <div
-                  className={`text-3xl font-bold ${getScoreColor(
+                  className={`text-3xl  ${getScoreColor(
                     assessment.integrityAnalysis?.originalityScore ||
                       assessment.plagiarismScore ||
                       0
@@ -218,7 +218,7 @@ export default function AssessmentDisplay({
                 <div className="flex items-center justify-center space-x-1 mb-1">
                   <Search className="w-4 h-4 text-gray-600" />
                   <div
-                    className={`text-2xl font-bold ${getScoreColor(
+                    className={`text-2xl  ${getScoreColor(
                       assessment.integrityAnalysis?.plagiarismScore ||
                         assessment.plagiarismScore ||
                         0
@@ -245,7 +245,7 @@ export default function AssessmentDisplay({
                 <div className="flex items-center justify-center space-x-1 mb-1">
                   <Brain className="w-4 h-4 text-gray-600" />
                   <div
-                    className={`text-2xl font-bold ${getScoreColor(
+                    className={`text-2xl  ${getScoreColor(
                       assessment.integrityAnalysis?.aiDetectionScore ||
                         assessment.aiDetectionScore ||
                         0
@@ -287,7 +287,7 @@ export default function AssessmentDisplay({
       {/* Warnings Section */}
       {warnings.length > 0 && (
         <div className="space-y-3">
-          <h4 className="text-lg font-semibold text-gray-900 flex items-center space-x-2">
+          <h4 className="text-lg  text-gray-900 flex items-center space-x-2">
             <AlertTriangle className="w-5 h-5 text-orange-600" />
             <span>Integrity Concerns</span>
           </h4>
@@ -319,7 +319,7 @@ export default function AssessmentDisplay({
                 </div>
                 <div className="flex-1">
                   <div
-                    className={`font-medium ${
+                    className={` ${
                       warning.type === 'plagiarism'
                         ? 'text-red-800'
                         : 'text-orange-800'
@@ -359,12 +359,12 @@ export default function AssessmentDisplay({
         <div className="text-center">
           <div className="flex items-center justify-center space-x-2 mb-2">
             <Award className="w-8 h-8 text-blue-600" />
-            <h3 className="text-2xl font-semibold text-gray-900">
+            <h3 className="text-2xl  text-gray-900">
               Overall Score
             </h3>
           </div>
           <div
-            className={`text-6xl font-bold mb-2 ${getScoreColor(assessment.overallScore)}`}
+            className={`text-6xl  mb-2 ${getScoreColor(assessment.overallScore)}`}
           >
             {getScoreEmoji(assessment.overallScore)} {assessment.overallScore}%
           </div>
@@ -376,7 +376,7 @@ export default function AssessmentDisplay({
 
       {/* Category Scores */}
       <div className="bg-white rounded-lg border p-6">
-        <h3 className="text-xl font-semibold text-gray-900 mb-4 flex items-center space-x-2">
+        <h3 className="text-xl  text-gray-900 mb-4 flex items-center space-x-2">
           <Target className="w-6 h-6 text-purple-600" />
           <span>Detailed Breakdown</span>
         </h3>
@@ -423,12 +423,12 @@ export default function AssessmentDisplay({
             >
               <div className="flex items-center justify-center mb-2">
                 <category.icon className="w-5 h-5 text-gray-600 mr-2" />
-                <span className="text-sm font-medium text-gray-700">
+                <span className="text-sm  text-gray-700">
                   {category.label}
                 </span>
               </div>
               <div
-                className={`text-3xl font-bold ${getScoreColor(category.score)}`}
+                className={`text-3xl  ${getScoreColor(category.score)}`}
               >
                 {category.score}%
               </div>
@@ -439,7 +439,7 @@ export default function AssessmentDisplay({
 
       {/* Teacher Feedback */}
       <div className="bg-white rounded-lg border p-6">
-        <h3 className="text-xl font-semibold text-gray-900 mb-4 flex items-center space-x-2">
+        <h3 className="text-xl  text-gray-900 mb-4 flex items-center space-x-2">
           <Info className="w-6 h-6 text-blue-600" />
           <span>Teacher Feedback</span>
         </h3>
@@ -452,7 +452,7 @@ export default function AssessmentDisplay({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Strengths */}
         <div className="bg-green-50 rounded-lg p-6 border border-green-200">
-          <h4 className="text-lg font-semibold text-green-900 mb-3 flex items-center space-x-2">
+          <h4 className="text-lg  text-green-900 mb-3 flex items-center space-x-2">
             <CheckCircle className="w-5 h-5" />
             <span>Your Strengths</span>
           </h4>
@@ -474,7 +474,7 @@ export default function AssessmentDisplay({
 
         {/* Improvements */}
         <div className="bg-yellow-50 rounded-lg p-6 border border-yellow-200">
-          <h4 className="text-lg font-semibold text-yellow-900 mb-3 flex items-center space-x-2">
+          <h4 className="text-lg  text-yellow-900 mb-3 flex items-center space-x-2">
             <TrendingUp className="w-5 h-5" />
             <span>Areas to Improve</span>
           </h4>
@@ -498,7 +498,7 @@ export default function AssessmentDisplay({
       {/* Advanced Recommendations (if available) */}
       {assessment.recommendations && (
         <div className="bg-purple-50 rounded-lg p-6 border border-purple-200">
-          <h4 className="text-lg font-semibold text-purple-900 mb-4 flex items-center space-x-2">
+          <h4 className="text-lg  text-purple-900 mb-4 flex items-center space-x-2">
             <Info className="w-5 h-5" />
             <span>Personalized Recommendations</span>
           </h4>
@@ -506,7 +506,7 @@ export default function AssessmentDisplay({
           {assessment.recommendations.immediate &&
             assessment.recommendations.immediate.length > 0 && (
               <div className="mb-4">
-                <h5 className="font-medium text-purple-800 mb-2">
+                <h5 className=" text-purple-800 mb-2">
                   Immediate Actions:
                 </h5>
                 <ul className="space-y-1">
@@ -523,7 +523,7 @@ export default function AssessmentDisplay({
           {assessment.recommendations.practiceExercises &&
             assessment.recommendations.practiceExercises.length > 0 && (
               <div>
-                <h5 className="font-medium text-purple-800 mb-2">
+                <h5 className=" text-purple-800 mb-2">
                   Practice Exercises:
                 </h5>
                 <ul className="space-y-1">
@@ -545,7 +545,7 @@ export default function AssessmentDisplay({
 
       {/* Encouragement */}
       <div className="bg-gradient-to-r from-pink-50 to-purple-50 rounded-lg p-6 border border-pink-200">
-        <h4 className="text-lg font-semibold text-pink-900 mb-3 flex items-center space-x-2">
+        <h4 className="text-lg  text-pink-900 mb-3 flex items-center space-x-2">
           <Award className="w-5 h-5" />
           <span>Keep Writing!</span>
         </h4>
@@ -559,7 +559,7 @@ export default function AssessmentDisplay({
         <div className="text-center">
           <button
             onClick={onReassess}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200 flex items-center space-x-2 mx-auto"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg  transition-colors duration-200 flex items-center space-x-2 mx-auto"
           >
             <TrendingUp className="w-5 h-5" />
             <span>
@@ -585,7 +585,7 @@ export default function AssessmentDisplay({
             <div className="flex items-center space-x-3">
               <CheckCircle className="w-8 h-8 text-green-600" />
               <div>
-                <h4 className="text-lg font-semibold text-green-900">
+                <h4 className="text-lg  text-green-900">
                   Excellent Original Work!
                 </h4>
                 <p className="text-green-800 mt-1">

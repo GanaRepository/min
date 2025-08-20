@@ -1,7 +1,7 @@
 export default function PrivacyPolicy() {
   return (
     <div className="container mx-auto px-2 sm:px-4 md:px-8 lg:px-12 xl:px-20 py-8 sm:py-12 md:py-16 min-h-screen mt-4 sm:mt-8">
-      <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-8 text-black">
+      <h1 className="text-3xl sm:text-4xl md:text-5xl  mb-8 text-black">
         Mintoons Privacy Policy
       </h1>
 
@@ -15,7 +15,7 @@ export default function PrivacyPolicy() {
         </p>
 
         <div className="space-y-4">
-          <h2 className="text-2xl font-semibold text-black mt-8">
+          <h2 className="text-2xl  text-black mt-8">
             1. Information We Collect
           </h2>
           <p>
@@ -36,7 +36,7 @@ export default function PrivacyPolicy() {
         </div>
 
         <div className="space-y-4">
-          <h2 className="text-2xl font-semibold text-black mt-8">
+          <h2 className="text-2xl  text-black mt-8">
             2. How We Use Your Information
           </h2>
           <p>We use the collected data for various purposes, including:</p>
@@ -55,7 +55,7 @@ export default function PrivacyPolicy() {
         </div>
 
         <div className="space-y-4">
-          <h2 className="text-2xl font-semibold text-black mt-8">
+          <h2 className="text-2xl  text-black mt-8">
             3. Data Security
           </h2>
           <p>
@@ -68,7 +68,7 @@ export default function PrivacyPolicy() {
         </div>
 
         <div className="space-y-4">
-          <h2 className="text-2xl font-semibold text-black mt-8">
+          <h2 className="text-2xl  text-black mt-8">
             4. Third-Party Services
           </h2>
           <p>
@@ -82,7 +82,7 @@ export default function PrivacyPolicy() {
         </div>
 
         <div className="space-y-4">
-          <h2 className="text-2xl font-semibold text-black mt-8">
+          <h2 className="text-2xl  text-black mt-8">
             5. Contact Us
           </h2>
           <p>

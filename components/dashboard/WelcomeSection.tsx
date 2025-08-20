@@ -35,14 +35,14 @@ export default function WelcomeSection() {
               className="flex items-center space-x-2 text-purple-300 mb-2"
             >
               <GreetingIcon className="w-5 h-5" />
-              <span className="text-sm font-medium">{greeting.text}</span>
+              <span className="text-sm ">{greeting.text}</span>
             </motion.div>
 
             <motion.h1
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6, delay: 0.4 }}
-              className="text-3xl sm:text-4xl font-bold text-white mb-2"
+              className="text-3xl sm:text-4xl  text-white mb-2"
             >
               🌟 Welcome back, {session?.user?.firstName || 'Writer'}!
             </motion.h1>

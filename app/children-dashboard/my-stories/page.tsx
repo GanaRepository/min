@@ -1808,7 +1808,7 @@ function StoryCard({
         if (!displayInfo.showScores) {
           return (
             <div className="text-center mb-4">
-              <div className={`inline-block px-3 py-1 rounded-full text-xs font-medium border ${displayInfo.badgeColor}`}>
+              <div className={`inline-block px-3 py-1 rounded-full text-xs  border ${displayInfo.badgeColor}`}>
                 {displayInfo.badge}
               </div>
             </div>
@@ -2059,7 +2059,7 @@ function StoryListItem({
               if (!displayInfo.showScores) {
                 return (
                   <div className="flex items-center gap-2">
-                    <span className={`inline-block px-2 py-1 rounded text-xs font-medium ${displayInfo.badgeColor}`}>
+                    <span className={`inline-block px-2 py-1 rounded text-xs  ${displayInfo.badgeColor}`}>
                       {displayInfo.badge}
                     </span>
                   </div>

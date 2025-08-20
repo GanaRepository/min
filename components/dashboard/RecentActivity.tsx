@@ -54,7 +54,7 @@ export default function RecentActivity() {
       transition={{ duration: 0.6, delay: 0.6 }}
       className="mb-8"
     >
-      <h2 className="text-xl font-bold text-white mb-4 flex items-center">
+      <h2 className="text-xl  text-white mb-4 flex items-center">
         📚 Recent Activity
       </h2>
 
@@ -77,7 +77,7 @@ export default function RecentActivity() {
 
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center space-x-2 mb-1">
-                        <h3 className="text-white font-semibold group-hover:text-green-400 transition-colors">
+                        <h3 className="text-white  group-hover:text-green-400 transition-colors">
                           {activity.title}
                         </h3>
                         <span className="text-xs text-gray-400 bg-gray-700/50 px-2 py-1 rounded">
@@ -95,19 +95,19 @@ export default function RecentActivity() {
                           <div className="flex items-center space-x-4 mb-2">
                             <div className="text-xs text-gray-400">
                               Grammar:{' '}
-                              <span className="text-green-400 font-medium">
+                              <span className="text-green-400 ">
                                 {activity.score.grammar}%
                               </span>
                             </div>
                             <div className="text-xs text-gray-400">
                               Creativity:{' '}
-                              <span className="text-blue-400 font-medium">
+                              <span className="text-blue-400 ">
                                 {activity.score.creativity}%
                               </span>
                             </div>
                             <div className="text-xs text-gray-400">
                               Overall:{' '}
-                              <span className="text-purple-400 font-medium">
+                              <span className="text-purple-400 ">
                                 {activity.score.overall}%
                               </span>
                             </div>
@@ -119,14 +119,14 @@ export default function RecentActivity() {
                           <div className="flex items-center space-x-4 mb-2">
                             <div className="text-xs text-gray-400">
                               Words:{' '}
-                              <span className="text-green-400 font-medium">
+                              <span className="text-green-400 ">
                                 {activity.progress.words}/
                                 {activity.progress.target}
                               </span>
                             </div>
                             <div className="text-xs text-gray-400">
                               Turn:{' '}
-                              <span className="text-blue-400 font-medium">
+                              <span className="text-blue-400 ">
                                 {activity.progress.turn}/
                                 {activity.progress.maxTurn}
                               </span>
@@ -138,7 +138,7 @@ export default function RecentActivity() {
                         <div className="flex items-center space-x-4 mb-2">
                           <div className="text-xs text-gray-400">
                             Downloads:{' '}
-                            <span className="text-green-400 font-medium">
+                            <span className="text-green-400 ">
                               {activity.downloads}
                             </span>
                           </div>

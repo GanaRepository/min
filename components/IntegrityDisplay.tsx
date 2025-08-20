@@ -108,12 +108,12 @@ export default function IntegrityDisplay({
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center space-x-2">
             <Shield className="w-6 h-6 text-blue-600" />
-            <h3 className="text-xl font-semibold text-gray-900">
+            <h3 className="text-xl  text-gray-900">
               Content Integrity
             </h3>
           </div>
           <div
-            className={`px-3 py-1 rounded-full border text-sm font-medium ${getRiskColor(results.riskLevel)}`}
+            className={`px-3 py-1 rounded-full border text-sm  ${getRiskColor(results.riskLevel)}`}
           >
             <div className="flex items-center space-x-1">
               {getRiskIcon(results.riskLevel)}
@@ -126,7 +126,7 @@ export default function IntegrityDisplay({
           {/* Overall Score */}
           <div className="text-center p-4 bg-gray-50 rounded-lg">
             <div
-              className={`text-3xl font-bold ${getScoreColor(results.integrityScore)}`}
+              className={`text-3xl  ${getScoreColor(results.integrityScore)}`}
             >
               {results.integrityScore}%
             </div>
@@ -139,7 +139,7 @@ export default function IntegrityDisplay({
               <div className="flex items-center justify-center space-x-1 mb-1">
                 <Search className="w-4 h-4 text-gray-600" />
                 <div
-                  className={`text-2xl font-bold ${getScoreColor(results.plagiarismScore)}`}
+                  className={`text-2xl  ${getScoreColor(results.plagiarismScore)}`}
                 >
                   {results.plagiarismScore}%
                 </div>
@@ -161,7 +161,7 @@ export default function IntegrityDisplay({
               <div className="flex items-center justify-center space-x-1 mb-1">
                 <Brain className="w-4 h-4 text-gray-600" />
                 <div
-                  className={`text-2xl font-bold ${getScoreColor(results.aiDetectionScore)}`}
+                  className={`text-2xl  ${getScoreColor(results.aiDetectionScore)}`}
                 >
                   {results.aiDetectionScore}%
                 </div>
@@ -190,7 +190,7 @@ export default function IntegrityDisplay({
       {/* Warnings */}
       {warnings.length > 0 && (
         <div className="space-y-3">
-          <h4 className="text-lg font-semibold text-gray-900 flex items-center space-x-2">
+          <h4 className="text-lg  text-gray-900 flex items-center space-x-2">
             <AlertTriangle className="w-5 h-5 text-orange-600" />
             <span>Integrity Concerns</span>
           </h4>
@@ -222,7 +222,7 @@ export default function IntegrityDisplay({
                 </div>
                 <div className="flex-1">
                   <div
-                    className={`font-medium ${
+                    className={` ${
                       warning.type === 'plagiarism'
                         ? 'text-red-800'
                         : 'text-orange-800'
@@ -260,7 +260,7 @@ export default function IntegrityDisplay({
       {/* Recommendations */}
       {recommendations.length > 0 && showDetails && (
         <div className="bg-blue-50 rounded-lg p-6 border border-blue-200">
-          <h4 className="text-lg font-semibold text-blue-900 mb-3 flex items-center space-x-2">
+          <h4 className="text-lg  text-blue-900 mb-3 flex items-center space-x-2">
             <Info className="w-5 h-5" />
             <span>Recommendations</span>
           </h4>
@@ -291,7 +291,7 @@ export default function IntegrityDisplay({
           <div className="flex items-center space-x-3">
             <CheckCircle className="w-8 h-8 text-green-600" />
             <div>
-              <h4 className="text-lg font-semibold text-green-900">
+              <h4 className="text-lg  text-green-900">
                 Excellent Work!
               </h4>
               <p className="text-green-800 mt-1">

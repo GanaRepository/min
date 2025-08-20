@@ -138,7 +138,7 @@ export default function FreeformStoryCreator({
               whileTap={{ scale: isValid ? 0.98 : 1 }}
               onClick={() => isValid && onComplete(openingText.trim())}
               disabled={!isValid}
-              className={`w-full mt-6 flex items-center justify-center space-x-2 py-4 px-6 rounded-lg font-medium text-lg transition-all ${
+              className={`w-full mt-6 flex items-center justify-center space-x-2 py-4 px-6 rounded-lg  text-lg transition-all ${
                 isValid
                   ? 'bg-gradient-to-r from-green-500 to-blue-600 text-white hover:from-green-600 hover:to-blue-700 shadow-lg hover:shadow-xl'
                   : 'bg-gray-600/50 text-gray-400 cursor-not-allowed'
@@ -164,7 +164,7 @@ export default function FreeformStoryCreator({
 
             <div className="space-y-4 text-sm">
               <div className="p-3 bg-gray-700/30 rounded-lg">
-                <h5 className="text-green-400 font-medium mb-1">
+                <h5 className="text-green-400  mb-1">
                   Start Strong
                 </h5>
                 <p className="text-gray-300">
@@ -174,7 +174,7 @@ export default function FreeformStoryCreator({
               </div>
 
               <div className="p-3 bg-gray-700/30 rounded-lg">
-                <h5 className="text-blue-400 font-medium mb-1">
+                <h5 className="text-blue-400  mb-1">
                   Show, Don't Tell
                 </h5>
                 <p className="text-gray-300">
@@ -184,7 +184,7 @@ export default function FreeformStoryCreator({
               </div>
 
               <div className="p-3 bg-gray-700/30 rounded-lg">
-                <h5 className="text-purple-400 font-medium mb-1">
+                <h5 className="text-purple-400  mb-1">
                   Use Your Senses
                 </h5>
                 <p className="text-gray-300">
@@ -193,7 +193,7 @@ export default function FreeformStoryCreator({
                 </p>
               </div>
               <div className="p-3 bg-gray-700/30 rounded-lg">
-                <h5 className="text-purple-400 font-medium mb-1">
+                <h5 className="text-purple-400  mb-1">
                   Use Your Senses
                 </h5>
                 <p className="text-gray-300">

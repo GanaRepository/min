@@ -56,7 +56,7 @@ const RegisterPage: React.FC = () => {
           <div className="inline-block mb-8">
             <div className="relative inline-flex items-center justify-center">
               <div className="absolute -inset-1 rounded-full bg-gradient-to-r from-green-500 to-teal-500 opacity-70 blur"></div>
-              <div className="relative px-6 py-2 bg-gray-800/90 backdrop-blur-xl rounded-full text-sm font-medium text-green-300 border border-green-400/30">
+              <div className="relative px-6 py-2 bg-gray-800/90 backdrop-blur-xl rounded-full text-sm  text-green-300 border border-green-400/30">
                 <UserPlus className="w-4 h-4 inline mr-2" />
                 Registration
               </div>

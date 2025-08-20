@@ -52,7 +52,7 @@ export default function ToastNotification({
         </div>
         <div className="ml-3">
           <p
-            className={`text-sm font-medium ${type === 'success' ? 'text-[#3ECF8E]' : 'text-red-500'}`}
+            className={`text-sm  ${type === 'success' ? 'text-[#3ECF8E]' : 'text-red-500'}`}
           >
             {type === 'success' ? 'Success' : 'Error'}
           </p>

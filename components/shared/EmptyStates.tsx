@@ -46,7 +46,7 @@ export default function EmptyState({
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.3 }}
-        className="text-xl font-semibold text-white mb-2"
+        className="text-xl  text-white mb-2"
       >
         {title}
       </motion.h3>
@@ -69,7 +69,7 @@ export default function EmptyState({
           <ActionComponent
             href={actionHref || '#'}
             onClick={onAction}
-            className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-green-500 to-blue-600 text-white rounded-xl font-medium hover:from-green-600 hover:to-blue-700 transition-all duration-300 transform hover:scale-105"
+            className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-green-500 to-blue-600 text-white rounded-xl  hover:from-green-600 hover:to-blue-700 transition-all duration-300 transform hover:scale-105"
           >
             {actionText}
           </ActionComponent>

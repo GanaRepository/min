@@ -271,7 +271,7 @@ const RegisterChildContent: React.FC = () => {
                     <BookOpen className="w-3 h-3 text-white" />
                   </div>
                 </div>
-                <span className="text-white text-base sm:text-lg font-medium">
+                <span className="text-white text-base sm:text-lg ">
                   Mintoons
                 </span>
               </motion.div>
@@ -309,7 +309,7 @@ const RegisterChildContent: React.FC = () => {
                       value={formData.firstName}
                       onChange={handleInputChange}
                       placeholder="Your first name"
-                      className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300"
+                      className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700  text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300"
                       required
                       disabled={isLoading}
                     />
@@ -329,7 +329,7 @@ const RegisterChildContent: React.FC = () => {
                       value={formData.lastName}
                       onChange={handleInputChange}
                       placeholder="Your last name"
-                      className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300"
+                      className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700  text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300"
                       required
                       disabled={isLoading}
                     />
@@ -350,7 +350,7 @@ const RegisterChildContent: React.FC = () => {
                     value={formData.email}
                     onChange={handleInputChange}
                     placeholder="Your email or parent's email"
-                    className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300"
+                    className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700  text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300"
                     required
                     disabled={isLoading}
                   />
@@ -373,7 +373,7 @@ const RegisterChildContent: React.FC = () => {
                       placeholder="Your age"
                       min="2"
                       max="18"
-                      className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300"
+                      className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700  text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300"
                       required
                       disabled={isLoading}
                     />
@@ -393,7 +393,7 @@ const RegisterChildContent: React.FC = () => {
                       value={formData.school}
                       onChange={handleInputChange}
                       placeholder="Your school"
-                      className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300"
+                      className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700  text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300"
                       required
                       disabled={isLoading}
                     />
@@ -415,7 +415,7 @@ const RegisterChildContent: React.FC = () => {
                       value={formData.password}
                       onChange={handleInputChange}
                       placeholder="Create a secure password"
-                      className="w-full px-4 py-3 pr-12 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300"
+                      className="w-full px-4 py-3 pr-12 bg-gray-800/50 border border-gray-700  text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300"
                       required
                       disabled={isLoading}
                     />
@@ -449,7 +449,7 @@ const RegisterChildContent: React.FC = () => {
                       value={formData.confirmPassword}
                       onChange={handleInputChange}
                       placeholder="Confirm your password"
-                      className="w-full px-4 py-3 pr-12 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300"
+                      className="w-full px-4 py-3 pr-12 bg-gray-800/50 border border-gray-700  text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300"
                       required
                       disabled={isLoading}
                     />
@@ -486,14 +486,14 @@ const RegisterChildContent: React.FC = () => {
                     By signing up, you confirm that you have parental consent if
                     under 13 and agree to our{' '}
                     <Link
-                      href="/terms"
+                      href="/terms-of-service"
                       className="text-green-400 hover:text-green-300 transition-colors"
                     >
                       Terms and Conditions
                     </Link>{' '}
                     and{' '}
                     <Link
-                      href="/privacy"
+                      href="/privacy-policy"
                       className="text-green-400 hover:text-green-300 transition-colors"
                     >
                       Privacy Policy
@@ -503,7 +503,7 @@ const RegisterChildContent: React.FC = () => {
 
                 <motion.button
                   type="submit"
-                  className="w-full bg-gradient-to-r from-green-500 to-green-600 text-white py-3 px-6 rounded-lg font-medium transition-all duration-300 hover:from-green-600 hover:to-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-gray-900 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-gradient-to-r from-green-500 to-green-600 text-white py-3 px-6   transition-all duration-300 hover:from-green-600 hover:to-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-gray-900 disabled:opacity-50 disabled:cursor-not-allowed"
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onHoverStart={() => setIsHovered(true)}
@@ -540,7 +540,7 @@ const RegisterChildContent: React.FC = () => {
                 </span>
                 <Link
                   href="/login/child"
-                  className="text-white text-sm border border-gray-600 px-4 py-2 rounded-lg hover:border-gray-500 transition-colors inline-block ml-2"
+                  className="text-white text-sm border border-gray-600 px-4 py-2  hover:border-gray-500 transition-colors inline-block ml-2"
                 >
                   Log in
                 </Link>
@@ -667,7 +667,7 @@ const RegisterChildContent: React.FC = () => {
                   <div
                     className={`w-12 h-12 bg-gradient-to-br ${profile.color} rounded-full flex items-center justify-center shadow-lg border-2 border-white/20`}
                   >
-                    <span className="text-white font-medium text-sm">
+                    <span className="text-white  text-sm">
                       {profile.name[0]}
                     </span>
                   </div>

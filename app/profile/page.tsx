@@ -102,7 +102,7 @@ export default function ProfilePage() {
                   initial={{ opacity: 0, scale: 0 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.6, delay: 0.2 }}
-                  className="w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden bg-gradient-to-r from-purple-500 to-blue-500 flex items-center justify-center text-white text-xl sm:text-2xl font-semibold border-4 border-white/20"
+                  className="w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden bg-gradient-to-r from-purple-500 to-blue-500 flex items-center justify-center text-white text-xl sm:text-2xl  border-4 border-white/20"
                 >
                   {isAdmin ? (
                     <Building size={40} />
@@ -122,7 +122,7 @@ export default function ProfilePage() {
                   transition={{ duration: 0.6, delay: 0.4 }}
                   className="flex-1 text-center md:text-left"
                 >
-                  <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-1 sm:mb-2">
+                  <h1 className="text-2xl sm:text-3xl md:text-4xl  text-white mb-1 sm:mb-2">
                     {`${session.user.firstName || ''} ${session.user.lastName || ''}`}
                   </h1>
                   <p className="text-white/80 text-base sm:text-lg mb-2 sm:mb-3 capitalize">
@@ -149,18 +149,18 @@ export default function ProfilePage() {
               >
                 <div className="flex items-center mb-4 sm:mb-6">
                   <Settings className="h-5 w-5 sm:h-6 sm:w-6 text-white mr-2 sm:mr-3" />
-                  <h2 className="text-lg sm:text-xl font-bold text-white">
+                  <h2 className="text-lg sm:text-xl  text-white">
                     Account Information
                   </h2>
                 </div>
 
                 <dl className="space-y-3 sm:space-y-4">
                   <div>
-                    <dt className="text-sm font-medium text-white/60">Email</dt>
+                    <dt className="text-sm  text-white/60">Email</dt>
                     <dd className="mt-1 text-white">{session.user.email}</dd>
                   </div>
                   <div>
-                    <dt className="text-sm font-medium text-white/60">
+                    <dt className="text-sm  text-white/60">
                       Account Type
                     </dt>
                     <dd className="mt-1 text-white capitalize">
@@ -170,7 +170,7 @@ export default function ProfilePage() {
                   {isChild && (
                     <>
                       <div>
-                        <dt className="text-xs sm:text-sm font-medium text-white/60">
+                        <dt className="text-xs sm:text-sm  text-white/60">
                           First Name
                         </dt>
                         <dd className="mt-1 text-white text-xs sm:text-base">
@@ -178,7 +178,7 @@ export default function ProfilePage() {
                         </dd>
                       </div>
                       <div>
-                        <dt className="text-xs sm:text-sm font-medium text-white/60">
+                        <dt className="text-xs sm:text-sm  text-white/60">
                           Last Name
                         </dt>
                         <dd className="mt-1 text-white text-xs sm:text-base">
@@ -187,7 +187,7 @@ export default function ProfilePage() {
                       </div>
                       {session.user.age && (
                         <div>
-                          <dt className="text-xs sm:text-sm font-medium text-white/60">
+                          <dt className="text-xs sm:text-sm  text-white/60">
                             Age
                           </dt>
                           <dd className="mt-1 text-white text-xs sm:text-base">
@@ -197,7 +197,7 @@ export default function ProfilePage() {
                       )}
                       {session.user.school && (
                         <div>
-                          <dt className="text-xs sm:text-sm font-medium text-white/60">
+                          <dt className="text-xs sm:text-sm  text-white/60">
                             School
                           </dt>
                           <dd className="mt-1 text-white text-xs sm:text-base">
@@ -210,7 +210,7 @@ export default function ProfilePage() {
                   {isMentor && (
                     <>
                       <div>
-                        <dt className="text-sm font-medium text-white/60">
+                        <dt className="text-sm  text-white/60">
                           First Name
                         </dt>
                         <dd className="mt-1 text-white">
@@ -218,7 +218,7 @@ export default function ProfilePage() {
                         </dd>
                       </div>
                       <div>
-                        <dt className="text-sm font-medium text-white/60">
+                        <dt className="text-sm  text-white/60">
                           Last Name
                         </dt>
                         <dd className="mt-1 text-white">
@@ -227,7 +227,7 @@ export default function ProfilePage() {
                       </div>
                       {session.user.createdBy && (
                         <div>
-                          <dt className="text-xs sm:text-sm font-medium text-white/60">
+                          <dt className="text-xs sm:text-sm  text-white/60">
                             Created By (Admin)
                           </dt>
                           <dd className="mt-1 text-white text-xs sm:text-base">
@@ -250,7 +250,7 @@ export default function ProfilePage() {
               >
                 <div className="flex items-center mb-4 sm:mb-6">
                   <Briefcase className="h-5 w-5 sm:h-6 sm:w-6 text-white mr-2 sm:mr-3" />
-                  <h2 className="text-lg sm:text-xl font-bold text-white">
+                  <h2 className="text-lg sm:text-xl  text-white">
                     Quick Access
                   </h2>
                 </div>
@@ -269,7 +269,7 @@ export default function ProfilePage() {
                           <User className="h-5 w-5 sm:h-6 sm:w-6" />
                         </div>
                         <div>
-                          <h3 className="font-medium text-white text-sm sm:text-base">
+                          <h3 className=" text-white text-sm sm:text-base">
                             Write Stories
                           </h3>
                           <p className="text-xs sm:text-sm text-white/60">
@@ -292,7 +292,7 @@ export default function ProfilePage() {
                           <User className="h-5 w-5 sm:h-6 sm:w-6" />
                         </div>
                         <div>
-                          <h3 className="font-medium text-white text-sm sm:text-base">
+                          <h3 className=" text-white text-sm sm:text-base">
                             Mentor Dashboard
                           </h3>
                           <p className="text-xs sm:text-sm text-white/60">
@@ -315,7 +315,7 @@ export default function ProfilePage() {
                         <Phone className="h-5 w-5 sm:h-6 sm:w-6" />
                       </div>
                       <div>
-                        <h3 className="font-medium text-white text-sm sm:text-base">
+                        <h3 className=" text-white text-sm sm:text-base">
                           Get Support
                         </h3>
                         <p className="text-xs sm:text-sm text-white/60">

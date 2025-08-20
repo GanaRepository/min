@@ -54,7 +54,7 @@ function AuthErrorContent() {
         <AlertCircle className="h-8 w-8" />
       </div>
 
-      <h1 className="text-2xl font-semibold mb-2">Authentication Error</h1>
+      <h1 className="text-2xl  mb-2">Authentication Error</h1>
       <p className="text-gray-600 mb-6">{error}</p>
 
       <Link href={loginRedirect}>
@@ -74,7 +74,7 @@ function AuthErrorFallback() {
       <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center text-gray-400 mb-4">
         <div className="animate-spin h-8 w-8 border-4 border-gray-300 border-t-gray-600 rounded-full"></div>
       </div>
-      <h1 className="text-2xl font-semibold mb-2">Loading...</h1>
+      <h1 className="text-2xl  mb-2">Loading...</h1>
       <p className="text-gray-600 mb-6">Retrieving error information</p>
     </div>
   );

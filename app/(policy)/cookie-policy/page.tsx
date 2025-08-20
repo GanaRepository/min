@@ -1,7 +1,7 @@
 export default function CookiePolicy() {
   return (
     <div className="container mx-auto px-2 sm:px-4 md:px-8 lg:px-12 xl:px-20 py-8 sm:py-12 md:py-16 min-h-screen mt-4 sm:mt-6">
-      <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-8 text-black">
+      <h1 className="text-3xl sm:text-4xl md:text-5xl  mb-8 text-black">
         Mintoons Cookie Policy
       </h1>
 
@@ -15,7 +15,7 @@ export default function CookiePolicy() {
         </p>
 
         <div className="space-y-4">
-          <h2 className="text-2xl font-semibold text-black mt-8">
+          <h2 className="text-2xl  text-black mt-8">
             1. What Are Cookies
           </h2>
           <p>
@@ -27,7 +27,7 @@ export default function CookiePolicy() {
         </div>
 
         <div className="space-y-4">
-          <h2 className="text-2xl font-semibold text-black mt-8">
+          <h2 className="text-2xl  text-black mt-8">
             2. Types of Cookies We Use
           </h2>
           <p>We use the following types of cookies on mintoons.com:</p>
@@ -53,7 +53,7 @@ export default function CookiePolicy() {
         </div>
 
         <div className="space-y-4">
-          <h2 className="text-2xl font-semibold text-black mt-8">
+          <h2 className="text-2xl  text-black mt-8">
             3. How We Use Cookies
           </h2>
           <p>We use cookies for various purposes on mintoons.com, including:</p>
@@ -66,7 +66,7 @@ export default function CookiePolicy() {
         </div>
 
         <div className="space-y-4">
-          <h2 className="text-2xl font-semibold text-black mt-8">
+          <h2 className="text-2xl  text-black mt-8">
             4. Managing Cookies
           </h2>
           <p>
@@ -86,7 +86,7 @@ export default function CookiePolicy() {
         </div>
 
         <div className="space-y-4">
-          <h2 className="text-2xl font-semibold text-black mt-8">
+          <h2 className="text-2xl  text-black mt-8">
             5. Third-Party Cookies
           </h2>
           <p>We may use third-party services that use cookies to:</p>
@@ -101,7 +101,7 @@ export default function CookiePolicy() {
         </div>
 
         <div className="space-y-4">
-          <h2 className="text-2xl font-semibold text-black mt-8">
+          <h2 className="text-2xl  text-black mt-8">
             6. Updates to This Policy
           </h2>
           <p>
@@ -113,7 +113,7 @@ export default function CookiePolicy() {
         </div>
 
         <div className="space-y-4">
-          <h2 className="text-2xl font-semibold text-black mt-8">
+          <h2 className="text-2xl  text-black mt-8">
             7. Contact Us
           </h2>
           <p>

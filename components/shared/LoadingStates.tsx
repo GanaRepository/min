@@ -54,7 +54,7 @@ export function StoryLoadingState() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
-          className="text-2xl font-bold mb-4"
+          className="text-2xl  mb-4"
         >
           Loading your creative space...
         </motion.h2>
@@ -92,7 +92,7 @@ export function AIThinkingState() {
         🤖
       </motion.div>
 
-      <h3 className="text-white font-medium mb-2">AI is thinking...</h3>
+      <h3 className="text-white  mb-2">AI is thinking...</h3>
       <p className="text-gray-400 text-sm mb-4">
         Creating the perfect response to continue your story
       </p>
@@ -137,7 +137,7 @@ export function CreatingStoryState() {
           ✨
         </motion.div>
 
-        <h2 className="text-2xl font-bold mb-6">
+        <h2 className="text-2xl  mb-6">
           Creating Your Magical Story...
         </h2>
 

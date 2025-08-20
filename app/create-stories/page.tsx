@@ -393,7 +393,7 @@ export default function CreateStoriesPage() {
           </motion.div>
         </div>
 
-        <h1 className="text-5xl md:text-6xl font-bold text-white mb-6">
+        <h1 className="text-5xl md:text-6xl  text-white mb-6">
           <span className="block">Your Creative</span>
           <span className="block bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent">
             Writing Studio
@@ -402,10 +402,10 @@ export default function CreateStoriesPage() {
 
         <p className="text-xl text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed">
           Three powerful ways to create and improve your stories:
-          <span className="text-blue-400 font-medium"> AI Collaboration</span>,
-          <span className="text-green-400 font-medium"> Expert Assessment</span>
+          <span className="text-blue-400 "> AI Collaboration</span>,
+          <span className="text-green-400 "> Expert Assessment</span>
           , and
-          <span className="text-purple-400 font-medium">
+          <span className="text-purple-400 ">
             {' '}
             Monthly Competitions
           </span>
@@ -420,7 +420,7 @@ export default function CreateStoriesPage() {
             className="grid grid-cols-3 md:grid-cols-3 gap-4 max-w-4xl mx-auto mb-12"
           >
             <div className="bg-blue-500/20 border border-blue-500/30 rounded-lg p-4">
-              <div className="text-2xl font-bold text-blue-400">
+              <div className="text-2xl  text-blue-400">
                 {usageStats.freestyleStories.remaining}
               </div>
               <div className="text-sm text-blue-300">
@@ -428,7 +428,7 @@ export default function CreateStoriesPage() {
               </div>
             </div>
             <div className="bg-green-500/20 border border-green-500/30 rounded-lg p-4">
-              <div className="text-2xl font-bold text-green-400">
+              <div className="text-2xl  text-green-400">
                 {usageStats.assessmentRequests.remaining}
               </div>
               <div className="text-sm text-green-300">
@@ -436,7 +436,7 @@ export default function CreateStoriesPage() {
               </div>
             </div>
             <div className="bg-purple-500/20 border border-purple-500/30 rounded-lg p-4">
-              <div className="text-2xl font-bold text-purple-400">
+              <div className="text-2xl  text-purple-400">
                 {usageStats.competitionEntries.remaining}
               </div>
               <div className="text-sm text-purple-300">
@@ -450,12 +450,12 @@ export default function CreateStoriesPage() {
         {usageStats && (
           <div className="flex justify-center mb-8">
             {usageStats.subscriptionTier === 'STORY_PACK' ? (
-              <div className="bg-gradient-to-r from-yellow-500 to-orange-500 text-gray-900 px-6 py-2 rounded-full font-semibold flex items-center gap-2">
+              <div className="bg-gradient-to-r from-yellow-500 to-orange-500 text-gray-900 px-6 py-2 rounded-full  flex items-center gap-2">
                 <Crown className="w-5 h-5" />
                 Story Pack Active
               </div>
             ) : (
-              <div className="bg-gray-700/50 text-gray-300 px-6 py-2 rounded-full font-medium flex items-center gap-2">
+              <div className="bg-gray-700/50 text-gray-300 px-6 py-2 rounded-full  flex items-center gap-2">
                 <Heart className="w-5 h-5" />
                 Free Writer
               </div>
@@ -482,7 +482,7 @@ export default function CreateStoriesPage() {
               </div>
             </div>
 
-            <h3 className="text-2xl font-bold text-white mb-4">
+            <h3 className="text-2xl  text-white mb-4">
               Freestyle Writing
             </h3>
             <p className="text-gray-300 mb-6">
@@ -518,7 +518,7 @@ export default function CreateStoriesPage() {
               </div>
             )}
 
-            <button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-3 rounded-lg font-medium transition-all flex items-center justify-center gap-2">
+            <button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-3 rounded-lg  transition-all flex items-center justify-center gap-2">
               <Rocket className="w-5 h-5" />
               Start Writing
             </button>
@@ -541,7 +541,7 @@ export default function CreateStoriesPage() {
               </div>
             </div>
 
-            <h3 className="text-2xl font-bold text-white mb-4">
+            <h3 className="text-2xl  text-white mb-4">
               Upload for Assessment
             </h3>
             <p className="text-gray-300 mb-6">
@@ -577,7 +577,7 @@ export default function CreateStoriesPage() {
               </div>
             )}
 
-            <button className="w-full bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700 text-white py-3 rounded-lg font-medium transition-all flex items-center justify-center gap-2">
+            <button className="w-full bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700 text-white py-3 rounded-lg  transition-all flex items-center justify-center gap-2">
               <Upload className="w-5 h-5" />
               Upload Story
             </button>
@@ -600,7 +600,7 @@ export default function CreateStoriesPage() {
               </div>
             </div>
 
-            <h3 className="text-2xl font-bold text-white mb-4">
+            <h3 className="text-2xl  text-white mb-4">
               Competition Entry
             </h3>
             <p className="text-gray-300 mb-6">
@@ -636,7 +636,7 @@ export default function CreateStoriesPage() {
               </div>
             )}
 
-            <button className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white py-3 rounded-lg font-medium transition-all flex items-center justify-center gap-2">
+            <button className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white py-3 rounded-lg  transition-all flex items-center justify-center gap-2">
               <Trophy className="w-5 h-5" />
               Enter Competition
             </button>
@@ -651,14 +651,14 @@ export default function CreateStoriesPage() {
         transition={{ delay: 0.5 }}
         className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-8 mb-16"
       >
-        <h2 className="text-3xl font-bold text-white text-center mb-8">
+        <h2 className="text-3xl  text-white text-center mb-8">
           Why Choose Mintoons? ✨
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <div className="text-center">
             <Brain className="w-12 h-12 text-blue-400 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-white mb-2">
+            <h3 className="text-lg  text-white mb-2">
               AI-Powered Learning
             </h3>
             <p className="text-gray-400 text-sm">
@@ -668,7 +668,7 @@ export default function CreateStoriesPage() {
 
           <div className="text-center">
             <Shield className="w-12 h-12 text-green-400 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-white mb-2">
+            <h3 className="text-lg  text-white mb-2">
               Safe & Secure
             </h3>
             <p className="text-gray-400 text-sm">
@@ -678,7 +678,7 @@ export default function CreateStoriesPage() {
 
           <div className="text-center">
             <Trophy className="w-12 h-12 text-purple-400 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-white mb-2">
+            <h3 className="text-lg  text-white mb-2">
               Monthly Contests
             </h3>
             <p className="text-gray-400 text-sm">
@@ -688,7 +688,7 @@ export default function CreateStoriesPage() {
 
           <div className="text-center">
             <Heart className="w-12 h-12 text-pink-400 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-white mb-2">
+            <h3 className="text-lg  text-white mb-2">
               Encouraging Community
             </h3>
             <p className="text-gray-400 text-sm">
@@ -707,7 +707,7 @@ export default function CreateStoriesPage() {
           className="bg-gradient-to-r from-orange-500/20 to-red-500/20 border border-orange-500/30 rounded-xl p-8 text-center"
         >
           <Crown className="w-16 h-16 text-orange-400 mx-auto mb-4" />
-          <h3 className="text-2xl font-bold text-white mb-4">
+          <h3 className="text-2xl  text-white mb-4">
             Want More Creative Power?
           </h3>
           <p className="text-gray-300 mb-6">
@@ -716,7 +716,7 @@ export default function CreateStoriesPage() {
           </p>
           <button
             onClick={() => router.push('/pricing')}
-            className="bg-orange-600 hover:bg-orange-700 text-white px-8 py-3 rounded-lg font-medium transition-colors"
+            className="bg-orange-600 hover:bg-orange-700 text-white px-8 py-3 rounded-lg  transition-colors"
           >
             Upgrade to Story Pack - $15/month
           </button>
@@ -746,7 +746,7 @@ export default function CreateStoriesPage() {
           </div>
         </div>
 
-        <h1 className="text-4xl font-bold text-white mb-4">
+        <h1 className="text-4xl  text-white mb-4">
           Freestyle Story Writing
         </h1>
         <p className="text-xl text-gray-300 mb-8">
@@ -756,34 +756,34 @@ export default function CreateStoriesPage() {
       </motion.div>
 
       <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-8 mb-8">
-        <h3 className="text-2xl font-bold text-white mb-6">How It Works:</h3>
+        <h3 className="text-2xl  text-white mb-6">How It Works:</h3>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div className="text-center">
-            <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-4 text-white font-bold">
+            <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-4 text-white ">
               1
             </div>
-            <h4 className="font-semibold text-white mb-2">You Write</h4>
+            <h4 className=" text-white mb-2">You Write</h4>
             <p className="text-gray-400 text-sm">
               Start your story with any idea - at least 60 words per turn
             </p>
           </div>
 
           <div className="text-center">
-            <div className="w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center mx-auto mb-4 text-white font-bold">
+            <div className="w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center mx-auto mb-4 text-white ">
               2
             </div>
-            <h4 className="font-semibold text-white mb-2">AI Responds</h4>
+            <h4 className=" text-white mb-2">AI Responds</h4>
             <p className="text-gray-400 text-sm">
               AI continues your story naturally and asks inspiring questions
             </p>
           </div>
 
           <div className="text-center">
-            <div className="w-12 h-12 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-4 text-white font-bold">
+            <div className="w-12 h-12 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-4 text-white ">
               3
             </div>
-            <h4 className="font-semibold text-white mb-2">Repeat & Assess</h4>
+            <h4 className=" text-white mb-2">Repeat & Assess</h4>
             <p className="text-gray-400 text-sm">
               Continue for 7 turns, then get detailed AI assessment
             </p>
@@ -794,7 +794,7 @@ export default function CreateStoriesPage() {
           <div className="mb-6 p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg">
             <div className="flex items-center justify-between mb-2">
               <span className="text-gray-300">Stories Remaining:</span>
-              <span className="text-white font-semibold">
+              <span className="text-white ">
                 {usageStats.freestyleStories?.remaining ?? 0} /{' '}
                 {usageStats.freestyleStories?.limit ?? 0}
               </span>
@@ -825,7 +825,7 @@ export default function CreateStoriesPage() {
           <button
             onClick={handleCreateFreestyleStory}
             disabled={creatingStory || !usageStats?.freestyleStories?.canUse}
-            className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 disabled:from-gray-600 disabled:to-gray-700 text-white px-8 py-4 rounded-lg font-bold text-lg transition-all flex items-center gap-3 mx-auto disabled:cursor-not-allowed"
+            className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 disabled:from-gray-600 disabled:to-gray-700 text-white px-8 py-4 rounded-lg  text-lg transition-all flex items-center gap-3 mx-auto disabled:cursor-not-allowed"
           >
             {creatingStory ? (
               <>
@@ -844,30 +844,30 @@ export default function CreateStoriesPage() {
 
       {/* Story Examples */}
       <div className="bg-gray-800/40 backdrop-blur-xl border border-gray-600/30 rounded-xl p-6">
-        <h3 className="text-xl font-bold text-white mb-4">
+        <h3 className="text-xl  text-white mb-4">
           Story Ideas to Get You Started:
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="bg-gray-700/30 rounded-lg p-4">
-            <h4 className="font-semibold text-blue-400 mb-2">🚀 Adventure</h4>
+            <h4 className=" text-blue-400 mb-2">🚀 Adventure</h4>
             <p className="text-gray-300 text-sm">
               A kid discovers a secret spaceship in their backyard...
             </p>
           </div>
           <div className="bg-gray-700/30 rounded-lg p-4">
-            <h4 className="font-semibold text-green-400 mb-2">🧙‍♂️ Fantasy</h4>
+            <h4 className=" text-green-400 mb-2">🧙‍♂️ Fantasy</h4>
             <p className="text-gray-300 text-sm">
               Your pet suddenly starts talking and reveals a magical secret...
             </p>
           </div>
           <div className="bg-gray-700/30 rounded-lg p-4">
-            <h4 className="font-semibold text-purple-400 mb-2">🔮 Mystery</h4>
+            <h4 className=" text-purple-400 mb-2">🔮 Mystery</h4>
             <p className="text-gray-300 text-sm">
               Strange things keep disappearing from your school locker...
             </p>
           </div>
           <div className="bg-gray-700/30 rounded-lg p-4">
-            <h4 className="font-semibold text-pink-400 mb-2">👥 Friendship</h4>
+            <h4 className=" text-pink-400 mb-2">👥 Friendship</h4>
             <p className="text-gray-300 text-sm">
               You meet someone who seems to be from a different time period...
             </p>
@@ -898,7 +898,7 @@ export default function CreateStoriesPage() {
           </div>
         </div>
 
-        <h1 className="text-4xl font-bold text-white mb-4">
+        <h1 className="text-4xl  text-white mb-4">
           Upload for Assessment
         </h1>
         <p className="text-xl text-gray-300 mb-8">
@@ -909,7 +909,7 @@ export default function CreateStoriesPage() {
       <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-8">
         {/* Upload Type Selection */}
         <div className="mb-8">
-          <h3 className="text-lg font-semibold text-white mb-4">
+          <h3 className="text-lg  text-white mb-4">
             Upload Purpose:
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -924,7 +924,7 @@ export default function CreateStoriesPage() {
               }`}
             >
               <Brain className="w-8 h-8 mx-auto mb-2" />
-              <div className="font-semibold">For Assessment</div>
+              <div className="">For Assessment</div>
               <div className="text-sm opacity-75">Get detailed AI feedback</div>
             </button>
 
@@ -942,7 +942,7 @@ export default function CreateStoriesPage() {
               }`}
             >
               <Trophy className="w-8 h-8 mx-auto mb-2" />
-              <div className="font-semibold">For Competition</div>
+              <div className="">For Competition</div>
               <div className="text-sm opacity-75">Enter monthly contest</div>
             </button>
           </div>
@@ -950,7 +950,7 @@ export default function CreateStoriesPage() {
 
         {/* Title Input */}
         <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-300 mb-2">
+          <label className="block text-sm  text-gray-300 mb-2">
             Story Title *
           </label>
           <input
@@ -972,7 +972,7 @@ export default function CreateStoriesPage() {
 
         {/* Text Input Alternative */}
         <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-300 mb-2">
+          <label className="block text-sm  text-gray-300 mb-2">
             Paste your story text directly (600 words max) *:
           </label>
 
@@ -1001,7 +1001,7 @@ export default function CreateStoriesPage() {
               <div>
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-gray-300">Uploads Remaining:</span>
-                  <span className="text-white font-semibold">
+                  <span className="text-white ">
                     {uploadData.uploadType === 'assessment'
                       ? `${usageStats.assessmentRequests.remaining} / ${usageStats.assessmentRequests.limit}`
                       : `${usageStats.competitionEntries.remaining} / ${usageStats.competitionEntries.limit}`}
@@ -1029,7 +1029,7 @@ export default function CreateStoriesPage() {
                 <div>
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-gray-300">Assessment Attempts:</span>
-                    <span className="text-white font-semibold">
+                    <span className="text-white ">
                       {usageStats.assessmentRequests.remaining} /{' '}
                       {usageStats.assessmentRequests.limit}
                     </span>
@@ -1080,7 +1080,7 @@ export default function CreateStoriesPage() {
               (uploadData.uploadType === 'competition' &&
                 !usageStats?.competitionEntries.canUse)
             }
-            className="bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700 disabled:from-gray-600 disabled:to-gray-700 text-white px-8 py-4 rounded-lg font-bold text-lg transition-all flex items-center gap-3 mx-auto disabled:cursor-not-allowed"
+            className="bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700 disabled:from-gray-600 disabled:to-gray-700 text-white px-8 py-4 rounded-lg  text-lg transition-all flex items-center gap-3 mx-auto disabled:cursor-not-allowed"
           >
             {uploading ? (
               <>
@@ -1101,29 +1101,29 @@ export default function CreateStoriesPage() {
 
       {/* Assessment Features */}
       <div className="mt-8 bg-gray-800/40 backdrop-blur-xl border border-gray-600/30 rounded-xl p-6">
-        <h3 className="text-xl font-bold text-white mb-4">What You'll Get:</h3>
+        <h3 className="text-xl  text-white mb-4">What You'll Get:</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="text-center">
             <Target className="w-8 h-8 text-blue-400 mx-auto mb-2" />
-            <div className="font-medium text-white text-sm">
+            <div className=" text-white text-sm">
               Grammar Analysis
             </div>
           </div>
           <div className="text-center">
             <Sparkles className="w-8 h-8 text-purple-400 mx-auto mb-2" />
-            <div className="font-medium text-white text-sm">
+            <div className=" text-white text-sm">
               Creativity Score
             </div>
           </div>
           <div className="text-center">
             <BookOpen className="w-8 h-8 text-green-400 mx-auto mb-2" />
-            <div className="font-medium text-white text-sm">
+            <div className=" text-white text-sm">
               Vocabulary Review
             </div>
           </div>
           <div className="text-center">
             <Shield className="w-8 h-8 text-orange-400 mx-auto mb-2" />
-            <div className="font-medium text-white text-sm">
+            <div className=" text-white text-sm">
               Integrity Check
             </div>
           </div>
@@ -1153,7 +1153,7 @@ export default function CreateStoriesPage() {
           </div>
         </div>
 
-        <h1 className="text-4xl font-bold text-white mb-4">
+        <h1 className="text-4xl  text-white mb-4">
           Competition Entry
         </h1>
         <p className="text-xl text-gray-300 mb-8">
@@ -1163,16 +1163,16 @@ export default function CreateStoriesPage() {
       </motion.div>
 
       <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-8 mb-8">
-        <h3 className="text-2xl font-bold text-white mb-6">
+        <h3 className="text-2xl  text-white mb-6">
           How Competitions Work:
         </h3>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div className="text-center">
-            <div className="w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center mx-auto mb-4 text-white font-bold">
+            <div className="w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center mx-auto mb-4 text-white ">
               1
             </div>
-            <h4 className="font-semibold text-white mb-2">
+            <h4 className=" text-white mb-2">
               Submit (Days 1-25)
             </h4>
             <p className="text-gray-400 text-sm">
@@ -1181,10 +1181,10 @@ export default function CreateStoriesPage() {
           </div>
 
           <div className="text-center">
-            <div className="w-12 h-12 bg-yellow-600 rounded-full flex items-center justify-center mx-auto mb-4 text-white font-bold">
+            <div className="w-12 h-12 bg-yellow-600 rounded-full flex items-center justify-center mx-auto mb-4 text-white ">
               2
             </div>
-            <h4 className="font-semibold text-white mb-2">
+            <h4 className=" text-white mb-2">
               AI Judging (Days 26-30)
             </h4>
             <p className="text-gray-400 text-sm">
@@ -1193,10 +1193,10 @@ export default function CreateStoriesPage() {
           </div>
 
           <div className="text-center">
-            <div className="w-12 h-12 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-4 text-white font-bold">
+            <div className="w-12 h-12 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-4 text-white ">
               3
             </div>
-            <h4 className="font-semibold text-white mb-2">Results (Day 31)</h4>
+            <h4 className=" text-white mb-2">Results (Day 31)</h4>
             <p className="text-gray-400 text-sm">
               Top 3 winners announced with certificates
             </p>
@@ -1204,7 +1204,7 @@ export default function CreateStoriesPage() {
         </div>
 
         <div className="bg-purple-500/10 border border-purple-500/20 rounded-lg p-6 mb-6">
-          <h4 className="font-semibold text-purple-300 mb-3">
+          <h4 className=" text-purple-300 mb-3">
             Competition Rules:
           </h4>
           <ul className="space-y-2 text-gray-300 text-sm">
@@ -1224,7 +1224,7 @@ export default function CreateStoriesPage() {
               setActiveSection('assessment'); // Reuse upload interface
             }}
             disabled={!usageStats?.competitionEntries.canUse}
-            className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 disabled:from-gray-600 disabled:to-gray-700 text-white px-8 py-4 rounded-lg font-bold text-lg transition-all flex items-center gap-3 mx-auto disabled:cursor-not-allowed"
+            className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 disabled:from-gray-600 disabled:to-gray-700 text-white px-8 py-4 rounded-lg  text-lg transition-all flex items-center gap-3 mx-auto disabled:cursor-not-allowed"
           >
             <Trophy className="w-6 h-6" />
             {usageStats?.competitionEntries.canUse
@@ -1236,29 +1236,29 @@ export default function CreateStoriesPage() {
 
       {/* Competition Features */}
       <div className="bg-gray-800/40 backdrop-blur-xl border border-gray-600/30 rounded-xl p-6">
-        <h3 className="text-xl font-bold text-white mb-4">
+        <h3 className="text-xl  text-white mb-4">
           Why Enter Competitions?
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="text-center">
             <Gift className="w-8 h-8 text-purple-400 mx-auto mb-2" />
-            <div className="font-medium text-white text-sm">
+            <div className=" text-white text-sm">
               Completely Free
             </div>
           </div>
           <div className="text-center">
             <Star className="w-8 h-8 text-yellow-400 mx-auto mb-2" />
-            <div className="font-medium text-white text-sm">Recognition</div>
+            <div className=" text-white text-sm">Recognition</div>
           </div>
           <div className="text-center">
             <Brain className="w-8 h-8 text-blue-400 mx-auto mb-2" />
-            <div className="font-medium text-white text-sm">
+            <div className=" text-white text-sm">
               Fair AI Judging
             </div>
           </div>
           <div className="text-center">
             <Heart className="w-8 h-8 text-pink-400 mx-auto mb-2" />
-            <div className="font-medium text-white text-sm">Community</div>
+            <div className=" text-white text-sm">Community</div>
           </div>
         </div>
       </div>

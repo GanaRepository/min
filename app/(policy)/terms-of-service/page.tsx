@@ -1,7 +1,7 @@
 export default function TermsOfService() {
   return (
     <div className="container mx-auto px-2 sm:px-4 md:px-8 lg:px-12 xl:px-20 py-8 sm:py-12 md:py-16 min-h-screen mt-4 sm:mt-8">
-      <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-8 text-black">
+      <h1 className="text-3xl sm:text-4xl md:text-5xl  mb-8 text-black">
         Mintoons Terms of Service
       </h1>
 
@@ -15,7 +15,7 @@ export default function TermsOfService() {
         </p>
 
         <div className="space-y-4">
-          <h2 className="text-2xl font-semibold text-black mt-8">
+          <h2 className="text-2xl  text-black mt-8">
             1. Agreement to Terms
           </h2>
           <p>
@@ -27,7 +27,7 @@ export default function TermsOfService() {
         </div>
 
         <div className="space-y-4">
-          <h2 className="text-2xl font-semibold text-black mt-8">
+          <h2 className="text-2xl  text-black mt-8">
             2. Use License
           </h2>
           <p>
@@ -46,7 +46,7 @@ export default function TermsOfService() {
         </div>
 
         <div className="space-y-4">
-          <h2 className="text-2xl font-semibold text-black mt-8">
+          <h2 className="text-2xl  text-black mt-8">
             3. Service Availability
           </h2>
           <p>
@@ -57,7 +57,7 @@ export default function TermsOfService() {
         </div>
 
         <div className="space-y-4">
-          <h2 className="text-2xl font-semibold text-black mt-8">
+          <h2 className="text-2xl  text-black mt-8">
             4. Intellectual Property
           </h2>
           <p>
@@ -68,7 +68,7 @@ export default function TermsOfService() {
         </div>
 
         <div className="space-y-4">
-          <h2 className="text-2xl font-semibold text-black mt-8">
+          <h2 className="text-2xl  text-black mt-8">
             5. Limitation of Liability
           </h2>
           <p>
@@ -79,7 +79,7 @@ export default function TermsOfService() {
         </div>
 
         <div className="space-y-4">
-          <h2 className="text-2xl font-semibold text-black mt-8">
+          <h2 className="text-2xl  text-black mt-8">
             6. Contact Information
           </h2>
           <p>

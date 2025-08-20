@@ -43,7 +43,7 @@ export default function QuickActions() {
       transition={{ duration: 0.6, delay: 0.4 }}
       className="mb-8"
     >
-      <h2 className="text-xl font-bold text-white mb-4 flex items-center">
+      <h2 className="text-xl  text-white mb-4 flex items-center">
         🚀 Quick Actions
       </h2>
 
@@ -69,7 +69,7 @@ export default function QuickActions() {
                   <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-white group-hover:translate-x-1 transition-all duration-200" />
                 </div>
 
-                <h3 className="text-white font-semibold text-lg mb-2 group-hover:text-green-300 transition-colors">
+                <h3 className="text-white  text-lg mb-2 group-hover:text-green-300 transition-colors">
                   {action.title}
                 </h3>
 

@@ -76,14 +76,14 @@ export default function AchievementBadges({
       transition={{ delay: 0.6 }}
       className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-6"
     >
-      <h3 className="text-white font-semibold text-lg mb-6 flex items-center">
+      <h3 className="text-white  text-lg mb-6 flex items-center">
         🏆 Achievements & Badges
       </h3>
 
       <div className="space-y-4">
         {/* Earned Achievements */}
         <div>
-          <h4 className="text-green-400 font-medium mb-3">
+          <h4 className="text-green-400  mb-3">
             Earned ({achievements.length}):
           </h4>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -101,7 +101,7 @@ export default function AchievementBadges({
                   <div className="text-2xl mb-2 group-hover:scale-110 transition-transform">
                     {achievement.icon}
                   </div>
-                  <h5 className="text-white font-medium text-sm mb-1">
+                  <h5 className="text-white  text-sm mb-1">
                     {achievement.name}
                   </h5>
                   <p className="text-gray-400 text-xs">
@@ -114,7 +114,7 @@ export default function AchievementBadges({
 
         {/* Working On */}
         <div>
-          <h4 className="text-blue-400 font-medium mb-3">
+          <h4 className="text-blue-400  mb-3">
             Working On ({allAchievements.filter((a) => !a.unlocked).length}):
           </h4>
           <div className="space-y-3">
@@ -134,7 +134,7 @@ export default function AchievementBadges({
                         {achievement.icon}
                       </div>
                       <div>
-                        <h5 className="text-gray-300 font-medium text-sm">
+                        <h5 className="text-gray-300  text-sm">
                           {achievement.name}
                         </h5>
                         <p className="text-gray-500 text-xs">

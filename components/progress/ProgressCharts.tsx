@@ -42,7 +42,7 @@
 //       className={`bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-6 ${className}`}
 //     >
 //       // components/progress/ProgressCharts.tsx (continued)
-//       <h3 className="text-white font-semibold text-lg mb-6 flex items-center">
+//       <h3 className="text-white  text-lg mb-6 flex items-center">
 //         📈 Writing Activity (Last 7 Days)
 //       </h3>
 //       <div className="h-64">
@@ -100,7 +100,7 @@
 //           },
 //         ].map((stat, index) => (
 //           <div key={stat.label} className="text-center">
-//             <div className={`text-lg font-bold ${stat.color}`}>
+//             <div className={`text-lg  ${stat.color}`}>
 //               {stat.value}
 //             </div>
 //             <div className="text-gray-400 text-xs">{stat.label}</div>
@@ -155,7 +155,7 @@ export default function ProgressCharts({
       className={`bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-6 ${className}`}
     >
       {/* Chart title and content */}
-      <h3 className="text-white font-semibold text-lg mb-6 flex items-center">
+      <h3 className="text-white  text-lg mb-6 flex items-center">
         📈 Writing Activity (Last 7 Days)
       </h3>
       <div className="h-64">
@@ -213,7 +213,7 @@ export default function ProgressCharts({
           },
         ].map((stat, index) => (
           <div key={stat.label} className="text-center">
-            <div className={`text-lg font-bold ${stat.color}`}>
+            <div className={`text-lg  ${stat.color}`}>
               {stat.value}
             </div>
             <div className="text-gray-400 text-xs">{stat.label}</div>

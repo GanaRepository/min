@@ -80,7 +80,7 @@ export default function LogoutPage() {
           {[...Array(50)].map((_, i) => (
             <div
               key={i}
-              className="absolute w-1 h-1 bg-white rounded-full opacity-60 animate-pulse"
+              className="absolute w-1 h-1 bg-white  opacity-60 animate-pulse"
               style={{
                 left: `${Math.random() * 100}%`,
                 top: `${Math.random() * 100}%`,
@@ -111,13 +111,13 @@ export default function LogoutPage() {
           transition={{ duration: 0.8 }}
           className="relative z-10 w-full max-w-sm sm:max-w-md md:max-w-lg mx-auto px-2 sm:px-4"
         >
-          <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-4 sm:p-8 shadow-2xl text-center">
+          <div className="bg-white/10 backdrop-blur-xl border border-white/20  p-4 sm:p-8 shadow-2xl text-center">
             {/* Logo/Icon */}
             <motion.div
               initial={{ opacity: 0, scale: 0 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl mb-4 sm:mb-6"
+              className="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 bg-white/10 backdrop-blur-lg border border-white/20  mb-4 sm:mb-6"
             >
               <LogOut className="h-8 w-8 sm:h-10 sm:w-10 text-white" />
             </motion.div>
@@ -151,7 +151,7 @@ export default function LogoutPage() {
                 <motion.div
                   animate={{ rotate: 360 }}
                   transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-                  className="w-10 h-10 sm:w-12 sm:h-12 border-4 border-white/20 border-t-white rounded-full"
+                  className="w-10 h-10 sm:w-12 sm:h-12 border-4 border-white/20 border-t-white "
                 />
               ) : (
                 !error && (
@@ -159,7 +159,7 @@ export default function LogoutPage() {
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
                     transition={{ duration: 0.5, type: 'spring' }}
-                    className="w-10 h-10 sm:w-12 sm:h-12 bg-green-500 rounded-full flex items-center justify-center"
+                    className="w-10 h-10 sm:w-12 sm:h-12 bg-green-500  flex items-center justify-center"
                   >
                     <svg
                       className="w-5 h-5 sm:w-6 sm:h-6 text-white"

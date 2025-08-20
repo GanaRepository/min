@@ -45,7 +45,7 @@ export default function WritingStreak({
       transition={{ delay: 0.7 }}
       className={`bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-6 ${className}`}
     >
-      <h3 className="text-white font-semibold text-lg mb-6 flex items-center">
+      <h3 className="text-white  text-lg mb-6 flex items-center">
         🔥 Writing Streak
       </h3>
 
@@ -60,7 +60,7 @@ export default function WritingStreak({
           >
             <Flame className="w-10 h-10 text-white" />
           </motion.div>
-          <div className="text-3xl font-bold text-orange-400 mb-1">
+          <div className="text-3xl  text-orange-400 mb-1">
             {currentStreak}
           </div>
           <div className="text-gray-400 text-sm">Current Streak</div>
@@ -76,7 +76,7 @@ export default function WritingStreak({
           >
             <span className="text-2xl">🏆</span>
           </motion.div>
-          <div className="text-3xl font-bold text-yellow-400 mb-1">
+          <div className="text-3xl  text-yellow-400 mb-1">
             {bestStreak}
           </div>
           <div className="text-gray-400 text-sm">Best Streak</div>
@@ -92,14 +92,14 @@ export default function WritingStreak({
           >
             <span className="text-2xl">🎯</span>
           </motion.div>
-          <div className="text-3xl font-bold text-green-400 mb-1">30</div>
+          <div className="text-3xl  text-green-400 mb-1">30</div>
           <div className="text-gray-400 text-sm">Next Goal</div>
         </div>
       </div>
 
       {/* Streak Calendar */}
       <div className="mt-6">
-        <h4 className="text-white font-medium mb-3 flex items-center">
+        <h4 className="text-white  mb-3 flex items-center">
           <Calendar className="w-4 h-4 mr-2" />
           Last 30 Days
         </h4>
@@ -110,7 +110,7 @@ export default function WritingStreak({
               initial={{ opacity: 0, scale: 0 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 1.1 + index * 0.02 }}
-              className={`w-6 h-6 rounded text-xs flex items-center justify-center font-medium ${
+              className={`w-6 h-6 rounded text-xs flex items-center justify-center  ${
                 day.hasWritten
                   ? 'bg-green-500 text-white'
                   : day.isToday

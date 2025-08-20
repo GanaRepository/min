@@ -94,7 +94,7 @@ export default function StoryCard({ story, viewMode }: StoryCardProps) {
             {/* Story Info */}
             <div className="flex-1 min-w-0">
               <div className="flex items-center space-x-2 mb-1">
-                <h3 className="text-white font-semibold text-lg group-hover:text-green-400 transition-colors truncate">
+                <h3 className="text-white  text-lg group-hover:text-green-400 transition-colors truncate">
                   {story.title}
                 </h3>
                 <span className={`text-sm ${getStatusColor(story.status)}`}>
@@ -117,19 +117,19 @@ export default function StoryCard({ story, viewMode }: StoryCardProps) {
                   <>
                     <div className="text-xs text-gray-400">
                       Grammar:{' '}
-                      <span className="text-green-400 font-medium">
+                      <span className="text-green-400 ">
                         {story.grammarScore}%
                       </span>
                     </div>
                     <div className="text-xs text-gray-400">
                       Creativity:{' '}
-                      <span className="text-blue-400 font-medium">
+                      <span className="text-blue-400 ">
                         {story.creativityScore}%
                       </span>
                     </div>
                     <div className="text-xs text-gray-400">
                       Overall:{' '}
-                      <span className="text-purple-400 font-medium">
+                      <span className="text-purple-400 ">
                         {story.overallScore}%
                       </span>
                     </div>
@@ -187,7 +187,7 @@ export default function StoryCard({ story, viewMode }: StoryCardProps) {
           {/* Header */}
           <div className="relative h-32 bg-gradient-to-br from-purple-500 via-pink-600 to-orange-600 overflow-hidden">
             {/* Status badge */}
-            <div className="absolute top-3 left-3 px-2 py-1 bg-white/20 backdrop-blur-sm rounded-full text-white text-xs font-medium">
+            <div className="absolute top-3 left-3 px-2 py-1 bg-white/20 backdrop-blur-sm rounded-full text-white text-xs ">
               {story.elements.genre}
             </div>
 
@@ -220,7 +220,7 @@ export default function StoryCard({ story, viewMode }: StoryCardProps) {
 
           {/* Content */}
           <div className="p-6">
-            <h3 className="text-xl font-bold text-white mb-3 group-hover:text-green-400 transition-colors line-clamp-2">
+            <h3 className="text-xl  text-white mb-3 group-hover:text-green-400 transition-colors line-clamp-2">
               {story.title}
             </h3>
 
@@ -249,7 +249,7 @@ export default function StoryCard({ story, viewMode }: StoryCardProps) {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-2">
                     <Star className="w-4 h-4 text-yellow-400" />
-                    <span className="text-yellow-400 font-medium text-sm">
+                    <span className="text-yellow-400  text-sm">
                       {story.overallScore}%
                     </span>
                   </div>
@@ -262,7 +262,7 @@ export default function StoryCard({ story, viewMode }: StoryCardProps) {
 
               {story.status === 'in_progress' && (
                 <div className="bg-yellow-500/20 border border-yellow-500/30 rounded-lg p-3">
-                  <p className="text-yellow-300 text-sm font-medium">
+                  <p className="text-yellow-300 text-sm ">
                     Ready to continue your adventure!
                   </p>
                 </div>
@@ -273,7 +273,7 @@ export default function StoryCard({ story, viewMode }: StoryCardProps) {
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className={`w-full mt-4 py-2 px-4 rounded-lg font-medium text-sm transition-all ${
+              className={`w-full mt-4 py-2 px-4 rounded-lg  text-sm transition-all ${
                 story.status === 'in_progress'
                   ? 'bg-green-500 hover:bg-green-600 text-white'
                   : 'bg-blue-500 hover:bg-blue-600 text-white'

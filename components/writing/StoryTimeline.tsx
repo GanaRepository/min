@@ -27,7 +27,7 @@
 // // }: StoryTimelineProps) {
 // //   return (
 // //     <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-6">
-// //       <h3 className="text-white font-semibold text-lg mb-4 flex items-center">
+// //       <h3 className="text-white  text-lg mb-4 flex items-center">
 // //         📖 Story So Far
 // //       </h3>
 
@@ -46,7 +46,7 @@
 // //               </div>
 // //               <div className="flex-1 min-w-0">
 // //                 <div className="flex items-center space-x-2 mb-1">
-// //                   <span className="text-purple-300 font-medium text-sm">You selected elements:</span>
+// //                   <span className="text-purple-300  text-sm">You selected elements:</span>
 // //                 </div>
 // //                 <div className="bg-purple-500/20 border border-purple-500/30 rounded-lg p-3">
 // //                   <div className="flex flex-wrap gap-2">
@@ -70,7 +70,7 @@
 // //               </div>
 // //               <div className="flex-1 min-w-0">
 // //                 <div className="flex items-center space-x-2 mb-1">
-// //                   <span className="text-green-300 font-medium text-sm">🎭 Your Teacher Says:</span>
+// //                   <span className="text-green-300  text-sm">🎭 Your Teacher Says:</span>
 // //                 </div>
 // //                 <div className="bg-green-500/20 border border-green-500/30 rounded-lg p-4">
 // //                   <p className="text-gray-200 text-sm leading-relaxed">
@@ -104,7 +104,7 @@
 // //                 </div>
 // //                 <div className="flex-1 min-w-0">
 // //                   <div className="flex items-center space-x-2 mb-1">
-// //                     <span className="text-purple-300 font-medium text-sm">You wrote:</span>
+// //                     <span className="text-purple-300  text-sm">You wrote:</span>
 // //                     <span className="text-xs text-gray-400">Turn {turn.turnNumber}</span>
 // //                   </div>
 // //                   <div className="bg-purple-500/20 border border-purple-500/30 rounded-lg p-3">
@@ -126,7 +126,7 @@
 // //                   </div>
 // //                   <div className="flex-1 min-w-0">
 // //                     <div className="flex items-center space-x-2 mb-1">
-// //                       <span className="text-green-300 font-medium text-sm">AI responded:</span>
+// //                       <span className="text-green-300  text-sm">AI responded:</span>
 // //                     </div>
 // //                     <div className="bg-green-500/20 border border-green-500/30 rounded-lg p-3">
 // //                       <p className="text-gray-200 text-sm leading-relaxed">
@@ -198,7 +198,7 @@
 // }: StoryTimelineProps) {
 //   return (
 //     <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-6">
-//       <h3 className="text-white font-semibold text-lg mb-4 flex items-center">
+//       <h3 className="text-white  text-lg mb-4 flex items-center">
 //         💬 Story Chat
 //       </h3>
 
@@ -216,7 +216,7 @@
 //                 <User className="w-4 h-4 text-white" />
 //               </div>
 //               <div className="bg-purple-500/20 border border-purple-500/30 rounded-lg p-4 rounded-bl-none">
-//                 <div className="text-purple-300 font-medium text-sm mb-2">Selected Story Elements:</div>
+//                 <div className="text-purple-300  text-sm mb-2">Selected Story Elements:</div>
 //                 <div className="flex flex-wrap gap-2">
 //                   {Object.entries(storyElements).map(([type, value]) => (
 //                     <span
@@ -242,7 +242,7 @@
 //           >
 //             <div className="flex items-start space-x-3 max-w-[80%]">
 //               <div className="bg-green-500/20 border border-green-500/30 rounded-lg p-4 rounded-br-none">
-//                 <div className="text-green-300 font-medium text-sm mb-2">🎭 Teacher's Opening:</div>
+//                 <div className="text-green-300  text-sm mb-2">🎭 Teacher's Opening:</div>
 //                 <p className="text-gray-200 text-sm leading-relaxed">
 //                   {aiOpening}
 //                 </p>
@@ -271,7 +271,7 @@
 //                 </div>
 //                 <div className="bg-purple-500/20 border border-purple-500/30 rounded-lg p-4 rounded-bl-none">
 //                   <div className="flex items-center space-x-2 mb-2">
-//                     <span className="text-purple-300 font-medium text-sm">You wrote:</span>
+//                     <span className="text-purple-300  text-sm">You wrote:</span>
 //                     <span className="text-xs text-gray-400">Turn {turn.turnNumber}</span>
 //                   </div>
 //                   <p className="text-gray-200 text-sm leading-relaxed mb-2">
@@ -294,7 +294,7 @@
 //               >
 //                 <div className="flex items-start space-x-3 max-w-[80%]">
 //                   <div className="bg-green-500/20 border border-green-500/30 rounded-lg p-4 rounded-br-none">
-//                     <div className="text-green-300 font-medium text-sm mb-2">AI responded:</div>
+//                     <div className="text-green-300  text-sm mb-2">AI responded:</div>
 //                     <p className="text-gray-200 text-sm leading-relaxed">
 //                       {turn.aiResponse}
 //                     </p>
@@ -398,7 +398,7 @@ export default function StoryTimeline({
 }: StoryTimelineProps) {
   return (
     <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-6">
-      <h3 className="text-white font-semibold text-lg mb-4 flex items-center">
+      <h3 className="text-white  text-lg mb-4 flex items-center">
         💬 Story Chat
       </h3>
 
@@ -416,7 +416,7 @@ export default function StoryTimeline({
                 <User className="w-4 h-4 text-white" />
               </div>
               <div className="bg-purple-500/20 border border-purple-500/30 rounded-lg p-4 rounded-bl-none">
-                <div className="text-purple-300 font-medium text-sm mb-2">
+                <div className="text-purple-300  text-sm mb-2">
                   Selected Story Elements:
                 </div>
                 <div className="flex flex-wrap gap-2">
@@ -444,7 +444,7 @@ export default function StoryTimeline({
           >
             <div className="flex items-start space-x-3 max-w-[85%]">
               <div className="bg-green-500/20 border border-green-500/30 rounded-lg p-4 rounded-br-none">
-                <div className="text-green-300 font-medium text-sm mb-2">
+                <div className="text-green-300  text-sm mb-2">
                   🎭 Teacher&apos;s Opening:
                 </div>
                 <p className="text-gray-200 text-sm leading-relaxed">
@@ -474,7 +474,7 @@ export default function StoryTimeline({
                 </div>
                 <div className="bg-purple-500/20 border border-purple-500/30 rounded-lg p-4 rounded-bl-none">
                   <div className="flex items-center space-x-2 mb-2">
-                    <span className="text-purple-300 font-medium text-sm">
+                    <span className="text-purple-300  text-sm">
                       You wrote:
                     </span>
                     <span className="text-xs text-gray-400">
@@ -501,7 +501,7 @@ export default function StoryTimeline({
               >
                 <div className="flex items-start space-x-3 max-w-[85%]">
                   <div className="bg-green-500/20 border border-green-500/30 rounded-lg p-4 rounded-br-none">
-                    <div className="text-green-300 font-medium text-sm mb-2">
+                    <div className="text-green-300  text-sm mb-2">
                       AI responded:
                     </div>
                     <p className="text-gray-200 text-sm leading-relaxed">

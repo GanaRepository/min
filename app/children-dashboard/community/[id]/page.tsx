@@ -387,7 +387,7 @@ export default function CommunityStoryView() {
         {/* Competition Entry Badge for non-winners */}
         {isCompetitionNonWinner() && (
           <div className="text-center mb-6">
-            <div className="inline-block px-4 py-2 rounded-full text-lg font-medium bg-purple-500/20 text-purple-400 border border-purple-500/30">
+            <div className="inline-block px-4 py-2 rounded-full text-lg  bg-purple-500/20 text-purple-400 border border-purple-500/30">
               Competition Entry
             </div>
             <p className="text-gray-400 text-sm mt-2">

@@ -43,7 +43,7 @@ export default function StatsCards() {
       transition={{ duration: 0.6, delay: 0.2 }}
       className="mb-8"
     >
-      <h2 className="text-xl font-bold text-white mb-4 flex items-center">
+      <h2 className="text-xl  text-white mb-4 flex items-center">
         📊 Your Writing Stats Today
       </h2>
 
@@ -63,12 +63,12 @@ export default function StatsCards() {
               >
                 <stat.icon className="w-5 h-5 text-white" />
               </div>
-              <span className="text-green-400 text-sm font-medium">
+              <span className="text-green-400 text-sm ">
                 {stat.change}
               </span>
             </div>
 
-            <div className="text-2xl sm:text-3xl font-bold text-white mb-1">
+            <div className="text-2xl sm:text-3xl  text-white mb-1">
               {stat.value}
             </div>
 

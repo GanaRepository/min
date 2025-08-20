@@ -59,13 +59,13 @@ export const DownloadStoryButtons: React.FC<Props> = ({ story }) => {
     <div className="flex gap-4">
       <button
         onClick={handleDownloadWord}
-        className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-2 rounded-lg font-semibold shadow-md transition-all"
+        className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-2 rounded-lg  shadow-md transition-all"
       >
         Word
       </button>
       <button
         onClick={handleDownloadPDF}
-        className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white px-6 py-2 rounded-lg font-semibold shadow-md transition-all"
+        className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white px-6 py-2 rounded-lg  shadow-md transition-all"
       >
         PDF
       </button>

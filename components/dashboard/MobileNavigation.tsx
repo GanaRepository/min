@@ -28,14 +28,14 @@ export default function MobileNavigation({
             <div className="w-8 h-8 bg-gradient-to-br from-green-400 to-blue-500 rounded-lg flex items-center justify-center">
               <Sparkles className="w-5 h-5 text-white" />
             </div>
-            <span className="text-lg font-bold text-white">Mintoons</span>
+            <span className="text-lg  text-white">Mintoons</span>
           </div>
 
           <div className="flex items-center space-x-2">
             <div className="w-8 h-8 bg-gradient-to-br from-purple-400 to-pink-500 rounded-full flex items-center justify-center">
               <User className="w-4 h-4 text-white" />
             </div>
-            <span className="text-sm font-medium text-white hidden sm:block">
+            <span className="text-sm  text-white hidden sm:block">
               {session?.user?.firstName}
             </span>
           </div>

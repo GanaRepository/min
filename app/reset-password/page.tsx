@@ -33,7 +33,7 @@ function ResetPasswordFallback() {
         <div className="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mb-6">
           <div className="animate-spin h-8 w-8 border-4 border-white/30 border-t-white rounded-full"></div>
         </div>
-        <h2 className="text-2xl font-medium text-center mb-2">Loading</h2>
+        <h2 className="text-2xl  text-center mb-2">Loading</h2>
         <p className="text-white/60">Retrieving your reset information...</p>
       </div>
     </div>
@@ -479,7 +479,7 @@ function ResetPasswordContent() {
               <motion.button
                 type="submit"
                 disabled={isLoading}
-                className="w-full bg-white hover:bg-teal-100 text-emerald-900 py-3 sm:py-4 px-4 sm:px-6 rounded-lg sm:rounded-xl font-medium transition-all duration-300 backdrop-blur-sm border border-white/30 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-teal-500/25"
+                className="w-full bg-white hover:bg-teal-100 text-emerald-900 py-3 sm:py-4 px-4 sm:px-6 rounded-lg sm:rounded-xl  transition-all duration-300 backdrop-blur-sm border border-white/30 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-teal-500/25"
                 whileHover={{
                   scale: 1.02,
                   boxShadow: '0 10px 40px rgba(20, 184, 166, 0.3)',

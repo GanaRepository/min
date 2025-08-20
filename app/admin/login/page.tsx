@@ -381,7 +381,7 @@ export default function AdminLogin() {
           <Link href="/">
             <Button
               variant="outline"
-              className="mb-6 bg-white/10 border-white/20 text-white hover:bg-white/20"
+              className="mb-6 bg-white/10 border-white/20 text-white hover:bg-gray-300"
             >
               ← Back to Mintoons
             </Button>

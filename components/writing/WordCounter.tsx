@@ -37,7 +37,7 @@
 //             This Turn: {currentWords}/{minWords} words
 //           </span>
 //           {isComplete && (
-//             <span className="text-green-400 text-sm font-medium">✓ Ready</span>
+//             <span className="text-green-400 text-sm ">✓ Ready</span>
 //           )}
 //           {isOverTarget && (
 //             <span className="text-yellow-400 text-sm">
@@ -204,7 +204,7 @@ export default function WordCounter({
       <div className="flex items-center justify-between mb-2">
         <div className={`flex items-center space-x-2 ${getStatusColor()}`}>
           {getStatusIcon()}
-          <span className="font-medium text-sm">
+          <span className=" text-sm">
             {wordCount}/{minWordCount}
           </span>
         </div>

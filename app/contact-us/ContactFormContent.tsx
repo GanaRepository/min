@@ -142,7 +142,7 @@ export default function MintoonsContactPage() {
           <div className="w-32 h-32 bg-gradient-to-r from-blue-600 to-indigo-700  flex items-center justify-center mx-auto mb-8 shadow-2xl animate-bounce">
             <CheckCircle className="w-16 h-16 text-white" />
           </div>
-          <h2 className="text-5xl font-bold text-gray-800 mb-6">
+          <h2 className="text-5xl  text-gray-800 mb-6">
             🎉 Welcome to the Mintoons Family! 🎉
           </h2>
           <p className="text-xl text-gray-600 mb-8 leading-relaxed">
@@ -151,7 +151,7 @@ export default function MintoonsContactPage() {
           </p>
           <div className="flex items-center justify-center space-x-3 text-gray-500 text-lg">
             <Heart className="w-6 h-6 animate-pulse text-indigo-600" />
-            <span className="font-medium">Get ready to create magic!</span>
+            <span className="">Get ready to create magic!</span>
             <Sparkles className="w-6 h-6 animate-spin text-blue-600" />
           </div>
         </div>
@@ -172,11 +172,11 @@ export default function MintoonsContactPage() {
               transition={{ delay: 0.2, duration: 0.8 }}
             >
               <Sparkles className="w-4 h-4 text-blue-400 mr-2  " />
-              <span className="text-blue-200 font-medium text-xs sm:text-sm ">
+              <span className="text-blue-200  text-xs sm:text-sm ">
                 Creative Writing Education Platform
               </span>
             </motion.div>
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight tracking-tight mb-6">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl  leading-tight tracking-tight mb-6">
               <span className="block text-white"> How can we help you</span>
               <span className="block bg-gradient-to-r from-green-400 via-teal-300 to-cyan-400 bg-clip-text text-transparent">
                 create magic?
@@ -190,18 +190,18 @@ export default function MintoonsContactPage() {
 
             <div className="grid grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
               <div className="text-center p-4 sm:p-6 bg-gradient-to-br from-gray-800/60 to-gray-700/60 backdrop-blur-xl border border-gray-600/40  hover:border-gray-500/60 transition-all duration-300 hover:scale-105 shadow-lg">
-                <div className="text-2xl sm:text-3xl font-bold text-blue-400 mb-1">
+                <div className="text-2xl sm:text-3xl  text-blue-400 mb-1">
                   10K+
                 </div>
-                <div className="text-xs sm:text-sm text-gray-300 font-medium">
+                <div className="text-xs sm:text-sm text-gray-300 ">
                   Stories Created
                 </div>
               </div>
               <div className="text-center p-4 sm:p-6 bg-gradient-to-br from-gray-800/60 to-gray-700/60 backdrop-blur-xl border border-gray-600/40  hover:border-gray-500/60 transition-all duration-300 hover:scale-105 shadow-lg">
-                <div className="text-2xl sm:text-3xl font-bold text-indigo-400 mb-1">
+                <div className="text-2xl sm:text-3xl  text-indigo-400 mb-1">
                   95%
                 </div>
-                <div className="text-xs sm:text-sm text-gray-300 font-medium">
+                <div className="text-xs sm:text-sm text-gray-300 ">
                   Happy Writers
                 </div>
               </div>
@@ -225,23 +225,23 @@ export default function MintoonsContactPage() {
               </div>
 
               {/* Testimonial text */}
-              <blockquote className="text-gray-200 text-lg sm:text-xl font-medium leading-relaxed mb-6 relative z-10">
+              <blockquote className="text-gray-200 text-lg sm:text-xl  leading-relaxed mb-6 relative z-10">
                 "{testimonials[currentTestimonial].text}"
               </blockquote>
 
               {/* Author info with avatar placeholder */}
               <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600  flex items-center justify-center text-white font-semibold text-lg">
+                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600  flex items-center justify-center text-white  text-lg">
                   {testimonials[currentTestimonial].author
                     .split(' ')
                     .map((n) => n[0])
                     .join('')}
                 </div>
                 <div>
-                  <div className="font-semibold text-gray-200 text-base">
+                  <div className=" text-gray-200 text-base">
                     {testimonials[currentTestimonial].author}
                   </div>
-                  <div className="text-blue-400 text-sm font-medium">
+                  <div className="text-blue-400 text-sm ">
                     {testimonials[currentTestimonial].role}
                   </div>
                 </div>
@@ -279,7 +279,7 @@ export default function MintoonsContactPage() {
           <div className="w-full max-w-xs sm:max-w-lg">
             <div className="bg-gradient-to-br from-gray-800/60 to-gray-700/60 backdrop-blur-xl border border-gray-600/40  p-4 sm:p-8 lg:p-10 shadow-2xl">
               <div className="text-center mb-6 sm:mb-8">
-                <h2 className="text-xl sm:text-3xl font-bold text-white mb-2 sm:mb-3">
+                <h2 className="text-xl sm:text-3xl  text-white mb-2 sm:mb-3">
                   Start Your Journey
                 </h2>
                 <p className="text-gray-300 text-xs sm:text-base">
@@ -290,7 +290,7 @@ export default function MintoonsContactPage() {
 
               <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
                 <div className="group">
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                  <label className="block text-sm  text-gray-300 mb-2">
                     Name *
                   </label>
                   <div className="relative">
@@ -308,7 +308,7 @@ export default function MintoonsContactPage() {
                 </div>
 
                 <div className="group">
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                  <label className="block text-sm  text-gray-300 mb-2">
                     Email *
                   </label>
                   <div className="relative">
@@ -326,7 +326,7 @@ export default function MintoonsContactPage() {
                 </div>
 
                 <div className="group">
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                  <label className="block text-sm  text-gray-300 mb-2">
                     Phone *
                   </label>
                   <div className="relative">
@@ -344,7 +344,7 @@ export default function MintoonsContactPage() {
                 </div>
 
                 <div className="group">
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                  <label className="block text-sm  text-gray-300 mb-2">
                     Child&apos;s Age
                   </label>
                   <div className="relative">
@@ -361,7 +361,7 @@ export default function MintoonsContactPage() {
                 </div>
 
                 <div className="group">
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                  <label className="block text-sm  text-gray-300 mb-2">
                     School
                   </label>
                   <div className="relative">
@@ -378,7 +378,7 @@ export default function MintoonsContactPage() {
                 </div>
 
                 <div className="group">
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                  <label className="block text-sm  text-gray-300 mb-2">
                     Tell us more about your child&apos;s interests and how we
                     can help... *
                   </label>
@@ -399,7 +399,7 @@ export default function MintoonsContactPage() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 text-white py-4 px-8  font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed group relative overflow-hidden"
+                  className="w-full bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 text-white py-4 px-8   transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed group relative overflow-hidden"
                 >
                   <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   {isSubmitting ? (
