@@ -45,7 +45,7 @@ export default function DashboardHeader({
             {/* Mobile menu button */}
             <button
               onClick={onMenuClick}
-              className="lg:hidden p-2 rounded-lg text-gray-300 hover:text-white hover:bg-gray-700/50 transition-colors"
+              className="lg:hidden p-2  text-gray-300 hover:text-white hover:bg-gray-700/50 transition-colors"
             >
               <Menu className="w-5 h-5" />
             </button>
@@ -68,7 +68,7 @@ export default function DashboardHeader({
               <input
                 type="text"
                 placeholder="Search your stories..."
-                className="w-full pl-10 pr-4 py-2 bg-gray-700/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
+                className="w-full pl-10 pr-4 py-2 bg-gray-700/50 border border-gray-600  text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
               />
             </div>
           </div>
@@ -88,18 +88,18 @@ export default function DashboardHeader({
             </div>
 
             {/* Notifications */}
-            <button className="relative p-2 rounded-lg text-gray-300 hover:text-white hover:bg-gray-700/50 transition-colors">
+            <button className="relative p-2  text-gray-300 hover:text-white hover:bg-gray-700/50 transition-colors">
               <Bell className="w-5 h-5" />
-              <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+              <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 "></span>
             </button>
 
             {/* Profile dropdown */}
             <div className="relative">
               <button
                 onClick={() => setShowProfileMenu(!showProfileMenu)}
-                className="flex items-center space-x-3 p-2 rounded-lg text-gray-300 hover:text-white hover:bg-gray-700/50 transition-colors"
+                className="flex items-center space-x-3 p-2  text-gray-300 hover:text-white hover:bg-gray-700/50 transition-colors"
               >
-                <div className="w-8 h-8 bg-gradient-to-r from-purple-400 to-pink-500 rounded-full flex items-center justify-center">
+                <div className="w-8 h-8 bg-gradient-to-r from-purple-400 to-pink-500  flex items-center justify-center">
                   <span className="text-white  text-sm">
                     {user.firstName.charAt(0)}
                   </span>
@@ -117,19 +117,19 @@ export default function DashboardHeader({
                 <motion.div
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="absolute right-0 top-full mt-2 w-48 bg-gray-800 border border-gray-600 rounded-lg shadow-xl"
+                  className="absolute right-0 top-full mt-2 w-48 bg-gray-800 border border-gray-600  shadow-xl"
                 >
                   <div className="p-2">
                     <button
                       onClick={() => setShowProfileMenu(false)}
-                      className="w-full flex items-center space-x-3 p-2 rounded-lg text-gray-300 hover:text-white hover:bg-gray-700/50 transition-colors text-left"
+                      className="w-full flex items-center space-x-3 p-2  text-gray-300 hover:text-white hover:bg-gray-700/50 transition-colors text-left"
                     >
                       <User className="w-4 h-4" />
                       <span>Profile Settings</span>
                     </button>
                     <button
                       onClick={() => setShowProfileMenu(false)}
-                      className="w-full flex items-center space-x-3 p-2 rounded-lg text-gray-300 hover:text-white hover:bg-gray-700/50 transition-colors text-left"
+                      className="w-full flex items-center space-x-3 p-2  text-gray-300 hover:text-white hover:bg-gray-700/50 transition-colors text-left"
                     >
                       <Settings className="w-4 h-4" />
                       <span>Preferences</span>
@@ -137,7 +137,7 @@ export default function DashboardHeader({
                     <hr className="my-2 border-gray-600" />
                     <button
                       onClick={handleSignOut}
-                      className="w-full flex items-center space-x-3 p-2 rounded-lg text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-colors text-left"
+                      className="w-full flex items-center space-x-3 p-2  text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-colors text-left"
                     >
                       <LogOut className="w-4 h-4" />
                       <span>Sign Out</span>

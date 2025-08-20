@@ -82,7 +82,7 @@ export default function DashboardSidebar({
         {/* Header */}
         <div className="flex items-center justify-between h-16 px-6 border-b border-gray-700">
           <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-gradient-to-br from-green-400 to-blue-500 rounded-lg flex items-center justify-center">
+            <div className="w-8 h-8 bg-gradient-to-br from-green-400 to-blue-500  flex items-center justify-center">
               <Sparkles className="w-5 h-5 text-white" />
             </div>
             <span className="text-xl  text-white">Mintoons</span>
@@ -98,7 +98,7 @@ export default function DashboardSidebar({
         {/* User Profile */}
         <div className="px-6 py-4 border-b border-gray-700">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-purple-400 to-pink-500 rounded-full flex items-center justify-center">
+            <div className="w-10 h-10 bg-gradient-to-br from-purple-400 to-pink-500  flex items-center justify-center">
               <User className="w-5 h-5 text-white" />
             </div>
             <div>
@@ -122,7 +122,7 @@ export default function DashboardSidebar({
                 href={item.href}
                 onClick={() => setOpen(false)}
                 className={`
-                  flex items-center space-x-3 px-3 py-3 text-sm  rounded-lg
+                  flex items-center space-x-3 px-3 py-3 text-sm  
                   ${
                     isActive
                       ? 'bg-green-500/20 text-green-400 border border-green-500/30'
@@ -141,7 +141,7 @@ export default function DashboardSidebar({
         <div className="p-3 border-t border-gray-700">
           <button
             onClick={handleSignOut}
-            className="w-full flex items-center space-x-3 px-3 py-3 text-sm  rounded-lg text-gray-300 hover:text-white hover:bg-red-600/20 mt-1"
+            className="w-full flex items-center space-x-3 px-3 py-3 text-sm   text-gray-300 hover:text-white hover:bg-red-600/20 mt-1"
           >
             <LogOut className="w-5 h-5" />
             <span>Sign Out</span>

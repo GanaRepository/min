@@ -33,7 +33,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 flex items-center justify-center">
         <div className="text-white text-center">
-          <div className="w-8 h-8 border-4 border-white/30 border-t-white rounded-full animate-spin mx-auto mb-4"></div>
+          <div className="w-8 h-8 border-4 border-white/30 border-t-white  animate-spin mx-auto mb-4"></div>
           <p>Loading your creative space...</p>
         </div>
       </div>

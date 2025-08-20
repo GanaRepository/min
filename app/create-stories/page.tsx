@@ -363,7 +363,7 @@ export default function CreateStoriesPage() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 flex items-center justify-center">
         <div className="text-white text-xl flex items-center gap-3">
-          <div className="w-8 h-8 border-4 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
+          <div className="w-8 h-8 border-4 border-blue-400 border-t-transparent  animate-spin"></div>
           Loading your creative studio...
         </div>
       </div>
@@ -384,10 +384,10 @@ export default function CreateStoriesPage() {
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ delay: 0.2, type: 'spring' }}
-            className="relative"
+            className="relative "
           >
             <Palette className="w-20 h-20 text-purple-400" />
-            <div className="absolute -top-2 -right-2 w-8 h-8 bg-gradient-to-r from-pink-500 to-yellow-500 rounded-full flex items-center justify-center">
+            <div className="rounded-md absolute -top-2 -right-2 w-8 h-8 bg-gradient-to-r from-pink-500 to-yellow-500  flex items-center justify-center">
               <Sparkles className="w-4 h-4 text-white" />
             </div>
           </motion.div>
@@ -419,7 +419,7 @@ export default function CreateStoriesPage() {
             transition={{ delay: 0.4 }}
             className="grid grid-cols-3 md:grid-cols-3 gap-4 max-w-4xl mx-auto mb-12"
           >
-            <div className="bg-blue-500/20 border border-blue-500/30 rounded-lg p-4">
+            <div className="bg-blue-500/20 border border-blue-500/30  p-4">
               <div className="text-2xl  text-blue-400">
                 {usageStats.freestyleStories.remaining}
               </div>
@@ -427,7 +427,7 @@ export default function CreateStoriesPage() {
                 Freestyle Stories Left
               </div>
             </div>
-            <div className="bg-green-500/20 border border-green-500/30 rounded-lg p-4">
+            <div className="bg-green-500/20 border border-green-500/30  p-4">
               <div className="text-2xl  text-green-400">
                 {usageStats.assessmentRequests.remaining}
               </div>
@@ -435,7 +435,7 @@ export default function CreateStoriesPage() {
                 Assessment Requests Left
               </div>
             </div>
-            <div className="bg-purple-500/20 border border-purple-500/30 rounded-lg p-4">
+            <div className="bg-purple-500/20 border border-purple-500/30  p-4">
               <div className="text-2xl  text-purple-400">
                 {usageStats.competitionEntries.remaining}
               </div>
@@ -450,12 +450,12 @@ export default function CreateStoriesPage() {
         {usageStats && (
           <div className="flex justify-center mb-8">
             {usageStats.subscriptionTier === 'STORY_PACK' ? (
-              <div className="bg-gradient-to-r from-yellow-500 to-orange-500 text-gray-900 px-6 py-2 rounded-full  flex items-center gap-2">
+              <div className="bg-gradient-to-r from-yellow-500 to-orange-500 text-gray-900 px-6 py-2   flex items-center gap-2">
                 <Crown className="w-5 h-5" />
                 Story Pack Active
               </div>
             ) : (
-              <div className="bg-gray-700/50 text-gray-300 px-6 py-2 rounded-full  flex items-center gap-2">
+              <div className="rounded-sm bg-gray-700/50 text-gray-300 px-6 py-2   flex items-center gap-2">
                 <Heart className="w-5 h-5" />
                 Free Writer
               </div>
@@ -472,12 +472,12 @@ export default function CreateStoriesPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
           onClick={() => setActiveSection('freestyle')}
-          className="bg-gradient-to-br from-blue-500/20 to-purple-500/20 border border-blue-500/30 rounded-xl p-8 cursor-pointer hover:scale-105 transition-all duration-300 group"
+          className="bg-gradient-to-br from-blue-500/20 to-purple-500/20 border border-blue-500/30  p-8 cursor-pointer hover:scale-105 transition-all duration-300 group"
         >
           <div className="text-center">
             <div className="relative mb-6">
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg blur-lg opacity-30 group-hover:opacity-50 transition-opacity"></div>
-              <div className="relative bg-gradient-to-r from-blue-500 to-purple-600 w-16 h-16 rounded-lg flex items-center justify-center mx-auto">
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-600  blur-lg opacity-30 group-hover:opacity-50 transition-opacity"></div>
+              <div className="relative bg-gradient-to-r from-blue-500 to-purple-600 w-16 h-16  flex items-center justify-center mx-auto">
                 <Sparkles className="w-8 h-8 text-white" />
               </div>
             </div>
@@ -505,7 +505,7 @@ export default function CreateStoriesPage() {
             </div>
 
             {usageStats && (
-              <div className="mb-6 p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg">
+              <div className="mb-6 p-3 bg-blue-500/10 border border-blue-500/20 ">
                 <p className="text-sm text-gray-300">
                   {usageStats.freestyleStories?.canUse ? (
                     `${usageStats.freestyleStories?.remaining ?? 0} stories remaining this month`
@@ -518,7 +518,7 @@ export default function CreateStoriesPage() {
               </div>
             )}
 
-            <button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-3 rounded-lg  transition-all flex items-center justify-center gap-2">
+            <button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-3   transition-all flex items-center justify-center gap-2">
               <Rocket className="w-5 h-5" />
               Start Writing
             </button>
@@ -531,12 +531,12 @@ export default function CreateStoriesPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
           onClick={() => setActiveSection('assessment')}
-          className="bg-gradient-to-br from-green-500/20 to-teal-500/20 border border-green-500/30 rounded-xl p-8 cursor-pointer hover:scale-105 transition-all duration-300 group"
+          className="bg-gradient-to-br from-green-500/20 to-teal-500/20 border border-green-500/30  p-8 cursor-pointer hover:scale-105 transition-all duration-300 group"
         >
           <div className="text-center">
             <div className="relative mb-6">
-              <div className="absolute inset-0 bg-gradient-to-r from-green-500 to-teal-600 rounded-lg blur-lg opacity-30 group-hover:opacity-50 transition-opacity"></div>
-              <div className="relative bg-gradient-to-r from-green-500 to-teal-600 w-16 h-16 rounded-lg flex items-center justify-center mx-auto">
+              <div className="absolute inset-0 bg-gradient-to-r from-green-500 to-teal-600  blur-lg opacity-30 group-hover:opacity-50 transition-opacity"></div>
+              <div className="relative bg-gradient-to-r from-green-500 to-teal-600 w-16 h-16  flex items-center justify-center mx-auto">
                 <Upload className="w-8 h-8 text-white" />
               </div>
             </div>
@@ -564,7 +564,7 @@ export default function CreateStoriesPage() {
             </div>
 
             {usageStats && (
-              <div className="mb-6 p-3 bg-green-500/10 border border-green-500/20 rounded-lg">
+              <div className="mb-6 p-3 bg-green-500/10 border border-green-500/20 ">
                 <p className="text-sm text-gray-300">
                   {usageStats.assessmentRequests.canUse ? (
                     `${usageStats.assessmentRequests.remaining} uploads remaining this month`
@@ -577,7 +577,7 @@ export default function CreateStoriesPage() {
               </div>
             )}
 
-            <button className="w-full bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700 text-white py-3 rounded-lg  transition-all flex items-center justify-center gap-2">
+            <button className="w-full bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700 text-white py-3   transition-all flex items-center justify-center gap-2">
               <Upload className="w-5 h-5" />
               Upload Story
             </button>
@@ -590,12 +590,12 @@ export default function CreateStoriesPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
           onClick={() => setActiveSection('competition')}
-          className="bg-gradient-to-br from-purple-500/20 to-pink-500/20 border border-purple-500/30 rounded-xl p-8 cursor-pointer hover:scale-105 transition-all duration-300 group"
+          className="bg-gradient-to-br from-purple-500/20 to-pink-500/20 border border-purple-500/30  p-8 cursor-pointer hover:scale-105 transition-all duration-300 group"
         >
           <div className="text-center">
             <div className="relative mb-6">
-              <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-pink-600 rounded-lg blur-lg opacity-30 group-hover:opacity-50 transition-opacity"></div>
-              <div className="relative bg-gradient-to-r from-purple-500 to-pink-600 w-16 h-16 rounded-lg flex items-center justify-center mx-auto">
+              <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-pink-600  blur-lg opacity-30 group-hover:opacity-50 transition-opacity"></div>
+              <div className="relative bg-gradient-to-r from-purple-500 to-pink-600 w-16 h-16  flex items-center justify-center mx-auto">
                 <Trophy className="w-8 h-8 text-white" />
               </div>
             </div>
@@ -623,7 +623,7 @@ export default function CreateStoriesPage() {
             </div>
 
             {usageStats && (
-              <div className="mb-6 p-3 bg-purple-500/10 border border-purple-500/20 rounded-lg">
+              <div className="mb-6 p-3 bg-purple-500/10 border border-purple-500/20 ">
                 <p className="text-sm text-gray-300">
                   {usageStats.competitionEntries.canUse ? (
                     `${usageStats.competitionEntries.remaining} entries remaining this month`
@@ -636,7 +636,7 @@ export default function CreateStoriesPage() {
               </div>
             )}
 
-            <button className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white py-3 rounded-lg  transition-all flex items-center justify-center gap-2">
+            <button className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white py-3   transition-all flex items-center justify-center gap-2">
               <Trophy className="w-5 h-5" />
               Enter Competition
             </button>
@@ -649,7 +649,7 @@ export default function CreateStoriesPage() {
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.5 }}
-        className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-8 mb-16"
+        className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-8 mb-16"
       >
         <h2 className="text-3xl  text-white text-center mb-8">
           Why Choose Mintoons? ✨
@@ -704,7 +704,7 @@ export default function CreateStoriesPage() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
-          className="bg-gradient-to-r from-orange-500/20 to-red-500/20 border border-orange-500/30 rounded-xl p-8 text-center"
+          className="bg-gradient-to-r from-orange-500/20 to-red-500/20 border border-orange-500/30  p-8 text-center"
         >
           <Crown className="w-16 h-16 text-orange-400 mx-auto mb-4" />
           <h3 className="text-2xl  text-white mb-4">
@@ -716,7 +716,7 @@ export default function CreateStoriesPage() {
           </p>
           <button
             onClick={() => router.push('/pricing')}
-            className="bg-orange-600 hover:bg-orange-700 text-white px-8 py-3 rounded-lg  transition-colors"
+            className="bg-orange-600 hover:bg-orange-700 text-white px-8 py-3   transition-colors"
           >
             Upgrade to Story Pack - $15/month
           </button>
@@ -734,14 +734,14 @@ export default function CreateStoriesPage() {
       >
         <button
           onClick={() => setActiveSection('home')}
-          className="bg-green-500 p-2 px-6 rounded-lg flex items-center gap-2 text-gray-800 hover:text-white mb-6 transition-colors mx-auto"
+          className="bg-green-500 p-2 px-6  flex items-center gap-2 text-gray-800 hover:text-white mb-6 transition-colors mx-auto"
         >
           ← Back to Options
         </button>
 
         <div className="relative mb-6">
           <Sparkles className="w-20 h-20 text-blue-400 mx-auto" />
-          <div className="absolute -top-2 -right-2 w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+          <div className="absolute -top-2 -right-2 w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500  flex items-center justify-center">
             <Rocket className="w-4 h-4 text-white" />
           </div>
         </div>
@@ -755,12 +755,12 @@ export default function CreateStoriesPage() {
         </p>
       </motion.div>
 
-      <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-8 mb-8">
+      <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-8 mb-8">
         <h3 className="text-2xl  text-white mb-6">How It Works:</h3>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div className="text-center">
-            <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-4 text-white ">
+            <div className="w-12 h-12 bg-blue-600  flex items-center justify-center mx-auto mb-4 text-white ">
               1
             </div>
             <h4 className=" text-white mb-2">You Write</h4>
@@ -770,7 +770,7 @@ export default function CreateStoriesPage() {
           </div>
 
           <div className="text-center">
-            <div className="w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center mx-auto mb-4 text-white ">
+            <div className="w-12 h-12 bg-purple-600  flex items-center justify-center mx-auto mb-4 text-white ">
               2
             </div>
             <h4 className=" text-white mb-2">AI Responds</h4>
@@ -780,7 +780,7 @@ export default function CreateStoriesPage() {
           </div>
 
           <div className="text-center">
-            <div className="w-12 h-12 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-4 text-white ">
+            <div className="w-12 h-12 bg-green-600  flex items-center justify-center mx-auto mb-4 text-white ">
               3
             </div>
             <h4 className=" text-white mb-2">Repeat & Assess</h4>
@@ -791,7 +791,7 @@ export default function CreateStoriesPage() {
         </div>
 
         {usageStats && (
-          <div className="mb-6 p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg">
+          <div className="mb-6 p-4 bg-blue-500/10 border border-blue-500/20 ">
             <div className="flex items-center justify-between mb-2">
               <span className="text-gray-300">Stories Remaining:</span>
               <span className="text-white ">
@@ -799,9 +799,9 @@ export default function CreateStoriesPage() {
                 {usageStats.freestyleStories?.limit ?? 0}
               </span>
             </div>
-            <div className="w-full bg-blue-800/30 rounded-full h-2">
+            <div className="w-full bg-blue-800/30  h-2">
               <div
-                className="bg-blue-400 h-2 rounded-full transition-all"
+                className="bg-blue-400 h-2  transition-all"
                 style={{
                   width: `${((usageStats.freestyleStories?.used ?? 0) / (usageStats.freestyleStories?.limit ?? 1)) * 100}%`,
                 }}
@@ -825,11 +825,11 @@ export default function CreateStoriesPage() {
           <button
             onClick={handleCreateFreestyleStory}
             disabled={creatingStory || !usageStats?.freestyleStories?.canUse}
-            className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 disabled:from-gray-600 disabled:to-gray-700 text-white px-8 py-4 rounded-lg  text-lg transition-all flex items-center gap-3 mx-auto disabled:cursor-not-allowed"
+            className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 disabled:from-gray-600 disabled:to-gray-700 text-white px-8 py-4   text-lg transition-all flex items-center gap-3 mx-auto disabled:cursor-not-allowed"
           >
             {creatingStory ? (
               <>
-                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                <div className="w-5 h-5 border-2 border-white border-t-transparent  animate-spin" />
                 Creating Your Story...
               </>
             ) : (
@@ -843,30 +843,30 @@ export default function CreateStoriesPage() {
       </div>
 
       {/* Story Examples */}
-      <div className="bg-gray-800/40 backdrop-blur-xl border border-gray-600/30 rounded-xl p-6">
+      <div className="bg-gray-800/40 backdrop-blur-xl border border-gray-600/30  p-6">
         <h3 className="text-xl  text-white mb-4">
           Story Ideas to Get You Started:
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="bg-gray-700/30 rounded-lg p-4">
+          <div className="bg-gray-700/30  p-4">
             <h4 className=" text-blue-400 mb-2">🚀 Adventure</h4>
             <p className="text-gray-300 text-sm">
               A kid discovers a secret spaceship in their backyard...
             </p>
           </div>
-          <div className="bg-gray-700/30 rounded-lg p-4">
+          <div className="bg-gray-700/30  p-4">
             <h4 className=" text-green-400 mb-2">🧙‍♂️ Fantasy</h4>
             <p className="text-gray-300 text-sm">
               Your pet suddenly starts talking and reveals a magical secret...
             </p>
           </div>
-          <div className="bg-gray-700/30 rounded-lg p-4">
+          <div className="bg-gray-700/30  p-4">
             <h4 className=" text-purple-400 mb-2">🔮 Mystery</h4>
             <p className="text-gray-300 text-sm">
               Strange things keep disappearing from your school locker...
             </p>
           </div>
-          <div className="bg-gray-700/30 rounded-lg p-4">
+          <div className="bg-gray-700/30  p-4">
             <h4 className=" text-pink-400 mb-2">👥 Friendship</h4>
             <p className="text-gray-300 text-sm">
               You meet someone who seems to be from a different time period...
@@ -886,14 +886,14 @@ export default function CreateStoriesPage() {
       >
         <button
           onClick={() => setActiveSection('home')}
-          className="bg-green-500 p-2 px-6 rounded-lg flex items-center gap-2 text-gray-800 hover:text-white mb-6 transition-colors mx-auto"
+          className="bg-green-500 p-2 px-6  flex items-center gap-2 text-gray-800 hover:text-white mb-6 transition-colors mx-auto"
         >
           ← Back to Options
         </button>
 
         <div className="relative mb-6">
           <Upload className="w-20 h-20 text-green-400 mx-auto" />
-          <div className="absolute -top-2 -right-2 w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+          <div className="absolute -top-2 -right-2 w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500  flex items-center justify-center">
             <Brain className="w-4 h-4 text-white" />
           </div>
         </div>
@@ -906,7 +906,7 @@ export default function CreateStoriesPage() {
         </p>
       </motion.div>
 
-      <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-8">
+      <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-8">
         {/* Upload Type Selection */}
         <div className="mb-8">
           <h3 className="text-lg  text-white mb-4">
@@ -917,7 +917,7 @@ export default function CreateStoriesPage() {
               onClick={() =>
                 setUploadData((prev) => ({ ...prev, uploadType: 'assessment' }))
               }
-              className={`p-4 rounded-lg border transition-all ${
+              className={`p-4  border transition-all ${
                 uploadData.uploadType === 'assessment'
                   ? 'border-green-500 bg-green-500/20 text-green-300'
                   : 'border-gray-600 bg-gray-700/30 text-gray-300 hover:border-green-400'
@@ -935,7 +935,7 @@ export default function CreateStoriesPage() {
                   uploadType: 'competition',
                 }))
               }
-              className={`p-4 rounded-lg border transition-all ${
+              className={`p-4  border transition-all ${
                 uploadData.uploadType === 'competition'
                   ? 'border-purple-500 bg-purple-500/20 text-purple-300'
                   : 'border-gray-600 bg-gray-700/30 text-gray-300 hover:border-purple-400'
@@ -961,7 +961,7 @@ export default function CreateStoriesPage() {
               setUploadData((prev) => ({ ...prev, title: e.target.value }))
             }
             maxLength={100}
-            className="w-full bg-gray-700/50 border border-gray-600/40 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+            className="w-full bg-gray-700/50 border border-gray-600/40  px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
           />
           <p className="text-sm text-gray-400 mt-1">
             {uploadData.title.length}/100 characters
@@ -983,7 +983,7 @@ export default function CreateStoriesPage() {
               setUploadData((prev) => ({ ...prev, content: e.target.value }))
             }
             rows={8}
-            className="w-full bg-gray-700/50 border border-gray-600/40 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent resize-vertical"
+            className="w-full bg-gray-700/50 border border-gray-600/40  px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent resize-vertical"
           />
           <p className="text-sm text-gray-400 mt-1">
             {
@@ -996,7 +996,7 @@ export default function CreateStoriesPage() {
 
         {/* Usage Stats */}
         {usageStats && (
-          <div className="mb-6 p-4 bg-green-500/10 border border-green-500/20 rounded-lg">
+          <div className="mb-6 p-4 bg-green-500/10 border border-green-500/20 ">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <div className="flex items-center justify-between mb-2">
@@ -1007,9 +1007,9 @@ export default function CreateStoriesPage() {
                       : `${usageStats.competitionEntries.remaining} / ${usageStats.competitionEntries.limit}`}
                   </span>
                 </div>
-                <div className="w-full bg-green-800/30 rounded-full h-2">
+                <div className="w-full bg-green-800/30  h-2">
                   <div
-                    className="bg-green-400 h-2 rounded-full transition-all"
+                    className="bg-green-400 h-2  transition-all"
                     style={{
                       width: `${
                         uploadData.uploadType === 'assessment'
@@ -1034,9 +1034,9 @@ export default function CreateStoriesPage() {
                       {usageStats.assessmentRequests.limit}
                     </span>
                   </div>
-                  <div className="w-full bg-yellow-800/30 rounded-full h-2">
+                  <div className="w-full bg-yellow-800/30  h-2">
                     <div
-                      className="bg-yellow-400 h-2 rounded-full transition-all"
+                      className="bg-yellow-400 h-2  transition-all"
                       style={{
                         width: `${(usageStats.assessmentRequests.used / usageStats.assessmentRequests.limit) * 100}%`,
                       }}
@@ -1050,7 +1050,7 @@ export default function CreateStoriesPage() {
 
         {/* Error/Success Messages */}
         {error && (
-          <div className="mb-6 p-4 bg-red-500/20 border border-red-500/30 rounded-lg">
+          <div className="mb-6 p-4 bg-red-500/20 border border-red-500/30 ">
             <div className="flex items-center gap-2">
               <AlertCircle className="w-5 h-5 text-red-400" />
               <p className="text-red-400">{error}</p>
@@ -1059,7 +1059,7 @@ export default function CreateStoriesPage() {
         )}
 
         {success && (
-          <div className="mb-6 p-4 bg-green-500/20 border border-green-500/30 rounded-lg">
+          <div className="mb-6 p-4 bg-green-500/20 border border-green-500/30 ">
             <div className="flex items-center gap-2">
               <CheckCircle className="w-5 h-5 text-green-400" />
               <p className="text-green-400">{success}</p>
@@ -1080,11 +1080,11 @@ export default function CreateStoriesPage() {
               (uploadData.uploadType === 'competition' &&
                 !usageStats?.competitionEntries.canUse)
             }
-            className="bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700 disabled:from-gray-600 disabled:to-gray-700 text-white px-8 py-4 rounded-lg  text-lg transition-all flex items-center gap-3 mx-auto disabled:cursor-not-allowed"
+            className="bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700 disabled:from-gray-600 disabled:to-gray-700 text-white px-8 py-4   text-lg transition-all flex items-center gap-3 mx-auto disabled:cursor-not-allowed"
           >
             {uploading ? (
               <>
-                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                <div className="w-5 h-5 border-2 border-white border-t-transparent  animate-spin" />
                 Uploading...
               </>
             ) : (
@@ -1100,7 +1100,7 @@ export default function CreateStoriesPage() {
       </div>
 
       {/* Assessment Features */}
-      <div className="mt-8 bg-gray-800/40 backdrop-blur-xl border border-gray-600/30 rounded-xl p-6">
+      <div className="mt-8 bg-gray-800/40 backdrop-blur-xl border border-gray-600/30  p-6">
         <h3 className="text-xl  text-white mb-4">What You'll Get:</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="text-center">
@@ -1141,14 +1141,14 @@ export default function CreateStoriesPage() {
       >
         <button
           onClick={() => setActiveSection('home')}
-          className="bg-green-500 p-2 px-6 rounded-lg flex items-center gap-2 text-gray-800 hover:text-white mb-6 transition-colors mx-auto"
+          className="bg-green-500 p-2 px-6  flex items-center gap-2 text-gray-800 hover:text-white mb-6 transition-colors mx-auto"
         >
           ← Back to Options
         </button>
 
         <div className="relative mb-6">
           <Trophy className="w-20 h-20 text-purple-400 mx-auto" />
-          <div className="absolute -top-2 -right-2 w-8 h-8 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full flex items-center justify-center">
+          <div className="absolute -top-2 -right-2 w-8 h-8 bg-gradient-to-r from-yellow-500 to-orange-500  flex items-center justify-center">
             <Star className="w-4 h-4 text-white" />
           </div>
         </div>
@@ -1162,14 +1162,14 @@ export default function CreateStoriesPage() {
         </p>
       </motion.div>
 
-      <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-xl p-8 mb-8">
+      <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-8 mb-8">
         <h3 className="text-2xl  text-white mb-6">
           How Competitions Work:
         </h3>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div className="text-center">
-            <div className="w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center mx-auto mb-4 text-white ">
+            <div className="w-12 h-12 bg-purple-600  flex items-center justify-center mx-auto mb-4 text-white ">
               1
             </div>
             <h4 className=" text-white mb-2">
@@ -1181,7 +1181,7 @@ export default function CreateStoriesPage() {
           </div>
 
           <div className="text-center">
-            <div className="w-12 h-12 bg-yellow-600 rounded-full flex items-center justify-center mx-auto mb-4 text-white ">
+            <div className="w-12 h-12 bg-yellow-600  flex items-center justify-center mx-auto mb-4 text-white ">
               2
             </div>
             <h4 className=" text-white mb-2">
@@ -1193,7 +1193,7 @@ export default function CreateStoriesPage() {
           </div>
 
           <div className="text-center">
-            <div className="w-12 h-12 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-4 text-white ">
+            <div className="w-12 h-12 bg-green-600  flex items-center justify-center mx-auto mb-4 text-white ">
               3
             </div>
             <h4 className=" text-white mb-2">Results (Day 31)</h4>
@@ -1203,7 +1203,7 @@ export default function CreateStoriesPage() {
           </div>
         </div>
 
-        <div className="bg-purple-500/10 border border-purple-500/20 rounded-lg p-6 mb-6">
+        <div className="bg-purple-500/10 border border-purple-500/20  p-6 mb-6">
           <h4 className=" text-purple-300 mb-3">
             Competition Rules:
           </h4>
@@ -1224,7 +1224,7 @@ export default function CreateStoriesPage() {
               setActiveSection('assessment'); // Reuse upload interface
             }}
             disabled={!usageStats?.competitionEntries.canUse}
-            className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 disabled:from-gray-600 disabled:to-gray-700 text-white px-8 py-4 rounded-lg  text-lg transition-all flex items-center gap-3 mx-auto disabled:cursor-not-allowed"
+            className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 disabled:from-gray-600 disabled:to-gray-700 text-white px-8 py-4   text-lg transition-all flex items-center gap-3 mx-auto disabled:cursor-not-allowed"
           >
             <Trophy className="w-6 h-6" />
             {usageStats?.competitionEntries.canUse
@@ -1235,7 +1235,7 @@ export default function CreateStoriesPage() {
       </div>
 
       {/* Competition Features */}
-      <div className="bg-gray-800/40 backdrop-blur-xl border border-gray-600/30 rounded-xl p-6">
+      <div className="bg-gray-800/40 backdrop-blur-xl border border-gray-600/30  p-6">
         <h3 className="text-xl  text-white mb-4">
           Why Enter Competitions?
         </h3>
