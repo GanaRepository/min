@@ -463,7 +463,7 @@ const Navbar = () => {
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled ? 'bg-white/95 backdrop-blur-md shadow-lg' : 'bg-transparent'
+        isScrolled ? 'bg-gray-900/95 backdrop-blur-md shadow-lg' : 'bg-transparent'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -493,7 +493,7 @@ const Navbar = () => {
                 pathname === '/'
                   ? 'text-contact-teal border-b-2 border-contact-teal pb-1'
                   : isScrolled
-                    ? 'text-gray-700 hover:text-contact-teal'
+                    ? 'text-gray-300 hover:text-contact-teal'
                     : 'text-white hover:text-contact-teal'
               }`}
             >
@@ -506,7 +506,7 @@ const Navbar = () => {
                 pathname === '/create-stories'
                   ? 'text-contact-teal border-b-2 border-contact-teal pb-1'
                   : isScrolled
-                    ? 'text-gray-700 hover:text-contact-teal'
+                    ? 'text-gray-300 hover:text-contact-teal'
                     : 'text-white hover:text-contact-teal'
               }`}
             >
@@ -519,7 +519,7 @@ const Navbar = () => {
                 pathname === '/contact-us'
                   ? 'text-contact-teal border-b-2 border-contact-teal pb-1'
                   : isScrolled
-                    ? 'text-gray-700 hover:text-contact-teal'
+                    ? 'text-gray-300 hover:text-contact-teal'
                     : 'text-white hover:text-contact-teal'
               }`}
             >
@@ -532,7 +532,7 @@ const Navbar = () => {
                 pathname === '/pricing'
                   ? 'text-contact-teal border-b-2 border-contact-teal pb-1'
                   : isScrolled
-                    ? 'text-gray-700 hover:text-contact-teal'
+                    ? 'text-gray-300 hover:text-contact-teal'
                     : 'text-white hover:text-contact-teal'
               }`}
             >
@@ -545,7 +545,7 @@ const Navbar = () => {
                 pathname === '/competitions'
                   ? 'text-contact-teal border-b-2 border-contact-teal pb-1'
                   : isScrolled
-                    ? 'text-gray-700 hover:text-contact-teal'
+                    ? 'text-gray-300 hover:text-contact-teal'
                     : 'text-white hover:text-contact-teal'
               }`}
             >
@@ -559,7 +559,9 @@ const Navbar = () => {
               <div className="relative" ref={userMenuRef}>
                 <button
                   onClick={toggleUserMenu}
-                  className="flex items-center space-x-2 p-2 rounded-full hover:bg-gray-100 transition-colors duration-200"
+                  className={`flex items-center space-x-2 p-2 rounded-full transition-colors duration-200 ${
+                    isScrolled ? 'hover:bg-gray-800' : 'hover:bg-white/10'
+                  }`}
                 >
                   <div
                     className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold ${avatarInfo.color}`}
@@ -569,7 +571,7 @@ const Navbar = () => {
                   <FiChevronDown
                     className={`w-4 h-4 transition-transform duration-200 ${
                       isUserMenuOpen ? 'rotate-180' : ''
-                    } ${isScrolled ? 'text-gray-700' : 'text-white'}`}
+                    } ${isScrolled ? 'text-gray-300' : 'text-white'}`}
                   />
                 </button>
 
@@ -638,7 +640,7 @@ const Navbar = () => {
                     variant="ghost"
                     className={`text-lg font-medium transition-all duration-300 ${
                       isScrolled
-                        ? 'text-gray-700 hover:text-contact-teal hover:bg-contact-teal/10'
+                        ? 'text-gray-300 hover:text-contact-teal hover:bg-contact-teal/10'
                         : 'text-white hover:text-contact-teal hover:bg-white/10'
                     }`}
                   >
@@ -656,7 +658,7 @@ const Navbar = () => {
               onClick={toggleMobileMenu}
               className={`p-2 rounded-md transition-colors duration-200 ${
                 isScrolled
-                  ? 'text-gray-700 hover:text-contact-teal hover:bg-gray-100'
+                  ? 'text-gray-300 hover:text-contact-teal hover:bg-gray-800'
                   : 'text-white hover:text-contact-teal hover:bg-white/10'
               }`}
             >
@@ -671,14 +673,14 @@ const Navbar = () => {
 
         {/* Mobile Navigation Menu */}
         {isMobileMenuOpen && (
-          <div className="md:hidden bg-white border-t border-gray-200 shadow-lg">
+          <div className="md:hidden bg-gray-900 border-t border-gray-700 shadow-lg">
             <div className="px-2 pt-2 pb-3 space-y-1">
               <Link
                 href="/"
                 className={`block px-3 py-2 text-base font-medium rounded-md transition-colors duration-200 ${
                   pathname === '/'
-                    ? 'text-contact-teal bg-contact-teal/10'
-                    : 'text-gray-700 hover:text-contact-teal hover:bg-gray-100'
+                    ? 'text-contact-teal bg-contact-teal/20'
+                    : 'text-gray-300 hover:text-contact-teal hover:bg-gray-800'
                 }`}
                 onClick={() => setIsMobileMenuOpen(false)}
               >
@@ -689,8 +691,8 @@ const Navbar = () => {
                 href="/create-stories"
                 className={`block px-3 py-2 text-base font-medium rounded-md transition-colors duration-200 ${
                   pathname === '/create-stories'
-                    ? 'text-contact-teal bg-contact-teal/10'
-                    : 'text-gray-700 hover:text-contact-teal hover:bg-gray-100'
+                    ? 'text-contact-teal bg-contact-teal/20'
+                    : 'text-gray-300 hover:text-contact-teal hover:bg-gray-800'
                 }`}
                 onClick={() => setIsMobileMenuOpen(false)}
               >
@@ -701,8 +703,8 @@ const Navbar = () => {
                 href="/contact-us"
                 className={`block px-3 py-2 text-base font-medium rounded-md transition-colors duration-200 ${
                   pathname === '/contact-us'
-                    ? 'text-contact-teal bg-contact-teal/10'
-                    : 'text-gray-700 hover:text-contact-teal hover:bg-gray-100'
+                    ? 'text-contact-teal bg-contact-teal/20'
+                    : 'text-gray-300 hover:text-contact-teal hover:bg-gray-800'
                 }`}
                 onClick={() => setIsMobileMenuOpen(false)}
               >
@@ -713,8 +715,8 @@ const Navbar = () => {
                 href="/pricing"
                 className={`block px-3 py-2 text-base font-medium rounded-md transition-colors duration-200 ${
                   pathname === '/pricing'
-                    ? 'text-contact-teal bg-contact-teal/10'
-                    : 'text-gray-700 hover:text-contact-teal hover:bg-gray-100'
+                    ? 'text-contact-teal bg-contact-teal/20'
+                    : 'text-gray-300 hover:text-contact-teal hover:bg-gray-800'
                 }`}
                 onClick={() => setIsMobileMenuOpen(false)}
               >
@@ -725,8 +727,8 @@ const Navbar = () => {
                 href="/competitions"
                 className={`block px-3 py-2 text-base font-medium rounded-md transition-colors duration-200 ${
                   pathname === '/competitions'
-                    ? 'text-contact-teal bg-contact-teal/10'
-                    : 'text-gray-700 hover:text-contact-teal hover:bg-gray-100'
+                    ? 'text-contact-teal bg-contact-teal/20'
+                    : 'text-gray-300 hover:text-contact-teal hover:bg-gray-800'
                 }`}
                 onClick={() => setIsMobileMenuOpen(false)}
               >
@@ -736,7 +738,7 @@ const Navbar = () => {
               {!session && (
                 <Link
                   href="/login"
-                  className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-contact-teal hover:bg-gray-100 rounded-md transition-colors duration-200"
+                  className="block px-3 py-2 text-base font-medium text-gray-300 hover:text-contact-teal hover:bg-gray-800 rounded-md transition-colors duration-200"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   <FiLogIn className="w-5 h-5 mr-2 inline" />
@@ -746,7 +748,7 @@ const Navbar = () => {
             </div>
 
             {session && (
-              <div className="pt-4 pb-3 border-t border-gray-200">
+              <div className="pt-4 pb-3 border-t border-gray-700">
                 <div className="flex items-center px-5">
                   <div
                     className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold ${avatarInfo.color}`}
@@ -754,10 +756,10 @@ const Navbar = () => {
                     {avatarInfo.initial || avatarInfo.icon}
                   </div>
                   <div className="ml-3">
-                    <div className="text-base font-medium text-gray-800">
+                    <div className="text-base font-medium text-gray-200">
                       {getUserDisplayName()}
                     </div>
-                    <div className="text-sm text-gray-500 capitalize">
+                    <div className="text-sm text-gray-400 capitalize">
                       {session.user.role}
                     </div>
                   </div>
@@ -766,7 +768,7 @@ const Navbar = () => {
                   {session.user.role === 'child' && (
                     <Link
                       href="/children-dashboard"
-                      className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-contact-teal hover:bg-gray-100 rounded-md transition-colors duration-200"
+                      className="block px-3 py-2 text-base font-medium text-gray-300 hover:text-contact-teal hover:bg-gray-800 rounded-md transition-colors duration-200"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       Dashboard
@@ -776,7 +778,7 @@ const Navbar = () => {
                   {session.user.role === 'mentor' && (
                     <Link
                       href="/mentor-dashboard"
-                      className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-contact-teal hover:bg-gray-100 rounded-md transition-colors duration-200"
+                      className="block px-3 py-2 text-base font-medium text-gray-300 hover:text-contact-teal hover:bg-gray-800 rounded-md transition-colors duration-200"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       Mentor Dashboard
@@ -786,7 +788,7 @@ const Navbar = () => {
                   {session.user.role === 'admin' && (
                     <Link
                       href="/admin"
-                      className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-contact-teal hover:bg-gray-100 rounded-md transition-colors duration-200"
+                      className="block px-3 py-2 text-base font-medium text-gray-300 hover:text-contact-teal hover:bg-gray-800 rounded-md transition-colors duration-200"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       Admin Panel
@@ -798,7 +800,7 @@ const Navbar = () => {
                       setIsMobileMenuOpen(false);
                       // Handle sign out
                     }}
-                    className="block w-full text-left px-3 py-2 text-base font-medium text-red-600 hover:bg-red-50 rounded-md transition-colors duration-200"
+                    className="block w-full text-left px-3 py-2 text-base font-medium text-red-400 hover:bg-red-900/20 rounded-md transition-colors duration-200"
                   >
                     Sign Out
                   </button>
