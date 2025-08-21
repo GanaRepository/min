@@ -51,30 +51,27 @@ export default function MentorStudentProfile() {
     fetchStudent();
   }, [params.id]);
 
-
-
-
-    if (loading) {
-      return (
-        <div className="flex items-center justify-center h-64">
-          <TerminalLoader
-            title="Students"
-            loadingText="Loading students Profile..."
-            size="md"
-          />
-        </div>
-      );
-    }
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <TerminalLoader
+          title="Students"
+          loadingText="Loading students Profile..."
+          size="md"
+        />
+      </div>
+    );
+  }
 
   if (!student) {
     return (
       <div className="text-center py-12">
         <Users className="w-16 h-16 text-gray-600 mx-auto mb-4" />
         <TerminalLoader
-            title="Students"
-            loadingText="Student not found"
-            size="md"
-          />
+          title="Students"
+          loadingText="Student not found"
+          size="md"
+        />
         <Link href="/mentor-dashboard/students">
           <button className="mt-4 bg-blue-600 text-white px-4 py-2 hover:bg-blue-700 transition-colors">
             Back to Students

@@ -4,7 +4,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/utils/authOptions';
 import { connectToDatabase } from '@/utils/db';
 import StorySession from '@/models/StorySession';
-import { AssessmentEngine } from '@/lib/ai/assessment-engine';
+import { AIAssessmentEngine } from '@/lib/ai/ai-assessment-engine';
 
 export async function GET(request: NextRequest) {
   try {
@@ -84,7 +84,7 @@ async function getIntegrityOverview() {
       ]),
 
       // Assessment statistics from engine
-      AssessmentEngine.getAssessmentStats(),
+      AIAssessmentEngine.getAssessmentStats(),
     ]);
 
   // FIXED: Process integrity stats to create riskDistribution

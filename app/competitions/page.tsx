@@ -204,7 +204,7 @@ export default function CompetitionPage() {
                                     {winner.childName}
                                   </div>
                                   <div className="text-gray-300">
-                                    "{winner.title}"
+                                    &quot;{winner.title}&quot;
                                   </div>
                                 </div>
                               </div>

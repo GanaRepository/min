@@ -318,7 +318,8 @@ export default function TransactionsPage() {
                       {transaction.transaction.type === 'story_publication' &&
                         transaction.transaction.metadata?.storyTitle && (
                           <span>
-                            "{transaction.transaction.metadata.storyTitle}"
+                            &quot;{transaction.transaction.metadata.storyTitle}
+                            &quot;
                           </span>
                         )}
                     </div>

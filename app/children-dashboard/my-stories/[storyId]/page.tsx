@@ -193,7 +193,9 @@ export default function StoryDetailPage() {
             `📚 Monthly Publication Limit Reached!\n\nYou can only publish 3 stories per month for free.\n\nYour limit will reset on the 1st of next month.`
           );
         } else if (errorMessage.includes('already published')) {
-          setToastMessage('📚 This story is already published to the community.');
+          setToastMessage(
+            '📚 This story is already published to the community.'
+          );
         } else {
           setToastMessage(`❌ Publication Failed\n\n${errorMessage}`);
         }
@@ -433,845 +435,866 @@ export default function StoryDetailPage() {
   return (
     <ToastProvider>
       <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900">
-      <div className="container mx-auto px-6 py-8">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-8"
-        >
-          <div className="flex items-center gap-4 mb-6">
-            <Link
-              href="/children-dashboard/my-stories"
-              className="bg-gray-700 hover:bg-gray-600 text-white p-2  transition-colors"
-            >
-              <ArrowLeft size={20} />
-            </Link>
-            <div className="flex-1">
-              <h1 className="text-3xl  text-white mb-1">{story.title}</h1>
-              <div className="flex items-center gap-3">
-                <div
-                  className={`inline-flex items-center gap-2 px-3 py-1  text-sm  ${typeInfo.bgColor} ${typeInfo.color} ${typeInfo.borderColor} border`}
-                >
-                  <typeInfo.icon size={14} />
-                  {typeInfo.label}
-                </div>
-                <span className="text-gray-400 text-sm">
-                  {story.totalWords} words • Created{' '}
-                  {new Date(story.createdAt).toLocaleDateString()}
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* Story Stats & Status */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-            <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-4">
-              <div className="text-lg  text-white">{story.totalWords}</div>
-              <div className="text-gray-300 text-sm">Total Words</div>
-            </div>
-            <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-4">
-              <div className="text-lg  text-green-400">{story.childWords}</div>
-              <div className="text-gray-300 text-sm">Your Words</div>
-            </div>
-            <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-4">
-              <div className="text-lg  text-blue-400">{story.aiWords}</div>
-              <div className="text-gray-300 text-sm">AI Words</div>
-            </div>
-            <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-4">
-              <div
-                className={`text-lg  ${story.assessment ? getScoreColor(story.assessment.overallScore) : 'text-gray-400'}`}
+        <div className="container mx-auto px-6 py-8">
+          {/* Header */}
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-8"
+          >
+            <div className="flex items-center gap-4 mb-6">
+              <Link
+                href="/children-dashboard/my-stories"
+                className="bg-gray-700 hover:bg-gray-600 text-white p-2  transition-colors"
               >
-                {story.assessment
-                  ? `${story.assessment.overallScore}%`
-                  : 'Not Assessed'}
-              </div>
-              <div className="text-gray-300 text-sm">Overall Score</div>
-            </div>
-          </div>
-
-          {/* Status Badges & Actions */}
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-            <div className="flex flex-wrap gap-2">
-              {story.isPublished && (
-                <span className="bg-green-500/20 text-green-300 px-3 py-1  text-sm  border border-green-500/30 flex items-center gap-2">
-                  <Star size={14} />
-                  Published
-                  {story.publishedAt && (
-                    <span className="text-xs opacity-75">
-                      {new Date(story.publishedAt).toLocaleDateString()}
-                    </span>
-                  )}
-                </span>
-              )}
-
-              {story.competitionEntries &&
-                story.competitionEntries.length > 0 && (
-                  <div className="flex gap-2">
-                    {story.competitionEntries.map((entry, index) => (
-                      <span
-                        key={index}
-                        className="bg-purple-500/20 text-purple-300 px-3 py-1  text-sm  border border-purple-500/30 flex items-center gap-2"
-                      >
-                        <Trophy size={14} />
-                        Competition Entry
-                        {entry.rank && entry.rank <= 3 && (
-                          <Crown size={14} className="text-yellow-400" />
-                        )}
-                        {entry.rank && (
-                          <span className="text-xs bg-purple-600/40 px-2 py-0.5 rounded">
-                            Rank #{entry.rank}
-                          </span>
-                        )}
-                      </span>
-                    ))}
+                <ArrowLeft size={20} />
+              </Link>
+              <div className="flex-1">
+                <h1 className="text-3xl  text-white mb-1">{story.title}</h1>
+                <div className="flex items-center gap-3">
+                  <div
+                    className={`inline-flex items-center gap-2 px-3 py-1  text-sm  ${typeInfo.bgColor} ${typeInfo.color} ${typeInfo.borderColor} border`}
+                  >
+                    <typeInfo.icon size={14} />
+                    {typeInfo.label}
                   </div>
+                  <span className="text-gray-400 text-sm">
+                    {story.totalWords} words • Created{' '}
+                    {new Date(story.createdAt).toLocaleDateString()}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Story Stats & Status */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+              <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-4">
+                <div className="text-lg  text-white">{story.totalWords}</div>
+                <div className="text-gray-300 text-sm">Total Words</div>
+              </div>
+              <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-4">
+                <div className="text-lg  text-green-400">
+                  {story.childWords}
+                </div>
+                <div className="text-gray-300 text-sm">Your Words</div>
+              </div>
+              <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-4">
+                <div className="text-lg  text-blue-400">{story.aiWords}</div>
+                <div className="text-gray-300 text-sm">AI Words</div>
+              </div>
+              <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-4">
+                <div
+                  className={`text-lg  ${story.assessment ? getScoreColor(story.assessment.overallScore) : 'text-gray-400'}`}
+                >
+                  {story.assessment
+                    ? `${story.assessment.overallScore}%`
+                    : 'Not Assessed'}
+                </div>
+                <div className="text-gray-300 text-sm">Overall Score</div>
+              </div>
+            </div>
+
+            {/* Status Badges & Actions */}
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+              <div className="flex flex-wrap gap-2">
+                {story.isPublished && (
+                  <span className="bg-green-500/20 text-green-300 px-3 py-1  text-sm  border border-green-500/30 flex items-center gap-2">
+                    <Star size={14} />
+                    Published
+                    {story.publishedAt && (
+                      <span className="text-xs opacity-75">
+                        {new Date(story.publishedAt).toLocaleDateString()}
+                      </span>
+                    )}
+                  </span>
                 )}
 
-              {story.status === 'flagged' && (
-                <span className="bg-red-500/20 text-red-400 px-3 py-1  text-sm  border border-red-500/30">
-                  Flagged for Review
-                </span>
-              )}
-
-              {story.status === 'review' && (
-                <span className="bg-yellow-500/20 text-yellow-400 px-3 py-1  text-sm  border border-yellow-500/30">
-                  Under Review
-                </span>
-              )}
-
-              {story.status === 'active' && (
-                <span className="bg-blue-500/20 text-blue-400 px-3 py-1  text-sm  border border-blue-500/30">
-                  In Progress
-                </span>
-              )}
-            </div>
-
-            {/* Action Buttons - NO REASSESS, NO DELETE */}
-            <div className="flex flex-wrap gap-3">
-              {story.status === 'active' && (
-                <button
-                  onClick={handleContinueWriting}
-                  className="bg-green-600 hover:bg-green-700 text-white px-6 py-3   transition-all flex items-center gap-2"
-                >
-                  <BookOpen size={18} />
-                  Continue Writing
-                </button>
-              )}
-
-              {/* Publish Button - Show for ALL completed stories (including flagged) */}
-              {story.status === 'completed' && !story.isPublished && (
-                <button
-                  onClick={handlePublishStory}
-                  disabled={publishingStory}
-                  className="bg-green-600 hover:bg-green-700 disabled:bg-green-400 text-white px-6 py-3   transition-all flex items-center gap-2"
-                >
-                  {publishingStory ? (
-                    <>
-                      <div className="w-4 h-4 border-2 border-white border-t-transparent  animate-spin" />
-                      Publishing...
-                    </>
-                  ) : (
-                    <>
-                      <Star size={18} />
-                      Publish Free
-                    </>
+                {story.competitionEntries &&
+                  story.competitionEntries.length > 0 && (
+                    <div className="flex gap-2">
+                      {story.competitionEntries.map((entry, index) => (
+                        <span
+                          key={index}
+                          className="bg-purple-500/20 text-purple-300 px-3 py-1  text-sm  border border-purple-500/30 flex items-center gap-2"
+                        >
+                          <Trophy size={14} />
+                          Competition Entry
+                          {entry.rank && entry.rank <= 3 && (
+                            <Crown size={14} className="text-yellow-400" />
+                          )}
+                          {entry.rank && (
+                            <span className="text-xs bg-purple-600/40 px-2 py-0.5 rounded">
+                              Rank #{entry.rank}
+                            </span>
+                          )}
+                        </span>
+                      ))}
+                    </div>
                   )}
-                </button>
-              )}
 
-              {/* Purchase Button - Show for ALL completed stories */}
-              {story.status === 'completed' && (
-                <button
-                  onClick={handlePurchaseStory}
-                  className="bg-yellow-600 hover:bg-yellow-700 text-white px-6 py-3   transition-all flex items-center gap-2"
-                >
-                  <DollarSign size={18} />
-                  Purchase $10
-                </button>
-              )}
+                {story.status === 'flagged' && (
+                  <span className="bg-red-500/20 text-red-400 px-3 py-1  text-sm  border border-red-500/30">
+                    Flagged for Review
+                  </span>
+                )}
+
+                {story.status === 'review' && (
+                  <span className="bg-yellow-500/20 text-yellow-400 px-3 py-1  text-sm  border border-yellow-500/30">
+                    Under Review
+                  </span>
+                )}
+
+                {story.status === 'active' && (
+                  <span className="bg-blue-500/20 text-blue-400 px-3 py-1  text-sm  border border-blue-500/30">
+                    In Progress
+                  </span>
+                )}
+              </div>
+
+              {/* Action Buttons - NO REASSESS, NO DELETE */}
+              <div className="flex flex-wrap gap-3">
+                {story.status === 'active' && (
+                  <button
+                    onClick={handleContinueWriting}
+                    className="bg-green-600 hover:bg-green-700 text-white px-6 py-3   transition-all flex items-center gap-2"
+                  >
+                    <BookOpen size={18} />
+                    Continue Writing
+                  </button>
+                )}
+
+                {/* Publish Button - Show for ALL completed stories (including flagged) */}
+                {story.status === 'completed' && !story.isPublished && (
+                  <button
+                    onClick={handlePublishStory}
+                    disabled={publishingStory}
+                    className="bg-green-600 hover:bg-green-700 disabled:bg-green-400 text-white px-6 py-3   transition-all flex items-center gap-2"
+                  >
+                    {publishingStory ? (
+                      <>
+                        <div className="w-4 h-4 border-2 border-white border-t-transparent  animate-spin" />
+                        Publishing...
+                      </>
+                    ) : (
+                      <>
+                        <Star size={18} />
+                        Publish Free
+                      </>
+                    )}
+                  </button>
+                )}
+
+                {/* Purchase Button - Show for ALL completed stories */}
+                {story.status === 'completed' && (
+                  <button
+                    onClick={handlePurchaseStory}
+                    className="bg-yellow-600 hover:bg-yellow-700 text-white px-6 py-3   transition-all flex items-center gap-2"
+                  >
+                    <DollarSign size={18} />
+                    Purchase $10
+                  </button>
+                )}
+              </div>
             </div>
-          </div>
-        </motion.div>
+          </motion.div>
 
-        {/* Competition Entry Details */}
-        {story.competitionEntries && story.competitionEntries.length > 0 && (
+          {/* Competition Entry Details */}
+          {story.competitionEntries && story.competitionEntries.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="mb-8"
+            >
+              <div className="bg-purple-500/10 border border-purple-500/20  p-6">
+                <h3 className="text-lg  text-white mb-4 flex items-center gap-2">
+                  <Trophy className="w-5 h-5 text-purple-400" />
+                  Competition Details
+                </h3>
+
+                <div className="space-y-4">
+                  {story.competitionEntries.map((entry, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center justify-between bg-purple-500/5  p-4"
+                    >
+                      <div>
+                        <div className="text-white ">
+                          Submitted on{' '}
+                          {new Date(entry.submittedAt).toLocaleDateString()}
+                        </div>
+                        <div className="text-purple-300 text-sm">
+                          Competition Entry #{index + 1}
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        {entry.rank && entry.rank <= 3 && (
+                          <div className="flex items-center gap-2 text-yellow-400 ">
+                            <Crown size={16} />
+                            Winner - Rank #{entry.rank}
+                          </div>
+                        )}
+                        {entry.rank && entry.rank > 3 && (
+                          <div className="text-purple-300">
+                            Rank #{entry.rank}
+                          </div>
+                        )}
+                        {entry.score && (
+                          <div className="text-purple-400 text-sm">
+                            Score: {entry.score.toFixed(1)}%
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          {/* ===== TAB NAVIGATION ===== */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
             className="mb-8"
           >
-            <div className="bg-purple-500/10 border border-purple-500/20  p-6">
-              <h3 className="text-lg  text-white mb-4 flex items-center gap-2">
-                <Trophy className="w-5 h-5 text-purple-400" />
-                Competition Details
-              </h3>
-
-              <div className="space-y-4">
-                {story.competitionEntries.map((entry, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center justify-between bg-purple-500/5  p-4"
+            <div className="flex justify-center">
+              <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-2 flex gap-2">
+                {getAvailableTabs().map((tab) => (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id as any)}
+                    className={`px-6 py-3  transition-all flex items-center gap-2  ${
+                      activeTab === tab.id
+                        ? 'bg-blue-600 text-white shadow-lg'
+                        : 'text-gray-300 hover:text-white hover:bg-gray-700/50'
+                    }`}
                   >
-                    <div>
-                      <div className="text-white ">
-                        Submitted on{' '}
-                        {new Date(entry.submittedAt).toLocaleDateString()}
-                      </div>
-                      <div className="text-purple-300 text-sm">
-                        Competition Entry #{index + 1}
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      {entry.rank && entry.rank <= 3 && (
-                        <div className="flex items-center gap-2 text-yellow-400 ">
-                          <Crown size={16} />
-                          Winner - Rank #{entry.rank}
-                        </div>
-                      )}
-                      {entry.rank && entry.rank > 3 && (
-                        <div className="text-purple-300">
-                          Rank #{entry.rank}
-                        </div>
-                      )}
-                      {entry.score && (
-                        <div className="text-purple-400 text-sm">
-                          Score: {entry.score.toFixed(1)}%
-                        </div>
-                      )}
-                    </div>
-                  </div>
+                    <tab.icon size={18} />
+                    {tab.label}
+                  </button>
                 ))}
               </div>
             </div>
           </motion.div>
-        )}
 
-        {/* ===== TAB NAVIGATION ===== */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="mb-8"
-        >
-          <div className="flex justify-center">
-            <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-2 flex gap-2">
-              {getAvailableTabs().map((tab) => (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id as any)}
-                  className={`px-6 py-3  transition-all flex items-center gap-2  ${
-                    activeTab === tab.id
-                      ? 'bg-blue-600 text-white shadow-lg'
-                      : 'text-gray-300 hover:text-white hover:bg-gray-700/50'
-                  }`}
-                >
-                  <tab.icon size={18} />
-                  {tab.label}
-                </button>
-              ))}
-            </div>
-          </div>
-        </motion.div>
+          {/* ===== TAB CONTENT ===== */}
+          <motion.div
+            key={activeTab}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            {activeTab === 'overview' && (
+              <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-8">
+                <h2 className="text-2xl  text-white mb-6">Story Overview</h2>
 
-        {/* ===== TAB CONTENT ===== */}
-        <motion.div
-          key={activeTab}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.2 }}
-        >
-          {activeTab === 'overview' && (
-            <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-8">
-              <h2 className="text-2xl  text-white mb-6">Story Overview</h2>
-
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                {/* Left Column */}
-                <div className="space-y-6">
-                  <div>
-                    <h3 className="text-lg  text-white mb-3">
-                      Writing Statistics
-                    </h3>
-                    <div className="space-y-3">
-                      <div className="flex justify-between items-center">
-                        <span className="text-gray-300">Total Words:</span>
-                        <span className="text-white ">{story.totalWords}</span>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-gray-300">
-                          Your Contribution:
-                        </span>
-                        <span className="text-green-400 ">
-                          {story.childWords} words
-                        </span>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-gray-300">AI Assistance:</span>
-                        <span className="text-blue-400 ">
-                          {story.aiWords} words
-                        </span>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-gray-300">
-                          Your Contribution:
-                        </span>
-                        <span className="text-yellow-400 ">
-                          {story.totalWords > 0
-                            ? Math.round(
-                                (story.childWords / story.totalWords) * 100
-                              )
-                            : 0}
-                          %
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div>
-                    <h3 className="text-lg  text-white mb-3">Story Details</h3>
-                    <div className="space-y-3">
-                      <div className="flex justify-between items-center">
-                        <span className="text-gray-300">Created:</span>
-                        <span className="text-white">
-                          {new Date(story.createdAt).toLocaleDateString()}
-                        </span>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-gray-300">Last Updated:</span>
-                        <span className="text-white">
-                          {new Date(story.updatedAt).toLocaleDateString()}
-                        </span>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-gray-300">Status:</span>
-                        <span
-                          className={` capitalize ${
-                            story.status === 'completed'
-                              ? 'text-green-400'
-                              : story.status === 'active'
-                                ? 'text-blue-400'
-                                : story.status === 'flagged'
-                                  ? 'text-red-400'
-                                  : 'text-yellow-400'
-                          }`}
-                        >
-                          {story.status}
-                        </span>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-gray-300">Type:</span>
-                        <span className="text-white capitalize">
-                          {story.storyType}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Right Column */}
-                <div className="space-y-6">
-                  {/* Assessment Overview - Only show if assessment should be visible */}
-                  {shouldShowAssessment() && story.assessment && (
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                  {/* Left Column */}
+                  <div className="space-y-6">
                     <div>
-                      <h3 className="text-lg  text-white mb-3 flex items-center gap-2">
-                        <Brain className="w-5 h-5 text-blue-400" />
-                        Assessment Summary
+                      <h3 className="text-lg  text-white mb-3">
+                        Writing Statistics
                       </h3>
-                      <div className="bg-gray-700/30  p-4 space-y-3">
-                        <div className="flex items-center justify-between">
-                          <span className="text-gray-300">Overall Score:</span>
-                          <div className="flex items-center gap-2">
-                            {getIntegrityIcon(story.assessment.integrityRisk)}
-                            <span
-                              className={`text-xl  ${getScoreColor(story.assessment.overallScore)}`}
-                            >
-                              {story.assessment.overallScore}%
-                            </span>
-                          </div>
+                      <div className="space-y-3">
+                        <div className="flex justify-between items-center">
+                          <span className="text-gray-300">Total Words:</span>
+                          <span className="text-white ">
+                            {story.totalWords}
+                          </span>
                         </div>
-
-                        <div className="grid grid-cols-2 gap-4 text-sm">
-                          <div className="flex justify-between">
-                            <span className="text-gray-400">Grammar:</span>
-                            <span
-                              className={getScoreColor(
-                                story.assessment.grammar
-                              )}
-                            >
-                              {story.assessment.grammar}%
-                            </span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-gray-400">Creativity:</span>
-                            <span
-                              className={getScoreColor(
-                                story.assessment.creativity
-                              )}
-                            >
-                              {story.assessment.creativity}%
-                            </span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-gray-400">Vocabulary:</span>
-                            <span
-                              className={getScoreColor(
-                                story.assessment.vocabulary
-                              )}
-                            >
-                              {story.assessment.vocabulary}%
-                            </span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-gray-400">Structure:</span>
-                            <span
-                              className={getScoreColor(
-                                story.assessment.structure || 0
-                              )}
-                            >
-                              {story.assessment.structure || 'N/A'}
-                            </span>
-                          </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-gray-300">
+                            Your Contribution:
+                          </span>
+                          <span className="text-green-400 ">
+                            {story.childWords} words
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-gray-300">AI Assistance:</span>
+                          <span className="text-blue-400 ">
+                            {story.aiWords} words
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-gray-300">
+                            Your Contribution:
+                          </span>
+                          <span className="text-yellow-400 ">
+                            {story.totalWords > 0
+                              ? Math.round(
+                                  (story.childWords / story.totalWords) * 100
+                                )
+                              : 0}
+                            %
+                          </span>
                         </div>
                       </div>
                     </div>
-                  )}
 
-                  {/* Competition Status */}
-                  {story.competitionEntries &&
-                    story.competitionEntries.length > 0 && (
+                    <div>
+                      <h3 className="text-lg  text-white mb-3">
+                        Story Details
+                      </h3>
+                      <div className="space-y-3">
+                        <div className="flex justify-between items-center">
+                          <span className="text-gray-300">Created:</span>
+                          <span className="text-white">
+                            {new Date(story.createdAt).toLocaleDateString()}
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-gray-300">Last Updated:</span>
+                          <span className="text-white">
+                            {new Date(story.updatedAt).toLocaleDateString()}
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-gray-300">Status:</span>
+                          <span
+                            className={` capitalize ${
+                              story.status === 'completed'
+                                ? 'text-green-400'
+                                : story.status === 'active'
+                                  ? 'text-blue-400'
+                                  : story.status === 'flagged'
+                                    ? 'text-red-400'
+                                    : 'text-yellow-400'
+                            }`}
+                          >
+                            {story.status}
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-gray-300">Type:</span>
+                          <span className="text-white capitalize">
+                            {story.storyType}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Right Column */}
+                  <div className="space-y-6">
+                    {/* Assessment Overview - Only show if assessment should be visible */}
+                    {shouldShowAssessment() && story.assessment && (
                       <div>
                         <h3 className="text-lg  text-white mb-3 flex items-center gap-2">
-                          <Trophy className="w-5 h-5 text-purple-400" />
-                          Competition Status
+                          <Brain className="w-5 h-5 text-blue-400" />
+                          Assessment Summary
                         </h3>
-                        <div className="bg-purple-500/10  p-4 space-y-3">
-                          {story.competitionEntries.map((entry, index) => (
-                            <div
-                              key={index}
-                              className="flex items-center justify-between"
-                            >
-                              <div>
-                                <div className="text-white ">
-                                  Entry #{index + 1}
-                                </div>
-                                <div className="text-purple-300 text-sm">
-                                  {new Date(
-                                    entry.submittedAt
-                                  ).toLocaleDateString()}
-                                </div>
-                              </div>
-                              <div className="text-right">
-                                {entry.rank && entry.rank <= 3 ? (
-                                  <div className="flex items-center gap-2 text-yellow-400 ">
-                                    <Crown size={16} />
-                                    Winner!
-                                  </div>
-                                ) : entry.rank ? (
-                                  <div className="text-purple-300">
-                                    Rank #{entry.rank}
-                                  </div>
-                                ) : (
-                                  <div className="text-gray-400">
-                                    Results Pending
-                                  </div>
-                                )}
-                              </div>
+                        <div className="bg-gray-700/30  p-4 space-y-3">
+                          <div className="flex items-center justify-between">
+                            <span className="text-gray-300">
+                              Overall Score:
+                            </span>
+                            <div className="flex items-center gap-2">
+                              {getIntegrityIcon(story.assessment.integrityRisk)}
+                              <span
+                                className={`text-xl  ${getScoreColor(story.assessment.overallScore)}`}
+                              >
+                                {story.assessment.overallScore}%
+                              </span>
                             </div>
-                          ))}
+                          </div>
+
+                          <div className="grid grid-cols-2 gap-4 text-sm">
+                            <div className="flex justify-between">
+                              <span className="text-gray-400">Grammar:</span>
+                              <span
+                                className={getScoreColor(
+                                  story.assessment.grammar
+                                )}
+                              >
+                                {story.assessment.grammar}%
+                              </span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-gray-400">Creativity:</span>
+                              <span
+                                className={getScoreColor(
+                                  story.assessment.creativity
+                                )}
+                              >
+                                {story.assessment.creativity}%
+                              </span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-gray-400">Vocabulary:</span>
+                              <span
+                                className={getScoreColor(
+                                  story.assessment.vocabulary
+                                )}
+                              >
+                                {story.assessment.vocabulary}%
+                              </span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-gray-400">Structure:</span>
+                              <span
+                                className={getScoreColor(
+                                  story.assessment.structure || 0
+                                )}
+                              >
+                                {story.assessment.structure || 'N/A'}
+                              </span>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     )}
 
-                  {/* Publication Status */}
-                  {story.isPublished && (
-                    <div>
-                      <h3 className="text-lg  text-white mb-3 flex items-center gap-2">
-                        <Star className="w-5 h-5 text-green-400" />
-                        Publication Status
-                      </h3>
-                      <div className="bg-green-500/10  p-4">
-                        <div className="flex items-center justify-between">
-                          <span className="text-gray-300">Published:</span>
-                          <span className="text-green-400 ">
-                            {story.publishedAt
-                              ? new Date(story.publishedAt).toLocaleDateString()
-                              : 'Yes'}
-                          </span>
-                        </div>
-                        <div className="mt-2">
-                          <Link
-                            href="/children-dashboard/community"
-                            className="text-green-400 hover:text-green-300 text-sm underline"
-                          >
-                            View in Community Showcase →
-                          </Link>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {activeTab === 'assessment' &&
-            shouldShowAssessment() &&
-            story.assessment && (
-              <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-8">
-                <h2 className="text-2xl  text-white mb-6 flex items-center gap-2">
-                  <Brain className="w-6 h-6 text-blue-400" />
-                  AI Assessment Results
-                </h2>
-
-                <div className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                    <div className="bg-gray-700/30  p-4 text-center">
-                      <div
-                        className={`text-2xl  ${getScoreColor(story.assessment.overallScore)}`}
-                      >
-                        {story.assessment.overallScore}%
-                      </div>
-                      <div className="text-gray-300 text-sm">Overall Score</div>
-                    </div>
-                    <div className="bg-gray-700/30  p-4 text-center">
-                      <div
-                        className={`text-2xl  ${getScoreColor(story.assessment.grammar)}`}
-                      >
-                        {story.assessment.grammar}%
-                      </div>
-                      <div className="text-gray-300 text-sm">Grammar</div>
-                    </div>
-                    <div className="bg-gray-700/30  p-4 text-center">
-                      <div
-                        className={`text-2xl  ${getScoreColor(story.assessment.creativity)}`}
-                      >
-                        {story.assessment.creativity}%
-                      </div>
-                      <div className="text-gray-300 text-sm">Creativity</div>
-                    </div>
-                    <div className="bg-gray-700/30  p-4 text-center">
-                      <div
-                        className={`text-2xl  ${getScoreColor(story.assessment.vocabulary)}`}
-                      >
-                        {story.assessment.vocabulary}%
-                      </div>
-                      <div className="text-gray-300 text-sm">Vocabulary</div>
-                    </div>
-                  </div>
-
-                  {/* Feedback */}
-                  {story.assessment.feedback && (
-                    <div className="bg-blue-500/10 border border-blue-500/20  p-6">
-                      <h3 className="text-lg  text-white mb-3">AI Feedback</h3>
-                      <p className="text-gray-300 leading-relaxed">
-                        {story.assessment.feedback}
-                      </p>
-                    </div>
-                  )}
-
-                  {/* Recommendations */}
-                  {story.assessment.recommendations && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      {story.assessment.recommendations.strengths &&
-                        story.assessment.recommendations.strengths.length >
-                          0 && (
-                          <div className="bg-green-500/10 border border-green-500/20  p-6">
-                            <h3 className="text-lg  text-green-400 mb-3">
-                              Strengths
-                            </h3>
-                            <ul className="space-y-2">
-                              {story.assessment.recommendations.strengths.map(
-                                (strength, index) => (
-                                  <li
-                                    key={index}
-                                    className="text-gray-300 flex items-start gap-2"
-                                  >
-                                    <CheckCircle className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" />
-                                    {strength}
-                                  </li>
-                                )
-                              )}
-                            </ul>
+                    {/* Competition Status */}
+                    {story.competitionEntries &&
+                      story.competitionEntries.length > 0 && (
+                        <div>
+                          <h3 className="text-lg  text-white mb-3 flex items-center gap-2">
+                            <Trophy className="w-5 h-5 text-purple-400" />
+                            Competition Status
+                          </h3>
+                          <div className="bg-purple-500/10  p-4 space-y-3">
+                            {story.competitionEntries.map((entry, index) => (
+                              <div
+                                key={index}
+                                className="flex items-center justify-between"
+                              >
+                                <div>
+                                  <div className="text-white ">
+                                    Entry #{index + 1}
+                                  </div>
+                                  <div className="text-purple-300 text-sm">
+                                    {new Date(
+                                      entry.submittedAt
+                                    ).toLocaleDateString()}
+                                  </div>
+                                </div>
+                                <div className="text-right">
+                                  {entry.rank && entry.rank <= 3 ? (
+                                    <div className="flex items-center gap-2 text-yellow-400 ">
+                                      <Crown size={16} />
+                                      Winner!
+                                    </div>
+                                  ) : entry.rank ? (
+                                    <div className="text-purple-300">
+                                      Rank #{entry.rank}
+                                    </div>
+                                  ) : (
+                                    <div className="text-gray-400">
+                                      Results Pending
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            ))}
                           </div>
-                        )}
+                        </div>
+                      )}
 
-                      {story.assessment.recommendations.improvements &&
-                        story.assessment.recommendations.improvements.length >
-                          0 && (
-                          <div className="bg-yellow-500/10 border border-yellow-500/20  p-6">
-                            <h3 className="text-lg  text-yellow-400 mb-3">
-                              Areas for Improvement
-                            </h3>
-                            <ul className="space-y-2">
-                              {story.assessment.recommendations.improvements.map(
-                                (improvement, index) => (
-                                  <li
-                                    key={index}
-                                    className="text-gray-300 flex items-start gap-2"
-                                  >
-                                    <TrendingUp className="w-4 h-4 text-yellow-400 mt-0.5 flex-shrink-0" />
-                                    {improvement}
-                                  </li>
-                                )
-                              )}
-                            </ul>
+                    {/* Publication Status */}
+                    {story.isPublished && (
+                      <div>
+                        <h3 className="text-lg  text-white mb-3 flex items-center gap-2">
+                          <Star className="w-5 h-5 text-green-400" />
+                          Publication Status
+                        </h3>
+                        <div className="bg-green-500/10  p-4">
+                          <div className="flex items-center justify-between">
+                            <span className="text-gray-300">Published:</span>
+                            <span className="text-green-400 ">
+                              {story.publishedAt
+                                ? new Date(
+                                    story.publishedAt
+                                  ).toLocaleDateString()
+                                : 'Yes'}
+                            </span>
                           </div>
-                        )}
-                    </div>
-                  )}
-
-                  {/* Integrity Analysis */}
-                  <div className="bg-gray-700/30  p-6">
-                    <h3 className="text-lg  text-white mb-3 flex items-center gap-2">
-                      Content Integrity
-                      {getIntegrityIcon(story.assessment.integrityRisk)}
-                    </h3>
-                    <div className="text-gray-300">
-                      Risk Level:{' '}
-                      <span
-                        className={` ${
-                          story.assessment.integrityRisk === 'low'
-                            ? 'text-green-400'
-                            : story.assessment.integrityRisk === 'medium'
-                              ? 'text-yellow-400'
-                              : story.assessment.integrityRisk === 'high'
-                                ? 'text-orange-400'
-                                : 'text-red-400'
-                        }`}
-                      >
-                        {(
-                          story.assessment.integrityRisk || 'unknown'
-                        ).toUpperCase()}
-                      </span>
-                    </div>
+                          <div className="mt-2">
+                            <Link
+                              href="/children-dashboard/community"
+                              className="text-green-400 hover:text-green-300 text-sm underline"
+                            >
+                              View in Community Showcase →
+                            </Link>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
             )}
 
-          {activeTab === 'content' && (
-            <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-8">
-              <h2 className="text-2xl  text-white mb-6 flex items-center gap-2">
-                <BookOpen className="w-6 h-6 text-green-400" />
-                Story Content
-              </h2>
+            {activeTab === 'assessment' &&
+              shouldShowAssessment() &&
+              story.assessment && (
+                <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-8">
+                  <h2 className="text-2xl  text-white mb-6 flex items-center gap-2">
+                    <Brain className="w-6 h-6 text-blue-400" />
+                    AI Assessment Results
+                  </h2>
 
-              <div className="space-y-6">
-                {/* Story Content Display */}
-                {story.isUploadedForAssessment && story.aiOpening ? (
-                  // Uploaded story content
-                  <div className="bg-gray-700/30  p-6">
-                    <h3 className="text-lg  text-white mb-4">Uploaded Story</h3>
-                    <div className="prose prose-invert max-w-none">
-                      <div className="text-gray-300 leading-relaxed whitespace-pre-wrap">
-                        {story.aiOpening}
-                      </div>
-                    </div>
-                  </div>
-                ) : story.turns && story.turns.length > 0 ? (
-                  // Collaborative story with turns
-                  <div className="space-y-4">
-                    <h3 className="text-lg  text-white mb-4">
-                      Collaborative Story
-                    </h3>
-                    {story.turns.map((turn, index) => (
-                      <div key={index} className="space-y-3">
-                        {turn.childInput && (
-                          <div className="bg-green-500/10 border-l-4 border-green-500 rounded-r-lg p-4">
-                            <div className="flex items-center gap-2 mb-2">
-                              <User className="w-4 h-4 text-green-400" />
-                              <span className="text-green-400  text-sm">
-                                Your Turn {turn.turnNumber}
-                              </span>
-                            </div>
-                            <div className="text-gray-300 leading-relaxed whitespace-pre-wrap">
-                              {turn.childInput}
-                            </div>
-                          </div>
-                        )}
-
-                        {turn.aiResponse && (
-                          <div className="bg-blue-500/10 border-l-4 border-blue-500 rounded-r-lg p-4">
-                            <div className="flex items-center gap-2 mb-2">
-                              <Brain className="w-4 h-4 text-blue-400" />
-                              <span className="text-blue-400  text-sm">
-                                AI Response
-                              </span>
-                            </div>
-                            <div className="text-gray-300 leading-relaxed whitespace-pre-wrap">
-                              {turn.aiResponse}
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                ) : story.content ? (
-                  // Simple content field
-                  <div className="bg-gray-700/30  p-6">
-                    <div className="prose prose-invert max-w-none">
-                      <div className="text-gray-300 leading-relaxed whitespace-pre-wrap">
-                        {story.content}
-                      </div>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="text-center py-12">
-                    <FileText className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                    <p className="text-gray-400">
-                      No content available to display.
-                    </p>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-
-          {activeTab === 'comments' && (
-            <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-8">
-              <h2 className="text-2xl  text-white mb-6 flex items-center gap-2">
-                <MessageSquare className="w-6 h-6 text-blue-400" />
-                Comments & Discussion
-              </h2>
-
-              {/* Comments List */}
-              <div className="space-y-4 mb-6">
-                {story.comments && story.comments.length > 0 ? (
-                  story.comments.map((comment) => (
-                    <div key={comment._id} className="bg-gray-700/30  p-4">
-                      <div className="flex items-start justify-between mb-2">
-                        <div className="flex items-center gap-2">
-                          <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600  flex items-center justify-center">
-                            <span className="text-white text-xs ">
-                              {comment.authorId?.firstName?.[0]}
-                              {comment.authorId?.lastName?.[0]}
-                            </span>
-                          </div>
-                          <div>
-                            <div className="text-white  text-sm">
-                              {comment.authorId?.firstName}{' '}
-                              {comment.authorId?.lastName}
-                              <span
-                                className={`ml-2 px-2 py-1  text-xs ${
-                                  comment.authorId?.role === 'admin'
-                                    ? 'bg-red-500/20 text-red-400'
-                                    : comment.authorId?.role === 'mentor'
-                                      ? 'bg-blue-500/20 text-blue-400'
-                                      : 'bg-green-500/20 text-green-400'
-                                }`}
-                              >
-                                {comment.authorId?.role}
-                              </span>
-                            </div>
-                            <div className="text-gray-400 text-xs">
-                              {new Date(comment.createdAt).toLocaleDateString()}
-                            </div>
-                          </div>
+                  <div className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                      <div className="bg-gray-700/30  p-4 text-center">
+                        <div
+                          className={`text-2xl  ${getScoreColor(story.assessment.overallScore)}`}
+                        >
+                          {story.assessment.overallScore}%
+                        </div>
+                        <div className="text-gray-300 text-sm">
+                          Overall Score
                         </div>
                       </div>
-                      <div className="text-gray-300 leading-relaxed">
-                        {comment.content}
-                      </div>
-                      {comment.rating && (
-                        <div className="flex items-center gap-1 mt-2">
-                          {[...Array(5)].map((_, i) => (
-                            <Star
-                              key={i}
-                              className={`w-4 h-4 ${
-                                i < comment.rating!
-                                  ? 'text-yellow-400 fill-current'
-                                  : 'text-gray-600'
-                              }`}
-                            />
-                          ))}
-                          <span className="text-sm text-gray-400 ml-1">
-                            ({comment.rating}/5)
-                          </span>
+                      <div className="bg-gray-700/30  p-4 text-center">
+                        <div
+                          className={`text-2xl  ${getScoreColor(story.assessment.grammar)}`}
+                        >
+                          {story.assessment.grammar}%
                         </div>
-                      )}
+                        <div className="text-gray-300 text-sm">Grammar</div>
+                      </div>
+                      <div className="bg-gray-700/30  p-4 text-center">
+                        <div
+                          className={`text-2xl  ${getScoreColor(story.assessment.creativity)}`}
+                        >
+                          {story.assessment.creativity}%
+                        </div>
+                        <div className="text-gray-300 text-sm">Creativity</div>
+                      </div>
+                      <div className="bg-gray-700/30  p-4 text-center">
+                        <div
+                          className={`text-2xl  ${getScoreColor(story.assessment.vocabulary)}`}
+                        >
+                          {story.assessment.vocabulary}%
+                        </div>
+                        <div className="text-gray-300 text-sm">Vocabulary</div>
+                      </div>
                     </div>
-                  ))
-                ) : (
-                  <div className="text-center py-8">
-                    <MessageSquare className="w-16 h-16 text-gray-500 mx-auto mb-4" />
-                    <h3 className="text-lg  text-gray-400 mb-2">
-                      No Comments Yet
-                    </h3>
-                    <p className="text-gray-500">
-                      This story hasn't received any comments from mentors or
-                      admins yet.
-                    </p>
-                  </div>
-                )}
-              </div>
 
-              {/* Comment Form (only for mentors/admins) */}
-              {session?.user?.role === 'mentor' ||
-              session?.user?.role === 'admin' ? (
-                <div className="border-t border-gray-600/30 pt-6">
-                  <form onSubmit={handleAddComment} className="space-y-4">
-                    <textarea
-                      value={newComment}
-                      onChange={(e) => setNewComment(e.target.value)}
-                      placeholder="Add your feedback or comment..."
-                      className="w-full p-3 bg-gray-700/50 border border-gray-600/30  text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      rows={4}
-                    />
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <span className="text-gray-400 text-sm">Rating:</span>
-                        <div className="flex gap-1">
-                          {[1, 2, 3, 4, 5].map((star) => (
-                            <button
-                              key={star}
-                              type="button"
-                              onClick={() => setCommentRating(star)}
-                              className={`p-1 ${
-                                star <= commentRating
-                                  ? 'text-yellow-400'
-                                  : 'text-gray-600'
-                              }`}
-                            >
-                              <Star
-                                className="w-5 h-5"
-                                fill={
-                                  star <= commentRating
-                                    ? 'currentColor'
-                                    : 'none'
-                                }
-                              />
-                            </button>
-                          ))}
-                        </div>
+                    {/* Feedback */}
+                    {story.assessment.feedback && (
+                      <div className="bg-blue-500/10 border border-blue-500/20  p-6">
+                        <h3 className="text-lg  text-white mb-3">
+                          AI Feedback
+                        </h3>
+                        <p className="text-gray-300 leading-relaxed">
+                          {story.assessment.feedback}
+                        </p>
                       </div>
-                      <button
-                        type="submit"
-                        disabled={!newComment.trim() || addingComment}
-                        className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 text-white px-6 py-2   transition-colors"
-                      >
-                        {addingComment ? 'Adding...' : 'Add Comment'}
-                      </button>
+                    )}
+
+                    {/* Recommendations */}
+                    {story.assessment.recommendations && (
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {story.assessment.recommendations.strengths &&
+                          story.assessment.recommendations.strengths.length >
+                            0 && (
+                            <div className="bg-green-500/10 border border-green-500/20  p-6">
+                              <h3 className="text-lg  text-green-400 mb-3">
+                                Strengths
+                              </h3>
+                              <ul className="space-y-2">
+                                {story.assessment.recommendations.strengths.map(
+                                  (strength, index) => (
+                                    <li
+                                      key={index}
+                                      className="text-gray-300 flex items-start gap-2"
+                                    >
+                                      <CheckCircle className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" />
+                                      {strength}
+                                    </li>
+                                  )
+                                )}
+                              </ul>
+                            </div>
+                          )}
+
+                        {story.assessment.recommendations.improvements &&
+                          story.assessment.recommendations.improvements.length >
+                            0 && (
+                            <div className="bg-yellow-500/10 border border-yellow-500/20  p-6">
+                              <h3 className="text-lg  text-yellow-400 mb-3">
+                                Areas for Improvement
+                              </h3>
+                              <ul className="space-y-2">
+                                {story.assessment.recommendations.improvements.map(
+                                  (improvement, index) => (
+                                    <li
+                                      key={index}
+                                      className="text-gray-300 flex items-start gap-2"
+                                    >
+                                      <TrendingUp className="w-4 h-4 text-yellow-400 mt-0.5 flex-shrink-0" />
+                                      {improvement}
+                                    </li>
+                                  )
+                                )}
+                              </ul>
+                            </div>
+                          )}
+                      </div>
+                    )}
+
+                    {/* Integrity Analysis */}
+                    <div className="bg-gray-700/30  p-6">
+                      <h3 className="text-lg  text-white mb-3 flex items-center gap-2">
+                        Content Integrity
+                        {getIntegrityIcon(story.assessment.integrityRisk)}
+                      </h3>
+                      <div className="text-gray-300">
+                        Risk Level:{' '}
+                        <span
+                          className={` ${
+                            story.assessment.integrityRisk === 'low'
+                              ? 'text-green-400'
+                              : story.assessment.integrityRisk === 'medium'
+                                ? 'text-yellow-400'
+                                : story.assessment.integrityRisk === 'high'
+                                  ? 'text-orange-400'
+                                  : 'text-red-400'
+                          }`}
+                        >
+                          {(
+                            story.assessment.integrityRisk || 'unknown'
+                          ).toUpperCase()}
+                        </span>
+                      </div>
                     </div>
-                  </form>
-                </div>
-              ) : (
-                <div className="border-t border-gray-600/30 pt-6 text-center">
-                  <p className="text-gray-400">
-                    Only mentors and admins can add comments.
-                  </p>
+                  </div>
                 </div>
               )}
-            </div>
-          )}
-        </motion.div>
-      </div>
+
+            {activeTab === 'content' && (
+              <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-8">
+                <h2 className="text-2xl  text-white mb-6 flex items-center gap-2">
+                  <BookOpen className="w-6 h-6 text-green-400" />
+                  Story Content
+                </h2>
+
+                <div className="space-y-6">
+                  {/* Story Content Display */}
+                  {story.isUploadedForAssessment && story.aiOpening ? (
+                    // Uploaded story content
+                    <div className="bg-gray-700/30  p-6">
+                      <h3 className="text-lg  text-white mb-4">
+                        Uploaded Story
+                      </h3>
+                      <div className="prose prose-invert max-w-none">
+                        <div className="text-gray-300 leading-relaxed whitespace-pre-wrap">
+                          {story.aiOpening}
+                        </div>
+                      </div>
+                    </div>
+                  ) : story.turns && story.turns.length > 0 ? (
+                    // Collaborative story with turns
+                    <div className="space-y-4">
+                      <h3 className="text-lg  text-white mb-4">
+                        Collaborative Story
+                      </h3>
+                      {story.turns.map((turn, index) => (
+                        <div key={index} className="space-y-3">
+                          {turn.childInput && (
+                            <div className="bg-green-500/10 border-l-4 border-green-500 rounded-r-lg p-4">
+                              <div className="flex items-center gap-2 mb-2">
+                                <User className="w-4 h-4 text-green-400" />
+                                <span className="text-green-400  text-sm">
+                                  Your Turn {turn.turnNumber}
+                                </span>
+                              </div>
+                              <div className="text-gray-300 leading-relaxed whitespace-pre-wrap">
+                                {turn.childInput}
+                              </div>
+                            </div>
+                          )}
+
+                          {turn.aiResponse && (
+                            <div className="bg-blue-500/10 border-l-4 border-blue-500 rounded-r-lg p-4">
+                              <div className="flex items-center gap-2 mb-2">
+                                <Brain className="w-4 h-4 text-blue-400" />
+                                <span className="text-blue-400  text-sm">
+                                  AI Response
+                                </span>
+                              </div>
+                              <div className="text-gray-300 leading-relaxed whitespace-pre-wrap">
+                                {turn.aiResponse}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  ) : story.content ? (
+                    // Simple content field
+                    <div className="bg-gray-700/30  p-6">
+                      <div className="prose prose-invert max-w-none">
+                        <div className="text-gray-300 leading-relaxed whitespace-pre-wrap">
+                          {story.content}
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-center py-12">
+                      <FileText className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                      <p className="text-gray-400">
+                        No content available to display.
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'comments' && (
+              <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-8">
+                <h2 className="text-2xl  text-white mb-6 flex items-center gap-2">
+                  <MessageSquare className="w-6 h-6 text-blue-400" />
+                  Comments & Discussion
+                </h2>
+
+                {/* Comments List */}
+                <div className="space-y-4 mb-6">
+                  {story.comments && story.comments.length > 0 ? (
+                    story.comments.map((comment) => (
+                      <div key={comment._id} className="bg-gray-700/30  p-4">
+                        <div className="flex items-start justify-between mb-2">
+                          <div className="flex items-center gap-2">
+                            <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600  flex items-center justify-center">
+                              <span className="text-white text-xs ">
+                                {comment.authorId?.firstName?.[0]}
+                                {comment.authorId?.lastName?.[0]}
+                              </span>
+                            </div>
+                            <div>
+                              <div className="text-white  text-sm">
+                                {comment.authorId?.firstName}{' '}
+                                {comment.authorId?.lastName}
+                                <span
+                                  className={`ml-2 px-2 py-1  text-xs ${
+                                    comment.authorId?.role === 'admin'
+                                      ? 'bg-red-500/20 text-red-400'
+                                      : comment.authorId?.role === 'mentor'
+                                        ? 'bg-blue-500/20 text-blue-400'
+                                        : 'bg-green-500/20 text-green-400'
+                                  }`}
+                                >
+                                  {comment.authorId?.role}
+                                </span>
+                              </div>
+                              <div className="text-gray-400 text-xs">
+                                {new Date(
+                                  comment.createdAt
+                                ).toLocaleDateString()}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="text-gray-300 leading-relaxed">
+                          {comment.content}
+                        </div>
+                        {comment.rating && (
+                          <div className="flex items-center gap-1 mt-2">
+                            {[...Array(5)].map((_, i) => (
+                              <Star
+                                key={i}
+                                className={`w-4 h-4 ${
+                                  i < comment.rating!
+                                    ? 'text-yellow-400 fill-current'
+                                    : 'text-gray-600'
+                                }`}
+                              />
+                            ))}
+                            <span className="text-sm text-gray-400 ml-1">
+                              ({comment.rating}/5)
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    ))
+                  ) : (
+                    <div className="text-center py-8">
+                      <MessageSquare className="w-16 h-16 text-gray-500 mx-auto mb-4" />
+                      <h3 className="text-lg  text-gray-400 mb-2">
+                        No Comments Yet
+                      </h3>
+                      <p className="text-gray-500">
+                        This story hasn&apos;t received any comments from
+                        mentors or admins yet.
+                      </p>
+                    </div>
+                  )}
+                </div>
+
+                {/* Comment Form (only for mentors/admins) */}
+                {session?.user?.role === 'mentor' ||
+                session?.user?.role === 'admin' ? (
+                  <div className="border-t border-gray-600/30 pt-6">
+                    <form onSubmit={handleAddComment} className="space-y-4">
+                      <textarea
+                        value={newComment}
+                        onChange={(e) => setNewComment(e.target.value)}
+                        placeholder="Add your feedback or comment..."
+                        className="w-full p-3 bg-gray-700/50 border border-gray-600/30  text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        rows={4}
+                      />
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <span className="text-gray-400 text-sm">Rating:</span>
+                          <div className="flex gap-1">
+                            {[1, 2, 3, 4, 5].map((star) => (
+                              <button
+                                key={star}
+                                type="button"
+                                onClick={() => setCommentRating(star)}
+                                className={`p-1 ${
+                                  star <= commentRating
+                                    ? 'text-yellow-400'
+                                    : 'text-gray-600'
+                                }`}
+                              >
+                                <Star
+                                  className="w-5 h-5"
+                                  fill={
+                                    star <= commentRating
+                                      ? 'currentColor'
+                                      : 'none'
+                                  }
+                                />
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                        <button
+                          type="submit"
+                          disabled={!newComment.trim() || addingComment}
+                          className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 text-white px-6 py-2   transition-colors"
+                        >
+                          {addingComment ? 'Adding...' : 'Add Comment'}
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                ) : (
+                  <div className="border-t border-gray-600/30 pt-6 text-center">
+                    <p className="text-gray-400">
+                      Only mentors and admins can add comments.
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
+          </motion.div>
+        </div>
       </div>
       {toastMessage && (
         <Toast>
           <ToastTitle>
-            {toastMessage.includes('🎉') ? 'Success!' : 
-             toastMessage.includes('📚') ? 'Info' : 'Error'}
+            {toastMessage.includes('🎉')
+              ? 'Success!'
+              : toastMessage.includes('📚')
+                ? 'Info'
+                : 'Error'}
           </ToastTitle>
           <ToastDescription>{toastMessage}</ToastDescription>
           <ToastClose onClick={() => setToastMessage(null)} />

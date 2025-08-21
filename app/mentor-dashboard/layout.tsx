@@ -64,29 +64,28 @@ export default function MentorLayout({ children }: MentorLayoutProps) {
     return pathname.startsWith(path);
   };
 
-
   if (status === 'loading') {
-        return (
-          <div className="flex items-center justify-center h-64">
-            <TerminalLoader
-              title="Accessing Mentor Dashboard"
-              loadingText="Verifying mentor access..."
-              size="md"
-            />
-          </div>
-        );
-      }
+    return (
+      <div className="flex items-center justify-center h-64">
+        <TerminalLoader
+          title="Accessing Mentor Dashboard"
+          loadingText="Verifying mentor access..."
+          size="md"
+        />
+      </div>
+    );
+  }
 
   if (!session || session.user?.role !== 'mentor') {
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-         <div className="flex items-center justify-center h-64">
-           <TerminalLoader
-             title="Dashboard"
-             loadingText="Redirecting to login..."
-             size="md"
-           />
-         </div>
+        <div className="flex items-center justify-center h-64">
+          <TerminalLoader
+            title="Dashboard"
+            loadingText="Redirecting to login..."
+            size="md"
+          />
+        </div>
       </div>
     );
   }

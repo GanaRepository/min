@@ -367,7 +367,7 @@
   }
 
   /* === SCROLL OPTIMIZATION - FIX WHITE PATCHES === */
-  
+
   /* Enable hardware acceleration and smooth scrolling */
   html {
     scroll-behavior: smooth;
@@ -432,7 +432,7 @@
       backdrop-filter: blur(8px) !important; /* Reduced from default */
       -webkit-backdrop-filter: blur(8px) !important;
     }
-    
+
     .backdrop-blur-2xl {
       backdrop-filter: blur(12px) !important; /* Reduced from default */
       -webkit-backdrop-filter: blur(12px) !important;

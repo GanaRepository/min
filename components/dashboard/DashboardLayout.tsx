@@ -30,16 +30,10 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     }
   }, [session, status, router]);
 
-
-
-    if (status === 'loading') {
+  if (status === 'loading') {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black flex items-center justify-center">
-        <TerminalLoader
-          title="Dashboard"
-          loadingText="Loading..."
-          size="md"
-        />
+        <TerminalLoader title="Dashboard" loadingText="Loading..." size="md" />
       </div>
     );
   }

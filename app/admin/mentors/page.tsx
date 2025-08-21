@@ -136,197 +136,197 @@ export default function MentorsPage() {
   return (
     <ToastProvider>
       <div className="space-y-6 px-2 sm:px-4 md:px-8 lg:px-12 xl:px-20 py-4 sm:py-6 md:py-8">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h1 className="text-2xl sm:text-3xl  text-white mb-2">
-            Mentors Management
-          </h1>
-          <p className="text-gray-400">
-            Manage all mentors and their student assignments
-          </p>
-        </div>
-        <Link href="/admin/mentors/create">
-          <button className="bg-gradient-to-r from-purple-600 to-purple-700 text-white px-6 py-2.5  hover:from-purple-700 hover:to-purple-800 transition-all duration-200 flex items-center">
-            <UserPlus size={20} className="mr-2" />
-            Add New Mentor
-          </button>
-        </Link>
-      </div>
-
-      {/* Search */}
-      <div className="bg-gray-800  p-6">
-        <div className="relative">
-          <Search size={20} className="absolute left-3 top-3 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Search mentors by name or email..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 bg-gray-700 border border-gray-600  text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-          />
-        </div>
-      </div>
-
-      {/* Mentors Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {mentors.map((mentor) => (
-          <motion.div
-            key={mentor._id}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-gray-800  p-6 hover:bg-gray-700/50 transition-all duration-200"
-          >
-            {/* Mentor Header */}
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center space-x-3">
-                <div className="w-12 h-12 bg-purple-600  flex items-center justify-center">
-                  <span className="text-white  text-lg">
-                    {mentor.firstName[0]}
-                    {mentor.lastName[0]}
-                  </span>
-                </div>
-                <div>
-                  <h3 className="text-white ">
-                    {mentor.firstName} {mentor.lastName}
-                  </h3>
-                  <p className="text-gray-400 text-sm">{mentor.email}</p>
-                </div>
-              </div>
-              <div className="flex items-center space-x-1">
-                <div
-                  className={`w-3 h-3  ${
-                    mentor.isActive ? 'bg-green-500' : 'bg-red-500'
-                  }`}
-                ></div>
-              </div>
-            </div>
-
-            {/* Stats */}
-            <div className="grid grid-cols-3 gap-4 mb-4">
-              <div className="text-center">
-                <div className="flex items-center justify-center mb-1">
-                  <Users size={16} className="text-blue-400" />
-                </div>
-                <p className="text-2xl  text-white">
-                  {mentor.assignedStudents}
-                </p>
-                <p className="text-xs text-gray-400">Students</p>
-              </div>
-              <div className="text-center">
-                <div className="flex items-center justify-center mb-1">
-                  <BookOpen size={16} className="text-green-400" />
-                </div>
-                <p className="text-2xl  text-white">{mentor.totalStories}</p>
-                <p className="text-xs text-gray-400">Stories</p>
-              </div>
-              <div className="text-center">
-                <div className="flex items-center justify-center mb-1">
-                  <MessageSquare size={16} className="text-orange-400" />
-                </div>
-                <p className="text-2xl  text-white">{mentor.totalComments}</p>
-                <p className="text-xs text-gray-400">Comments</p>
-              </div>
-            </div>
-
-            {/* Actions */}
-            <div className="flex items-center justify-between pt-4 border-t border-gray-700">
-              <div className="flex items-center text-gray-400 text-sm">
-                <Calendar size={14} className="mr-1" />
-                {new Date(mentor.createdAt).toLocaleDateString()}
-              </div>
-              <div className="flex items-center space-x-2">
-                <Link href={`/admin/mentors/${mentor._id}`}>
-                  <button className="p-2 text-gray-400 hover:text-blue-400 hover:bg-gray-600  transition-colors">
-                    <Eye size={16} />
-                  </button>
-                </Link>
-                <Link href={`/admin/mentors/${mentor._id}/edit`}>
-                  <button className="p-2 text-gray-400 hover:text-green-400 hover:bg-gray-600  transition-colors">
-                    <Edit size={16} />
-                  </button>
-                </Link>
-                <button
-                  onClick={() =>
-                    deleteMentor(
-                      mentor._id,
-                      `${mentor.firstName} ${mentor.lastName}`
-                    )
-                  }
-                  className="p-2 text-gray-400 hover:text-red-400 hover:bg-gray-600  transition-colors"
-                >
-                  <Trash2 size={16} />
-                </button>
-              </div>
-            </div>
-          </motion.div>
-        ))}
-      </div>
-
-      {/* Empty State */}
-      {mentors.length === 0 && !loading && (
-        <div className="text-center py-12">
-          <Users size={48} className="text-gray-600 mx-auto mb-4" />
-          <h3 className="text-xl  text-gray-400 mb-2">No mentors found</h3>
-          <p className="text-gray-500 mb-6">
-            {searchTerm
-              ? 'Try adjusting your search'
-              : 'Start by adding your first mentor'}
-          </p>
-        </div>
-      )}
-
-      {/* Pagination */}
-      {pagination && pagination.pages > 1 && (
-        <div className="flex items-center justify-center space-x-4">
-          <button
-            onClick={() => setPage(Math.max(1, page - 1))}
-            disabled={page === 1}
-            className="px-4 py-2 bg-gray-700 text-white  hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-          >
-            Previous
-          </button>
-
-          <div className="flex items-center space-x-2">
-            {Array.from({ length: Math.min(5, pagination.pages) }, (_, i) => {
-              const pageNum =
-                Math.max(1, Math.min(pagination.pages - 4, page - 2)) + i;
-              return (
-                <button
-                  key={pageNum}
-                  onClick={() => setPage(pageNum)}
-                  className={`px-3 py-2  transition-colors ${
-                    page === pageNum
-                      ? 'bg-purple-600 text-white'
-                      : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                  }`}
-                >
-                  {pageNum}
-                </button>
-              );
-            })}
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div>
+            <h1 className="text-2xl sm:text-3xl  text-white mb-2">
+              Mentors Management
+            </h1>
+            <p className="text-gray-400">
+              Manage all mentors and their student assignments
+            </p>
           </div>
-
-          <button
-            onClick={() => setPage(Math.min(pagination.pages, page + 1))}
-            disabled={page === pagination.pages}
-            className="px-4 py-2 bg-gray-700 text-white  hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-          >
-            Next
-          </button>
+          <Link href="/admin/mentors/create">
+            <button className="bg-gradient-to-r from-purple-600 to-purple-700 text-white px-6 py-2.5  hover:from-purple-700 hover:to-purple-800 transition-all duration-200 flex items-center">
+              <UserPlus size={20} className="mr-2" />
+              Add New Mentor
+            </button>
+          </Link>
         </div>
-      )}
 
-      {toastMessage && (
-        <Toast>
-          <ToastTitle>
-            {toastMessage.includes('successfully') ? 'Success!' : 'Error'}
-          </ToastTitle>
-          <ToastDescription>{toastMessage}</ToastDescription>
-          <ToastClose onClick={() => setToastMessage(null)} />
-        </Toast>
-      )}
-      <ToastViewport />
+        {/* Search */}
+        <div className="bg-gray-800  p-6">
+          <div className="relative">
+            <Search size={20} className="absolute left-3 top-3 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search mentors by name or email..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-10 pr-4 py-2.5 bg-gray-700 border border-gray-600  text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+            />
+          </div>
+        </div>
+
+        {/* Mentors Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {mentors.map((mentor) => (
+            <motion.div
+              key={mentor._id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-gray-800  p-6 hover:bg-gray-700/50 transition-all duration-200"
+            >
+              {/* Mentor Header */}
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center space-x-3">
+                  <div className="w-12 h-12 bg-purple-600  flex items-center justify-center">
+                    <span className="text-white  text-lg">
+                      {mentor.firstName[0]}
+                      {mentor.lastName[0]}
+                    </span>
+                  </div>
+                  <div>
+                    <h3 className="text-white ">
+                      {mentor.firstName} {mentor.lastName}
+                    </h3>
+                    <p className="text-gray-400 text-sm">{mentor.email}</p>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-1">
+                  <div
+                    className={`w-3 h-3  ${
+                      mentor.isActive ? 'bg-green-500' : 'bg-red-500'
+                    }`}
+                  ></div>
+                </div>
+              </div>
+
+              {/* Stats */}
+              <div className="grid grid-cols-3 gap-4 mb-4">
+                <div className="text-center">
+                  <div className="flex items-center justify-center mb-1">
+                    <Users size={16} className="text-blue-400" />
+                  </div>
+                  <p className="text-2xl  text-white">
+                    {mentor.assignedStudents}
+                  </p>
+                  <p className="text-xs text-gray-400">Students</p>
+                </div>
+                <div className="text-center">
+                  <div className="flex items-center justify-center mb-1">
+                    <BookOpen size={16} className="text-green-400" />
+                  </div>
+                  <p className="text-2xl  text-white">{mentor.totalStories}</p>
+                  <p className="text-xs text-gray-400">Stories</p>
+                </div>
+                <div className="text-center">
+                  <div className="flex items-center justify-center mb-1">
+                    <MessageSquare size={16} className="text-orange-400" />
+                  </div>
+                  <p className="text-2xl  text-white">{mentor.totalComments}</p>
+                  <p className="text-xs text-gray-400">Comments</p>
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="flex items-center justify-between pt-4 border-t border-gray-700">
+                <div className="flex items-center text-gray-400 text-sm">
+                  <Calendar size={14} className="mr-1" />
+                  {new Date(mentor.createdAt).toLocaleDateString()}
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Link href={`/admin/mentors/${mentor._id}`}>
+                    <button className="p-2 text-gray-400 hover:text-blue-400 hover:bg-gray-600  transition-colors">
+                      <Eye size={16} />
+                    </button>
+                  </Link>
+                  <Link href={`/admin/mentors/${mentor._id}/edit`}>
+                    <button className="p-2 text-gray-400 hover:text-green-400 hover:bg-gray-600  transition-colors">
+                      <Edit size={16} />
+                    </button>
+                  </Link>
+                  <button
+                    onClick={() =>
+                      deleteMentor(
+                        mentor._id,
+                        `${mentor.firstName} ${mentor.lastName}`
+                      )
+                    }
+                    className="p-2 text-gray-400 hover:text-red-400 hover:bg-gray-600  transition-colors"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Empty State */}
+        {mentors.length === 0 && !loading && (
+          <div className="text-center py-12">
+            <Users size={48} className="text-gray-600 mx-auto mb-4" />
+            <h3 className="text-xl  text-gray-400 mb-2">No mentors found</h3>
+            <p className="text-gray-500 mb-6">
+              {searchTerm
+                ? 'Try adjusting your search'
+                : 'Start by adding your first mentor'}
+            </p>
+          </div>
+        )}
+
+        {/* Pagination */}
+        {pagination && pagination.pages > 1 && (
+          <div className="flex items-center justify-center space-x-4">
+            <button
+              onClick={() => setPage(Math.max(1, page - 1))}
+              disabled={page === 1}
+              className="px-4 py-2 bg-gray-700 text-white  hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              Previous
+            </button>
+
+            <div className="flex items-center space-x-2">
+              {Array.from({ length: Math.min(5, pagination.pages) }, (_, i) => {
+                const pageNum =
+                  Math.max(1, Math.min(pagination.pages - 4, page - 2)) + i;
+                return (
+                  <button
+                    key={pageNum}
+                    onClick={() => setPage(pageNum)}
+                    className={`px-3 py-2  transition-colors ${
+                      page === pageNum
+                        ? 'bg-purple-600 text-white'
+                        : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                    }`}
+                  >
+                    {pageNum}
+                  </button>
+                );
+              })}
+            </div>
+
+            <button
+              onClick={() => setPage(Math.min(pagination.pages, page + 1))}
+              disabled={page === pagination.pages}
+              className="px-4 py-2 bg-gray-700 text-white  hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              Next
+            </button>
+          </div>
+        )}
+
+        {toastMessage && (
+          <Toast>
+            <ToastTitle>
+              {toastMessage.includes('successfully') ? 'Success!' : 'Error'}
+            </ToastTitle>
+            <ToastDescription>{toastMessage}</ToastDescription>
+            <ToastClose onClick={() => setToastMessage(null)} />
+          </Toast>
+        )}
+        <ToastViewport />
       </div>
     </ToastProvider>
   );

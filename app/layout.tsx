@@ -32,7 +32,7 @@ export default function RootLayout({
         <title>Mintoons</title>
         <link rel="icon" href="/favicon2.ico" type="image/png" />
       </head>
-      <body 
+      <body
         className={inter.className}
         style={{
           // Critical performance optimizations for scroll

@@ -1,11 +1,12 @@
-import TerminalLoader from '../../../../components/TerminalLoader';
+'use client';
+
 // app/children-dashboard/story/[sessionId]/page.tsx - FIXED INPUT VISIBILITY
-('use client');
 
 import { useState, useEffect, useRef } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
+import TerminalLoader from '../../../../components/TerminalLoader';
 import {
   ArrowLeft,
   Send,
@@ -378,18 +379,13 @@ export default function StoryWritingInterface({
     );
   }
 
-    if (!storySession) {
+  if (!storySession) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-900 via-slate-900 to-green-900 flex items-center justify-center">
-        <TerminalLoader
-          title="Story"
-          loadingText="Story not found"
-          size="md"
-        />
+        <TerminalLoader title="Story" loadingText="Story not found" size="md" />
       </div>
     );
   }
-
 
   const isCompleted = storySession.status === 'completed';
   // More robust canWrite logic - check each condition separately
@@ -706,8 +702,8 @@ export default function StoryWritingInterface({
                         🎉 Story Complete!
                       </h3>
                       <p className="text-gray-300 mb-4">
-                        Amazing work! You've completed all {maxTurns} turns of
-                        your collaborative story.
+                        Amazing work! You&apos;ve completed all {maxTurns} turns
+                        of your collaborative story.
                       </p>
                       {assessment && (
                         <button

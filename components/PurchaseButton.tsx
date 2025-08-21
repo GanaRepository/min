@@ -220,18 +220,18 @@ export default function PurchaseButton({
         ${variantClasses[variant]}
         ${className}
       `}
-    >
-      {loading ? (
-        <>
-          <Loader2 className="animate-spin" size={16} />
-          Processing...
-        </>
-      ) : (
-        <>
-          {showIcon && <Icon size={16} />}
-          {children || defaultText[productType]}
-        </>
-      )}
+      >
+        {loading ? (
+          <>
+            <Loader2 className="animate-spin" size={16} />
+            Processing...
+          </>
+        ) : (
+          <>
+            {showIcon && <Icon size={16} />}
+            {children || defaultText[productType]}
+          </>
+        )}
       </button>
       {toastMessage && (
         <Toast>

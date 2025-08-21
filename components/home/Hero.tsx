@@ -45,12 +45,12 @@ export default function Home() {
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolling(true);
-      
+
       // Clear existing timeout
       if (scrollTimeoutRef.current) {
         clearTimeout(scrollTimeoutRef.current);
       }
-      
+
       // Set new timeout to detect scroll end
       scrollTimeoutRef.current = setTimeout(() => {
         setIsScrolling(false);
@@ -58,7 +58,7 @@ export default function Home() {
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
-    
+
     return () => {
       window.removeEventListener('scroll', handleScroll);
       if (scrollTimeoutRef.current) {
@@ -296,7 +296,6 @@ export default function Home() {
     },
   ];
 
-
   const steps = [
     {
       number: '01',
@@ -467,7 +466,7 @@ export default function Home() {
   };
 
   return (
-    <div 
+    <div
       className={`min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 text-white relative overflow-hidden px-8 lg:px-24 ${
         isScrolling ? 'scrolling' : ''
       }`}
@@ -480,7 +479,9 @@ export default function Home() {
       }}
     >
       {/* Optimized Animated Background Elements - Reduced during scroll */}
-      <div className={`absolute inset-0 overflow-hidden ${isScrolling ? 'opacity-30' : 'opacity-100'} transition-opacity duration-300`}>
+      <div
+        className={`absolute inset-0 overflow-hidden ${isScrolling ? 'opacity-30' : 'opacity-100'} transition-opacity duration-300`}
+      >
         {[...Array(isScrolling ? 8 : 15)].map((_, i) => (
           <motion.div
             key={i}
@@ -491,7 +492,7 @@ export default function Home() {
               transform: 'translateZ(0)', // Force hardware acceleration
             }}
             variants={particleVariants}
-            animate={isScrolling ? "initial" : "animate"}
+            animate={isScrolling ? 'initial' : 'animate'}
             transition={{ delay: i * 0.3 }}
           />
         ))}
@@ -666,7 +667,6 @@ export default function Home() {
 
                     {/* Card Content */}
                     <div className="text-center space-y-2 sm:space-y-4 flex-grow">
-
                       <h3 className="text-lg sm:text-xl text-white mb-2">
                         Mintoons
                       </h3>
@@ -674,10 +674,12 @@ export default function Home() {
                         Creative Writing Education Platform
                       </p>
                       <p className="text-gray-300 text-xs sm:text-sm leading-relaxed mt-2">
-                        Write freely with AI collaboration and get detailed feedback to improve your creative writing skills.
+                        Write freely with AI collaboration and get detailed
+                        feedback to improve your creative writing skills.
                       </p>
                       <p className="text-gray-300 text-xs sm:text-sm leading-relaxed">
-                        3 free stories + 9 free assessments monthly. Join thousands of young writers worldwide!
+                        3 free stories + 9 free assessments monthly. Join
+                        thousands of young writers worldwide!
                       </p>
 
                       {/* New Content Addition */}
@@ -919,9 +921,9 @@ export default function Home() {
             transition={{ delay: 0.5 }}
             viewport={{ once: true }}
           >
-             <Link href="/register">
-                  <AnimatedButton text="Register Now" />
-                </Link>
+            <Link href="/register">
+              <AnimatedButton text="Register Now" />
+            </Link>
           </motion.div>
         </div>
       </section>
@@ -1046,9 +1048,9 @@ export default function Home() {
             transition={{ delay: 0.5 }}
             viewport={{ once: true }}
           >
-               <Link href="/create-stories">
-                  <AnimatedButton text="Spark Imagination" />
-                </Link>
+            <Link href="/create-stories">
+              <AnimatedButton text="Spark Imagination" />
+            </Link>
           </motion.div>
         </div>
       </section>
@@ -1448,7 +1450,7 @@ export default function Home() {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-         <Link href="/create-stories">
+                <Link href="/create-stories">
                   <AnimatedButton text="Spark Imagination" />
                 </Link>
               </motion.div>

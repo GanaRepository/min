@@ -115,7 +115,7 @@ const Footer: React.FC = () => {
                   Home
                 </Link>
               </li>
-          
+
               <li>
                 <Link
                   href="/create-stories"
@@ -164,7 +164,7 @@ const Footer: React.FC = () => {
                   Mentor Login
                 </Link>
               </li>
-                  <li>
+              <li>
                 <Link
                   href="/admin"
                   className="text-emerald-200 hover:text-emerald-100 transition-colors"
@@ -301,7 +301,6 @@ const Footer: React.FC = () => {
             >
               Terms of Service
             </Link>
-        
           </div>
         </div>
       </div>

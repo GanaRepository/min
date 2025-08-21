@@ -74,8 +74,6 @@ export default function ProfilePage() {
           ))}
         </div>
 
-
-
         <div className="relative z-10 container mx-auto px-2 sm:px-4">
           <div className="max-w-2xl md:max-w-3xl lg:max-w-4xl mx-auto">
             {/* Profile Header */}

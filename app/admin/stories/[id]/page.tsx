@@ -222,7 +222,9 @@ export default function ViewStory() {
         setCommentType('general');
         setToastMessage('Admin comment added successfully!');
       } else {
-        setToastMessage('Failed to add comment: ' + (data.error || 'Unknown error'));
+        setToastMessage(
+          'Failed to add comment: ' + (data.error || 'Unknown error')
+        );
       }
     } catch (error) {
       console.error('Error adding admin comment:', error);
@@ -329,400 +331,408 @@ export default function ViewStory() {
   return (
     <ToastProvider>
       <div className="space-y-6 px-2 sm:px-4 md:px-8 lg:px-12 xl:px-20 py-4 sm:py-6 md:py-8">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-4">
-          <Link href="/admin/stories">
-            <button className="p-2 text-gray-400 hover:text-white hover:bg-gray-700  transition-colors">
-              <ArrowLeft size={20} />
-            </button>
-          </Link>
-          <div>
-            <h1 className="text-2xl sm:text-3xl  text-white">{story.title}</h1>
-            <p className="text-gray-400">Story #{story._id}</p>
-          </div>
-        </div>
-
-        <div className="flex items-center space-x-2">
-          <Link href={`/admin/stories/${storyId}/edit`}>
-            <button className="bg-blue-600 text-white px-4 py-2  hover:bg-blue-700 transition-colors flex items-center">
-              <Edit size={16} className="mr-2" />
-              Edit
-            </button>
-          </Link>
-          <button
-            onClick={exportStory}
-            className="bg-green-600 text-white px-4 py-2  hover:bg-green-700 transition-colors flex items-center"
-          >
-            <Download size={16} className="mr-2" />
-            Export
-          </button>
-          <button
-            onClick={deleteStory}
-            disabled={deleting}
-            className="bg-red-600 text-white px-4 py-2  hover:bg-red-700 transition-colors flex items-center disabled:opacity-50"
-          >
-            <Trash2 size={16} className="mr-2" />
-            {deleting ? 'Deleting...' : 'Delete'}
-          </button>
-        </div>
-      </div>
-
-      {/* Story Info Card */}
-      <div className="bg-gray-800  p-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="flex items-center space-x-3">
-            <div className="bg-blue-600 p-3 ">
-              <User size={24} className="text-white" />
-            </div>
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-4">
+            <Link href="/admin/stories">
+              <button className="p-2 text-gray-400 hover:text-white hover:bg-gray-700  transition-colors">
+                <ArrowLeft size={20} />
+              </button>
+            </Link>
             <div>
-              <p className="text-sm text-gray-400">Author</p>
-              <Link href={`/admin/users/${story.childId._id}`}>
-                <p className="text-white  hover:text-blue-400 cursor-pointer">
-                  {story.childId.firstName} {story.childId.lastName}
-                </p>
-              </Link>
+              <h1 className="text-2xl sm:text-3xl  text-white">
+                {story.title}
+              </h1>
+              <p className="text-gray-400">Story #{story._id}</p>
             </div>
           </div>
 
-          <div className="flex items-center space-x-3">
-            <div className="bg-green-600 p-3 ">
-              <BookOpen size={24} className="text-white" />
-            </div>
-            <div>
-              <p className="text-sm text-gray-400">Word Count</p>
-              <p className="text-white ">{story.totalWords} words</p>
-            </div>
-          </div>
-
-          <div className="flex items-center space-x-3">
-            <div className="bg-purple-600 p-3 ">
-              <MessageSquare size={24} className="text-white" />
-            </div>
-            <div>
-              <p className="text-sm text-gray-400">Status</p>
-              <span
-                className={`inline-flex items-center px-2.5 py-0.5  text-xs  ${getStatusColor(story.status)}`}
-              >
-                {story.status}
-              </span>
-            </div>
-          </div>
-
-          <div className="flex items-center space-x-3">
-            <div className="bg-yellow-600 p-3 ">
-              <Calendar size={24} className="text-white" />
-            </div>
-            <div>
-              <p className="text-sm text-gray-400">Created</p>
-              <p className="text-white ">
-                {new Date(story.createdAt).toLocaleDateString()}
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Tab Navigation */}
-      <div className="bg-gray-800 ">
-        <div className="flex border-b border-gray-700">
-          {[
-            { key: 'content', label: 'Story Content', icon: BookOpen },
-            { key: 'comments', label: 'Comments', icon: MessageSquare },
-            { key: 'details', label: 'Details', icon: Eye },
-          ].map((tab) => (
+          <div className="flex items-center space-x-2">
+            <Link href={`/admin/stories/${storyId}/edit`}>
+              <button className="bg-blue-600 text-white px-4 py-2  hover:bg-blue-700 transition-colors flex items-center">
+                <Edit size={16} className="mr-2" />
+                Edit
+              </button>
+            </Link>
             <button
-              key={tab.key}
-              onClick={() => setActiveTab(tab.key as any)}
-              className={`flex items-center space-x-2 px-6 py-4 border-b-2 transition-colors ${
-                activeTab === tab.key
-                  ? 'border-blue-500 text-blue-400'
-                  : 'border-transparent text-gray-400 hover:text-white'
-              }`}
+              onClick={exportStory}
+              className="bg-green-600 text-white px-4 py-2  hover:bg-green-700 transition-colors flex items-center"
             >
-              <tab.icon size={18} />
-              <span>{tab.label}</span>
+              <Download size={16} className="mr-2" />
+              Export
             </button>
-          ))}
+            <button
+              onClick={deleteStory}
+              disabled={deleting}
+              className="bg-red-600 text-white px-4 py-2  hover:bg-red-700 transition-colors flex items-center disabled:opacity-50"
+            >
+              <Trash2 size={16} className="mr-2" />
+              {deleting ? 'Deleting...' : 'Delete'}
+            </button>
+          </div>
         </div>
 
-        <div className="p-6">
-          {/* Content Tab */}
-          {activeTab === 'content' && (
-            <div className="space-y-6">
-              {story.turns && story.turns.length > 0 ? (
-                <div className="space-y-4">
-                  {story.turns.map((turn, index) => (
-                    <div
-                      key={index}
-                      className={`p-4  ${
-                        turn.type === 'child'
-                          ? 'bg-blue-900/20 border-l-4 border-blue-500'
-                          : 'bg-purple-900/20 border-l-4 border-purple-500'
-                      }`}
-                    >
-                      <div className="flex items-center justify-between mb-2">
-                        <span
-                          className={`text-sm  ${
-                            turn.type === 'child'
-                              ? 'text-blue-400'
-                              : 'text-purple-400'
-                          }`}
-                        >
-                          Turn {turn.turnNumber} -{' '}
-                          {turn.type === 'child' ? 'Child' : 'AI'}
-                        </span>
-                        <span className="text-gray-400 text-xs">
-                          {new Date(turn.createdAt).toLocaleString()}
-                        </span>
-                      </div>
-                      <p className="text-gray-300 whitespace-pre-wrap">
-                        {turn.content}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-gray-400 text-center py-8">
-                  No story content available.
-                </p>
-              )}
+        {/* Story Info Card */}
+        <div className="bg-gray-800  p-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="flex items-center space-x-3">
+              <div className="bg-blue-600 p-3 ">
+                <User size={24} className="text-white" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-400">Author</p>
+                <Link href={`/admin/users/${story.childId._id}`}>
+                  <p className="text-white  hover:text-blue-400 cursor-pointer">
+                    {story.childId.firstName} {story.childId.lastName}
+                  </p>
+                </Link>
+              </div>
             </div>
-          )}
 
-          {/* Comments Tab */}
-          {activeTab === 'comments' && (
-            <div className="space-y-6">
-              <div className="flex items-center justify-between">
-                <h3 className="text-lg  text-white">Comments & Feedback</h3>
-                <span className="text-sm text-gray-400">
-                  {story.comments.length} comment
-                  {story.comments.length !== 1 ? 's' : ''}
+            <div className="flex items-center space-x-3">
+              <div className="bg-green-600 p-3 ">
+                <BookOpen size={24} className="text-white" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-400">Word Count</p>
+                <p className="text-white ">{story.totalWords} words</p>
+              </div>
+            </div>
+
+            <div className="flex items-center space-x-3">
+              <div className="bg-purple-600 p-3 ">
+                <MessageSquare size={24} className="text-white" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-400">Status</p>
+                <span
+                  className={`inline-flex items-center px-2.5 py-0.5  text-xs  ${getStatusColor(story.status)}`}
+                >
+                  {story.status}
                 </span>
               </div>
+            </div>
 
-              {/* Add Comment Form */}
-              <div className="bg-gray-700/30  p-4">
-                <h4 className="text-white  mb-3">Add Admin Comment</h4>
-
-                {/* Comment Type Selector */}
-                <div className="mb-4">
-                  <label className="block text-sm  text-gray-400 mb-2">
-                    Comment Type
-                  </label>
-                  <div className="relative">
-                    <button
-                      onClick={() =>
-                        setShowCommentTypeDropdown(!showCommentTypeDropdown)
-                      }
-                      className="w-full bg-gray-700 border border-gray-600  px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center justify-between"
-                    >
-                      <div className="flex items-center space-x-2">
-                        <span
-                          className={`px-2 py-1 text-xs  ${getCommentTypeColor(commentType)}`}
-                        >
-                          {selectedCommentType?.label}
-                        </span>
-                        <span className="text-gray-400 text-sm">
-                          {selectedCommentType?.description}
-                        </span>
-                      </div>
-                      <ChevronDown
-                        size={16}
-                        className={`transition-transform ${
-                          showCommentTypeDropdown ? 'rotate-180' : ''
-                        }`}
-                      />
-                    </button>
-
-                    {showCommentTypeDropdown && (
-                      <div className="absolute z-10 w-full mt-1 bg-gray-700 border border-gray-600  shadow-lg">
-                        {commentTypeOptions.map((option) => (
-                          <button
-                            key={option.value}
-                            onClick={() => {
-                              setCommentType(option.value);
-                              setShowCommentTypeDropdown(false);
-                            }}
-                            className="w-full text-left px-3 py-2 hover:bg-gray-600 first:rounded-t-lg last:rounded-b-lg transition-colors"
-                          >
-                            <div className="flex items-center space-x-2">
-                              <span
-                                className={`px-2 py-1 text-xs  ${getCommentTypeColor(option.value)}`}
-                              >
-                                {option.label}
-                              </span>
-                              <span className="text-gray-400 text-sm">
-                                {option.description}
-                              </span>
-                            </div>
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                <textarea
-                  value={newComment}
-                  onChange={(e) => setNewComment(e.target.value)}
-                  placeholder="Add your feedback or comments about this story..."
-                  className="w-full p-3 bg-gray-700 border border-gray-600  text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-                  rows={4}
-                />
-                <div className="flex justify-end mt-3">
-                  <button
-                    onClick={addComment}
-                    disabled={!newComment.trim() || addingComment}
-                    className="bg-blue-600 text-white px-4 py-2  hover:bg-blue-700 transition-colors flex items-center disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    <Send size={16} className="mr-2" />
-                    {addingComment ? 'Adding...' : 'Add Comment'}
-                  </button>
-                </div>
+            <div className="flex items-center space-x-3">
+              <div className="bg-yellow-600 p-3 ">
+                <Calendar size={24} className="text-white" />
               </div>
+              <div>
+                <p className="text-sm text-gray-400">Created</p>
+                <p className="text-white ">
+                  {new Date(story.createdAt).toLocaleDateString()}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
 
-              {/* Comments List */}
-              <div className="space-y-4">
-                {story.comments.length > 0 ? (
-                  story.comments.map((comment, index) => (
-                    <div key={comment._id} className="bg-gray-700/30  p-4">
-                      <div className="flex items-start justify-between mb-2">
-                        <div className="flex items-center space-x-2">
-                          <span className="text-white ">
-                            {comment.authorId.firstName}{' '}
-                            {comment.authorId.lastName}
-                          </span>
+        {/* Tab Navigation */}
+        <div className="bg-gray-800 ">
+          <div className="flex border-b border-gray-700">
+            {[
+              { key: 'content', label: 'Story Content', icon: BookOpen },
+              { key: 'comments', label: 'Comments', icon: MessageSquare },
+              { key: 'details', label: 'Details', icon: Eye },
+            ].map((tab) => (
+              <button
+                key={tab.key}
+                onClick={() => setActiveTab(tab.key as any)}
+                className={`flex items-center space-x-2 px-6 py-4 border-b-2 transition-colors ${
+                  activeTab === tab.key
+                    ? 'border-blue-500 text-blue-400'
+                    : 'border-transparent text-gray-400 hover:text-white'
+                }`}
+              >
+                <tab.icon size={18} />
+                <span>{tab.label}</span>
+              </button>
+            ))}
+          </div>
+
+          <div className="p-6">
+            {/* Content Tab */}
+            {activeTab === 'content' && (
+              <div className="space-y-6">
+                {story.turns && story.turns.length > 0 ? (
+                  <div className="space-y-4">
+                    {story.turns.map((turn, index) => (
+                      <div
+                        key={index}
+                        className={`p-4  ${
+                          turn.type === 'child'
+                            ? 'bg-blue-900/20 border-l-4 border-blue-500'
+                            : 'bg-purple-900/20 border-l-4 border-purple-500'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between mb-2">
                           <span
-                            className={`px-2 py-1 text-xs  ${getRoleColor(comment.authorId.role)}`}
+                            className={`text-sm  ${
+                              turn.type === 'child'
+                                ? 'text-blue-400'
+                                : 'text-purple-400'
+                            }`}
                           >
-                            {comment.authorId.role}
+                            Turn {turn.turnNumber} -{' '}
+                            {turn.type === 'child' ? 'Child' : 'AI'}
                           </span>
-                          <span
-                            className={`px-2 py-1 text-xs  ${getCommentTypeColor(comment.commentType)}`}
-                          >
-                            {comment.commentType}
+                          <span className="text-gray-400 text-xs">
+                            {new Date(turn.createdAt).toLocaleString()}
                           </span>
                         </div>
-                        <div className="flex items-center space-x-2">
-                          <span className="text-gray-400 text-sm">
-                            {new Date(comment.createdAt).toLocaleDateString()}
-                          </span>
-                          {comment.isResolved ? (
-                            <Check size={16} className="text-green-400" />
-                          ) : (
-                            <X size={16} className="text-red-400" />
-                          )}
-                        </div>
+                        <p className="text-gray-300 whitespace-pre-wrap">
+                          {turn.content}
+                        </p>
                       </div>
-                      <p className="text-gray-300 whitespace-pre-wrap">
-                        {comment.content}{' '}
-                        {/* ✅ FIXED: Using comment.content instead of comment.comment */}
-                      </p>
-                    </div>
-                  ))
+                    ))}
+                  </div>
                 ) : (
                   <p className="text-gray-400 text-center py-8">
-                    No comments yet. Add the first comment above.
+                    No story content available.
                   </p>
                 )}
               </div>
-            </div>
-          )}
+            )}
 
-          {/* Details Tab */}
-          {activeTab === 'details' && (
-            <div className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Comments Tab */}
+            {activeTab === 'comments' && (
+              <div className="space-y-6">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg  text-white">Comments & Feedback</h3>
+                  <span className="text-sm text-gray-400">
+                    {story.comments.length} comment
+                    {story.comments.length !== 1 ? 's' : ''}
+                  </span>
+                </div>
+
+                {/* Add Comment Form */}
                 <div className="bg-gray-700/30  p-4">
-                  <h4 className="text-white  mb-3">Story Statistics</h4>
-                  <div className="space-y-2">
-                    <div className="flex justify-between">
-                      <span className="text-gray-400">Total Words:</span>
-                      <span className="text-white">{story.totalWords}</span>
+                  <h4 className="text-white  mb-3">Add Admin Comment</h4>
+
+                  {/* Comment Type Selector */}
+                  <div className="mb-4">
+                    <label className="block text-sm  text-gray-400 mb-2">
+                      Comment Type
+                    </label>
+                    <div className="relative">
+                      <button
+                        onClick={() =>
+                          setShowCommentTypeDropdown(!showCommentTypeDropdown)
+                        }
+                        className="w-full bg-gray-700 border border-gray-600  px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center justify-between"
+                      >
+                        <div className="flex items-center space-x-2">
+                          <span
+                            className={`px-2 py-1 text-xs  ${getCommentTypeColor(commentType)}`}
+                          >
+                            {selectedCommentType?.label}
+                          </span>
+                          <span className="text-gray-400 text-sm">
+                            {selectedCommentType?.description}
+                          </span>
+                        </div>
+                        <ChevronDown
+                          size={16}
+                          className={`transition-transform ${
+                            showCommentTypeDropdown ? 'rotate-180' : ''
+                          }`}
+                        />
+                      </button>
+
+                      {showCommentTypeDropdown && (
+                        <div className="absolute z-10 w-full mt-1 bg-gray-700 border border-gray-600  shadow-lg">
+                          {commentTypeOptions.map((option) => (
+                            <button
+                              key={option.value}
+                              onClick={() => {
+                                setCommentType(option.value);
+                                setShowCommentTypeDropdown(false);
+                              }}
+                              className="w-full text-left px-3 py-2 hover:bg-gray-600 first:rounded-t-lg last:rounded-b-lg transition-colors"
+                            >
+                              <div className="flex items-center space-x-2">
+                                <span
+                                  className={`px-2 py-1 text-xs  ${getCommentTypeColor(option.value)}`}
+                                >
+                                  {option.label}
+                                </span>
+                                <span className="text-gray-400 text-sm">
+                                  {option.description}
+                                </span>
+                              </div>
+                            </button>
+                          ))}
+                        </div>
+                      )}
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-400">Child Words:</span>
-                      <span className="text-white">{story.childWords}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-400">AI Words:</span>
-                      <span className="text-white">{story.aiWords}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-400">Current Turn:</span>
-                      <span className="text-white">{story.currentTurn}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-400">API Calls Used:</span>
-                      <span className="text-white">
-                        {story.apiCallsUsed}/{story.maxApiCalls}
-                      </span>
-                    </div>
+                  </div>
+
+                  <textarea
+                    value={newComment}
+                    onChange={(e) => setNewComment(e.target.value)}
+                    placeholder="Add your feedback or comments about this story..."
+                    className="w-full p-3 bg-gray-700 border border-gray-600  text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                    rows={4}
+                  />
+                  <div className="flex justify-end mt-3">
+                    <button
+                      onClick={addComment}
+                      disabled={!newComment.trim() || addingComment}
+                      className="bg-blue-600 text-white px-4 py-2  hover:bg-blue-700 transition-colors flex items-center disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <Send size={16} className="mr-2" />
+                      {addingComment ? 'Adding...' : 'Add Comment'}
+                    </button>
                   </div>
                 </div>
 
-                <div className="bg-gray-700/30  p-4">
-                  <h4 className="text-white  mb-3">Publication Status</h4>
-                  <div className="space-y-2">
-                    <div className="flex justify-between">
-                      <span className="text-gray-400">Published:</span>
-                      <span
-                        className={
-                          story.isPublished ? 'text-green-400' : 'text-red-400'
-                        }
-                      >
-                        {story.isPublished ? 'Yes' : 'No'}
-                      </span>
+                {/* Comments List */}
+                <div className="space-y-4">
+                  {story.comments.length > 0 ? (
+                    story.comments.map((comment, index) => (
+                      <div key={comment._id} className="bg-gray-700/30  p-4">
+                        <div className="flex items-start justify-between mb-2">
+                          <div className="flex items-center space-x-2">
+                            <span className="text-white ">
+                              {comment.authorId.firstName}{' '}
+                              {comment.authorId.lastName}
+                            </span>
+                            <span
+                              className={`px-2 py-1 text-xs  ${getRoleColor(comment.authorId.role)}`}
+                            >
+                              {comment.authorId.role}
+                            </span>
+                            <span
+                              className={`px-2 py-1 text-xs  ${getCommentTypeColor(comment.commentType)}`}
+                            >
+                              {comment.commentType}
+                            </span>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <span className="text-gray-400 text-sm">
+                              {new Date(comment.createdAt).toLocaleDateString()}
+                            </span>
+                            {comment.isResolved ? (
+                              <Check size={16} className="text-green-400" />
+                            ) : (
+                              <X size={16} className="text-red-400" />
+                            )}
+                          </div>
+                        </div>
+                        <p className="text-gray-300 whitespace-pre-wrap">
+                          {comment.content}{' '}
+                          {/* ✅ FIXED: Using comment.content instead of comment.comment */}
+                        </p>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-gray-400 text-center py-8">
+                      No comments yet. Add the first comment above.
+                    </p>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Details Tab */}
+            {activeTab === 'details' && (
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="bg-gray-700/30  p-4">
+                    <h4 className="text-white  mb-3">Story Statistics</h4>
+                    <div className="space-y-2">
+                      <div className="flex justify-between">
+                        <span className="text-gray-400">Total Words:</span>
+                        <span className="text-white">{story.totalWords}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-400">Child Words:</span>
+                        <span className="text-white">{story.childWords}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-400">AI Words:</span>
+                        <span className="text-white">{story.aiWords}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-400">Current Turn:</span>
+                        <span className="text-white">{story.currentTurn}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-400">API Calls Used:</span>
+                        <span className="text-white">
+                          {story.apiCallsUsed}/{story.maxApiCalls}
+                        </span>
+                      </div>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-400">Competition Entry:</span>
-                      <span
-                        className={
-                          story.submittedToCompetition
-                            ? 'text-green-400'
-                            : 'text-red-400'
-                        }
-                      >
-                        {story.submittedToCompetition ? 'Yes' : 'No'}
-                      </span>
-                    </div>
-                    {story.competitionScore && (
+                  </div>
+
+                  <div className="bg-gray-700/30  p-4">
+                    <h4 className="text-white  mb-3">Publication Status</h4>
+                    <div className="space-y-2">
+                      <div className="flex justify-between">
+                        <span className="text-gray-400">Published:</span>
+                        <span
+                          className={
+                            story.isPublished
+                              ? 'text-green-400'
+                              : 'text-red-400'
+                          }
+                        >
+                          {story.isPublished ? 'Yes' : 'No'}
+                        </span>
+                      </div>
                       <div className="flex justify-between">
                         <span className="text-gray-400">
-                          Competition Score:
+                          Competition Entry:
                         </span>
-                        <span className="text-white">
-                          {story.competitionScore}
-                        </span>
-                      </div>
-                    )}
-                    {story.competitionRank && (
-                      <div className="flex justify-between">
-                        <span className="text-gray-400">Competition Rank:</span>
-                        <span className="text-white">
-                          #{story.competitionRank}
+                        <span
+                          className={
+                            story.submittedToCompetition
+                              ? 'text-green-400'
+                              : 'text-red-400'
+                          }
+                        >
+                          {story.submittedToCompetition ? 'Yes' : 'No'}
                         </span>
                       </div>
-                    )}
+                      {story.competitionScore && (
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">
+                            Competition Score:
+                          </span>
+                          <span className="text-white">
+                            {story.competitionScore}
+                          </span>
+                        </div>
+                      )}
+                      {story.competitionRank && (
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">
+                            Competition Rank:
+                          </span>
+                          <span className="text-white">
+                            #{story.competitionRank}
+                          </span>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
-      </div>
 
-      {toastMessage && (
-        <Toast>
-          <ToastTitle>
-            {toastMessage.includes('successfully') ? 'Success!' : 'Error'}
-          </ToastTitle>
-          <ToastDescription>{toastMessage}</ToastDescription>
-          <ToastClose onClick={() => setToastMessage(null)} />
-        </Toast>
-      )}
-      <ToastViewport />
+        {toastMessage && (
+          <Toast>
+            <ToastTitle>
+              {toastMessage.includes('successfully') ? 'Success!' : 'Error'}
+            </ToastTitle>
+            <ToastDescription>{toastMessage}</ToastDescription>
+            <ToastClose onClick={() => setToastMessage(null)} />
+          </Toast>
+        )}
+        <ToastViewport />
       </div>
     </ToastProvider>
   );

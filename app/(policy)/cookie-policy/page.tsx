@@ -8,10 +8,10 @@ export default function CookiePolicy() {
       <div className="prose prose-base sm:prose-lg max-w-none text-gray-900 space-y-6">
         <p>Last updated: {new Date().toLocaleDateString()}</p>
         <p>
-          This Cookie Policy explains how Mintoons ("we", "us", or "our") uses
-          cookies and similar technologies on our website (mintoons.com). By
-          using our website, you consent to the use of cookies as described in
-          this policy.
+          This Cookie Policy explains how Mintoons (&quot;we&quot;,
+          &quot;us&quot;, or &quot;our&quot;) uses cookies and similar
+          technologies on our website (mintoons.com). By using our website, you
+          consent to the use of cookies as described in this policy.
         </p>
 
         <div className="space-y-4">

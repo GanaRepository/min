@@ -202,7 +202,9 @@ export default function MyStoriesPage() {
             `📚 Monthly Publication Limit Reached!\n\nYou can only publish 3 stories per month for free.\n\nYour limit will reset on the 1st of next month.`
           );
         } else if (errorMessage.includes('already published')) {
-          setToastMessage('📚 This story is already published to the community.');
+          setToastMessage(
+            '📚 This story is already published to the community.'
+          );
         } else {
           setToastMessage(`❌ Publication Failed\n\n${errorMessage}`);
         }
@@ -322,14 +324,14 @@ export default function MyStoriesPage() {
   };
 
   // ===== LOADING STATE =====
- 
-   if (status === 'loading' || loading) {
-      return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 flex items-center justify-center">
-          <TerminalLoader loadingText="Loading your stories..." />
-        </div>
-      );
-    }
+
+  if (status === 'loading' || loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 flex items-center justify-center">
+        <TerminalLoader loadingText="Loading your stories..." />
+      </div>
+    );
+  }
 
   // ===== MAIN RENDER =====
   return (

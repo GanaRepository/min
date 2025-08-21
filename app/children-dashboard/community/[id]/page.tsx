@@ -1,4 +1,4 @@
-// app/children-dashboard/community/[id]/page.tsx 
+// app/children-dashboard/community/[id]/page.tsx
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -248,7 +248,8 @@ export default function CommunityStoryView() {
       <div className="text-center py-12">
         <h3 className="text-xl  text-white mb-2">Story Not Found</h3>
         <p className="text-gray-400 mb-4">
-          The story you're looking for doesn't exist or has been removed.
+          The story you&apos;re looking for doesn&apos;t exist or has been
+          removed.
         </p>
         <Link href="/children-dashboard/community">
           <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white  transition-colors">

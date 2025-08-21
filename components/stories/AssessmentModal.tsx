@@ -262,7 +262,7 @@ export default function AssessmentModal({
               <Brain className="text-purple-400" />
               Story Assessment
             </h2>
-            <p className="text-gray-400">"{storySession.title}"</p>
+            <p className="text-gray-400">&quot;{storySession.title}&quot;</p>
           </div>
           <button
             onClick={onClose}

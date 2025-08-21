@@ -159,216 +159,218 @@ export default function EditStory() {
 
   return (
     <ToastProvider>
-    <div className="space-y-6 px-2 sm:px-4 md:px-8 lg:px-12 xl:px-20 py-4 sm:py-6 md:py-8">
-      {/* Header */}
-      <div className="flex items-center space-x-4">
-        <Link href={`/admin/stories/${storyId}`}>
-          <button className="p-2 text-gray-400 hover:text-white hover:bg-gray-700  transition-colors">
-            <ArrowLeft size={20} />
-          </button>
-        </Link>
-        <div>
-          <h1 className="text-2xl sm:text-3xl  text-white">Edit Story</h1>
-          <p className="text-gray-400">Modify story settings and metadata</p>
+      <div className="space-y-6 px-2 sm:px-4 md:px-8 lg:px-12 xl:px-20 py-4 sm:py-6 md:py-8">
+        {/* Header */}
+        <div className="flex items-center space-x-4">
+          <Link href={`/admin/stories/${storyId}`}>
+            <button className="p-2 text-gray-400 hover:text-white hover:bg-gray-700  transition-colors">
+              <ArrowLeft size={20} />
+            </button>
+          </Link>
+          <div>
+            <h1 className="text-2xl sm:text-3xl  text-white">Edit Story</h1>
+            <p className="text-gray-400">Modify story settings and metadata</p>
+          </div>
         </div>
-      </div>
 
-      {/* Form */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="bg-gray-800  p-6"
-      >
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Title */}
-          <div>
-            <label className="block text-sm  text-gray-300 mb-2">
-              Story Title
-            </label>
-            <div className="relative">
-              <BookOpen
-                size={20}
-                className="absolute left-3 top-3 text-gray-400"
-              />
-              <input
-                type="text"
-                required
-                value={formData.title}
-                onChange={(e) => handleInputChange('title', e.target.value)}
-                className={`w-full pl-10 pr-4 py-3 bg-gray-700 border  text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                  errors.title ? 'border-red-500' : 'border-gray-600'
-                }`}
-                placeholder="Enter story title"
-              />
+        {/* Form */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-gray-800  p-6"
+        >
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Title */}
+            <div>
+              <label className="block text-sm  text-gray-300 mb-2">
+                Story Title
+              </label>
+              <div className="relative">
+                <BookOpen
+                  size={20}
+                  className="absolute left-3 top-3 text-gray-400"
+                />
+                <input
+                  type="text"
+                  required
+                  value={formData.title}
+                  onChange={(e) => handleInputChange('title', e.target.value)}
+                  className={`w-full pl-10 pr-4 py-3 bg-gray-700 border  text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                    errors.title ? 'border-red-500' : 'border-gray-600'
+                  }`}
+                  placeholder="Enter story title"
+                />
+              </div>
+              {errors.title && (
+                <p className="text-red-400 text-sm mt-1">{errors.title}</p>
+              )}
             </div>
-            {errors.title && (
-              <p className="text-red-400 text-sm mt-1">{errors.title}</p>
-            )}
-          </div>
 
-          {/* Status */}
-          <div>
-            <label className="block text-sm  text-gray-300 mb-2">Status</label>
-            <select
-              value={formData.status}
-              onChange={(e) => handleInputChange('status', e.target.value)}
-              className="w-full px-4 py-3 bg-gray-700 border border-gray-600  text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="active">Active</option>
-              <option value="completed">Completed</option>
-              <option value="paused">Paused</option>
-            </select>
-          </div>
-
-          {/* API Calls Limit */}
-          <div>
-            <label className="block text-sm  text-gray-300 mb-2">
-              Max AI Calls
-            </label>
-            <div className="relative">
-              <BarChart3
-                size={20}
-                className="absolute left-3 top-3 text-gray-400"
-              />
-              <input
-                type="number"
-                min="1"
-                max="200"
-                value={formData.maxApiCalls}
-                onChange={(e) =>
-                  handleInputChange(
-                    'maxApiCalls',
-                    parseInt(e.target.value) || 50
-                  )
-                }
-                className="w-full pl-10 pr-4 py-3 bg-gray-700 border border-gray-600  text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Maximum AI calls allowed"
-              />
+            {/* Status */}
+            <div>
+              <label className="block text-sm  text-gray-300 mb-2">
+                Status
+              </label>
+              <select
+                value={formData.status}
+                onChange={(e) => handleInputChange('status', e.target.value)}
+                className="w-full px-4 py-3 bg-gray-700 border border-gray-600  text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="active">Active</option>
+                <option value="completed">Completed</option>
+                <option value="paused">Paused</option>
+              </select>
             </div>
-            <p className="text-gray-400 text-sm mt-1">
-              Number of AI interactions allowed for this story
-            </p>
-          </div>
 
-          {/* Competition Settings */}
-          <div className="space-y-4">
-            <h3 className="text-lg  text-white">Competition Settings</h3>
+            {/* API Calls Limit */}
+            <div>
+              <label className="block text-sm  text-gray-300 mb-2">
+                Max AI Calls
+              </label>
+              <div className="relative">
+                <BarChart3
+                  size={20}
+                  className="absolute left-3 top-3 text-gray-400"
+                />
+                <input
+                  type="number"
+                  min="1"
+                  max="200"
+                  value={formData.maxApiCalls}
+                  onChange={(e) =>
+                    handleInputChange(
+                      'maxApiCalls',
+                      parseInt(e.target.value) || 50
+                    )
+                  }
+                  className="w-full pl-10 pr-4 py-3 bg-gray-700 border border-gray-600  text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Maximum AI calls allowed"
+                />
+              </div>
+              <p className="text-gray-400 text-sm mt-1">
+                Number of AI interactions allowed for this story
+              </p>
+            </div>
 
+            {/* Competition Settings */}
+            <div className="space-y-4">
+              <h3 className="text-lg  text-white">Competition Settings</h3>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm  text-gray-300 mb-2">
+                    Competition Score
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    max="100"
+                    value={formData.competitionScore}
+                    onChange={(e) =>
+                      handleInputChange(
+                        'competitionScore',
+                        parseInt(e.target.value) || 0
+                      )
+                    }
+                    className="w-full px-4 py-3 bg-gray-700 border border-gray-600  text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Competition score (0-100)"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm  text-gray-300 mb-2">
+                    Competition Rank
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    value={formData.competitionRank}
+                    onChange={(e) =>
+                      handleInputChange(
+                        'competitionRank',
+                        parseInt(e.target.value) || 0
+                      )
+                    }
+                    className="w-full px-4 py-3 bg-gray-700 border border-gray-600  text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Competition rank"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Status Toggles */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm  text-gray-300 mb-2">
-                  Competition Score
+                <label className="flex items-center space-x-3">
+                  <input
+                    type="checkbox"
+                    checked={formData.isPublished}
+                    onChange={(e) =>
+                      handleInputChange('isPublished', e.target.checked)
+                    }
+                    className="w-5 h-5 bg-gray-700 border-gray-600  focus:ring-blue-500 focus:ring-2"
+                  />
+                  <span className="text-white ">Published</span>
                 </label>
-                <input
-                  type="number"
-                  min="0"
-                  max="100"
-                  value={formData.competitionScore}
-                  onChange={(e) =>
-                    handleInputChange(
-                      'competitionScore',
-                      parseInt(e.target.value) || 0
-                    )
-                  }
-                  className="w-full px-4 py-3 bg-gray-700 border border-gray-600  text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Competition score (0-100)"
-                />
+                <p className="text-gray-400 text-sm mt-1">
+                  Story is publicly visible
+                </p>
               </div>
 
               <div>
-                <label className="block text-sm  text-gray-300 mb-2">
-                  Competition Rank
+                <label className="flex items-center space-x-3">
+                  <input
+                    type="checkbox"
+                    checked={formData.submittedToCompetition}
+                    onChange={(e) =>
+                      handleInputChange(
+                        'submittedToCompetition',
+                        e.target.checked
+                      )
+                    }
+                    className="w-5 h-5 bg-gray-700 border-gray-600  focus:ring-blue-500 focus:ring-2"
+                  />
+                  <span className="text-white ">Competition Entry</span>
                 </label>
-                <input
-                  type="number"
-                  min="0"
-                  value={formData.competitionRank}
-                  onChange={(e) =>
-                    handleInputChange(
-                      'competitionRank',
-                      parseInt(e.target.value) || 0
-                    )
-                  }
-                  className="w-full px-4 py-3 bg-gray-700 border border-gray-600  text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Competition rank"
-                />
+                <p className="text-gray-400 text-sm mt-1">
+                  Story is entered in competition
+                </p>
               </div>
             </div>
-          </div>
 
-          {/* Status Toggles */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label className="flex items-center space-x-3">
-                <input
-                  type="checkbox"
-                  checked={formData.isPublished}
-                  onChange={(e) =>
-                    handleInputChange('isPublished', e.target.checked)
-                  }
-                  className="w-5 h-5 bg-gray-700 border-gray-600  focus:ring-blue-500 focus:ring-2"
-                />
-                <span className="text-white ">Published</span>
-              </label>
-              <p className="text-gray-400 text-sm mt-1">
-                Story is publicly visible
-              </p>
-            </div>
-
-            <div>
-              <label className="flex items-center space-x-3">
-                <input
-                  type="checkbox"
-                  checked={formData.submittedToCompetition}
-                  onChange={(e) =>
-                    handleInputChange(
-                      'submittedToCompetition',
-                      e.target.checked
-                    )
-                  }
-                  className="w-5 h-5 bg-gray-700 border-gray-600  focus:ring-blue-500 focus:ring-2"
-                />
-                <span className="text-white ">Competition Entry</span>
-              </label>
-              <p className="text-gray-400 text-sm mt-1">
-                Story is entered in competition
-              </p>
-            </div>
-          </div>
-
-          {/* Action Buttons */}
-          <div className="flex items-center justify-end space-x-4 pt-6 border-t border-gray-700">
-            <Link href={`/admin/stories/${storyId}`}>
+            {/* Action Buttons */}
+            <div className="flex items-center justify-end space-x-4 pt-6 border-t border-gray-700">
+              <Link href={`/admin/stories/${storyId}`}>
+                <button
+                  type="button"
+                  className="px-6 py-2.5 bg-gray-600 text-white  hover:bg-gray-700 transition-colors"
+                >
+                  Cancel
+                </button>
+              </Link>
               <button
-                type="button"
-                className="px-6 py-2.5 bg-gray-600 text-white  hover:bg-gray-700 transition-colors"
+                type="submit"
+                disabled={saving}
+                className="px-6 py-2.5 bg-blue-600 text-white  hover:bg-blue-700 transition-colors flex items-center disabled:opacity-50"
               >
-                Cancel
+                <Save size={16} className="mr-2" />
+                {saving ? 'Saving...' : 'Save Changes'}
               </button>
-            </Link>
-            <button
-              type="submit"
-              disabled={saving}
-              className="px-6 py-2.5 bg-blue-600 text-white  hover:bg-blue-700 transition-colors flex items-center disabled:opacity-50"
-            >
-              <Save size={16} className="mr-2" />
-              {saving ? 'Saving...' : 'Save Changes'}
-            </button>
-          </div>
-        </form>
-      </motion.div>
+            </div>
+          </form>
+        </motion.div>
 
-      {toastMessage && (
-        <Toast>
-          <ToastTitle>
-            {toastMessage.includes('successfully') ? 'Success!' : 'Error'}
-          </ToastTitle>
-          <ToastDescription>{toastMessage}</ToastDescription>
-          <ToastClose onClick={() => setToastMessage(null)} />
-        </Toast>
-      )}
-      <ToastViewport />
-    </div>
+        {toastMessage && (
+          <Toast>
+            <ToastTitle>
+              {toastMessage.includes('successfully') ? 'Success!' : 'Error'}
+            </ToastTitle>
+            <ToastDescription>{toastMessage}</ToastDescription>
+            <ToastClose onClick={() => setToastMessage(null)} />
+          </Toast>
+        )}
+        <ToastViewport />
+      </div>
     </ToastProvider>
   );
 }

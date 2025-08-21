@@ -8,10 +8,10 @@ export default function TermsOfService() {
       <div className="prose prose-base sm:prose-lg max-w-none text-gray-900 space-y-6">
         <p>Last updated: {new Date().toLocaleDateString()}</p>
         <p>
-          These Terms of Service ("Terms") govern your use of the Mintoons
-          website (mintoons.com) and related services. By accessing or using
-          Mintoons, you agree to these Terms. If you do not agree, please do not
-          use our platform.
+          These Terms of Service (&quot;Terms&quot;) govern your use of the
+          Mintoons website (mintoons.com) and related services. By accessing or
+          using Mintoons, you agree to these Terms. If you do not agree, please
+          do not use our platform.
         </p>
 
         <div className="space-y-4">

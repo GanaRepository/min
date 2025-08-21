@@ -8,10 +8,10 @@ export default function PrivacyPolicy() {
       <div className="prose prose-base sm:prose-lg max-w-none text-gray-900 space-y-6">
         <p>Last updated: {new Date().toLocaleDateString()}</p>
         <p>
-          This Privacy Policy explains how Mintoons ("we", "us", or "our")
-          collects, uses, and protects your information when you use our website
-          (mintoons.com) and related services. By using Mintoons, you agree to
-          the terms of this policy.
+          This Privacy Policy explains how Mintoons (&quot;we&quot;,
+          &quot;us&quot;, or &quot;our&quot;) collects, uses, and protects your
+          information when you use our website (mintoons.com) and related
+          services. By using Mintoons, you agree to the terms of this policy.
         </p>
 
         <div className="space-y-4">

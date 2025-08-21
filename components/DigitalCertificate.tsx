@@ -113,8 +113,8 @@ export default function DigitalCertificate({
           </p>
 
           <p className="text-lg text-gray-600 mb-2">
-            for the story "
-            <span className=" text-gray-800">{winnerData.title}</span>"
+            for the story &quot;
+            <span className=" text-gray-800">{winnerData.title}</span>&quot;
           </p>
 
           <p className="text-lg text-gray-600">
