@@ -5,6 +5,14 @@ import { Component, ErrorInfo, ReactNode } from 'react';
 import { motion } from 'framer-motion';
 import { RefreshCw, AlertCircle, Home } from 'lucide-react';
 import Link from 'next/link';
+import {
+  ToastProvider,
+  ToastViewport,
+  Toast,
+  ToastTitle,
+  ToastDescription,
+  ToastClose,
+} from '@/components/ui/toast';
 
 interface Props {
   children: ReactNode;
@@ -14,12 +22,16 @@ interface Props {
 interface State {
   hasError: boolean;
   error?: Error;
+  toastMessage?: string | null;
 }
 
 export default class ErrorBoundary extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = { hasError: false };
+    this.state = { 
+      hasError: false, 
+      toastMessage: null 
+    };
   }
 
   static getDerivedStateFromError(error: Error): State {
@@ -41,7 +53,8 @@ export default class ErrorBoundary extends Component<Props, State> {
       }
 
       return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 flex items-center justify-center p-4">
+        <ToastProvider>
+          <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 flex items-center justify-center p-4">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -113,7 +126,16 @@ export default class ErrorBoundary extends Component<Props, State> {
               </motion.details>
             )}
           </motion.div>
-        </div>
+          </div>
+          {this.state.toastMessage && (
+            <Toast>
+              <ToastTitle>Error</ToastTitle>
+              <ToastDescription>{this.state.toastMessage}</ToastDescription>
+              <ToastClose onClick={() => this.setState({ toastMessage: null })} />
+            </Toast>
+          )}
+          <ToastViewport />
+        </ToastProvider>
       );
     }
 

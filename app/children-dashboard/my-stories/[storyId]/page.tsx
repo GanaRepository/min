@@ -30,6 +30,14 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import TerminalLoader from '@/components/TerminalLoader';
+import {
+  ToastProvider,
+  ToastViewport,
+  Toast,
+  ToastTitle,
+  ToastDescription,
+  ToastClose,
+} from '@/components/ui/toast';
 
 interface Story {
   _id: string;
@@ -98,6 +106,7 @@ export default function StoryDetailPage() {
   const [story, setStory] = useState<Story | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<
     'overview' | 'assessment' | 'content' | 'comments'
   >('content');
@@ -171,7 +180,7 @@ export default function StoryDetailPage() {
       const data = await response.json();
 
       if (data.success) {
-        alert('🎉 Story published to community showcase!');
+        setToastMessage('🎉 Story published to community showcase!');
         fetchStoryDetails(); // Refresh data
       } else {
         // Handle API errors properly
@@ -180,19 +189,19 @@ export default function StoryDetailPage() {
           errorMessage.includes('3 stories per month') ||
           errorMessage.includes('publish 3 stories')
         ) {
-          alert(
+          setToastMessage(
             `📚 Monthly Publication Limit Reached!\n\nYou can only publish 3 stories per month for free.\n\nYour limit will reset on the 1st of next month.`
           );
         } else if (errorMessage.includes('already published')) {
-          alert('ℹ️ This story is already published to the community.');
+          setToastMessage('📚 This story is already published to the community.');
         } else {
-          alert(`❌ Publication Failed\n\n${errorMessage}`);
+          setToastMessage(`❌ Publication Failed\n\n${errorMessage}`);
         }
       }
     } catch (error) {
       // Only catch actual network/connection errors
       console.error('❌ Network error:', error);
-      alert(
+      setToastMessage(
         '❌ Connection Error\n\nPlease check your internet connection and try again.'
       );
     } finally {
@@ -223,7 +232,7 @@ export default function StoryDetailPage() {
       }
     } catch (error) {
       console.error('❌ Purchase error:', error);
-      alert('Failed to start purchase process. Please try again.');
+      setToastMessage('Failed to start purchase process. Please try again.');
     }
   };
 
@@ -257,7 +266,7 @@ export default function StoryDetailPage() {
       }
     } catch (error) {
       console.error('Error adding comment:', error);
-      alert('Failed to add comment. Please try again.');
+      setToastMessage('Failed to add comment. Please try again.');
     } finally {
       setAddingComment(false);
     }
@@ -422,7 +431,8 @@ export default function StoryDetailPage() {
 
   // ===== MAIN RENDER =====
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900">
+    <ToastProvider>
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900">
       <div className="container mx-auto px-6 py-8">
         {/* Header */}
         <motion.div
@@ -1256,6 +1266,18 @@ export default function StoryDetailPage() {
           )}
         </motion.div>
       </div>
-    </div>
+      </div>
+      {toastMessage && (
+        <Toast>
+          <ToastTitle>
+            {toastMessage.includes('🎉') ? 'Success!' : 
+             toastMessage.includes('📚') ? 'Info' : 'Error'}
+          </ToastTitle>
+          <ToastDescription>{toastMessage}</ToastDescription>
+          <ToastClose onClick={() => setToastMessage(null)} />
+        </Toast>
+      )}
+      <ToastViewport />
+    </ToastProvider>
   );
 }

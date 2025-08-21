@@ -20,6 +20,14 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import TerminalLoader from '@/components/TerminalLoader';
+import {
+  ToastProvider,
+  ToastViewport,
+  Toast,
+  ToastTitle,
+  ToastDescription,
+  ToastClose,
+} from '@/components/ui/toast';
 
 interface User {
   _id: string;
@@ -49,6 +57,7 @@ export default function UsersPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterRole, setFilterRole] = useState('all');
   const [page, setPage] = useState(1);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   useEffect(() => {
     if (status === 'loading') return;
@@ -97,14 +106,15 @@ export default function UsersPage() {
       });
 
       if (response.ok) {
+        setToastMessage('User deleted successfully');
         fetchUsers();
       } else {
         const data = await response.json();
-        alert(data.error || 'Failed to delete user');
+        setToastMessage('Failed to delete user: ' + (data.error || 'Unknown error'));
       }
     } catch (error) {
       console.error('Error deleting user:', error);
-      alert('Failed to delete user');
+      setToastMessage('Failed to delete user');
     }
   };
 
@@ -178,7 +188,8 @@ export default function UsersPage() {
   }
 
   return (
-    <div className="space-y-6 px-2 sm:px-4 md:px-8 lg:px-12 xl:px-20 py-4 sm:py-6 md:py-8">
+    <ToastProvider>
+      <div className="space-y-6 px-2 sm:px-4 md:px-8 lg:px-12 xl:px-20 py-4 sm:py-6 md:py-8">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
@@ -275,11 +286,17 @@ export default function UsersPage() {
                 <option value="admin">Admins</option>
               </select>
             </div>
-          </div>
         </div>
       </div>
-
-      {/* Users Table */}
+      {toastMessage && (
+        <Toast>
+          <ToastTitle>{toastMessage.includes('successfully') ? 'Success' : 'Error'}</ToastTitle>
+          <ToastDescription>{toastMessage}</ToastDescription>
+          <ToastClose onClick={() => setToastMessage(null)} />
+        </Toast>
+      )}
+    </div>
+  );      {/* Users Table */}
       <div className="bg-gray-800  overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
@@ -435,6 +452,15 @@ export default function UsersPage() {
           </div>
         )}
       </div>
-    </div>
+      </div>
+      {toastMessage && (
+        <Toast>
+          <ToastTitle>{toastMessage.includes('successfully') ? 'Success' : 'Error'}</ToastTitle>
+          <ToastDescription>{toastMessage}</ToastDescription>
+          <ToastClose onClick={() => setToastMessage(null)} />
+        </Toast>
+      )}
+      <ToastViewport />
+    </ToastProvider>
   );
 }

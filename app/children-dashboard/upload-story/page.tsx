@@ -18,6 +18,14 @@ import {
   Trophy,
   Star,
 } from 'lucide-react';
+import {
+  ToastProvider,
+  ToastViewport,
+  Toast,
+  ToastTitle,
+  ToastDescription,
+  ToastClose,
+} from '@/components/ui/toast';
 
 export default function UploadStoryPage() {
   const { data: session } = useSession();
@@ -27,6 +35,7 @@ export default function UploadStoryPage() {
   const [title, setTitle] = useState('');
   const [uploading, setUploading] = useState(false);
   const [uploadSuccess, setUploadSuccess] = useState(false);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0];
@@ -36,13 +45,13 @@ export default function UploadStoryPage() {
         !selectedFile.type.includes('pdf') &&
         !selectedFile.name.endsWith('.docx')
       ) {
-        alert('Please upload only PDF or DOCX files');
+        setToastMessage('Please upload only PDF or DOCX files');
         return;
       }
 
       // Validate file size (10MB max)
       if (selectedFile.size > 10 * 1024 * 1024) {
-        alert('File size must be less than 10MB');
+        setToastMessage('File size must be less than 10MB');
         return;
       }
 
@@ -58,7 +67,7 @@ export default function UploadStoryPage() {
 
   const handleUpload = async () => {
     if (!file || !title.trim()) {
-      alert('Please provide both a title and select a file');
+      setToastMessage('Please provide both a title and select a file');
       return;
     }
 
@@ -83,11 +92,11 @@ export default function UploadStoryPage() {
           router.push('/children-dashboard');
         }, 3000);
       } else {
-        alert(`Upload failed: ${data.message}`);
+        setToastMessage(`Upload failed: ${data.message}`);
       }
     } catch (error) {
       console.error('Upload error:', error);
-      alert('Upload failed. Please try again.');
+      setToastMessage('Upload failed. Please try again.');
     } finally {
       setUploading(false);
     }
@@ -127,7 +136,8 @@ export default function UploadStoryPage() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto px-6 py-8">
+    <ToastProvider>
+      <div className="max-w-2xl mx-auto px-6 py-8">
       {/* Back Button */}
       <button
         onClick={() => router.push('/children-dashboard')}
@@ -327,6 +337,17 @@ export default function UploadStoryPage() {
           </ul>
         </div>
       </motion.div>
-    </div>
+      </div>
+      {toastMessage && (
+        <Toast>
+          <ToastTitle>
+            {toastMessage.includes('failed') ? 'Error' : 'Warning'}
+          </ToastTitle>
+          <ToastDescription>{toastMessage}</ToastDescription>
+          <ToastClose onClick={() => setToastMessage(null)} />
+        </Toast>
+      )}
+      <ToastViewport />
+    </ToastProvider>
   );
 }

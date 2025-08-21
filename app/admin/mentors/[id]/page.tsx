@@ -19,6 +19,14 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import TerminalLoader from '@/components/TerminalLoader';
+import {
+  ToastProvider,
+  ToastViewport,
+  Toast,
+  ToastTitle,
+  ToastDescription,
+  ToastClose,
+} from '@/components/ui/toast';
 
 interface MentorDetails {
   _id: string;
@@ -57,6 +65,7 @@ export default function ViewMentor() {
   const [mentor, setMentor] = useState<MentorDetails | null>(null);
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState(false);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   useEffect(() => {
     if (status === 'loading') return;
@@ -103,14 +112,14 @@ export default function ViewMentor() {
       const data = await response.json();
 
       if (data.success) {
-        alert('Mentor deleted successfully');
+        setToastMessage('Mentor deleted successfully');
         router.push('/admin/mentors');
       } else {
-        alert('Failed to delete mentor: ' + data.error);
+        setToastMessage('Failed to delete mentor: ' + data.error);
       }
     } catch (error) {
       console.error('Error deleting mentor:', error);
-      alert('Failed to delete mentor');
+      setToastMessage('Failed to delete mentor');
     } finally {
       setDeleting(false);
     }
@@ -141,7 +150,8 @@ export default function ViewMentor() {
   }
 
   return (
-    <div className="space-y-6 px-2 sm:px-4 md:px-8 lg:px-12 xl:px-20 py-4 sm:py-6 md:py-8">
+    <ToastProvider>
+      <div className="space-y-6 px-2 sm:px-4 md:px-8 lg:px-12 xl:px-20 py-4 sm:py-6 md:py-8">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
@@ -337,6 +347,18 @@ export default function ViewMentor() {
           </div>
         </div>
       )}
-    </div>
+
+      {toastMessage && (
+        <Toast>
+          <ToastTitle>
+            {toastMessage.includes('successfully') ? 'Success!' : 'Error'}
+          </ToastTitle>
+          <ToastDescription>{toastMessage}</ToastDescription>
+          <ToastClose onClick={() => setToastMessage(null)} />
+        </Toast>
+      )}
+      <ToastViewport />
+      </div>
+    </ToastProvider>
   );
 }

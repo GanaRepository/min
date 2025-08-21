@@ -15,6 +15,14 @@ import {
   Filter,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import {
+  ToastProvider,
+  ToastViewport,
+  Toast,
+  ToastTitle,
+  ToastDescription,
+  ToastClose,
+} from '@/components/ui/toast';
 
 interface RefundRequest {
   _id: string;
@@ -38,6 +46,7 @@ export default function RefundsPage() {
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState('pending');
   const [processing, setProcessing] = useState<string | null>(null);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   useEffect(() => {
     if (status === 'loading') return;
@@ -97,11 +106,11 @@ export default function RefundsPage() {
         alert(data.message);
         fetchRefunds(); // Refresh data
       } else {
-        alert('Failed to process refund: ' + data.error);
+        setToastMessage('Failed to process refund: ' + data.error);
       }
     } catch (error) {
       console.error('Error processing refund:', error);
-      alert('Failed to process refund');
+      setToastMessage('Failed to process refund');
     } finally {
       setProcessing(null);
     }
@@ -134,7 +143,8 @@ export default function RefundsPage() {
   };
 
   return (
-    <div className="space-y-6 px-2 sm:px-4 md:px-8 lg:px-12 xl:px-20 py-4 sm:py-6 md:py-8">
+    <ToastProvider>
+      <div className="space-y-6 px-2 sm:px-4 md:px-8 lg:px-12 xl:px-20 py-4 sm:py-6 md:py-8">
       {/* Header */}
       <div className="flex items-center space-x-4">
         <Link href="/admin/revenue">
@@ -274,6 +284,16 @@ export default function RefundsPage() {
           </p>
         </div>
       )}
-    </div>
+
+      {toastMessage && (
+        <Toast>
+          <ToastTitle>Error</ToastTitle>
+          <ToastDescription>{toastMessage}</ToastDescription>
+          <ToastClose onClick={() => setToastMessage(null)} />
+        </Toast>
+      )}
+      <ToastViewport />
+      </div>
+    </ToastProvider>
   );
 }

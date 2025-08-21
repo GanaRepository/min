@@ -6,6 +6,14 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
+  ToastProvider,
+  ToastViewport,
+  Toast,
+  ToastTitle,
+  ToastDescription,
+  ToastClose,
+} from '@/components/ui/toast';
+import {
   MessageSquare,
   Filter,
   Eye,
@@ -56,6 +64,7 @@ export default function CommentsPage() {
   const [resolvedFilter, setResolvedFilter] = useState('all');
   const [typeFilter, setTypeFilter] = useState('all');
   const [page, setPage] = useState(1);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   // ✅ FIXED: Correct comment type options matching the model
   const commentTypeOptions = [
@@ -128,11 +137,11 @@ export default function CommentsPage() {
           )
         );
       } else {
-        alert('Failed to update comment status');
+        setToastMessage('Failed to update comment status');
       }
     } catch (error) {
       console.error('Error updating comment:', error);
-      alert('Failed to update comment status');
+      setToastMessage('Failed to update comment status');
     }
   };
 
@@ -179,6 +188,7 @@ export default function CommentsPage() {
   }
 
   return (
+    <ToastProvider>
     <div className="space-y-6 px-2 sm:px-4 md:px-8 lg:px-12 xl:px-20 py-4 sm:py-6 md:py-8">
       {/* Header */}
       <div className="flex items-center justify-between">
@@ -425,6 +435,16 @@ export default function CommentsPage() {
           </button>
         </div>
       )}
+
+      {toastMessage && (
+        <Toast>
+          <ToastTitle>Error</ToastTitle>
+          <ToastDescription>{toastMessage}</ToastDescription>
+          <ToastClose onClick={() => setToastMessage(null)} />
+        </Toast>
+      )}
+      <ToastViewport />
     </div>
+    </ToastProvider>
   );
 }

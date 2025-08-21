@@ -6,6 +6,14 @@ import { useSession } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import {
+  ToastProvider,
+  ToastViewport,
+  Toast,
+  ToastTitle,
+  ToastDescription,
+  ToastClose,
+} from '@/components/ui/toast';
+import {
   BookOpen,
   Search,
   Filter,
@@ -79,6 +87,7 @@ export default function StoriesPage() {
     searchParams.get('author') || ''
   );
   const [page, setPage] = useState(parseInt(searchParams.get('page') || '1'));
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const fetchStories = useCallback(async () => {
     try {
@@ -137,13 +146,13 @@ export default function StoriesPage() {
 
       if (data.success) {
         setStories(stories.filter((story) => story._id !== storyId));
-        alert('Story deleted successfully');
+        setToastMessage('Story deleted successfully');
       } else {
-        alert('Failed to delete story: ' + data.error);
+        setToastMessage('Failed to delete story: ' + data.error);
       }
     } catch (error) {
       console.error('Error deleting story:', error);
-      alert('Failed to delete story');
+      setToastMessage('Failed to delete story');
     }
   };
 
@@ -195,6 +204,7 @@ export default function StoriesPage() {
   }
 
   return (
+    <ToastProvider>
     <div className="space-y-6 px-2 sm:px-4 md:px-8 lg:px-12 xl:px-20 py-4 sm:py-6 md:py-8">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -531,6 +541,18 @@ export default function StoriesPage() {
           {pagination.total} stories
         </div>
       )}
+
+      {toastMessage && (
+        <Toast>
+          <ToastTitle>
+            {toastMessage.includes('successfully') ? 'Success' : 'Error'}
+          </ToastTitle>
+          <ToastDescription>{toastMessage}</ToastDescription>
+          <ToastClose onClick={() => setToastMessage(null)} />
+        </Toast>
+      )}
+      <ToastViewport />
     </div>
+    </ToastProvider>
   );
 }

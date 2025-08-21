@@ -16,6 +16,14 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import TerminalLoader from '@/components/TerminalLoader';
+import {
+  ToastProvider,
+  ToastViewport,
+  Toast,
+  ToastTitle,
+  ToastDescription,
+  ToastClose,
+} from '@/components/ui/toast';
 
 interface EditUserData {
   _id: string;
@@ -39,6 +47,7 @@ export default function EditUser() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   // Form state
   const [formData, setFormData] = useState({
@@ -109,18 +118,18 @@ export default function EditUser() {
       const data = await response.json();
 
       if (data.success) {
-        alert('User updated successfully!');
+        setToastMessage('User updated successfully!');
         router.push(`/admin/users/${userId}`);
       } else {
         if (data.errors) {
           setErrors(data.errors);
         } else {
-          alert('Failed to update user: ' + data.error);
+          setToastMessage('Failed to update user: ' + data.error);
         }
       }
     } catch (error) {
       console.error('Error updating user:', error);
-      alert('Failed to update user');
+      setToastMessage('Failed to update user');
     } finally {
       setSaving(false);
     }
@@ -165,7 +174,8 @@ export default function EditUser() {
   }
 
   return (
-    <div className="space-y-6 px-2 sm:px-4 md:px-8 lg:px-12 xl:px-20 py-4 sm:py-6 md:py-8">
+    <ToastProvider>
+      <div className="space-y-6 px-2 sm:px-4 md:px-8 lg:px-12 xl:px-20 py-4 sm:py-6 md:py-8">
       {/* Header */}
       <div className="flex items-center space-x-4">
         <Link href={`/admin/users/${userId}`}>
@@ -418,6 +428,17 @@ export default function EditUser() {
           </div>
         </form>
       </motion.div>
-    </div>
+      </div>
+      {toastMessage && (
+        <Toast>
+          <ToastTitle>
+            {toastMessage.includes('successfully') ? 'Success!' : 'Error'}
+          </ToastTitle>
+          <ToastDescription>{toastMessage}</ToastDescription>
+          <ToastClose onClick={() => setToastMessage(null)} />
+        </Toast>
+      )}
+      <ToastViewport />
+    </ToastProvider>
   );
 }

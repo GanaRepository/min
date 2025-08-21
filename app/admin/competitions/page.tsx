@@ -24,6 +24,14 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import TerminalLoader from '@/components/TerminalLoader';
+import {
+  ToastProvider,
+  ToastViewport,
+  Toast,
+  ToastTitle,
+  ToastDescription,
+  ToastClose,
+} from '@/components/ui/toast';
 
 interface Winner {
   position: number;
@@ -76,6 +84,7 @@ export default function AdminCompetitionsPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterPhase, setFilterPhase] = useState<string>('all');
   const [sortBy, setSortBy] = useState<string>('newest');
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   useEffect(() => {
     if (status === 'loading') return;
@@ -184,11 +193,11 @@ export default function AdminCompetitionsPage() {
         await fetchData(); // Refresh data
         alert(data.message);
       } else {
-        alert('Failed to advance phase: ' + data.error);
+        setToastMessage('Failed to advance phase: ' + data.error);
       }
     } catch (error) {
       console.error('Error advancing phase:', error);
-      alert('Error advancing phase');
+      setToastMessage('Error advancing phase');
     } finally {
       setAdvancingPhase(false);
     }
@@ -258,7 +267,8 @@ export default function AdminCompetitionsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 p-2 sm:p-4 md:p-6">
+    <ToastProvider>
+      <div className="min-h-screen bg-gray-900 p-2 sm:p-4 md:p-6">
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
@@ -781,6 +791,16 @@ export default function AdminCompetitionsPage() {
           </motion.div>
         </div>
       )}
-    </div>
+
+      {toastMessage && (
+        <Toast>
+          <ToastTitle>Error</ToastTitle>
+          <ToastDescription>{toastMessage}</ToastDescription>
+          <ToastClose onClick={() => setToastMessage(null)} />
+        </Toast>
+      )}
+      <ToastViewport />
+      </div>
+    </ToastProvider>
   );
 }

@@ -37,6 +37,14 @@ import {
   Rocket,
   X,
 } from 'lucide-react';
+import {
+  ToastProvider,
+  ToastViewport,
+  Toast,
+  ToastTitle,
+  ToastDescription,
+  ToastClose,
+} from '@/components/ui/toast';
 
 // ===== INTERFACES =====
 interface Competition {
@@ -125,6 +133,7 @@ export default function CompetitionsPage() {
   const [eligibleStories, setEligibleStories] = useState<EligibleStory[]>([]);
   const [error, setError] = useState<string>('');
   const [submitting, setSubmitting] = useState<string | null>(null);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   // Upload modal state
   const [uploadModal, setUploadModal] = useState<UploadModal>({
@@ -242,7 +251,7 @@ export default function CompetitionsPage() {
       const data = await response.json();
 
       if (data.success) {
-        alert(
+        setToastMessage(
           `🎉 "${title}" has been submitted to the ${currentCompetition.month} competition!`
         );
         fetchCompetitionData(); // Refresh data
@@ -346,7 +355,7 @@ export default function CompetitionsPage() {
       const data = await response.json();
 
       if (data.success) {
-        alert(
+        setToastMessage(
           `🎉 "${uploadModal.title}" has been uploaded and submitted to the competition!`
         );
 
@@ -428,7 +437,8 @@ export default function CompetitionsPage() {
 
   // ===== MAIN RENDER =====
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 py-20">
+    <ToastProvider>
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 py-20">
       <div className="max-w-7xl mx-auto px-6">
         {/* ===== HEADER ===== */}
         <motion.div
@@ -1317,6 +1327,18 @@ export default function CompetitionsPage() {
           </div>
         )}
       </div>
-    </div>
+      </div>
+      {toastMessage && (
+        <Toast>
+          <ToastTitle>
+            {toastMessage.includes('🎉') || toastMessage.includes('successfully') || toastMessage.includes('completed') ? 'Success!' : 
+             toastMessage.includes('Failed') || toastMessage.includes('Error') ? 'Error' : 'Info'}
+          </ToastTitle>
+          <ToastDescription>{toastMessage}</ToastDescription>
+          <ToastClose onClick={() => setToastMessage(null)} />
+        </Toast>
+      )}
+      <ToastViewport />
+    </ToastProvider>
   );
 }

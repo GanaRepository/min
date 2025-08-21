@@ -8,6 +8,14 @@ import Link from 'next/link';
 import { ArrowLeft, Save, BookOpen, User, BarChart3 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import TerminalLoader from '@/components/TerminalLoader';
+import {
+  ToastProvider,
+  ToastViewport,
+  Toast,
+  ToastTitle,
+  ToastDescription,
+  ToastClose,
+} from '@/components/ui/toast';
 
 interface EditStoryData {
   _id: string;
@@ -30,6 +38,7 @@ export default function EditStory() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -94,18 +103,18 @@ export default function EditStory() {
       const data = await response.json();
 
       if (data.success) {
-        alert('Story updated successfully!');
+        setToastMessage('Story updated successfully!');
         router.push(`/admin/stories/${storyId}`);
       } else {
         if (data.errors) {
           setErrors(data.errors);
         } else {
-          alert('Failed to update story: ' + data.error);
+          setToastMessage('Failed to update story: ' + data.error);
         }
       }
     } catch (error) {
       console.error('Error updating story:', error);
-      alert('Failed to update story');
+      setToastMessage('Failed to update story');
     } finally {
       setSaving(false);
     }
@@ -149,6 +158,7 @@ export default function EditStory() {
   }
 
   return (
+    <ToastProvider>
     <div className="space-y-6 px-2 sm:px-4 md:px-8 lg:px-12 xl:px-20 py-4 sm:py-6 md:py-8">
       {/* Header */}
       <div className="flex items-center space-x-4">
@@ -347,6 +357,18 @@ export default function EditStory() {
           </div>
         </form>
       </motion.div>
+
+      {toastMessage && (
+        <Toast>
+          <ToastTitle>
+            {toastMessage.includes('successfully') ? 'Success!' : 'Error'}
+          </ToastTitle>
+          <ToastDescription>{toastMessage}</ToastDescription>
+          <ToastClose onClick={() => setToastMessage(null)} />
+        </Toast>
+      )}
+      <ToastViewport />
     </div>
+    </ToastProvider>
   );
 }

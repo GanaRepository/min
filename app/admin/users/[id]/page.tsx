@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import TerminalLoader from '@/components/TerminalLoader';
+import { Toast, ToastProvider, ToastViewport, ToastTitle, ToastDescription, ToastClose } from '@/components/ui/toast';
 
 interface UserDetails {
   _id: string;
@@ -67,6 +68,7 @@ export default function ViewUser() {
   const [user, setUser] = useState<UserDetails | null>(null);
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState(false);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   useEffect(() => {
     if (status === 'loading') return;
@@ -113,14 +115,14 @@ export default function ViewUser() {
       const data = await response.json();
 
       if (data.success) {
-        alert('User deleted successfully');
+        setToastMessage('User deleted successfully');
         router.push('/admin/users');
       } else {
-        alert('Failed to delete user: ' + data.error);
+        setToastMessage('Failed to delete user: ' + data.error);
       }
     } catch (error) {
       console.error('Error deleting user:', error);
-      alert('Failed to delete user');
+      setToastMessage('Failed to delete user');
     } finally {
       setDeleting(false);
     }
@@ -156,7 +158,8 @@ export default function ViewUser() {
   );
 
   return (
-    <div className="space-y-6 px-2 sm:px-4 md:px-8 lg:px-12 xl:px-20 py-4 sm:py-6 md:py-8">
+    <ToastProvider>
+      <div className="space-y-6 px-2 sm:px-4 md:px-8 lg:px-12 xl:px-20 py-4 sm:py-6 md:py-8">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
@@ -443,6 +446,15 @@ export default function ViewUser() {
             </div>
           </div>
         )}
-    </div>
+      </div>
+      {toastMessage && (
+        <Toast>
+          <ToastTitle>{toastMessage.includes('successfully') ? 'Success' : 'Error'}</ToastTitle>
+          <ToastDescription>{toastMessage}</ToastDescription>
+          <ToastClose onClick={() => setToastMessage(null)} />
+        </Toast>
+      )}
+      <ToastViewport />
+    </ToastProvider>
   );
 }

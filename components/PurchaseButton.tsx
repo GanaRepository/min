@@ -109,6 +109,14 @@ import { useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { CreditCard, Loader2, DollarSign, BookOpen } from 'lucide-react';
+import {
+  ToastProvider,
+  ToastViewport,
+  Toast,
+  ToastTitle,
+  ToastDescription,
+  ToastClose,
+} from '@/components/ui/toast';
 
 interface PurchaseButtonProps {
   productType: 'story_pack' | 'story_purchase';
@@ -134,6 +142,7 @@ export default function PurchaseButton({
   const { data: session } = useSession();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const sizeClasses = {
     sm: 'px-4 py-2 text-sm',
@@ -179,7 +188,7 @@ export default function PurchaseButton({
       }
     } catch (error) {
       console.error('Purchase error:', error);
-      alert('Purchase failed. Please try again.');
+      setToastMessage('Purchase failed. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -200,10 +209,11 @@ export default function PurchaseButton({
   const Icon = defaultIcon[productType];
 
   return (
-    <button
-      onClick={handlePurchase}
-      disabled={disabled || loading}
-      className={`
+    <ToastProvider>
+      <button
+        onClick={handlePurchase}
+        disabled={disabled || loading}
+        className={`
         flex items-center justify-center gap-2  transition-all
         disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl
         ${sizeClasses[size]}
@@ -222,6 +232,15 @@ export default function PurchaseButton({
           {children || defaultText[productType]}
         </>
       )}
-    </button>
+      </button>
+      {toastMessage && (
+        <Toast>
+          <ToastTitle>Error</ToastTitle>
+          <ToastDescription>{toastMessage}</ToastDescription>
+          <ToastClose onClick={() => setToastMessage(null)} />
+        </Toast>
+      )}
+      <ToastViewport />
+    </ToastProvider>
   );
 }

@@ -19,11 +19,20 @@ import {
   AlertCircle,
   Loader2,
 } from 'lucide-react';
+import {
+  ToastProvider,
+  ToastViewport,
+  Toast,
+  ToastTitle,
+  ToastDescription,
+  ToastClose,
+} from '@/components/ui/toast';
 
 export default function PricingPage() {
   const { data: session } = useSession();
   const router = useRouter();
   const [loading, setLoading] = useState<string | null>(null);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const handlePurchase = async (
     productType: 'story_pack' | 'story_publication',
@@ -59,14 +68,15 @@ export default function PricingPage() {
       }
     } catch (error) {
       console.error('Purchase error:', error);
-      alert('Purchase failed. Please try again.');
+      setToastMessage('Purchase failed. Please try again.');
     } finally {
       setLoading(null);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 pt-16">
+    <ToastProvider>
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 pt-16">
       {/* Header */}
       <div className="pt-16 pb-16">
         <div className="max-w-7xl mx-auto px-6 text-center">
@@ -429,6 +439,15 @@ export default function PricingPage() {
           ))}
         </div>
       </div>
-    </div>
+      </div>
+      {toastMessage && (
+        <Toast>
+          <ToastTitle>Error</ToastTitle>
+          <ToastDescription>{toastMessage}</ToastDescription>
+          <ToastClose onClick={() => setToastMessage(null)} />
+        </Toast>
+      )}
+      <ToastViewport />
+    </ToastProvider>
   );
 }

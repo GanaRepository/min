@@ -7,6 +7,14 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, Save, User, Mail, Lock, FileText, Tag } from 'lucide-react';
 import { motion } from 'framer-motion';
+import {
+  ToastProvider,
+  ToastViewport,
+  Toast,
+  ToastTitle,
+  ToastDescription,
+  ToastClose,
+} from '@/components/ui/toast';
 
 export default function CreateMentorPage() {
   const { data: session, status } = useSession();
@@ -14,6 +22,7 @@ export default function CreateMentorPage() {
 
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
     firstName: '',
@@ -68,7 +77,7 @@ export default function CreateMentorPage() {
       const data = await response.json();
 
       if (data.success) {
-        alert('Mentor created successfully!');
+        setToastMessage('Mentor created successfully!');
         router.push('/admin/mentors');
       } else {
         if (data.errors) {
@@ -120,7 +129,8 @@ export default function CreateMentorPage() {
   };
 
   return (
-    <div className="space-y-6 px-2 sm:px-4 md:px-8 lg:px-12 xl:px-20 py-4 sm:py-6 md:py-8">
+    <ToastProvider>
+      <div className="space-y-6 px-2 sm:px-4 md:px-8 lg:px-12 xl:px-20 py-4 sm:py-6 md:py-8">
       {/* Header */}
       <div className="flex items-center space-x-4">
         <Link href="/admin/mentors">
@@ -404,6 +414,16 @@ export default function CreateMentorPage() {
           </div>
         </form>
       </motion.div>
-    </div>
+
+      {toastMessage && (
+        <Toast>
+          <ToastTitle>Success!</ToastTitle>
+          <ToastDescription>{toastMessage}</ToastDescription>
+          <ToastClose onClick={() => setToastMessage(null)} />
+        </Toast>
+      )}
+      <ToastViewport />
+      </div>
+    </ToastProvider>
   );
 }

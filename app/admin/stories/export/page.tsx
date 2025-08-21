@@ -6,6 +6,14 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
+  ToastProvider,
+  ToastViewport,
+  Toast,
+  ToastTitle,
+  ToastDescription,
+  ToastClose,
+} from '@/components/ui/toast';
+import {
   ArrowLeft,
   Download,
   Calendar,
@@ -42,6 +50,7 @@ export default function StoriesExportPage() {
   const router = useRouter();
 
   const [loading, setLoading] = useState(false);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [exportConfig, setExportConfig] = useState<ExportConfig>({
     format: 'csv',
     dateRange: {
@@ -122,10 +131,10 @@ export default function StoriesExportPage() {
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
 
-      alert('Export completed successfully!');
+      setToastMessage('Export completed successfully!');
     } catch (error) {
       console.error('Error exporting stories:', error);
-      alert('Export failed. Please try again.');
+      setToastMessage('Export failed. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -153,6 +162,7 @@ export default function StoriesExportPage() {
   };
 
   return (
+    <ToastProvider>
     <div className="space-y-6 px-2 sm:px-4 md:px-8 lg:px-12 xl:px-20 py-4 sm:py-6 md:py-8">
       {/* Header */}
       <div className="flex items-center space-x-4">
@@ -463,6 +473,18 @@ export default function StoriesExportPage() {
           </motion.div>
         </div>
       </div>
+
+      {toastMessage && (
+        <Toast>
+          <ToastTitle>
+            {toastMessage.includes('successfully') ? 'Success' : 'Error'}
+          </ToastTitle>
+          <ToastDescription>{toastMessage}</ToastDescription>
+          <ToastClose onClick={() => setToastMessage(null)} />
+        </Toast>
+      )}
+      <ToastViewport />
     </div>
+    </ToastProvider>
   );
 }

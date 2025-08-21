@@ -31,6 +31,14 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import TerminalLoader from '@/components/TerminalLoader';
+import {
+  ToastProvider,
+  ToastViewport,
+  Toast,
+  ToastTitle,
+  ToastDescription,
+  ToastClose,
+} from '@/components/ui/toast';
 
 // ===== INTERFACES =====
 interface Story {
@@ -104,6 +112,7 @@ export default function MyStoriesPage() {
   const [pagination, setPagination] = useState<PaginationInfo | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   // Filters & Search
   const [searchTerm, setSearchTerm] = useState(
@@ -180,7 +189,7 @@ export default function MyStoriesPage() {
       const data = await response.json();
 
       if (data.success) {
-        alert('🎉 Story published to community showcase!');
+        setToastMessage('🎉 Story published to community showcase!');
         fetchStories(); // Refresh data
       } else {
         // Handle API errors properly
@@ -189,19 +198,19 @@ export default function MyStoriesPage() {
           errorMessage.includes('3 stories per month') ||
           errorMessage.includes('publish 3 stories')
         ) {
-          alert(
+          setToastMessage(
             `📚 Monthly Publication Limit Reached!\n\nYou can only publish 3 stories per month for free.\n\nYour limit will reset on the 1st of next month.`
           );
         } else if (errorMessage.includes('already published')) {
-          alert('ℹ️ This story is already published to the community.');
+          setToastMessage('📚 This story is already published to the community.');
         } else {
-          alert(`❌ Publication Failed\n\n${errorMessage}`);
+          setToastMessage(`❌ Publication Failed\n\n${errorMessage}`);
         }
       }
     } catch (error) {
       // Only catch actual network/connection errors
       console.error('❌ Network error:', error);
-      alert(
+      setToastMessage(
         '❌ Connection Error\n\nPlease check your internet connection and try again.'
       );
     } finally {
@@ -232,7 +241,7 @@ export default function MyStoriesPage() {
       }
     } catch (error) {
       console.error('❌ Purchase error:', error);
-      alert('Failed to start purchase process. Please try again.');
+      setToastMessage('Failed to start purchase process. Please try again.');
     }
   };
 

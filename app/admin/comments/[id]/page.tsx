@@ -21,6 +21,14 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import TerminalLoader from '@/components/TerminalLoader';
+import {
+  ToastProvider,
+  ToastViewport,
+  Toast,
+  ToastTitle,
+  ToastDescription,
+  ToastClose,
+} from '@/components/ui/toast';
 
 interface CommentDetails {
   _id: string;
@@ -83,6 +91,7 @@ export default function ViewComment() {
   // Pagination states
   const [pagination, setPagination] = useState<PaginationInfo | null>(null);
   const [loadingPagination, setLoadingPagination] = useState(false);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   useEffect(() => {
     if (status === 'loading') return;
@@ -128,13 +137,13 @@ export default function ViewComment() {
 
       if (data.success) {
         setComment((prev) => (prev ? { ...prev, isResolved } : null));
-        alert(`Comment marked as ${isResolved ? 'resolved' : 'unresolved'}`);
+        setToastMessage(`Comment marked as ${isResolved ? 'resolved' : 'unresolved'}`);
       } else {
-        alert('Failed to update comment status');
+        setToastMessage('Failed to update comment status');
       }
     } catch (error) {
       console.error('Error updating comment:', error);
-      alert('Failed to update comment status');
+      setToastMessage('Failed to update comment status');
     } finally {
       setUpdating(false);
     }
@@ -147,7 +156,7 @@ export default function ViewComment() {
 
   const handleEditSave = async () => {
     if (!editValue.trim()) {
-      alert('Comment cannot be empty');
+      setToastMessage('Comment cannot be empty');
       return;
     }
 
@@ -174,13 +183,13 @@ export default function ViewComment() {
             : null
         );
         setIsEditing(false);
-        alert('Comment updated successfully');
+        setToastMessage('Comment updated successfully');
       } else {
-        alert('Failed to update comment: ' + data.error);
+        setToastMessage('Failed to update comment: ' + data.error);
       }
     } catch (error) {
       console.error('Error updating comment:', error);
-      alert('Failed to update comment');
+      setToastMessage('Failed to update comment');
     } finally {
       setSaving(false);
     }
@@ -209,14 +218,14 @@ export default function ViewComment() {
       const data = await response.json();
 
       if (data.success) {
-        alert('Comment deleted successfully');
+        setToastMessage('Comment deleted successfully');
         router.push('/admin/comments');
       } else {
-        alert('Failed to delete comment: ' + data.error);
+        setToastMessage('Failed to delete comment: ' + data.error);
       }
     } catch (error) {
       console.error('Error deleting comment:', error);
-      alert('Failed to delete comment');
+      setToastMessage('Failed to delete comment');
     } finally {
       setDeleting(false);
     }
@@ -284,7 +293,8 @@ export default function ViewComment() {
   const canEdit = comment.authorId._id === session?.user?.id;
 
   return (
-    <div className="space-y-6 px-2 sm:px-4 md:px-8 lg:px-12 xl:px-20 py-4 sm:py-6 md:py-8">
+    <ToastProvider>
+      <div className="space-y-6 px-2 sm:px-4 md:px-8 lg:px-12 xl:px-20 py-4 sm:py-6 md:py-8">
       {/* Header with Navigation */}
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
@@ -569,6 +579,19 @@ export default function ViewComment() {
           </div>
         </motion.div>
       )}
-    </div>
+
+      {toastMessage && (
+        <Toast>
+          <ToastTitle>
+            {toastMessage.includes('cannot be empty') ? 'Warning' : 
+             toastMessage.includes('successfully') ? 'Success' : 'Error'}
+          </ToastTitle>
+          <ToastDescription>{toastMessage}</ToastDescription>
+          <ToastClose onClick={() => setToastMessage(null)} />
+        </Toast>
+      )}
+      <ToastViewport />
+      </div>
+    </ToastProvider>
   );
 }

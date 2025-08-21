@@ -22,6 +22,14 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import TerminalLoader from '@/components/TerminalLoader';
+import {
+  ToastProvider,
+  ToastViewport,
+  Toast,
+  ToastTitle,
+  ToastDescription,
+  ToastClose,
+} from '@/components/ui/toast';
 
 interface Student {
   _id: string;
@@ -81,6 +89,7 @@ export default function AssignStudentsPage() {
   const [selectedMentor, setSelectedMentor] = useState('');
   const [page, setPage] = useState(1);
   const studentsPerPage = 6;
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   useEffect(() => {
     if (status === 'loading') return;
@@ -150,7 +159,7 @@ export default function AssignStudentsPage() {
 
   const assignStudent = async (studentId: string, mentorId: string) => {
     if (!mentorId) {
-      alert('Please select a mentor');
+      setToastMessage('Please select a mentor');
       return;
     }
 
@@ -171,11 +180,11 @@ export default function AssignStudentsPage() {
         alert(data.message);
         fetchData(); // Refresh data
       } else {
-        alert('Failed to assign student: ' + data.error);
+        setToastMessage('Failed to assign student: ' + data.error);
       }
     } catch (error) {
       console.error('Error assigning student:', error);
-      alert('Failed to assign student');
+      setToastMessage('Failed to assign student');
     } finally {
       setAssigning(null);
     }
@@ -198,14 +207,14 @@ export default function AssignStudentsPage() {
       const data = await response.json();
 
       if (data.success) {
-        alert('Student unassigned successfully');
+        setToastMessage('Student unassigned successfully');
         fetchData(); // Refresh data
       } else {
-        alert('Failed to unassign student: ' + data.error);
+        setToastMessage('Failed to unassign student: ' + data.error);
       }
     } catch (error) {
       console.error('Error unassigning student:', error);
-      alert('Failed to unassign student');
+      setToastMessage('Failed to unassign student');
     } finally {
       setAssigning(null);
     }
@@ -253,7 +262,8 @@ export default function AssignStudentsPage() {
   }
 
   return (
-    <div className="space-y-6 px-1 sm:px-4 md:px-8 lg:px-12 xl:px-20 py-2 sm:py-6 md:py-8 overflow-x-auto w-full min-w-0">
+    <ToastProvider>
+      <div className="space-y-6 px-1 sm:px-4 md:px-8 lg:px-12 xl:px-20 py-2 sm:py-6 md:py-8 overflow-x-auto w-full min-w-0">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4 w-full min-w-0">
         <div className="flex items-center space-x-4">
@@ -579,6 +589,19 @@ export default function AssignStudentsPage() {
           </div>
         </div>
       )}
-    </div>
+
+      {toastMessage && (
+        <Toast>
+          <ToastTitle>
+            {toastMessage.includes('successfully') || toastMessage.includes('unassigned') ? 'Success!' : 
+             toastMessage.includes('select') ? 'Warning' : 'Error'}
+          </ToastTitle>
+          <ToastDescription>{toastMessage}</ToastDescription>
+          <ToastClose onClick={() => setToastMessage(null)} />
+        </Toast>
+      )}
+      <ToastViewport />
+      </div>
+    </ToastProvider>
   );
 }

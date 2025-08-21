@@ -23,6 +23,14 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import TerminalLoader from '@/components/TerminalLoader';
+import {
+  ToastProvider,
+  ToastViewport,
+  Toast,
+  ToastTitle,
+  ToastDescription,
+  ToastClose,
+} from '@/components/ui/toast';
 
 interface StoryDetails {
   _id: string;
@@ -128,6 +136,7 @@ export default function ViewStory() {
   const [commentType, setCommentType] = useState<CommentType>('general');
   const [addingComment, setAddingComment] = useState(false);
   const [showCommentTypeDropdown, setShowCommentTypeDropdown] = useState(false);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   useEffect(() => {
     if (status === 'loading') return;
@@ -174,14 +183,14 @@ export default function ViewStory() {
       const data = await response.json();
 
       if (data.success) {
-        alert('Story deleted successfully');
+        setToastMessage('Story deleted successfully');
         router.push('/admin/stories');
       } else {
-        alert('Failed to delete story: ' + data.error);
+        setToastMessage('Failed to delete story: ' + data.error);
       }
     } catch (error) {
       console.error('Error deleting story:', error);
-      alert('Failed to delete story');
+      setToastMessage('Failed to delete story');
     } finally {
       setDeleting(false);
     }
@@ -211,13 +220,13 @@ export default function ViewStory() {
         fetchStory();
         setNewComment('');
         setCommentType('general');
-        alert('Admin comment added successfully!');
+        setToastMessage('Admin comment added successfully!');
       } else {
-        alert('Failed to add comment: ' + (data.error || 'Unknown error'));
+        setToastMessage('Failed to add comment: ' + (data.error || 'Unknown error'));
       }
     } catch (error) {
       console.error('Error adding admin comment:', error);
-      alert('Failed to add admin comment');
+      setToastMessage('Failed to add admin comment');
     } finally {
       setAddingComment(false);
     }
@@ -238,7 +247,7 @@ export default function ViewStory() {
       document.body.removeChild(a);
     } catch (error) {
       console.error('Error exporting story:', error);
-      alert('Failed to export story');
+      setToastMessage('Failed to export story');
     }
   };
 
@@ -318,7 +327,8 @@ export default function ViewStory() {
   );
 
   return (
-    <div className="space-y-6 px-2 sm:px-4 md:px-8 lg:px-12 xl:px-20 py-4 sm:py-6 md:py-8">
+    <ToastProvider>
+      <div className="space-y-6 px-2 sm:px-4 md:px-8 lg:px-12 xl:px-20 py-4 sm:py-6 md:py-8">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
@@ -702,6 +712,18 @@ export default function ViewStory() {
           )}
         </div>
       </div>
-    </div>
+
+      {toastMessage && (
+        <Toast>
+          <ToastTitle>
+            {toastMessage.includes('successfully') ? 'Success!' : 'Error'}
+          </ToastTitle>
+          <ToastDescription>{toastMessage}</ToastDescription>
+          <ToastClose onClick={() => setToastMessage(null)} />
+        </Toast>
+      )}
+      <ToastViewport />
+      </div>
+    </ToastProvider>
   );
 }

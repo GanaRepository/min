@@ -8,6 +8,14 @@ import Link from 'next/link';
 import { ArrowLeft, Save, User, Mail, FileText, Tag } from 'lucide-react';
 import { motion } from 'framer-motion';
 import TerminalLoader from '@/components/TerminalLoader';
+import {
+  ToastProvider,
+  ToastViewport,
+  Toast,
+  ToastTitle,
+  ToastDescription,
+  ToastClose,
+} from '@/components/ui/toast';
 
 interface EditMentorData {
   _id: string;
@@ -30,6 +38,7 @@ export default function EditMentor() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
     firstName: '',
@@ -97,18 +106,18 @@ export default function EditMentor() {
       const data = await response.json();
 
       if (data.success) {
-        alert('Mentor updated successfully!');
+        setToastMessage('Mentor updated successfully!');
         router.push(`/admin/mentors/${mentorId}`);
       } else {
         if (data.errors) {
           setErrors(data.errors);
         } else {
-          alert('Failed to update mentor: ' + data.error);
+          setToastMessage('Failed to update mentor: ' + data.error);
         }
       }
     } catch (error) {
       console.error('Error updating mentor:', error);
-      alert('Failed to update mentor');
+      setToastMessage('Failed to update mentor');
     } finally {
       setSaving(false);
     }
@@ -180,7 +189,8 @@ export default function EditMentor() {
   }
 
   return (
-    <div className="space-y-6 px-2 sm:px-4 md:px-8 lg:px-12 xl:px-20 py-4 sm:py-6 md:py-8">
+    <ToastProvider>
+      <div className="space-y-6 px-2 sm:px-4 md:px-8 lg:px-12 xl:px-20 py-4 sm:py-6 md:py-8">
       {/* Header */}
       <div className="flex items-center space-x-4">
         <Link href={`/admin/mentors/${mentorId}`}>
@@ -416,6 +426,18 @@ export default function EditMentor() {
           </div>
         </form>
       </motion.div>
-    </div>
+
+      {toastMessage && (
+        <Toast>
+          <ToastTitle>
+            {toastMessage.includes('successfully') ? 'Success!' : 'Error'}
+          </ToastTitle>
+          <ToastDescription>{toastMessage}</ToastDescription>
+          <ToastClose onClick={() => setToastMessage(null)} />
+        </Toast>
+      )}
+      <ToastViewport />
+      </div>
+    </ToastProvider>
   );
 }
