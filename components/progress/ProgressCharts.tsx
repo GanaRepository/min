@@ -213,9 +213,7 @@ export default function ProgressCharts({
           },
         ].map((stat, index) => (
           <div key={stat.label} className="text-center">
-            <div className={`text-lg  ${stat.color}`}>
-              {stat.value}
-            </div>
+            <div className={`text-lg  ${stat.color}`}>{stat.value}</div>
             <div className="text-gray-400 text-xs">{stat.label}</div>
           </div>
         ))}

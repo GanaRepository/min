@@ -27,6 +27,7 @@ import {
   ToastClose,
 } from '@/components/ui/toast';
 import { useToast } from '@/hooks/use-toast';
+import TerminalLoader from '@/components/TerminalLoader';
 
 const RegisterChildContent: React.FC = () => {
   const router = useRouter();
@@ -223,7 +224,11 @@ const RegisterChildContent: React.FC = () => {
   if (!mounted) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black flex items-center justify-center">
-        <div className="text-white">Loading...</div>
+        <TerminalLoader
+          title="Registering"
+          loadingText="Loading..."
+          size="md"
+        />
       </div>
     );
   }

@@ -143,9 +143,7 @@ export default function AssessmentDisplay({
         <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-6 border border-blue-200">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-xl  text-gray-900 mb-1">
-                {storyInfo.title}
-              </h2>
+              <h2 className="text-xl  text-gray-900 mb-1">{storyInfo.title}</h2>
               <p className="text-gray-600">{storyInfo.wordCount} words</p>
             </div>
             <div className="text-right">
@@ -166,9 +164,7 @@ export default function AssessmentDisplay({
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center space-x-2">
                 <Shield className="w-6 h-6 text-blue-600" />
-                <h3 className="text-xl  text-gray-900">
-                  Content Integrity
-                </h3>
+                <h3 className="text-xl  text-gray-900">Content Integrity</h3>
               </div>
               <div
                 className={`px-3 py-1 rounded-full border text-sm  ${getRiskColor(
@@ -359,9 +355,7 @@ export default function AssessmentDisplay({
         <div className="text-center">
           <div className="flex items-center justify-center space-x-2 mb-2">
             <Award className="w-8 h-8 text-blue-600" />
-            <h3 className="text-2xl  text-gray-900">
-              Overall Score
-            </h3>
+            <h3 className="text-2xl  text-gray-900">Overall Score</h3>
           </div>
           <div
             className={`text-6xl  mb-2 ${getScoreColor(assessment.overallScore)}`}
@@ -423,13 +417,9 @@ export default function AssessmentDisplay({
             >
               <div className="flex items-center justify-center mb-2">
                 <category.icon className="w-5 h-5 text-gray-600 mr-2" />
-                <span className="text-sm  text-gray-700">
-                  {category.label}
-                </span>
+                <span className="text-sm  text-gray-700">{category.label}</span>
               </div>
-              <div
-                className={`text-3xl  ${getScoreColor(category.score)}`}
-              >
+              <div className={`text-3xl  ${getScoreColor(category.score)}`}>
                 {category.score}%
               </div>
             </motion.div>
@@ -506,9 +496,7 @@ export default function AssessmentDisplay({
           {assessment.recommendations.immediate &&
             assessment.recommendations.immediate.length > 0 && (
               <div className="mb-4">
-                <h5 className=" text-purple-800 mb-2">
-                  Immediate Actions:
-                </h5>
+                <h5 className=" text-purple-800 mb-2">Immediate Actions:</h5>
                 <ul className="space-y-1">
                   {assessment.recommendations.immediate.map((rec, index) => (
                     <li key={index} className="flex items-start space-x-2">
@@ -523,9 +511,7 @@ export default function AssessmentDisplay({
           {assessment.recommendations.practiceExercises &&
             assessment.recommendations.practiceExercises.length > 0 && (
               <div>
-                <h5 className=" text-purple-800 mb-2">
-                  Practice Exercises:
-                </h5>
+                <h5 className=" text-purple-800 mb-2">Practice Exercises:</h5>
                 <ul className="space-y-1">
                   {assessment.recommendations.practiceExercises.map(
                     (exercise, index) => (

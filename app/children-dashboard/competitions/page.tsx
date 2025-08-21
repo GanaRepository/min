@@ -6,6 +6,8 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+
+import TerminalLoader from '@/components/TerminalLoader';
 import {
   Trophy,
   Calendar,
@@ -142,7 +144,10 @@ export default function CompetitionsPage() {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const itemsPerPage = 6;
   const totalPages = Math.ceil(pastCompetitions.length / itemsPerPage);
-  const paginatedCompetitions = pastCompetitions.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+  const paginatedCompetitions = pastCompetitions.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   // ===== EFFECTS =====
   useEffect(() => {
@@ -416,10 +421,7 @@ export default function CompetitionsPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 flex items-center justify-center">
-        <div className="text-white text-xl flex items-center gap-3">
-          <div className="w-8 h-8 border-4 border-purple-400 border-t-transparent  animate-spin"></div>
-          Loading competitions...
-        </div>
+        <TerminalLoader loadingText="Loading competitions..." />
       </div>
     );
   }
@@ -864,7 +866,8 @@ export default function CompetitionsPage() {
             <h2 className="text-2xl  text-white mb-6">Past Competitions</h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {paginatedCompetitions.map((competition: Competition, index: number) => (
+              {paginatedCompetitions.map(
+                (competition: Competition, index: number) => (
                   <motion.div
                     key={competition._id}
                     initial={{ opacity: 0, y: 20 }}
@@ -872,69 +875,82 @@ export default function CompetitionsPage() {
                     transition={{ delay: 0.3 + index * 0.1 }}
                     className="bg-gray-800/40 backdrop-blur-xl border border-gray-600/30  p-6"
                   >
-                  <div className="flex items-center gap-3 mb-4">
-                    <Trophy className="w-6 h-6 text-purple-400" />
-                    <h3 className="text-lg  text-white">
-                      {competition.month} {competition.year}
-                    </h3>
-                  </div>
+                    <div className="flex items-center gap-3 mb-4">
+                      <Trophy className="w-6 h-6 text-purple-400" />
+                      <h3 className="text-lg  text-white">
+                        {competition.month} {competition.year}
+                      </h3>
+                    </div>
 
-                  <div className="space-y-3 mb-4">
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-400">Submissions:</span>
-                      <span className="text-white">
-                        {competition.totalSubmissions}
-                      </span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-400">Participants:</span>
-                      <span className="text-white">
-                        {competition.totalParticipants}
-                      </span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-400">Results:</span>
-                      <span className="text-green-400">Completed</span>
-                    </div>
-                  </div>
-
-                  {/* Show winners if available */}
-                  {competition.winners && competition.winners.length > 0 && (
-                    <div className="border-t border-gray-600/30 pt-4">
-                      <div className="text-sm text-gray-400 mb-2">Winners:</div>
-                      <div className="space-y-1">
-                        {competition.winners.slice(0, 3).map((winner: { position: number; childName: string }) => (
-                          <div
-                            key={winner.position}
-                            className="flex items-center gap-2 text-sm"
-                          >
-                            <span
-                              className={`w-6 h-6  flex items-center justify-center text-xs  ${
-                                winner.position === 1
-                                  ? 'bg-yellow-500 text-gray-900'
-                                  : winner.position === 2
-                                    ? 'bg-gray-400 text-gray-900'
-                                    : 'bg-orange-500 text-gray-900'
-                              }`}
-                            >
-                              {winner.position}
-                            </span>
-                            <span className="text-white truncate">
-                              {winner.childName}
-                            </span>
-                          </div>
-                        ))}
+                    <div className="space-y-3 mb-4">
+                      <div className="flex justify-between text-sm">
+                        <span className="text-gray-400">Submissions:</span>
+                        <span className="text-white">
+                          {competition.totalSubmissions}
+                        </span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-gray-400">Participants:</span>
+                        <span className="text-white">
+                          {competition.totalParticipants}
+                        </span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-gray-400">Results:</span>
+                        <span className="text-green-400">Completed</span>
                       </div>
                     </div>
-                  )}
-                </motion.div>
-              ))}
+
+                    {/* Show winners if available */}
+                    {competition.winners && competition.winners.length > 0 && (
+                      <div className="border-t border-gray-600/30 pt-4">
+                        <div className="text-sm text-gray-400 mb-2">
+                          Winners:
+                        </div>
+                        <div className="space-y-1">
+                          {competition.winners
+                            .slice(0, 3)
+                            .map(
+                              (winner: {
+                                position: number;
+                                childName: string;
+                              }) => (
+                                <div
+                                  key={winner.position}
+                                  className="flex items-center gap-2 text-sm"
+                                >
+                                  <span
+                                    className={`w-6 h-6  flex items-center justify-center text-xs  ${
+                                      winner.position === 1
+                                        ? 'bg-yellow-500 text-gray-900'
+                                        : winner.position === 2
+                                          ? 'bg-gray-400 text-gray-900'
+                                          : 'bg-orange-500 text-gray-900'
+                                    }`}
+                                  >
+                                    {winner.position}
+                                  </span>
+                                  <span className="text-white truncate">
+                                    {winner.childName}
+                                  </span>
+                                </div>
+                              )
+                            )}
+                        </div>
+                      </div>
+                    )}
+                  </motion.div>
+                )
+              )}
             </div>
 
             {/* Pagination Controls */}
             {totalPages > 1 && (
               <div className="flex justify-center mt-6">
-                <nav className="inline-flex items-center gap-2" aria-label="Pagination">
+                <nav
+                  className="inline-flex items-center gap-2"
+                  aria-label="Pagination"
+                >
                   <button
                     onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                     disabled={currentPage === 1}
@@ -942,21 +958,25 @@ export default function CompetitionsPage() {
                   >
                     Prev
                   </button>
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                    <button
-                      key={page}
-                      onClick={() => setCurrentPage(page)}
-                      className={`px-3 py-1 ${
-                        page === currentPage
-                          ? 'bg-blue-600 text-white'
-                          : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                      }`}
-                    >
-                      {page}
-                    </button>
-                  ))}
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                    (page) => (
+                      <button
+                        key={page}
+                        onClick={() => setCurrentPage(page)}
+                        className={`px-3 py-1 ${
+                          page === currentPage
+                            ? 'bg-blue-600 text-white'
+                            : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                        }`}
+                      >
+                        {page}
+                      </button>
+                    )
+                  )}
                   <button
-                    onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                    onClick={() =>
+                      setCurrentPage((p) => Math.min(totalPages, p + 1))
+                    }
                     disabled={currentPage === totalPages}
                     className="px-3 py-1 bg-gray-700 text-white disabled:bg-gray-900 disabled:text-gray-500"
                   >

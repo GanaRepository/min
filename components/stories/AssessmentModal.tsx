@@ -421,15 +421,11 @@ export default function AssessmentModal({
                     >
                       <div className="flex items-center justify-between mb-2">
                         <Icon size={20} className={getScoreColor(score)} />
-                        <span
-                          className={`text-2xl  ${getScoreColor(score)}`}
-                        >
+                        <span className={`text-2xl  ${getScoreColor(score)}`}>
                           {score}%
                         </span>
                       </div>
-                      <div className="text-sm text-gray-300 ">
-                        {label}
-                      </div>
+                      <div className="text-sm text-gray-300 ">{label}</div>
                       <div className="w-full bg-gray-700 rounded-full h-2 mt-2">
                         <div
                           className={`h-2 rounded-full transition-all ${
@@ -608,9 +604,7 @@ export default function AssessmentModal({
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     {assessment.progressTracking.scoreChange && (
                       <div className="bg-gray-800/50 border border-gray-700/50 rounded-lg p-4">
-                        <h4 className="text-white  mb-2">
-                          Score Change
-                        </h4>
+                        <h4 className="text-white  mb-2">Score Change</h4>
                         <div
                           className={`text-2xl  ${
                             assessment.progressTracking.scoreChange > 0
@@ -634,9 +628,7 @@ export default function AssessmentModal({
                       assessment.progressTracking.strengthsGained.length >
                         0 && (
                         <div className="bg-gray-800/50 border border-gray-700/50 rounded-lg p-4">
-                          <h4 className="text-white  mb-2">
-                            New Strengths
-                          </h4>
+                          <h4 className="text-white  mb-2">New Strengths</h4>
                           <div className="space-y-1">
                             {assessment.progressTracking.strengthsGained.map(
                               (strength, index) => (
@@ -671,13 +663,9 @@ export default function AssessmentModal({
                       <div className="flex items-center justify-between mb-3">
                         <div className="flex items-center gap-3">
                           <Icon size={20} className={getScoreColor(score)} />
-                          <span className="text-white ">
-                            {label}
-                          </span>
+                          <span className="text-white ">{label}</span>
                         </div>
-                        <span
-                          className={`text-xl  ${getScoreColor(score)}`}
-                        >
+                        <span className={`text-xl  ${getScoreColor(score)}`}>
                           {score}%
                         </span>
                       </div>

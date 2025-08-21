@@ -1,5 +1,4 @@
 //app/admin/mentors/page.tsx
-// app/admin/mentors/page.tsx - List All Mentors
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -18,6 +17,7 @@ import {
   Calendar,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import TerminalLoader from '@/components/TerminalLoader';
 
 interface Mentor {
   _id: string;
@@ -114,8 +114,12 @@ export default function MentorsPage() {
 
   if (loading && mentors.length === 0) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-xl text-gray-400">Loading mentors...</div>
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-green-900 flex items-center justify-center">
+        <TerminalLoader
+          title="Mentor Edits"
+          loadingText="Loading  mentors..."
+          size="lg"
+        />
       </div>
     );
   }

@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import TerminalLoader from '@/components/TerminalLoader';
 import Link from 'next/link';
 import {
   Users,
@@ -138,7 +139,11 @@ export default function MentorDashboard() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-xl text-gray-400">Loading dashboard...</div>
+        <TerminalLoader
+          title="Mentor Dashboard"
+          loadingText="Loading dashboard..."
+          size="md"
+        />
       </div>
     );
   }
@@ -196,9 +201,7 @@ export default function MentorDashboard() {
         {/* Monthly Performance */}
         <div className="bg-gray-800 p-4 sm:p-6">
           <div className="flex items-center justify-between mb-2 sm:mb-4">
-            <h3 className="text-base sm:text-lg text-white">
-              This Month
-            </h3>
+            <h3 className="text-base sm:text-lg text-white">This Month</h3>
             <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5 text-green-400" />
           </div>
           <div className="space-y-2 sm:space-y-4">
@@ -274,9 +277,7 @@ export default function MentorDashboard() {
       {/* Recent Activity */}
       <div className="bg-gray-800 p-4 sm:p-6">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 sm:mb-6 gap-2 sm:gap-0">
-          <h3 className="text-lg sm:text-xl text-white">
-            Recent Activity
-          </h3>
+          <h3 className="text-lg sm:text-xl text-white">Recent Activity</h3>
           <Link
             href="/mentor-dashboard/activity"
             className="text-blue-400 hover:text-blue-300 text-xs sm:text-sm"

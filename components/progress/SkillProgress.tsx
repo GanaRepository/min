@@ -77,9 +77,7 @@ export default function SkillProgress({
                 </div>
               </div>
               <div className="text-right">
-                <div className="text-2xl  text-white">
-                  {skill.score}%
-                </div>
+                <div className="text-2xl  text-white">{skill.score}%</div>
               </div>
             </div>
 
@@ -97,9 +95,7 @@ export default function SkillProgress({
 
             {/* Focus areas */}
             <div>
-              <h5 className="text-gray-300 text-sm  mb-2">
-                Recent Focus:
-              </h5>
+              <h5 className="text-gray-300 text-sm  mb-2">Recent Focus:</h5>
               <div className="space-y-1">
                 {skill.focus.map((item, itemIndex) => (
                   <div

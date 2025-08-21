@@ -111,9 +111,7 @@ const ConfirmPopup = ({
           <div className="flex items-start justify-between mb-4">
             <div className="flex items-center gap-3">
               <AlertCircle className={`h-6 w-6 ${styles.icon}`} />
-              <h2 className={`text-lg  ${styles.title}`}>
-                {title}
-              </h2>
+              <h2 className={`text-lg  ${styles.title}`}>{title}</h2>
             </div>
             <button
               onClick={onCancel}

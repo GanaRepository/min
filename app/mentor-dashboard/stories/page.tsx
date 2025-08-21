@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import TerminalLoader from '@/components/TerminalLoader';
 import {
   BookOpen,
   MessageSquare,
@@ -117,7 +118,6 @@ export default function MentorStories() {
     }
   };
 
-
   const filteredStories = stories.filter(
     (story) =>
       story.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -144,7 +144,11 @@ export default function MentorStories() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-xl text-gray-400">Loading stories...</div>
+        <TerminalLoader
+          title="Stories"
+          loadingText="Loading stories..."
+          size="md"
+        />
       </div>
     );
   }
@@ -213,9 +217,7 @@ export default function MentorStories() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-400 text-sm">Need Review</p>
-              <p className="text-2xl text-white">
-                {pendingReviewCount}
-              </p>
+              <p className="text-2xl text-white">{pendingReviewCount}</p>
             </div>
             <AlertCircle className="w-8 h-8 text-orange-400" />
           </div>

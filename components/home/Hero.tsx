@@ -35,6 +35,7 @@ import {
 import React from 'react';
 
 import { DiamondSeparator } from '../seperators/DiamondSeparator';
+import AnimatedButton from '../AnimatedButton';
 
 export default function Home() {
   const features = [
@@ -266,84 +267,6 @@ export default function Home() {
     },
   ];
 
-  // Updated steps for current system
-  // const steps = [
-  //   {
-  //     number: '01',
-  //     icon: <PenTool className="w-8 h-8" />,
-  //     title: 'Start Writing Freely',
-  //     description:
-  //       'Begin your story with complete creative freedom. Write about anything that sparks your imagination - no limits!',
-  //     gradient: 'from-green-500 to-teal-600',
-  //     features: [
-  //       'Any Genre Welcome',
-  //       'No Story Restrictions',
-  //       'Real-time AI Help',
-  //       'Word Count Tracking',
-  //     ],
-  //     image: '/kid9.jpg',
-  //   },
-  //   {
-  //     number: '02',
-  //     icon: <Sparkles className="w-8 h-8" />,
-  //     title: 'Collaborate with AI',
-  //     description:
-  //       'Get suggestions and ideas from AI as you write. The AI helps develop your story while you stay in complete control.',
-  //     gradient: 'from-blue-500 to-cyan-600',
-  //     features: [
-  //       'Plot Suggestions',
-  //       'Character Development',
-  //       'Creative Prompts',
-  //       'Writing Guidance',
-  //     ],
-  //     image: '/kid10.jpg',
-  //   },
-  //   {
-  //     number: '03',
-  //     icon: <BookOpen className="w-8 h-8" />,
-  //     title: 'Complete Your Story',
-  //     description:
-  //       'Finish your masterpiece! Stories can be any length - from short tales to epic adventures.',
-  //     gradient: 'from-purple-500 to-indigo-600',
-  //     features: [
-  //       'Flexible Length',
-  //       'Auto-save Progress',
-  //       'Draft Management',
-  //       'Story Preview',
-  //     ],
-  //     image: '/kid11.jpg',
-  //   },
-  //   {
-  //     number: '04',
-  //     icon: <Upload className="w-8 h-8" />,
-  //     title: 'Upload for Assessment',
-  //     description:
-  //       'Submit your completed story for detailed AI analysis and personalized feedback to improve your writing.',
-  //     gradient: 'from-orange-500 to-red-600',
-  //     features: [
-  //       'File Upload Support',
-  //       'Instant Processing',
-  //       'Multiple Attempts',
-  //       'Plagiarism Detection',
-  //     ],
-  //     image: '/kid12.jpg',
-  //   },
-  //   {
-  //     number: '05',
-  //     icon: <Award className="w-8 h-8" />,
-  //     title: 'Get Feedback & Compete',
-  //     description:
-  //       'Receive comprehensive feedback to improve your writing and enter monthly competitions with other young writers.',
-  //     gradient: 'from-pink-500 to-purple-600',
-  //     features: [
-  //       'Grammar Analysis',
-  //       'Creativity Scores',
-  //       'Competition Entry',
-  //       'Progress Tracking',
-  //     ],
-  //     image: '/kid14.jpg',
-  //   },
-  // ];
 
   const steps = [
     {
@@ -555,61 +478,22 @@ export default function Home() {
 
                 <p className="text-base sm:text-lg lg:text-xl text-gray-300 leading-relaxed">
                   A platform where children{' '}
-                  <span className="text-green-300 ">
-                    write freely
-                  </span>{' '}
-                  with{' '}
-                  <span className="text-teal-300 ">
-                    AI collaboration
-                  </span>{' '}
-                  and get{' '}
-                  <span className="text-cyan-300 ">
-                    detailed feedback
-                  </span>{' '}
+                  <span className="text-green-300 ">write freely</span> with{' '}
+                  <span className="text-teal-300 ">AI collaboration</span> and
+                  get <span className="text-cyan-300 ">detailed feedback</span>{' '}
                   to improve their writing skills.
                 </p>
               </motion.div>
 
               {/* CTA Buttons */}
               <motion.div
-                className="flex flex-col justify-center gap-4 w-full"
+                className="flex justify-center w-full mt-4"
                 initial={{ opacity: 0, x: -50 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.8, delay: 0.8 }}
               >
-                <div className="flex flex-col sm:flex-row gap-4 w-full"></div>
-                  <Link href="/create-stories" className="flex-1">
-                    <motion.button
-                      className="group relative w-full px-8 py-3 bg-gradient-to-r from-green-500 to-teal-600 rounded-xl text-base text-white shadow-lg shadow-green-500/25 overflow-hidden flex items-center justify-center"
-                      whileHover={{
-                        scale: 1.05,
-                        boxShadow: '0 10px 25px -5px rgba(16, 185, 129, 0.4)',
-                      }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      <span className="relative z-10 flex items-center justify-center">
-                        <PenTool className="w-4 h-4 mr-2" />
-                        Start Writing Now →
-                      </span>
-                      <motion.div
-                        className="absolute inset-0 bg-gradient-to-r from-teal-600 to-green-500"
-                        initial={{ x: '-100%' }}
-                        whileHover={{ x: '0%' }}
-                        transition={{ duration: 0.3 }}
-                      />
-                    </motion.button>
-                  </Link>
-
-                  <Link href="/contact-us" className="flex-1">
-                    <motion.button
-                      className="w-full px-8 py-3 bg-gray-800/60 backdrop-blur-xl rounded-xl text-base text-white border border-gray-600/50 shadow-lg hover:bg-gray-700/60 transition-all duration-300 flex items-center justify-center"
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      <span className="flex items-center justify-center">
-                      Know More About Us →
-                    </span>
-                  </motion.button>
+                <Link href="/create-stories">
+                  <AnimatedButton text="Unleash Creativity" />
                 </Link>
               </motion.div>
             </div>
@@ -622,19 +506,7 @@ export default function Home() {
               transition={{ duration: 1, delay: 0.6 }}
             >
               <motion.div className="relative flex flex-col justify-center items-center h-full">
-                {/* Glow Effect */}
-                <motion.div
-                  className="absolute inset-0 bg-gradient-to-r from-green-500/30 to-teal-500/30 blur-xl"
-                  animate={{
-                    scale: [1, 1.2, 1],
-                    opacity: [0.4, 0.8, 0.4],
-                  }}
-                  transition={{
-                    duration: 4,
-                    repeat: Infinity,
-                    ease: 'easeInOut',
-                  }}
-                />
+                {/* Glow Effect removed as requested */}
 
                 {/* Hero Image Container */}
                 <div className="relative w-80 sm:w-96 h-[28rem] sm:h-[32rem] overflow-hidden shadow-2xl">
@@ -710,19 +582,7 @@ export default function Home() {
               transition={{ duration: 1, delay: 1.4 }}
             >
               <motion.div className="relative flex flex-col justify-center items-center h-full">
-                {/* Enhanced Glow Effect */}
-                <motion.div
-                  className="absolute inset-0 bg-gradient-to-r from-green-500/30 to-teal-500/30 blur-xl"
-                  animate={{
-                    scale: [1, 1.2, 1],
-                    opacity: [0.4, 0.8, 0.4],
-                  }}
-                  transition={{
-                    duration: 4,
-                    repeat: Infinity,
-                    ease: 'easeInOut',
-                  }}
-                />
+                {/* Enhanced Glow Effect removed as requested */}
 
                 {/* Main Card with Image */}
                 <div className="relative w-80 sm:w-96 h-[28rem] sm:h-[32rem] bg-gradient-to-br from-gray-800/95 to-gray-900/95 backdrop-blur-2xl border border-gray-600/40 shadow-2xl overflow-hidden">
@@ -1035,24 +895,9 @@ export default function Home() {
             transition={{ delay: 0.5 }}
             viewport={{ once: true }}
           >
-            <Link href="/register">
-              <motion.button
-                className="group relative px-8 py-4 bg-gradient-to-r from-purple-500 to-pink-600 rounded-xl text-lg text-white shadow-lg shadow-purple-500/25 overflow-hidden"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <span className="relative z-10 flex items-center">
-                  Register Now to Start Writing
-                  <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
-                </span>
-                <motion.div
-                  className="absolute inset-0 bg-gradient-to-r from-pink-600 to-purple-500"
-                  initial={{ x: '-100%' }}
-                  whileHover={{ x: '0%' }}
-                  transition={{ duration: 0.3 }}
-                />
-              </motion.button>
-            </Link>
+             <Link href="/register">
+                  <AnimatedButton text="Register Now" />
+                </Link>
           </motion.div>
         </div>
       </section>
@@ -1109,9 +954,7 @@ export default function Home() {
                   >
                     <div className="relative z-10 text-center space-y-2">
                       <span className="text-2xl block">{genre.icon}</span>
-                      <span className="text-sm  block">
-                        {genre.name}
-                      </span>
+                      <span className="text-sm  block">{genre.name}</span>
                       <span className="text-xs text-gray-300 block">
                         {genre.description}
                       </span>
@@ -1154,9 +997,7 @@ export default function Home() {
                   >
                     <div className="relative z-10 text-center space-y-2">
                       <span className="text-2xl block">{theme.icon}</span>
-                      <span className="text-sm  block">
-                        {theme.name}
-                      </span>
+                      <span className="text-sm  block">{theme.name}</span>
                       <span className="text-xs text-gray-300 block">
                         {theme.description}
                       </span>
@@ -1181,24 +1022,9 @@ export default function Home() {
             transition={{ delay: 0.5 }}
             viewport={{ once: true }}
           >
-            <Link href="/create-stories">
-              <motion.button
-                className="group relative px-10 py-4 bg-gradient-to-r from-purple-500 to-blue-600 rounded-xl text-lg text-white shadow-lg shadow-purple-500/25 overflow-hidden"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <span className="relative z-10 flex items-center">
-                  Start Creating Your Story
-                  <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
-                </span>
-                <motion.div
-                  className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-500"
-                  initial={{ x: '-100%' }}
-                  whileHover={{ x: '0%' }}
-                  transition={{ duration: 0.3 }}
-                />
-              </motion.button>
-            </Link>
+               <Link href="/create-stories">
+                  <AnimatedButton text="Spark Imagination" />
+                </Link>
           </motion.div>
         </div>
       </section>
@@ -1589,10 +1415,7 @@ export default function Home() {
                 <span className="text-green-300 ">
                   complete creative freedom
                 </span>{' '}
-                and{' '}
-                <span className="text-teal-300 ">
-                  AI-powered feedback
-                </span>{' '}
+                and <span className="text-teal-300 ">AI-powered feedback</span>{' '}
                 to improve their skills. Start with 3 free stories and 9 free
                 assessments!
               </p>
@@ -1601,19 +1424,8 @@ export default function Home() {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <Link href="/create-stories">
-                  <button className="group relative px-8 sm:px-10 py-3 sm:py-4 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-xl text-base sm:text-lg text-white shadow-lg shadow-cyan-500/25 overflow-hidden">
-                    <span className="relative z-10 flex items-center justify-center">
-                      <Zap className="w-4 sm:w-5 h-4 sm:h-5 mr-2 sm:mr-3" />
-                      Start Writing Your First Story →
-                    </span>
-                    <motion.div
-                      className="absolute inset-0 bg-gradient-to-r from-blue-600 to-cyan-500"
-                      initial={{ x: '-100%' }}
-                      whileHover={{ x: '0%' }}
-                      transition={{ duration: 0.3 }}
-                    />
-                  </button>
+         <Link href="/create-stories">
+                  <AnimatedButton text="Spark Imagination" />
                 </Link>
               </motion.div>
 

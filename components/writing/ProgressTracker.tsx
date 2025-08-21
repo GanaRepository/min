@@ -403,9 +403,7 @@ export default function ProgressTracker({
               <BookOpen className="w-5 h-5 text-green-400" />
               <span className="text-gray-300 ">Words</span>
             </div>
-            <span className="text-white ">
-              {session.totalWords}/600 words
-            </span>
+            <span className="text-white ">{session.totalWords}/600 words</span>
           </div>
           <div className="w-full bg-gray-700 rounded-full h-3">
             <motion.div

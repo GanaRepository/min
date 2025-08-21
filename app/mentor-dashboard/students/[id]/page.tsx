@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
 import { BookOpen, Calendar, Mail, Users } from 'lucide-react';
+import TerminalLoader from '@/components/TerminalLoader';
 
 interface Student {
   _id: string;
@@ -50,21 +51,30 @@ export default function MentorStudentProfile() {
     fetchStudent();
   }, [params.id]);
 
-  if (loading) {
-    return (
-      <div className="text-center py-12 text-gray-400">
-        Loading student profile...
-      </div>
-    );
-  }
+
+
+
+    if (loading) {
+      return (
+        <div className="flex items-center justify-center h-64">
+          <TerminalLoader
+            title="Students"
+            loadingText="Loading students Profile..."
+            size="md"
+          />
+        </div>
+      );
+    }
 
   if (!student) {
     return (
       <div className="text-center py-12">
         <Users className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-        <h3 className="text-xl text-gray-400 mb-2">
-          Student not found
-        </h3>
+        <TerminalLoader
+            title="Students"
+            loadingText="Student not found"
+            size="md"
+          />
         <Link href="/mentor-dashboard/students">
           <button className="mt-4 bg-blue-600 text-white px-4 py-2 hover:bg-blue-700 transition-colors">
             Back to Students
@@ -141,9 +151,7 @@ export default function MentorStudentProfile() {
               className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-4 p-2 sm:p-3 bg-gray-700/50"
             >
               <div>
-                <p className="text-white text-xs sm:text-sm">
-                  {story.title}
-                </p>
+                <p className="text-white text-xs sm:text-sm">{story.title}</p>
                 <div className="flex flex-wrap items-center gap-1 sm:gap-2 mt-1">
                   <span className="px-2 py-1 text-xs border bg-blue-500/20 text-blue-300 border-blue-500/30">
                     {story.status}

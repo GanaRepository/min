@@ -49,19 +49,18 @@ const Footer: React.FC = () => {
           {/* Company Info */}
           <div className="md:col-span-1 mb-8 sm:mb-12">
             <div className="flex justify-center sm:justify-around items-center h-16 sm:h-20">
-               <Link
-              href="/"
-              className="mt-12  flex items-center space-x-3 group transition-all duration-300 hover:scale-105"
-            >
-            
-              <Image
-                src="/min_logo3.png"
-                alt="Mintoons Logo"
-                width={250}
-                height={250}
-                priority
-              />
-            </Link>
+              <Link
+                href="/"
+                className="mt-12  flex items-center space-x-3 group transition-all duration-300 hover:scale-105"
+              >
+                <Image
+                  src="/min_logo3.png"
+                  alt="Mintoons Logo"
+                  width={250}
+                  height={250}
+                  priority
+                />
+              </Link>
             </div>
             <p className="text-xs sm:text-sm text-emerald-200 mb-2 sm:mb-4 mt-16">
               Unleashing Creative Magic Through AI-Powered Storytelling
@@ -116,14 +115,7 @@ const Footer: React.FC = () => {
                   Home
                 </Link>
               </li>
-              <li>
-                <Link
-                  href="/about"
-                  className="text-emerald-200 hover:text-emerald-100 transition-colors"
-                >
-                  About Us
-                </Link>
-              </li>
+          
               <li>
                 <Link
                   href="/create-stories"
@@ -134,7 +126,7 @@ const Footer: React.FC = () => {
               </li>
               <li>
                 <Link
-                  href="/competitons"
+                  href="/competitions"
                   className="text-emerald-200 hover:text-emerald-100 transition-colors"
                 >
                   Competitions
@@ -170,6 +162,14 @@ const Footer: React.FC = () => {
                   className="text-emerald-200 hover:text-emerald-100 transition-colors"
                 >
                   Mentor Login
+                </Link>
+              </li>
+                  <li>
+                <Link
+                  href="/admin"
+                  className="text-emerald-200 hover:text-emerald-100 transition-colors"
+                >
+                  Admin
                 </Link>
               </li>
             </ul>
@@ -301,18 +301,7 @@ const Footer: React.FC = () => {
             >
               Terms of Service
             </Link>
-            <Link
-              href="/child-safety"
-              className="text-emerald-200 hover:text-emerald-100 transition-colors text-xs"
-            >
-              Child Safety
-            </Link>
-            <Link
-              href="/parent-guide"
-              className="text-emerald-200 hover:text-emerald-100 transition-colors text-xs"
-            >
-              Parent Guide
-            </Link>
+        
           </div>
         </div>
       </div>
@@ -320,7 +309,7 @@ const Footer: React.FC = () => {
       {/* Back to top button */}
       <button
         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-        className="fixed bottom-6 right-6 w-12 h-12  bg-gradient-to-r from-emerald-600 to-teal-600 text-white flex items-center justify-center shadow-lg hover:scale-105 transition-all hover:-translate-y-1 z-40"
+        className="rounded-full fixed bottom-6 right-6 w-12 h-12  bg-gradient-to-r from-emerald-600 to-teal-600 text-white flex items-center justify-center shadow-lg hover:scale-105 transition-all hover:-translate-y-1 z-40"
         aria-label="Back to top"
       >
         <FiArrowUp size={18} />

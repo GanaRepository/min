@@ -108,9 +108,7 @@ export default function IntegrityDisplay({
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center space-x-2">
             <Shield className="w-6 h-6 text-blue-600" />
-            <h3 className="text-xl  text-gray-900">
-              Content Integrity
-            </h3>
+            <h3 className="text-xl  text-gray-900">Content Integrity</h3>
           </div>
           <div
             className={`px-3 py-1 rounded-full border text-sm  ${getRiskColor(results.riskLevel)}`}
@@ -291,9 +289,7 @@ export default function IntegrityDisplay({
           <div className="flex items-center space-x-3">
             <CheckCircle className="w-8 h-8 text-green-600" />
             <div>
-              <h4 className="text-lg  text-green-900">
-                Excellent Work!
-              </h4>
+              <h4 className="text-lg  text-green-900">Excellent Work!</h4>
               <p className="text-green-800 mt-1">
                 Your content appears to be original and authentic. Keep up the
                 great creative writing!

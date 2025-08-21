@@ -2,6 +2,7 @@
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
+import TerminalLoader from '../../components/TerminalLoader';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { LogOut } from 'lucide-react';
@@ -64,7 +65,11 @@ export default function LogoutPage() {
   if (!mounted) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-900/90 via-gray-800/90 to-blue-900/90 flex items-center justify-center px-2 sm:px-4">
-        <div className="text-white">Loading...</div>
+        <TerminalLoader
+          title="Logging out"
+          loadingText="Loading..."
+          size="md"
+        />
       </div>
     );
   }

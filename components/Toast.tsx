@@ -75,9 +75,7 @@ export const Toast: React.FC<ToastProps> = ({
         className={`${getBgColor()} ${getBorderColor()} flex items-center p-4 rounded-lg border shadow-lg max-w-md`}
       >
         <div className="flex-shrink-0">{getIcon()}</div>
-        <div className="ml-3 mr-8 text-sm  text-gray-800">
-          {message}
-        </div>
+        <div className="ml-3 mr-8 text-sm  text-gray-800">{message}</div>
         <button
           onClick={onClose}
           className="ml-auto -mx-1.5 -my-1.5 rounded-lg focus:ring-2 p-1.5 inline-flex h-8 w-8 focus:outline-none focus:ring-gray-300"

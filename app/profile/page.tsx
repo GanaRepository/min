@@ -74,19 +74,7 @@ export default function ProfilePage() {
           ))}
         </div>
 
-        {/* Grid pattern overlay */}
-        {/* <div className="absolute inset-0 opacity-10">
-          <div
-            className="w-full h-full"
-            style={{
-              backgroundImage: `
-                linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)
-              `,
-              backgroundSize: '50px 50px',
-            }}
-          />
-        </div> */}
+
 
         <div className="relative z-10 container mx-auto px-2 sm:px-4">
           <div className="max-w-2xl md:max-w-3xl lg:max-w-4xl mx-auto">
@@ -160,9 +148,7 @@ export default function ProfilePage() {
                     <dd className="mt-1 text-white">{session.user.email}</dd>
                   </div>
                   <div>
-                    <dt className="text-sm  text-white/60">
-                      Account Type
-                    </dt>
+                    <dt className="text-sm  text-white/60">Account Type</dt>
                     <dd className="mt-1 text-white capitalize">
                       {session.user.role}
                     </dd>
@@ -210,17 +196,13 @@ export default function ProfilePage() {
                   {isMentor && (
                     <>
                       <div>
-                        <dt className="text-sm  text-white/60">
-                          First Name
-                        </dt>
+                        <dt className="text-sm  text-white/60">First Name</dt>
                         <dd className="mt-1 text-white">
                           {session.user.firstName || 'Not set'}
                         </dd>
                       </div>
                       <div>
-                        <dt className="text-sm  text-white/60">
-                          Last Name
-                        </dt>
+                        <dt className="text-sm  text-white/60">Last Name</dt>
                         <dd className="mt-1 text-white">
                           {session.user.lastName || 'Not set'}
                         </dd>

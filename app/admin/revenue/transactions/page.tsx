@@ -14,6 +14,7 @@ import {
   Download,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import TerminalLoader from '@/components/TerminalLoader';
 
 interface Transaction {
   _id: string;
@@ -130,8 +131,12 @@ export default function TransactionsPage() {
 
   if (loading && transactions.length === 0) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-xl text-gray-400">Loading transactions...</div>
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-green-900 flex items-center justify-center">
+        <TerminalLoader
+          title="Transactions"
+          loadingText="   Loading Transactions..."
+          size="lg"
+        />
       </div>
     );
   }

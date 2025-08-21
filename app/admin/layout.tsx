@@ -20,6 +20,7 @@ import {
   Award,
   User,
 } from 'lucide-react';
+import TerminalLoader from '../../components/TerminalLoader';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface AdminLayoutProps {
@@ -89,7 +90,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   if (status === 'loading') {
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <div className="text-white text-xl">Loading...</div>
+        <TerminalLoader title="Admin" loadingText="Loading..." size="lg" />
       </div>
     );
   }
@@ -99,7 +100,11 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     if (session && session.user?.role === 'admin') {
       return (
         <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-          <div className="text-white text-xl">Redirecting to dashboard...</div>
+          <TerminalLoader
+            title="Dashboard"
+            loadingText="Redirecting to dashboard..."
+            size="lg"
+          />
         </div>
       );
     }
@@ -111,9 +116,11 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   if (!session || session.user?.role !== 'admin') {
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <div className="text-white text-xl">
-          Unauthorized access. Redirecting...
-        </div>
+        <TerminalLoader
+          title="Dashboard"
+          loadingText="Loading Admin Dashboard..."
+          size="lg"
+        />
       </div>
     );
   }

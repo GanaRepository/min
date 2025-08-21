@@ -28,6 +28,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
+import TerminalLoader from '@/components/TerminalLoader';
 
 interface PublishedStory {
   _id: string;
@@ -182,35 +183,35 @@ export default function CommunityPage() {
   const getCommunityDisplayInfo = (story: PublishedStory) => {
     const isCompetitionEntry = story.storyType === 'competition';
     const isWinner = isCompetitionEntry && story.competitionWinner;
-    
+
     if (isCompetitionEntry && !isWinner) {
       return {
         showScores: false,
-        badge: "Competition Entry",
-        badgeColor: "bg-purple-500/20 text-purple-400"
+        badge: 'Competition Entry',
+        badgeColor: 'bg-purple-500/20 text-purple-400',
       };
     }
-    
+
     return {
       showScores: true,
       overall: story.assessment?.overallScore || 0,
       creativity: story.assessment?.creativity || 0,
       grammar: story.assessment?.grammar || 0,
-      vocabulary: story.assessment?.vocabulary || 0
+      vocabulary: story.assessment?.vocabulary || 0,
     };
   };
 
   // Pagination logic
   const totalPages = Math.ceil(stories.length / itemsPerPage);
-  const paginatedStories = stories.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+  const paginatedStories = stories.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="text-center">
-          <div className="w-8 h-8 border-4 border-blue-600/30 border-t-blue-600  animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-400">Loading community stories...</p>
-        </div>
+        <TerminalLoader loadingText="Loading community stories..." />
       </div>
     );
   }
@@ -285,7 +286,7 @@ export default function CommunityPage() {
             <div className="text-sm text-gray-400">Competition Winners</div>
           </div>
         </div>
-  )}
+      )}
 
       {/* Filters */}
       <div className="bg-gray-800  p-6">
@@ -404,10 +405,14 @@ export default function CommunityPage() {
                         {story.title}
                       </h3>
                     </Link>
-                    <p className="text-gray-400 text-sm mb-3">{story.excerpt}</p>
+                    <p className="text-gray-400 text-sm mb-3">
+                      {story.excerpt}
+                    </p>
                     <div className="flex items-center gap-2 text-sm text-gray-400 mb-3">
                       <User className="w-4 h-4" />
-                      <span>{story.author.firstName} {story.author.lastName}</span>
+                      <span>
+                        {story.author.firstName} {story.author.lastName}
+                      </span>
                       <span>•</span>
                       <span>{story.genre}</span>
                       <span>•</span>
@@ -435,11 +440,14 @@ export default function CommunityPage() {
               ))}
             </AnimatePresence>
           </div>
-          
+
           {/* Pagination Controls */}
           {totalPages > 1 && (
             <div className="flex justify-center mt-6">
-              <nav className="inline-flex items-center gap-2" aria-label="Pagination">
+              <nav
+                className="inline-flex items-center gap-2"
+                aria-label="Pagination"
+              >
                 <button
                   onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                   disabled={currentPage === 1}
@@ -447,21 +455,25 @@ export default function CommunityPage() {
                 >
                   Prev
                 </button>
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                  <button
-                    key={page}
-                    onClick={() => setCurrentPage(page)}
-                    className={`px-3 py-1 ${
-                      page === currentPage
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                    }`}
-                  >
-                    {page}
-                  </button>
-                ))}
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                  (page) => (
+                    <button
+                      key={page}
+                      onClick={() => setCurrentPage(page)}
+                      className={`px-3 py-1 ${
+                        page === currentPage
+                          ? 'bg-blue-600 text-white'
+                          : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  )
+                )}
                 <button
-                  onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                  onClick={() =>
+                    setCurrentPage((p) => Math.min(totalPages, p + 1))
+                  }
                   disabled={currentPage === totalPages}
                   className="px-3 py-1 bg-gray-700 text-white disabled:bg-gray-900 disabled:text-gray-500"
                 >

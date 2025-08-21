@@ -18,6 +18,7 @@ import {
   ChevronRight,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import TerminalLoader from '@/components/TerminalLoader';
 
 interface Comment {
   _id: string;
@@ -168,10 +169,11 @@ export default function CommentsPage() {
     }
   };
 
+  // ===== LOADING STATE =====
   if (loading && comments.length === 0) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-xl text-gray-400">Loading comments...</div>
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 flex items-center justify-center">
+        <TerminalLoader loadingText="Loading comments......" />
       </div>
     );
   }

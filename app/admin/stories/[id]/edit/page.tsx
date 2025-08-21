@@ -7,6 +7,7 @@ import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, Save, BookOpen, User, BarChart3 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import TerminalLoader from '@/components/TerminalLoader';
 
 interface EditStoryData {
   _id: string;
@@ -125,16 +126,24 @@ export default function EditStory() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-xl text-gray-400">Loading story data...</div>
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-green-900 flex items-center justify-center">
+        <TerminalLoader
+          title="Story Details"
+          loadingText="   Loading story data..."
+          size="lg"
+        />
       </div>
     );
   }
 
   if (!story) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-xl text-gray-400">Story not found</div>
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-green-900 flex items-center justify-center">
+        <TerminalLoader
+          title="Story Details"
+          loadingText="Story Not Found..."
+          size="lg"
+        />
       </div>
     );
   }

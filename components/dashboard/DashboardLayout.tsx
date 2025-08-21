@@ -6,6 +6,7 @@ import { useSession } from 'next-auth/react';
 import { useRouter, usePathname } from 'next/navigation';
 import DashboardSidebar from './DashboardSidebar';
 import MobileNavigation from './MobileNavigation';
+import TerminalLoader from '../TerminalLoader';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -29,13 +30,16 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     }
   }, [session, status, router]);
 
-  if (status === 'loading') {
+
+
+    if (status === 'loading') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 flex items-center justify-center">
-        <div className="text-white text-center">
-          <div className="w-8 h-8 border-4 border-white/30 border-t-white  animate-spin mx-auto mb-4"></div>
-          <p>Loading your creative space...</p>
-        </div>
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black flex items-center justify-center">
+        <TerminalLoader
+          title="Dashboard"
+          loadingText="Loading..."
+          size="md"
+        />
       </div>
     );
   }

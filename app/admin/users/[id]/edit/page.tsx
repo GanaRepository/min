@@ -15,6 +15,7 @@ import {
   Activity,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import TerminalLoader from '@/components/TerminalLoader';
 
 interface EditUserData {
   _id: string;
@@ -141,16 +142,24 @@ export default function EditUser() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-xl text-gray-400">Loading user data...</div>
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-green-900 flex items-center justify-center">
+        <TerminalLoader
+          title="User Details"
+          loadingText="Loading user details..."
+          size="lg"
+        />
       </div>
     );
   }
 
   if (!user) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-xl text-gray-400">User not found</div>
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-green-900 flex items-center justify-center">
+        <TerminalLoader
+          title="User Details"
+          loadingText="User details Not Found..."
+          size="lg"
+        />
       </div>
     );
   }

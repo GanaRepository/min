@@ -15,9 +15,7 @@ export default function TermsOfService() {
         </p>
 
         <div className="space-y-4">
-          <h2 className="text-2xl  text-black mt-8">
-            1. Agreement to Terms
-          </h2>
+          <h2 className="text-2xl  text-black mt-8">1. Agreement to Terms</h2>
           <p>
             By accessing or using Mintoons, you agree to be bound by these Terms
             of Service and all applicable laws and regulations. If you do not
@@ -27,9 +25,7 @@ export default function TermsOfService() {
         </div>
 
         <div className="space-y-4">
-          <h2 className="text-2xl  text-black mt-8">
-            2. Use License
-          </h2>
+          <h2 className="text-2xl  text-black mt-8">2. Use License</h2>
           <p>
             Permission is granted to temporarily access our services for
             personal, non-commercial use only. This license shall automatically
@@ -46,9 +42,7 @@ export default function TermsOfService() {
         </div>
 
         <div className="space-y-4">
-          <h2 className="text-2xl  text-black mt-8">
-            3. Service Availability
-          </h2>
+          <h2 className="text-2xl  text-black mt-8">3. Service Availability</h2>
           <p>
             We strive to ensure our services are available 24/7, but we cannot
             guarantee uninterrupted access. We reserve the right to modify,
@@ -79,9 +73,7 @@ export default function TermsOfService() {
         </div>
 
         <div className="space-y-4">
-          <h2 className="text-2xl  text-black mt-8">
-            6. Contact Information
-          </h2>
+          <h2 className="text-2xl  text-black mt-8">6. Contact Information</h2>
           <p>
             For any questions regarding these Terms of Service, please contact
             us:

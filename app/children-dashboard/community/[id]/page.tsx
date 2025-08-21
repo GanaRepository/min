@@ -1,4 +1,4 @@
-// app/children-dashboard/community/[id]/page.tsx - FIXED INDIVIDUAL STORY VIEW
+// app/children-dashboard/community/[id]/page.tsx 
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -6,6 +6,7 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
+import TerminalLoader from '@/components/TerminalLoader';
 import {
   ArrowLeft,
   Share2,
@@ -173,24 +174,24 @@ export default function CommunityStoryView() {
   // Helper functions for competition story logic
   const shouldShowAssessment = () => {
     if (!story) return false;
-    
+
     // For competition stories, only show assessment if they're a winner
     if (story.storyType === 'competition') {
       return story.competitionWinner;
     }
-    
+
     // For non-competition stories, show if assessment exists
     return !!story.assessment;
   };
 
   const shouldShowOverview = () => {
     if (!story) return false;
-    
+
     // For competition stories, only show overview if they're a winner
     if (story.storyType === 'competition') {
       return story.competitionWinner;
     }
-    
+
     // For non-competition stories, always show overview
     return true;
   };
@@ -207,36 +208,37 @@ export default function CommunityStoryView() {
       // Competition non-winners: only show content and comments
       return [
         { id: 'content', label: 'Content', icon: BookOpen },
-        { id: 'comments', label: 'Comments', icon: MessageSquare }
+        { id: 'comments', label: 'Comments', icon: MessageSquare },
       ];
     }
-    
+
     // Winners and non-competition stories: show tabs as appropriate
     const baseTabs = [];
-    
+
     if (shouldShowOverview()) {
       baseTabs.push({ id: 'overview', label: 'Overview', icon: Eye });
     }
-    
+
     if (shouldShowAssessment()) {
       baseTabs.push({ id: 'assessment', label: 'Assessment', icon: Brain });
     }
-    
+
     baseTabs.push(
       { id: 'content', label: 'Content', icon: BookOpen },
       { id: 'comments', label: 'Comments', icon: MessageSquare }
     );
-    
+
     return baseTabs;
   };
 
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="text-center">
-          <div className="w-8 h-8 border-4 border-blue-600/30 border-t-blue-600  animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-400">Loading story...</p>
-        </div>
+        <TerminalLoader
+          title="Community Story"
+          loadingText="Loading story..."
+          size="md"
+        />
       </div>
     );
   }
@@ -258,8 +260,15 @@ export default function CommunityStoryView() {
   }
 
   // Pagination logic for comments
-  const totalCommentsPages = story ? Math.ceil(story.comments.length / commentsPerPage) : 1;
-  const paginatedComments = story ? story.comments.slice((currentCommentsPage - 1) * commentsPerPage, currentCommentsPage * commentsPerPage) : [];
+  const totalCommentsPages = story
+    ? Math.ceil(story.comments.length / commentsPerPage)
+    : 1;
+  const paginatedComments = story
+    ? story.comments.slice(
+        (currentCommentsPage - 1) * commentsPerPage,
+        currentCommentsPage * commentsPerPage
+      )
+    : [];
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
@@ -531,29 +540,40 @@ export default function CommunityStoryView() {
         {/* Pagination Controls for Comments */}
         {totalCommentsPages > 1 && (
           <div className="flex justify-center mt-6">
-            <nav className="inline-flex items-center gap-2" aria-label="Pagination">
+            <nav
+              className="inline-flex items-center gap-2"
+              aria-label="Pagination"
+            >
               <button
-                onClick={() => setCurrentCommentsPage((p) => Math.max(1, p - 1))}
+                onClick={() =>
+                  setCurrentCommentsPage((p) => Math.max(1, p - 1))
+                }
                 disabled={currentCommentsPage === 1}
                 className="px-3 py-1 bg-gray-700 text-white disabled:bg-gray-900 disabled:text-gray-500"
               >
                 Prev
               </button>
-              {Array.from({ length: totalCommentsPages }, (_, i) => i + 1).map((page) => (
-                <button
-                  key={page}
-                  onClick={() => setCurrentCommentsPage(page)}
-                  className={`px-3 py-1 ${
-                    page === currentCommentsPage
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                  }`}
-                >
-                  {page}
-                </button>
-              ))}
+              {Array.from({ length: totalCommentsPages }, (_, i) => i + 1).map(
+                (page) => (
+                  <button
+                    key={page}
+                    onClick={() => setCurrentCommentsPage(page)}
+                    className={`px-3 py-1 ${
+                      page === currentCommentsPage
+                        ? 'bg-blue-600 text-white'
+                        : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                    }`}
+                  >
+                    {page}
+                  </button>
+                )
+              )}
               <button
-                onClick={() => setCurrentCommentsPage((p) => Math.min(totalCommentsPages, p + 1))}
+                onClick={() =>
+                  setCurrentCommentsPage((p) =>
+                    Math.min(totalCommentsPages, p + 1)
+                  )
+                }
                 disabled={currentCommentsPage === totalCommentsPages}
                 className="px-3 py-1 bg-gray-700 text-white disabled:bg-gray-900 disabled:text-gray-500"
               >

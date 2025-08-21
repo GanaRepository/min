@@ -60,9 +60,7 @@ export default function WritingStreak({
           >
             <Flame className="w-10 h-10 text-white" />
           </motion.div>
-          <div className="text-3xl  text-orange-400 mb-1">
-            {currentStreak}
-          </div>
+          <div className="text-3xl  text-orange-400 mb-1">{currentStreak}</div>
           <div className="text-gray-400 text-sm">Current Streak</div>
         </div>
 
@@ -76,9 +74,7 @@ export default function WritingStreak({
           >
             <span className="text-2xl">🏆</span>
           </motion.div>
-          <div className="text-3xl  text-yellow-400 mb-1">
-            {bestStreak}
-          </div>
+          <div className="text-3xl  text-yellow-400 mb-1">{bestStreak}</div>
           <div className="text-gray-400 text-sm">Best Streak</div>
         </div>
 

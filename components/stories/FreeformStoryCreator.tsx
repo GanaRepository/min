@@ -164,9 +164,7 @@ export default function FreeformStoryCreator({
 
             <div className="space-y-4 text-sm">
               <div className="p-3 bg-gray-700/30 rounded-lg">
-                <h5 className="text-green-400  mb-1">
-                  Start Strong
-                </h5>
+                <h5 className="text-green-400  mb-1">Start Strong</h5>
                 <p className="text-gray-300">
                   Begin with action, dialogue, or an interesting situation to
                   hook your readers.
@@ -174,9 +172,7 @@ export default function FreeformStoryCreator({
               </div>
 
               <div className="p-3 bg-gray-700/30 rounded-lg">
-                <h5 className="text-blue-400  mb-1">
-                  Show, Don't Tell
-                </h5>
+                <h5 className="text-blue-400  mb-1">Show, Don't Tell</h5>
                 <p className="text-gray-300">
                   Instead of "I was scared," try "My hands trembled as I reached
                   for the door."
@@ -184,18 +180,14 @@ export default function FreeformStoryCreator({
               </div>
 
               <div className="p-3 bg-gray-700/30 rounded-lg">
-                <h5 className="text-purple-400  mb-1">
-                  Use Your Senses
-                </h5>
+                <h5 className="text-purple-400  mb-1">Use Your Senses</h5>
                 <p className="text-gray-300">
                   Describe what you see, hear, smell, feel, or taste to bring
                   your story to life.
                 </p>
               </div>
               <div className="p-3 bg-gray-700/30 rounded-lg">
-                <h5 className="text-purple-400  mb-1">
-                  Use Your Senses
-                </h5>
+                <h5 className="text-purple-400  mb-1">Use Your Senses</h5>
                 <p className="text-gray-300">
                   Describe what you see, hear, smell, feel, or taste to bring
                   your story to life.

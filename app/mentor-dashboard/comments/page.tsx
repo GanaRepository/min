@@ -1,4 +1,5 @@
-'use client';
+import TerminalLoader from '../../../components/TerminalLoader';
+('use client');
 
 import { useState, useEffect, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
@@ -93,7 +94,6 @@ export default function MentorComments() {
     }
   };
 
-
   const filteredComments = comments.filter((comment) => {
     const matchesSearch =
       comment.comment.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -119,7 +119,11 @@ export default function MentorComments() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-xl text-gray-400">Loading comments...</div>
+        <TerminalLoader
+          title="Comments"
+          loadingText="Loading comments..."
+          size="md"
+        />
       </div>
     );
   }

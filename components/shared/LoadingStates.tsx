@@ -137,9 +137,7 @@ export function CreatingStoryState() {
           ✨
         </motion.div>
 
-        <h2 className="text-2xl  mb-6">
-          Creating Your Magical Story...
-        </h2>
+        <h2 className="text-2xl  mb-6">Creating Your Magical Story...</h2>
 
         <div className="space-y-4">
           {steps.map((step, index) => (

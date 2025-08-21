@@ -19,6 +19,7 @@ import {
   BarChart3,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import TerminalLoader from '@/components/TerminalLoader';
 
 interface DashboardStats {
   users: {
@@ -139,11 +140,12 @@ export default function AdminDashboard() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="text-center">
-          <div className="w-8 h-8 border-4 border-blue-600/30 border-t-blue-600  animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-400">Loading dashboard...</p>
-        </div>
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-green-900 flex items-center justify-center">
+        <TerminalLoader
+          title="Dashboard Details"
+          loadingText="Loading Dashboard..."
+          size="lg"
+        />
       </div>
     );
   }

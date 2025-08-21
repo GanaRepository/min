@@ -21,6 +21,7 @@ import {
   RefreshCw,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import TerminalLoader from '@/components/TerminalLoader';
 
 interface Student {
   _id: string;
@@ -241,10 +242,12 @@ export default function AssignStudentsPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-xl text-gray-400">
-          Loading students and mentors...
-        </div>
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-green-900 flex items-center justify-center">
+        <TerminalLoader
+          title="Mentor Edits"
+          loadingText="   Loading students and mentors..."
+          size="lg"
+        />
       </div>
     );
   }

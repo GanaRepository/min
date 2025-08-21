@@ -12,6 +12,7 @@ import {
   Edit,
   Trash2,
 } from 'lucide-react';
+import TerminalLoader from '@/components/TerminalLoader';
 
 interface Comment {
   _id: string;
@@ -127,19 +128,25 @@ export default function MentorStoryDetail() {
     } catch (e) {}
   };
 
-  if (loading) {
-    return (
-      <div className="text-center py-12 text-gray-400">Loading story...</div>
-    );
-  }
+
+
+    if (loading) {
+      return (
+        <div className="flex items-center justify-center h-64">
+          <TerminalLoader
+            title="Stories"
+            loadingText="Loading story..."
+            size="md"
+          />
+        </div>
+      );
+    }
 
   if (!story) {
     return (
       <div className="text-center py-12">
         <BookOpen className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-        <h3 className="text-xl text-gray-400 mb-2">
-          Story not found
-        </h3>
+        <h3 className="text-xl text-gray-400 mb-2">Story not found</h3>
         <Link href="/mentor-dashboard/stories">
           <button className="mt-4 bg-blue-600 text-white px-4 py-2 hover:bg-blue-700 transition-colors">
             Back to Stories

@@ -63,9 +63,7 @@ export default function StatsCards() {
               >
                 <stat.icon className="w-5 h-5 text-white" />
               </div>
-              <span className="text-green-400 text-sm ">
-                {stat.change}
-              </span>
+              <span className="text-green-400 text-sm ">{stat.change}</span>
             </div>
 
             <div className="text-2xl sm:text-3xl  text-white mb-1">

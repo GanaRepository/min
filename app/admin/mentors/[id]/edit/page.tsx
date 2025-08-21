@@ -7,6 +7,7 @@ import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, Save, User, Mail, FileText, Tag } from 'lucide-react';
 import { motion } from 'framer-motion';
+import TerminalLoader from '@/components/TerminalLoader';
 
 interface EditMentorData {
   _id: string;
@@ -149,15 +150,31 @@ export default function EditMentor() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-xl text-gray-400">Loading mentor data...</div>
+        <div className="text-xl text-gray-400"></div>
+      </div>
+    );
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-green-900 flex items-center justify-center">
+        <TerminalLoader
+          title="Mentor Edits"
+          loadingText="Loading mentor data..."
+          size="lg"
+        />
       </div>
     );
   }
 
   if (!mentor) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-xl text-gray-400">Mentor not found</div>
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-green-900 flex items-center justify-center">
+        <TerminalLoader
+          title="Mentor Details"
+          loadingText="Mentor not found...."
+          size="lg"
+        />
       </div>
     );
   }

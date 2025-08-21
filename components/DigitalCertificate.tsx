@@ -114,17 +114,12 @@ export default function DigitalCertificate({
 
           <p className="text-lg text-gray-600 mb-2">
             for the story "
-            <span className=" text-gray-800">
-              {winnerData.title}
-            </span>
-            "
+            <span className=" text-gray-800">{winnerData.title}</span>"
           </p>
 
           <p className="text-lg text-gray-600">
             with a score of{' '}
-            <span className=" text-green-600">
-              {winnerData.score}%
-            </span>
+            <span className=" text-green-600">{winnerData.score}%</span>
           </p>
         </div>
 
@@ -133,9 +128,7 @@ export default function DigitalCertificate({
           <div className="text-center">
             <div className="w-32 h-px bg-gray-400 mb-1"></div>
             <p className="text-sm text-gray-500">Date Awarded</p>
-            <p className="text-sm ">
-              {new Date().toLocaleDateString()}
-            </p>
+            <p className="text-sm ">{new Date().toLocaleDateString()}</p>
           </div>
 
           <div className="text-center">

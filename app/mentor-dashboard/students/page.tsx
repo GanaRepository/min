@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import TerminalLoader from '@/components/TerminalLoader';
 import {
   Users,
   BookOpen,
@@ -40,7 +41,6 @@ export default function MentorStudents() {
   // Pagination: reset or clamp currentPage safely
   const prevSearchTerm = useRef(searchTerm);
   const prevStudentsLength = useRef(students.length);
-
 
   // (Declarations and effect already present above, remove duplicates)
 
@@ -103,24 +103,22 @@ export default function MentorStudents() {
     fetchStudents();
   }, [session, status, router, fetchStudents]);
 
-
-
-
   const paginatedStudents = filteredStudents.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
 
-
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-xl text-gray-400">Loading students...</div>
+        <TerminalLoader
+          title="Students"
+          loadingText="Loading students..."
+          size="md"
+        />
       </div>
     );
   }
-
-  // (Pagination effect already declared above, remove duplicate)
 
   return (
     <div className="p-2 sm:p-4 md:p-6 space-y-4 sm:space-y-6">

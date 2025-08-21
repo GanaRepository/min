@@ -19,6 +19,7 @@ import {
   Clock,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import TerminalLoader from '@/components/TerminalLoader';
 
 interface MentorLayoutProps {
   children: React.ReactNode;
@@ -63,18 +64,29 @@ export default function MentorLayout({ children }: MentorLayoutProps) {
     return pathname.startsWith(path);
   };
 
+
   if (status === 'loading') {
-    return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <div className="text-white text-xl">Verifying mentor access...</div>
-      </div>
-    );
-  }
+        return (
+          <div className="flex items-center justify-center h-64">
+            <TerminalLoader
+              title="Accessing Mentor Dashboard"
+              loadingText="Verifying mentor access..."
+              size="md"
+            />
+          </div>
+        );
+      }
 
   if (!session || session.user?.role !== 'mentor') {
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <div className="text-white text-xl">Redirecting to login...</div>
+         <div className="flex items-center justify-center h-64">
+           <TerminalLoader
+             title="Dashboard"
+             loadingText="Redirecting to login..."
+             size="md"
+           />
+         </div>
       </div>
     );
   }
@@ -96,7 +108,8 @@ export default function MentorLayout({ children }: MentorLayoutProps) {
       </div>
 
       {/* Layout Container */}
-      <div className="flex h-screen">{/* Changed from flex-col lg:flex-row to flex and h-screen */}
+      <div className="flex h-screen">
+        {/* Changed from flex-col lg:flex-row to flex and h-screen */}
         {/* Sidebar */}
         <div
           className={`w-60 sm:w-64 bg-gray-800 border-r border-gray-700 flex-shrink-0 transform transition-transform duration-300 ease-in-out ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 fixed lg:static inset-y-0 left-0 z-40 lg:z-auto`}

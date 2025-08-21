@@ -1,4 +1,3 @@
-//app/admin/revenue/page.tsx
 
 // app/admin/revenue/page.tsx (Fixed)
 'use client';
@@ -18,6 +17,7 @@ import {
   Calendar,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import TerminalLoader from '@/components/TerminalLoader';
 
 interface RevenueData {
   totalRevenue: number;
@@ -69,16 +69,24 @@ export default function RevenuePage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-xl text-gray-400">Loading revenue data...</div>
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-green-900 flex items-center justify-center">
+        <TerminalLoader
+          title="Revenue"
+          loadingText="   Loading revenue data..."
+          size="lg"
+        />
       </div>
     );
   }
 
   if (!revenueData) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-xl text-gray-400">Failed to load revenue data</div>
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-green-900 flex items-center justify-center">
+        <TerminalLoader
+          title="Revenue"
+          loadingText="Failed to load revenue data"
+          size="lg"
+        />
       </div>
     );
   }

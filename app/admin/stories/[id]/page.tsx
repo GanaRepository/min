@@ -22,6 +22,7 @@ import {
   X,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import TerminalLoader from '@/components/TerminalLoader';
 
 interface StoryDetails {
   _id: string;
@@ -243,16 +244,24 @@ export default function ViewStory() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-xl text-gray-400">Loading story details...</div>
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-green-900 flex items-center justify-center">
+        <TerminalLoader
+          title="Story Details"
+          loadingText="   Loading story details..."
+          size="lg"
+        />
       </div>
     );
   }
 
   if (!story) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-xl text-gray-400">Story not found</div>
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-green-900 flex items-center justify-center">
+        <TerminalLoader
+          title="Story Details"
+          loadingText="Story Not Found..."
+          size="lg"
+        />
       </div>
     );
   }

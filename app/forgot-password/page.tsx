@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { ArrowLeft, Mail, BookOpen, Sparkles } from 'lucide-react';
+import TerminalLoader from '../../components/TerminalLoader';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { motion, useScroll, useTransform } from 'framer-motion';
@@ -108,7 +109,11 @@ const ForgotPasswordPage: React.FC = () => {
   if (!mounted) {
     return (
       <div className="min-h-screen bg-gradient-radial from-blue-900/90 via-indigo-800/90 to-purple-900/90 flex items-center justify-center">
-        <div className="text-white">Loading...</div>
+        <TerminalLoader
+          title="Forgot Password"
+          loadingText="Loading..."
+          size="md"
+        />
       </div>
     );
   }

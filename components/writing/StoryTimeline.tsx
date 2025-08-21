@@ -474,9 +474,7 @@ export default function StoryTimeline({
                 </div>
                 <div className="bg-purple-500/20 border border-purple-500/30 rounded-lg p-4 rounded-bl-none">
                   <div className="flex items-center space-x-2 mb-2">
-                    <span className="text-purple-300  text-sm">
-                      You wrote:
-                    </span>
+                    <span className="text-purple-300  text-sm">You wrote:</span>
                     <span className="text-xs text-gray-400">
                       Turn {turn.turnNumber}
                     </span>

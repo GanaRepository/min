@@ -55,9 +55,7 @@ export default function PrivacyPolicy() {
         </div>
 
         <div className="space-y-4">
-          <h2 className="text-2xl  text-black mt-8">
-            3. Data Security
-          </h2>
+          <h2 className="text-2xl  text-black mt-8">3. Data Security</h2>
           <p>
             The security of your data is important to us. We implement
             appropriate security measures to protect against unauthorized
@@ -68,9 +66,7 @@ export default function PrivacyPolicy() {
         </div>
 
         <div className="space-y-4">
-          <h2 className="text-2xl  text-black mt-8">
-            4. Third-Party Services
-          </h2>
+          <h2 className="text-2xl  text-black mt-8">4. Third-Party Services</h2>
           <p>
             We may employ third-party companies and individuals to facilitate
             our services, provide services on our behalf, perform
@@ -82,9 +78,7 @@ export default function PrivacyPolicy() {
         </div>
 
         <div className="space-y-4">
-          <h2 className="text-2xl  text-black mt-8">
-            5. Contact Us
-          </h2>
+          <h2 className="text-2xl  text-black mt-8">5. Contact Us</h2>
           <p>
             If you have any questions about this Privacy Policy, please contact
             us:

@@ -30,6 +30,7 @@ import {
   Download,
   Eye,
 } from 'lucide-react';
+import TerminalLoader from '@/components/TerminalLoader';
 
 // ===== INTERFACES =====
 interface UsageStats {
@@ -358,17 +359,21 @@ export default function CreateStoriesPage() {
     }
   };
 
-  // ===== LOADING STATE =====
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 flex items-center justify-center">
-        <div className="text-white text-xl flex items-center gap-3">
-          <div className="w-8 h-8 border-4 border-blue-400 border-t-transparent  animate-spin"></div>
-          Loading your creative studio...
+
+
+    // ===== LOADING STATE =====
+    if (loading) {
+      return (
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+          <TerminalLoader
+            title="Dashboard"
+            loadingText="Loading your creative studio..."
+            size="md"
+          />
         </div>
-      </div>
-    );
-  }
+      );
+    }
+  
 
   // ===== RENDER SECTIONS =====
   const renderHomeSection = () => (
@@ -403,12 +408,8 @@ export default function CreateStoriesPage() {
         <p className="text-xl text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed">
           Three powerful ways to create and improve your stories:
           <span className="text-blue-400 "> AI Collaboration</span>,
-          <span className="text-green-400 "> Expert Assessment</span>
-          , and
-          <span className="text-purple-400 ">
-            {' '}
-            Monthly Competitions
-          </span>
+          <span className="text-green-400 "> Expert Assessment</span>, and
+          <span className="text-purple-400 "> Monthly Competitions</span>
         </p>
 
         {/* Usage Stats Overview */}
@@ -482,9 +483,7 @@ export default function CreateStoriesPage() {
               </div>
             </div>
 
-            <h3 className="text-2xl  text-white mb-4">
-              Freestyle Writing
-            </h3>
+            <h3 className="text-2xl  text-white mb-4">Freestyle Writing</h3>
             <p className="text-gray-300 mb-6">
               Turn-based AI collaboration to develop your creative story ideas
             </p>
@@ -541,9 +540,7 @@ export default function CreateStoriesPage() {
               </div>
             </div>
 
-            <h3 className="text-2xl  text-white mb-4">
-              Upload for Assessment
-            </h3>
+            <h3 className="text-2xl  text-white mb-4">Upload for Assessment</h3>
             <p className="text-gray-300 mb-6">
               Get detailed AI feedback on stories you've already written
             </p>
@@ -600,9 +597,7 @@ export default function CreateStoriesPage() {
               </div>
             </div>
 
-            <h3 className="text-2xl  text-white mb-4">
-              Competition Entry
-            </h3>
+            <h3 className="text-2xl  text-white mb-4">Competition Entry</h3>
             <p className="text-gray-300 mb-6">
               Submit your best stories to monthly writing competitions
             </p>
@@ -658,9 +653,7 @@ export default function CreateStoriesPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <div className="text-center">
             <Brain className="w-12 h-12 text-blue-400 mx-auto mb-4" />
-            <h3 className="text-lg  text-white mb-2">
-              AI-Powered Learning
-            </h3>
+            <h3 className="text-lg  text-white mb-2">AI-Powered Learning</h3>
             <p className="text-gray-400 text-sm">
               Get detailed feedback on 16+ writing categories
             </p>
@@ -668,9 +661,7 @@ export default function CreateStoriesPage() {
 
           <div className="text-center">
             <Shield className="w-12 h-12 text-green-400 mx-auto mb-4" />
-            <h3 className="text-lg  text-white mb-2">
-              Safe & Secure
-            </h3>
+            <h3 className="text-lg  text-white mb-2">Safe & Secure</h3>
             <p className="text-gray-400 text-sm">
               Child-friendly platform with integrity checking
             </p>
@@ -678,9 +669,7 @@ export default function CreateStoriesPage() {
 
           <div className="text-center">
             <Trophy className="w-12 h-12 text-purple-400 mx-auto mb-4" />
-            <h3 className="text-lg  text-white mb-2">
-              Monthly Contests
-            </h3>
+            <h3 className="text-lg  text-white mb-2">Monthly Contests</h3>
             <p className="text-gray-400 text-sm">
               Compete with young writers worldwide
             </p>
@@ -688,9 +677,7 @@ export default function CreateStoriesPage() {
 
           <div className="text-center">
             <Heart className="w-12 h-12 text-pink-400 mx-auto mb-4" />
-            <h3 className="text-lg  text-white mb-2">
-              Encouraging Community
-            </h3>
+            <h3 className="text-lg  text-white mb-2">Encouraging Community</h3>
             <p className="text-gray-400 text-sm">
               Supportive feedback from mentors and peers
             </p>
@@ -746,9 +733,7 @@ export default function CreateStoriesPage() {
           </div>
         </div>
 
-        <h1 className="text-4xl  text-white mb-4">
-          Freestyle Story Writing
-        </h1>
+        <h1 className="text-4xl  text-white mb-4">Freestyle Story Writing</h1>
         <p className="text-xl text-gray-300 mb-8">
           Collaborate with AI to create amazing stories through turn-based
           writing
@@ -898,9 +883,7 @@ export default function CreateStoriesPage() {
           </div>
         </div>
 
-        <h1 className="text-4xl  text-white mb-4">
-          Upload for Assessment
-        </h1>
+        <h1 className="text-4xl  text-white mb-4">Upload for Assessment</h1>
         <p className="text-xl text-gray-300 mb-8">
           Get detailed AI feedback on stories you've already written
         </p>
@@ -909,9 +892,7 @@ export default function CreateStoriesPage() {
       <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-8">
         {/* Upload Type Selection */}
         <div className="mb-8">
-          <h3 className="text-lg  text-white mb-4">
-            Upload Purpose:
-          </h3>
+          <h3 className="text-lg  text-white mb-4">Upload Purpose:</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <button
               onClick={() =>
@@ -1105,27 +1086,19 @@ export default function CreateStoriesPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="text-center">
             <Target className="w-8 h-8 text-blue-400 mx-auto mb-2" />
-            <div className=" text-white text-sm">
-              Grammar Analysis
-            </div>
+            <div className=" text-white text-sm">Grammar Analysis</div>
           </div>
           <div className="text-center">
             <Sparkles className="w-8 h-8 text-purple-400 mx-auto mb-2" />
-            <div className=" text-white text-sm">
-              Creativity Score
-            </div>
+            <div className=" text-white text-sm">Creativity Score</div>
           </div>
           <div className="text-center">
             <BookOpen className="w-8 h-8 text-green-400 mx-auto mb-2" />
-            <div className=" text-white text-sm">
-              Vocabulary Review
-            </div>
+            <div className=" text-white text-sm">Vocabulary Review</div>
           </div>
           <div className="text-center">
             <Shield className="w-8 h-8 text-orange-400 mx-auto mb-2" />
-            <div className=" text-white text-sm">
-              Integrity Check
-            </div>
+            <div className=" text-white text-sm">Integrity Check</div>
           </div>
         </div>
       </div>
@@ -1153,9 +1126,7 @@ export default function CreateStoriesPage() {
           </div>
         </div>
 
-        <h1 className="text-4xl  text-white mb-4">
-          Competition Entry
-        </h1>
+        <h1 className="text-4xl  text-white mb-4">Competition Entry</h1>
         <p className="text-xl text-gray-300 mb-8">
           Submit your best stories to monthly writing competitions - completely
           FREE!
@@ -1163,18 +1134,14 @@ export default function CreateStoriesPage() {
       </motion.div>
 
       <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-8 mb-8">
-        <h3 className="text-2xl  text-white mb-6">
-          How Competitions Work:
-        </h3>
+        <h3 className="text-2xl  text-white mb-6">How Competitions Work:</h3>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div className="text-center">
             <div className="w-12 h-12 bg-purple-600  flex items-center justify-center mx-auto mb-4 text-white ">
               1
             </div>
-            <h4 className=" text-white mb-2">
-              Submit (Days 1-25)
-            </h4>
+            <h4 className=" text-white mb-2">Submit (Days 1-25)</h4>
             <p className="text-gray-400 text-sm">
               Upload up to 3 of your best stories
             </p>
@@ -1184,9 +1151,7 @@ export default function CreateStoriesPage() {
             <div className="w-12 h-12 bg-yellow-600  flex items-center justify-center mx-auto mb-4 text-white ">
               2
             </div>
-            <h4 className=" text-white mb-2">
-              AI Judging (Days 26-30)
-            </h4>
+            <h4 className=" text-white mb-2">AI Judging (Days 26-30)</h4>
             <p className="text-gray-400 text-sm">
               Advanced AI evaluates all entries fairly
             </p>
@@ -1204,9 +1169,7 @@ export default function CreateStoriesPage() {
         </div>
 
         <div className="bg-purple-500/10 border border-purple-500/20  p-6 mb-6">
-          <h4 className=" text-purple-300 mb-3">
-            Competition Rules:
-          </h4>
+          <h4 className=" text-purple-300 mb-3">Competition Rules:</h4>
           <ul className="space-y-2 text-gray-300 text-sm">
             <li>• Completely FREE to enter</li>
             <li>• Maximum 3 stories per month</li>
@@ -1236,15 +1199,11 @@ export default function CreateStoriesPage() {
 
       {/* Competition Features */}
       <div className="bg-gray-800/40 backdrop-blur-xl border border-gray-600/30  p-6">
-        <h3 className="text-xl  text-white mb-4">
-          Why Enter Competitions?
-        </h3>
+        <h3 className="text-xl  text-white mb-4">Why Enter Competitions?</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="text-center">
             <Gift className="w-8 h-8 text-purple-400 mx-auto mb-2" />
-            <div className=" text-white text-sm">
-              Completely Free
-            </div>
+            <div className=" text-white text-sm">Completely Free</div>
           </div>
           <div className="text-center">
             <Star className="w-8 h-8 text-yellow-400 mx-auto mb-2" />
@@ -1252,9 +1211,7 @@ export default function CreateStoriesPage() {
           </div>
           <div className="text-center">
             <Brain className="w-8 h-8 text-blue-400 mx-auto mb-2" />
-            <div className=" text-white text-sm">
-              Fair AI Judging
-            </div>
+            <div className=" text-white text-sm">Fair AI Judging</div>
           </div>
           <div className="text-center">
             <Heart className="w-8 h-8 text-pink-400 mx-auto mb-2" />

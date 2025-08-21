@@ -1,5 +1,6 @@
+import TerminalLoader from '../../../../components/TerminalLoader';
 // app/children-dashboard/story/[sessionId]/page.tsx - FIXED INPUT VISIBILITY
-'use client';
+('use client');
 
 import { useState, useEffect, useRef } from 'react';
 import { useSession } from 'next-auth/react';
@@ -368,23 +369,27 @@ export default function StoryWritingInterface({
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-900 via-slate-900 to-green-900 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin  h-32 w-32 border-b-2 border-purple-400 mx-auto mb-4"></div>
-          <p className="text-white text-lg">Loading your story...</p>
-        </div>
+        <TerminalLoader
+          title="Story"
+          loadingText="Loading your story..."
+          size="md"
+        />
       </div>
     );
   }
 
-  if (!storySession) {
+    if (!storySession) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-900 via-slate-900 to-green-900 flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-white text-lg">Story not found</p>
-        </div>
+        <TerminalLoader
+          title="Story"
+          loadingText="Story not found"
+          size="md"
+        />
       </div>
     );
   }
+
 
   const isCompleted = storySession.status === 'completed';
   // More robust canWrite logic - check each condition separately

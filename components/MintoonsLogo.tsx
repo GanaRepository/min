@@ -53,9 +53,7 @@ const MintoonsLogo: React.FC<MintoonsLogoProps> = ({
       </div>
 
       {/* Logo Text */}
-      <span className={`text-2xl  ${variantConfig.textColor}`}>
-        Mintoons
-      </span>
+      <span className={`text-2xl  ${variantConfig.textColor}`}>Mintoons</span>
     </div>
   );
 };

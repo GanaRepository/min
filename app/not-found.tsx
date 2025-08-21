@@ -39,6 +39,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { Home, Search, ArrowLeft } from 'lucide-react';
+import TerminalLoader from '@/components/TerminalLoader';
 
 const NotFound = () => {
   const [mounted, setMounted] = useState(false);
@@ -53,7 +54,7 @@ const NotFound = () => {
   if (!mounted) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-900/90 via-gray-800/90 to-blue-900/90 flex items-center justify-center">
-        <div className="text-white">Loading...</div>
+        <TerminalLoader title="404" loadingText="Loading..." size="md" />
       </div>
     );
   }

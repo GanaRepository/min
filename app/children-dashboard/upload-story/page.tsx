@@ -1,5 +1,6 @@
+import TerminalLoader from '../../../components/TerminalLoader';
 // app/children-dashboard/upload-story/page.tsx - Separate Story Upload (NOT for AI Assessment)
-'use client';
+('use client');
 
 import { useState } from 'react';
 import { useSession } from 'next-auth/react';
@@ -269,10 +270,11 @@ export default function UploadStoryPage() {
           className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white py-4 px-6  flex items-center justify-center gap-3 transition-colors  text-lg"
         >
           {uploading ? (
-            <>
-              <div className="w-5 h-5 border-2 border-white/30 border-t-white  animate-spin"></div>
-              Uploading Story...
-            </>
+            <TerminalLoader
+              title="Uploading"
+              loadingText="Uploading Story..."
+              size="sm"
+            />
           ) : (
             <>
               <Upload size={20} />

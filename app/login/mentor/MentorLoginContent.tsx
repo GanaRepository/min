@@ -9,11 +9,12 @@ import { useRouter } from 'next/navigation';
 import { signIn } from 'next-auth/react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import Image from 'next/image';
+import TerminalLoader from '@/components/TerminalLoader';
 
-import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
 import {
   ToastProvider,
   ToastViewport,
@@ -90,7 +91,11 @@ const MentorLoginContent: React.FC = () => {
   if (!mounted) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-emerald-900/90 via-teal-800/90 to-blue-900/90 flex items-center justify-center">
-        <div className="text-white">Loading...</div>
+        <TerminalLoader
+          title="Mentor Login"
+          loadingText="Loading..."
+          size="md"
+        />
       </div>
     );
   }

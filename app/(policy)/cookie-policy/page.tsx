@@ -15,9 +15,7 @@ export default function CookiePolicy() {
         </p>
 
         <div className="space-y-4">
-          <h2 className="text-2xl  text-black mt-8">
-            1. What Are Cookies
-          </h2>
+          <h2 className="text-2xl  text-black mt-8">1. What Are Cookies</h2>
           <p>
             Cookies are small text files that are placed on your computer or
             mobile device when you visit mintoons.com. They are widely used to
@@ -53,9 +51,7 @@ export default function CookiePolicy() {
         </div>
 
         <div className="space-y-4">
-          <h2 className="text-2xl  text-black mt-8">
-            3. How We Use Cookies
-          </h2>
+          <h2 className="text-2xl  text-black mt-8">3. How We Use Cookies</h2>
           <p>We use cookies for various purposes on mintoons.com, including:</p>
           <ul className="list-disc pl-6 space-y-2">
             <li>To provide essential website functionality</li>
@@ -66,9 +62,7 @@ export default function CookiePolicy() {
         </div>
 
         <div className="space-y-4">
-          <h2 className="text-2xl  text-black mt-8">
-            4. Managing Cookies
-          </h2>
+          <h2 className="text-2xl  text-black mt-8">4. Managing Cookies</h2>
           <p>
             Most web browsers allow you to control cookies through their
             settings. You can:
@@ -86,9 +80,7 @@ export default function CookiePolicy() {
         </div>
 
         <div className="space-y-4">
-          <h2 className="text-2xl  text-black mt-8">
-            5. Third-Party Cookies
-          </h2>
+          <h2 className="text-2xl  text-black mt-8">5. Third-Party Cookies</h2>
           <p>We may use third-party services that use cookies to:</p>
           <ul className="list-disc pl-6 space-y-2">
             <li>Analyze website traffic (Google Analytics)</li>
@@ -113,9 +105,7 @@ export default function CookiePolicy() {
         </div>
 
         <div className="space-y-4">
-          <h2 className="text-2xl  text-black mt-8">
-            7. Contact Us
-          </h2>
+          <h2 className="text-2xl  text-black mt-8">7. Contact Us</h2>
           <p>
             If you have questions about our Cookie Policy, please contact us:
           </p>

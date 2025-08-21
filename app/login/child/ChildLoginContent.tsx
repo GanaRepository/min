@@ -1,5 +1,6 @@
-// app/login/child/ChildLoginContent.tsx
 'use client';
+import TerminalLoader from '../../../components/TerminalLoader';
+// app/login/child/ChildLoginContent.tsx
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useInView } from 'react-intersection-observer';
@@ -10,10 +11,10 @@ import { signIn } from 'next-auth/react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import Image from 'next/image';
 import { Suspense } from 'react';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
 import {
   ToastProvider,
   ToastViewport,
@@ -114,8 +115,12 @@ function ChildLoginContent() {
 
   if (!mounted) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-900/90 via-pink-800/90 to-orange-900/90 flex items-center justify-center">
-        <div className="text-white">Loading...</div>
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black flex items-center justify-center">
+        <TerminalLoader
+          title="Child Login"
+          loadingText="Loading..."
+          size="md"
+        />
       </div>
     );
   }
@@ -310,7 +315,6 @@ function ChildLoginContent() {
               >
                 <div className="relative">
                   <BookOpen className="w-8 h-8 text-white" />
-            
                 </div>
               </motion.div>
 

@@ -19,6 +19,7 @@ import {
   BarChart3,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import TerminalLoader from '@/components/TerminalLoader';
 
 interface Story {
   _id: string;
@@ -183,8 +184,12 @@ export default function StoriesPage() {
 
   if (loading && stories.length === 0) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-xl text-gray-400">Loading stories...</div>
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-green-900 flex items-center justify-center">
+        <TerminalLoader
+          title="Story Details"
+          loadingText="Loading stories..."
+          size="lg"
+        />
       </div>
     );
   }

@@ -23,6 +23,7 @@ import {
   BarChart3,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import TerminalLoader from '@/components/TerminalLoader';
 
 interface Winner {
   position: number;
@@ -247,13 +248,11 @@ export default function AdminCompetitionsPage() {
       }
     });
 
+  // ===== LOADING STATE =====
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-16 h-16 border-4 border-gray-700 border-t-green-400  animate-spin mb-4"></div>
-          <p className="text-green-300 ">Loading competitions...</p>
-        </div>
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 flex items-center justify-center">
+        <TerminalLoader loadingText="Loading competitions..." />
       </div>
     );
   }
@@ -664,9 +663,7 @@ export default function AdminCompetitionsPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Competition Info */}
                 <div>
-                  <h3 className=" text-white mb-3">
-                    Competition Information
-                  </h3>
+                  <h3 className=" text-white mb-3">Competition Information</h3>
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
                       <span className="text-gray-400">Phase:</span>
@@ -714,9 +711,7 @@ export default function AdminCompetitionsPage() {
                 {/* Judging Criteria */}
                 {selectedCompetition.judgingCriteria && (
                   <div>
-                    <h3 className=" text-white mb-3">
-                      Judging Criteria
-                    </h3>
+                    <h3 className=" text-white mb-3">Judging Criteria</h3>
                     <div className="space-y-2 text-sm">
                       {Object.entries(selectedCompetition.judgingCriteria).map(
                         ([key, value]) => (
@@ -739,9 +734,7 @@ export default function AdminCompetitionsPage() {
               {selectedCompetition.winners &&
                 selectedCompetition.winners.length > 0 && (
                   <div className="mt-6">
-                    <h3 className=" text-white mb-4">
-                      Competition Winners
-                    </h3>
+                    <h3 className=" text-white mb-4">Competition Winners</h3>
                     <div className="space-y-3">
                       {selectedCompetition.winners.map((winner) => (
                         <div key={winner.position} className="p-4 bg-gray-800 ">

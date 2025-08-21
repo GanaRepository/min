@@ -130,9 +130,7 @@ export default function PricingPage() {
               <div className="bg-purple-500/20 rounded-full p-4 w-16 h-16 flex items-center justify-center mx-auto mb-4">
                 <Trophy className="text-purple-400" size={24} />
               </div>
-              <h3 className="text-white  mb-2">
-                3 Competition Entries
-              </h3>
+              <h3 className="text-white  mb-2">3 Competition Entries</h3>
               <p className="text-gray-400">
                 Participate in monthly competitions
               </p>
@@ -364,9 +362,7 @@ export default function PricingPage() {
             </div>
 
             <div className="bg-gray-800/50  p-6">
-              <h3 className="text-white  mb-3">
-                Competition Winners
-              </h3>
+              <h3 className="text-white  mb-3">Competition Winners</h3>
               <p className="text-gray-300 text-sm mb-4">
                 Annual anthology featuring the best stories from our monthly
                 competitions.

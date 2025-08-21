@@ -111,9 +111,7 @@ export default function GoalsTracker({ goals }: GoalsTrackerProps) {
 
         {/* Weekly Challenges */}
         <div>
-          <h4 className="text-purple-400  mb-4">
-            Weekly Challenges:
-          </h4>
+          <h4 className="text-purple-400  mb-4">Weekly Challenges:</h4>
           <div className="space-y-3">
             {challenges.map((challenge, index) => (
               <motion.div
