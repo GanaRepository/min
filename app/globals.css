@@ -365,4 +365,136 @@
   .bg-gradient-radial {
     background: radial-gradient(circle, var(--tw-gradient-stops));
   }
+
+  /* === SCROLL OPTIMIZATION - FIX WHITE PATCHES === */
+  
+  /* Enable hardware acceleration and smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    /* Prevent white patches during scroll */
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    background-size: cover;
+    /* Enable hardware acceleration */
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    /* Prevent reflow during scroll */
+    will-change: scroll-position;
+    /* Optimize for mobile scrolling */
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Fix backdrop-blur performance issues */
+  .backdrop-blur-xl,
+  .backdrop-blur-2xl,
+  .backdrop-blur-3xl {
+    /* Force hardware acceleration */
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    will-change: transform;
+    /* Optimize backdrop-blur */
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+
+  /* Optimize gradient backgrounds for scroll performance */
+  .bg-gradient-to-br,
+  .bg-gradient-to-r,
+  .bg-gradient-radial {
+    /* Prevent repainting during scroll */
+    background-attachment: scroll;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    /* Contain paint operations */
+    contain: layout style paint;
+  }
+
+  /* Optimize complex containers */
+  .scroll-container {
+    overflow-y: auto;
+    overflow-x: hidden;
+    /* Enable momentum scrolling on iOS */
+    -webkit-overflow-scrolling: touch;
+    /* Optimize scrolling performance */
+    will-change: scroll-position;
+    /* Force layer creation */
+    transform: translateZ(0);
+  }
+
+  /* Reduce backdrop-blur on mobile for better performance */
+  @media (max-width: 768px) {
+    .backdrop-blur-xl {
+      backdrop-filter: blur(8px) !important; /* Reduced from default */
+      -webkit-backdrop-filter: blur(8px) !important;
+    }
+    
+    .backdrop-blur-2xl {
+      backdrop-filter: blur(12px) !important; /* Reduced from default */
+      -webkit-backdrop-filter: blur(12px) !important;
+    }
+
+    .backdrop-blur-3xl {
+      backdrop-filter: blur(16px) !important; /* Reduced from default */
+      -webkit-backdrop-filter: blur(16px) !important;
+    }
+
+    /* Disable complex animations on mobile */
+    .animate-float,
+    .animate-spin-slow {
+      animation: none !important;
+    }
+  }
+
+  /* Optimize for scroll performance */
+  .min-h-screen {
+    /* Prevent layout shifts */
+    contain: layout;
+    /* Force hardware acceleration */
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+  }
+
+  /* Fix white patches in overflow containers */
+  .overflow-hidden {
+    /* Ensure proper layer creation */
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    isolation: isolate;
+  }
+
+  /* Performance optimization for motion elements */
+  [data-motion] {
+    will-change: transform;
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+  }
+
+  /* Custom scroll optimization class */
+  .scroll-optimized {
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    contain: layout style paint;
+    will-change: scroll-position;
+  }
+
+  /* Reduce motion for users who prefer it */
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+
+    .animate-float,
+    .animate-spin-slow {
+      animation: none !important;
+    }
+  }
 }

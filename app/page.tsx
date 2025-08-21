@@ -96,13 +96,36 @@ export const metadata: Metadata = {
 
 export default function Home() {
   return (
-    <div className="min-h-screen ">
-      <div className="fixed top-10 sm:top-16 md:top-20 left-2 sm:left-6 md:left-10 w-40 sm:w-56 md:w-64 h-40 sm:h-56 md:h-64 bg-contact-purple/10 rounded-full filter blur-3xl animate-float -z-10"></div>
+    <div 
+      className="min-h-screen"
+      style={{
+        // Critical performance optimizations
+        transform: 'translateZ(0)',
+        backfaceVisibility: 'hidden',
+        contain: 'layout style paint',
+      }}
+    >
+      <div 
+        className="fixed top-10 sm:top-16 md:top-20 left-2 sm:left-6 md:left-10 w-40 sm:w-56 md:w-64 h-40 sm:h-56 md:h-64 bg-contact-purple/10 rounded-full filter blur-3xl animate-float -z-10"
+        style={{
+          transform: 'translateZ(0)',
+          backfaceVisibility: 'hidden',
+        }}
+      ></div>
       <div
         className="fixed bottom-10 sm:bottom-16 md:bottom-20 right-2 sm:right-6 md:right-10 w-40 sm:w-56 md:w-64 h-40 sm:h-56 md:h-64 bg-contact-teal/10 rounded-full filter blur-3xl animate-float -z-10"
-        style={{ animationDelay: '2s' }}
+        style={{ 
+          animationDelay: '2s',
+          transform: 'translateZ(0)',
+          backfaceVisibility: 'hidden',
+        }}
       ></div>
-      <main>
+      <main
+        style={{
+          transform: 'translateZ(0)',
+          backfaceVisibility: 'hidden',
+        }}
+      >
         <Hero />
       </main>
     </div>

@@ -180,7 +180,7 @@ function useToast() {
         listeners.splice(index, 1);
       }
     };
-  }, [state]);
+  }, []); // ✅ FIXED: Remove state dependency to prevent infinite re-renders
 
   return {
     ...state,

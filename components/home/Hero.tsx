@@ -32,12 +32,41 @@ import {
   Clock,
   BookMarked,
 } from 'lucide-react';
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 import { DiamondSeparator } from '../seperators/DiamondSeparator';
 import AnimatedButton from '../AnimatedButton';
 
 export default function Home() {
+  const [isScrolling, setIsScrolling] = useState(false);
+  const scrollTimeoutRef = useRef<NodeJS.Timeout>();
+
+  // Optimized scroll detection to reduce animation complexity during scroll
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolling(true);
+      
+      // Clear existing timeout
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current);
+      }
+      
+      // Set new timeout to detect scroll end
+      scrollTimeoutRef.current = setTimeout(() => {
+        setIsScrolling(false);
+      }, 150);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current);
+      }
+    };
+  }, []);
+
   const features = [
     {
       icon: <PenTool className="w-6 h-6" />,
@@ -438,19 +467,31 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 text-white relative overflow-hidden px-8 lg:px-24 ">
-      {/* Animated Background Elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        {[...Array(15)].map((_, i) => (
+    <div 
+      className={`min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 text-white relative overflow-hidden px-8 lg:px-24 ${
+        isScrolling ? 'scrolling' : ''
+      }`}
+      style={{
+        // Critical optimizations to prevent white patches
+        backgroundAttachment: 'scroll', // Changed from fixed
+        transform: 'translateZ(0)', // Force hardware acceleration
+        backfaceVisibility: 'hidden',
+        contain: 'layout style paint', // Optimize rendering
+      }}
+    >
+      {/* Optimized Animated Background Elements - Reduced during scroll */}
+      <div className={`absolute inset-0 overflow-hidden ${isScrolling ? 'opacity-30' : 'opacity-100'} transition-opacity duration-300`}>
+        {[...Array(isScrolling ? 8 : 15)].map((_, i) => (
           <motion.div
             key={i}
             className="absolute w-2 h-2 bg-green-400/20 rounded-full"
             style={{
               left: `${Math.random() * 100}%`,
               top: `${Math.random() * 100}%`,
+              transform: 'translateZ(0)', // Force hardware acceleration
             }}
             variants={particleVariants}
-            animate="animate"
+            animate={isScrolling ? "initial" : "animate"}
             transition={{ delay: i * 0.3 }}
           />
         ))}

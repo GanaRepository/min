@@ -32,7 +32,15 @@ export default function RootLayout({
         <title>Mintoons</title>
         <link rel="icon" href="/favicon2.ico" type="image/png" />
       </head>
-      <body className={inter.className}>
+      <body 
+        className={inter.className}
+        style={{
+          // Critical performance optimizations for scroll
+          transform: 'translateZ(0)',
+          backfaceVisibility: 'hidden',
+          contain: 'layout style',
+        }}
+      >
         <SessionProvider>
           <SessionSyncProvider>
             {/* Only show navbar on non-dashboard pages */}
@@ -41,7 +49,16 @@ export default function RootLayout({
             {/* Only show scroll progress bar on non-dashboard pages */}
             {!isDashboardPage && <ScrollProgressBar />}
 
-            <main>{children}</main>
+            <main
+              style={{
+                // Optimize main content area
+                transform: 'translateZ(0)',
+                backfaceVisibility: 'hidden',
+                contain: 'layout style paint',
+              }}
+            >
+              {children}
+            </main>
 
             {/* Only show footer on non-dashboard pages */}
             {!isDashboardPage && <Footer />}
