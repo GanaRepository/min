@@ -45,7 +45,7 @@ export default function Home() {
       description:
         'Write any story you want! No restrictions, just pure creativity with AI collaboration to help develop your ideas.',
       gradient: 'from-green-500 to-teal-600',
-      image: '/kid1.jpg',
+      image: '/kid3.jpg',
     },
     {
       icon: <Brain className="w-6 h-6" />,
@@ -61,7 +61,7 @@ export default function Home() {
       description:
         'Compete with other young writers in monthly contests. Winners get recognition and their stories featured globally.',
       gradient: 'from-orange-500 to-yellow-600',
-      image: '/kid4.jpg',
+      image: '/kid7.jpg',
     },
     {
       icon: <Users className="w-6 h-6" />,
@@ -282,7 +282,7 @@ export default function Home() {
         'Real-time AI Help',
         'Word Count Tracking',
       ],
-      image: '/kid9.jpg',
+      image: '/kid12.jpg',
     },
     {
       number: '02',
@@ -297,7 +297,7 @@ export default function Home() {
         'Creative Prompts',
         'Writing Guidance',
       ],
-      image: '/kid10.jpg',
+      image: '/ai16.jpg',
     },
     {
       number: '03',
@@ -312,7 +312,7 @@ export default function Home() {
         'Draft Management',
         'Story Preview',
       ],
-      image: '/kid11.jpg',
+      image: '/kid20.jpg',
     },
     {
       number: '04',
@@ -327,7 +327,7 @@ export default function Home() {
         'Multiple Attempts',
         'Plagiarism Detection',
       ],
-      image: '/kid12.jpg',
+      image: '/kid19.jpg',
     },
     {
       number: '05',
@@ -342,7 +342,7 @@ export default function Home() {
         'Competition Entry',
         'Progress Tracking',
       ],
-      image: '/kid14.jpg',
+      image: '/kid23.jpg',
     },
     {
       number: '06',
@@ -357,7 +357,7 @@ export default function Home() {
         'Ai Picks Top 3 Winners',
         'Winner Will be Considered for Free Spot in Anthology Books',
       ],
-      image: '/kid15.jpg', // Add this image
+      image: '/kid21.jpg', // Add this image
     },
     {
       number: '07',
@@ -372,7 +372,7 @@ export default function Home() {
         'Story Ratings',
         'Author Profiles',
       ],
-      image: '/kid16.jpg', // Add this image
+      image: '/kid10.jpg', // Add this image
     },
     {
       number: '08',
@@ -387,7 +387,7 @@ export default function Home() {
         'Contact Admin for Orders',
         'Professional Anthology',
       ],
-      image: '/kid17.jpg', // Add this image
+      image: '/kid14.jpg', // Add this image
     },
   ];
 
@@ -457,7 +457,7 @@ export default function Home() {
       </div>
 
       {/* Hero Section */}
-      <section className="relative flex items-center px-4 sm:px-6 lg:px-8 py-12 mt-28 ">
+      <section className="relative flex items-center px-4 sm:px-6 lg:px-8 py-12 mt-20 ">
         <div className="max-w-7xl mx-auto w-full">
           <div className="grid grid-cols-1 gap-8 sm:gap-12 md:gap-16 lg:gap-24 xl:gap-32 lg:grid-cols-3 items-center">
             {/* Left Content */}
@@ -511,7 +511,7 @@ export default function Home() {
                 {/* Hero Image Container */}
                 <div className="relative w-80 sm:w-96 h-[28rem] sm:h-[32rem] overflow-hidden shadow-2xl">
                   <Image
-                    src="/kid3.jpg"
+                    src="/kid1.jpg"
                     alt="Creative young writer"
                     fill
                     className="object-cover"
@@ -1107,7 +1107,7 @@ export default function Home() {
             </h2>
           </motion.div>
 
-          <div className="grid grid-cols-1 gap-6 sm:gap-8 md:gap-10 lg:gap-12 xl:gap-14 md:grid-cols-2 xl:grid-cols-4">
+          <div className="grid grid-cols-1 gap-6 sm:gap-8 md:gap-10 lg:gap-12 xl:gap-14 md:grid-cols-2 xl:grid-cols-4 ">
             {features.map((feature, index) => (
               <motion.div
                 key={index}
@@ -1118,7 +1118,7 @@ export default function Home() {
                 viewport={{ once: true }}
                 whileHover={{ y: -8, transition: { duration: 0.3 } }}
               >
-                <div className="relative h-full bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 shadow-xl overflow-hidden">
+                <div className="relative h-full bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 shadow-xl overflow-hidden p-2">
                   {/* Feature Image */}
                   <div className="relative h-40 sm:h-48 overflow-hidden">
                     <Image
@@ -1364,7 +1364,7 @@ export default function Home() {
           >
             <div className="absolute inset-0 bg-gradient-to-br from-green-500/10 to-teal-500/10">
               <Image
-                src="/kid1.jpg"
+                src="/kid5.jpg"
                 alt="Background"
                 fill
                 className="opacity-20 object-center object-cover"
