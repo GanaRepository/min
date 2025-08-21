@@ -459,9 +459,9 @@ export default function Home() {
       {/* Hero Section */}
       <section className="relative flex items-center px-4 sm:px-6 lg:px-8 py-12 mt-28 ">
         <div className="max-w-7xl mx-auto w-full">
-          <div className="grid grid-cols-1 lg:grid-cols-3 lg:gap-12 xl:gap-16 items-center">
+          <div className="grid grid-cols-1 gap-8 sm:gap-12 md:gap-16 lg:gap-24 xl:gap-32 lg:grid-cols-3 items-center">
             {/* Left Content */}
-            <div className="space-y-8 flex flex-col items-center justify-center h-full">
+            <div className="space-y-8 flex flex-col items-center justify-center h-full lg:mb-0 mb-8">
               {/* Main heading */}
               <motion.div
                 className="space-y-4 text-center"
@@ -625,36 +625,19 @@ export default function Home() {
 
                     {/* Card Content */}
                     <div className="text-center space-y-2 sm:space-y-4 flex-grow">
-                      <motion.h3
-                        className="text-xl sm:text-2xl text-white"
-                        animate={{
-                          opacity: [0.8, 1, 0.8],
-                        }}
-                        transition={{
-                          duration: 3,
-                          repeat: Infinity,
-                        }}
-                      >
-                        Mintoons
-                      </motion.h3>
 
-                      <motion.p
-                        className="text-gray-300 text-xs sm:text-sm leading-relaxed"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 1.2 }}
-                      >
-                        &quot;Where Young Writers Create Amazing Stories&quot;
-                      </motion.p>
-                      <motion.p
-                        className="text-gray-300 text-xs sm:text-sm leading-relaxed"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 1.2 }}
-                      >
-                        Write freely with AI collaboration and get detailed
-                        feedback to improve your creative writing skills.
-                      </motion.p>
+                      <h3 className="text-lg sm:text-xl text-white mb-2">
+                        Mintoons
+                      </h3>
+                      <p className="text-green-300 text-xs sm:text-sm ">
+                        Creative Writing Education Platform
+                      </p>
+                      <p className="text-gray-300 text-xs sm:text-sm leading-relaxed mt-2">
+                        Write freely with AI collaboration and get detailed feedback to improve your creative writing skills.
+                      </p>
+                      <p className="text-gray-300 text-xs sm:text-sm leading-relaxed">
+                        3 free stories + 9 free assessments monthly. Join thousands of young writers worldwide!
+                      </p>
 
                       {/* New Content Addition */}
                       <motion.p
@@ -807,7 +790,7 @@ export default function Home() {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 gap-8 sm:gap-10 md:gap-12 lg:gap-14 xl:gap-16 md:grid-cols-2 lg:grid-cols-3">
             {storyShowcase.map((story, index) => (
               <motion.div
                 key={index}
@@ -1124,7 +1107,7 @@ export default function Home() {
             </h2>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 gap-6 sm:gap-8 md:gap-10 lg:gap-12 xl:gap-14 md:grid-cols-2 xl:grid-cols-4">
             {features.map((feature, index) => (
               <motion.div
                 key={index}
@@ -1211,7 +1194,7 @@ export default function Home() {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
+          <div className="grid grid-cols-1 gap-6 sm:gap-8 md:gap-10 lg:gap-12 md:grid-cols-2">
             {values.map((value, index) => (
               <motion.div
                 key={index}
