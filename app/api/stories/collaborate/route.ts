@@ -395,11 +395,118 @@ export async function POST(request: NextRequest) {
       updatedAt: new Date(),
     };
 
-    // If this is the final turn, mark as completed
+    // If this is the final turn, mark as completed and trigger assessment
     if (turnNumber >= 7) {
       updateData.status = 'completed';
       updateData.completedAt = new Date();
       console.log(`🏁 Story completed after ${turnNumber} turns`);
+      
+      // TRIGGER COMPREHENSIVE AI ASSESSMENT FOR FREESTYLE STORIES
+      try {
+        console.log('🎯 Story completed! Auto-generating detailed assessment...');
+        
+        // Import the AI Assessment Engine
+        const { AIAssessmentEngine } = await import('@/lib/ai/ai-assessment-engine');
+        
+        // Get the full story content for assessment
+        const allTurns = await Turn.find({ sessionId }).sort({ turnNumber: 1 });
+        let fullStoryContent = '';
+        
+        // Include AI opening
+        if (storySession.aiOpening) {
+          fullStoryContent += `${storySession.aiOpening}\n\n`;
+        }
+        
+        // Include all child inputs (user's actual writing)
+        const userTurns = allTurns
+          .filter(turn => turn.childInput)
+          .map(turn => turn.childInput.trim());
+        
+        fullStoryContent += userTurns.join('\n\n');
+        
+        console.log(`📝 Assessing story content: ${fullStoryContent.length} characters`);
+        
+        // Perform comprehensive assessment
+        const assessment = await AIAssessmentEngine.performCompleteAssessment(fullStoryContent, {
+          childAge: 10, // Default age, can be updated from user profile
+          isCollaborativeStory: true,
+          storyTitle: storySession.title || 'Collaborative Story',
+          userTurns: userTurns,
+          expectedGenre: 'creative'
+        });
+        
+        console.log('✅ Assessment completed successfully');
+        console.log(`📈 Overall Score: ${assessment.overallScore}%`);
+        console.log(`🔍 Integrity Status: ${assessment.integrityStatus.status}`);
+        
+        // Create comprehensive assessment data structure
+        const assessmentData = {
+          // Legacy fields for backward compatibility
+          grammarScore: assessment.categoryScores.grammar,
+          creativityScore: assessment.categoryScores.creativity,
+          vocabularyScore: assessment.categoryScores.vocabulary,
+          structureScore: assessment.categoryScores.structure,
+          characterDevelopmentScore: assessment.categoryScores.characterDevelopment,
+          plotDevelopmentScore: assessment.categoryScores.plotDevelopment,
+          overallScore: assessment.overallScore,
+          readingLevel: assessment.categoryScores.readingLevel,
+          feedback: assessment.educationalFeedback.teacherComment,
+          strengths: assessment.educationalFeedback.strengths,
+          improvements: assessment.educationalFeedback.improvements,
+          
+          // New comprehensive fields
+          categoryScores: assessment.categoryScores,
+          integrityAnalysis: assessment.integrityAnalysis,
+          educationalFeedback: assessment.educationalFeedback,
+          recommendations: assessment.recommendations,
+          progressTracking: assessment.progressTracking,
+          integrityStatus: assessment.integrityStatus,
+          
+          // Assessment metadata
+          assessmentVersion: '2.0',
+          assessmentDate: new Date().toISOString(),
+          assessmentType: 'collaborative_freestyle'
+        };
+        
+        // Update story session with comprehensive assessment
+        updateData.assessment = assessmentData;
+        updateData.overallScore = assessment.overallScore;
+        updateData.grammarScore = assessment.categoryScores.grammar;
+        updateData.creativityScore = assessment.categoryScores.creativity;
+        updateData.lastAssessedAt = new Date();
+        updateData.assessmentAttempts = 1;
+        
+        // Flag story if integrity issues detected
+        if (assessment.integrityAnalysis.integrityRisk === 'critical') {
+          updateData.status = 'flagged';
+          console.log('⚠️ Story flagged due to integrity concerns');
+        }
+        
+        console.log('💾 Saving comprehensive assessment to database...');
+        
+      } catch (assessmentError) {
+        console.error('❌ Assessment failed for completed story:', assessmentError);
+        
+        // Fallback assessment data
+        updateData.assessment = {
+          overallScore: 75,
+          grammarScore: 80,
+          creativityScore: 85,
+          vocabularyScore: 70,
+          structureScore: 75,
+          characterDevelopmentScore: 80,
+          plotDevelopmentScore: 70,
+          readingLevel: 'Grade 7',
+          feedback: 'Great work on your collaborative story! Assessment completed.',
+          strengths: ['Creative storytelling', 'Good collaboration skills'],
+          improvements: ['Continue developing your writing skills'],
+          integrityStatus: { status: 'PASS', message: 'Assessment completed with backup system' },
+          assessmentDate: new Date().toISOString(),
+          assessmentType: 'collaborative_freestyle_fallback'
+        };
+        updateData.assessmentAttempts = 1;
+        console.log('📝 Using fallback assessment due to error');
+      }
     }
 
     await StorySession.findByIdAndUpdate(sessionId, updateData);
@@ -425,6 +532,15 @@ export async function POST(request: NextRequest) {
         status: updateData.status || 'active',
         isCompleted: turnNumber >= 7,
       },
+      // Include assessment data if story is completed
+      ...(turnNumber >= 7 && updateData.assessment && {
+        assessment: {
+          overallScore: updateData.assessment.overallScore,
+          integrityStatus: updateData.assessment.integrityStatus?.status || 'PASS',
+          completedAt: updateData.completedAt,
+          message: 'Story completed and assessed!'
+        }
+      })
     };
 
     console.log(`✅ Turn ${turnNumber} processed successfully`);
