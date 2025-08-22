@@ -175,13 +175,19 @@
 //   }
 // }
 
-// app/api/stripe/webhook/route.ts - UPDATED FOR 30-DAY STORY PACK SYSTEM
+// app/api/stripe/webhook/route.ts - UPDATED FOR 30-DAY STORY PACK SYSTEM + EMAIL TRIGGERS
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import mongoose from 'mongoose';
 import { connectToDatabase } from '@/utils/db';
 import User from '@/models/User';
 import StorySession from '@/models/StorySession';
+
+// ADD EMAIL IMPORTS FOR PURCHASE CONFIRMATIONS
+import { 
+  sendStoryPackPurchaseConfirmation,
+  sendAnthologyBookPurchaseConfirmation 
+} from '@/lib/mailer';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2025-07-30.basil',
@@ -261,6 +267,12 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
       amount: session.amount_total,
     });
 
+    // GET USER DATA FOR EMAILS
+    const userForEmail = await User.findById(userId).select('firstName lastName email');
+    if (!userForEmail) {
+      throw new Error(`User not found: ${userId}`);
+    }
+
     // Determine purchase details based on product type
     let purchaseData;
     if (productType === 'story_pack') {
@@ -331,6 +343,20 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
       console.log(
         `⏰ Story Pack active from ${purchaseDate.toISOString()} to ${expiryDate.toISOString()}`
       );
+
+      // 🔥 SEND STORY PACK CONFIRMATION EMAIL
+      try {
+        await sendStoryPackPurchaseConfirmation(
+          userForEmail.email,
+          userForEmail.firstName,
+          session.id, // Transaction ID
+          15 // Amount
+        );
+        console.log('📧 Story Pack confirmation email sent to:', userForEmail.email);
+      } catch (emailError) {
+        console.error('❌ Failed to send Story Pack confirmation email:', emailError);
+        // Don't throw error - payment already processed
+      }
     } else if (productType === 'individual_story' && storyId) {
       console.log(
         '📖 Individual story purchased for physical anthology:',
@@ -345,6 +371,24 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
           amount: 10.0,
         },
       });
+
+      // 🔥 SEND ANTHOLOGY BOOK CONFIRMATION EMAIL
+      try {
+        const story = await StorySession.findById(storyId).select('title');
+        const storyTitleForEmail = story?.title || storyTitle || 'Your Story';
+
+        await sendAnthologyBookPurchaseConfirmation(
+          userForEmail.email,
+          userForEmail.firstName,
+          storyTitleForEmail,
+          session.id, // Transaction ID
+          10 // Amount
+        );
+        console.log('📧 Anthology Book confirmation email sent to:', userForEmail.email);
+      } catch (emailError) {
+        console.error('❌ Failed to send Anthology Book confirmation email:', emailError);
+        // Don't throw error - payment already processed
+      }
     } else if (productType === 'story_purchase' && storyId) {
       console.log('📖 Physical book purchased for story:', storyId);
       // Mark story as purchased for physical book
@@ -353,6 +397,24 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
         physicalBookPurchaseDate: new Date(),
         physicalBookStripeSessionId: session.id,
       });
+
+      // 🔥 SEND ANTHOLOGY BOOK CONFIRMATION EMAIL (Alternative path)
+      try {
+        const story = await StorySession.findById(storyId).select('title');
+        const storyTitleForEmail = story?.title || storyTitle || 'Your Story';
+
+        await sendAnthologyBookPurchaseConfirmation(
+          userForEmail.email,
+          userForEmail.firstName,
+          storyTitleForEmail,
+          session.id, // Transaction ID
+          10 // Amount
+        );
+        console.log('📧 Anthology Book confirmation email sent to:', userForEmail.email);
+      } catch (emailError) {
+        console.error('❌ Failed to send Anthology Book confirmation email:', emailError);
+        // Don't throw error - payment already processed
+      }
     }
 
     console.log('🎉 Checkout completed successfully for', userId);

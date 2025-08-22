@@ -449,7 +449,7 @@ export default function AssessmentModal({
               <div>
                 <h3 className="text-lg  text-white mb-4 flex items-center gap-2">
                   <Award className="text-yellow-400" />
-                  Teacher's Comment
+                  Teacher&apos;s Comment
                 </h3>
                 <div className="bg-blue-500/10 border border-blue-500/30 rounded-xl p-6">
                   <p className="text-blue-100 leading-relaxed text-lg">

@@ -299,8 +299,8 @@ export default function UploadStoryPage() {
 
           {/* Note */}
           <p className="text-gray-400 text-sm text-center mt-4">
-            After uploading, you'll need to pay the $10 publication fee to make
-            your story live and competition-eligible.
+            After uploading, you&apos;ll need to pay the $10 publication fee to
+            make your story live and competition-eligible.
           </p>
         </motion.div>
 

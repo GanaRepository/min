@@ -148,7 +148,7 @@ export default function PricingPage() {
             </div>
 
             <div className="bg-gray-800/50  p-6">
-              <h4 className="text-white  mb-4">What's Included:</h4>
+              <h4 className="text-white  mb-4">What&apos;s Included:</h4>
               <div className="grid md:grid-cols-2 gap-3 text-left">
                 {[
                   'Advanced AI writing companion',
@@ -240,7 +240,7 @@ export default function PricingPage() {
 
               <div className="bg-gray-800/50  p-4 mb-6">
                 <p className="text-gray-300 text-sm">
-                  <strong>Great Value:</strong> That's only $1.88 per story
+                  <strong>Great Value:</strong> That&apos;s only $1.88 per story
                   creation! Perfect for children who love to write regularly.
                 </p>
               </div>
@@ -360,7 +360,7 @@ export default function PricingPage() {
               <div className="bg-gray-800/50  p-6">
                 <h3 className="text-white  mb-3">Individual Books</h3>
                 <p className="text-gray-300 text-sm mb-4">
-                  Custom printed book featuring your child's story with
+                  Custom printed book featuring your child&apos;s story with
                   professional layout and cover design.
                 </p>
                 <p className="text-yellow-400 ">Contact for Quote</p>

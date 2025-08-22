@@ -1,7 +1,7 @@
 // app/admin/users/[id]/edit/page.tsx
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
@@ -62,16 +62,7 @@ export default function EditUser() {
     competitionEntriesThisMonth: 0,
   });
 
-  useEffect(() => {
-    if (status === 'loading') return;
-    if (!session || session.user?.role !== 'admin') {
-      router.push('/admin/login');
-      return;
-    }
-    fetchUser();
-  }, [session, status, router, userId]);
-
-  const fetchUser = async () => {
+  const fetchUser = useCallback(async () => {
     try {
       const response = await fetch(`/api/admin/users/${userId}`);
       const data = await response.json();
@@ -99,7 +90,16 @@ export default function EditUser() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [userId, router]);
+
+  useEffect(() => {
+    if (status === 'loading') return;
+    if (!session || session.user?.role !== 'admin') {
+      router.push('/admin/login');
+      return;
+    }
+    fetchUser();
+  }, [session, status, router, fetchUser]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

@@ -18,7 +18,7 @@ export async function GET() {
 
     const competition = await competitionManager.getCurrentCompetition();
     const stats = competition
-      ? await competitionManager.getCompetitionStats(competition._id.toString())
+      ? await competitionManager.getCompetitionStats()
       : null;
 
     return NextResponse.json({

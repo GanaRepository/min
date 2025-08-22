@@ -1,7 +1,7 @@
 // app/admin/mentors/[id]/edit/page.tsx
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
@@ -52,16 +52,7 @@ export default function EditMentor() {
 
   const [newSpecialization, setNewSpecialization] = useState('');
 
-  useEffect(() => {
-    if (status === 'loading') return;
-    if (!session || session.user?.role !== 'admin') {
-      router.push('/admin/login');
-      return;
-    }
-    fetchMentor();
-  }, [session, status, router, mentorId]);
-
-  const fetchMentor = async () => {
+  const fetchMentor = useCallback(async () => {
     try {
       const response = await fetch(`/api/admin/mentors/${mentorId}`);
       const data = await response.json();
@@ -87,7 +78,16 @@ export default function EditMentor() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [mentorId, router]);
+
+  useEffect(() => {
+    if (status === 'loading') return;
+    if (!session || session.user?.role !== 'admin') {
+      router.push('/admin/login');
+      return;
+    }
+    fetchMentor();
+  }, [session, status, router, fetchMentor]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

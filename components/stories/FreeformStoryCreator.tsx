@@ -172,10 +172,10 @@ export default function FreeformStoryCreator({
               </div>
 
               <div className="p-3 bg-gray-700/30 rounded-lg">
-                <h5 className="text-blue-400  mb-1">Show, Don't Tell</h5>
+                <h5 className="text-blue-400  mb-1">Show, Don&apos;t Tell</h5>
                 <p className="text-gray-300">
-                  Instead of "I was scared," try "My hands trembled as I reached
-                  for the door."
+                  Instead of &quot;I was scared,&quot; try &quot;My hands
+                  trembled as I reached for the door.&quot;
                 </p>
               </div>
 

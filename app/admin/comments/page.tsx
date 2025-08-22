@@ -1,7 +1,7 @@
 // app/admin/comments/page.tsx - FIXED VERSION WITH CARD LAYOUT
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -77,16 +77,7 @@ export default function CommentsPage() {
     { value: 'admin_feedback', label: 'Admin Feedback' },
   ];
 
-  useEffect(() => {
-    if (status === 'loading') return;
-    if (!session || session.user?.role !== 'admin') {
-      router.push('/admin/login');
-      return;
-    }
-    fetchComments();
-  }, [session, status, router, page, resolvedFilter, typeFilter]);
-
-  const fetchComments = async () => {
+  const fetchComments = useCallback(async () => {
     try {
       setLoading(true);
       const params = new URLSearchParams({
@@ -113,7 +104,16 @@ export default function CommentsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [page, resolvedFilter, typeFilter]);
+
+  useEffect(() => {
+    if (status === 'loading') return;
+    if (!session || session.user?.role !== 'admin') {
+      router.push('/admin/login');
+      return;
+    }
+    fetchComments();
+  }, [session, status, router, fetchComments]);
 
   const updateCommentStatus = async (
     commentId: string,

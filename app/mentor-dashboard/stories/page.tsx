@@ -138,8 +138,8 @@ export default function MentorStories() {
 
   // Reset to first page if search/filter changes and currentPage is out of range
   useEffect(() => {
-    if (currentPage > totalPages) setCurrentPage(1);
-  }, [searchTerm, stories, totalPages]);
+    if (currentPage > totalPages && totalPages > 0) setCurrentPage(1);
+  }, [searchTerm, stories, totalPages, currentPage]);
 
   if (loading) {
     return (

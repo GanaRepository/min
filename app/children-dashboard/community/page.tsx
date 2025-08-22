@@ -1,7 +1,7 @@
 // app/children-dashboard/community/page.tsx - FIXED COMMUNITY PAGE
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -112,58 +112,61 @@ export default function CommunityPage() {
     { value: 'highest_rated', label: 'Highest Rated' },
   ];
 
+  const fetchCommunityData = useCallback(
+    async (page: number, append: boolean) => {
+      try {
+        if (append) {
+          setLoadingMore(true);
+        } else {
+          setLoading(true);
+        }
+
+        const params = new URLSearchParams({
+          page: page.toString(),
+          limit: '12',
+          sort: sortBy,
+          ...(searchTerm && { search: searchTerm }),
+          ...(selectedGenre && { genre: selectedGenre }),
+          ...(selectedAgeGroup && { ageGroup: selectedAgeGroup }),
+        });
+
+        const [storiesRes, statsRes] = await Promise.all([
+          fetch(`/api/community/stories?${params}`),
+          page === 1 ? fetch('/api/community/stats') : Promise.resolve(null),
+        ]);
+
+        if (storiesRes.ok) {
+          const storiesData = await storiesRes.json();
+          if (append) {
+            setStories((prev) => [...prev, ...storiesData.stories]);
+          } else {
+            setStories(storiesData.stories || []);
+          }
+          setHasMore(storiesData.hasMore);
+          setCurrentPage(page);
+        } else {
+          console.error('Failed to fetch stories:', await storiesRes.text());
+          setStories([]);
+        }
+
+        if (statsRes?.ok) {
+          const statsData = await statsRes.json();
+          setStats(statsData.stats);
+        }
+      } catch (error) {
+        console.error('Error fetching community data:', error);
+        setStories([]);
+      } finally {
+        setLoading(false);
+        setLoadingMore(false);
+      }
+    },
+    [searchTerm, selectedGenre, selectedAgeGroup, sortBy]
+  );
+
   useEffect(() => {
     fetchCommunityData(1, false);
-  }, [searchTerm, selectedGenre, selectedAgeGroup, sortBy]);
-
-  const fetchCommunityData = async (page: number, append: boolean) => {
-    try {
-      if (append) {
-        setLoadingMore(true);
-      } else {
-        setLoading(true);
-      }
-
-      const params = new URLSearchParams({
-        page: page.toString(),
-        limit: '12',
-        sort: sortBy,
-        ...(searchTerm && { search: searchTerm }),
-        ...(selectedGenre && { genre: selectedGenre }),
-        ...(selectedAgeGroup && { ageGroup: selectedAgeGroup }),
-      });
-
-      const [storiesRes, statsRes] = await Promise.all([
-        fetch(`/api/community/stories?${params}`),
-        page === 1 ? fetch('/api/community/stats') : Promise.resolve(null),
-      ]);
-
-      if (storiesRes.ok) {
-        const storiesData = await storiesRes.json();
-        if (append) {
-          setStories((prev) => [...prev, ...storiesData.stories]);
-        } else {
-          setStories(storiesData.stories || []);
-        }
-        setHasMore(storiesData.hasMore);
-        setCurrentPage(page);
-      } else {
-        console.error('Failed to fetch stories:', await storiesRes.text());
-        setStories([]);
-      }
-
-      if (statsRes?.ok) {
-        const statsData = await statsRes.json();
-        setStats(statsData.stats);
-      }
-    } catch (error) {
-      console.error('Error fetching community data:', error);
-      setStories([]);
-    } finally {
-      setLoading(false);
-      setLoadingMore(false);
-    }
-  };
+  }, [fetchCommunityData]);
 
   const loadMoreStories = () => {
     if (!loadingMore && hasMore) {

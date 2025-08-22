@@ -1,7 +1,7 @@
 // app/children-dashboard/my-stories/page.tsx - FINAL VERSION
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
@@ -130,19 +130,8 @@ export default function MyStoriesPage() {
   // Action states
   const [publishingStory, setPublishingStory] = useState<string | null>(null);
 
-  // ===== EFFECTS =====
-  useEffect(() => {
-    if (status === 'unauthenticated') {
-      router.push('/auth/signin');
-      return;
-    }
-    if (status === 'authenticated') {
-      fetchStories();
-    }
-  }, [status, currentPage, searchTerm, statusFilter, typeFilter]);
-
   // ===== API CALLS =====
-  const fetchStories = async () => {
+  const fetchStories = useCallback(async () => {
     if (!session?.user?.id) return;
 
     setLoading(true);
@@ -173,7 +162,18 @@ export default function MyStoriesPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [session?.user?.id, currentPage, searchTerm, statusFilter, typeFilter]);
+
+  // ===== EFFECTS =====
+  useEffect(() => {
+    if (status === 'unauthenticated') {
+      router.push('/auth/signin');
+      return;
+    }
+    if (status === 'authenticated') {
+      fetchStories();
+    }
+  }, [status, fetchStories, router]);
 
   // ===== STORY ACTIONS =====
   const handlePublishStory = async (storyId: string) => {

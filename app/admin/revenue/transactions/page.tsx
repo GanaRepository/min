@@ -1,7 +1,7 @@
 // app/admin/revenue/transactions/page.tsx
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -51,16 +51,7 @@ export default function TransactionsPage() {
     endDate: '',
   });
 
-  useEffect(() => {
-    if (status === 'loading') return;
-    if (!session || session.user?.role !== 'admin') {
-      router.push('/admin/login');
-      return;
-    }
-    fetchTransactions();
-  }, [session, status, router, page]);
-
-  const fetchTransactions = async () => {
+  const fetchTransactions = useCallback(async () => {
     try {
       setLoading(true);
       const params = new URLSearchParams({
@@ -87,7 +78,16 @@ export default function TransactionsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [page, dateRange.startDate, dateRange.endDate]);
+
+  useEffect(() => {
+    if (status === 'loading') return;
+    if (!session || session.user?.role !== 'admin') {
+      router.push('/admin/login');
+      return;
+    }
+    fetchTransactions();
+  }, [session, status, router, fetchTransactions]);
 
   const exportTransactions = async () => {
     try {

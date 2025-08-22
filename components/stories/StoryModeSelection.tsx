@@ -73,7 +73,8 @@ export default function StoryModeSelection({
         className="text-center mt-12"
       >
         <p className="text-gray-500 text-sm">
-          Don't worry - you can always try the other mode in your next story! 🌟
+          Don&apos;t worry - you can always try the other mode in your next
+          story! 🌟
         </p>
       </motion.div>
     </div>

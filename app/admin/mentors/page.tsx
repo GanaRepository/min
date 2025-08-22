@@ -1,7 +1,7 @@
 //app/admin/mentors/page.tsx
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -58,16 +58,7 @@ export default function MentorsPage() {
   const [page, setPage] = useState(1);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (status === 'loading') return;
-    if (!session || session.user?.role !== 'admin') {
-      router.push('/admin/login');
-      return;
-    }
-    fetchMentors();
-  }, [session, status, router, page, searchTerm]);
-
-  const fetchMentors = async () => {
+  const fetchMentors = useCallback(async () => {
     try {
       setLoading(true);
       const params = new URLSearchParams({
@@ -91,7 +82,16 @@ export default function MentorsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [page, searchTerm]);
+
+  useEffect(() => {
+    if (status === 'loading') return;
+    if (!session || session.user?.role !== 'admin') {
+      router.push('/admin/login');
+      return;
+    }
+    fetchMentors();
+  }, [session, status, router, fetchMentors]);
 
   const deleteMentor = async (mentorId: string, name: string) => {
     if (

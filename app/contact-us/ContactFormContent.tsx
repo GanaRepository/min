@@ -226,7 +226,7 @@ export default function MintoonsContactPage() {
 
               {/* Testimonial text */}
               <blockquote className="text-gray-200 text-lg sm:text-xl  leading-relaxed mb-6 relative z-10">
-                "{testimonials[currentTestimonial].text}"
+                &quot;{testimonials[currentTestimonial].text}&quot;
               </blockquote>
 
               {/* Author info with avatar placeholder */}

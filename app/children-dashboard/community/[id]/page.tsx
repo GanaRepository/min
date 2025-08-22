@@ -1,7 +1,7 @@
 // app/children-dashboard/community/[id]/page.tsx
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useParams } from 'next/navigation';
@@ -90,11 +90,7 @@ export default function CommunityStoryView() {
   const [currentCommentsPage, setCurrentCommentsPage] = useState(1);
   const commentsPerPage = 6;
 
-  useEffect(() => {
-    fetchStoryDetails();
-  }, [storyId]);
-
-  const fetchStoryDetails = async () => {
+  const fetchStoryDetails = useCallback(async () => {
     try {
       const response = await fetch(`/api/community/stories/${storyId}`);
       if (response.ok) {
@@ -115,7 +111,11 @@ export default function CommunityStoryView() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [storyId, router]);
+
+  useEffect(() => {
+    fetchStoryDetails();
+  }, [fetchStoryDetails]);
 
   // Removed like and bookmark handlers
 

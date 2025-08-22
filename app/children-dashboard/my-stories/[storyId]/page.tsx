@@ -1,7 +1,7 @@
 // app/children-dashboard/my-stories/[storyId]/page.tsx - FINAL VERSION
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
@@ -119,32 +119,21 @@ export default function StoryDetailPage() {
   const [commentRating, setCommentRating] = useState(0);
   const [addingComment, setAddingComment] = useState(false);
 
-  // ===== EFFECTS =====
-  useEffect(() => {
-    if (status === 'unauthenticated') {
-      router.push('/auth/signin');
-      return;
-    }
-    if (status === 'authenticated' && storyId) {
-      fetchStoryDetails();
-    }
-  }, [status, storyId]);
+  // ===== HELPER FUNCTIONS =====
+  const isCompetitionNonWinner = useCallback(() => {
+    return (
+      story?.competitionEntries?.some(
+        (entry) => entry.rank && entry.rank > 3
+      ) || false
+    );
+  }, [story]);
 
-  // Add useEffect to set correct default tab after story loads
-  useEffect(() => {
-    if (story) {
-      if (isCompetitionNonWinner()) {
-        setActiveTab('content');
-      } else if (shouldShowOverview()) {
-        setActiveTab('overview');
-      } else {
-        setActiveTab('content');
-      }
-    }
+  const shouldShowOverview = useCallback(() => {
+    return story?.isPublished || story?.assessment || false;
   }, [story]);
 
   // ===== API CALLS =====
-  const fetchStoryDetails = async () => {
+  const fetchStoryDetails = useCallback(async () => {
     if (!session?.user?.id || !storyId) return;
 
     setLoading(true);
@@ -164,7 +153,31 @@ export default function StoryDetailPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [session?.user?.id, storyId]);
+
+  // ===== EFFECTS =====
+  useEffect(() => {
+    if (status === 'unauthenticated') {
+      router.push('/auth/signin');
+      return;
+    }
+    if (status === 'authenticated' && storyId) {
+      fetchStoryDetails();
+    }
+  }, [status, storyId, router, fetchStoryDetails]);
+
+  // Add useEffect to set correct default tab after story loads
+  useEffect(() => {
+    if (story) {
+      if (isCompetitionNonWinner()) {
+        setActiveTab('content');
+      } else if (shouldShowOverview()) {
+        setActiveTab('overview');
+      } else {
+        setActiveTab('content');
+      }
+    }
+  }, [story, isCompetitionNonWinner, shouldShowOverview]);
 
   // ===== STORY ACTIONS =====
   const handlePublishStory = async () => {
@@ -338,34 +351,6 @@ export default function StoryDetailPage() {
 
     // For non-competition stories, show if assessment exists
     return !!story.assessment;
-  };
-
-  // Add this new function after shouldShowAssessment:
-  const shouldShowOverview = () => {
-    if (!story) return false;
-
-    // For competition stories, only show overview if they're a winner
-    if (story.competitionEntries && story.competitionEntries.length > 0) {
-      return story.competitionEntries.some(
-        (entry) => entry.isWinner || (entry.rank && entry.rank <= 3)
-      );
-    }
-
-    // For non-competition stories, always show overview
-    return true;
-  };
-
-  // Add this new function to check if story is competition entry:
-  const isCompetitionNonWinner = () => {
-    if (!story) return false;
-    const isCompetitionEntry =
-      story.competitionEntries && story.competitionEntries.length > 0;
-    const isWinner =
-      isCompetitionEntry &&
-      story.competitionEntries.some(
-        (entry) => entry.isWinner || (entry.rank && entry.rank <= 3)
-      );
-    return isCompetitionEntry && !isWinner;
   };
 
   // Get available tabs based on story type and status

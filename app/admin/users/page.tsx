@@ -1,7 +1,7 @@
 // app/admin/users/page.tsx - UPDATED to include admin filter
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -59,16 +59,7 @@ export default function UsersPage() {
   const [page, setPage] = useState(1);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (status === 'loading') return;
-    if (!session || session.user?.role !== 'admin') {
-      router.push('/admin/login');
-      return;
-    }
-    fetchUsers();
-  }, [session, status, router, page, searchTerm, filterRole]);
-
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async () => {
     try {
       setLoading(true);
       const params = new URLSearchParams({
@@ -95,7 +86,16 @@ export default function UsersPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [page, searchTerm, filterRole]);
+
+  useEffect(() => {
+    if (status === 'loading') return;
+    if (!session || session.user?.role !== 'admin') {
+      router.push('/admin/login');
+      return;
+    }
+    fetchUsers();
+  }, [session, status, router, fetchUsers]);
 
   const deleteUser = async (userId: string, name: string) => {
     if (!confirm(`Are you sure you want to delete ${name}?`)) return;

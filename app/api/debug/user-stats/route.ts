@@ -19,14 +19,17 @@ export async function GET() {
     const currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
 
     // Get the current user
-    const user = await User.findById(session.user.id).lean();
+    const user = (await User.findById(session.user.id).lean()) as any;
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
+    // Use session.user.id consistently since it's the same as user._id
+    const userId = session.user.id;
+
     // Count actual stories created this month
     const allStoriesThisMonth = await StorySession.find({
-      childId: user._id,
+      childId: userId,
       createdAt: { $gte: currentMonthStart },
     }).lean();
 
@@ -44,17 +47,17 @@ export async function GET() {
 
     // Get all stories for this user (not just this month)
     const allUserStories = await StorySession.find({
-      childId: user._id,
+      childId: userId,
     }).lean();
 
     const debugData = {
       user: {
         id: user._id,
-        email: user.email,
-        storiesCreatedThisMonth: user.storiesCreatedThisMonth,
-        assessmentUploadsThisMonth: user.assessmentUploadsThisMonth,
-        competitionEntriesThisMonth: user.competitionEntriesThisMonth,
-        lastMonthlyReset: user.lastMonthlyReset,
+        email: user.email || '',
+        storiesCreatedThisMonth: user.storiesCreatedThisMonth || 0,
+        assessmentUploadsThisMonth: user.assessmentUploadsThisMonth || 0,
+        competitionEntriesThisMonth: user.competitionEntriesThisMonth || 0,
+        lastMonthlyReset: user.lastMonthlyReset || null,
       },
       currentMonth: {
         start: currentMonthStart,

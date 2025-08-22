@@ -1,7 +1,7 @@
 // app/admin/comments/moderate/page.tsx
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -60,16 +60,7 @@ export default function ModerationPage() {
   });
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (status === 'loading') return;
-    if (!session || session.user?.role !== 'admin') {
-      router.push('/admin/login');
-      return;
-    }
-    fetchComments();
-  }, [session, status, router, filters]);
-
-  const fetchComments = async () => {
+  const fetchComments = useCallback(async () => {
     try {
       setLoading(true);
       const params = new URLSearchParams({
@@ -110,7 +101,16 @@ export default function ModerationPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [filters]);
+
+  useEffect(() => {
+    if (status === 'loading') return;
+    if (!session || session.user?.role !== 'admin') {
+      router.push('/admin/login');
+      return;
+    }
+    fetchComments();
+  }, [session, status, router, fetchComments]);
 
   const bulkModerate = async (action: 'resolve' | 'unresolve' | 'delete') => {
     if (selectedComments.size === 0) {

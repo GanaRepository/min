@@ -1,7 +1,7 @@
 // app/admin/mentors/[id]/page.tsx
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
@@ -67,16 +67,7 @@ export default function ViewMentor() {
   const [deleting, setDeleting] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (status === 'loading') return;
-    if (!session || session.user?.role !== 'admin') {
-      router.push('/admin/login');
-      return;
-    }
-    fetchMentor();
-  }, [session, status, router, mentorId]);
-
-  const fetchMentor = async () => {
+  const fetchMentor = useCallback(async () => {
     try {
       const response = await fetch(`/api/admin/mentors/${mentorId}`);
       const data = await response.json();
@@ -92,7 +83,16 @@ export default function ViewMentor() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [mentorId, router]);
+
+  useEffect(() => {
+    if (status === 'loading') return;
+    if (!session || session.user?.role !== 'admin') {
+      router.push('/admin/login');
+      return;
+    }
+    fetchMentor();
+  }, [session, status, router, fetchMentor]);
 
   const deleteMentor = async () => {
     if (

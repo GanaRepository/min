@@ -21,9 +21,12 @@ export interface IUser extends Document {
   // Writing Statistics
   totalStoriesCreated: number;
   storiesCreatedThisMonth: number;
+  assessmentUploadsThisMonth: number;
+  competitionEntriesThisMonth: number;
   totalWordsWritten: number;
   writingStreak: number;
   lastActiveDate?: Date;
+  lastMonthlyReset?: Date;
   totalTimeWriting: number;
 
   // Purchase History - THE MISSING FIELD CAUSING ALL ERRORS
@@ -140,6 +143,14 @@ const UserSchema = new Schema<IUser>(
       type: Number,
       default: 0,
     },
+    assessmentUploadsThisMonth: {
+      type: Number,
+      default: 0,
+    },
+    competitionEntriesThisMonth: {
+      type: Number,
+      default: 0,
+    },
     totalWordsWritten: {
       type: Number,
       default: 0,
@@ -149,6 +160,7 @@ const UserSchema = new Schema<IUser>(
       default: 0,
     },
     lastActiveDate: Date,
+    lastMonthlyReset: Date,
     totalTimeWriting: {
       type: Number,
       default: 0,

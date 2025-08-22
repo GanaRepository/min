@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
@@ -93,16 +93,7 @@ export default function ViewComment() {
   const [loadingPagination, setLoadingPagination] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (status === 'loading') return;
-    if (!session || session.user?.role !== 'admin') {
-      router.push('/admin/login');
-      return;
-    }
-    fetchComment();
-  }, [session, status, router, commentId]);
-
-  const fetchComment = async () => {
+  const fetchComment = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch(`/api/admin/comments/${commentId}`);
@@ -120,7 +111,16 @@ export default function ViewComment() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [commentId, router]);
+
+  useEffect(() => {
+    if (status === 'loading') return;
+    if (!session || session.user?.role !== 'admin') {
+      router.push('/admin/login');
+      return;
+    }
+    fetchComment();
+  }, [session, status, router, fetchComment]);
 
   const updateCommentStatus = async (isResolved: boolean) => {
     try {

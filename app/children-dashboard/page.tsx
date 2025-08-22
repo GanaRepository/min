@@ -1,7 +1,7 @@
 // app/children-dashboard/page.tsx - REVAMPED COLOR PALETTE VERSION
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -155,17 +155,6 @@ export default function ChildrenDashboardPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // ===== EFFECTS =====
-  useEffect(() => {
-    if (status === 'unauthenticated') {
-      router.push('/auth/signin');
-      return;
-    }
-    if (status === 'authenticated') {
-      fetchDashboardData();
-    }
-  }, [status]);
-
   // ===== HELPER FUNCTIONS =====
   const getDefaultUsageStats = (): UsageStats => ({
     freestyleStories: { used: 0, limit: 3, remaining: 3, canUse: true },
@@ -181,7 +170,7 @@ export default function ChildrenDashboardPage() {
   });
 
   // ===== API CALLS =====
-  const fetchDashboardData = async () => {
+  const fetchDashboardData = useCallback(async () => {
     if (!session?.user?.id) return;
 
     setLoading(true);
@@ -246,7 +235,18 @@ export default function ChildrenDashboardPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [session?.user?.id]);
+
+  // ===== EFFECTS =====
+  useEffect(() => {
+    if (status === 'unauthenticated') {
+      router.push('/auth/signin');
+      return;
+    }
+    if (status === 'authenticated') {
+      fetchDashboardData();
+    }
+  }, [status, fetchDashboardData, router]);
 
   const handleUpgrade = () => {
     router.push('/pricing');

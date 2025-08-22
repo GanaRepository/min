@@ -539,7 +539,7 @@ export default function CreateStoriesPage() {
 
             <h3 className="text-2xl  text-white mb-4">Upload for Assessment</h3>
             <p className="text-gray-300 mb-6">
-              Get detailed AI feedback on stories you've already written
+              Get detailed AI feedback on stories you&apos;ve already written
             </p>
 
             <div className="space-y-3 mb-6">
@@ -882,7 +882,7 @@ export default function CreateStoriesPage() {
 
         <h1 className="text-4xl  text-white mb-4">Upload for Assessment</h1>
         <p className="text-xl text-gray-300 mb-8">
-          Get detailed AI feedback on stories you've already written
+          Get detailed AI feedback on stories you&apos;ve already written
         </p>
       </motion.div>
 
@@ -1079,7 +1079,7 @@ export default function CreateStoriesPage() {
 
       {/* Assessment Features */}
       <div className="mt-8 bg-gray-800/40 backdrop-blur-xl border border-gray-600/30  p-6">
-        <h3 className="text-xl  text-white mb-4">What You'll Get:</h3>
+        <h3 className="text-xl  text-white mb-4">What You&apos;ll Get:</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="text-center">
             <Target className="w-8 h-8 text-blue-400 mx-auto mb-2" />

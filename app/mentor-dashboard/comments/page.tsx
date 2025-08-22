@@ -114,8 +114,8 @@ export default function MentorComments() {
 
   // Reset to first page if search/filter changes and currentPage is out of range
   useEffect(() => {
-    if (currentPage > totalPages) setCurrentPage(1);
-  }, [searchTerm, comments, totalPages]);
+    if (currentPage > totalPages && totalPages > 0) setCurrentPage(1);
+  }, [searchTerm, comments, totalPages, currentPage]);
 
   if (loading) {
     return (

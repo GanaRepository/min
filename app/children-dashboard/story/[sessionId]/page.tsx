@@ -2,7 +2,7 @@
 
 // app/children-dashboard/story/[sessionId]/page.tsx - FIXED INPUT VISIBILITY
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -117,43 +117,7 @@ export default function StoryWritingInterface({
 
   const maxTurns = 7;
 
-  // Load story session and turns
-  useEffect(() => {
-    if (status === 'loading') return;
-    if (!session) {
-      router.push('/auth/signin');
-      return;
-    }
-
-    fetchStoryData();
-  }, [sessionId, session, status]);
-
-  // Auto-resize textarea
-  useEffect(() => {
-    if (textareaRef.current) {
-      textareaRef.current.style.height = 'auto';
-      textareaRef.current.style.height =
-        textareaRef.current.scrollHeight + 'px';
-    }
-  }, [currentInput]);
-
-  // Focus title input when editing
-  useEffect(() => {
-    if (isEditingTitle && titleInputRef.current) {
-      titleInputRef.current.focus();
-      titleInputRef.current.select();
-    }
-  }, [isEditingTitle]);
-
-  // Scroll to bottom of timeline
-  useEffect(() => {
-    if (storyTimelineRef.current) {
-      storyTimelineRef.current.scrollTop =
-        storyTimelineRef.current.scrollHeight;
-    }
-  }, [turns, isAIGenerating]);
-
-  const fetchStoryData = async () => {
+  const fetchStoryData = useCallback(async () => {
     try {
       setIsLoading(true);
 
@@ -191,7 +155,43 @@ export default function StoryWritingInterface({
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [sessionId, toast, router]);
+
+  // Load story session and turns
+  useEffect(() => {
+    if (status === 'loading') return;
+    if (!session) {
+      router.push('/auth/signin');
+      return;
+    }
+
+    fetchStoryData();
+  }, [sessionId, session, status, router, fetchStoryData]);
+
+  // Auto-resize textarea
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+      textareaRef.current.style.height =
+        textareaRef.current.scrollHeight + 'px';
+    }
+  }, [currentInput]);
+
+  // Focus title input when editing
+  useEffect(() => {
+    if (isEditingTitle && titleInputRef.current) {
+      titleInputRef.current.focus();
+      titleInputRef.current.select();
+    }
+  }, [isEditingTitle]);
+
+  // Scroll to bottom of timeline
+  useEffect(() => {
+    if (storyTimelineRef.current) {
+      storyTimelineRef.current.scrollTop =
+        storyTimelineRef.current.scrollHeight;
+    }
+  }, [turns, isAIGenerating]);
 
   const handleInputChange = (value: string) => {
     setCurrentInput(value);
