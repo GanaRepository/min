@@ -565,34 +565,8 @@ export async function POST(request: NextRequest) {
         `⚠️ Integrity Risk: ${assessmentResult.integrityAnalysis.integrityRisk}`
       );
 
-      // ✅ FILTER: Block high-risk submissions
-      if (
-        assessmentResult.integrityAnalysis.integrityRisk === 'critical' ||
-        assessmentResult.integrityAnalysis.integrityRisk === 'high'
-      ) {
-        return NextResponse.json(
-          {
-            error: 'Story integrity check failed',
-            details:
-              'This content appears to violate academic integrity standards. Competition entries must be completely original.',
-            integrityAnalysis: assessmentResult.integrityStatus,
-          },
-          { status: 400 }
-        );
-      }
-
-      // ✅ MINIMUM QUALITY THRESHOLD for competitions
-      if (assessmentResult.overallScore < 60) {
-        return NextResponse.json(
-          {
-            error: 'Story quality threshold not met',
-            details:
-              'Competition entries must achieve a minimum quality score of 60%. Please revise and improve your story.',
-            currentScore: assessmentResult.overallScore,
-          },
-          { status: 400 }
-        );
-      }
+      // ✅ ASSESSMENT COMPLETE: Save with full assessment data
+      // No blocking - let competition-manager filter later through tier system
     } catch (error) {
       console.error('❌ AI Assessment failed for competition entry:', error);
 
