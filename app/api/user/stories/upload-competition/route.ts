@@ -541,7 +541,7 @@ export async function POST(request: NextRequest) {
 
     // ✅ CRITICAL: Run AI Assessment BEFORE allowing competition entry
     console.log('🤖 Running ADVANCED AI Assessment for competition entry...');
-    
+
     let assessmentResult;
     try {
       assessmentResult = await AIAssessmentEngine.performCompleteAssessment(
@@ -551,42 +551,60 @@ export async function POST(request: NextRequest) {
           isCollaborativeStory: false,
           storyTitle: title,
           expectedGenre: 'creative',
-          isCompetition: true  // Special flag for competition
+          isCompetition: true, // Special flag for competition
         }
       );
 
-      console.log(`📊 Competition Assessment - Overall: ${assessmentResult.overallScore}%`);
-      console.log(`🔍 AI Detection: ${assessmentResult.integrityAnalysis.aiDetectionResult.likelihood}`);
-      console.log(`⚠️ Integrity Risk: ${assessmentResult.integrityAnalysis.integrityRisk}`);
+      console.log(
+        `📊 Competition Assessment - Overall: ${assessmentResult.overallScore}%`
+      );
+      console.log(
+        `🔍 AI Detection: ${assessmentResult.integrityAnalysis.aiDetectionResult.likelihood}`
+      );
+      console.log(
+        `⚠️ Integrity Risk: ${assessmentResult.integrityAnalysis.integrityRisk}`
+      );
 
       // ✅ FILTER: Block high-risk submissions
-      if (assessmentResult.integrityAnalysis.integrityRisk === 'critical' || 
-          assessmentResult.integrityAnalysis.integrityRisk === 'high') {
-        
-        return NextResponse.json({
-          error: 'Story integrity check failed',
-          details: 'This content appears to violate academic integrity standards. Competition entries must be completely original.',
-          integrityAnalysis: assessmentResult.integrityStatus
-        }, { status: 400 });
+      if (
+        assessmentResult.integrityAnalysis.integrityRisk === 'critical' ||
+        assessmentResult.integrityAnalysis.integrityRisk === 'high'
+      ) {
+        return NextResponse.json(
+          {
+            error: 'Story integrity check failed',
+            details:
+              'This content appears to violate academic integrity standards. Competition entries must be completely original.',
+            integrityAnalysis: assessmentResult.integrityStatus,
+          },
+          { status: 400 }
+        );
       }
 
       // ✅ MINIMUM QUALITY THRESHOLD for competitions
       if (assessmentResult.overallScore < 60) {
-        return NextResponse.json({
-          error: 'Story quality threshold not met',
-          details: 'Competition entries must achieve a minimum quality score of 60%. Please revise and improve your story.',
-          currentScore: assessmentResult.overallScore
-        }, { status: 400 });
+        return NextResponse.json(
+          {
+            error: 'Story quality threshold not met',
+            details:
+              'Competition entries must achieve a minimum quality score of 60%. Please revise and improve your story.',
+            currentScore: assessmentResult.overallScore,
+          },
+          { status: 400 }
+        );
       }
-
     } catch (error) {
       console.error('❌ AI Assessment failed for competition entry:', error);
-      
+
       // For competition entries, we should fail safely rather than allow potentially problematic content
-      return NextResponse.json({
-        error: 'Unable to verify story quality and integrity',
-        details: 'Please try submitting again. If the problem persists, contact support.',
-      }, { status: 500 });
+      return NextResponse.json(
+        {
+          error: 'Unable to verify story quality and integrity',
+          details:
+            'Please try submitting again. If the problem persists, contact support.',
+        },
+        { status: 500 }
+      );
     }
 
     // ✅ CREATE STORY SESSION WITH FULL ASSESSMENT DATA
@@ -605,35 +623,37 @@ export async function POST(request: NextRequest) {
       isUploadedForAssessment: false,
       storyType: 'competition',
       competitionEligible: true,
-      
+
       // ✅ STORE COMPLETE ASSESSMENT DATA
       assessment: {
         grammarScore: assessmentResult.categoryScores.grammar,
         creativityScore: assessmentResult.categoryScores.creativity,
         vocabularyScore: assessmentResult.categoryScores.vocabulary,
         structureScore: assessmentResult.categoryScores.structure,
-        characterDevelopmentScore: assessmentResult.categoryScores.characterDevelopment,
+        characterDevelopmentScore:
+          assessmentResult.categoryScores.characterDevelopment,
         plotDevelopmentScore: assessmentResult.categoryScores.plotDevelopment,
         overallScore: assessmentResult.overallScore,
         readingLevel: assessmentResult.categoryScores.readingLevel,
         feedback: assessmentResult.educationalFeedback.teacherComment,
         strengths: assessmentResult.educationalFeedback.strengths,
         improvements: assessmentResult.educationalFeedback.improvements,
-        
+
         // ✅ INTEGRITY ANALYSIS (The missing piece!)
         plagiarismScore: assessmentResult.integrityAnalysis.originalityScore,
-        aiDetectionScore: assessmentResult.integrityAnalysis.aiDetectionResult.overallScore,
+        aiDetectionScore:
+          assessmentResult.integrityAnalysis.aiDetectionResult.overallScore,
         integrityRisk: assessmentResult.integrityAnalysis.integrityRisk,
         integrityStatus: assessmentResult.integrityStatus,
         integrityAnalysis: assessmentResult.integrityAnalysis,
-        
+
         // ✅ ADVANCED ANALYSIS
         recommendations: assessmentResult.recommendations,
         progressTracking: assessmentResult.progressTracking,
         assessmentVersion: '2.0',
         assessmentDate: new Date().toISOString(),
       },
-      
+
       competitionEntries: [
         {
           competitionId: currentCompetition._id,
@@ -659,7 +679,7 @@ export async function POST(request: NextRequest) {
         isPublished: false,
         competitionEligible: true,
         assessmentScore: assessmentResult.overallScore,
-        integrityStatus: assessmentResult.integrityStatus.status
+        integrityStatus: assessmentResult.integrityStatus.status,
       },
       competition: {
         id: currentCompetition._id,
@@ -669,7 +689,7 @@ export async function POST(request: NextRequest) {
       assessment: {
         overallScore: assessmentResult.overallScore,
         integrityStatus: assessmentResult.integrityStatus,
-        feedback: assessmentResult.educationalFeedback.teacherComment
+        feedback: assessmentResult.educationalFeedback.teacherComment,
       },
       message: 'Story assessed and submitted to competition successfully!',
     });

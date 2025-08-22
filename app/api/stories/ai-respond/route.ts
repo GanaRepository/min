@@ -155,55 +155,76 @@ export async function POST(req: NextRequest) {
           .join(' ');
 
         // ✅ FIXED: Use comprehensive assessment engine
-        const comprehensiveAssessment = await AIAssessmentEngine.performCompleteAssessment(
-          storyContent,
-          {
+        const comprehensiveAssessment =
+          await AIAssessmentEngine.performCompleteAssessment(storyContent, {
             childAge: 10,
             isCollaborativeStory: true,
             storyTitle: updatedSession.title,
             expectedGenre: 'creative',
-            userTurns: allTurns.filter(turn => turn.childInput).map(turn => turn.childInput)
-          }
-        );
+            userTurns: allTurns
+              .filter((turn) => turn.childInput)
+              .map((turn) => turn.childInput),
+          });
 
         console.log('✅ Comprehensive assessment completed');
-        console.log(`📊 Overall Score: ${comprehensiveAssessment.overallScore}%`);
-        console.log(`🔍 AI Detection: ${comprehensiveAssessment.integrityAnalysis.aiDetectionResult.likelihood}`);
-        console.log(`⚠️ Integrity Risk: ${comprehensiveAssessment.integrityAnalysis.integrityRisk}`);
+        console.log(
+          `📊 Overall Score: ${comprehensiveAssessment.overallScore}%`
+        );
+        console.log(
+          `🔍 AI Detection: ${comprehensiveAssessment.integrityAnalysis.aiDetectionResult.likelihood}`
+        );
+        console.log(
+          `⚠️ Integrity Risk: ${comprehensiveAssessment.integrityAnalysis.integrityRisk}`
+        );
 
         await StorySession.findByIdAndUpdate(actualSessionId, {
           $set: {
             assessment: {
               // Legacy fields for backward compatibility
               grammarScore: comprehensiveAssessment.categoryScores.grammar,
-              creativityScore: comprehensiveAssessment.categoryScores.creativity,
+              creativityScore:
+                comprehensiveAssessment.categoryScores.creativity,
               overallScore: comprehensiveAssessment.overallScore,
-              vocabularyScore: comprehensiveAssessment.categoryScores.vocabulary,
+              vocabularyScore:
+                comprehensiveAssessment.categoryScores.vocabulary,
               structureScore: comprehensiveAssessment.categoryScores.structure,
-              characterDevelopmentScore: comprehensiveAssessment.categoryScores.characterDevelopment,
-              plotDevelopmentScore: comprehensiveAssessment.categoryScores.plotDevelopment,
+              characterDevelopmentScore:
+                comprehensiveAssessment.categoryScores.characterDevelopment,
+              plotDevelopmentScore:
+                comprehensiveAssessment.categoryScores.plotDevelopment,
               readingLevel: comprehensiveAssessment.categoryScores.readingLevel,
-              feedback: comprehensiveAssessment.educationalFeedback.teacherComment,
+              feedback:
+                comprehensiveAssessment.educationalFeedback.teacherComment,
               strengths: comprehensiveAssessment.educationalFeedback.strengths,
-              improvements: comprehensiveAssessment.educationalFeedback.improvements,
+              improvements:
+                comprehensiveAssessment.educationalFeedback.improvements,
               vocabularyUsed: [],
               suggestedWords: [],
-              educationalInsights: comprehensiveAssessment.educationalFeedback.encouragement,
+              educationalInsights:
+                comprehensiveAssessment.educationalFeedback.encouragement,
 
               // ✅ ADVANCED INTEGRITY ANALYSIS (The missing piece!)
-              plagiarismScore: comprehensiveAssessment.integrityAnalysis.originalityScore,
-              aiDetectionScore: comprehensiveAssessment.integrityAnalysis.aiDetectionResult.overallScore,
-              integrityRisk: comprehensiveAssessment.integrityAnalysis.integrityRisk,
+              plagiarismScore:
+                comprehensiveAssessment.integrityAnalysis.originalityScore,
+              aiDetectionScore:
+                comprehensiveAssessment.integrityAnalysis.aiDetectionResult
+                  .overallScore,
+              integrityRisk:
+                comprehensiveAssessment.integrityAnalysis.integrityRisk,
               integrityStatus: comprehensiveAssessment.integrityStatus,
               integrityAnalysis: comprehensiveAssessment.integrityAnalysis,
-              
+
               // ✅ ADVANCED ANALYSIS
               recommendations: comprehensiveAssessment.recommendations,
               progressTracking: comprehensiveAssessment.progressTracking,
               assessmentVersion: '2.0',
               assessmentDate: new Date().toISOString(),
             },
-            status: comprehensiveAssessment.integrityAnalysis.integrityRisk === 'critical' ? 'flagged' : 'completed',
+            status:
+              comprehensiveAssessment.integrityAnalysis.integrityRisk ===
+              'critical'
+                ? 'flagged'
+                : 'completed',
             lastAssessedAt: new Date(),
             assessmentAttempts: 1,
           },
@@ -217,17 +238,21 @@ export async function POST(req: NextRequest) {
           creativityScore: comprehensiveAssessment.categoryScores.creativity,
           vocabularyScore: comprehensiveAssessment.categoryScores.vocabulary,
           structureScore: comprehensiveAssessment.categoryScores.structure,
-          characterDevelopmentScore: comprehensiveAssessment.categoryScores.characterDevelopment,
-          plotDevelopmentScore: comprehensiveAssessment.categoryScores.plotDevelopment,
+          characterDevelopmentScore:
+            comprehensiveAssessment.categoryScores.characterDevelopment,
+          plotDevelopmentScore:
+            comprehensiveAssessment.categoryScores.plotDevelopment,
           overallScore: comprehensiveAssessment.overallScore,
           readingLevel: comprehensiveAssessment.categoryScores.readingLevel,
           feedback: comprehensiveAssessment.educationalFeedback.teacherComment,
           strengths: comprehensiveAssessment.educationalFeedback.strengths,
-          improvements: comprehensiveAssessment.educationalFeedback.improvements,
+          improvements:
+            comprehensiveAssessment.educationalFeedback.improvements,
           vocabularyUsed: [],
           suggestedWords: [],
-          educationalInsights: comprehensiveAssessment.educationalFeedback.encouragement,
-          
+          educationalInsights:
+            comprehensiveAssessment.educationalFeedback.encouragement,
+
           // ✅ NEW: Include integrity analysis for frontend
           integrityAnalysis: comprehensiveAssessment.integrityAnalysis,
           integrityStatus: comprehensiveAssessment.integrityStatus,
@@ -244,13 +269,17 @@ export async function POST(req: NextRequest) {
           plotDevelopmentScore: 75,
           overallScore: 74,
           readingLevel: 'Elementary',
-          feedback: 'Story completed successfully! Great work on your creative writing.',
+          feedback:
+            'Story completed successfully! Great work on your creative writing.',
           strengths: ['Creative ideas', 'Story completion'],
           improvements: ['Continue practicing writing skills'],
           vocabularyUsed: [],
           suggestedWords: [],
           educationalInsights: 'Keep writing and exploring your creativity!',
-          integrityStatus: { status: 'PASS', message: 'Assessment unavailable but story completed' }
+          integrityStatus: {
+            status: 'PASS',
+            message: 'Assessment unavailable but story completed',
+          },
         };
       }
     }

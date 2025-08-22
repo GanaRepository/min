@@ -181,7 +181,7 @@ export interface StoryResponse extends Story {
 export interface CompetitionResponse extends Competition {
   daysLeft?: number;
   submissionDeadline?: string | null; // Keep for backwards compatibility - maps to submissionEnd
-  judgingDeadline?: string | null;    // Keep for backwards compatibility - maps to judgingEnd
+  judgingDeadline?: string | null; // Keep for backwards compatibility - maps to judgingEnd
   userStats?: {
     entriesUsed: number;
     entriesLimit: number;

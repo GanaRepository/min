@@ -7,7 +7,9 @@ const path = require('path');
 // Simple connection function
 async function connectToMongoDB() {
   try {
-    const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://ZenthoritDb:Abhi%40Zenthorit1@127.0.0.1:27017/ZenthoritDB?authSource=admin';
+    const MONGODB_URI =
+      process.env.MONGODB_URI ||
+      'mongodb://ZenthoritDb:Abhi%40Zenthorit1@127.0.0.1:27017/ZenthoritDB?authSource=admin';
     await mongoose.connect(MONGODB_URI);
     console.log('✅ Connected to MongoDB');
     return true;
@@ -29,7 +31,10 @@ async function fixCompetitionValidation() {
     }
 
     // Find all competitions directly from the collection
-    const competitions = await mongoose.connection.db.collection('competitions').find({}).toArray();
+    const competitions = await mongoose.connection.db
+      .collection('competitions')
+      .find({})
+      .toArray();
     console.log(`📊 Found ${competitions.length} competitions to check`);
 
     if (competitions.length === 0) {
@@ -42,7 +47,9 @@ async function fixCompetitionValidation() {
 
     for (const comp of competitions) {
       try {
-        console.log(`\n🔍 Checking competition: ${comp.month || 'Unknown'} ${comp.year || 'Unknown'}`);
+        console.log(
+          `\n🔍 Checking competition: ${comp.month || 'Unknown'} ${comp.year || 'Unknown'}`
+        );
 
         let needsUpdate = false;
         const updates = {};
@@ -51,7 +58,8 @@ async function fixCompetitionValidation() {
         if (!comp.submissionEnd) {
           console.log('  ❌ Missing submissionEnd - adding default');
           const year = comp.year || 2024;
-          const monthIndex = comp.month === 'January' ? 0 : new Date().getMonth();
+          const monthIndex =
+            comp.month === 'January' ? 0 : new Date().getMonth();
           updates.submissionEnd = new Date(year, monthIndex, 28);
           needsUpdate = true;
         }
@@ -59,7 +67,8 @@ async function fixCompetitionValidation() {
         if (!comp.judgingEnd) {
           console.log('  ❌ Missing judgingEnd - adding default');
           const year = comp.year || 2024;
-          const monthIndex = comp.month === 'January' ? 0 : new Date().getMonth();
+          const monthIndex =
+            comp.month === 'January' ? 0 : new Date().getMonth();
           updates.judgingEnd = new Date(year, monthIndex, 30);
           needsUpdate = true;
         }
@@ -67,7 +76,8 @@ async function fixCompetitionValidation() {
         if (!comp.submissionStart) {
           console.log('  ❌ Missing submissionStart - adding default');
           const year = comp.year || 2024;
-          const monthIndex = comp.month === 'January' ? 0 : new Date().getMonth();
+          const monthIndex =
+            comp.month === 'January' ? 0 : new Date().getMonth();
           updates.submissionStart = new Date(year, monthIndex, 1);
           needsUpdate = true;
         }
@@ -75,7 +85,8 @@ async function fixCompetitionValidation() {
         if (!comp.judgingStart) {
           console.log('  ❌ Missing judgingStart - adding default');
           const year = comp.year || 2024;
-          const monthIndex = comp.month === 'January' ? 0 : new Date().getMonth();
+          const monthIndex =
+            comp.month === 'January' ? 0 : new Date().getMonth();
           updates.judgingStart = new Date(year, monthIndex, 29);
           needsUpdate = true;
         }
@@ -83,7 +94,8 @@ async function fixCompetitionValidation() {
         if (!comp.resultsDate) {
           console.log('  ❌ Missing resultsDate - adding default');
           const year = comp.year || 2024;
-          const monthIndex = comp.month === 'January' ? 0 : new Date().getMonth();
+          const monthIndex =
+            comp.month === 'January' ? 0 : new Date().getMonth();
           updates.resultsDate = new Date(year, monthIndex, 31);
           needsUpdate = true;
         }
@@ -92,7 +104,7 @@ async function fixCompetitionValidation() {
         const unsetFields = {};
         if (comp.entries !== undefined) {
           console.log('  🗑️ Removing deprecated entries field');
-          unsetFields.entries = "";
+          unsetFields.entries = '';
         }
 
         if (needsUpdate || Object.keys(unsetFields).length > 0) {
@@ -104,19 +116,24 @@ async function fixCompetitionValidation() {
             updateQuery.$unset = unsetFields;
           }
 
-          await mongoose.connection.db.collection('competitions').updateOne(
-            { _id: comp._id },
-            updateQuery
-          );
+          await mongoose.connection.db
+            .collection('competitions')
+            .updateOne({ _id: comp._id }, updateQuery);
 
-          console.log(`  ✅ Fixed competition: ${comp.month || 'Unknown'} ${comp.year || 'Unknown'}`);
+          console.log(
+            `  ✅ Fixed competition: ${comp.month || 'Unknown'} ${comp.year || 'Unknown'}`
+          );
           fixedCount++;
         } else {
-          console.log(`  ✅ Competition is valid: ${comp.month || 'Unknown'} ${comp.year || 'Unknown'}`);
+          console.log(
+            `  ✅ Competition is valid: ${comp.month || 'Unknown'} ${comp.year || 'Unknown'}`
+          );
         }
-
       } catch (error) {
-        console.error(`  ❌ Error fixing competition ${comp.month || 'Unknown'} ${comp.year || 'Unknown'}:`, error.message);
+        console.error(
+          `  ❌ Error fixing competition ${comp.month || 'Unknown'} ${comp.year || 'Unknown'}:`,
+          error.message
+        );
         errorCount++;
       }
     }
@@ -125,7 +142,6 @@ async function fixCompetitionValidation() {
     console.log(`   ✅ Fixed: ${fixedCount} competitions`);
     console.log(`   ❌ Errors: ${errorCount} competitions`);
     console.log(`   📊 Total: ${competitions.length} competitions checked`);
-
   } catch (error) {
     console.error('❌ Migration failed:', error);
     process.exit(1);

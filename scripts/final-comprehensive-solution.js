@@ -112,5 +112,5 @@ module.exports = {
   assessmentIntegrated: true,
   competitionFilteringActive: true,
   integrityDetectionOperational: true,
-  statisticsWorking: true
+  statisticsWorking: true,
 };

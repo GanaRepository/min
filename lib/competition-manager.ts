@@ -1385,7 +1385,7 @@ export class CompetitionManager {
         case 'submission':
           competition.phase = 'judging';
           competition.submissionEnd = new Date(); // ✅ This field exists
-          
+
           // Set judgingEnd if not set (use the existing field name)
           if (!competition.judgingEnd) {
             competition.judgingEnd = new Date(
@@ -1474,26 +1474,27 @@ export class CompetitionManager {
   static async updateCompetitionStats(competitionId: string) {
     try {
       await connectToDatabase();
-      
+
       // Get real-time counts
       const totalSubmissions = await StorySession.countDocuments({
         'competitionEntries.competitionId': competitionId,
       });
-      
+
       const totalParticipants = await StorySession.distinct('childId', {
         'competitionEntries.competitionId': competitionId,
       });
-      
+
       // Update competition document
       await Competition.findByIdAndUpdate(competitionId, {
         $set: {
           totalSubmissions,
           totalParticipants: totalParticipants.length,
-        }
+        },
       });
-      
-      console.log(`📊 Updated competition stats: ${totalSubmissions} submissions, ${totalParticipants.length} participants`);
-      
+
+      console.log(
+        `📊 Updated competition stats: ${totalSubmissions} submissions, ${totalParticipants.length} participants`
+      );
     } catch (error) {
       console.error('❌ Failed to update competition stats:', error);
     }

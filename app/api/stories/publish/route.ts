@@ -178,7 +178,7 @@ export async function POST(request: Request) {
       return NextResponse.json({
         success: true,
         message: 'Story already published',
-        publishedStory: { _id: storySession._id, title: storySession.title }
+        publishedStory: { _id: storySession._id, title: storySession.title },
       });
     }
 
@@ -203,14 +203,16 @@ export async function POST(request: Request) {
     // ✅ FIXED: Set isPublished flag AND publishedAt timestamp
     await StorySession.findByIdAndUpdate(sessionId, {
       $set: {
-        isPublished: true,        // ✅ This was missing!
-        publishedAt: new Date(),  // ✅ This was missing!
+        isPublished: true, // ✅ This was missing!
+        publishedAt: new Date(), // ✅ This was missing!
         // Optional: also set these fields for community display
         views: 0,
         likes: [],
         bookmarks: [],
-        tags: storySession.elements?.genre ? [storySession.elements.genre] : ['Adventure']
-      }
+        tags: storySession.elements?.genre
+          ? [storySession.elements.genre]
+          : ['Adventure'],
+      },
     });
 
     return NextResponse.json({

@@ -695,7 +695,6 @@ function StoryCard({
                 </span>
               </div>
             </div>
-
           </div>
         );
       })()}
@@ -765,10 +764,7 @@ function StoryCard({
                   Publishing...
                 </>
               ) : (
-                <>
-            
-                  Publish To Community
-                </>
+                <>Publish To Community</>
               )}
             </button>
           ) : null}
@@ -779,7 +775,6 @@ function StoryCard({
               onClick={onPurchase}
               className="w-full bg-yellow-600 hover:bg-yellow-700 text-white py-3 px-4 text-sm font-medium transition-colors flex items-center justify-center gap-2 rounded-lg"
             >
-       
               Reserve Spot in Physical Book - $10
             </button>
           ) : null}

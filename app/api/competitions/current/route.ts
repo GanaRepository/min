@@ -604,14 +604,16 @@ export async function GET() {
 
       // Timing information - using actual schema field names
       daysLeft,
-      submissionStart: currentCompetition.submissionStart?.toISOString() || null,
+      submissionStart:
+        currentCompetition.submissionStart?.toISOString() || null,
       submissionEnd: currentCompetition.submissionEnd?.toISOString() || null,
       judgingStart: currentCompetition.judgingStart?.toISOString() || null,
       judgingEnd: currentCompetition.judgingEnd?.toISOString() || null,
       resultsDate: currentCompetition.resultsDate?.toISOString() || null,
 
       // Backwards compatibility aliases (for frontend that might still expect old names)
-      submissionDeadline: currentCompetition.submissionEnd?.toISOString() || null,
+      submissionDeadline:
+        currentCompetition.submissionEnd?.toISOString() || null,
       judgingDeadline: currentCompetition.judgingEnd?.toISOString() || null,
 
       // 🔧 REAL-TIME STATS (not stored values)

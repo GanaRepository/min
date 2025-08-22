@@ -122,5 +122,6 @@ Your comprehensive AI assessment system with integrity checking is now FULLY OPE
 `);
 
 module.exports = {
-  summary: 'Comprehensive fixes implemented for publish, assessment, and competition systems'
+  summary:
+    'Comprehensive fixes implemented for publish, assessment, and competition systems',
 };
