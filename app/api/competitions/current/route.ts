@@ -602,12 +602,17 @@ export async function GET() {
       phase: currentCompetition.phase,
       isActive: currentCompetition.isActive,
 
-      // Timing information
+      // Timing information - using actual schema field names
       daysLeft,
-      submissionDeadline:
-        currentCompetition.submissionEnd?.toISOString() || null,
-      judgingDeadline: currentCompetition.judgingEnd?.toISOString() || null,
+      submissionStart: currentCompetition.submissionStart?.toISOString() || null,
+      submissionEnd: currentCompetition.submissionEnd?.toISOString() || null,
+      judgingStart: currentCompetition.judgingStart?.toISOString() || null,
+      judgingEnd: currentCompetition.judgingEnd?.toISOString() || null,
       resultsDate: currentCompetition.resultsDate?.toISOString() || null,
+
+      // Backwards compatibility aliases (for frontend that might still expect old names)
+      submissionDeadline: currentCompetition.submissionEnd?.toISOString() || null,
+      judgingDeadline: currentCompetition.judgingEnd?.toISOString() || null,
 
       // 🔧 REAL-TIME STATS (not stored values)
       totalSubmissions: realTotalSubmissions,

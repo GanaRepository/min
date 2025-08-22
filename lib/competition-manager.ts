@@ -113,10 +113,7 @@ export class CompetitionManager {
       judgingEnd,
       resultsDate,
       isActive: true,
-      entries: [],
       winners: [],
-      createdAt: firstDay,
-      updatedAt: now,
       judgingCriteria: {
         grammar: 12,
         creativity: 25, // Highest weight for competition
