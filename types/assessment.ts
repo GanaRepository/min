@@ -32,6 +32,33 @@ export interface StoryAssessment {
   overallScore: number;
   readingLevel: string;
 
+  // NEW: Additional assessment categories
+  descriptiveWritingScore?: number;
+  sensoryDetailsScore?: number;
+  plotLogicScore?: number;
+  causeEffectScore?: number;
+  problemSolvingScore?: number;
+  themeRecognitionScore?: number;
+  ageAppropriatenessScore?: number;
+
+  // Advanced category scores (from new engine)
+  categoryScores?: {
+    grammar: number;
+    vocabulary: number;
+    creativity: number;
+    structure: number;
+    characterDevelopment: number;
+    plotDevelopment: number;
+    descriptiveWriting: number;
+    sensoryDetails: number;
+    plotLogic: number;
+    causeEffect: number;
+    problemSolving: number;
+    themeRecognition: number;
+    ageAppropriateness: number;
+    readingLevel: string;
+  };
+
   // Feedback
   feedback: string;
   strengths: string[];

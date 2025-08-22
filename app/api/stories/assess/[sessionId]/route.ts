@@ -711,6 +711,18 @@ export async function POST(
       suggestedWords: [],
       educationalInsights: assessment.educationalFeedback.encouragement,
 
+      // NEW: Additional assessment categories
+      descriptiveWritingScore: assessment.categoryScores.descriptiveWriting,
+      sensoryDetailsScore: assessment.categoryScores.sensoryDetails,
+      plotLogicScore: assessment.categoryScores.plotLogic,
+      causeEffectScore: assessment.categoryScores.causeEffect,
+      problemSolvingScore: assessment.categoryScores.problemSolving,
+      themeRecognitionScore: assessment.categoryScores.themeRecognition,
+      ageAppropriatenessScore: assessment.categoryScores.ageAppropriateness,
+
+      // NEW: Full category scores object for advanced assessment display
+      categoryScores: assessment.categoryScores,
+
       // Advanced fields
       plagiarismScore: assessment.integrityAnalysis.originalityScore,
       aiDetectionScore:

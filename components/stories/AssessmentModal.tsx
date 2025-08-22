@@ -22,6 +22,13 @@ import {
   Target,
   Lightbulb,
   Zap,
+  Palette,
+  Eye,
+  Puzzle,
+  ArrowRight,
+  Users,
+  Heart,
+  Baby,
 } from 'lucide-react';
 
 interface Assessment {
@@ -37,6 +44,34 @@ interface Assessment {
   strengths: string[];
   improvements: string[];
   educationalInsights: string;
+  
+  // NEW: Additional assessment categories
+  descriptiveWritingScore?: number;
+  sensoryDetailsScore?: number;
+  plotLogicScore?: number;
+  causeEffectScore?: number;
+  problemSolvingScore?: number;
+  themeRecognitionScore?: number;
+  ageAppropriatenessScore?: number;
+  
+  // Advanced category scores (from new engine)
+  categoryScores?: {
+    grammar: number;
+    vocabulary: number;
+    creativity: number;
+    structure: number;
+    characterDevelopment: number;
+    plotDevelopment: number;
+    descriptiveWriting: number;
+    sensoryDetails: number;
+    plotLogic: number;
+    causeEffect: number;
+    problemSolving: number;
+    themeRecognition: number;
+    ageAppropriateness: number;
+    readingLevel: string;
+  };
+  
   integrityAnalysis?: {
     originalityScore: number;
     plagiarismScore: number;
@@ -235,22 +270,57 @@ export default function AssessmentModal({
     }
   };
 
+  // Helper function to get category score with fallback
+  const getCategoryScore = (category: string): number => {
+    if (assessment.categoryScores) {
+      return assessment.categoryScores[category as keyof typeof assessment.categoryScores] as number || 0;
+    }
+    // Fallback to legacy fields
+    switch (category) {
+      case 'grammar': return assessment.grammarScore;
+      case 'creativity': return assessment.creativityScore;
+      case 'vocabulary': return assessment.vocabularyScore;
+      case 'structure': return assessment.structureScore;
+      case 'characterDevelopment': return assessment.characterDevelopmentScore;
+      case 'plotDevelopment': return assessment.plotDevelopmentScore;
+      case 'descriptiveWriting': return assessment.descriptiveWritingScore || 0;
+      case 'sensoryDetails': return assessment.sensoryDetailsScore || 0;
+      case 'plotLogic': return assessment.plotLogicScore || 0;
+      case 'causeEffect': return assessment.causeEffectScore || 0;
+      case 'problemSolving': return assessment.problemSolvingScore || 0;
+      case 'themeRecognition': return assessment.themeRecognitionScore || 0;
+      case 'ageAppropriateness': return assessment.ageAppropriatenessScore || 0;
+      default: return 0;
+    }
+  };
+
+  // Check if this is an advanced assessment
+  const isAdvancedAssessment = assessment.categoryScores || 
+    assessment.descriptiveWritingScore !== undefined ||
+    assessment.integrityAnalysis;
+
   const categoryScores = [
-    { label: 'Grammar', score: assessment.grammarScore, icon: BarChart3 },
-    { label: 'Creativity', score: assessment.creativityScore, icon: Sparkles },
-    { label: 'Vocabulary', score: assessment.vocabularyScore, icon: BookOpen },
-    { label: 'Structure', score: assessment.structureScore, icon: Target },
-    {
-      label: 'Character Development',
-      score: assessment.characterDevelopmentScore,
-      icon: Award,
-    },
-    {
-      label: 'Plot Development',
-      score: assessment.plotDevelopmentScore,
-      icon: TrendingUp,
-    },
-  ];
+    // Core Writing Skills
+    { label: 'Grammar', category: 'grammar', score: getCategoryScore('grammar'), icon: BarChart3, group: 'core' },
+    { label: 'Creativity', category: 'creativity', score: getCategoryScore('creativity'), icon: Sparkles, group: 'core' },
+    { label: 'Vocabulary', category: 'vocabulary', score: getCategoryScore('vocabulary'), icon: BookOpen, group: 'core' },
+    { label: 'Structure', category: 'structure', score: getCategoryScore('structure'), icon: Target, group: 'core' },
+    
+    // Story Development
+    { label: 'Character Development', category: 'characterDevelopment', score: getCategoryScore('characterDevelopment'), icon: Users, group: 'story' },
+    { label: 'Plot Development', category: 'plotDevelopment', score: getCategoryScore('plotDevelopment'), icon: TrendingUp, group: 'story' },
+    
+    // Advanced Writing Skills (only show if available)
+    ...(isAdvancedAssessment ? [
+      { label: 'Descriptive Writing', category: 'descriptiveWriting', score: getCategoryScore('descriptiveWriting'), icon: Palette, group: 'advanced' },
+      { label: 'Sensory Details', category: 'sensoryDetails', score: getCategoryScore('sensoryDetails'), icon: Eye, group: 'advanced' },
+      { label: 'Plot Logic', category: 'plotLogic', score: getCategoryScore('plotLogic'), icon: Puzzle, group: 'advanced' },
+      { label: 'Cause & Effect', category: 'causeEffect', score: getCategoryScore('causeEffect'), icon: ArrowRight, group: 'advanced' },
+      { label: 'Problem Solving', category: 'problemSolving', score: getCategoryScore('problemSolving'), icon: Lightbulb, group: 'advanced' },
+      { label: 'Theme Recognition', category: 'themeRecognition', score: getCategoryScore('themeRecognition'), icon: Heart, group: 'advanced' },
+      { label: 'Age Appropriateness', category: 'ageAppropriateness', score: getCategoryScore('ageAppropriateness'), icon: Baby, group: 'advanced' }
+    ] : [])
+  ].filter(category => category.score > 0 || !isAdvancedAssessment || category.group === 'core');
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
@@ -411,38 +481,118 @@ export default function AssessmentModal({
               <div>
                 <h3 className="text-lg  text-white mb-4 flex items-center gap-2">
                   <BarChart3 className="text-blue-400" />
-                  Category Scores
+                  Category Scores {isAdvancedAssessment && <span className="text-sm text-green-400 ml-2">(Enhanced Assessment)</span>}
                 </h3>
-                <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-                  {categoryScores.map(({ label, score, icon: Icon }) => (
-                    <div
-                      key={label}
-                      className={`p-4 rounded-lg border ${getScoreBgColor(score)}`}
-                    >
-                      <div className="flex items-center justify-between mb-2">
-                        <Icon size={20} className={getScoreColor(score)} />
-                        <span className={`text-2xl  ${getScoreColor(score)}`}>
-                          {score}%
-                        </span>
+                
+                {/* Core Skills */}
+                <div className="mb-6">
+                  <h4 className="text-md font-medium text-blue-400 mb-3">Core Writing Skills</h4>
+                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                    {categoryScores.filter(cat => cat.group === 'core').map(({ label, category, score, icon: Icon, group }) => (
+                      <div
+                        key={category}
+                        className={`p-4 rounded-lg border ${getScoreBgColor(score)}`}
+                      >
+                        <div className="flex items-center justify-between mb-2">
+                          <Icon size={20} className={getScoreColor(score)} />
+                          <span className={`text-2xl font-bold ${getScoreColor(score)}`}>
+                            {score}%
+                          </span>
+                        </div>
+                        <div className="text-sm text-gray-300 font-medium">{label}</div>
+                        <div className="w-full bg-gray-700 rounded-full h-2 mt-2">
+                          <div
+                            className={`h-2 rounded-full transition-all ${
+                              score >= 90
+                                ? 'bg-green-400'
+                                : score >= 80
+                                  ? 'bg-blue-400'
+                                  : score >= 70
+                                    ? 'bg-yellow-400'
+                                    : 'bg-orange-400'
+                            }`}
+                            style={{ width: `${score}%` }}
+                          ></div>
+                        </div>
                       </div>
-                      <div className="text-sm text-gray-300 ">{label}</div>
-                      <div className="w-full bg-gray-700 rounded-full h-2 mt-2">
-                        <div
-                          className={`h-2 rounded-full transition-all ${
-                            score >= 90
-                              ? 'bg-green-400'
-                              : score >= 80
-                                ? 'bg-blue-400'
-                                : score >= 70
-                                  ? 'bg-yellow-400'
-                                  : 'bg-orange-400'
-                          }`}
-                          style={{ width: `${score}%` }}
-                        ></div>
-                      </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
+
+                {/* Story Development */}
+                <div className="mb-6">
+                  <h4 className="text-md font-medium text-purple-400 mb-3">Story Development</h4>
+                  <div className="grid grid-cols-2 gap-4">
+                    {categoryScores.filter(cat => cat.group === 'story').map(({ label, category, score, icon: Icon, group }) => (
+                      <div
+                        key={category}
+                        className={`p-4 rounded-lg border ${getScoreBgColor(score)}`}
+                      >
+                        <div className="flex items-center justify-between mb-2">
+                          <Icon size={20} className={getScoreColor(score)} />
+                          <span className={`text-2xl font-bold ${getScoreColor(score)}`}>
+                            {score}%
+                          </span>
+                        </div>
+                        <div className="text-sm text-gray-300 font-medium">{label}</div>
+                        <div className="w-full bg-gray-700 rounded-full h-2 mt-2">
+                          <div
+                            className={`h-2 rounded-full transition-all ${
+                              score >= 90
+                                ? 'bg-green-400'
+                                : score >= 80
+                                  ? 'bg-blue-400'
+                                  : score >= 70
+                                    ? 'bg-yellow-400'
+                                    : 'bg-orange-400'
+                            }`}
+                            style={{ width: `${score}%` }}
+                          ></div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Advanced Skills (if available) */}
+                {isAdvancedAssessment && categoryScores.filter(cat => cat.group === 'advanced').length > 0 && (
+                  <div className="mb-6">
+                    <h4 className="text-md font-medium text-green-400 mb-3 flex items-center gap-2">
+                      Advanced Writing Analysis 
+                      <span className="text-xs bg-green-500/20 px-2 py-1 rounded-full">NEW</span>
+                    </h4>
+                    <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                      {categoryScores.filter(cat => cat.group === 'advanced').map(({ label, category, score, icon: Icon, group }) => (
+                        <div
+                          key={category}
+                          className={`p-4 rounded-lg border ${getScoreBgColor(score)} border-green-500/30`}
+                        >
+                          <div className="flex items-center justify-between mb-2">
+                            <Icon size={20} className={getScoreColor(score)} />
+                            <span className={`text-xl font-bold ${getScoreColor(score)}`}>
+                              {score}%
+                            </span>
+                          </div>
+                          <div className="text-xs text-gray-300 font-medium">{label}</div>
+                          <div className="w-full bg-gray-700 rounded-full h-1.5 mt-2">
+                            <div
+                              className={`h-1.5 rounded-full transition-all ${
+                                score >= 90
+                                  ? 'bg-green-400'
+                                  : score >= 80
+                                    ? 'bg-blue-400'
+                                    : score >= 70
+                                      ? 'bg-yellow-400'
+                                      : 'bg-orange-400'
+                              }`}
+                              style={{ width: `${score}%` }}
+                            ></div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Quick Feedback */}
@@ -650,51 +800,154 @@ export default function AssessmentModal({
 
               {/* Detailed Score Breakdown */}
               <div>
-                <h3 className="text-lg  text-white mb-4 flex items-center gap-2">
+                <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
                   <BarChart3 className="text-blue-400" />
-                  Detailed Score Analysis
+                  Detailed Score Analysis {isAdvancedAssessment && <span className="text-sm text-green-400 ml-2">(Enhanced Assessment)</span>}
                 </h3>
-                <div className="space-y-4">
-                  {categoryScores.map(({ label, score, icon: Icon }) => (
-                    <div
-                      key={label}
-                      className="bg-gray-800/50 border border-gray-700/50 rounded-lg p-4"
-                    >
-                      <div className="flex items-center justify-between mb-3">
-                        <div className="flex items-center gap-3">
-                          <Icon size={20} className={getScoreColor(score)} />
-                          <span className="text-white ">{label}</span>
+                
+                {/* Core Skills Detailed */}
+                <div className="mb-6">
+                  <h4 className="text-md font-medium text-blue-400 mb-3">Core Writing Skills</h4>
+                  <div className="space-y-4">
+                    {categoryScores.filter(cat => cat.group === 'core').map(({ label, category, score, icon: Icon }) => (
+                      <div
+                        key={category}
+                        className="bg-gray-800/50 border border-gray-700/50 rounded-lg p-4"
+                      >
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="flex items-center gap-3">
+                            <Icon size={20} className={getScoreColor(score)} />
+                            <span className="text-white font-medium">{label}</span>
+                          </div>
+                          <span className={`text-xl font-bold ${getScoreColor(score)}`}>
+                            {score}%
+                          </span>
                         </div>
-                        <span className={`text-xl  ${getScoreColor(score)}`}>
-                          {score}%
-                        </span>
+                        <div className="w-full bg-gray-700 rounded-full h-3">
+                          <div
+                            className={`h-3 rounded-full transition-all ${
+                              score >= 90
+                                ? 'bg-green-400'
+                                : score >= 80
+                                  ? 'bg-blue-400'
+                                  : score >= 70
+                                    ? 'bg-yellow-400'
+                                    : 'bg-orange-400'
+                            }`}
+                            style={{ width: `${score}%` }}
+                          ></div>
+                        </div>
+                        <div className="mt-2 text-sm text-gray-400">
+                          {score >= 90
+                            ? 'Excellent - Keep up the great work!'
+                            : score >= 80
+                              ? 'Good - Minor improvements needed'
+                              : score >= 70
+                                ? 'Fair - Some areas need attention'
+                                : 'Needs improvement - Focus on this area'}
+                        </div>
                       </div>
-                      <div className="w-full bg-gray-700 rounded-full h-3">
-                        <div
-                          className={`h-3 rounded-full transition-all ${
-                            score >= 90
-                              ? 'bg-green-400'
-                              : score >= 80
-                                ? 'bg-blue-400'
-                                : score >= 70
-                                  ? 'bg-yellow-400'
-                                  : 'bg-orange-400'
-                          }`}
-                          style={{ width: `${score}%` }}
-                        ></div>
-                      </div>
-                      <div className="mt-2 text-sm text-gray-400">
-                        {score >= 90
-                          ? 'Excellent - Keep up the great work!'
-                          : score >= 80
-                            ? 'Good - Minor improvements needed'
-                            : score >= 70
-                              ? 'Fair - Some areas need attention'
-                              : 'Needs improvement - Focus on this area'}
-                      </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
+
+                {/* Story Development Detailed */}
+                <div className="mb-6">
+                  <h4 className="text-md font-medium text-purple-400 mb-3">Story Development</h4>
+                  <div className="space-y-4">
+                    {categoryScores.filter(cat => cat.group === 'story').map(({ label, category, score, icon: Icon }) => (
+                      <div
+                        key={category}
+                        className="bg-gray-800/50 border border-gray-700/50 rounded-lg p-4"
+                      >
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="flex items-center gap-3">
+                            <Icon size={20} className={getScoreColor(score)} />
+                            <span className="text-white font-medium">{label}</span>
+                          </div>
+                          <span className={`text-xl font-bold ${getScoreColor(score)}`}>
+                            {score}%
+                          </span>
+                        </div>
+                        <div className="w-full bg-gray-700 rounded-full h-3">
+                          <div
+                            className={`h-3 rounded-full transition-all ${
+                              score >= 90
+                                ? 'bg-green-400'
+                                : score >= 80
+                                  ? 'bg-blue-400'
+                                  : score >= 70
+                                    ? 'bg-yellow-400'
+                                    : 'bg-orange-400'
+                            }`}
+                            style={{ width: `${score}%` }}
+                          ></div>
+                        </div>
+                        <div className="mt-2 text-sm text-gray-400">
+                          {score >= 90
+                            ? 'Excellent - Keep up the great work!'
+                            : score >= 80
+                              ? 'Good - Minor improvements needed'
+                              : score >= 70
+                                ? 'Fair - Some areas need attention'
+                                : 'Needs improvement - Focus on this area'}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Advanced Skills Detailed (if available) */}
+                {isAdvancedAssessment && categoryScores.filter(cat => cat.group === 'advanced').length > 0 && (
+                  <div className="mb-6">
+                    <h4 className="text-md font-medium text-green-400 mb-3 flex items-center gap-2">
+                      Advanced Writing Analysis 
+                      <span className="text-xs bg-green-500/20 px-2 py-1 rounded-full">NEW</span>
+                    </h4>
+                    <div className="space-y-4">
+                      {categoryScores.filter(cat => cat.group === 'advanced').map(({ label, category, score, icon: Icon }) => (
+                        <div
+                          key={category}
+                          className="bg-gray-800/50 border border-green-500/30 rounded-lg p-4"
+                        >
+                          <div className="flex items-center justify-between mb-3">
+                            <div className="flex items-center gap-3">
+                              <Icon size={20} className={getScoreColor(score)} />
+                              <span className="text-white font-medium">{label}</span>
+                              <span className="text-xs bg-green-500/20 text-green-400 px-2 py-1 rounded-full">Advanced</span>
+                            </div>
+                            <span className={`text-xl font-bold ${getScoreColor(score)}`}>
+                              {score}%
+                            </span>
+                          </div>
+                          <div className="w-full bg-gray-700 rounded-full h-3">
+                            <div
+                              className={`h-3 rounded-full transition-all ${
+                                score >= 90
+                                  ? 'bg-green-400'
+                                  : score >= 80
+                                    ? 'bg-blue-400'
+                                    : score >= 70
+                                      ? 'bg-yellow-400'
+                                      : 'bg-orange-400'
+                              }`}
+                              style={{ width: `${score}%` }}
+                            ></div>
+                          </div>
+                          <div className="mt-2 text-sm text-gray-400">
+                            {score >= 90
+                              ? 'Outstanding advanced writing skills!'
+                              : score >= 80
+                                ? 'Strong advanced techniques demonstrated'
+                                : score >= 70
+                                  ? 'Good foundation, room for advanced development'
+                                  : 'Opportunity to develop more advanced techniques'}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           )}
