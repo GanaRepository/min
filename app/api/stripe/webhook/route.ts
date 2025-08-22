@@ -184,9 +184,9 @@ import User from '@/models/User';
 import StorySession from '@/models/StorySession';
 
 // ADD EMAIL IMPORTS FOR PURCHASE CONFIRMATIONS
-import { 
+import {
   sendStoryPackPurchaseConfirmation,
-  sendAnthologyBookPurchaseConfirmation 
+  sendAnthologyBookPurchaseConfirmation,
 } from '@/lib/mailer';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
@@ -268,7 +268,9 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     });
 
     // GET USER DATA FOR EMAILS
-    const userForEmail = await User.findById(userId).select('firstName lastName email');
+    const userForEmail = await User.findById(userId).select(
+      'firstName lastName email'
+    );
     if (!userForEmail) {
       throw new Error(`User not found: ${userId}`);
     }
@@ -352,9 +354,15 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
           session.id, // Transaction ID
           15 // Amount
         );
-        console.log('📧 Story Pack confirmation email sent to:', userForEmail.email);
+        console.log(
+          '📧 Story Pack confirmation email sent to:',
+          userForEmail.email
+        );
       } catch (emailError) {
-        console.error('❌ Failed to send Story Pack confirmation email:', emailError);
+        console.error(
+          '❌ Failed to send Story Pack confirmation email:',
+          emailError
+        );
         // Don't throw error - payment already processed
       }
     } else if (productType === 'individual_story' && storyId) {
@@ -384,9 +392,15 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
           session.id, // Transaction ID
           10 // Amount
         );
-        console.log('📧 Anthology Book confirmation email sent to:', userForEmail.email);
+        console.log(
+          '📧 Anthology Book confirmation email sent to:',
+          userForEmail.email
+        );
       } catch (emailError) {
-        console.error('❌ Failed to send Anthology Book confirmation email:', emailError);
+        console.error(
+          '❌ Failed to send Anthology Book confirmation email:',
+          emailError
+        );
         // Don't throw error - payment already processed
       }
     } else if (productType === 'story_purchase' && storyId) {
@@ -410,9 +424,15 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
           session.id, // Transaction ID
           10 // Amount
         );
-        console.log('📧 Anthology Book confirmation email sent to:', userForEmail.email);
+        console.log(
+          '📧 Anthology Book confirmation email sent to:',
+          userForEmail.email
+        );
       } catch (emailError) {
-        console.error('❌ Failed to send Anthology Book confirmation email:', emailError);
+        console.error(
+          '❌ Failed to send Anthology Book confirmation email:',
+          emailError
+        );
         // Don't throw error - payment already processed
       }
     }
