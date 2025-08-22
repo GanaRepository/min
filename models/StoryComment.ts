@@ -184,7 +184,6 @@ const StoryCommentSchema = new Schema<IStoryComment>(
     parentCommentId: {
       type: Schema.Types.ObjectId,
       ref: 'StoryComment',
-      index: true, // 🆕 Added index for replies
     },
     position: {
       paragraph: { type: Number },

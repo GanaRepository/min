@@ -34,6 +34,8 @@ import { authOptions } from '@/utils/authOptions';
 import { UsageManager } from '@/lib/usage-manager';
 import { checkAndPerformMonthlyReset } from '@/utils/autoReset';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   try {
     const session = await getServerSession(authOptions);

@@ -6,6 +6,8 @@ import { connectToDatabase } from '@/utils/db';
 import StorySession from '@/models/StorySession';
 import User from '@/models/User';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
