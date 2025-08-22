@@ -101,10 +101,14 @@ const sampleEmail = `
 // Save the test email
 fs.writeFileSync('email-test.html', sampleEmail);
 console.log('✅ Email template test file created: email-test.html');
-console.log('🎯 Test Result: Email templates now use table-based layouts for Gmail compatibility!');
+console.log(
+  '🎯 Test Result: Email templates now use table-based layouts for Gmail compatibility!'
+);
 console.log('\n📋 Changes Made:');
 console.log('  ✅ getEmailHeader(): Converted flexbox to table structure');
-console.log('  ✅ getEmailFooter(): Converted navigation flexbox to table cells');
+console.log(
+  '  ✅ getEmailFooter(): Converted navigation flexbox to table cells'
+);
 console.log('  ✅ Main container: Wrapped in table with align="center"');
 console.log('  ✅ Preserved all gradients, colors, and styling');
 console.log('  ✅ Maintained responsive design principles');

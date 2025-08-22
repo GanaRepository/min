@@ -334,13 +334,17 @@ const MentorLoginContent: React.FC = () => {
                 <Label
                   htmlFor="mentor-email"
                   className="text-white/80 text-xs sm:text-sm cursor-pointer"
-                  onClick={() => document.getElementById('mentor-email')?.focus()}
+                  onClick={() =>
+                    document.getElementById('mentor-email')?.focus()
+                  }
                 >
                   Email
                 </Label>
-                <div 
+                <div
                   className="relative"
-                  onClick={() => document.getElementById('mentor-email')?.focus()}
+                  onClick={() =>
+                    document.getElementById('mentor-email')?.focus()
+                  }
                 >
                   <input
                     id="mentor-email"
@@ -360,7 +364,9 @@ const MentorLoginContent: React.FC = () => {
                   <Label
                     htmlFor="mentor-password"
                     className="text-white/80 text-xs sm:text-sm cursor-pointer"
-                    onClick={() => document.getElementById('mentor-password')?.focus()}
+                    onClick={() =>
+                      document.getElementById('mentor-password')?.focus()
+                    }
                   >
                     Password
                   </Label>

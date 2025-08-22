@@ -360,13 +360,17 @@ function ChildLoginContent() {
                 <Label
                   htmlFor="child-email"
                   className="text-white/80 text-xs sm:text-sm cursor-pointer"
-                  onClick={() => document.getElementById('child-email')?.focus()}
+                  onClick={() =>
+                    document.getElementById('child-email')?.focus()
+                  }
                 >
                   Email
                 </Label>
-                <div 
+                <div
                   className="relative"
-                  onClick={() => document.getElementById('child-email')?.focus()}
+                  onClick={() =>
+                    document.getElementById('child-email')?.focus()
+                  }
                 >
                   <input
                     id="child-email"
@@ -386,7 +390,9 @@ function ChildLoginContent() {
                   <Label
                     htmlFor="child-password"
                     className="text-white/80 text-xs sm:text-sm cursor-pointer"
-                    onClick={() => document.getElementById('child-password')?.focus()}
+                    onClick={() =>
+                      document.getElementById('child-password')?.focus()
+                    }
                   >
                     Password
                   </Label>

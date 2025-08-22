@@ -304,13 +304,17 @@ const RegisterChildContent: React.FC = () => {
                     <label
                       htmlFor="firstName"
                       className="block text-sm text-gray-400 mb-2 cursor-pointer"
-                      onClick={() => document.getElementById('firstName')?.focus()}
+                      onClick={() =>
+                        document.getElementById('firstName')?.focus()
+                      }
                     >
                       First Name
                     </label>
-                    <div 
+                    <div
                       className="relative"
-                      onClick={() => document.getElementById('firstName')?.focus()}
+                      onClick={() =>
+                        document.getElementById('firstName')?.focus()
+                      }
                     >
                       <input
                         type="text"
@@ -330,13 +334,17 @@ const RegisterChildContent: React.FC = () => {
                     <label
                       htmlFor="lastName"
                       className="block text-sm text-gray-400 mb-2 cursor-pointer"
-                      onClick={() => document.getElementById('lastName')?.focus()}
+                      onClick={() =>
+                        document.getElementById('lastName')?.focus()
+                      }
                     >
                       Last Name
                     </label>
-                    <div 
+                    <div
                       className="relative"
-                      onClick={() => document.getElementById('lastName')?.focus()}
+                      onClick={() =>
+                        document.getElementById('lastName')?.focus()
+                      }
                     >
                       <input
                         type="text"
@@ -361,7 +369,7 @@ const RegisterChildContent: React.FC = () => {
                   >
                     Email
                   </label>
-                  <div 
+                  <div
                     className="relative"
                     onClick={() => document.getElementById('email')?.focus()}
                   >
@@ -388,7 +396,7 @@ const RegisterChildContent: React.FC = () => {
                     >
                       Age
                     </label>
-                    <div 
+                    <div
                       className="relative"
                       onClick={() => document.getElementById('age')?.focus()}
                     >
@@ -416,7 +424,7 @@ const RegisterChildContent: React.FC = () => {
                     >
                       School
                     </label>
-                    <div 
+                    <div
                       className="relative"
                       onClick={() => document.getElementById('school')?.focus()}
                     >
@@ -478,7 +486,9 @@ const RegisterChildContent: React.FC = () => {
                   <label
                     htmlFor="confirmPassword"
                     className="block text-sm text-gray-400 mb-2 cursor-pointer"
-                    onClick={() => document.getElementById('confirmPassword')?.focus()}
+                    onClick={() =>
+                      document.getElementById('confirmPassword')?.focus()
+                    }
                   >
                     Confirm Password
                   </label>

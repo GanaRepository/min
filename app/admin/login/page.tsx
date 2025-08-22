@@ -271,13 +271,13 @@ export default function AdminLogin() {
           >
             {/* Email field */}
             <div className="space-y-2">
-              <label 
+              <label
                 className="text-white/80 text-sm cursor-pointer"
                 onClick={() => document.getElementById('admin-email')?.focus()}
               >
                 Admin Email
               </label>
-              <div 
+              <div
                 className="relative"
                 onClick={() => document.getElementById('admin-email')?.focus()}
               >
@@ -296,9 +296,11 @@ export default function AdminLogin() {
 
             {/* Password field */}
             <div className="space-y-2">
-              <label 
+              <label
                 className="text-white/80 text-sm cursor-pointer"
-                onClick={() => document.getElementById('admin-password')?.focus()}
+                onClick={() =>
+                  document.getElementById('admin-password')?.focus()
+                }
               >
                 Password
               </label>
