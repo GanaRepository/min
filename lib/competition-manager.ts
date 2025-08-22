@@ -1467,6 +1467,37 @@ export class CompetitionManager {
       return null;
     }
   }
+
+  /**
+   * Update competition statistics after new submission
+   */
+  static async updateCompetitionStats(competitionId: string) {
+    try {
+      await connectToDatabase();
+      
+      // Get real-time counts
+      const totalSubmissions = await StorySession.countDocuments({
+        'competitionEntries.competitionId': competitionId,
+      });
+      
+      const totalParticipants = await StorySession.distinct('childId', {
+        'competitionEntries.competitionId': competitionId,
+      });
+      
+      // Update competition document
+      await Competition.findByIdAndUpdate(competitionId, {
+        $set: {
+          totalSubmissions,
+          totalParticipants: totalParticipants.length,
+        }
+      });
+      
+      console.log(`📊 Updated competition stats: ${totalSubmissions} submissions, ${totalParticipants.length} participants`);
+      
+    } catch (error) {
+      console.error('❌ Failed to update competition stats:', error);
+    }
+  }
 }
 
 // Export both class and instance for compatibility

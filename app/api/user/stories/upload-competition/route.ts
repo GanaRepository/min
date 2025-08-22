@@ -446,6 +446,7 @@ import Competition from '@/models/Competition';
 import User from '@/models/User';
 import { UsageManager } from '@/lib/usage-manager';
 import { competitionManager } from '@/lib/competition-manager';
+import { AIAssessmentEngine } from '@/lib/ai/ai-assessment-engine';
 
 export async function POST(request: NextRequest) {
   try {
@@ -533,16 +534,62 @@ export async function POST(request: NextRequest) {
     }
 
     // Get next story number
-    const lastSession = (await StorySession.findOne({
+    const userStoryCount = await StorySession.countDocuments({
       childId: session.user.id,
-    })
-      .sort({ storyNumber: -1 })
-      .select('storyNumber')
-      .lean()) as { storyNumber?: number } | null;
+    });
+    const nextStoryNumber = userStoryCount + 1;
 
-    const nextStoryNumber = (lastSession?.storyNumber || 0) + 1;
+    // ✅ CRITICAL: Run AI Assessment BEFORE allowing competition entry
+    console.log('🤖 Running ADVANCED AI Assessment for competition entry...');
+    
+    let assessmentResult;
+    try {
+      assessmentResult = await AIAssessmentEngine.performCompleteAssessment(
+        storyContent,
+        {
+          childAge: 10, // default
+          isCollaborativeStory: false,
+          storyTitle: title,
+          expectedGenre: 'creative',
+          isCompetition: true  // Special flag for competition
+        }
+      );
 
-    // Create story session for competition
+      console.log(`📊 Competition Assessment - Overall: ${assessmentResult.overallScore}%`);
+      console.log(`🔍 AI Detection: ${assessmentResult.integrityAnalysis.aiDetectionResult.likelihood}`);
+      console.log(`⚠️ Integrity Risk: ${assessmentResult.integrityAnalysis.integrityRisk}`);
+
+      // ✅ FILTER: Block high-risk submissions
+      if (assessmentResult.integrityAnalysis.integrityRisk === 'critical' || 
+          assessmentResult.integrityAnalysis.integrityRisk === 'high') {
+        
+        return NextResponse.json({
+          error: 'Story integrity check failed',
+          details: 'This content appears to violate academic integrity standards. Competition entries must be completely original.',
+          integrityAnalysis: assessmentResult.integrityStatus
+        }, { status: 400 });
+      }
+
+      // ✅ MINIMUM QUALITY THRESHOLD for competitions
+      if (assessmentResult.overallScore < 60) {
+        return NextResponse.json({
+          error: 'Story quality threshold not met',
+          details: 'Competition entries must achieve a minimum quality score of 60%. Please revise and improve your story.',
+          currentScore: assessmentResult.overallScore
+        }, { status: 400 });
+      }
+
+    } catch (error) {
+      console.error('❌ AI Assessment failed for competition entry:', error);
+      
+      // For competition entries, we should fail safely rather than allow potentially problematic content
+      return NextResponse.json({
+        error: 'Unable to verify story quality and integrity',
+        details: 'Please try submitting again. If the problem persists, contact support.',
+      }, { status: 500 });
+    }
+
+    // ✅ CREATE STORY SESSION WITH FULL ASSESSMENT DATA
     const storySession = await StorySession.create({
       childId: session.user.id,
       storyNumber: nextStoryNumber,
@@ -558,12 +605,35 @@ export async function POST(request: NextRequest) {
       isUploadedForAssessment: false,
       storyType: 'competition',
       competitionEligible: true,
+      
+      // ✅ STORE COMPLETE ASSESSMENT DATA
       assessment: {
-        integrityStatus: {
-          status: 'PASS',
-          message: 'Competition entry integrity check passed',
-        },
+        grammarScore: assessmentResult.categoryScores.grammar,
+        creativityScore: assessmentResult.categoryScores.creativity,
+        vocabularyScore: assessmentResult.categoryScores.vocabulary,
+        structureScore: assessmentResult.categoryScores.structure,
+        characterDevelopmentScore: assessmentResult.categoryScores.characterDevelopment,
+        plotDevelopmentScore: assessmentResult.categoryScores.plotDevelopment,
+        overallScore: assessmentResult.overallScore,
+        readingLevel: assessmentResult.categoryScores.readingLevel,
+        feedback: assessmentResult.educationalFeedback.teacherComment,
+        strengths: assessmentResult.educationalFeedback.strengths,
+        improvements: assessmentResult.educationalFeedback.improvements,
+        
+        // ✅ INTEGRITY ANALYSIS (The missing piece!)
+        plagiarismScore: assessmentResult.integrityAnalysis.originalityScore,
+        aiDetectionScore: assessmentResult.integrityAnalysis.aiDetectionResult.overallScore,
+        integrityRisk: assessmentResult.integrityAnalysis.integrityRisk,
+        integrityStatus: assessmentResult.integrityStatus,
+        integrityAnalysis: assessmentResult.integrityAnalysis,
+        
+        // ✅ ADVANCED ANALYSIS
+        recommendations: assessmentResult.recommendations,
+        progressTracking: assessmentResult.progressTracking,
+        assessmentVersion: '2.0',
+        assessmentDate: new Date().toISOString(),
       },
+      
       competitionEntries: [
         {
           competitionId: currentCompetition._id,
@@ -573,30 +643,8 @@ export async function POST(request: NextRequest) {
       ],
     });
 
-    console.log(`✅ Competition story saved with ID: ${storySession._id}`);
-
-    // Update competition statistics properly
-    const userSubmissionsCount = await StorySession.countDocuments({
-      childId: session.user.id,
-      'competitionEntries.competitionId': currentCompetition._id,
-    });
-
-    const isFirstSubmissionFromUser = userSubmissionsCount === 1;
-
-    // Update competition totals
-    await Competition.findByIdAndUpdate(currentCompetition._id, {
-      $inc: {
-        totalSubmissions: 1,
-        ...(isFirstSubmissionFromUser && { totalParticipants: 1 }),
-      },
-    });
-
-    console.log(
-      `📊 Updated competition stats: +1 submission${isFirstSubmissionFromUser ? ', +1 participant' : ''}`
-    );
-
-    // Increment competition entry counter
-    await UsageManager.incrementCompetitionEntry(session.user.id);
+    // ✅ USE COMPETITION MANAGER for stats update
+    await competitionManager.updateCompetitionStats(currentCompetition._id);
 
     return NextResponse.json({
       success: true,
@@ -610,13 +658,20 @@ export async function POST(request: NextRequest) {
         competitionId: currentCompetition._id,
         isPublished: false,
         competitionEligible: true,
+        assessmentScore: assessmentResult.overallScore,
+        integrityStatus: assessmentResult.integrityStatus.status
       },
       competition: {
         id: currentCompetition._id,
         month: currentCompetition.month,
         phase: currentCompetition.phase,
       },
-      message: 'Story uploaded and submitted to competition successfully!',
+      assessment: {
+        overallScore: assessmentResult.overallScore,
+        integrityStatus: assessmentResult.integrityStatus,
+        feedback: assessmentResult.educationalFeedback.teacherComment
+      },
+      message: 'Story assessed and submitted to competition successfully!',
     });
   } catch (error) {
     console.error('Competition upload error:', error);

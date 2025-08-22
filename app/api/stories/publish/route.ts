@@ -174,13 +174,11 @@ export async function POST(request: Request) {
     });
 
     // Check if already published
-    const existingPublished = await PublishedStory.findOne({ sessionId });
-
-    if (existingPublished) {
+    if (storySession.isPublished) {
       return NextResponse.json({
         success: true,
-        publishedStory: existingPublished,
         message: 'Story already published',
+        publishedStory: { _id: storySession._id, title: storySession.title }
       });
     }
 
@@ -202,12 +200,17 @@ export async function POST(request: Request) {
       aiFeeback: finalAssessment.feedback || 'No feedback provided',
     });
 
-    // ALSO set the flag in StorySession for community page
+    // ✅ FIXED: Set isPublished flag AND publishedAt timestamp
     await StorySession.findByIdAndUpdate(sessionId, {
       $set: {
-        aiFeeback: assessment.feedback,
-        publishedAt: new Date(),
-      },
+        isPublished: true,        // ✅ This was missing!
+        publishedAt: new Date(),  // ✅ This was missing!
+        // Optional: also set these fields for community display
+        views: 0,
+        likes: [],
+        bookmarks: [],
+        tags: storySession.elements?.genre ? [storySession.elements.genre] : ['Adventure']
+      }
     });
 
     return NextResponse.json({
