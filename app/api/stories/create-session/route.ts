@@ -11,15 +11,27 @@ import mongoose from 'mongoose';
 
 export const dynamic = 'force-dynamic';
 
+// Fixed TypeScript errors for StorySessionDoc interface
+
 // Type definitions for better type safety
 interface StorySessionDoc {
   _id: mongoose.Types.ObjectId;
+  childId: mongoose.Types.ObjectId;
   title: string;
   storyNumber: number;
   currentTurn: number;
   maxApiCalls: number;
   aiOpening: string;
   status: 'active' | 'completed' | 'flagged' | 'review';
+  storyType: 'freestyle' | 'uploaded' | 'competition';
+  isUploadedForAssessment: boolean;
+  competitionEntries?: Array<{
+    competitionId: mongoose.Types.ObjectId;
+    submittedAt: Date;
+    phase: 'submission' | 'judging' | 'results';
+    rank?: number;
+    score?: number;
+  }>;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -145,6 +157,14 @@ export async function POST(request: Request) {
     await UsageManager.incrementStoryCreation(session.user.id);
 
     console.log(`✅ Story session created: ${savedSession._id}`);
+    console.log(`📊 Story details:`, {
+      childId: savedSession.childId.toString(),
+      title: savedSession.title,
+      storyType: savedSession.storyType || 'freestyle',
+      isUploadedForAssessment: savedSession.isUploadedForAssessment || false,
+      competitionEntries: savedSession.competitionEntries || [],
+      createdAt: savedSession.createdAt
+    });
 
     // Return success response
     return NextResponse.json({

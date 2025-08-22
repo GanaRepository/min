@@ -131,7 +131,14 @@ function CreateStoriesContent() {
   const fetchUsageStats = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/user/usage');
+      // Force fresh data by adding timestamp to prevent caching
+      const timestamp = new Date().getTime();
+      const response = await fetch(`/api/user/usage?t=${timestamp}`, { 
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache'
+        }
+      });
 
       if (response.ok) {
         const data = await response.json();
@@ -185,6 +192,8 @@ function CreateStoriesContent() {
       );
     } finally {
       setCreatingStory(false);
+      // Refresh usage stats after story creation (success or failure)
+      fetchUsageStats();
     }
   };
 

@@ -175,10 +175,27 @@ export default function ChildrenDashboardPage() {
 
     setLoading(true);
     try {
-      // Fetch dashboard data in parallel (removed stories API call)
+      // Force fresh data by adding timestamp to prevent caching
+      const timestamp = new Date().getTime();
+      
+      // Fetch dashboard data in parallel
       const [usageResponse, competitionResponse] = await Promise.all([
-        fetch('/api/user/usage'),
-        fetch('/api/competitions/current'),
+        fetch(`/api/user/usage?t=${timestamp}`, { 
+          cache: 'no-store',
+          headers: {
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0'
+          }
+        }),
+        fetch(`/api/competitions/current?t=${timestamp}`, { 
+          cache: 'no-store',
+          headers: {
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0'
+          }
+        }),
       ]);
 
       // Handle usage stats

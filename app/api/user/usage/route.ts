@@ -331,70 +331,52 @@ export async function GET(request: NextRequest) {
 
     console.log('⚡ Calculated limits in', Date.now() - startTime, 'ms');
 
-    // OPTIMIZED: Single aggregation query instead of multiple separate queries
-    const usageData = await StorySession.aggregate([
-      {
-        $match: {
-          childId: session.user.id,
-          createdAt: { $gte: currentMonthStart },
-        },
-      },
-      {
-        $group: {
-          _id: null,
-          // Count freestyle stories (not uploaded for assessment)
-          freestyleCount: {
-            $sum: {
-              $cond: [{ $ne: ['$isUploadedForAssessment', true] }, 1, 0],
-            },
-          },
-          // Count assessment requests (uploaded or has assessment)
-          assessmentCount: {
-            $sum: {
-              $cond: [
-                {
-                  $or: [
-                    { $eq: ['$isUploadedForAssessment', true] },
-                    { $ne: ['$assessment', null] },
-                  ],
-                },
-                1,
-                0,
-              ],
-            },
-          },
-          // Count competition entries
-          competitionCount: {
-            $sum: {
-              $cond: [
-                {
-                  $and: [
-                    { $ne: ['$competitionEntries', null] },
-                    {
-                      $gt: [
-                        { $size: { $ifNull: ['$competitionEntries', []] } },
-                        0,
-                      ],
-                    },
-                  ],
-                },
-                1,
-                0,
-              ],
-            },
-          },
-        },
-      },
+    // OPTIMIZED: Use simple, direct counting queries for better accuracy
+    const [freestyleCount, assessmentCount, competitionCount] = await Promise.all([
+      // Count freestyle stories (not uploaded for assessment, no competition entries)
+      StorySession.countDocuments({
+        childId: session.user.id,
+        createdAt: { $gte: currentMonthStart },
+        isUploadedForAssessment: { $ne: true },
+        $or: [
+          { competitionEntries: { $exists: false } },
+          { competitionEntries: { $size: 0 } }
+        ]
+      }),
+      
+      // Count assessment requests (uploaded stories or stories with assessments)
+      StorySession.countDocuments({
+        childId: session.user.id,
+        createdAt: { $gte: currentMonthStart },
+        $or: [
+          { isUploadedForAssessment: true },
+          { assessment: { $exists: true } }
+        ]
+      }),
+      
+      // Count competition entries (stories with competition entries)
+      StorySession.countDocuments({
+        childId: session.user.id,
+        createdAt: { $gte: currentMonthStart },
+        competitionEntries: { $exists: true, $ne: [] }
+      })
     ]);
 
     console.log('⚡ Got usage data in', Date.now() - startTime, 'ms');
 
-    // Extract counts (default to 0 if no data)
-    const counts = usageData[0] || {
-      freestyleCount: 0,
-      assessmentCount: 0,
-      competitionCount: 0,
+    // Extract counts directly from the queries
+    const counts = {
+      freestyleCount: freestyleCount,
+      assessmentCount: assessmentCount,
+      competitionCount: competitionCount,
     };
+
+    console.log('📊 Usage counts for user', session.user.id, ':', {
+      freestyle: freestyleCount,
+      assessment: assessmentCount, 
+      competition: competitionCount,
+      monthStart: currentMonthStart.toISOString()
+    });
 
     // OPTIMIZED: Count published stories (simple query)
     const publishedCount = await StorySession.countDocuments({
