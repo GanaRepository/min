@@ -8,9 +8,11 @@ export interface ICompetition extends Document {
   phase: 'submission' | 'judging' | 'results';
   daysLeft: number;
 
-  // Dates
-  submissionDeadline: Date;
-  judgingDeadline: Date;
+  // FIXED: Use the field names that competition manager creates
+  submissionStart?: Date;
+  submissionEnd: Date;
+  judgingStart?: Date;
+  judgingEnd: Date;
   resultsDate: Date;
 
   // Status
@@ -79,14 +81,22 @@ const CompetitionSchema = new Schema<ICompetition>(
       default: 0,
     },
 
-    // Dates
-    submissionDeadline: {
+    // FIXED: Use the field names that competition manager creates
+    submissionStart: {
       type: Date,
-      required: true,
+      required: false, // Optional since some existing competitions might not have this
     },
-    judgingDeadline: {
+    submissionEnd: {
       type: Date,
-      required: true,
+      required: true, // This is what your manager creates as "submissionEnd"
+    },
+    judgingStart: {
+      type: Date,
+      required: false,
+    },
+    judgingEnd: {
+      type: Date,
+      required: true, // This is what your manager creates as "judgingEnd"
     },
     resultsDate: {
       type: Date,

@@ -1387,15 +1387,13 @@ export class CompetitionManager {
       switch (competition.phase) {
         case 'submission':
           competition.phase = 'judging';
-          competition.submissionEnd = new Date();
-          // Ensure required deadlines are set
-          if (!competition.judgingDeadline) {
-            competition.judgingDeadline = new Date(
+          competition.submissionEnd = new Date(); // ✅ This field exists
+          
+          // Set judgingEnd if not set (use the existing field name)
+          if (!competition.judgingEnd) {
+            competition.judgingEnd = new Date(
               Date.now() + 5 * 24 * 60 * 60 * 1000
             ); // 5 days from now
-          }
-          if (!competition.submissionDeadline) {
-            competition.submissionDeadline = competition.submissionEnd;
           }
           break;
         case 'judging':

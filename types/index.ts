@@ -123,9 +123,10 @@ export interface Competition extends BaseDocument {
   phase: 'submission' | 'judging' | 'results';
   isActive: boolean;
 
-  // Timing
+  // FIXED: Use consistent field names matching the model
   submissionStart?: Date;
   submissionEnd?: Date;
+  judgingStart?: Date;
   judgingEnd?: Date;
   resultsDate?: Date;
 
@@ -179,8 +180,8 @@ export interface StoryResponse extends Story {
 
 export interface CompetitionResponse extends Competition {
   daysLeft?: number;
-  submissionDeadline?: string | null;
-  judgingDeadline?: string | null;
+  submissionDeadline?: string | null; // Keep for backwards compatibility - maps to submissionEnd
+  judgingDeadline?: string | null;    // Keep for backwards compatibility - maps to judgingEnd
   userStats?: {
     entriesUsed: number;
     entriesLimit: number;
