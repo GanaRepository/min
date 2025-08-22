@@ -271,14 +271,23 @@ export default function AdminLogin() {
           >
             {/* Email field */}
             <div className="space-y-2">
-              <label className="text-white/80 text-sm ">Admin Email</label>
-              <div className="relative">
+              <label 
+                className="text-white/80 text-sm cursor-pointer"
+                onClick={() => document.getElementById('admin-email')?.focus()}
+              >
+                Admin Email
+              </label>
+              <div 
+                className="relative"
+                onClick={() => document.getElementById('admin-email')?.focus()}
+              >
                 <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/40 w-5 h-5" />
                 <input
+                  id="admin-email"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 bg-white/10  border border-white/20  text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
+                  className="w-full pl-10 pr-4 py-3 bg-white/10 rounded-lg border border-white/20 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all cursor-text"
                   placeholder="admin@mintoons.com"
                   required
                 />
@@ -287,21 +296,31 @@ export default function AdminLogin() {
 
             {/* Password field */}
             <div className="space-y-2">
-              <label className="text-white/80 text-sm ">Password</label>
+              <label 
+                className="text-white/80 text-sm cursor-pointer"
+                onClick={() => document.getElementById('admin-password')?.focus()}
+              >
+                Password
+              </label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/40 w-5 h-5" />
                 <input
+                  id="admin-password"
                   type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-10 pr-12 py-3 bg-white/10  border border-white/20  text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
+                  className="w-full pl-10 pr-12 py-3 bg-white/10 rounded-lg border border-white/20 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all cursor-text"
                   placeholder="Enter your admin password"
                   required
                 />
                 <button
                   type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white/40 hover:text-white/60 transition-colors"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setShowPassword(!showPassword);
+                  }}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white/40 hover:text-white/60 transition-colors z-10 p-1"
                 >
                   {showPassword ? (
                     <EyeOff className="w-5 h-5" />

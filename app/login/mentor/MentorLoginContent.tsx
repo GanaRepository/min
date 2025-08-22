@@ -333,27 +333,34 @@ const MentorLoginContent: React.FC = () => {
               <div className="space-y-1 sm:space-y-2">
                 <Label
                   htmlFor="mentor-email"
-                  className="text-white/80 text-xs sm:text-sm"
+                  className="text-white/80 text-xs sm:text-sm cursor-pointer"
+                  onClick={() => document.getElementById('mentor-email')?.focus()}
                 >
                   Email
                 </Label>
-                <input
-                  id="mentor-email"
-                  type="email"
-                  placeholder="mentor@mintoons.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value.toLowerCase())}
-                  required
-                  disabled={isLoading}
-                  className="w-full px-3 sm:px-4 py-2 sm:py-3  bg-white/10 backdrop-blur-sm border border-white/20 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-transparent transition-all text-xs sm:text-base"
-                />
+                <div 
+                  className="relative"
+                  onClick={() => document.getElementById('mentor-email')?.focus()}
+                >
+                  <input
+                    id="mentor-email"
+                    type="email"
+                    placeholder="mentor@mintoons.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value.toLowerCase())}
+                    required
+                    disabled={isLoading}
+                    className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg bg-white/10 backdrop-blur-sm border border-white/20 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-transparent transition-all text-xs sm:text-base cursor-text"
+                  />
+                </div>
               </div>
 
               <div className="space-y-1 sm:space-y-2">
                 <div className="flex justify-between items-center">
                   <Label
                     htmlFor="mentor-password"
-                    className="text-white/80 text-xs sm:text-sm"
+                    className="text-white/80 text-xs sm:text-sm cursor-pointer"
+                    onClick={() => document.getElementById('mentor-password')?.focus()}
                   >
                     Password
                   </Label>
@@ -373,12 +380,16 @@ const MentorLoginContent: React.FC = () => {
                     onChange={(e) => setPassword(e.target.value)}
                     required
                     disabled={isLoading}
-                    className="w-full px-3 sm:px-4 py-2 sm:py-3 pr-10 sm:pr-12  bg-white/10 backdrop-blur-sm border border-white/20 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-transparent transition-all text-xs sm:text-base"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-3 pr-10 sm:pr-12 rounded-lg bg-white/10 backdrop-blur-sm border border-white/20 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-transparent transition-all text-xs sm:text-base cursor-text"
                   />
                   <button
                     type="button"
-                    className="absolute right-2 sm:right-3 top-1/2 transform -translate-y-1/2 text-white/60 hover:text-teal-300 transition-colors"
-                    onClick={togglePasswordVisibility}
+                    className="absolute right-2 sm:right-3 top-1/2 transform -translate-y-1/2 text-white/60 hover:text-teal-300 transition-colors z-10 p-1"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      togglePasswordVisibility();
+                    }}
                     tabIndex={-1}
                   >
                     {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}

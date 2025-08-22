@@ -303,112 +303,143 @@ const RegisterChildContent: React.FC = () => {
                   <div>
                     <label
                       htmlFor="firstName"
-                      className="block text-sm text-gray-400 mb-2"
+                      className="block text-sm text-gray-400 mb-2 cursor-pointer"
+                      onClick={() => document.getElementById('firstName')?.focus()}
                     >
                       First Name
                     </label>
-                    <input
-                      type="text"
-                      id="firstName"
-                      name="firstName"
-                      value={formData.firstName}
-                      onChange={handleInputChange}
-                      placeholder="Your first name"
-                      className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700  text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300"
-                      required
-                      disabled={isLoading}
-                    />
+                    <div 
+                      className="relative"
+                      onClick={() => document.getElementById('firstName')?.focus()}
+                    >
+                      <input
+                        type="text"
+                        id="firstName"
+                        name="firstName"
+                        value={formData.firstName}
+                        onChange={handleInputChange}
+                        placeholder="Your first name"
+                        className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300 cursor-text"
+                        required
+                        disabled={isLoading}
+                      />
+                    </div>
                   </div>
 
                   <div>
                     <label
                       htmlFor="lastName"
-                      className="block text-sm text-gray-400 mb-2"
+                      className="block text-sm text-gray-400 mb-2 cursor-pointer"
+                      onClick={() => document.getElementById('lastName')?.focus()}
                     >
                       Last Name
                     </label>
-                    <input
-                      type="text"
-                      id="lastName"
-                      name="lastName"
-                      value={formData.lastName}
-                      onChange={handleInputChange}
-                      placeholder="Your last name"
-                      className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700  text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300"
-                      required
-                      disabled={isLoading}
-                    />
+                    <div 
+                      className="relative"
+                      onClick={() => document.getElementById('lastName')?.focus()}
+                    >
+                      <input
+                        type="text"
+                        id="lastName"
+                        name="lastName"
+                        value={formData.lastName}
+                        onChange={handleInputChange}
+                        placeholder="Your last name"
+                        className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300 cursor-text"
+                        required
+                        disabled={isLoading}
+                      />
+                    </div>
                   </div>
                 </div>
 
                 <div>
                   <label
                     htmlFor="email"
-                    className="block text-sm text-gray-400 mb-2"
+                    className="block text-sm text-gray-400 mb-2 cursor-pointer"
+                    onClick={() => document.getElementById('email')?.focus()}
                   >
                     Email
                   </label>
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    placeholder="Your email or parent's email"
-                    className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700  text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300"
-                    required
-                    disabled={isLoading}
-                  />
+                  <div 
+                    className="relative"
+                    onClick={() => document.getElementById('email')?.focus()}
+                  >
+                    <input
+                      type="email"
+                      id="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleInputChange}
+                      placeholder="Your email or parent's email"
+                      className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300 cursor-text"
+                      required
+                      disabled={isLoading}
+                    />
+                  </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                   <div>
                     <label
                       htmlFor="age"
-                      className="block text-sm text-gray-400 mb-2"
+                      className="block text-sm text-gray-400 mb-2 cursor-pointer"
+                      onClick={() => document.getElementById('age')?.focus()}
                     >
                       Age
                     </label>
-                    <input
-                      type="number"
-                      id="age"
-                      name="age"
-                      value={formData.age}
-                      onChange={handleInputChange}
-                      placeholder="Your age"
-                      min="2"
-                      max="18"
-                      className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700  text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300"
-                      required
-                      disabled={isLoading}
-                    />
+                    <div 
+                      className="relative"
+                      onClick={() => document.getElementById('age')?.focus()}
+                    >
+                      <input
+                        type="number"
+                        id="age"
+                        name="age"
+                        value={formData.age}
+                        onChange={handleInputChange}
+                        placeholder="Your age"
+                        min="2"
+                        max="18"
+                        className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300 cursor-text"
+                        required
+                        disabled={isLoading}
+                      />
+                    </div>
                   </div>
 
                   <div>
                     <label
                       htmlFor="school"
-                      className="block text-sm text-gray-400 mb-2"
+                      className="block text-sm text-gray-400 mb-2 cursor-pointer"
+                      onClick={() => document.getElementById('school')?.focus()}
                     >
                       School
                     </label>
-                    <input
-                      type="text"
-                      id="school"
-                      name="school"
-                      value={formData.school}
-                      onChange={handleInputChange}
-                      placeholder="Your school"
-                      className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700  text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300"
-                      required
-                      disabled={isLoading}
-                    />
+                    <div 
+                      className="relative"
+                      onClick={() => document.getElementById('school')?.focus()}
+                    >
+                      <input
+                        type="text"
+                        id="school"
+                        name="school"
+                        value={formData.school}
+                        onChange={handleInputChange}
+                        placeholder="Your school"
+                        className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300 cursor-text"
+                        required
+                        disabled={isLoading}
+                      />
+                    </div>
                   </div>
                 </div>
 
                 <div>
                   <label
                     htmlFor="password"
-                    className="block text-sm text-gray-400 mb-2"
+                    className="block text-sm text-gray-400 mb-2 cursor-pointer"
+                    onClick={() => document.getElementById('password')?.focus()}
                   >
                     Password
                   </label>
@@ -420,14 +451,18 @@ const RegisterChildContent: React.FC = () => {
                       value={formData.password}
                       onChange={handleInputChange}
                       placeholder="Create a secure password"
-                      className="w-full px-4 py-3 pr-12 bg-gray-800/50 border border-gray-700  text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300"
+                      className="w-full px-4 py-3 pr-12 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300 cursor-text"
                       required
                       disabled={isLoading}
                     />
                     <button
                       type="button"
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-green-400 transition-colors"
-                      onClick={togglePasswordVisibility}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-green-400 transition-colors z-10 p-1"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        togglePasswordVisibility();
+                      }}
                       tabIndex={-1}
                     >
                       {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -442,7 +477,8 @@ const RegisterChildContent: React.FC = () => {
                 <div>
                   <label
                     htmlFor="confirmPassword"
-                    className="block text-sm text-gray-400 mb-2"
+                    className="block text-sm text-gray-400 mb-2 cursor-pointer"
+                    onClick={() => document.getElementById('confirmPassword')?.focus()}
                   >
                     Confirm Password
                   </label>
@@ -454,14 +490,18 @@ const RegisterChildContent: React.FC = () => {
                       value={formData.confirmPassword}
                       onChange={handleInputChange}
                       placeholder="Confirm your password"
-                      className="w-full px-4 py-3 pr-12 bg-gray-800/50 border border-gray-700  text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300"
+                      className="w-full px-4 py-3 pr-12 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300 cursor-text"
                       required
                       disabled={isLoading}
                     />
                     <button
                       type="button"
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-green-400 transition-colors"
-                      onClick={toggleConfirmPasswordVisibility}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-green-400 transition-colors z-10 p-1"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        toggleConfirmPasswordVisibility();
+                      }}
                       tabIndex={-1}
                     >
                       {showConfirmPassword ? (

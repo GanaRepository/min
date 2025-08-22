@@ -953,32 +953,44 @@ const createTransporter = () => {
   });
 };
 
-// Professional email header template - FIXED
+// Professional email header template - EMAIL CLIENT COMPATIBLE
 const getEmailHeader = () => `
     <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px 20px; text-align: center; border-radius: 20px 20px 0 0;">
       <div style="background: rgba(255,255,255,0.95); padding: 25px; border-radius: 15px; display: inline-block; box-shadow: 0 8px 32px rgba(0,0,0,0.1); max-width: 400px;">
-        <div style="display: flex; align-items: center; justify-content: center; gap: 20px;">
-          <div style="background: linear-gradient(45deg, #667eea, #764ba2); width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3); flex-shrink: 0;">
-            <span style="color: white; font-size: 32px; font-weight: bold; line-height: 1; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%;">M</span>
-          </div>
-          <div style="text-align: left; flex-grow: 1;">
-            <h1 style="margin: 0 0 5px 0; font-size: 32px; font-weight: 700; background: linear-gradient(45deg, #667eea, #764ba2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; color: #667eea; font-family: 'Segoe UI', Arial, sans-serif; letter-spacing: -0.5px;">MINTOONS</h1>
-            <p style="margin: 0; font-size: 14px; color: #64748b; font-weight: 500; line-height: 1.2;">AI-Powered Creative Writing Platform</p>
-          </div>
-        </div>
+        <table cellpadding="0" cellspacing="0" border="0" style="margin: 0 auto;">
+          <tr>
+            <td style="vertical-align: middle; padding-right: 20px;">
+              <div style="background: linear-gradient(45deg, #667eea, #764ba2); width: 70px; height: 70px; border-radius: 50%; display: table-cell; vertical-align: middle; text-align: center; box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);">
+                <span style="color: white; font-size: 32px; font-weight: bold; line-height: 70px; display: inline-block; width: 100%; text-align: center;">M</span>
+              </div>
+            </td>
+            <td style="vertical-align: middle; text-align: left;">
+              <h1 style="margin: 0 0 5px 0; font-size: 32px; font-weight: 700; background: linear-gradient(45deg, #667eea, #764ba2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; color: #667eea; font-family: 'Segoe UI', Arial, sans-serif; letter-spacing: -0.5px;">MINTOONS</h1>
+              <p style="margin: 0; font-size: 14px; color: #64748b; font-weight: 500; line-height: 1.2;">AI-Powered Creative Writing Platform</p>
+            </td>
+          </tr>
+        </table>
       </div>
     </div>
   `;
 
-// Professional email footer template - FIXED
+// Professional email footer template - EMAIL CLIENT COMPATIBLE
 const getEmailFooter = () => `
     <div style="background: #f8fafc; padding: 40px 20px; text-align: center; border-radius: 0 0 20px 20px; border-top: 1px solid #e2e8f0;">
       <div style="max-width: 500px; margin: 0 auto;">
-        <div style="display: flex; justify-content: center; align-items: center; gap: 30px; margin-bottom: 25px; flex-wrap: wrap;">
-          <a href="${process.env.NEXTAUTH_URL}" style="color: #667eea; text-decoration: none; font-weight: 600; font-size: 14px; padding: 8px 16px; border-radius: 20px; transition: background-color 0.2s; display: inline-block;">🏠 Home</a>
-          <a href="${process.env.NEXTAUTH_URL}/pricing" style="color: #667eea; text-decoration: none; font-weight: 600; font-size: 14px; padding: 8px 16px; border-radius: 20px; transition: background-color 0.2s; display: inline-block;">💎 Pricing</a>
-          <a href="${process.env.NEXTAUTH_URL}/contact-us" style="color: #667eea; text-decoration: none; font-weight: 600; font-size: 14px; padding: 8px 16px; border-radius: 20px; transition: background-color 0.2s; display: inline-block;">📧 Support</a>
-        </div>
+        <table cellpadding="0" cellspacing="0" border="0" style="margin: 0 auto 25px auto;">
+          <tr>
+            <td style="padding: 8px 16px;">
+              <a href="${process.env.NEXTAUTH_URL}" style="color: #667eea; text-decoration: none; font-weight: 600; font-size: 14px; padding: 8px 16px; border-radius: 20px; transition: background-color 0.2s; display: inline-block;">🏠 Home</a>
+            </td>
+            <td style="padding: 8px 16px;">
+              <a href="${process.env.NEXTAUTH_URL}/pricing" style="color: #667eea; text-decoration: none; font-weight: 600; font-size: 14px; padding: 8px 16px; border-radius: 20px; transition: background-color 0.2s; display: inline-block;">💎 Pricing</a>
+            </td>
+            <td style="padding: 8px 16px;">
+              <a href="${process.env.NEXTAUTH_URL}/contact-us" style="color: #667eea; text-decoration: none; font-weight: 600; font-size: 14px; padding: 8px 16px; border-radius: 20px; transition: background-color 0.2s; display: inline-block;">📧 Support</a>
+            </td>
+          </tr>
+        </table>
         <div style="border-top: 1px solid #e2e8f0; padding-top: 25px;">
           <p style="margin: 0; font-size: 12px; color: #64748b; line-height: 1.6;">
             © ${new Date().getFullYear()} Mintoons. All rights reserved.<br/>
@@ -1004,123 +1016,137 @@ export const sendChildRegistrationEmail = async (
     to: email,
     subject: '🎉 Welcome to Mintoons - Your Premium Writing Journey Begins!',
     html: `
-        <div style="font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif; max-width: 650px; margin: 0 auto; background: #ffffff; border-radius: 20px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.1);">
-          ${getEmailHeader()}
+        <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; max-width: 650px; margin: 0 auto; background: #ffffff; border-radius: 20px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.1); font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;">
+          <tr>
+            <td align="center">
+              ${getEmailHeader()}
+            </td>
+          </tr>
           
           <!-- Welcome Hero Section -->
-          <div style="background: linear-gradient(135deg, #fef7ff 0%, #f0f9ff 100%); padding: 50px 30px; text-align: center; position: relative;">
-            <div style="position: absolute; top: 20px; right: 20px; background: #10b981; color: white; padding: 8px 16px; border-radius: 20px; font-size: 12px; font-weight: 600;">
-              FREE STARTER PLAN
-            </div>
-            <h2 style="margin: 0 0 15px 0; font-size: 36px; font-weight: 700; color: #1a202c;">
-              Welcome, ${firstName}! 🌟
-            </h2>
-            <p style="margin: 0 0 30px 0; font-size: 18px; color: #4a5568; line-height: 1.6; max-width: 400px; margin-left: auto; margin-right: auto;">
-              You've joined thousands of young writers creating amazing stories with AI assistance!
-            </p>
-            
-            <!-- Stats Row -->
-            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin: 30px 0;">
-              <div style="text-align: center; padding: 20px; background: rgba(255,255,255,0.8); border-radius: 15px; border: 2px solid #e2e8f0;">
-                <div style="font-size: 32px; font-weight: 700; color: #667eea; margin-bottom: 5px;">10K+</div>
-                <div style="font-size: 14px; color: #64748b; font-weight: 500;">Stories Created</div>
+          <tr>
+            <td style="background: linear-gradient(135deg, #fef7ff 0%, #f0f9ff 100%); padding: 50px 30px; text-align: center; position: relative;">
+              <div style="position: absolute; top: 20px; right: 20px; background: #10b981; color: white; padding: 8px 16px; border-radius: 20px; font-size: 12px; font-weight: 600;">
+                FREE STARTER PLAN
               </div>
-              <div style="text-align: center; padding: 20px; background: rgba(255,255,255,0.8); border-radius: 15px; border: 2px solid #e2e8f0;">
-                <div style="font-size: 32px; font-weight: 700; color: #10b981; margin-bottom: 5px;">500+</div>
-                <div style="font-size: 14px; color: #64748b; font-weight: 500;">Young Writers</div>
+              <h2 style="margin: 0 0 15px 0; font-size: 36px; font-weight: 700; color: #1a202c;">
+                Welcome, ${firstName}! 🌟
+              </h2>
+              <p style="margin: 0 0 30px 0; font-size: 18px; color: #4a5568; line-height: 1.6; max-width: 400px; margin-left: auto; margin-right: auto;">
+                You've joined thousands of young writers creating amazing stories with AI assistance!
+              </p>
+              
+              <!-- Stats Row -->
+              <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin: 30px 0;">
+                <div style="text-align: center; padding: 20px; background: rgba(255,255,255,0.8); border-radius: 15px; border: 2px solid #e2e8f0;">
+                  <div style="font-size: 32px; font-weight: 700; color: #667eea; margin-bottom: 5px;">10K+</div>
+                  <div style="font-size: 14px; color: #64748b; font-weight: 500;">Stories Created</div>
+                </div>
+                <div style="text-align: center; padding: 20px; background: rgba(255,255,255,0.8); border-radius: 15px; border: 2px solid #e2e8f0;">
+                  <div style="font-size: 32px; font-weight: 700; color: #10b981; margin-bottom: 5px;">500+</div>
+                  <div style="font-size: 14px; color: #64748b; font-weight: 500;">Young Writers</div>
+                </div>
+                <div style="text-align: center; padding: 20px; background: rgba(255,255,255,0.8); border-radius: 15px; border: 2px solid #e2e8f0;">
+                  <div style="font-size: 32px; font-weight: 700; color: #f59e0b; margin-bottom: 5px;">25+</div>
+                  <div style="font-size: 14px; color: #64748b; font-weight: 500;">Countries</div>
+                </div>
               </div>
-              <div style="text-align: center; padding: 20px; background: rgba(255,255,255,0.8); border-radius: 15px; border: 2px solid #e2e8f0;">
-                <div style="font-size: 32px; font-weight: 700; color: #f59e0b; margin-bottom: 5px;">25+</div>
-                <div style="font-size: 14px; color: #64748b; font-weight: 500;">Countries</div>
-              </div>
-            </div>
-          </div>
+            </td>
+          </tr>
 
           <!-- Your Free Plan Section -->
-          <div style="padding: 40px 30px; background: #ffffff;">
-            <div style="text-align: center; margin-bottom: 30px;">
-              <h3 style="margin: 0 0 10px 0; font-size: 24px; font-weight: 700; color: #1a202c;">Your Free Starter Plan Includes:</h3>
-              <p style="margin: 0; font-size: 16px; color: #64748b;">Everything you need to start your writing journey</p>
-            </div>
-            
-            <div style="background: linear-gradient(135deg, #f0f9ff 0%, #fef7ff 100%); padding: 30px; border-radius: 20px; border: 2px solid #e2e8f0; margin-bottom: 30px;">
-              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
-                <div style="display: flex; align-items: center; gap: 15px;">
-                  <div style="background: #667eea; width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                    <span style="color: white; font-size: 20px;">✍️</span>
-                  </div>
-                  <div>
-                    <div style="font-size: 18px; font-weight: 600; color: #1a202c; margin-bottom: 3px;">3 Free Stories</div>
-                    <div style="font-size: 14px; color: #64748b;">Create amazing stories with AI help</div>
-                  </div>
-                </div>
-                
-                <div style="display: flex; align-items: center; gap: 15px;">
-                  <div style="background: #10b981; width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                    <span style="color: white; font-size: 20px;">🧠</span>
-                  </div>
-                  <div>
-                    <div style="font-size: 18px; font-weight: 600; color: #1a202c; margin-bottom: 3px;">3 AI Assessments</div>
-                    <div style="font-size: 14px; color: #64748b;">Get detailed feedback on your writing</div>
-                  </div>
-                </div>
-                
-                <div style="display: flex; align-items: center; gap: 15px;">
-                  <div style="background: #f59e0b; width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                    <span style="color: white; font-size: 20px;">🏆</span>
-                  </div>
-                  <div>
-                    <div style="font-size: 18px; font-weight: 600; color: #1a202c; margin-bottom: 3px;">Competition Entries</div>
-                    <div style="font-size: 14px; color: #64748b;">Participate in monthly contests</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- CTA Buttons -->
-            <div style="text-align: center; margin: 40px 0;">
-              <a href="${process.env.NEXTAUTH_URL}/create-stories" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 18px 40px; text-decoration: none; font-size: 18px; font-weight: 600; border-radius: 50px; display: inline-block; margin: 0 10px 10px 0; box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3); transition: transform 0.2s;">
-                🚀 Start Writing Now
-              </a>
-              <a href="${process.env.NEXTAUTH_URL}/pricing" style="background: #ffffff; color: #667eea; padding: 18px 40px; text-decoration: none; font-size: 18px; font-weight: 600; border-radius: 50px; display: inline-block; border: 2px solid #667eea; transition: all 0.2s;">
-                💎 View Premium Plans
-              </a>
-            </div>
-          </div>
-
-          <!-- Upgrade Incentive Section -->
-          <div style="background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%); padding: 40px 30px; color: white; text-align: center;">
-            <div style="margin-bottom: 30px;">
-              <h3 style="margin: 0 0 15px 0; font-size: 28px; font-weight: 700; color: #ffffff;">Ready for More? 🚀</h3>
-              <p style="margin: 0 0 25px 0; font-size: 16px; color: #a0aec0; line-height: 1.6;">
-                Unlock unlimited creativity with our Story Pack - perfect for young writers who want to explore more!
-              </p>
-            </div>
-            
-            <div style="background: rgba(255,255,255,0.1); padding: 30px; border-radius: 20px; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); margin-bottom: 30px;">
-              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px; margin-bottom: 25px;">
-                <div style="text-align: center;">
-                  <div style="font-size: 28px; font-weight: 700; color: #4ade80; margin-bottom: 8px;">+5 Stories</div>
-                  <div style="font-size: 14px; color: #a0aec0;">Extra creations</div>
-                </div>
-                <div style="text-align: center;">
-                  <div style="font-size: 28px; font-weight: 700; color: #60a5fa; margin-bottom: 8px;">+5 Assessments</div>
-                  <div style="font-size: 14px; color: #a0aec0;">More feedback</div>
-                </div>
-                <div style="text-align: center;">
-                  <div style="font-size: 28px; font-weight: 700; color: #f59e0b; margin-bottom: 8px;">$15</div>
-                  <div style="font-size: 14px; color: #a0aec0;">One-time</div>
-                </div>
+          <tr>
+            <td style="padding: 40px 30px; background: #ffffff;">
+              <div style="text-align: center; margin-bottom: 30px;">
+                <h3 style="margin: 0 0 10px 0; font-size: 24px; font-weight: 700; color: #1a202c;">Your Free Starter Plan Includes:</h3>
+                <p style="margin: 0; font-size: 16px; color: #64748b;">Everything you need to start your writing journey</p>
               </div>
               
-              <a href="${process.env.NEXTAUTH_URL}/pricing" style="background: linear-gradient(135deg, #4ade80 0%, #06b6d4 100%); color: white; padding: 15px 35px; text-decoration: none; font-size: 16px; font-weight: 600; border-radius: 50px; display: inline-block; box-shadow: 0 6px 20px rgba(74, 222, 128, 0.3);">
-                💎 Upgrade to Story Pack
-              </a>
-            </div>
-          </div>
+              <div style="background: linear-gradient(135deg, #f0f9ff 0%, #fef7ff 100%); padding: 30px; border-radius: 20px; border: 2px solid #e2e8f0; margin-bottom: 30px;">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                  <div style="display: flex; align-items: center; gap: 15px;">
+                    <div style="background: #667eea; width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                      <span style="color: white; font-size: 20px;">✍️</span>
+                    </div>
+                    <div>
+                      <div style="font-size: 18px; font-weight: 600; color: #1a202c; margin-bottom: 3px;">3 Free Stories</div>
+                      <div style="font-size: 14px; color: #64748b;">Create amazing stories with AI help</div>
+                    </div>
+                  </div>
+                  
+                  <div style="display: flex; align-items: center; gap: 15px;">
+                    <div style="background: #10b981; width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                      <span style="color: white; font-size: 20px;">🧠</span>
+                    </div>
+                    <div>
+                      <div style="font-size: 18px; font-weight: 600; color: #1a202c; margin-bottom: 3px;">3 AI Assessments</div>
+                      <div style="font-size: 14px; color: #64748b;">Get detailed feedback on your writing</div>
+                    </div>
+                  </div>
+                  
+                  <div style="display: flex; align-items: center; gap: 15px;">
+                    <div style="background: #f59e0b; width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                      <span style="color: white; font-size: 20px;">🏆</span>
+                    </div>
+                    <div>
+                      <div style="font-size: 18px; font-weight: 600; color: #1a202c; margin-bottom: 3px;">Competition Entries</div>
+                      <div style="font-size: 14px; color: #64748b;">Participate in monthly contests</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
 
-          ${getEmailFooter()}
-        </div>
+              <!-- CTA Buttons -->
+              <div style="text-align: center; margin: 40px 0;">
+                <a href="${process.env.NEXTAUTH_URL}/create-stories" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 18px 40px; text-decoration: none; font-size: 18px; font-weight: 600; border-radius: 50px; display: inline-block; margin: 0 10px 10px 0; box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3); transition: transform 0.2s;">
+                  🚀 Start Writing Now
+                </a>
+                <a href="${process.env.NEXTAUTH_URL}/pricing" style="background: #ffffff; color: #667eea; padding: 18px 40px; text-decoration: none; font-size: 18px; font-weight: 600; border-radius: 50px; display: inline-block; border: 2px solid #667eea; transition: all 0.2s;">
+                  💎 View Premium Plans
+                </a>
+              </div>
+            </td>
+          </tr>
+
+          <!-- Upgrade Incentive Section -->
+          <tr>
+            <td style="background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%); padding: 40px 30px; color: white; text-align: center;">
+              <div style="margin-bottom: 30px;">
+                <h3 style="margin: 0 0 15px 0; font-size: 28px; font-weight: 700; color: #ffffff;">Ready for More? 🚀</h3>
+                <p style="margin: 0 0 25px 0; font-size: 16px; color: #a0aec0; line-height: 1.6;">
+                  Unlock unlimited creativity with our Story Pack - perfect for young writers who want to explore more!
+                </p>
+              </div>
+              
+              <div style="background: rgba(255,255,255,0.1); padding: 30px; border-radius: 20px; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); margin-bottom: 30px;">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px; margin-bottom: 25px;">
+                  <div style="text-align: center;">
+                    <div style="font-size: 28px; font-weight: 700; color: #4ade80; margin-bottom: 8px;">+5 Stories</div>
+                    <div style="font-size: 14px; color: #a0aec0;">Extra creations</div>
+                  </div>
+                  <div style="text-align: center;">
+                    <div style="font-size: 28px; font-weight: 700; color: #60a5fa; margin-bottom: 8px;">+5 Assessments</div>
+                    <div style="font-size: 14px; color: #a0aec0;">More feedback</div>
+                  </div>
+                  <div style="text-align: center;">
+                    <div style="font-size: 28px; font-weight: 700; color: #f59e0b; margin-bottom: 8px;">$15</div>
+                    <div style="font-size: 14px; color: #a0aec0;">One-time</div>
+                  </div>
+                </div>
+                
+                <a href="${process.env.NEXTAUTH_URL}/pricing" style="background: linear-gradient(135deg, #4ade80 0%, #06b6d4 100%); color: white; padding: 15px 35px; text-decoration: none; font-size: 16px; font-weight: 600; border-radius: 50px; display: inline-block; box-shadow: 0 6px 20px rgba(74, 222, 128, 0.3);">
+                  💎 Upgrade to Story Pack
+                </a>
+              </div>
+            </td>
+          </tr>
+
+          <tr>
+            <td align="center">
+              ${getEmailFooter()}
+            </td>
+          </tr>
+        </table>
       `,
   };
 
