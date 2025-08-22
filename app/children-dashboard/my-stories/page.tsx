@@ -472,7 +472,7 @@ export default function MyStoriesPage() {
           ) : (
             <>
               {viewMode === 'grid' ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                   {stories.map((story) => (
                     <StoryCard
                       key={story._id}
@@ -695,10 +695,7 @@ function StoryCard({
                 </span>
               </div>
             </div>
-            <div className="flex gap-4 text-xs text-gray-400">
-              <span>Grammar: {story.assessment.grammar}%</span>
-              <span>Creativity: {story.assessment.creativity}%</span>
-            </div>
+
           </div>
         );
       })()}
@@ -712,7 +709,7 @@ function StoryCard({
           </span>
         )}
         {story.physicalAnthology?.purchased && (
-          <span className="bg-yellow-800/60 border border-yellow-600/40 text-yellow-300 px-2 py-1 rounded text-xs  flex items-center gap-1">
+          <span className=" bg-yellow-800/60 border border-yellow-600/40 text-yellow-300 px-2 py-1 rounded text-xs  flex items-center gap-1">
             <CheckCircle size={12} />
             Spot Reserved in Physical Book
             {story.physicalAnthology.purchaseDate && (
@@ -760,17 +757,17 @@ function StoryCard({
             <button
               onClick={onPublish}
               disabled={publishingStory === story._id}
-              className="w-full bg-green-600 hover:bg-green-700 text-white py-2  text-xs  transition-colors flex items-center justify-center gap-1 disabled:opacity-50"
+              className="w-full bg-green-600 hover:bg-green-700 text-white py-3 px-4 text-sm font-medium transition-colors flex items-center justify-center gap-2 disabled:opacity-50 rounded-lg"
             >
               {publishingStory === story._id ? (
                 <>
-                  <div className="w-3 h-3 border border-white border-t-transparent  animate-spin"></div>
+                  <div className="w-4 h-4 border border-white border-t-transparent rounded-full animate-spin"></div>
                   Publishing...
                 </>
               ) : (
                 <>
-                  <Star size={12} />
-                  Publish To Community - Free
+            
+                  Publish To Community
                 </>
               )}
             </button>
@@ -780,9 +777,9 @@ function StoryCard({
           {!story.physicalAnthology?.purchased ? (
             <button
               onClick={onPurchase}
-              className="w-full bg-yellow-600 hover:bg-yellow-700 text-white py-2  text-xs  transition-colors flex items-center justify-center gap-1"
+              className="w-full bg-yellow-600 hover:bg-yellow-700 text-white py-3 px-4 text-sm font-medium transition-colors flex items-center justify-center gap-2 rounded-lg"
             >
-              <DollarSign size={12} />
+       
               Reserve Spot in Physical Book - $10
             </button>
           ) : null}
@@ -993,22 +990,6 @@ function StoryListItem({
             <DollarSign size={16} />
             Purchase $10
           </button>
-
-          {/* More Actions Dropdown - NO ACTIONS */}
-          <div className="relative group">
-            <button className="bg-gray-700 hover:bg-gray-600 text-white p-2  transition-colors">
-              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
-              </svg>
-            </button>
-
-            <div className="absolute right-0 top-full mt-2 w-48 bg-gray-800 border border-gray-600  shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10">
-              {/* NO ACTIONS - No reassess, no delete */}
-              <div className="px-4 py-2 text-gray-400 text-sm text-center">
-                No actions available
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </motion.div>
