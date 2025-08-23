@@ -916,137 +916,21 @@ export default function StoryDetailPage() {
               shouldShowAssessment() &&
               story.assessment && (
                 <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-8">
-                  <h2 className="text-2xl  text-white mb-6 flex items-center gap-2">
-                    <Brain className="w-6 h-6 text-blue-400" />
-                    AI Assessment Results
-                  </h2>
-
-                  <div className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                      <div className="bg-gray-700/30  p-4 text-center">
-                        <div
-                          className={`text-2xl  ${getScoreColor(story.assessment.overallScore)}`}
-                        >
-                          {story.assessment.overallScore}%
-                        </div>
-                        <div className="text-gray-300 text-sm">
-                          Overall Score
-                        </div>
-                      </div>
-                      <div className="bg-gray-700/30  p-4 text-center">
-                        <div
-                          className={`text-2xl  ${getScoreColor(story.assessment.grammar)}`}
-                        >
-                          {story.assessment.grammar}%
-                        </div>
-                        <div className="text-gray-300 text-sm">Grammar</div>
-                      </div>
-                      <div className="bg-gray-700/30  p-4 text-center">
-                        <div
-                          className={`text-2xl  ${getScoreColor(story.assessment.creativity)}`}
-                        >
-                          {story.assessment.creativity}%
-                        </div>
-                        <div className="text-gray-300 text-sm">Creativity</div>
-                      </div>
-                      <div className="bg-gray-700/30  p-4 text-center">
-                        <div
-                          className={`text-2xl  ${getScoreColor(story.assessment.vocabulary)}`}
-                        >
-                          {story.assessment.vocabulary}%
-                        </div>
-                        <div className="text-gray-300 text-sm">Vocabulary</div>
-                      </div>
-                    </div>
-
-                    {/* Feedback */}
-                    {story.assessment.feedback && (
-                      <div className="bg-blue-500/10 border border-blue-500/20  p-6">
-                        <h3 className="text-lg  text-white mb-3">
-                          AI Feedback
-                        </h3>
-                        <p className="text-gray-300 leading-relaxed">
-                          {story.assessment.feedback}
-                        </p>
-                      </div>
-                    )}
-
-                    {/* Recommendations */}
-                    {story.assessment.recommendations && (
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {story.assessment.recommendations.strengths &&
-                          story.assessment.recommendations.strengths.length >
-                            0 && (
-                            <div className="bg-green-500/10 border border-green-500/20  p-6">
-                              <h3 className="text-lg  text-green-400 mb-3">
-                                Strengths
-                              </h3>
-                              <ul className="space-y-2">
-                                {story.assessment.recommendations.strengths.map(
-                                  (strength, index) => (
-                                    <li
-                                      key={index}
-                                      className="text-gray-300 flex items-start gap-2"
-                                    >
-                                      <CheckCircle className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" />
-                                      {strength}
-                                    </li>
-                                  )
-                                )}
-                              </ul>
-                            </div>
-                          )}
-
-                        {story.assessment.recommendations.improvements &&
-                          story.assessment.recommendations.improvements.length >
-                            0 && (
-                            <div className="bg-yellow-500/10 border border-yellow-500/20  p-6">
-                              <h3 className="text-lg  text-yellow-400 mb-3">
-                                Areas for Improvement
-                              </h3>
-                              <ul className="space-y-2">
-                                {story.assessment.recommendations.improvements.map(
-                                  (improvement, index) => (
-                                    <li
-                                      key={index}
-                                      className="text-gray-300 flex items-start gap-2"
-                                    >
-                                      <TrendingUp className="w-4 h-4 text-yellow-400 mt-0.5 flex-shrink-0" />
-                                      {improvement}
-                                    </li>
-                                  )
-                                )}
-                              </ul>
-                            </div>
-                          )}
-                      </div>
-                    )}
-
-                    {/* Integrity Analysis */}
-                    <div className="bg-gray-700/30  p-6">
-                      <h3 className="text-lg  text-white mb-3 flex items-center gap-2">
-                        Content Integrity
-                        {getIntegrityIcon(story.assessment.integrityRisk)}
-                      </h3>
-                      <div className="text-gray-300">
-                        Risk Level:{' '}
-                        <span
-                          className={` ${
-                            story.assessment.integrityRisk === 'low'
-                              ? 'text-green-400'
-                              : story.assessment.integrityRisk === 'medium'
-                                ? 'text-yellow-400'
-                                : story.assessment.integrityRisk === 'high'
-                                  ? 'text-orange-400'
-                                  : 'text-red-400'
-                          }`}
-                        >
-                          {(
-                            story.assessment.integrityRisk || 'unknown'
-                          ).toUpperCase()}
-                        </span>
-                      </div>
-                    </div>
+                  <div className="text-center">
+                    <Brain className="w-16 h-16 text-blue-400 mx-auto mb-4" />
+                    <h2 className="text-2xl  text-white mb-4">
+                      Assessment Results Available
+                    </h2>
+                    <p className="text-gray-300 mb-6">
+                      Your story has been assessed! View the detailed results including scores, feedback, and recommendations.
+                    </p>
+                    <Link
+                      href={`/children-dashboard/my-stories/${story._id}/assessment`}
+                      className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-lg transition-colors inline-flex items-center gap-2 text-lg font-medium"
+                    >
+                      <Brain size={20} />
+                      View Detailed Assessment
+                    </Link>
                   </div>
                 </div>
               )}
