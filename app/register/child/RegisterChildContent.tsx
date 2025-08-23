@@ -812,7 +812,7 @@ function RegisterChildContent() {
 
   useEffect(() => {
     setMounted(true);
-    
+
     // Check for error in URL params (if redirected from failed registration)
     const errorParam = searchParams.get('error');
     if (errorParam) {
@@ -865,24 +865,28 @@ function RegisterChildContent() {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    
+
     // Helper function to format names properly (Title Case)
     const formatName = (name: string) => {
       return name
         .toLowerCase()
         .split(' ')
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
         .join(' ');
     };
-    
+
     let formattedValue = value;
-    
+
     if (name === 'email') {
       formattedValue = value.toLowerCase();
-    } else if (name === 'firstName' || name === 'lastName' || name === 'school') {
+    } else if (
+      name === 'firstName' ||
+      name === 'lastName' ||
+      name === 'school'
+    ) {
       formattedValue = formatName(value);
     }
-    
+
     setFormData((prev) => ({
       ...prev,
       [name]: formattedValue,
@@ -928,7 +932,9 @@ function RegisterChildContent() {
       }
 
       if (!formData.agreeToTerms) {
-        setToastMessage('Registration Failed: You must agree to the terms and conditions');
+        setToastMessage(
+          'Registration Failed: You must agree to the terms and conditions'
+        );
         setIsLoading(false);
         return;
       }
@@ -967,7 +973,9 @@ function RegisterChildContent() {
 
       if (signInResult?.error) {
         console.error('Auto login failed:', signInResult.error);
-        setToastMessage(`Registration successful, but auto-login failed: ${signInResult.error}. Please login manually.`);
+        setToastMessage(
+          `Registration successful, but auto-login failed: ${signInResult.error}. Please login manually.`
+        );
         // If auto-login fails, redirect to login page with callbackUrl
         setTimeout(() => {
           router.push(
@@ -991,7 +999,9 @@ function RegisterChildContent() {
       }
     } catch (error) {
       console.error('Registration error:', error);
-      setToastMessage('Registration Failed: An unexpected error occurred. Please try again.');
+      setToastMessage(
+        'Registration Failed: An unexpected error occurred. Please try again.'
+      );
     } finally {
       setIsLoading(false);
     }
@@ -1485,19 +1495,24 @@ function RegisterChildContent() {
 
         {/* Toast notifications */}
         {toastMessage && (
-          <Toast 
-            variant={toastMessage.startsWith('Registration Failed') ? 'destructive' : 'default'}
+          <Toast
+            variant={
+              toastMessage.startsWith('Registration Failed')
+                ? 'destructive'
+                : 'default'
+            }
             className="z-50"
           >
             <ToastTitle>
               {toastMessage.startsWith('Registration Failed')
                 ? 'Registration Error'
-                : toastMessage.includes('successful') || toastMessage.includes('Welcome')
-                ? 'Success'
-                : 'Info'}
+                : toastMessage.includes('successful') ||
+                    toastMessage.includes('Welcome')
+                  ? 'Success'
+                  : 'Info'}
             </ToastTitle>
             <ToastDescription>
-              {toastMessage.startsWith('Registration Failed') 
+              {toastMessage.startsWith('Registration Failed')
                 ? toastMessage.replace('Registration Failed: ', '')
                 : toastMessage}
             </ToastDescription>

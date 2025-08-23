@@ -40,7 +40,7 @@ function AdminLogin() {
 
   useEffect(() => {
     setMounted(true);
-    
+
     // Check for error in URL params from NextAuth
     const errorParam = searchParams.get('error');
     if (errorParam) {
@@ -93,12 +93,12 @@ function AdminLogin() {
         // Check if the user has the correct role for admin login
         const sessionResponse = await fetch('/api/auth/session');
         const session = await sessionResponse.json();
-        
+
         if (session?.user?.role && session.user.role !== 'admin') {
           // User has wrong role for admin login
           const roleError = `This login is for administrators only. Please use the ${session.user.role} login page instead.`;
           setError(roleError);
-          
+
           // Sign out the user since they used wrong login page
           await fetch('/api/auth/signout', { method: 'POST' });
           return;
@@ -111,24 +111,28 @@ function AdminLogin() {
       } else if (result?.error) {
         // Parse the specific error from NextAuth
         let errorMessage = result.error;
-        
+
         // Map common error codes to user-friendly messages for admin
         switch (result.error) {
           case 'CredentialsSignin':
-            errorMessage = 'Invalid admin credentials. Please check your email and password.';
+            errorMessage =
+              'Invalid admin credentials. Please check your email and password.';
             break;
           case 'AccessDenied':
             errorMessage = 'Access denied. Admin privileges required.';
             break;
           default:
             // Check if it's a role-based error
-            if (result.error.includes('Admin') || result.error.includes('admin')) {
+            if (
+              result.error.includes('Admin') ||
+              result.error.includes('admin')
+            ) {
               errorMessage = result.error;
             } else {
               errorMessage = 'Invalid credentials. Admin access only.';
             }
         }
-        
+
         setError(errorMessage);
         console.error('Admin authentication failed:', errorMessage);
       } else {

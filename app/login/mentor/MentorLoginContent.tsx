@@ -23,7 +23,7 @@ import {
   ToastTitle,
   ToastDescription,
   ToastClose,
-  } from '@/components/ui/toast';
+} from '@/components/ui/toast';
 
 function MentorLoginContent() {
   const router = useRouter();
@@ -47,7 +47,7 @@ function MentorLoginContent() {
 
   useEffect(() => {
     setMounted(true);
-    
+
     // Check for error in URL params from NextAuth
     const errorParam = searchParams.get('error');
     if (errorParam) {
@@ -56,7 +56,8 @@ function MentorLoginContent() {
       setToastMessage(`Login Failed: ${decodedError}`);
       console.log('Auth error detected:', decodedError);
     }
-  }, [searchParams]);  useEffect(() => {
+  }, [searchParams]);
+  useEffect(() => {
     // Animations for stars and cosmic elements
     const stars = starsRef.current?.children;
     if (stars && typeof window !== 'undefined') {
@@ -94,13 +95,17 @@ function MentorLoginContent() {
         // Check if the user has the correct role for mentor login
         const sessionResponse = await fetch('/api/auth/session');
         const session = await sessionResponse.json();
-        
-        if (session?.user?.role && session.user.role !== 'mentor' && session.user.role !== 'admin') {
+
+        if (
+          session?.user?.role &&
+          session.user.role !== 'mentor' &&
+          session.user.role !== 'admin'
+        ) {
           // User has wrong role for mentor login
           const roleError = `This login is for mentors only. Please use the ${session.user.role} login page instead.`;
           setError(roleError);
           setToastMessage(`Access Denied: ${roleError}`);
-          
+
           // Sign out the user since they used wrong login page
           await fetch('/api/auth/signout', { method: 'POST' });
           return;
@@ -116,11 +121,12 @@ function MentorLoginContent() {
       } else if (result?.error) {
         // Parse the specific error from NextAuth
         let errorMessage = result.error;
-        
+
         // Map common error codes to user-friendly messages
         switch (result.error) {
           case 'CredentialsSignin':
-            errorMessage = 'Invalid email or password. Please check your credentials and try again.';
+            errorMessage =
+              'Invalid email or password. Please check your credentials and try again.';
             break;
           case 'AccessDenied':
             errorMessage = 'Access denied. Your account may be deactivated.';
@@ -129,7 +135,7 @@ function MentorLoginContent() {
             // Use the exact error message from the backend
             errorMessage = result.error;
         }
-        
+
         setError(errorMessage);
         setToastMessage(`Login Failed: ${errorMessage}`);
         console.error('Mentor authentication failed:', errorMessage);
@@ -530,14 +536,20 @@ function MentorLoginContent() {
 
         {/* Toast notifications */}
         {toastMessage && (
-          <Toast variant={toastMessage.startsWith('Login Failed') ? 'destructive' : 'default'}>
+          <Toast
+            variant={
+              toastMessage.startsWith('Login Failed')
+                ? 'destructive'
+                : 'default'
+            }
+          >
             <ToastTitle>
               {toastMessage.startsWith('Login Failed')
                 ? 'Authentication Error'
                 : 'Welcome Back!'}
             </ToastTitle>
             <ToastDescription>
-              {toastMessage.startsWith('Login Failed') 
+              {toastMessage.startsWith('Login Failed')
                 ? toastMessage.replace('Login Failed: ', '')
                 : toastMessage}
             </ToastDescription>

@@ -46,7 +46,7 @@ function ChildLoginContent() {
 
   useEffect(() => {
     setMounted(true);
-    
+
     // Check for error in URL params from NextAuth
     const errorParam = searchParams.get('error');
     if (errorParam) {
@@ -95,13 +95,13 @@ function ChildLoginContent() {
         // Check if the user has the correct role for child login
         const sessionResponse = await fetch('/api/auth/session');
         const session = await sessionResponse.json();
-        
+
         if (session?.user?.role && session.user.role !== 'child') {
           // User has wrong role for child login
           const roleError = `This login is for children only. Please use the ${session.user.role} login page instead.`;
           setError(roleError);
           setToastMessage(`Access Denied: ${roleError}`);
-          
+
           // Sign out the user since they used wrong login page
           await fetch('/api/auth/signout', { method: 'POST' });
           return;
@@ -119,11 +119,12 @@ function ChildLoginContent() {
       } else if (result?.error) {
         // Parse the specific error from NextAuth
         let errorMessage = result.error;
-        
+
         // Map common error codes to user-friendly messages
         switch (result.error) {
           case 'CredentialsSignin':
-            errorMessage = 'Invalid email or password. Please check your credentials and try again.';
+            errorMessage =
+              'Invalid email or password. Please check your credentials and try again.';
             break;
           case 'AccessDenied':
             errorMessage = 'Access denied. Your account may be deactivated.';
@@ -132,7 +133,7 @@ function ChildLoginContent() {
             // Use the exact error message from the backend
             errorMessage = result.error;
         }
-        
+
         setError(errorMessage);
         setToastMessage(`Login Failed: ${errorMessage}`);
         console.error('Authentication failed:', errorMessage);
@@ -537,14 +538,20 @@ function ChildLoginContent() {
 
         {/* Toast notifications */}
         {toastMessage && (
-          <Toast variant={toastMessage.startsWith('Login Failed') ? 'destructive' : 'default'}>
+          <Toast
+            variant={
+              toastMessage.startsWith('Login Failed')
+                ? 'destructive'
+                : 'default'
+            }
+          >
             <ToastTitle>
               {toastMessage.startsWith('Login Failed')
                 ? 'Authentication Error'
                 : 'Welcome Back!'}
             </ToastTitle>
             <ToastDescription>
-              {toastMessage.startsWith('Login Failed') 
+              {toastMessage.startsWith('Login Failed')
                 ? toastMessage.replace('Login Failed: ', '')
                 : toastMessage}
             </ToastDescription>

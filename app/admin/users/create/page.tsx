@@ -40,7 +40,7 @@ export default function CreateUserPage() {
     return name
       .toLowerCase()
       .split(' ')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' ');
   };
 
@@ -245,7 +245,9 @@ export default function CreateUserPage() {
                 type="email"
                 required
                 value={formData.email}
-                onChange={(e) => handleInputChange('email', e.target.value.toLowerCase())}
+                onChange={(e) =>
+                  handleInputChange('email', e.target.value.toLowerCase())
+                }
                 className={`w-full pl-10 pr-4 py-3 bg-gray-700 border  text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                   errors.email ? 'border-red-500' : 'border-gray-600'
                 }`}

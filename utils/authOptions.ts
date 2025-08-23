@@ -183,11 +183,15 @@ export const authOptions: NextAuthOptions = {
           }).select('+password');
 
           if (!user) {
-            throw new Error('No account found with this email address. Please check your email or create a new account.');
+            throw new Error(
+              'No account found with this email address. Please check your email or create a new account.'
+            );
           }
 
           if (!user.isActive) {
-            throw new Error('Your account has been deactivated. Please contact support for assistance.');
+            throw new Error(
+              'Your account has been deactivated. Please contact support for assistance.'
+            );
           }
 
           const isValidPassword = await bcrypt.compare(
@@ -196,7 +200,9 @@ export const authOptions: NextAuthOptions = {
           );
 
           if (!isValidPassword) {
-            throw new Error('Incorrect password. Please check your password and try again.');
+            throw new Error(
+              'Incorrect password. Please check your password and try again.'
+            );
           }
 
           // Update last active date
