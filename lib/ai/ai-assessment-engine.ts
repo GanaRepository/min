@@ -212,8 +212,217 @@ export class AIAssessmentEngine {
   }
 
   /**
-   * Comprehensive assessment that works for both freeform writing and uploaded stories
+   * NEW: 16-Step Detailed Assessment Analysis
+   * Provides comprehensive analysis matching the expected assessment format
    */
+  static async performSixteenStepAnalysis(
+    content: string,
+    metadata: {
+      childAge?: number;
+      storyTitle?: string;
+      isCollaborativeStory?: boolean;
+      expectedGenre?: 'creative' | 'adventure' | 'mystery' | 'fantasy';
+    }
+  ): Promise<{
+    step1_2_academicIntegrity: {
+      status: 'PASS' | 'WARNING' | 'FAIL';
+      message: string;
+      aiDetectionRisk: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+      plagiarismRisk: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+      recommendation: string;
+    };
+    step3_6_educationalContent: {
+      grammarScore: number;
+      vocabularyScore: number;
+      creativityScore: number;
+      characterDevelopmentScore: number;
+      plotDevelopmentScore: number;
+      descriptiveWritingScore: number;
+    };
+    step7_10_specializedAnalysis: {
+      sensoryDetailsScore: number;
+      plotLogicScore: number;
+      themeRecognitionScore: number;
+      problemSolvingScore: number;
+    };
+    step11_13_ageAppropriatenessAndReadingLevel: {
+      ageAppropriatenessScore: number;
+      readingLevel: string;
+      complexity: 'Beginner' | 'Elementary' | 'Intermediate' | 'Advanced';
+      recommendation: string;
+    };
+    step14_16_comprehensiveFeedback: {
+      overallScore: number;
+      strengths: string[];
+      improvements: string[];
+      nextSteps: string[];
+      teacherComment: string;
+      encouragement: string;
+      integrityStatus: {
+        status: 'PASS' | 'WARNING' | 'FAIL';
+        message: string;
+        mentorNote?: string;
+        adminFlags?: string[];
+      };
+    };
+    detailedAnalysisBreakdown: {
+      contentAnalysis: any;
+      integrityAnalysis: any;
+      progressTracking?: any;
+      recommendations: any;
+    };
+  }> {
+    console.log('🔍 Starting 16-Step Detailed Assessment Analysis...');
+
+    const age = metadata.childAge || 10;
+
+    // Perform complete assessment first
+    const completeAssessment = await this.performCompleteAssessment(
+      content,
+      metadata
+    );
+
+    // Step 1-2: Academic Integrity Check
+    const step1_2_academicIntegrity = {
+      status: completeAssessment.integrityStatus.status,
+      message: completeAssessment.integrityStatus.message,
+      aiDetectionRisk: this.mapToRiskLevel(
+        completeAssessment.integrityAnalysis.aiDetectionResult.likelihood
+      ),
+      plagiarismRisk: this.mapToRiskLevel(
+        completeAssessment.integrityAnalysis.plagiarismResult.riskLevel
+      ),
+      recommendation: completeAssessment.integrityStatus.recommendation,
+    };
+
+    // Step 3-6: Educational Content Assessment
+    const step3_6_educationalContent = {
+      grammarScore: completeAssessment.categoryScores.grammar,
+      vocabularyScore: completeAssessment.categoryScores.vocabulary,
+      creativityScore: completeAssessment.categoryScores.creativity,
+      characterDevelopmentScore:
+        completeAssessment.categoryScores.characterDevelopment,
+      plotDevelopmentScore: completeAssessment.categoryScores.plotDevelopment,
+      descriptiveWritingScore:
+        completeAssessment.categoryScores.descriptiveWriting,
+    };
+
+    // Step 7-10: Specialized Analysis
+    const step7_10_specializedAnalysis = {
+      sensoryDetailsScore: completeAssessment.categoryScores.sensoryDetails,
+      plotLogicScore: completeAssessment.categoryScores.plotLogic,
+      themeRecognitionScore: completeAssessment.categoryScores.themeRecognition,
+      problemSolvingScore: completeAssessment.categoryScores.problemSolving,
+    };
+
+    // Step 11-13: Age Appropriateness & Reading Level
+    const complexity = this.determineComplexityLevel(
+      completeAssessment.categoryScores.readingLevel,
+      completeAssessment.categoryScores.ageAppropriateness
+    );
+
+    const step11_13_ageAppropriatenessAndReadingLevel = {
+      ageAppropriatenessScore:
+        completeAssessment.categoryScores.ageAppropriateness,
+      readingLevel: completeAssessment.categoryScores.readingLevel,
+      complexity,
+      recommendation: this.generateReadingLevelRecommendation(
+        completeAssessment.categoryScores.ageAppropriateness,
+        age,
+        complexity
+      ),
+    };
+
+    // Step 14-16: Comprehensive Feedback Generation
+    const step14_16_comprehensiveFeedback = {
+      overallScore: completeAssessment.overallScore,
+      strengths: completeAssessment.educationalFeedback.strengths,
+      improvements: completeAssessment.educationalFeedback.improvements,
+      nextSteps: completeAssessment.educationalFeedback.nextSteps,
+      teacherComment: completeAssessment.educationalFeedback.teacherComment,
+      encouragement: completeAssessment.educationalFeedback.encouragement,
+      integrityStatus: completeAssessment.integrityStatus,
+    };
+
+    return {
+      step1_2_academicIntegrity,
+      step3_6_educationalContent,
+      step7_10_specializedAnalysis,
+      step11_13_ageAppropriatenessAndReadingLevel,
+      step14_16_comprehensiveFeedback,
+      detailedAnalysisBreakdown: {
+        contentAnalysis: completeAssessment.categoryScores,
+        integrityAnalysis: completeAssessment.integrityAnalysis,
+        progressTracking: completeAssessment.progressTracking,
+        recommendations: completeAssessment.recommendations,
+      },
+    };
+  }
+
+  // Helper methods for 16-step analysis
+  private static mapToRiskLevel(
+    level: string
+  ): 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL' {
+    switch (level.toLowerCase()) {
+      case 'very_low':
+      case 'low':
+        return 'LOW';
+      case 'medium':
+        return 'MEDIUM';
+      case 'high':
+        return 'HIGH';
+      case 'very_high':
+      case 'critical':
+        return 'CRITICAL';
+      default:
+        return 'MEDIUM';
+    }
+  }
+
+  private static determineComplexityLevel(
+    readingLevel: string,
+    ageAppropriatenessScore: number
+  ): 'Beginner' | 'Elementary' | 'Intermediate' | 'Advanced' {
+    if (readingLevel.includes('Beginner') || ageAppropriatenessScore < 60) {
+      return 'Beginner';
+    } else if (
+      readingLevel.includes('Elementary') ||
+      ageAppropriatenessScore < 75
+    ) {
+      return 'Elementary';
+    } else if (
+      readingLevel.includes('Intermediate') ||
+      ageAppropriatenessScore < 85
+    ) {
+      return 'Intermediate';
+    } else {
+      return 'Advanced';
+    }
+  }
+
+  private static generateReadingLevelRecommendation(
+    score: number,
+    age: number,
+    complexity: string
+  ): string {
+    if (score >= 85) {
+      return `Perfect content complexity for age ${age}. Continue developing your writing skills.`;
+    } else if (score >= 70) {
+      return `Good age-appropriate content. Try adding more ${age <= 8 ? 'simple' : 'varied'} details.`;
+    } else if (score >= 60) {
+      return `Content may be ${complexity === 'Advanced' ? 'too complex' : 'too simple'} for age ${age}. ${
+        complexity === 'Advanced'
+          ? 'Try using simpler words and shorter sentences.'
+          : 'Challenge yourself with more descriptive language.'
+      }`;
+    } else {
+      return `Content needs significant adjustment for age ${age}. ${
+        age <= 8
+          ? 'Focus on simple, clear storytelling with familiar words.'
+          : 'Work on age-appropriate vocabulary and themes.'
+      }`;
+    }
+  }
   static async performCompleteAssessment(
     content: string,
     metadata: {
@@ -482,28 +691,22 @@ export class AIAssessmentEngine {
     aiLikelihood: string,
     originalityScore: number
   ): 'low' | 'medium' | 'high' | 'critical' {
-    const plagiarismScore =
-      { low: 10, medium: 30, high: 60, critical: 90 }[plagiarismRisk] || 10;
+    // AI detection takes priority - this fixes contradictions
+    if (aiLikelihood === 'very_high') return 'critical';
+    if (aiLikelihood === 'high') return 'high';
+    if (aiLikelihood === 'medium' && originalityScore < 70) return 'high';
+    if (aiLikelihood === 'medium') return 'medium';
 
-    // FIXED: Make AI detection more impactful
-    const aiScore =
-      {
-        very_low: 5,
-        low: 20, // Increased from 15
-        medium: 50, // Increased from 40
-        high: 80, // Increased from 70
-        very_high: 95,
-      }[aiLikelihood] || 5;
+    // Then check plagiarism
+    if (plagiarismRisk === 'critical') return 'critical';
+    if (plagiarismRisk === 'high') return 'high';
+    if (plagiarismRisk === 'medium') return 'medium';
 
-    // FIXED: AI detection should override plagiarism risk
-    const combinedRisk = Math.max(plagiarismScore, aiScore * 1.2); // Give AI detection more weight
+    // Finally check overall originality
+    if (originalityScore < 50) return 'critical';
+    if (originalityScore < 70) return 'high';
+    if (originalityScore < 85) return 'medium';
 
-    // FIXED: More aggressive thresholds
-    if (aiLikelihood === 'very_high' || aiLikelihood === 'high')
-      return 'critical';
-    if (combinedRisk >= 70 || originalityScore < 40) return 'critical'; // Lowered from 80/30
-    if (combinedRisk >= 50 || originalityScore < 60) return 'high'; // Lowered from 60/50
-    if (combinedRisk >= 30 || originalityScore < 75) return 'medium'; // Lowered from 30/70
     return 'low';
   }
 
@@ -575,109 +778,33 @@ export class AIAssessmentEngine {
     console.log('📊 Content length:', contentToAssess.length, 'characters');
     console.log('👶 Age group:', ageGroup);
 
-    // Enhanced error handling with meaningful defaults - DETAILED DEBUGGING
-    const safeAssess = async (
-      assessmentFunction: () => Promise<number>,
-      category: string,
-      defaultScore: number = 75
-    ): Promise<number> => {
-      try {
-        console.log(`🔍 Starting ${category} assessment...`);
-        const result = await assessmentFunction();
-        console.log(`✅ ${category}: ${result}% (REAL ASSESSMENT)`);
-        return result;
-      } catch (error) {
-        console.error(`❌ ${category} assessment FAILED:`, error);
-        console.error(`❌ Error details:`, {
-          name: error instanceof Error ? error.name : 'Unknown',
-          message: error instanceof Error ? error.message : String(error),
-          stack: error instanceof Error ? error.stack : 'No stack trace'
-        });
-        console.warn(`⚠️ Using fallback score for ${category}: ${defaultScore}%`);
-        return defaultScore;
-      }
-    };
-
-    // Comprehensive educational analysis with enhanced error handling
+    // Comprehensive educational analysis - NO FALLBACKS
     const analysis = {
       // Core Language Skills
-      grammar: await safeAssess(
-        () => this.assessGrammar(contentToAssess, ageGroup),
-        'Grammar',
-        78
-      ),
-      vocabulary: await safeAssess(
-        () => this.assessVocabulary(contentToAssess, ageGroup),
-        'Vocabulary',
-        72
-      ),
-      spelling: await safeAssess(
-        () => this.assessSpelling(contentToAssess),
-        'Spelling',
-        80
-      ),
+      grammar: await this.assessGrammar(contentToAssess, ageGroup),
+      vocabulary: await this.assessVocabulary(contentToAssess, ageGroup),
+      spelling: await this.assessSpelling(contentToAssess),
 
       // Creative Writing Skills
-      creativity: await safeAssess(
-        () => this.assessCreativity(contentToAssess, fullStory),
-        'Creativity',
-        82
-      ),
-      structure: await safeAssess(
-        () => this.assessStructure(fullStory),
-        'Structure',
-        76
-      ),
-      characterDevelopment: await safeAssess(
-        () => this.assessCharacterDevelopment(fullStory),
-        'Character Development',
-        74
-      ),
-      plotDevelopment: await safeAssess(
-        () => this.assessPlotDevelopment(fullStory),
-        'Plot Development',
-        73
-      ),
+      creativity: await this.assessCreativity(contentToAssess, fullStory),
+      structure: await this.assessStructure(fullStory),
+      characterDevelopment: await this.assessCharacterDevelopment(fullStory),
+      plotDevelopment: await this.assessPlotDevelopment(fullStory),
 
       // Descriptive Writing
-      descriptiveWriting: await safeAssess(
-        () => this.assessDescriptiveWriting(contentToAssess),
-        'Descriptive Writing',
-        71
-      ),
-      sensoryDetails: await safeAssess(
-        () => this.assessSensoryDetails(contentToAssess),
-        'Sensory Details',
-        68
-      ),
+      descriptiveWriting: await this.assessDescriptiveWriting(contentToAssess),
+      sensoryDetails: await this.assessSensoryDetails(contentToAssess),
 
       // Critical Thinking
-      plotLogic: await safeAssess(
-        () => this.assessPlotLogic(fullStory),
-        'Plot Logic',
-        77
-      ),
-      causeEffect: await safeAssess(
-        () => this.assessCauseEffect(fullStory),
-        'Cause & Effect',
-        75
-      ),
-      problemSolving: await safeAssess(
-        () => this.assessProblemSolving(fullStory),
-        'Problem Solving',
-        73
-      ),
-      themeRecognition: await safeAssess(
-        () => this.assessThemeRecognition(fullStory),
-        'Theme Recognition',
-        70
-      ),
+      plotLogic: await this.assessPlotLogic(fullStory),
+      causeEffect: await this.assessCauseEffect(fullStory),
+      problemSolving: await this.assessProblemSolving(fullStory),
+      themeRecognition: await this.assessThemeRecognition(fullStory),
 
       // Age Appropriateness
-      ageAppropriateness: await safeAssess(
-        () => this.assessAgeAppropriateness(contentToAssess, age),
-        'Age Appropriateness',
-        85
+      ageAppropriateness: await this.assessAgeAppropriateness(
+        contentToAssess,
+        age
       ),
       readingLevel: this.calculateReadingLevel(contentToAssess),
     };
@@ -704,7 +831,10 @@ export class AIAssessmentEngine {
     const overallScore = Math.round(
       Object.entries(weights).reduce((sum, [key, weight]) => {
         const score = analysis[key as keyof typeof analysis] as number;
-        return sum + (score || 75) * weight; // Fallback to 75 if score is 0/undefined
+        if (typeof score !== 'number' || isNaN(score)) {
+          throw new Error(`Assessment failed for ${key}: received ${score}`);
+        }
+        return sum + score * weight;
       }, 0)
     );
 
@@ -1418,7 +1548,7 @@ export class AIAssessmentEngine {
     ageGroup: string
   ): Promise<number> {
     if (!content || content.trim().length < 10) {
-      return 75; // Reasonable default for short content
+      throw new Error('Content too short for grammar assessment');
     }
 
     const sentences = content
@@ -1426,7 +1556,7 @@ export class AIAssessmentEngine {
       .filter((s) => s.trim().length > 5);
 
     if (sentences.length === 0) {
-      return 70; // Some content but no clear sentences
+      throw new Error('No valid sentences found for grammar assessment');
     }
 
     let score = 85; // Start with a good baseline
@@ -1692,7 +1822,7 @@ export class AIAssessmentEngine {
     fullStory: string
   ): Promise<number> {
     if (!userContent || userContent.trim().length < 20) {
-      return 70; // Basic score for minimal content
+      throw new Error('Content too short for creativity assessment');
     }
 
     let score = 80; // Start with good baseline for creative writing

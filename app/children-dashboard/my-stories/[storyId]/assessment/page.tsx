@@ -24,6 +24,7 @@ import {
 import { motion } from 'framer-motion';
 import TerminalLoader from '../../../../../components/TerminalLoader';
 import ComprehensiveAssessmentDisplay from '../../../../../components/ComprehensiveAssessmentDisplay';
+import DetailedAssessmentDisplay from '../../../../../components/DetailedAssessmentDisplay';
 
 interface ComprehensiveAssessment {
   // Core scores
@@ -116,6 +117,34 @@ export default function StoryAssessmentPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    const fetchStoryAssessment = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(`/api/user/stories/${storyId}`);
+        const data = await response.json();
+
+        console.log('🔍 API Response:', data);
+        console.log('🎯 Story Assessment:', data.story?.assessment);
+
+        if (data.success && data.story) {
+          setStory(data.story);
+          if (!data.story.assessment) {
+            console.log('❌ No assessment found for story');
+            setError('Assessment not available for this story.');
+          } else {
+            console.log('✅ Assessment found:', data.story.assessment);
+          }
+        } else {
+          throw new Error(data.error || 'Failed to fetch story assessment');
+        }
+      } catch (error) {
+        console.error('Error fetching story assessment:', error);
+        setError('Failed to load assessment. Please try again.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
     if (status === 'loading') {
       // Still checking authentication status
       return;
@@ -131,34 +160,6 @@ export default function StoryAssessmentPage() {
       fetchStoryAssessment();
     }
   }, [status, storyId, router]);
-
-  const fetchStoryAssessment = async () => {
-    try {
-      setLoading(true);
-      const response = await fetch(`/api/user/stories/${storyId}`);
-      const data = await response.json();
-
-      console.log('🔍 API Response:', data);
-      console.log('🎯 Story Assessment:', data.story?.assessment);
-
-      if (data.success && data.story) {
-        setStory(data.story);
-        if (!data.story.assessment) {
-          console.log('❌ No assessment found for story');
-          setError('Assessment not available for this story.');
-        } else {
-          console.log('✅ Assessment found:', data.story.assessment);
-        }
-      } else {
-        throw new Error(data.error || 'Failed to fetch story assessment');
-      }
-    } catch (error) {
-      console.error('Error fetching story assessment:', error);
-      setError('Failed to load assessment. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const getScoreColor = (score: number) => {
     if (score >= 90) return 'text-green-400';
@@ -452,7 +453,7 @@ export default function StoryAssessmentPage() {
             Assessment Not Available
           </h2>
           <p className="text-gray-300 mb-6">
-            This story hasn't been assessed yet. Complete your story to get
+            This story hasn&apos;t been assessed yet. Complete your story to get
             detailed feedback!
           </p>
           <Link
@@ -469,30 +470,27 @@ export default function StoryAssessmentPage() {
 
   const assessment = createComprehensiveAssessment(story.assessment);
 
-  // Convert assessment to format expected by ComprehensiveAssessmentDisplay
+  // Convert assessment to format expected by DetailedAssessmentDisplay
   const convertToDisplayFormat = (assessment: ComprehensiveAssessment) => {
     return {
       overallScore: assessment.overallScore,
       categoryScores: assessment.categoryScores,
-      educationalFeedback: assessment.educationalFeedback,
-      integrityAnalysis: {
-        originalityScore: assessment.integrityAnalysis.originalityScore,
-        plagiarismScore:
-          assessment.integrityAnalysis.plagiarismResult.overallScore,
-        aiDetectionScore:
-          assessment.integrityAnalysis.aiDetectionResult.confidence,
-        integrityRisk: assessment.integrityAnalysis.integrityRisk as
-          | 'low'
-          | 'medium'
-          | 'high'
-          | 'critical',
-        plagiarismRiskLevel:
-          assessment.integrityAnalysis.plagiarismResult.riskLevel,
-        aiDetectionLikelihood:
-          assessment.integrityAnalysis.aiDetectionResult.likelihood,
-      },
-      recommendations: assessment.recommendations,
-      progressTracking: assessment.progressTracking,
+
+      // Required feedback properties
+      feedback: assessment.educationalFeedback.teacherComment,
+      strengths: assessment.educationalFeedback.strengths,
+      improvements: assessment.educationalFeedback.improvements,
+      educationalInsights: assessment.educationalFeedback.encouragement,
+
+      // Required integrity properties
+      integrityStatus: assessment.integrityStatus.status,
+      aiDetectionScore:
+        100 - assessment.integrityAnalysis.aiDetectionResult.confidence,
+      plagiarismScore:
+        assessment.integrityAnalysis.plagiarismResult.overallScore,
+      integrityRisk: assessment.integrityAnalysis.integrityRisk,
+
+      // Optional metadata
       assessmentVersion: assessment.assessmentVersion,
       assessmentDate: assessment.assessmentDate,
       assessmentType: assessment.assessmentType,
@@ -560,13 +558,36 @@ export default function StoryAssessmentPage() {
           </div>
         </motion.div>
 
-        {/* Assessment Content - Use Comprehensive Display Component */}
-        <ComprehensiveAssessmentDisplay
+        {/* Assessment Content - Use Detailed Assessment Display Component */}
+        <DetailedAssessmentDisplay
           assessment={displayAssessment}
           storyInfo={{
             title: story.title,
-            wordCount: 0, // Default value - we don't have word count in our story data
-            attemptsRemaining: 3, // Default value - we don't have attempts data
+            wordCount:
+              (story as any).content
+                ?.split(/\s+/)
+                .filter((word: string) => word.length > 0).length ||
+              (story as any).totalWords ||
+              0,
+            attemptsRemaining: Math.max(
+              0,
+              3 - ((story as any).assessmentAttempts || 0)
+            ),
+          }}
+          onReassess={async () => {
+            try {
+              const response = await fetch(
+                `/api/stories/assessment/${storyId}`,
+                {
+                  method: 'POST',
+                }
+              );
+              if (response.ok) {
+                window.location.reload();
+              }
+            } catch (error) {
+              console.error('Reassessment failed:', error);
+            }
           }}
         />
 

@@ -696,36 +696,62 @@ export class AIDetector {
     const highIndicators = indicators.filter(
       (i) => i.severity === 'high'
     ).length;
+    const mediumIndicators = indicators.filter(
+      (i) => i.severity === 'medium'
+    ).length;
 
-    let confidence = 50; // Base confidence
-    confidence += criticalIndicators * 25; // Increased from 20
-    confidence += highIndicators * 15; // Increased from 10
-    confidence += indicators.length * 5; // Increased from 3
-    confidence = Math.min(95, confidence);
+    let confidence = 60; // Improved base confidence
+    confidence += criticalIndicators * 30; // Strong evidence
+    confidence += highIndicators * 20; // High evidence
+    confidence += mediumIndicators * 10; // Medium evidence
+    confidence += indicators.length * 3; // General indicator count
+    confidence = Math.min(98, confidence);
 
-    // FIXED: More aggressive AI detection thresholds
+    // Enhanced likelihood calculation based on score and evidence
     let likelihood: 'very_low' | 'low' | 'medium' | 'high' | 'very_high';
 
-    if (score >= 85)
-      likelihood = 'very_low'; // Increased from 90
-    else if (score >= 70)
-      likelihood = 'low'; // Increased from 75
-    else if (score >= 50)
-      likelihood = 'medium'; // Same
-    else if (score >= 30)
-      likelihood = 'high'; // Increased from 25
-    else likelihood = 'very_high'; // Below 30
-
-    // Adjust based on critical indicators
+    // Critical indicators override score
     if (criticalIndicators > 0) {
       likelihood = 'very_high';
-      confidence = Math.max(90, confidence);
+      confidence = Math.max(92, confidence);
     }
-
-    // ADDED: Extra checks for sophisticated writing patterns
-    if (score < 40 && highIndicators >= 3) {
+    // High sophistication patterns
+    else if (score < 35 && (highIndicators >= 2 || mediumIndicators >= 4)) {
+      likelihood = 'very_high';
+      confidence = Math.max(88, confidence);
+    }
+    // Score-based thresholds (more reasonable for creative writing)
+    else if (score >= 90) {
+      likelihood = 'very_low';
+    } else if (score >= 80) {
+      likelihood = 'low';
+    } else if (score >= 65) {
+      likelihood = 'medium';
+    } else if (score >= 45) {
+      likelihood = 'high';
+      confidence = Math.max(75, confidence);
+    } else {
       likelihood = 'very_high';
       confidence = Math.max(85, confidence);
+    }
+
+    // Special consideration for creative writing
+    if (metadata?.isCreativeWriting && score >= 75) {
+      // Give creative writing benefit of doubt
+      if (likelihood === 'high') likelihood = 'medium';
+      if (likelihood === 'medium') likelihood = 'low';
+    }
+
+    // Additional sophistication checks for age-inappropriate content
+    const age = metadata?.childAge || 10;
+    const sophisticationIndicators = indicators.filter(
+      (i) => i.type === 'vocabulary' || i.type === 'style'
+    );
+
+    if (age <= 10 && sophisticationIndicators.length >= 3) {
+      if (likelihood === 'low') likelihood = 'medium';
+      else if (likelihood === 'medium') likelihood = 'high';
+      confidence = Math.max(80, confidence);
     }
 
     return { likelihood, confidence };
