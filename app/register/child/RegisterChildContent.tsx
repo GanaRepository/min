@@ -16,8 +16,6 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { signIn } from 'next-auth/react';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { Label } from '@/components/ui/label';
-import { Checkbox } from '@/components/ui/checkbox';
 import {
   ToastProvider,
   ToastViewport,
@@ -64,7 +62,6 @@ const RegisterChildContent: React.FC = () => {
     school: '',
     password: '',
     confirmPassword: '',
-    agreeToTerms: false,
   });
 
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -122,13 +119,6 @@ const RegisterChildContent: React.FC = () => {
     setFormData((prev) => ({
       ...prev,
       [name]: name === 'email' ? value.toLowerCase() : value,
-    }));
-  };
-
-  const handleCheckboxChange = (name: string, checked: boolean) => {
-    setFormData((prev) => ({
-      ...prev,
-      [name]: checked,
     }));
   };
 
@@ -523,37 +513,24 @@ const RegisterChildContent: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="flex items-start gap-2">
-                  <Checkbox
-                    id="agreeToTerms"
-                    checked={formData.agreeToTerms}
-                    onCheckedChange={(checked) =>
-                      handleCheckboxChange('agreeToTerms', checked as boolean)
-                    }
-                    required
-                    disabled={isLoading}
-                    className="mt-1"
-                  />
-                  <Label
-                    htmlFor="agreeToTerms"
-                    className="text-xs text-gray-400 leading-relaxed"
-                  >
+                <div className="bg-gray-800/30 border border-gray-700/50 rounded-lg p-4">
+                  <p className="text-xs text-gray-400 leading-relaxed">
                     By signing up, you confirm that you have parental consent if
                     under 13 and agree to our{' '}
                     <Link
                       href="/terms-of-service"
-                      className="text-green-400 hover:text-green-300 transition-colors"
+                      className="text-green-400 hover:text-green-300 transition-colors underline cursor-pointer font-medium"
                     >
-                      Terms and Conditions
+                      Terms Of Service
                     </Link>{' '}
                     and{' '}
                     <Link
                       href="/privacy-policy"
-                      className="text-green-400 hover:text-green-300 transition-colors"
+                      className="text-green-400 hover:text-green-300 transition-colors underline cursor-pointer font-medium"
                     >
                       Privacy Policy
                     </Link>
-                  </Label>
+                  </p>
                 </div>
 
                 <motion.button
