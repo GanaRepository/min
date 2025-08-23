@@ -273,64 +273,31 @@ export async function POST(
     } catch (assessmentError) {
       console.error('❌ Assessment generation failed:', assessmentError);
 
-      // Enhanced fallback assessment with content analysis
-      const contentLength = storyContent.length;
-      const wordCount = storyContent.split(/\s+/).length;
-      const hasCreativeElements =
-        /magic|adventure|mysterious|wonderful|amazing|incredible/i.test(
-          storyContent
-        );
-
-      const fallbackAssessment = {
-        overallScore: Math.min(85, Math.max(65, 60 + wordCount / 20)),
-        categoryScores: {
-          grammar: Math.min(85, 70 + (contentLength > 100 ? 10 : 0)),
-          creativity: hasCreativeElements ? 80 : 70,
-          vocabulary: Math.min(80, 65 + wordCount / 25),
-          structure: contentLength > 200 ? 75 : 65,
-          characterDevelopment: /he|she|character|person|friend/i.test(
-            storyContent
-          )
-            ? 75
-            : 65,
-          plotDevelopment: /then|next|after|because|so/i.test(storyContent)
-            ? 70
-            : 60,
-          readingLevel:
-            wordCount < 100
-              ? 'Beginner'
-              : wordCount < 200
-                ? 'Elementary'
-                : 'Intermediate',
-        },
-        feedback:
-          'Great work on your story! Keep practicing to develop your writing skills further.',
-        strengths: ['Creative storytelling', 'Good effort and imagination'],
-        improvements: [
-          'Continue developing writing skills',
-          'Practice writing regularly',
-        ],
-        integrityStatus: 'PASS',
-        aiDetectionScore: 85, // Assume human-written in fallback
-        assessmentVersion: '3.0-fallback',
-        assessmentDate: new Date().toISOString(),
-      };
-
-      // Save fallback assessment
+      // Mark story as needing manual assessment instead of providing fake scores
       await StorySession.findByIdAndUpdate(actualSessionId, {
-        assessment: fallbackAssessment,
-        overallScore: fallbackAssessment.overallScore,
-        grammarScore: fallbackAssessment.categoryScores.grammar,
-        creativityScore: fallbackAssessment.categoryScores.creativity,
-        lastAssessedAt: new Date(),
         assessmentAttempts: (storySession.assessmentAttempts || 0) + 1,
+        lastAssessmentError:
+          assessmentError instanceof Error
+            ? assessmentError.message
+            : 'Unknown error',
+        needsManualAssessment: true,
+        status: 'completed', // Keep status as completed but flag for manual review
       });
 
-      return NextResponse.json({
-        success: true,
-        message: 'Assessment completed with backup system',
-        assessment: fallbackAssessment,
-      });
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Assessment generation failed',
+          message:
+            'Your story has been saved but assessment could not be completed automatically. Please contact support or try again later.',
+          needsManualAssessment: true,
+          details:
+            assessmentError instanceof Error
+              ? assessmentError.message
+              : 'Unknown error',
+        },
+        { status: 500 }
+      );
     }
   } catch (error) {
     console.error('❌ Assessment endpoint error:', error);
