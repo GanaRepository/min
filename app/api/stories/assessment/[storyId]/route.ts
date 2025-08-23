@@ -151,11 +151,22 @@ export async function POST(
         creativityScore: assessment.categoryScores.creativity,
         lastAssessedAt: new Date(),
         assessmentAttempts: (storySession.assessmentAttempts || 0) + 1,
-        // Flag if integrity issues
-        status:
-          assessment.integrityAnalysis?.integrityRisk === 'critical'
-            ? 'flagged'
-            : 'completed',
+        // HUMAN-FIRST: Always keep as completed, add flags for mentor review
+        status: 'completed',
+        // Add integrity flags for mentor/admin review if concerns exist
+        ...(assessment.integrityAnalysis?.integrityRisk === 'critical' || 
+            assessment.integrityAnalysis?.integrityRisk === 'high' ||
+            assessment.integrityAnalysis?.aiDetectionResult?.likelihood === 'high' ||
+            assessment.integrityAnalysis?.aiDetectionResult?.likelihood === 'very_high') && {
+          integrityFlags: {
+            needsReview: true,
+            aiDetectionLevel: assessment.integrityAnalysis.aiDetectionResult?.likelihood || 'unknown',
+            plagiarismRisk: assessment.integrityAnalysis.plagiarismResult?.riskLevel || 'low',
+            integrityRisk: assessment.integrityAnalysis.integrityRisk,
+            flaggedAt: new Date(),
+            reviewStatus: 'pending_mentor_review'
+          }
+        }
       };
 
       await StorySession.findByIdAndUpdate(actualSessionId, updateData);

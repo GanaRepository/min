@@ -174,30 +174,39 @@ Respond as a supportive teacher who celebrates their unique creativity.`;
       `🎯 Integrity Status: ${assessmentResult.integrityStatus.status}`
     );
 
-    // ADDED: Determine session status based on integrity assessment
+    // HUMAN-FIRST: Always keep session completed, add integrity flags for mentor review
     let sessionStatus = 'completed';
-    if (assessmentResult.integrityStatus.status === 'FAIL') {
-      sessionStatus = 'flagged';
-      console.log(
-        `🚨 Story FLAGGED: ${assessmentResult.integrityStatus.message}`
-      );
-    } else if (assessmentResult.integrityStatus.status === 'WARNING') {
-      sessionStatus = 'review';
-      console.log(
-        `⚠️ Story needs REVIEW: ${assessmentResult.integrityStatus.message}`
-      );
+    let integrityFlags = null;
+    
+    // Add integrity flags for mentor/admin review if concerns exist
+    if (assessmentResult.integrityStatus.status === 'FAIL' || 
+        assessmentResult.integrityAnalysis?.integrityRisk === 'critical' ||
+        assessmentResult.integrityAnalysis?.integrityRisk === 'high') {
+      
+      integrityFlags = {
+        needsReview: true,
+        aiDetectionLevel: assessmentResult.integrityAnalysis?.aiDetectionResult?.likelihood || 'unknown',
+        plagiarismRisk: assessmentResult.integrityAnalysis?.plagiarismResult?.riskLevel || 'low',
+        integrityRisk: assessmentResult.integrityAnalysis?.integrityRisk || 'low',
+        flaggedAt: new Date(),
+        reviewStatus: 'pending_mentor_review'
+      };
+      
+      console.log('🏷️ Story tagged for mentor/admin review due to integrity concerns');
+      console.log(`📊 Integrity Risk: ${assessmentResult.integrityAnalysis?.integrityRisk}`);
+    } else {
+      console.log('✅ Assessment completed - no integrity concerns');
     }
 
-    // Update session with ADVANCED assessment
-    await StorySession.findByIdAndUpdate(sessionId, {
-      $set: {
-        status: sessionStatus,
-        completedAt: new Date(),
-        totalWords: fullStory.split(/\s+/).filter(Boolean).length,
-        childWords: wordCount,
+    // Update session with ADVANCED assessment and integrity flags
+    const updateData: any = {
+      status: sessionStatus,
+      completedAt: new Date(),
+      totalWords: fullStory.split(/\s+/).filter(Boolean).length,
+      childWords: wordCount,
 
-        // CHANGED: Store complete advanced assessment
-        assessment: {
+      // CHANGED: Store complete advanced assessment
+      assessment: {
           // Core scores from advanced engine
           grammarScore: assessmentResult.categoryScores.grammar,
           creativityScore: assessmentResult.categoryScores.creativity,
@@ -287,8 +296,13 @@ Respond as a supportive teacher who celebrates their unique creativity.`;
         aiDetectionScore:
           assessmentResult.integrityAnalysis.aiDetectionResult.overallScore,
         plagiarismScore: assessmentResult.integrityAnalysis.originalityScore,
-      },
-    });
+        
+        // Add integrity flags if concerns exist
+        ...(integrityFlags && { integrityFlags }),
+    };
+
+    // Execute the update
+    await StorySession.findByIdAndUpdate(sessionId, { $set: updateData });
 
     console.log(
       `✅ Collaborative story completed with ADVANCED assessment: ${sessionId}`

@@ -775,6 +775,18 @@ export interface IStorySession extends Document {
   isUploadedForAssessment: boolean;
   lastAssessedAt?: Date;
 
+  // NEW: Human-first integrity flags for mentor/admin review
+  integrityFlags?: {
+    needsReview: boolean;
+    aiDetectionLevel: string;
+    plagiarismRisk: string;
+    integrityRisk: string;
+    flaggedAt: Date;
+    reviewStatus: 'pending_mentor_review' | 'reviewed_by_mentor' | 'reviewed_by_admin' | 'cleared';
+    mentorComments?: string[];
+    adminNotes?: string;
+  };
+
   // Publication fields
   isPublished?: boolean;
   publishedAt?: Date;
@@ -942,6 +954,45 @@ const StorySessionSchema = new Schema<IStorySession>(
     },
     lastAssessedAt: {
       type: Date,
+    },
+
+    // NEW: Human-first integrity flags for mentor/admin review
+    integrityFlags: {
+      needsReview: {
+        type: Boolean,
+        default: false,
+        index: true,
+      },
+      aiDetectionLevel: {
+        type: String,
+        enum: ['very_low', 'low', 'medium', 'high', 'very_high', 'unknown'],
+        default: 'unknown',
+      },
+      plagiarismRisk: {
+        type: String,
+        enum: ['low', 'medium', 'high', 'critical'],
+        default: 'low',
+      },
+      integrityRisk: {
+        type: String,
+        enum: ['low', 'medium', 'high', 'critical'],
+        default: 'low',
+      },
+      flaggedAt: {
+        type: Date,
+      },
+      reviewStatus: {
+        type: String,
+        enum: ['pending_mentor_review', 'reviewed_by_mentor', 'reviewed_by_admin', 'cleared'],
+        default: 'pending_mentor_review',
+        index: true,
+      },
+      mentorComments: [{
+        type: String,
+      }],
+      adminNotes: {
+        type: String,
+      },
     },
 
     // Publication fields

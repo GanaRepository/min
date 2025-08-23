@@ -507,50 +507,54 @@ export class AIAssessmentEngine {
     return 'low';
   }
 
-  // Add a clear integrity assessment method
+  // HUMAN-FIRST INTEGRITY ASSESSMENT - Always PASS for children, provide data for mentors
   static getIntegrityAssessment(integrityAnalysis: any): {
     status: 'PASS' | 'WARNING' | 'FAIL';
     message: string;
     recommendation: string;
+    mentorNote?: string; // NEW: For mentor/admin guidance
+    adminFlags?: string[]; // NEW: For admin dashboard
   } {
     const { aiDetectionResult, integrityRisk, originalityScore } =
       integrityAnalysis;
 
-    // CRITICAL: AI detection overrides everything
-    if (
-      aiDetectionResult.likelihood === 'very_high' ||
-      aiDetectionResult.likelihood === 'high'
-    ) {
-      return {
-        status: 'FAIL',
-        message: '🚨 AI-GENERATED CONTENT DETECTED',
-        recommendation:
-          'REJECT - This appears to be written by artificial intelligence. Require original, authentic writing.',
-      };
+    // ALWAYS PASS for children - let mentors handle concerns through comments
+    const adminFlags = [];
+    let mentorNote = '';
+
+    // Collect data for mentor/admin review
+    if (aiDetectionResult.likelihood === 'very_high' || aiDetectionResult.likelihood === 'high') {
+      adminFlags.push('AI_DETECTION_HIGH');
+      mentorNote += `🤖 High AI detection confidence (${aiDetectionResult.likelihood}). `;
     }
 
-    if (integrityRisk === 'critical') {
-      return {
-        status: 'FAIL',
-        message: '❌ CRITICAL INTEGRITY VIOLATION',
-        recommendation:
-          'REJECT - Significant concerns about content authenticity.',
-      };
+    if (integrityRisk === 'critical' || integrityRisk === 'high') {
+      adminFlags.push('INTEGRITY_CONCERNS');
+      mentorNote += `⚠️ Integrity concerns detected (${integrityRisk} risk). `;
     }
 
-    if (integrityRisk === 'high' || originalityScore < 50) {
+    if (originalityScore < 30) {
+      adminFlags.push('LOW_ORIGINALITY');
+      mentorNote += `📝 Low originality score (${originalityScore}%). `;
+    }
+
+    // Always provide encouraging message to child, but include mentor guidance
+    if (adminFlags.length > 0) {
+      mentorNote += `👨‍🏫 MENTOR: Please review this story and provide guidance through comments.`;
+      
       return {
-        status: 'WARNING',
-        message: '⚠️ INTEGRITY CONCERNS DETECTED',
-        recommendation:
-          'REVIEW - Content shows signs of potential AI assistance or copying.',
+        status: 'PASS', // Always pass for children
+        message: '✅ STORY COMPLETED SUCCESSFULLY',
+        recommendation: 'Great work completing your story! Your mentor may provide additional feedback.',
+        mentorNote,
+        adminFlags
       };
     }
 
     return {
       status: 'PASS',
-      message: '✅ CONTENT APPEARS AUTHENTIC',
-      recommendation: 'ACCEPT - Writing shows authentic human characteristics.',
+      message: '✅ EXCELLENT CREATIVE WRITING',
+      recommendation: 'Outstanding original work! Keep up the great creativity.',
     };
   }
 

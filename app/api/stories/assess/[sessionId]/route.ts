@@ -735,17 +735,29 @@ export async function POST(
       assessmentDate: new Date().toISOString(),
     };
 
-    // Update story session with assessment results
+    // Update story session with assessment results - HUMAN-FIRST APPROACH
     const updateData = {
       assessment: assessmentData,
       overallScore: assessment.overallScore,
       grammarScore: assessment.categoryScores.grammar,
       creativityScore: assessment.categoryScores.creativity,
       lastAssessedAt: new Date(),
-      status:
-        assessment.integrityAnalysis.integrityRisk === 'critical'
-          ? 'flagged'
-          : 'completed',
+      // HUMAN-FIRST: Always keep as completed, add flags for mentor review
+      status: 'completed',
+      // Add integrity flags for mentor/admin review if concerns exist
+      ...(assessment.integrityAnalysis?.integrityRisk === 'critical' || 
+          assessment.integrityAnalysis?.integrityRisk === 'high' ||
+          assessment.integrityAnalysis?.aiDetectionResult?.likelihood === 'high' ||
+          assessment.integrityAnalysis?.aiDetectionResult?.likelihood === 'very_high') && {
+        integrityFlags: {
+          needsReview: true,
+          aiDetectionLevel: assessment.integrityAnalysis.aiDetectionResult?.likelihood || 'unknown',
+          plagiarismRisk: assessment.integrityAnalysis.plagiarismResult?.riskLevel || 'low',
+          integrityRisk: assessment.integrityAnalysis.integrityRisk,
+          flaggedAt: new Date(),
+          reviewStatus: 'pending_mentor_review'
+        }
+      },
       // POOL SYSTEM: Just increment total attempts, no per-story restrictions
       $inc: { assessmentAttempts: 1 },
     };

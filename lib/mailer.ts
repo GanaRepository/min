@@ -1063,31 +1063,60 @@ export const sendChildRegistrationEmail = async (
               </div>
               
               <div style="background: linear-gradient(135deg, #f0f9ff 0%, #fef7ff 100%); padding: 30px; border-radius: 20px; border: 2px solid #e2e8f0; margin-bottom: 30px;">
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
-                  <div style="display: flex; align-items: center; gap: 15px;">
-                    <div style="background: #667eea; width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                      <span style="color: white; font-size: 20px;">✍️</span>
-                    </div>
-                    <div>
-                      <div style="font-size: 18px; font-weight: 600; color: #1a202c; margin-bottom: 3px;">3 Free Stories</div>
-                      <div style="font-size: 14px; color: #64748b;">Create amazing stories with AI help</div>
-                    </div>
-                  </div>
-                  
-                  <div style="display: flex; align-items: center; gap: 15px;">
-                    <div style="background: #10b981; width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                      <span style="color: white; font-size: 20px;">🧠</span>
-                    </div>
-                    <div>
-                      <div style="font-size: 18px; font-weight: 600; color: #1a202c; margin-bottom: 3px;">3 AI Assessments</div>
-                      <div style="font-size: 14px; color: #64748b;">Get detailed feedback on your writing</div>
-                    </div>
-                  </div>
-                  
-                  <div style="display: flex; align-items: center; gap: 15px;">
-                    <div style="background: #f59e0b; width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                      <span style="color: white; font-size: 20px;">🏆</span>
-                    </div>
+                <table cellpadding="0" cellspacing="0" border="0" style="width: 100%;">
+                  <tr>
+                    <td style="padding: 15px; vertical-align: top;">
+                      <table cellpadding="0" cellspacing="0" border="0" style="width: 100%;">
+                        <tr>
+                          <td style="width: 65px; vertical-align: middle; padding-right: 15px;">
+                            <div style="background: #667eea; width: 50px; height: 50px; border-radius: 12px; text-align: center; line-height: 50px;">
+                              <span style="color: white; font-size: 20px; display: inline-block; vertical-align: middle; line-height: normal;">✍️</span>
+                            </div>
+                          </td>
+                          <td style="vertical-align: middle;">
+                            <div style="font-size: 18px; font-weight: 600; color: #1a202c; margin-bottom: 3px;">3 Free Stories</div>
+                            <div style="font-size: 14px; color: #64748b;">Create amazing stories with AI help</div>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                    <td style="padding: 15px; vertical-align: top;">
+                      <table cellpadding="0" cellspacing="0" border="0" style="width: 100%;">
+                        <tr>
+                          <td style="width: 65px; vertical-align: middle; padding-right: 15px;">
+                            <div style="background: #10b981; width: 50px; height: 50px; border-radius: 12px; text-align: center; line-height: 50px;">
+                              <span style="color: white; font-size: 20px; display: inline-block; vertical-align: middle; line-height: normal;">🧠</span>
+                            </div>
+                          </td>
+                          <td style="vertical-align: middle;">
+                            <div style="font-size: 18px; font-weight: 600; color: #1a202c; margin-bottom: 3px;">3 AI Assessments</div>
+                            <div style="font-size: 14px; color: #64748b;">Get detailed feedback on your writing</div>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 15px; vertical-align: top;">
+                      <table cellpadding="0" cellspacing="0" border="0" style="width: 100%;">
+                        <tr>
+                          <td style="width: 65px; vertical-align: middle; padding-right: 15px;">
+                            <div style="background: #f59e0b; width: 50px; height: 50px; border-radius: 12px; text-align: center; line-height: 50px;">
+                              <span style="color: white; font-size: 20px; display: inline-block; vertical-align: middle; line-height: normal;">🏆</span>
+                            </div>
+                          </td>
+                          <td style="vertical-align: middle;">
+                            <div style="font-size: 18px; font-weight: 600; color: #1a202c; margin-bottom: 3px;">Competition Entries</div>
+                            <div style="font-size: 14px; color: #64748b;">Participate in monthly contests</div>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                    <td style="padding: 15px; vertical-align: top; width: 50%;">
+                      <!-- Empty cell for spacing when there's an odd number of items -->
+                    </td>
+                  </tr>
+                </table>
                     <div>
                       <div style="font-size: 18px; font-weight: 600; color: #1a202c; margin-bottom: 3px;">Competition Entries</div>
                       <div style="font-size: 14px; color: #64748b;">Participate in monthly contests</div>
@@ -1220,8 +1249,8 @@ export const sendPasswordResetEmail = async (
           ${getEmailHeader()}
           
           <div style="padding: 50px 30px; text-align: center; background: linear-gradient(135deg, #fef7ff 0%, #f0f9ff 100%);">
-            <div style="background: #fee2e2; width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 25px auto;">
-              <span style="font-size: 32px;">🔐</span>
+            <div style="background: #fee2e2; width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 25px auto; text-align: center; line-height: 80px;">
+              <span style="font-size: 32px; display: inline-block; vertical-align: middle; line-height: normal;">🔐</span>
             </div>
             
             <h2 style="margin: 0 0 15px 0; font-size: 28px; font-weight: 700; color: #1a202c;">
@@ -1287,8 +1316,8 @@ export const sendContactFormConfirmationEmail = async (
           ${getEmailHeader()}
           
           <div style="padding: 50px 30px; text-align: center; background: linear-gradient(135deg, #ecfdf5 0%, #f0f9ff 100%);">
-            <div style="background: #dcfce7; width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 25px auto;">
-              <span style="font-size: 32px;">✅</span>
+            <div style="background: #dcfce7; width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 25px auto; text-align: center; line-height: 80px;">
+              <span style="font-size: 32px; display: inline-block; vertical-align: middle; line-height: normal;">✅</span>
             </div>
             
             <h2 style="margin: 0 0 15px 0; font-size: 28px; font-weight: 700; color: #1a202c;">
@@ -1516,8 +1545,8 @@ export const sendCompetitionSubmissionConfirmation = async (
               COMPETITION ENTRY ✨
             </div>
             
-            <div style="background: #fbbf24; width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 25px auto; box-shadow: 0 8px 25px rgba(251, 191, 36, 0.3);">
-              <span style="font-size: 32px;">🏆</span>
+            <div style="background: #fbbf24; width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 25px auto; box-shadow: 0 8px 25px rgba(251, 191, 36, 0.3); text-align: center; line-height: 80px;">
+              <span style="font-size: 32px; display: inline-block; vertical-align: middle; line-height: normal;">🏆</span>
             </div>
             
             <h2 style="margin: 0 0 15px 0; font-size: 32px; font-weight: 700; color: #1a202c;">
@@ -1557,27 +1586,35 @@ export const sendCompetitionSubmissionConfirmation = async (
             
             <div style="display: grid; gap: 20px; margin-bottom: 30px;">
               <div style="background: linear-gradient(135deg, #f0f9ff 0%, #fef7ff 100%); padding: 25px; border-radius: 15px; border-left: 4px solid #3b82f6;">
-                <div style="display: flex; align-items: center; gap: 15px;">
-                  <div style="background: #3b82f6; width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                    <span style="color: white; font-size: 20px;">🧠</span>
-                  </div>
-                  <div>
-                    <div style="font-size: 18px; font-weight: 600; color: #1a202c; margin-bottom: 5px;">AI Judging Phase</div>
-                    <div style="font-size: 14px; color: #64748b; line-height: 1.5;">Our advanced AI will evaluate your story across 16 categories including creativity, grammar, vocabulary, and storytelling structure.</div>
-                  </div>
-                </div>
+                <table cellpadding="0" cellspacing="0" border="0" style="width: 100%;">
+                  <tr>
+                    <td style="width: 65px; vertical-align: middle; padding-right: 15px;">
+                      <div style="background: #3b82f6; width: 50px; height: 50px; border-radius: 12px; text-align: center; line-height: 50px;">
+                        <span style="color: white; font-size: 20px; display: inline-block; vertical-align: middle; line-height: normal;">🧠</span>
+                      </div>
+                    </td>
+                    <td style="vertical-align: middle;">
+                      <div style="font-size: 18px; font-weight: 600; color: #1a202c; margin-bottom: 5px;">AI Judging Phase</div>
+                      <div style="font-size: 14px; color: #64748b; line-height: 1.5;">Our advanced AI will evaluate your story across 16 categories including creativity, grammar, vocabulary, and storytelling structure.</div>
+                    </td>
+                  </tr>
+                </table>
               </div>
               
               <div style="background: linear-gradient(135deg, #fef7ff 0%, #fef3cd 100%); padding: 25px; border-radius: 15px; border-left: 4px solid #8b5cf6;">
-                <div style="display: flex; align-items: center; gap: 15px;">
-                  <div style="background: #8b5cf6; width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                    <span style="color: white; font-size: 20px;">🥇</span>
-                  </div>
-                  <div>
-                    <div style="font-size: 18px; font-weight: 600; color: #1a202c; margin-bottom: 5px;">Results & Recognition</div>
-                    <div style="font-size: 14px; color: #64748b; line-height: 1.5;">Top 3 winners receive Olympic-style recognition, special badges, digital certificates, and featured story placement!</div>
-                  </div>
-                </div>
+                <table cellpadding="0" cellspacing="0" border="0" style="width: 100%;">
+                  <tr>
+                    <td style="width: 65px; vertical-align: middle; padding-right: 15px;">
+                      <div style="background: #8b5cf6; width: 50px; height: 50px; border-radius: 12px; text-align: center; line-height: 50px;">
+                        <span style="color: white; font-size: 20px; display: inline-block; vertical-align: middle; line-height: normal;">🥇</span>
+                      </div>
+                    </td>
+                    <td style="vertical-align: middle;">
+                      <div style="font-size: 18px; font-weight: 600; color: #1a202c; margin-bottom: 5px;">Results & Recognition</div>
+                      <div style="font-size: 14px; color: #64748b; line-height: 1.5;">Top 3 winners receive Olympic-style recognition, special badges, digital certificates, and featured story placement!</div>
+                    </td>
+                  </tr>
+                </table>
               </div>
             </div>
             
@@ -1728,8 +1765,8 @@ export const sendStoryPackPurchaseConfirmation = async (
               PURCHASE CONFIRMED ✅
             </div>
             
-            <div style="background: #10b981; width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 25px auto; box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);">
-              <span style="font-size: 32px;">💎</span>
+            <div style="background: #10b981; width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 25px auto; box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3); text-align: center; line-height: 80px;">
+              <span style="font-size: 32px; display: inline-block; vertical-align: middle; line-height: normal;">💎</span>
             </div>
             
             <h2 style="margin: 0 0 15px 0; font-size: 32px; font-weight: 700; color: #1a202c;">
@@ -1769,42 +1806,54 @@ export const sendStoryPackPurchaseConfirmation = async (
             
             <div style="display: grid; gap: 20px; margin-bottom: 30px;">
               <div style="background: linear-gradient(135deg, #f0f9ff 0%, #fef7ff 100%); padding: 25px; border-radius: 15px; border-left: 4px solid #667eea;">
-                <div style="display: flex; align-items: center; gap: 15px;">
-                  <div style="background: #667eea; width: 60px; height: 60px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                    <span style="color: white; font-size: 24px;">✍️</span>
-                  </div>
-                  <div>
-                    <div style="font-size: 20px; font-weight: 600; color: #1a202c; margin-bottom: 5px;">+5 Additional Stories</div>
-                    <div style="font-size: 14px; color: #64748b; line-height: 1.5;">Create 5 more incredible stories this month with full AI collaboration and assistance.</div>
-                    <div style="font-size: 12px; color: #667eea; font-weight: 600; margin-top: 5px;">Total: 8 stories available this month ⬆️</div>
-                  </div>
-                </div>
+                <table cellpadding="0" cellspacing="0" border="0" style="width: 100%;">
+                  <tr>
+                    <td style="width: 75px; vertical-align: middle; padding-right: 15px;">
+                      <div style="background: #667eea; width: 60px; height: 60px; border-radius: 12px; text-align: center; line-height: 60px;">
+                        <span style="color: white; font-size: 24px; display: inline-block; vertical-align: middle; line-height: normal;">✍️</span>
+                      </div>
+                    </td>
+                    <td style="vertical-align: middle;">
+                      <div style="font-size: 20px; font-weight: 600; color: #1a202c; margin-bottom: 5px;">+5 Additional Stories</div>
+                      <div style="font-size: 14px; color: #64748b; line-height: 1.5;">Create 5 more incredible stories this month with full AI collaboration and assistance.</div>
+                      <div style="font-size: 12px; color: #667eea; font-weight: 600; margin-top: 5px;">Total: 8 stories available this month ⬆️</div>
+                    </td>
+                  </tr>
+                </table>
               </div>
               
               <div style="background: linear-gradient(135deg, #ecfdf5 0%, #f0f9ff 100%); padding: 25px; border-radius: 15px; border-left: 4px solid #10b981;">
-                <div style="display: flex; align-items: center; gap: 15px;">
-                  <div style="background: #10b981; width: 60px; height: 60px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                    <span style="color: white; font-size: 24px;">🧠</span>
-                  </div>
-                  <div>
-                    <div style="font-size: 20px; font-weight: 600; color: #1a202c; margin-bottom: 5px;">+5 AI Assessments</div>
-                    <div style="font-size: 14px; color: #64748b; line-height: 1.5;">Get detailed feedback and analysis on 5 more stories with our advanced AI evaluation system.</div>
-                    <div style="font-size: 12px; color: #10b981; font-weight: 600; margin-top: 5px;">Total: 8 assessments available this month ⬆️</div>
-                  </div>
-                </div>
+                <table cellpadding="0" cellspacing="0" border="0" style="width: 100%;">
+                  <tr>
+                    <td style="width: 75px; vertical-align: middle; padding-right: 15px;">
+                      <div style="background: #10b981; width: 60px; height: 60px; border-radius: 12px; text-align: center; line-height: 60px;">
+                        <span style="color: white; font-size: 24px; display: inline-block; vertical-align: middle; line-height: normal;">🧠</span>
+                      </div>
+                    </td>
+                    <td style="vertical-align: middle;">
+                      <div style="font-size: 20px; font-weight: 600; color: #1a202c; margin-bottom: 5px;">+5 AI Assessments</div>
+                      <div style="font-size: 14px; color: #64748b; line-height: 1.5;">Get detailed feedback and analysis on 5 more stories with our advanced AI evaluation system.</div>
+                      <div style="font-size: 12px; color: #10b981; font-weight: 600; margin-top: 5px;">Total: 8 assessments available this month ⬆️</div>
+                    </td>
+                  </tr>
+                </table>
               </div>
               
               <div style="background: linear-gradient(135deg, #fef3cd 0%, #fef7ff 100%); padding: 25px; border-radius: 15px; border-left: 4px solid #f59e0b;">
-                <div style="display: flex; align-items: center; gap: 15px;">
-                  <div style="background: #f59e0b; width: 60px; height: 60px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                    <span style="color: white; font-size: 24px;">🏆</span>
-                  </div>
-                  <div>
-                    <div style="font-size: 20px; font-weight: 600; color: #1a202c; margin-bottom: 5px;">Enhanced Competition Chances</div>
-                    <div style="font-size: 14px; color: #64748b; line-height: 1.5;">With more stories and assessments, you can perfect your entries and increase your chances of winning!</div>
-                    <div style="font-size: 12px; color: #f59e0b; font-weight: 600; margin-top: 5px;">More stories = better chances to win 🎯</div>
-                  </div>
-                </div>
+                <table cellpadding="0" cellspacing="0" border="0" style="width: 100%;">
+                  <tr>
+                    <td style="width: 75px; vertical-align: middle; padding-right: 15px;">
+                      <div style="background: #f59e0b; width: 60px; height: 60px; border-radius: 12px; text-align: center; line-height: 60px;">
+                        <span style="color: white; font-size: 24px; display: inline-block; vertical-align: middle; line-height: normal;">🏆</span>
+                      </div>
+                    </td>
+                    <td style="vertical-align: middle;">
+                      <div style="font-size: 20px; font-weight: 600; color: #1a202c; margin-bottom: 5px;">Enhanced Competition Chances</div>
+                      <div style="font-size: 14px; color: #64748b; line-height: 1.5;">With more stories and assessments, you can perfect your entries and increase your chances of winning!</div>
+                      <div style="font-size: 12px; color: #f59e0b; font-weight: 600; margin-top: 5px;">More stories = better chances to win 🎯</div>
+                    </td>
+                  </tr>
+                </table>
               </div>
             </div>
             
@@ -1918,8 +1967,8 @@ export const sendAnthologyBookPurchaseConfirmation = async (
               ANTHOLOGY RESERVED 📚
             </div>
             
-            <div style="background: #8b5cf6; width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 25px auto; box-shadow: 0 8px 25px rgba(139, 92, 246, 0.3);">
-              <span style="font-size: 32px;">📖</span>
+            <div style="background: #8b5cf6; width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 25px auto; box-shadow: 0 8px 25px rgba(139, 92, 246, 0.3); text-align: center; line-height: 80px;">
+              <span style="font-size: 32px; display: inline-block; vertical-align: middle; line-height: normal;">📖</span>
             </div>
             
             <h2 style="margin: 0 0 15px 0; font-size: 32px; font-weight: 700; color: #1a202c;">
@@ -1969,39 +2018,51 @@ export const sendAnthologyBookPurchaseConfirmation = async (
             <!-- What Happens Next -->
             <div style="display: grid; gap: 20px; margin-bottom: 30px;">
               <div style="background: linear-gradient(135deg, #f0f9ff 0%, #fef7ff 100%); padding: 25px; border-radius: 15px; border-left: 4px solid #3b82f6;">
-                <div style="display: flex; align-items: center; gap: 15px;">
-                  <div style="background: #3b82f6; width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                    <span style="color: white; font-size: 20px;">✏️</span>
-                  </div>
-                  <div>
-                    <div style="font-size: 18px; font-weight: 600; color: #1a202c; margin-bottom: 5px;">Professional Editing</div>
-                    <div style="font-size: 14px; color: #64748b; line-height: 1.5;">Your story will undergo professional editing and formatting to ensure it looks perfect in print.</div>
-                  </div>
-                </div>
+                <table cellpadding="0" cellspacing="0" border="0" style="width: 100%;">
+                  <tr>
+                    <td style="width: 65px; vertical-align: middle; padding-right: 15px;">
+                      <div style="background: #3b82f6; width: 50px; height: 50px; border-radius: 12px; text-align: center; line-height: 50px;">
+                        <span style="color: white; font-size: 20px; display: inline-block; vertical-align: middle; line-height: normal;">✏️</span>
+                      </div>
+                    </td>
+                    <td style="vertical-align: middle;">
+                      <div style="font-size: 18px; font-weight: 600; color: #1a202c; margin-bottom: 5px;">Professional Editing</div>
+                      <div style="font-size: 14px; color: #64748b; line-height: 1.5;">Your story will undergo professional editing and formatting to ensure it looks perfect in print.</div>
+                    </td>
+                  </tr>
+                </table>
               </div>
               
               <div style="background: linear-gradient(135deg, #fef7ff 0%, #fef3cd 100%); padding: 25px; border-radius: 15px; border-left: 4px solid #8b5cf6;">
-                <div style="display: flex; align-items: center; gap: 15px;">
-                  <div style="background: #8b5cf6; width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                    <span style="color: white; font-size: 20px;">📖</span>
-                  </div>
-                  <div>
-                    <div style="font-size: 18px; font-weight: 600; color: #1a202c; margin-bottom: 5px;">Physical Book Production</div>
-                    <div style="font-size: 14px; color: #64748b; line-height: 1.5;">Your story will be included in our high-quality printed anthology, shipped directly to you!</div>
-                  </div>
-                </div>
+                <table cellpadding="0" cellspacing="0" border="0" style="width: 100%;">
+                  <tr>
+                    <td style="width: 65px; vertical-align: middle; padding-right: 15px;">
+                      <div style="background: #8b5cf6; width: 50px; height: 50px; border-radius: 12px; text-align: center; line-height: 50px;">
+                        <span style="color: white; font-size: 20px; display: inline-block; vertical-align: middle; line-height: normal;">📖</span>
+                      </div>
+                    </td>
+                    <td style="vertical-align: middle;">
+                      <div style="font-size: 18px; font-weight: 600; color: #1a202c; margin-bottom: 5px;">Physical Book Production</div>
+                      <div style="font-size: 14px; color: #64748b; line-height: 1.5;">Your story will be included in our high-quality printed anthology, shipped directly to you!</div>
+                    </td>
+                  </tr>
+                </table>
               </div>
               
               <div style="background: linear-gradient(135deg, #ecfdf5 0%, #f0f9ff 100%); padding: 25px; border-radius: 15px; border-left: 4px solid #10b981;">
-                <div style="display: flex; align-items: center; gap: 15px;">
-                  <div style="background: #10b981; width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                    <span style="color: white; font-size: 20px;">🏆</span>
-                  </div>
-                  <div>
-                    <div style="font-size: 18px; font-weight: 600; color: #1a202c; margin-bottom: 5px;">Published Author Status</div>
-                    <div style="font-size: 14px; color: #64748b; line-height: 1.5;">You'll receive a special "Published Author" badge and certificate recognizing your achievement!</div>
-                  </div>
-                </div>
+                <table cellpadding="0" cellspacing="0" border="0" style="width: 100%;">
+                  <tr>
+                    <td style="width: 65px; vertical-align: middle; padding-right: 15px;">
+                      <div style="background: #10b981; width: 50px; height: 50px; border-radius: 12px; text-align: center; line-height: 50px;">
+                        <span style="color: white; font-size: 20px; display: inline-block; vertical-align: middle; line-height: normal;">🏆</span>
+                      </div>
+                    </td>
+                    <td style="vertical-align: middle;">
+                      <div style="font-size: 18px; font-weight: 600; color: #1a202c; margin-bottom: 5px;">Published Author Status</div>
+                      <div style="font-size: 14px; color: #64748b; line-height: 1.5;">You'll receive a special "Published Author" badge and certificate recognizing your achievement!</div>
+                    </td>
+                  </tr>
+                </table>
               </div>
             </div>
             

@@ -158,6 +158,7 @@ export async function POST(request: NextRequest) {
       console.log(`🏁 Story completed after ${turnNumber} turns`);
 
       // TRIGGER COMPREHENSIVE AI ASSESSMENT FOR FREESTYLE STORIES
+      console.log('🎯 Starting assessment process...');
       try {
         console.log(
           '🎯 Story completed! Auto-generating detailed assessment...'
@@ -187,6 +188,7 @@ export async function POST(request: NextRequest) {
         console.log(
           `📝 Assessing story content: ${fullStoryContent.length} characters`
         );
+        console.log(`👤 User turns: ${userTurns.length}`);
 
         // Perform comprehensive assessment
         const assessment = await AIAssessmentEngine.performCompleteAssessment(
@@ -205,6 +207,8 @@ export async function POST(request: NextRequest) {
         console.log(
           `🔍 Integrity Status: ${assessment.integrityStatus.status}`
         );
+        console.log(`🔍 Integrity Risk: ${assessment.integrityAnalysis.integrityRisk}`);
+        console.log(`🤖 AI Detection: ${assessment.integrityAnalysis.aiDetectionResult?.likelihood || 'unknown'}`);
 
         // Create comprehensive assessment data structure
         const assessmentData = {
@@ -244,10 +248,31 @@ export async function POST(request: NextRequest) {
         updateData.lastAssessedAt = new Date();
         updateData.assessmentAttempts = 1;
 
-        // Flag story if integrity issues detected
-        if (assessment.integrityAnalysis.integrityRisk === 'critical') {
-          updateData.status = 'flagged';
-          console.log('⚠️ Story flagged due to integrity concerns');
+        // HUMAN-FIRST APPROACH: Never restrict, just tag for mentor/admin review
+        // Always keep status as 'completed' - let humans decide what to do
+        updateData.status = 'completed';
+        
+        // Add integrity tags for mentor/admin visibility
+        if (assessment.integrityAnalysis.integrityRisk === 'critical' || 
+            assessment.integrityAnalysis.integrityRisk === 'high' ||
+            assessment.integrityAnalysis.aiDetectionResult?.likelihood === 'high' ||
+            assessment.integrityAnalysis.aiDetectionResult?.likelihood === 'very_high') {
+          
+          // Add integrity flags for admin/mentor review (not user restriction)
+          updateData.integrityFlags = {
+            needsReview: true,
+            aiDetectionLevel: assessment.integrityAnalysis.aiDetectionResult?.likelihood || 'unknown',
+            plagiarismRisk: assessment.integrityAnalysis.plagiarismResult?.riskLevel || 'low',
+            integrityRisk: assessment.integrityAnalysis.integrityRisk,
+            flaggedAt: new Date(),
+            reviewStatus: 'pending_mentor_review'
+          };
+          
+          console.log('🏷️ Story tagged for mentor/admin review due to integrity concerns');
+          console.log(`📊 AI Detection: ${assessment.integrityAnalysis.aiDetectionResult?.likelihood}`);
+          console.log(`📊 Plagiarism Risk: ${assessment.integrityAnalysis.plagiarismResult?.riskLevel}`);
+        } else {
+          console.log('✅ Assessment completed - no integrity concerns');
         }
 
         console.log('💾 Saving comprehensive assessment to database...');
@@ -256,6 +281,12 @@ export async function POST(request: NextRequest) {
           '❌ Assessment failed for completed story:',
           assessmentError
         );
+        console.error('Assessment error details:', {
+          message: assessmentError instanceof Error ? assessmentError.message : 'Unknown error',
+          stack: assessmentError instanceof Error ? assessmentError.stack : 'No stack trace',
+          sessionId,
+          turnNumber
+        });
 
         // Fallback assessment data
         updateData.assessment = {
@@ -283,7 +314,16 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    console.log('📊 Updating story session with data:', {
+      sessionId,
+      updateKeys: Object.keys(updateData),
+      hasAssessment: !!updateData.assessment,
+      status: updateData.status,
+      hasIntegrityFlags: !!updateData.integrityFlags
+    });
+
     await StorySession.findByIdAndUpdate(sessionId, updateData);
+    console.log('✅ Story session updated successfully');
 
     // Prepare response - return the child turn with AI response included
     const responseData = {
@@ -307,15 +347,16 @@ export async function POST(request: NextRequest) {
         isCompleted: turnNumber >= 7,
       },
       // Include assessment data if story is completed
-      ...(turnNumber >= 7 &&
-        updateData.assessment && {
-          assessment: {
+      ...(turnNumber >= 7 && {
+          assessment: updateData.assessment ? {
             overallScore: updateData.assessment.overallScore,
-            integrityStatus:
-              updateData.assessment.integrityStatus?.status || 'PASS',
+            categoryScores: updateData.assessment.categoryScores,
+            integrityStatus: updateData.assessment.integrityStatus?.status || 'PASS',
             completedAt: updateData.completedAt,
             message: 'Story completed and assessed!',
-          },
+            // Include full assessment for frontend
+            fullAssessment: updateData.assessment,
+          } : null,
         }),
     };
 

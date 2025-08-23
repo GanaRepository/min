@@ -381,10 +381,21 @@ export default function StoryWritingInterface({
       // Handle story completion
       if (data.newTurn.turnNumber >= maxTurns) {
         console.log('🏁 Story completed! Checking for assessment...');
+        console.log('Assessment data received:', data.assessment);
 
-        if (data.assessment) {
-          setAssessment(data.assessment);
+        if (data.assessment && data.assessment.fullAssessment) {
+          console.log('✅ Full assessment found in response');
+          setAssessment(data.assessment.fullAssessment);
           setShowAssessment(true); // Automatically show assessment modal
+          toast({
+            title: '🎉 Story Complete!',
+            description:
+              'Amazing work! Your story has been assessed automatically.',
+          });
+        } else if (data.assessment) {
+          console.log('⚠️ Partial assessment found, using fallback');
+          setAssessment(data.assessment);
+          setShowAssessment(true);
           toast({
             title: '🎉 Story Complete!',
             description:
@@ -392,6 +403,7 @@ export default function StoryWritingInterface({
           });
         } else {
           // If no assessment in response, trigger it manually
+          console.log('❌ No assessment found, triggering manual assessment');
           toast({
             title: '🎉 Story Complete!',
             description: 'Generating your assessment...',
@@ -399,7 +411,7 @@ export default function StoryWritingInterface({
 
           setTimeout(() => {
             triggerAssessment();
-          }, 2000);
+          }, 1000); // Reduced delay from 2000 to 1000
         }
       } else {
         toast({
@@ -422,20 +434,30 @@ export default function StoryWritingInterface({
   };
 
   const triggerAssessment = async () => {
-    if (!storySession) return;
+    if (!storySession) {
+      console.error('❌ No story session found for assessment');
+      return;
+    }
 
     try {
       console.log('🎯 Triggering assessment for completed story...');
+      console.log('Story session ID:', storySession._id);
+      console.log('Story status:', storySession.status);
+      
       const response = await fetch(
         `/api/stories/assessment/${storySession._id}`,
         {
           method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
         }
       );
 
       const data = await response.json();
+      console.log('Assessment response:', data);
 
-      if (response.ok) {
+      if (response.ok && data.success) {
         console.log('✅ Assessment completed successfully');
         setAssessment(data.assessment);
         setShowAssessment(true); // Show the assessment modal
@@ -455,6 +477,9 @@ export default function StoryWritingInterface({
         });
       } else {
         console.error('❌ Assessment failed:', data.error);
+        console.error('Response status:', response.status);
+        console.error('Full response:', data);
+        
         toast({
           title: 'Assessment Error',
           description:
