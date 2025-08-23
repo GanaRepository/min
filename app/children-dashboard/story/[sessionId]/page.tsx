@@ -104,6 +104,7 @@ export default function StoryWritingInterface({
   const [isSaving, setIsSaving] = useState(false);
   const [showAssessment, setShowAssessment] = useState(false);
   const [assessment, setAssessment] = useState<Assessment | null>(null);
+  const [loadingAssessment, setLoadingAssessment] = useState(false);
 
   // Title editing
   const [isEditingTitle, setIsEditingTitle] = useState(false);
@@ -116,6 +117,52 @@ export default function StoryWritingInterface({
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const maxTurns = 7;
+
+  // Auto-fetch assessment when story is completed
+  useEffect(() => {
+    const fetchAssessment = async () => {
+      const childTurns = turns.filter(turn => turn.childInput && turn.childInput.trim());
+      
+      // Only try to fetch if story is completed and we don't have assessment yet
+      if (childTurns.length >= 7 && !assessment && !loadingAssessment) {
+        setLoadingAssessment(true);
+        try {
+          console.log('🎯 Fetching assessment for completed story...');
+          const response = await fetch(`/api/stories/assessment/${sessionId}`);
+          if (response.ok) {
+            const data = await response.json();
+            if (data.success && data.assessment) {
+              setAssessment(data.assessment);
+              console.log('✅ Assessment loaded successfully');
+            }
+          } else {
+            console.log('⚠️ No assessment available yet, may still be generating...');
+          }
+        } catch (error) {
+          console.error('Error fetching assessment:', error);
+        } finally {
+          setLoadingAssessment(false);
+        }
+      }
+    };
+
+    if (turns.length > 0) {
+      fetchAssessment();
+    }
+  }, [turns, sessionId, assessment, loadingAssessment]);
+
+  // Auto-show assessment modal when story is completed and assessment is available
+  useEffect(() => {
+    const childTurns = turns.filter(turn => turn.childInput && turn.childInput.trim());
+    
+    if (childTurns.length >= 7 && assessment && !showAssessment) {
+      // Small delay to allow UI to update before showing modal
+      const timer = setTimeout(() => {
+        setShowAssessment(true);
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [turns, assessment, showAssessment]);
 
   const fetchStoryData = useCallback(async () => {
     try {
@@ -155,6 +202,8 @@ export default function StoryWritingInterface({
       if (actualSession.status === 'completed' && actualSession.assessment) {
         setAssessment(actualSession.assessment);
         console.log('✅ Assessment found for completed story');
+        // Automatically show assessment modal for completed stories
+        setTimeout(() => setShowAssessment(true), 1000);
       } else if (actualSession.status === 'completed' && !actualSession.assessment) {
         console.log('⚠️ Story completed but no assessment found - may need to trigger assessment');
       }
@@ -206,6 +255,14 @@ export default function StoryWritingInterface({
         storyTimelineRef.current.scrollHeight;
     }
   }, [turns, isAIGenerating]);
+
+  // Auto-show assessment modal when assessment becomes available
+  useEffect(() => {
+    if (assessment && !showAssessment && storySession?.status === 'completed') {
+      console.log('🎯 Assessment available - showing modal');
+      setShowAssessment(true);
+    }
+  }, [assessment, showAssessment, storySession?.status]);
 
   const handleInputChange = (value: string) => {
     setCurrentInput(value);
@@ -314,6 +371,7 @@ export default function StoryWritingInterface({
         
         if (data.assessment) {
           setAssessment(data.assessment);
+          setShowAssessment(true); // Automatically show assessment modal
           toast({
             title: '🎉 Story Complete!',
             description: "Amazing work! Your story has been assessed automatically.",
@@ -366,6 +424,7 @@ export default function StoryWritingInterface({
       if (response.ok) {
         console.log('✅ Assessment completed successfully');
         setAssessment(data.assessment);
+        setShowAssessment(true); // Show the assessment modal
         setStorySession((prev) =>
           prev
             ? {
@@ -379,7 +438,7 @@ export default function StoryWritingInterface({
         toast({
           title: '🎉 Story Complete!',
           description:
-            "Your story has been assessed. Click 'View Assessment' to see your results!",
+            "Your story has been assessed. Check out your results!",
         });
       } else {
         console.error('❌ Assessment failed:', data.error);
@@ -1009,6 +1068,35 @@ export default function StoryWritingInterface({
                 ))}
               </div>
             </div>
+
+            {/* Assessment Loading */}
+            {loadingAssessment && isCompleted && (
+              <div className="bg-gradient-to-r from-blue-500/20 to-purple-600/20 border border-blue-500/30  p-6">
+                <h3 className="text-white  text-lg mb-4 flex items-center gap-2">
+                  <Brain className="w-5 h-5 text-blue-400 animate-pulse" />
+                  Generating Assessment...
+                </h3>
+
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 bg-blue-400  animate-pulse"></div>
+                    <span className="text-gray-300">Analyzing creativity...</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 bg-purple-400  animate-pulse"></div>
+                    <span className="text-gray-300">Checking grammar...</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 bg-green-400  animate-pulse"></div>
+                    <span className="text-gray-300">Evaluating structure...</span>
+                  </div>
+                </div>
+
+                <p className="text-gray-400 text-sm mt-4">
+                  Please wait while we create your detailed assessment...
+                </p>
+              </div>
+            )}
 
             {/* Assessment Preview */}
             {assessment && (
