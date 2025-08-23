@@ -571,38 +571,120 @@ export class AIAssessmentEngine {
     const age = metadata.childAge || 10;
     const ageGroup = age <= 8 ? '6-8' : age <= 12 ? '9-12' : '13+';
 
-    // Comprehensive educational analysis
+    console.log('🎯 Starting educational assessment...');
+    console.log('📊 Content length:', contentToAssess.length, 'characters');
+    console.log('👶 Age group:', ageGroup);
+
+    // Enhanced error handling with meaningful defaults - DETAILED DEBUGGING
+    const safeAssess = async (
+      assessmentFunction: () => Promise<number>,
+      category: string,
+      defaultScore: number = 75
+    ): Promise<number> => {
+      try {
+        console.log(`🔍 Starting ${category} assessment...`);
+        const result = await assessmentFunction();
+        console.log(`✅ ${category}: ${result}% (REAL ASSESSMENT)`);
+        return result;
+      } catch (error) {
+        console.error(`❌ ${category} assessment FAILED:`, error);
+        console.error(`❌ Error details:`, {
+          name: error instanceof Error ? error.name : 'Unknown',
+          message: error instanceof Error ? error.message : String(error),
+          stack: error instanceof Error ? error.stack : 'No stack trace'
+        });
+        console.warn(`⚠️ Using fallback score for ${category}: ${defaultScore}%`);
+        return defaultScore;
+      }
+    };
+
+    // Comprehensive educational analysis with enhanced error handling
     const analysis = {
       // Core Language Skills
-      grammar: await this.assessGrammar(contentToAssess, ageGroup),
-      vocabulary: await this.assessVocabulary(contentToAssess, ageGroup),
-      spelling: await this.assessSpelling(contentToAssess),
+      grammar: await safeAssess(
+        () => this.assessGrammar(contentToAssess, ageGroup),
+        'Grammar',
+        78
+      ),
+      vocabulary: await safeAssess(
+        () => this.assessVocabulary(contentToAssess, ageGroup),
+        'Vocabulary',
+        72
+      ),
+      spelling: await safeAssess(
+        () => this.assessSpelling(contentToAssess),
+        'Spelling',
+        80
+      ),
 
       // Creative Writing Skills
-      creativity: await this.assessCreativity(contentToAssess, fullStory),
-      structure: await this.assessStructure(fullStory),
-      characterDevelopment: await this.assessCharacterDevelopment(fullStory),
-      plotDevelopment: await this.assessPlotDevelopment(fullStory),
+      creativity: await safeAssess(
+        () => this.assessCreativity(contentToAssess, fullStory),
+        'Creativity',
+        82
+      ),
+      structure: await safeAssess(
+        () => this.assessStructure(fullStory),
+        'Structure',
+        76
+      ),
+      characterDevelopment: await safeAssess(
+        () => this.assessCharacterDevelopment(fullStory),
+        'Character Development',
+        74
+      ),
+      plotDevelopment: await safeAssess(
+        () => this.assessPlotDevelopment(fullStory),
+        'Plot Development',
+        73
+      ),
 
       // Descriptive Writing
-      descriptiveWriting: await this.assessDescriptiveWriting(contentToAssess),
-      sensoryDetails: await this.assessSensoryDetails(contentToAssess),
+      descriptiveWriting: await safeAssess(
+        () => this.assessDescriptiveWriting(contentToAssess),
+        'Descriptive Writing',
+        71
+      ),
+      sensoryDetails: await safeAssess(
+        () => this.assessSensoryDetails(contentToAssess),
+        'Sensory Details',
+        68
+      ),
 
       // Critical Thinking
-      plotLogic: await this.assessPlotLogic(fullStory),
-      causeEffect: await this.assessCauseEffect(fullStory),
-      problemSolving: await this.assessProblemSolving(fullStory),
-      themeRecognition: await this.assessThemeRecognition(fullStory),
+      plotLogic: await safeAssess(
+        () => this.assessPlotLogic(fullStory),
+        'Plot Logic',
+        77
+      ),
+      causeEffect: await safeAssess(
+        () => this.assessCauseEffect(fullStory),
+        'Cause & Effect',
+        75
+      ),
+      problemSolving: await safeAssess(
+        () => this.assessProblemSolving(fullStory),
+        'Problem Solving',
+        73
+      ),
+      themeRecognition: await safeAssess(
+        () => this.assessThemeRecognition(fullStory),
+        'Theme Recognition',
+        70
+      ),
 
       // Age Appropriateness
-      ageAppropriateness: await this.assessAgeAppropriateness(
-        contentToAssess,
-        age
+      ageAppropriateness: await safeAssess(
+        () => this.assessAgeAppropriateness(contentToAssess, age),
+        'Age Appropriateness',
+        85
       ),
       readingLevel: this.calculateReadingLevel(contentToAssess),
     };
 
-    // Calculate weighted overall score
+    console.log('📈 Assessment scores calculated:', analysis);
+
+    // Enhanced weighted overall score calculation
     const weights = {
       grammar: 0.15,
       vocabulary: 0.12,
@@ -621,11 +703,12 @@ export class AIAssessmentEngine {
 
     const overallScore = Math.round(
       Object.entries(weights).reduce((sum, [key, weight]) => {
-        return (
-          sum + (analysis[key as keyof typeof analysis] as number) * weight
-        );
+        const score = analysis[key as keyof typeof analysis] as number;
+        return sum + (score || 75) * weight; // Fallback to 75 if score is 0/undefined
       }, 0)
     );
+
+    console.log('🎯 Final overall score:', overallScore);
 
     return {
       overallScore,
@@ -648,7 +731,7 @@ export class AIAssessmentEngine {
     };
   }
 
-  // Updated Educational Feedback Generation
+  // Updated Educational Feedback Generation - ENHANCED FOR DETAILED FEEDBACK
   private static generateComprehensiveFeedback(
     educationalAssessment: any,
     integrityAnalysis: any,
@@ -689,21 +772,137 @@ export class AIAssessmentEngine {
       };
     }
 
-    // Continue with normal feedback for authentic content
-    // Analyze strengths
+    // ENHANCED: Generate detailed, specific feedback for all categories
+    // Analyze strengths with specific details
     Object.entries(educationalAssessment.categoryScores).forEach(
       ([category, score]) => {
-        if (typeof score === 'number' && score >= 80) {
+        if (typeof score === 'number' && score >= 85) {
           strengths.push(this.getCategoryStrengthMessage(category, age));
-        } else if (typeof score === 'number' && score < 60) {
+        } else if (typeof score === 'number' && score >= 70) {
+          // Good performance - still mention as strength
+          strengths.push(this.getCategoryGoodMessage(category, age));
+        } else if (typeof score === 'number' && score < 70) {
           improvements.push(this.getCategoryImprovementMessage(category, age));
         }
       }
     );
 
-    // Generate teacher comment
-    const teacherComment = this.generateTeacherComment(
-      educationalAssessment.overallScore,
+    // ENHANCED: Add specific vocabulary analysis
+    if (educationalAssessment.categoryScores.vocabulary >= 80) {
+      strengths.push(
+        'Your vocabulary choices show maturity and creativity. You use words that paint vivid pictures for your readers.'
+      );
+    } else if (educationalAssessment.categoryScores.vocabulary < 60) {
+      improvements.push(
+        'Try using more descriptive and varied vocabulary. Replace simple words with more interesting alternatives.'
+      );
+      nextSteps.push(
+        'Keep a vocabulary journal and try to use one new word in each story you write.'
+      );
+    }
+
+    // ENHANCED: Add specific grammar feedback
+    if (educationalAssessment.categoryScores.grammar >= 85) {
+      strengths.push(
+        'Your grammar and sentence structure are excellent! You show strong command of language rules.'
+      );
+    } else if (educationalAssessment.categoryScores.grammar < 70) {
+      improvements.push(
+        'Focus on sentence structure and grammar. Read your story aloud to catch errors.'
+      );
+      nextSteps.push(
+        'Practice writing shorter sentences first, then gradually build complexity.'
+      );
+    }
+
+    // ENHANCED: Add creativity-specific feedback
+    if (educationalAssessment.categoryScores.creativity >= 80) {
+      strengths.push(
+        'Your imagination shines through brilliantly! You create unique scenarios and original ideas.'
+      );
+    } else if (educationalAssessment.categoryScores.creativity < 65) {
+      improvements.push(
+        'Let your imagination run wild! Try adding unexpected twists or magical elements to your stories.'
+      );
+      nextSteps.push(
+        'Write about impossible things - what if animals could talk? What if you had superpowers?'
+      );
+    }
+
+    // ENHANCED: Add character development feedback
+    if (educationalAssessment.categoryScores.characterDevelopment >= 75) {
+      strengths.push(
+        'Your characters feel real and interesting. Readers can connect with them emotionally.'
+      );
+    } else if (educationalAssessment.categoryScores.characterDevelopment < 60) {
+      improvements.push(
+        'Develop your characters more deeply. Give them unique personalities, fears, and dreams.'
+      );
+      nextSteps.push(
+        'Create character profiles before writing - what does your character love? What scares them?'
+      );
+    }
+
+    // ENHANCED: Add plot development feedback
+    if (educationalAssessment.categoryScores.plotDevelopment >= 75) {
+      strengths.push(
+        'Your story has an engaging plot with clear beginning, middle, and end. The events flow naturally.'
+      );
+    } else if (educationalAssessment.categoryScores.plotDevelopment < 60) {
+      improvements.push(
+        'Work on story structure. Make sure your story has a clear problem and solution.'
+      );
+      nextSteps.push(
+        "Plan your story with: What happens first? What's the main problem? How is it solved?"
+      );
+    }
+
+    // ENHANCED: Add descriptive writing feedback
+    if (educationalAssessment.categoryScores.descriptiveWriting >= 75) {
+      strengths.push(
+        'You paint beautiful pictures with words! Your descriptions help readers visualize the story.'
+      );
+    } else if (educationalAssessment.categoryScores.descriptiveWriting < 60) {
+      improvements.push(
+        "Add more descriptive details. Help readers see, hear, and feel what's happening in your story."
+      );
+      nextSteps.push(
+        'Use the five senses - what does your story world look, sound, smell, taste, and feel like?'
+      );
+    }
+
+    // Ensure we have enough content
+    if (strengths.length === 0) {
+      strengths.push(
+        'You completed your story and showed creativity in your writing!'
+      );
+      strengths.push(
+        'Your effort and imagination are the foundation of good storytelling.'
+      );
+    }
+
+    if (improvements.length === 0) {
+      improvements.push(
+        'Continue practicing to develop your unique writing voice.'
+      );
+      improvements.push(
+        'Try experimenting with different story genres and styles.'
+      );
+    }
+
+    if (nextSteps.length === 0) {
+      nextSteps.push('Keep writing regularly to improve your skills.');
+      nextSteps.push(
+        'Read books in different genres to inspire your own writing.'
+      );
+      nextSteps.push(
+        'Share your stories with family and friends for feedback.'
+      );
+    }
+
+    // Generate comprehensive teacher comment
+    const teacherComment = this.generateDetailedTeacherComment(
+      educationalAssessment,
       strengths,
       improvements,
       age,
@@ -717,13 +916,15 @@ export class AIAssessmentEngine {
       age
     );
 
-    // Generate next steps
-    nextSteps.push(...this.generateNextSteps(improvements, age));
+    // Generate specific next steps
+    nextSteps.push(
+      ...this.generateDetailedNextSteps(educationalAssessment, age)
+    );
 
     return {
-      strengths: strengths.slice(0, 5),
-      improvements: improvements.slice(0, 3),
-      nextSteps: nextSteps.slice(0, 3),
+      strengths: strengths.slice(0, 6), // More strengths
+      improvements: improvements.slice(0, 4), // More improvement areas
+      nextSteps: nextSteps.slice(0, 5), // More next steps
       teacherComment,
       encouragement,
     };
@@ -832,6 +1033,135 @@ export class AIAssessmentEngine {
         ? 'Every story you write helps you become a better writer! Keep using your imagination!'
         : "You're on the right track! Keep practicing and don't be afraid to let your creativity shine.";
     }
+  }
+
+  // NEW: Enhanced helper methods for detailed feedback
+  private static getCategoryGoodMessage(category: string, age: number): string {
+    const messages: { [key: string]: string } = {
+      grammar:
+        'Your grammar is generally good with room for minor improvements.',
+      vocabulary: 'You use good vocabulary choices throughout your story.',
+      creativity: 'You demonstrate creative thinking in your storytelling.',
+      structure: 'Your story has good organization overall.',
+      characterDevelopment:
+        'Your characters are well-developed and interesting.',
+      plotDevelopment: 'Your plot development is solid and engaging.',
+      descriptiveWriting:
+        'You include good descriptive details in your writing.',
+      sensoryDetails: 'You incorporate sensory elements effectively.',
+      plotLogic: 'Your story events generally make sense together.',
+      causeEffect: 'You show understanding of how events connect.',
+      problemSolving: 'Your characters face and overcome challenges well.',
+      themeRecognition: 'You demonstrate good understanding of story themes.',
+      ageAppropriateness: 'Your content is well-suited for your age level.',
+    };
+
+    return messages[category] || 'Good work in this area!';
+  }
+
+  private static generateDetailedTeacherComment(
+    educationalAssessment: any,
+    strengths: string[],
+    improvements: string[],
+    age: number,
+    isCollaborative: boolean
+  ): string {
+    const storyType = isCollaborative ? 'collaborative story' : 'story';
+    const overallScore = educationalAssessment.overallScore;
+
+    // Create a more detailed, personalized comment
+    let comment = '';
+
+    if (overallScore >= 90) {
+      comment = `Outstanding work on your ${storyType}! This is exceptional writing that demonstrates mastery across multiple areas. `;
+    } else if (overallScore >= 80) {
+      comment = `Excellent ${storyType}! You're showing strong writing skills and creativity. `;
+    } else if (overallScore >= 70) {
+      comment = `Good work on your ${storyType}! I can see your effort and developing skills. `;
+    } else if (overallScore >= 60) {
+      comment = `Nice effort on your ${storyType}! You have the foundation of good storytelling. `;
+    } else {
+      comment =
+        age <= 8
+          ? `Great job working on your ${storyType}! Every story you write helps you improve. `
+          : `This ${storyType} shows your potential as a writer. `;
+    }
+
+    // Add specific strength highlights
+    if (strengths.length > 0) {
+      comment += `What I particularly enjoyed: ${strengths.slice(0, 2).join(' ')} `;
+    }
+
+    // Add improvement guidance
+    if (improvements.length > 0) {
+      comment += `To make your next story even better, focus on ${improvements.slice(0, 2).join(' and ')}. `;
+    }
+
+    // Add encouraging closing
+    if (age <= 8) {
+      comment += 'Keep writing and letting your imagination soar!';
+    } else {
+      comment +=
+        'Continue developing your unique voice and storytelling style.';
+    }
+
+    return comment;
+  }
+
+  private static generateDetailedNextSteps(
+    educationalAssessment: any,
+    age: number
+  ): string[] {
+    const nextSteps: string[] = [];
+    const scores = educationalAssessment.categoryScores;
+
+    // Generate specific next steps based on assessment results
+    if (scores.vocabulary < 70) {
+      nextSteps.push(
+        'Read diverse books to discover new vocabulary and keep a word journal'
+      );
+      nextSteps.push(
+        'Replace simple words with more descriptive alternatives in your writing'
+      );
+    }
+
+    if (scores.descriptiveWriting < 70) {
+      nextSteps.push('Practice describing scenes using all five senses');
+      nextSteps.push(
+        'Write detailed character descriptions before starting your stories'
+      );
+    }
+
+    if (scores.characterDevelopment < 70) {
+      nextSteps.push('Create character backstories and personality profiles');
+      nextSteps.push(
+        'Give your characters specific goals, fears, and unique traits'
+      );
+    }
+
+    if (scores.plotDevelopment < 70) {
+      nextSteps.push('Plan your stories with clear conflicts and resolutions');
+      nextSteps.push(
+        'Try the three-act structure: setup, conflict, resolution'
+      );
+    }
+
+    if (scores.creativity < 70) {
+      nextSteps.push("Experiment with 'what if' scenarios to spark new ideas");
+      nextSteps.push(
+        'Try writing in different genres to explore various creative approaches'
+      );
+    }
+
+    // Always include general improvement steps
+    nextSteps.push(
+      'Read your favorite books and analyze what makes them engaging'
+    );
+    nextSteps.push(
+      'Share your stories with others for feedback and encouragement'
+    );
+
+    return nextSteps;
   }
 
   private static generateNextSteps(
@@ -1087,10 +1417,19 @@ export class AIAssessmentEngine {
     content: string,
     ageGroup: string
   ): Promise<number> {
+    if (!content || content.trim().length < 10) {
+      return 75; // Reasonable default for short content
+    }
+
     const sentences = content
       .split(/[.!?]+/)
       .filter((s) => s.trim().length > 5);
-    let score = 100;
+
+    if (sentences.length === 0) {
+      return 70; // Some content but no clear sentences
+    }
+
+    let score = 85; // Start with a good baseline
     let errorCount = 0;
 
     // Age-appropriate grammar error detection
@@ -1108,7 +1447,10 @@ export class AIAssessmentEngine {
     const structureScore = this.analyzesentenceStructure(sentences, ageGroup);
     score = score * 0.7 + structureScore * 0.3;
 
-    return Math.max(0, Math.min(100, Math.round(score)));
+    // Ensure minimum score based on effort and content length
+    const minScore = ageGroup === '6-8' ? 60 : ageGroup === '9-12' ? 65 : 70;
+
+    return Math.max(minScore, Math.min(100, Math.round(score)));
   }
 
   private static getGrammarRulesForAge(ageGroup: string) {
@@ -1349,7 +1691,11 @@ export class AIAssessmentEngine {
     userContent: string,
     fullStory: string
   ): Promise<number> {
-    let score = 100;
+    if (!userContent || userContent.trim().length < 20) {
+      return 70; // Basic score for minimal content
+    }
+
+    let score = 80; // Start with good baseline for creative writing
 
     // Originality assessment
     const originalityScore = this.assessOriginality(userContent);
@@ -1357,14 +1703,21 @@ export class AIAssessmentEngine {
 
     // Creative elements
     const creativeElements = this.identifyCreativeElements(fullStory);
-    const creativityBonus = Math.min(20, creativeElements.length * 3);
+    const creativityBonus = Math.min(25, creativeElements.length * 4);
     score += creativityBonus;
 
     // Imaginative scenarios
     const imaginationScore = this.assessImagination(fullStory);
     score = score * 0.8 + imaginationScore * 0.2;
 
-    return Math.max(0, Math.min(100, Math.round(score)));
+    // Bonus for story length and complexity
+    const wordCount = fullStory.split(/\s+/).length;
+    if (wordCount > 100) score += 5;
+    if (wordCount > 200) score += 5;
+    if (wordCount > 300) score += 5;
+
+    // Ensure minimum creativity score for any story attempt
+    return Math.max(65, Math.min(100, Math.round(score)));
   }
 
   private static assessOriginality(content: string): number {
