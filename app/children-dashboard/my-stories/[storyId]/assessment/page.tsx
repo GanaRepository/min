@@ -22,7 +22,7 @@ import {
   Eye,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
-import TerminalLoader from '@/components/TerminalLoader';
+import TerminalLoader from '../../../../../components/TerminalLoader';
 
 interface ComprehensiveAssessment {
   // Core scores
@@ -115,10 +115,17 @@ export default function StoryAssessmentPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (status === 'unauthenticated') {
-      router.push('/auth/signin');
+    if (status === 'loading') {
+      // Still checking authentication status
       return;
     }
+    
+    if (status === 'unauthenticated') {
+      // Redirect to login page
+      router.push('/login/child');
+      return;
+    }
+    
     if (status === 'authenticated' && storyId) {
       fetchStoryAssessment();
     }
@@ -130,10 +137,16 @@ export default function StoryAssessmentPage() {
       const response = await fetch(`/api/user/stories/${storyId}`);
       const data = await response.json();
 
+      console.log('🔍 API Response:', data);
+      console.log('🎯 Story Assessment:', data.story?.assessment);
+
       if (data.success && data.story) {
         setStory(data.story);
         if (!data.story.assessment) {
+          console.log('❌ No assessment found for story');
           setError('Assessment not available for this story.');
+        } else {
+          console.log('✅ Assessment found:', data.story.assessment);
         }
       } else {
         throw new Error(data.error || 'Failed to fetch story assessment');
@@ -190,7 +203,7 @@ export default function StoryAssessmentPage() {
     }
   };
 
-  if (loading) {
+  if (loading || status === 'loading') {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 flex items-center justify-center">
         <TerminalLoader loadingText="Loading assessment details..." />
@@ -198,7 +211,30 @@ export default function StoryAssessmentPage() {
     );
   }
 
-  if (error || !story || !story.assessment) {
+  if (status === 'unauthenticated') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 flex items-center justify-center">
+        <div className="text-center max-w-md mx-auto px-6">
+          <Brain className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+          <h2 className="text-xl font-bold text-white mb-2">
+            Login Required
+          </h2>
+          <p className="text-gray-300 mb-6">
+            Please log in to view your story assessment.
+          </p>
+          <Link
+            href="/login/child"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition-colors inline-flex items-center gap-2"
+          >
+            <ArrowLeft size={16} />
+            Login
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !story) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 flex items-center justify-center">
         <div className="text-center max-w-md mx-auto px-6">
@@ -221,7 +257,93 @@ export default function StoryAssessmentPage() {
     );
   }
 
-  const assessment = story.assessment;
+  // Create a comprehensive assessment object from the API response
+  const createComprehensiveAssessment = (assessment: any): ComprehensiveAssessment => {
+    return {
+      overallScore: assessment?.overallScore || 0,
+      
+      categoryScores: {
+        grammar: assessment?.grammar || assessment?.categoryScores?.grammar || 0,
+        vocabulary: assessment?.vocabulary || assessment?.categoryScores?.vocabulary || 0,
+        creativity: assessment?.creativity || assessment?.categoryScores?.creativity || 0,
+        structure: assessment?.structure || assessment?.categoryScores?.structure || 0,
+        characterDevelopment: assessment?.categoryScores?.characterDevelopment || 0,
+        plotDevelopment: assessment?.categoryScores?.plotDevelopment || 0,
+        descriptiveWriting: assessment?.categoryScores?.descriptiveWriting || 0,
+        sensoryDetails: assessment?.categoryScores?.sensoryDetails || 0,
+        plotLogic: assessment?.categoryScores?.plotLogic || 0,
+        causeEffect: assessment?.categoryScores?.causeEffect || 0,
+        problemSolving: assessment?.categoryScores?.problemSolving || 0,
+        themeRecognition: assessment?.categoryScores?.themeRecognition || 0,
+        ageAppropriateness: assessment?.categoryScores?.ageAppropriateness || 0,
+        readingLevel: assessment?.categoryScores?.readingLevel || 'Grade 5'
+      },
+
+      integrityAnalysis: {
+        plagiarismResult: {
+          overallScore: assessment?.integrityAnalysis?.plagiarismResult?.overallScore || 100,
+          riskLevel: assessment?.integrityAnalysis?.plagiarismResult?.riskLevel || 'low'
+        },
+        aiDetectionResult: {
+          likelihood: assessment?.integrityAnalysis?.aiDetectionResult?.likelihood || 'low',
+          confidence: assessment?.integrityAnalysis?.aiDetectionResult?.confidence || 0
+        },
+        originalityScore: assessment?.integrityAnalysis?.originalityScore || 100,
+        integrityRisk: assessment?.integrityAnalysis?.integrityRisk || assessment?.integrityRisk || 'low'
+      },
+
+      educationalFeedback: {
+        strengths: assessment?.educationalFeedback?.strengths || assessment?.strengths || ['Your story shows creativity and imagination!'],
+        improvements: assessment?.educationalFeedback?.improvements || assessment?.improvements || [],
+        nextSteps: assessment?.educationalFeedback?.nextSteps || ['Keep practicing your writing skills!'],
+        teacherComment: assessment?.educationalFeedback?.teacherComment || assessment?.feedback || 'Good work on your story!',
+        encouragement: assessment?.educationalFeedback?.encouragement || 'Keep up the excellent writing! 🌟'
+      },
+
+      progressTracking: assessment?.progressTracking || {},
+
+      recommendations: {
+        immediate: assessment?.recommendations?.immediate || ['Continue writing stories to improve your skills'],
+        longTerm: assessment?.recommendations?.longTerm || ['Read more books to expand your vocabulary'],
+        practiceExercises: assessment?.recommendations?.practiceExercises || ['Try writing different story genres']
+      },
+
+      integrityStatus: {
+        status: assessment?.integrityStatus?.status || 'PASS',
+        message: assessment?.integrityStatus?.message || 'Story passed all integrity checks',
+        recommendation: assessment?.integrityStatus?.recommendation || 'Continue writing original content'
+      },
+
+      assessmentVersion: assessment?.assessmentVersion || '1.0',
+      assessmentDate: assessment?.assessmentDate || new Date().toISOString(),
+      assessmentType: assessment?.assessmentType || 'standard'
+    };
+  };
+
+  if (!story.assessment) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 flex items-center justify-center">
+        <div className="text-center max-w-md mx-auto px-6">
+          <Brain className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+          <h2 className="text-xl font-bold text-white mb-2">
+            Assessment Not Available
+          </h2>
+          <p className="text-gray-300 mb-6">
+            This story hasn't been assessed yet. Complete your story to get detailed feedback!
+          </p>
+          <Link
+            href={`/children-dashboard/my-stories/${storyId}`}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition-colors inline-flex items-center gap-2"
+          >
+            <ArrowLeft size={16} />
+            Back to Story
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  const assessment = createComprehensiveAssessment(story.assessment);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900">
