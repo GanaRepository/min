@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { signIn, getSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { Suspense } from 'react';
 import TerminalLoader from '@/components/TerminalLoader';
 import {
   Eye,
@@ -19,7 +20,7 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 
-export default function AdminLogin() {
+function AdminLogin() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -27,15 +28,27 @@ export default function AdminLogin() {
   const [error, setError] = useState('');
   const [mounted, setMounted] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get('callbackUrl') || '/admin';
 
   const containerRef = useRef<HTMLDivElement>(null);
   const starsRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll();
   const backgroundY = useTransform(scrollYProgress, [0, 1], ['0%', '30%']);
 
+  console.log('Admin login page callbackUrl:', callbackUrl);
+
   useEffect(() => {
     setMounted(true);
-  }, []);
+    
+    // Check for error in URL params from NextAuth
+    const errorParam = searchParams.get('error');
+    if (errorParam) {
+      const decodedError = decodeURIComponent(errorParam);
+      setError(decodedError);
+      console.log('Admin auth error detected:', decodedError);
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     // Animations for stars and cosmic elements
@@ -65,24 +78,60 @@ export default function AdminLogin() {
     setError('');
 
     try {
+      console.log('Attempting admin sign in with callbackUrl:', callbackUrl);
+
       const result = await signIn('credentials', {
         email,
         password,
-        redirect: false,
+        callbackUrl,
+        redirect: false, // Handle redirect manually to show better error messages
       });
 
-      if (result?.error) {
-        setError('Invalid credentials. Admin access only.');
-      } else {
+      console.log('Admin sign in result:', result);
+
+      if (result?.ok && !result?.error) {
+        // Check if user has admin role
         const session = await getSession();
+        console.log('Admin session after login:', session);
+
         if (session?.user?.role === 'admin') {
-          router.push('/admin');
+          console.log('Admin login successful, redirecting to:', callbackUrl);
+          setTimeout(() => {
+            window.location.href = callbackUrl;
+          }, 1000);
         } else {
-          setError('Admin access required');
+          setError('Access denied. Admin privileges required.');
         }
+      } else if (result?.error) {
+        // Parse the specific error from NextAuth
+        let errorMessage = result.error;
+        
+        // Map common error codes to user-friendly messages for admin
+        switch (result.error) {
+          case 'CredentialsSignin':
+            errorMessage = 'Invalid admin credentials. Please check your email and password.';
+            break;
+          case 'AccessDenied':
+            errorMessage = 'Access denied. Admin privileges required.';
+            break;
+          default:
+            // Check if it's a role-based error
+            if (result.error.includes('Admin') || result.error.includes('admin')) {
+              errorMessage = result.error;
+            } else {
+              errorMessage = 'Invalid credentials. Admin access only.';
+            }
+        }
+        
+        setError(errorMessage);
+        console.error('Admin authentication failed:', errorMessage);
+      } else {
+        // Fallback for unexpected cases
+        setError('Login failed. Please try again.');
       }
     } catch (error) {
-      setError('Login failed. Please try again.');
+      console.error('Admin login error:', error);
+      setError('An unexpected error occurred. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -283,7 +332,7 @@ export default function AdminLogin() {
                   id="admin-email"
                   type="email"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) => setEmail(e.target.value.toLowerCase())}
                   className="w-full pl-10 pr-4 py-3 bg-white/10 rounded-lg border border-white/20 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all cursor-text"
                   placeholder="admin@mintoons.com"
                   required
@@ -410,5 +459,19 @@ export default function AdminLogin() {
         </motion.div>
       </div>
     </div>
+  );
+}
+
+export default function AdminLoginPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-green-900 flex items-center justify-center">
+          <div className="text-white">Loading...</div>
+        </div>
+      }
+    >
+      <AdminLogin />
+    </Suspense>
   );
 }

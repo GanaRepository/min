@@ -1,6 +1,6 @@
 // app/register/child/page.tsx
 import { Metadata, Viewport } from 'next';
-import RegisterChildContent from './RegisterChildContent';
+import RegisterChildContentWithSuspense from './RegisterChildContent';
 
 export const viewport: Viewport = {
   themeColor: '#0a192f',
@@ -8,51 +8,51 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.mintoons.com'),
-  title: 'Candidate Registration | Mintoons - Join Our Talent Pool',
+  title: 'Child Registration | Mintoons - Join the Creative Community',
   description:
-    'Create your candidate profile with Mintoons to access job opportunities in technology, connect with top employers, and advance your career in the tech industry.',
+    'Create your young writer profile with Mintoons to start writing amazing stories, connect with mentors, and unleash your creative potential.',
   keywords: [
     'Mintoons',
-    'candidate registration',
-    'tech job opportunities',
-    'talent pool',
-    'IT career',
-    'technology jobs',
-    'software development careers',
-    'tech talent',
-    'tech recruiting',
-    'job application',
-    'IT staffing',
-    'candidate profile',
-    'tech professional',
-    'career advancement',
-    'job search',
-    'technology employment',
+    'child registration',
+    'young writer signup',
+    'creative writing for kids',
+    'storytelling platform',
+    'kids writing community',
+    'young storyteller',
+    'children creative writing',
+    'writing for kids',
+    'story creation for children',
+    'youth writing platform',
+    'creative kids',
+    'writing mentorship',
+    'children stories',
+    'kids creativity',
+    'young author',
   ],
   authors: [{ name: 'Mintoons', url: 'https://www.mintoons.com' }],
   creator: 'Mintoons',
   publisher: 'Mintoons',
   openGraph: {
-    title: 'Candidate Registration | Mintoons - Join Our Talent Pool',
+    title: 'Child Registration | Mintoons - Join the Creative Community',
     description:
-      'Create your candidate profile with Mintoons to access job opportunities in technology, connect with top employers, and advance your career in the tech industry.',
-    url: 'https://www.mintoons.com/register/candidate',
+      'Create your young writer profile with Mintoons to start writing amazing stories, connect with mentors, and unleash your creative potential.',
+    url: 'https://www.mintoons.com/register/child',
     siteName: 'Mintoons',
     type: 'website',
     locale: 'en_US',
     images: [
       {
-        url: '/candidate-register-og.jpg', // Update with your actual image path
+        url: '/child-register-og.jpg', // Update with your actual image path
         width: 1200,
         height: 630,
-        alt: 'Mintoons - Candidate Registration',
+        alt: 'Mintoons - Child Registration',
       },
     ],
   },
   alternates: {
-    canonical: 'https://www.mintoons.com/register/candidate',
+    canonical: 'https://www.mintoons.com/register/child',
     languages: {
-      'en-US': 'https://www.mintoons.com/register/candidate',
+      'en-US': 'https://www.mintoons.com/register/child',
     },
   },
   robots: {
@@ -94,5 +94,5 @@ export const metadata: Metadata = {
 };
 
 export default function RegisterChildPage() {
-  return <RegisterChildContent />;
+  return <RegisterChildContentWithSuspense />;
 }

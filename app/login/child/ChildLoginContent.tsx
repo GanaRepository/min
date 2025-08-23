@@ -46,7 +46,16 @@ function ChildLoginContent() {
 
   useEffect(() => {
     setMounted(true);
-  }, []);
+    
+    // Check for error in URL params from NextAuth
+    const errorParam = searchParams.get('error');
+    if (errorParam) {
+      const decodedError = decodeURIComponent(errorParam);
+      setError(decodedError);
+      setToastMessage(`Login Failed: ${decodedError}`);
+      console.log('Auth error detected:', decodedError);
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     // Animations for stars and cosmic elements
@@ -68,6 +77,7 @@ function ChildLoginContent() {
     e.preventDefault();
     setIsLoading(true);
     setError('');
+    setToastMessage(null);
 
     try {
       console.log('Attempting sign in with callbackUrl:', callbackUrl);
@@ -75,14 +85,12 @@ function ChildLoginContent() {
       const result = await signIn('credentials', {
         email,
         password,
-        callbackUrl, // Pass the callbackUrl to NextAuth
-        redirect: true, // Let NextAuth handle the redirect
+        callbackUrl,
+        redirect: false, // Handle redirect manually to show better error messages
       });
 
       console.log('Sign in result:', result);
 
-      // NextAuth will handle the redirect automatically if redirect: true
-      // If for some reason it doesn't redirect, we can handle it manually
       if (result?.ok && !result?.error) {
         setToastMessage(
           'Welcome back, young storyteller! Loading your creative space...'
@@ -94,20 +102,36 @@ function ChildLoginContent() {
           window.location.href = callbackUrl;
         }, 1500);
       } else if (result?.error) {
-        setError(result.error);
-        setToastMessage(`Login Failed: ${result.error}`);
-        // On error, stay on page but keep callbackUrl in search params for retry
-        router.replace(
-          `/login/child?callbackUrl=${encodeURIComponent(callbackUrl)}`
-        );
+        // Parse the specific error from NextAuth
+        let errorMessage = result.error;
+        
+        // Map common error codes to user-friendly messages
+        switch (result.error) {
+          case 'CredentialsSignin':
+            errorMessage = 'Invalid email or password. Please check your credentials and try again.';
+            break;
+          case 'AccessDenied':
+            errorMessage = 'Access denied. Your account may be deactivated.';
+            break;
+          default:
+            // Use the exact error message from the backend
+            errorMessage = result.error;
+        }
+        
+        setError(errorMessage);
+        setToastMessage(`Login Failed: ${errorMessage}`);
+        console.error('Authentication failed:', errorMessage);
+      } else {
+        // Fallback for unexpected cases
+        const fallbackError = 'Login failed. Please try again.';
+        setError(fallbackError);
+        setToastMessage(`Login Failed: ${fallbackError}`);
       }
     } catch (error) {
       console.error('Login error:', error);
-      setError('An unexpected error occurred. Please try again.');
-      setToastMessage('Login Failed: An unexpected error occurred');
-      router.replace(
-        `/login/child?callbackUrl=${encodeURIComponent(callbackUrl)}`
-      );
+      const errorMsg = 'An unexpected error occurred. Please try again.';
+      setError(errorMsg);
+      setToastMessage(`Login Failed: ${errorMsg}`);
     } finally {
       setIsLoading(false);
     }
@@ -498,13 +522,17 @@ function ChildLoginContent() {
 
         {/* Toast notifications */}
         {toastMessage && (
-          <Toast>
+          <Toast variant={toastMessage.startsWith('Login Failed') ? 'destructive' : 'default'}>
             <ToastTitle>
               {toastMessage.startsWith('Login Failed')
-                ? 'Login Failed'
+                ? 'Authentication Error'
                 : 'Welcome Back!'}
             </ToastTitle>
-            <ToastDescription>{toastMessage}</ToastDescription>
+            <ToastDescription>
+              {toastMessage.startsWith('Login Failed') 
+                ? toastMessage.replace('Login Failed: ', '')
+                : toastMessage}
+            </ToastDescription>
             <ToastClose onClick={() => setToastMessage(null)} />
           </Toast>
         )}

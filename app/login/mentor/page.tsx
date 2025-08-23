@@ -1,6 +1,6 @@
-// File: app/login/employee/page.tsx
+// File: app/login/mentor/page.tsx
 import { Metadata, Viewport } from 'next';
-import MentorLoginContent from './MentorLoginContent';
+import MentorLoginContentWithSuspense from './MentorLoginContent';
 
 export const viewport: Viewport = {
   themeColor: '#0a192f',
@@ -8,51 +8,51 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.mintoons.com'),
-  title: 'Employee Login | Mintoons - Access Your Dashboard',
+  title: 'Mentor Login | Mintoons - Access Your Dashboard',
   description:
-    'Access your Mintoons employee dashboard to manage timesheets, view company resources, and connect with your team members and clients.',
+    'Access your Mintoons mentor dashboard to guide young writers, provide feedback, and track student progress in creative writing.',
   keywords: [
     'Mintoons',
-    'employee login',
-    'staff portal',
-    'timesheet management',
-    'employee dashboard',
-    'IT company resources',
-    'tech employee portal',
-    'internal systems access',
-    'staff login',
-    'company portal',
-    'employee resources',
-    'IT timesheet system',
-    'tech staff login',
-    'employee access',
-    'workforce management',
-    'internal communications',
+    'mentor login',
+    'teacher portal',
+    'mentor dashboard',
+    'student guidance',
+    'writing mentor access',
+    'creative writing mentor',
+    'student feedback system',
+    'mentor login',
+    'teacher login',
+    'educational portal',
+    'writing instructor access',
+    'mentor resources',
+    'student tracking',
+    'writing education',
+    'mentor access',
   ],
   authors: [{ name: 'Mintoons', url: 'https://www.mintoons.com' }],
   creator: 'Mintoons',
   publisher: 'Mintoons',
   openGraph: {
-    title: 'Employee Login | Mintoons - Access Your Dashboard',
+    title: 'Mentor Login | Mintoons - Access Your Dashboard',
     description:
-      'Access your Mintoons employee dashboard to manage timesheets, view company resources, and connect with your team members and clients.',
-    url: 'https://www.mintoons.com/login/employee',
+      'Access your Mintoons mentor dashboard to guide young writers, provide feedback, and track student progress in creative writing.',
+    url: 'https://www.mintoons.com/login/mentor',
     siteName: 'Mintoons',
     type: 'website',
     locale: 'en_US',
     images: [
       {
-        url: '/employee-login-og.jpg', // Update with your actual image path
+        url: '/mentor-login-og.jpg', // Update with your actual image path
         width: 1200,
         height: 630,
-        alt: 'Mintoons - Employee Login',
+        alt: 'Mintoons - Mentor Login',
       },
     ],
   },
   alternates: {
-    canonical: 'https://www.mintoons.com/login/employee',
+    canonical: 'https://www.mintoons.com/login/mentor',
     languages: {
-      'en-US': 'https://www.mintoons.com/login/employee',
+      'en-US': 'https://www.mintoons.com/login/mentor',
     },
   },
   robots: {
@@ -94,5 +94,5 @@ export const metadata: Metadata = {
 };
 
 export default function MentorLoginPage() {
-  return <MentorLoginContent />;
+  return <MentorLoginContentWithSuspense />;
 }

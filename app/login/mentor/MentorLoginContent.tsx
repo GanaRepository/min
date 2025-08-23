@@ -5,10 +5,11 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { ArrowLeft, GraduationCap, Eye, EyeOff, Users } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { signIn } from 'next-auth/react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import Image from 'next/image';
+import { Suspense } from 'react';
 import TerminalLoader from '@/components/TerminalLoader';
 
 import { Card, CardContent } from '@/components/ui/card';
@@ -22,10 +23,12 @@ import {
   ToastTitle,
   ToastDescription,
   ToastClose,
-} from '@/components/ui/toast';
+  } from '@/components/ui/toast';
 
-const MentorLoginContent: React.FC = () => {
+function MentorLoginContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get('callbackUrl') || '/mentor-dashboard';
   const containerRef = useRef<HTMLDivElement>(null);
   const starsRef = useRef<HTMLDivElement>(null);
   const [mounted, setMounted] = useState(false);
@@ -39,11 +42,21 @@ const MentorLoginContent: React.FC = () => {
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  // Always use callbackUrl for all redirects
+  console.log('Mentor login page callbackUrl:', callbackUrl);
 
   useEffect(() => {
+    setMounted(true);
+    
+    // Check for error in URL params from NextAuth
+    const errorParam = searchParams.get('error');
+    if (errorParam) {
+      const decodedError = decodeURIComponent(errorParam);
+      setError(decodedError);
+      setToastMessage(`Login Failed: ${decodedError}`);
+      console.log('Auth error detected:', decodedError);
+    }
+  }, [searchParams]);  useEffect(() => {
     // Animations for stars and cosmic elements
     const stars = starsRef.current?.children;
     if (stars && typeof window !== 'undefined') {
@@ -63,26 +76,59 @@ const MentorLoginContent: React.FC = () => {
     e.preventDefault();
     setIsLoading(true);
     setError('');
+    setToastMessage(null);
 
     try {
+      console.log('Attempting mentor sign in with callbackUrl:', callbackUrl);
+
       const result = await signIn('credentials', {
-        redirect: false,
         email,
         password,
+        callbackUrl,
+        redirect: false, // Handle redirect manually to show better error messages
       });
 
-      if (result?.error) {
-        setError(result.error);
-        setToastMessage(`Login Failed: ${result.error}`);
-      } else if (result?.ok) {
+      console.log('Mentor sign in result:', result);
+
+      if (result?.ok && !result?.error) {
         setToastMessage('Welcome back, mentor! Loading your dashboard...');
+        console.log('Mentor login successful, redirecting to:', callbackUrl);
+
+        // Give a short delay to show the success message, then redirect
         setTimeout(() => {
-          router.push('/mentor-dashboard');
+          window.location.href = callbackUrl;
         }, 1500);
+      } else if (result?.error) {
+        // Parse the specific error from NextAuth
+        let errorMessage = result.error;
+        
+        // Map common error codes to user-friendly messages
+        switch (result.error) {
+          case 'CredentialsSignin':
+            errorMessage = 'Invalid email or password. Please check your credentials and try again.';
+            break;
+          case 'AccessDenied':
+            errorMessage = 'Access denied. Your account may be deactivated.';
+            break;
+          default:
+            // Use the exact error message from the backend
+            errorMessage = result.error;
+        }
+        
+        setError(errorMessage);
+        setToastMessage(`Login Failed: ${errorMessage}`);
+        console.error('Mentor authentication failed:', errorMessage);
+      } else {
+        // Fallback for unexpected cases
+        const fallbackError = 'Login failed. Please try again.';
+        setError(fallbackError);
+        setToastMessage(`Login Failed: ${fallbackError}`);
       }
     } catch (error) {
-      setError('An unexpected error occurred. Please try again.');
-      setToastMessage('Login Failed: An unexpected error occurred');
+      console.error('Mentor login error:', error);
+      const errorMsg = 'An unexpected error occurred. Please try again.';
+      setError(errorMsg);
+      setToastMessage(`Login Failed: ${errorMsg}`);
     } finally {
       setIsLoading(false);
     }
@@ -469,13 +515,17 @@ const MentorLoginContent: React.FC = () => {
 
         {/* Toast notifications */}
         {toastMessage && (
-          <Toast>
+          <Toast variant={toastMessage.startsWith('Login Failed') ? 'destructive' : 'default'}>
             <ToastTitle>
               {toastMessage.startsWith('Login Failed')
-                ? 'Login Failed'
+                ? 'Authentication Error'
                 : 'Welcome Back!'}
             </ToastTitle>
-            <ToastDescription>{toastMessage}</ToastDescription>
+            <ToastDescription>
+              {toastMessage.startsWith('Login Failed') 
+                ? toastMessage.replace('Login Failed: ', '')
+                : toastMessage}
+            </ToastDescription>
             <ToastClose onClick={() => setToastMessage(null)} />
           </Toast>
         )}
@@ -483,6 +533,18 @@ const MentorLoginContent: React.FC = () => {
       </div>
     </ToastProvider>
   );
-};
+}
 
-export default MentorLoginContent;
+export default function MentorLoginContentWithSuspense() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-gradient-to-br from-emerald-900/90 via-teal-800/90 to-blue-900/90 flex items-center justify-center">
+          <div className="text-white">Loading...</div>
+        </div>
+      }
+    >
+      <MentorLoginContent />
+    </Suspense>
+  );
+}

@@ -752,10 +752,11 @@ import {
   Users,
 } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { signIn } from 'next-auth/react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Suspense } from 'react';
 import {
   ToastProvider,
   ToastViewport,
@@ -767,13 +768,10 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import TerminalLoader from '@/components/TerminalLoader';
 
-const RegisterChildContent: React.FC = () => {
+function RegisterChildContent() {
   const router = useRouter();
-  const searchParams =
-    typeof window !== 'undefined'
-      ? new URLSearchParams(window.location.search)
-      : undefined;
-  const callbackUrl = searchParams?.get('callbackUrl') || '/create-stories';
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get('callbackUrl') || '/create-stories';
   const containerRef = useRef<HTMLDivElement>(null);
   const planetRef = useRef<HTMLDivElement>(null);
   const starsRef = useRef<HTMLDivElement>(null);
@@ -810,9 +808,19 @@ const RegisterChildContent: React.FC = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
+  console.log('Child register page callbackUrl:', callbackUrl);
+
   useEffect(() => {
     setMounted(true);
-  }, []);
+    
+    // Check for error in URL params (if redirected from failed registration)
+    const errorParam = searchParams.get('error');
+    if (errorParam) {
+      const decodedError = decodeURIComponent(errorParam);
+      setToastMessage(`Registration Failed: ${decodedError}`);
+      console.log('Registration error detected:', decodedError);
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     // Animations for stars and cosmic elements
@@ -881,6 +889,7 @@ const RegisterChildContent: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    setToastMessage(null);
 
     try {
       // Password validation on the client side
@@ -888,20 +897,20 @@ const RegisterChildContent: React.FC = () => {
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
       if (!passwordRegex.test(formData.password)) {
         setToastMessage(
-          'Password must be at least 8 characters and include uppercase, lowercase, number, and special character'
+          'Registration Failed: Password must be at least 8 characters and include uppercase, lowercase, number, and special character'
         );
         setIsLoading(false);
         return;
       }
 
       if (formData.password !== formData.confirmPassword) {
-        setToastMessage('Passwords do not match');
+        setToastMessage('Registration Failed: Passwords do not match');
         setIsLoading(false);
         return;
       }
 
       if (!formData.agreeToTerms) {
-        setToastMessage('You must agree to the terms and conditions');
+        setToastMessage('Registration Failed: You must agree to the terms and conditions');
         setIsLoading(false);
         return;
       }
@@ -919,8 +928,9 @@ const RegisterChildContent: React.FC = () => {
       console.log('Registration response:', response.status, data);
 
       if (!response.ok) {
-        console.log('Registration failed:', data.error);
-        setToastMessage(data.error || 'Registration failed');
+        const errorMsg = data.error || 'Registration failed. Please try again.';
+        console.log('Registration failed:', errorMsg);
+        setToastMessage(`Registration Failed: ${errorMsg}`);
         setIsLoading(false);
         return;
       }
@@ -939,25 +949,32 @@ const RegisterChildContent: React.FC = () => {
 
       if (signInResult?.error) {
         console.error('Auto login failed:', signInResult.error);
+        setToastMessage(`Registration successful, but auto-login failed: ${signInResult.error}. Please login manually.`);
         // If auto-login fails, redirect to login page with callbackUrl
         setTimeout(() => {
           router.push(
             `/login/child?callbackUrl=${encodeURIComponent(callbackUrl)}`
           );
+        }, 3000);
+      } else if (signInResult?.ok) {
+        // If successful, redirect to callbackUrl
+        console.log('Auto-login successful, redirecting to:', callbackUrl);
+        setTimeout(() => {
+          window.location.href = callbackUrl;
         }, 2000);
       } else {
-        // If successful, redirect to callbackUrl
+        console.error('Auto login failed - unknown error');
+        setToastMessage('Registration successful! Please login to continue.');
         setTimeout(() => {
-          router.push(callbackUrl);
-        }, 2000);
+          router.push(
+            `/login/child?callbackUrl=${encodeURIComponent(callbackUrl)}`
+          );
+        }, 3000);
       }
     } catch (error) {
       console.error('Registration error:', error);
-      setToastMessage(
-        error instanceof Error
-          ? error.message
-          : 'Registration failed. Please try again.'
-      );
+      setToastMessage('Registration Failed: An unexpected error occurred. Please try again.');
+    } finally {
       setIsLoading(false);
     }
   };
@@ -1450,14 +1467,22 @@ const RegisterChildContent: React.FC = () => {
 
         {/* Toast notifications */}
         {toastMessage && (
-          <Toast className="z-50">
+          <Toast 
+            variant={toastMessage.startsWith('Registration Failed') ? 'destructive' : 'default'}
+            className="z-50"
+          >
             <ToastTitle>
-              {toastMessage.includes('successful') ||
-              toastMessage.includes('Welcome')
+              {toastMessage.startsWith('Registration Failed')
+                ? 'Registration Error'
+                : toastMessage.includes('successful') || toastMessage.includes('Welcome')
                 ? 'Success'
-                : 'Error'}
+                : 'Info'}
             </ToastTitle>
-            <ToastDescription>{toastMessage}</ToastDescription>
+            <ToastDescription>
+              {toastMessage.startsWith('Registration Failed') 
+                ? toastMessage.replace('Registration Failed: ', '')
+                : toastMessage}
+            </ToastDescription>
             <ToastClose onClick={() => setToastMessage(null)} />
           </Toast>
         )}
@@ -1465,6 +1490,18 @@ const RegisterChildContent: React.FC = () => {
       </div>
     </ToastProvider>
   );
-};
+}
 
-export default RegisterChildContent;
+export default function RegisterChildContentWithSuspense() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black flex items-center justify-center">
+          <div className="text-white">Loading...</div>
+        </div>
+      }
+    >
+      <RegisterChildContent />
+    </Suspense>
+  );
+}
