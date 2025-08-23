@@ -46,38 +46,55 @@ export async function GET(
     // Get all turns for this session
     const turns = await Turn.find({ sessionId }).sort({ turnNumber: 1 }).lean();
 
+    // FIXED: Separate child turns from AI responses for proper counting
+    const childTurns = turns.filter(turn => turn.childInput && turn.childInput.trim());
+    const aiTurns = turns.filter(turn => turn.aiResponse && turn.aiResponse.trim());
+
     // Calculate statistics
     const stats = {
       totalTurns: turns.length,
+      childTurns: childTurns.length,
+      aiTurns: aiTurns.length,
       totalWords: turns.reduce(
         (sum, turn) =>
-          sum + (turn.childWordCount || 0) + (turn.aiWordCount || 0),
+          sum + (turn.childWordCount || turn.wordCount || 0),
         0
       ),
-      childWords: turns.reduce(
-        (sum, turn) => sum + (turn.childWordCount || 0),
+      childWords: childTurns.reduce(
+        (sum, turn) => sum + (turn.childWordCount || turn.wordCount || 0),
         0
       ),
-      aiWords: turns.reduce((sum, turn) => sum + (turn.aiWordCount || 0), 0),
+      aiWords: aiTurns.reduce((sum, turn) => sum + (turn.aiWordCount || turn.wordCount || 0), 0),
       averageWordsPerTurn:
-        turns.length > 0
+        childTurns.length > 0
           ? Math.round(
-              turns.reduce((sum, turn) => sum + (turn.childWordCount || 0), 0) /
-                turns.length
+              childTurns.reduce((sum, turn) => sum + (turn.childWordCount || turn.wordCount || 0), 0) /
+                childTurns.length
             )
           : 0,
     };
 
+    // FIXED: Return properly structured turns data
+    const structuredTurns = turns.map((turn) => ({
+      _id: turn._id,
+      turnNumber: turn.turnNumber,
+      childInput: turn.childInput || null,
+      aiResponse: turn.aiResponse || null,
+      childWordCount: turn.childWordCount || (turn.childInput ? turn.wordCount : 0),
+      aiWordCount: turn.aiWordCount || (turn.aiResponse ? turn.wordCount : 0),
+      timestamp: turn.timestamp || turn.createdAt,
+      author: turn.author || (turn.childInput ? 'child' : 'ai'),
+    }));
+
     return NextResponse.json({
       success: true,
-      turns: turns.map((turn) => ({
+      turns: structuredTurns,
+      childTurnsOnly: childTurns.map((turn) => ({
         _id: turn._id,
         turnNumber: turn.turnNumber,
         childInput: turn.childInput,
-        aiResponse: turn.aiResponse,
-        childWordCount: turn.childWordCount,
-        aiWordCount: turn.aiWordCount,
-        timestamp: turn.timestamp,
+        childWordCount: turn.childWordCount || turn.wordCount,
+        timestamp: turn.timestamp || turn.createdAt,
       })),
       stats,
       sessionInfo: {
@@ -85,8 +102,10 @@ export async function GET(
         status: storySession.status,
         currentTurn: storySession.currentTurn,
         maxTurns: 7,
+        actualChildTurns: childTurns.length,
+        nextTurnNumber: childTurns.length + 1,
         canContinue:
-          storySession.status === 'active' && storySession.currentTurn < 7,
+          storySession.status === 'active' && childTurns.length < 7,
       },
     });
   } catch (error) {

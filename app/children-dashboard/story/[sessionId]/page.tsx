@@ -137,12 +137,26 @@ export default function StoryWritingInterface({
       const actualSession = sessionData.session || sessionData;
 
       setStorySession(actualSession);
-      setTurns(turnsData.turns || []);
+      
+      // FIXED: Use the structured turns data with proper filtering
+      const allTurns = turnsData.turns || [];
+      setTurns(allTurns);
       setEditedTitle(actualSession.title || '');
+
+      console.log('📊 Fetched story data:', {
+        sessionId: actualSession._id,
+        status: actualSession.status,
+        allTurns: allTurns.length,
+        childTurnsOnly: turnsData.childTurnsOnly?.length || 0,
+        sessionInfo: turnsData.sessionInfo,
+      });
 
       // Check if story is completed and has assessment
       if (actualSession.status === 'completed' && actualSession.assessment) {
         setAssessment(actualSession.assessment);
+        console.log('✅ Assessment found for completed story');
+      } else if (actualSession.status === 'completed' && !actualSession.assessment) {
+        console.log('⚠️ Story completed but no assessment found - may need to trigger assessment');
       }
     } catch (error) {
       console.error('Error fetching story data:', error);
@@ -239,6 +253,8 @@ export default function StoryWritingInterface({
     setIsAIGenerating(true);
 
     try {
+      console.log(`📝 Submitting turn ${nextTurnNumber} with ${wordCount} words`);
+      
       const response = await fetch('/api/stories/collaborate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -255,7 +271,9 @@ export default function StoryWritingInterface({
         throw new Error(data.error || 'Failed to submit turn');
       }
 
-      // Update session and add new turn
+      console.log(`✅ Turn ${nextTurnNumber} submitted successfully:`, data);
+
+      // Update session with the response data
       setStorySession((prev) =>
         prev
           ? {
@@ -268,24 +286,55 @@ export default function StoryWritingInterface({
               childWords: prev.childWords + data.newTurn.childWordCount,
               status:
                 data.newTurn.turnNumber >= maxTurns ? 'completed' : 'active',
+              // Include assessment if story is completed
+              ...(data.assessment && { assessment: data.assessment }),
             }
           : null
       );
 
-      setTurns((prev) => [...prev, data.newTurn]);
+      // Add new turn to the turns array (combining child input and AI response into one display item)
+      const newTurnData = {
+        _id: data.newTurn._id,
+        turnNumber: data.newTurn.turnNumber,
+        childInput: data.newTurn.childInput,
+        aiResponse: data.newTurn.aiResponse,
+        childWordCount: data.newTurn.childWordCount,
+        aiWordCount: data.newTurn.aiWordCount,
+        timestamp: data.newTurn.timestamp,
+      };
+      
+      setTurns((prev) => [...prev, newTurnData]);
       setCurrentInput('');
       setWordCount(0);
       setIsValid(false);
 
-      // If this was the final turn, trigger assessment
+      // Handle story completion
       if (data.newTurn.turnNumber >= maxTurns) {
-        await triggerAssessment();
+        console.log('🏁 Story completed! Checking for assessment...');
+        
+        if (data.assessment) {
+          setAssessment(data.assessment);
+          toast({
+            title: '🎉 Story Complete!',
+            description: "Amazing work! Your story has been assessed automatically.",
+          });
+        } else {
+          // If no assessment in response, trigger it manually
+          toast({
+            title: '🎉 Story Complete!',
+            description: "Generating your assessment...",
+          });
+          
+          setTimeout(() => {
+            triggerAssessment();
+          }, 2000);
+        }
+      } else {
+        toast({
+          title: 'Turn Submitted!',
+          description: `Turn ${data.newTurn.turnNumber} submitted successfully!`,
+        });
       }
-
-      toast({
-        title: 'Success',
-        description: `Turn ${data.newTurn.turnNumber} submitted successfully!`,
-      });
     } catch (error: any) {
       console.error('Error submitting turn:', error);
       toast({
@@ -304,6 +353,7 @@ export default function StoryWritingInterface({
     if (!storySession) return;
 
     try {
+      console.log('🎯 Triggering assessment for completed story...');
       const response = await fetch(
         `/api/stories/assessment/${storySession._id}`,
         {
@@ -314,6 +364,7 @@ export default function StoryWritingInterface({
       const data = await response.json();
 
       if (response.ok) {
+        console.log('✅ Assessment completed successfully');
         setAssessment(data.assessment);
         setStorySession((prev) =>
           prev
@@ -326,13 +377,25 @@ export default function StoryWritingInterface({
         );
 
         toast({
-          title: 'Story Complete!',
+          title: '🎉 Story Complete!',
           description:
             "Your story has been assessed. Click 'View Assessment' to see your results!",
+        });
+      } else {
+        console.error('❌ Assessment failed:', data.error);
+        toast({
+          title: 'Assessment Error',
+          description: data.error || 'Failed to generate assessment. Please try again.',
+          variant: 'destructive',
         });
       }
     } catch (error) {
       console.error('Error triggering assessment:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to generate assessment. Please try again.',
+        variant: 'destructive',
+      });
     }
   };
 
@@ -389,25 +452,26 @@ export default function StoryWritingInterface({
 
   const isCompleted = storySession.status === 'completed';
   
-  // FIXED: Determine the actual current turn based on completed turns
-  // The story starts at turn 1, and we track completed turns
-  const actualTurns = turns.length;
-  const nextTurnNumber = actualTurns + 1;
+  // FIXED: Calculate turns correctly - only count child inputs, not AI responses
+  const childTurns = turns.filter(turn => turn.childInput && turn.childInput.trim());
+  const actualCompletedTurns = childTurns.length;
+  const nextTurnNumber = actualCompletedTurns + 1;
   
   // Can write if story is active and we haven't reached max turns
   const canWrite = storySession.status === 'active' && nextTurnNumber <= maxTurns;
   
-  // Progress calculation based on actual completed turns
-  const turnsCompleted = Math.min(actualTurns, maxTurns);
+  // Progress calculation based on actual completed child turns
+  const turnsCompleted = Math.min(actualCompletedTurns, maxTurns);
   const progressPercentage = isCompleted 
     ? 100 
     : Math.round((turnsCompleted / maxTurns) * 100);
 
   // DEBUG: Log the corrected values
-  console.log('DEBUG - Story Session (FIXED):', {
-    sessionCurrentTurn: storySession.currentTurn,
-    actualCompletedTurns: actualTurns,
-    nextTurnNumber: nextTurnNumber,
+  console.log('DEBUG - Story Session (REALLY FIXED):', {
+    allTurns: turns.length,
+    childTurnsOnly: childTurns.length,
+    actualCompletedTurns,
+    nextTurnNumber,
     maxTurns,
     status: storySession.status,
     canWrite,
@@ -491,7 +555,7 @@ export default function StoryWritingInterface({
 
               <div className="text-right">
                 <div className="text-sm text-gray-400">
-                  Turn {isCompleted ? maxTurns : nextTurnNumber} of {maxTurns}
+                  Turn {isCompleted ? maxTurns : Math.min(nextTurnNumber, maxTurns)} of {maxTurns}
                 </div>
                 <div className="text-xs text-gray-500">
                   {storySession.childWords} words written
@@ -825,7 +889,7 @@ export default function StoryWritingInterface({
                 <div className="flex items-center justify-between">
                   <span className="text-gray-400">Current Turn</span>
                   <span className="text-white ">
-                    {isCompleted ? maxTurns : nextTurnNumber} / {maxTurns}
+                    {isCompleted ? maxTurns : Math.min(nextTurnNumber, maxTurns)} / {maxTurns}
                   </span>
                 </div>
 
@@ -906,14 +970,14 @@ export default function StoryWritingInterface({
                     className={`flex items-center gap-3 p-2  transition-colors ${
                       nextTurnNumber === turnNum && !isCompleted
                         ? 'bg-purple-500/20 border border-purple-500/30'
-                        : actualTurns >= turnNum || isCompleted
+                        : actualCompletedTurns >= turnNum || isCompleted
                           ? 'bg-green-500/10'
                           : 'bg-gray-700/30'
                     }`}
                   >
                     <div
                       className={`w-6 h-6  flex items-center justify-center text-xs  ${
-                        actualTurns >= turnNum || isCompleted
+                        actualCompletedTurns >= turnNum || isCompleted
                           ? 'bg-green-500 text-white'
                           : nextTurnNumber === turnNum &&
                               !isCompleted
@@ -921,7 +985,7 @@ export default function StoryWritingInterface({
                             : 'bg-gray-600 text-gray-300'
                       }`}
                     >
-                      {actualTurns >= turnNum || isCompleted ? (
+                      {actualCompletedTurns >= turnNum || isCompleted ? (
                         <CheckCircle className="w-3 h-3" />
                       ) : (
                         turnNum
@@ -932,7 +996,7 @@ export default function StoryWritingInterface({
                       className={`${
                         nextTurnNumber === turnNum && !isCompleted
                           ? 'text-purple-300 '
-                          : actualTurns >= turnNum || isCompleted
+                          : actualCompletedTurns >= turnNum || isCompleted
                             ? 'text-green-300'
                             : 'text-gray-400'
                       }`}
