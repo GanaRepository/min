@@ -737,7 +737,6 @@
 
 // export default RegisterChildContent;
 
-
 // app/register/child/RegisterChildContent.tsx
 'use client';
 
@@ -1045,7 +1044,10 @@ const RegisterChildContent: React.FC = () => {
                 {/* First Name and Last Name */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                   <div>
-                    <label htmlFor="firstName" className="block text-sm text-gray-400 mb-2">
+                    <label
+                      htmlFor="firstName"
+                      className="block text-sm text-gray-400 mb-2"
+                    >
                       First Name
                     </label>
                     <input
@@ -1062,7 +1064,10 @@ const RegisterChildContent: React.FC = () => {
                   </div>
 
                   <div>
-                    <label htmlFor="lastName" className="block text-sm text-gray-400 mb-2">
+                    <label
+                      htmlFor="lastName"
+                      className="block text-sm text-gray-400 mb-2"
+                    >
                       Last Name
                     </label>
                     <input
@@ -1081,7 +1086,10 @@ const RegisterChildContent: React.FC = () => {
 
                 {/* Email */}
                 <div>
-                  <label htmlFor="email" className="block text-sm text-gray-400 mb-2">
+                  <label
+                    htmlFor="email"
+                    className="block text-sm text-gray-400 mb-2"
+                  >
                     Email
                   </label>
                   <input
@@ -1100,7 +1108,10 @@ const RegisterChildContent: React.FC = () => {
                 {/* Age and School */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                   <div>
-                    <label htmlFor="age" className="block text-sm text-gray-400 mb-2">
+                    <label
+                      htmlFor="age"
+                      className="block text-sm text-gray-400 mb-2"
+                    >
                       Age
                     </label>
                     <input
@@ -1119,7 +1130,10 @@ const RegisterChildContent: React.FC = () => {
                   </div>
 
                   <div>
-                    <label htmlFor="school" className="block text-sm text-gray-400 mb-2">
+                    <label
+                      htmlFor="school"
+                      className="block text-sm text-gray-400 mb-2"
+                    >
                       School
                     </label>
                     <input
@@ -1138,7 +1152,10 @@ const RegisterChildContent: React.FC = () => {
 
                 {/* Password - FIXED */}
                 <div>
-                  <label htmlFor="password" className="block text-sm text-gray-400 mb-2">
+                  <label
+                    htmlFor="password"
+                    className="block text-sm text-gray-400 mb-2"
+                  >
                     Password
                   </label>
                   <div className="relative">
@@ -1162,13 +1179,17 @@ const RegisterChildContent: React.FC = () => {
                     </button>
                   </div>
                   <p className="text-xs text-gray-500 mt-1">
-                    Password must be at least 8 characters and include uppercase, lowercase, number, and special character.
+                    Password must be at least 8 characters and include
+                    uppercase, lowercase, number, and special character.
                   </p>
                 </div>
 
                 {/* Confirm Password - FIXED */}
                 <div>
-                  <label htmlFor="confirmPassword" className="block text-sm text-gray-400 mb-2">
+                  <label
+                    htmlFor="confirmPassword"
+                    className="block text-sm text-gray-400 mb-2"
+                  >
                     Confirm Password
                   </label>
                   <div className="relative">
@@ -1188,7 +1209,11 @@ const RegisterChildContent: React.FC = () => {
                       className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-green-400 transition-colors"
                       onClick={toggleConfirmPasswordVisibility}
                     >
-                      {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                      {showConfirmPassword ? (
+                        <EyeOff size={18} />
+                      ) : (
+                        <Eye size={18} />
+                      )}
                     </button>
                   </div>
                 </div>
@@ -1198,12 +1223,18 @@ const RegisterChildContent: React.FC = () => {
                   <Checkbox
                     id="agreeToTerms"
                     checked={formData.agreeToTerms}
-                    onCheckedChange={(checked) => handleCheckboxChange(checked as boolean)}
+                    onCheckedChange={(checked) =>
+                      handleCheckboxChange(checked as boolean)
+                    }
                     className="mt-1 border-gray-600 data-[state=checked]:bg-green-500 data-[state=checked]:border-green-500"
                     disabled={isLoading}
                   />
-                  <label htmlFor="agreeToTerms" className="text-xs text-gray-400 leading-relaxed">
-                    By signing up, you confirm that you have parental consent if under 13 and agree to our{' '}
+                  <label
+                    htmlFor="agreeToTerms"
+                    className="text-xs text-gray-400 leading-relaxed"
+                  >
+                    By signing up, you confirm that you have parental consent if
+                    under 13 and agree to our{' '}
                     <Link
                       href="/terms-of-service"
                       className="text-green-400 hover:text-green-300 transition-colors underline font-medium"

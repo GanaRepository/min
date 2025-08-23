@@ -45,10 +45,7 @@ export async function POST(
     }
 
     if (!storySession) {
-      return NextResponse.json(
-        { error: 'Story not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Story not found' }, { status: 404 });
     }
 
     // Only assess completed stories
@@ -109,37 +106,41 @@ export async function POST(
         // Core scores
         overallScore: assessment.overallScore,
         categoryScores: assessment.categoryScores,
-        
+
         // Legacy compatibility fields
         grammarScore: assessment.categoryScores.grammar,
         creativityScore: assessment.categoryScores.creativity,
         vocabularyScore: assessment.categoryScores.vocabulary,
         structureScore: assessment.categoryScores.structure,
-        characterDevelopmentScore: assessment.categoryScores.characterDevelopment,
+        characterDevelopmentScore:
+          assessment.categoryScores.characterDevelopment,
         plotDevelopmentScore: assessment.categoryScores.plotDevelopment,
         readingLevel: assessment.categoryScores.readingLevel,
-        
+
         // Educational feedback
         feedback: assessment.educationalFeedback.teacherComment,
         strengths: assessment.educationalFeedback.strengths,
         improvements: assessment.educationalFeedback.improvements,
         educationalInsights: assessment.educationalFeedback.encouragement,
-        
+
         // Integrity analysis
         integrityStatus: assessment.integrityStatus.status,
-        aiDetectionScore: assessment.integrityAnalysis?.aiDetectionResult?.overallScore || 0,
+        aiDetectionScore:
+          assessment.integrityAnalysis?.aiDetectionResult?.overallScore || 0,
         plagiarismScore: assessment.integrityAnalysis?.originalityScore || 100,
         integrityRisk: assessment.integrityAnalysis?.integrityRisk || 'low',
-        
+
         // Advanced fields
         integrityAnalysis: assessment.integrityAnalysis,
         recommendations: assessment.recommendations,
         progressTracking: assessment.progressTracking,
-        
+
         // Metadata
         assessmentVersion: '2.0',
         assessmentDate: new Date().toISOString(),
-        assessmentType: storySession.isUploadedForAssessment ? 'uploaded' : 'collaborative',
+        assessmentType: storySession.isUploadedForAssessment
+          ? 'uploaded'
+          : 'collaborative',
       };
 
       // Update story session with assessment
@@ -151,7 +152,10 @@ export async function POST(
         lastAssessedAt: new Date(),
         assessmentAttempts: (storySession.assessmentAttempts || 0) + 1,
         // Flag if integrity issues
-        status: assessment.integrityAnalysis?.integrityRisk === 'critical' ? 'flagged' : 'completed',
+        status:
+          assessment.integrityAnalysis?.integrityRisk === 'critical'
+            ? 'flagged'
+            : 'completed',
       };
 
       await StorySession.findByIdAndUpdate(actualSessionId, updateData);
@@ -163,10 +167,9 @@ export async function POST(
         message: 'Assessment completed successfully',
         assessment: assessmentData,
       });
-
     } catch (assessmentError) {
       console.error('❌ Assessment generation failed:', assessmentError);
-      
+
       // Fallback assessment
       const fallbackAssessment = {
         overallScore: 75,
@@ -179,7 +182,8 @@ export async function POST(
           plotDevelopment: 70,
           readingLevel: 'Grade 7',
         },
-        feedback: 'Great work on your story! Assessment completed with backup system.',
+        feedback:
+          'Great work on your story! Assessment completed with backup system.',
         strengths: ['Creative storytelling', 'Good effort'],
         improvements: ['Continue developing writing skills'],
         integrityStatus: 'PASS',
@@ -204,13 +208,12 @@ export async function POST(
         assessment: fallbackAssessment,
       });
     }
-
   } catch (error) {
     console.error('❌ Assessment endpoint error:', error);
     return NextResponse.json(
-      { 
+      {
         error: 'Failed to generate assessment',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        details: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
     );
@@ -251,10 +254,7 @@ export async function GET(
     }
 
     if (!storySession) {
-      return NextResponse.json(
-        { error: 'Story not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Story not found' }, { status: 404 });
     }
 
     if (!(storySession as any).assessment) {
@@ -268,7 +268,6 @@ export async function GET(
       success: true,
       assessment: (storySession as any).assessment,
     });
-
   } catch (error) {
     console.error('❌ Get assessment error:', error);
     return NextResponse.json(

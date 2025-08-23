@@ -47,8 +47,12 @@ export async function GET(
     const turns = await Turn.find({ sessionId }).sort({ turnNumber: 1 }).lean();
 
     // FIXED: Separate child turns from AI responses for proper counting
-    const childTurns = turns.filter(turn => turn.childInput && turn.childInput.trim());
-    const aiTurns = turns.filter(turn => turn.aiResponse && turn.aiResponse.trim());
+    const childTurns = turns.filter(
+      (turn) => turn.childInput && turn.childInput.trim()
+    );
+    const aiTurns = turns.filter(
+      (turn) => turn.aiResponse && turn.aiResponse.trim()
+    );
 
     // Calculate statistics
     const stats = {
@@ -56,20 +60,25 @@ export async function GET(
       childTurns: childTurns.length,
       aiTurns: aiTurns.length,
       totalWords: turns.reduce(
-        (sum, turn) =>
-          sum + (turn.childWordCount || turn.wordCount || 0),
+        (sum, turn) => sum + (turn.childWordCount || turn.wordCount || 0),
         0
       ),
       childWords: childTurns.reduce(
         (sum, turn) => sum + (turn.childWordCount || turn.wordCount || 0),
         0
       ),
-      aiWords: aiTurns.reduce((sum, turn) => sum + (turn.aiWordCount || turn.wordCount || 0), 0),
+      aiWords: aiTurns.reduce(
+        (sum, turn) => sum + (turn.aiWordCount || turn.wordCount || 0),
+        0
+      ),
       averageWordsPerTurn:
         childTurns.length > 0
           ? Math.round(
-              childTurns.reduce((sum, turn) => sum + (turn.childWordCount || turn.wordCount || 0), 0) /
-                childTurns.length
+              childTurns.reduce(
+                (sum, turn) =>
+                  sum + (turn.childWordCount || turn.wordCount || 0),
+                0
+              ) / childTurns.length
             )
           : 0,
     };
@@ -80,7 +89,8 @@ export async function GET(
       turnNumber: turn.turnNumber,
       childInput: turn.childInput || null,
       aiResponse: turn.aiResponse || null,
-      childWordCount: turn.childWordCount || (turn.childInput ? turn.wordCount : 0),
+      childWordCount:
+        turn.childWordCount || (turn.childInput ? turn.wordCount : 0),
       aiWordCount: turn.aiWordCount || (turn.aiResponse ? turn.wordCount : 0),
       timestamp: turn.timestamp || turn.createdAt,
       author: turn.author || (turn.childInput ? 'child' : 'ai'),
@@ -104,8 +114,7 @@ export async function GET(
         maxTurns: 7,
         actualChildTurns: childTurns.length,
         nextTurnNumber: childTurns.length + 1,
-        canContinue:
-          storySession.status === 'active' && childTurns.length < 7,
+        canContinue: storySession.status === 'active' && childTurns.length < 7,
       },
     });
   } catch (error) {

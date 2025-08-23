@@ -91,10 +91,7 @@ export async function PUT(
     const { title, elements } = body;
 
     if (!title?.trim()) {
-      return NextResponse.json(
-        { error: 'Title is required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Title is required' }, { status: 400 });
     }
 
     await connectToDatabase();

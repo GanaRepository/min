@@ -121,8 +121,10 @@ export default function StoryWritingInterface({
   // Auto-fetch assessment when story is completed
   useEffect(() => {
     const fetchAssessment = async () => {
-      const childTurns = turns.filter(turn => turn.childInput && turn.childInput.trim());
-      
+      const childTurns = turns.filter(
+        (turn) => turn.childInput && turn.childInput.trim()
+      );
+
       // Only try to fetch if story is completed and we don't have assessment yet
       if (childTurns.length >= 7 && !assessment && !loadingAssessment) {
         setLoadingAssessment(true);
@@ -136,7 +138,9 @@ export default function StoryWritingInterface({
               console.log('✅ Assessment loaded successfully');
             }
           } else {
-            console.log('⚠️ No assessment available yet, may still be generating...');
+            console.log(
+              '⚠️ No assessment available yet, may still be generating...'
+            );
           }
         } catch (error) {
           console.error('Error fetching assessment:', error);
@@ -153,8 +157,10 @@ export default function StoryWritingInterface({
 
   // Auto-show assessment modal when story is completed and assessment is available
   useEffect(() => {
-    const childTurns = turns.filter(turn => turn.childInput && turn.childInput.trim());
-    
+    const childTurns = turns.filter(
+      (turn) => turn.childInput && turn.childInput.trim()
+    );
+
     if (childTurns.length >= 7 && assessment && !showAssessment) {
       // Small delay to allow UI to update before showing modal
       const timer = setTimeout(() => {
@@ -184,7 +190,7 @@ export default function StoryWritingInterface({
       const actualSession = sessionData.session || sessionData;
 
       setStorySession(actualSession);
-      
+
       // FIXED: Use the structured turns data with proper filtering
       const allTurns = turnsData.turns || [];
       setTurns(allTurns);
@@ -204,8 +210,13 @@ export default function StoryWritingInterface({
         console.log('✅ Assessment found for completed story');
         // Automatically show assessment modal for completed stories
         setTimeout(() => setShowAssessment(true), 1000);
-      } else if (actualSession.status === 'completed' && !actualSession.assessment) {
-        console.log('⚠️ Story completed but no assessment found - may need to trigger assessment');
+      } else if (
+        actualSession.status === 'completed' &&
+        !actualSession.assessment
+      ) {
+        console.log(
+          '⚠️ Story completed but no assessment found - may need to trigger assessment'
+        );
       }
     } catch (error) {
       console.error('Error fetching story data:', error);
@@ -310,8 +321,10 @@ export default function StoryWritingInterface({
     setIsAIGenerating(true);
 
     try {
-      console.log(`📝 Submitting turn ${nextTurnNumber} with ${wordCount} words`);
-      
+      console.log(
+        `📝 Submitting turn ${nextTurnNumber} with ${wordCount} words`
+      );
+
       const response = await fetch('/api/stories/collaborate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -359,7 +372,7 @@ export default function StoryWritingInterface({
         aiWordCount: data.newTurn.aiWordCount,
         timestamp: data.newTurn.timestamp,
       };
-      
+
       setTurns((prev) => [...prev, newTurnData]);
       setCurrentInput('');
       setWordCount(0);
@@ -368,21 +381,22 @@ export default function StoryWritingInterface({
       // Handle story completion
       if (data.newTurn.turnNumber >= maxTurns) {
         console.log('🏁 Story completed! Checking for assessment...');
-        
+
         if (data.assessment) {
           setAssessment(data.assessment);
           setShowAssessment(true); // Automatically show assessment modal
           toast({
             title: '🎉 Story Complete!',
-            description: "Amazing work! Your story has been assessed automatically.",
+            description:
+              'Amazing work! Your story has been assessed automatically.',
           });
         } else {
           // If no assessment in response, trigger it manually
           toast({
             title: '🎉 Story Complete!',
-            description: "Generating your assessment...",
+            description: 'Generating your assessment...',
           });
-          
+
           setTimeout(() => {
             triggerAssessment();
           }, 2000);
@@ -437,14 +451,14 @@ export default function StoryWritingInterface({
 
         toast({
           title: '🎉 Story Complete!',
-          description:
-            "Your story has been assessed. Check out your results!",
+          description: 'Your story has been assessed. Check out your results!',
         });
       } else {
         console.error('❌ Assessment failed:', data.error);
         toast({
           title: 'Assessment Error',
-          description: data.error || 'Failed to generate assessment. Please try again.',
+          description:
+            data.error || 'Failed to generate assessment. Please try again.',
           variant: 'destructive',
         });
       }
@@ -510,19 +524,22 @@ export default function StoryWritingInterface({
   }
 
   const isCompleted = storySession.status === 'completed';
-  
+
   // FIXED: Calculate turns correctly - only count child inputs, not AI responses
-  const childTurns = turns.filter(turn => turn.childInput && turn.childInput.trim());
+  const childTurns = turns.filter(
+    (turn) => turn.childInput && turn.childInput.trim()
+  );
   const actualCompletedTurns = childTurns.length;
   const nextTurnNumber = actualCompletedTurns + 1;
-  
+
   // Can write if story is active and we haven't reached max turns
-  const canWrite = storySession.status === 'active' && nextTurnNumber <= maxTurns;
-  
+  const canWrite =
+    storySession.status === 'active' && nextTurnNumber <= maxTurns;
+
   // Progress calculation based on actual completed child turns
   const turnsCompleted = Math.min(actualCompletedTurns, maxTurns);
-  const progressPercentage = isCompleted 
-    ? 100 
+  const progressPercentage = isCompleted
+    ? 100
     : Math.round((turnsCompleted / maxTurns) * 100);
 
   // DEBUG: Log the corrected values
@@ -614,7 +631,9 @@ export default function StoryWritingInterface({
 
               <div className="text-right">
                 <div className="text-sm text-gray-400">
-                  Turn {isCompleted ? maxTurns : Math.min(nextTurnNumber, maxTurns)} of {maxTurns}
+                  Turn{' '}
+                  {isCompleted ? maxTurns : Math.min(nextTurnNumber, maxTurns)}{' '}
+                  of {maxTurns}
                 </div>
                 <div className="text-xs text-gray-500">
                   {storySession.childWords} words written
@@ -900,10 +919,7 @@ export default function StoryWritingInterface({
                     <div className="flex items-center gap-2 text-sm text-gray-400">
                       <Lightbulb className="w-4 h-4" />
                       Write 60-100 words to{' '}
-                      {nextTurnNumber === 1
-                        ? 'begin'
-                        : 'continue'}{' '}
-                      your story
+                      {nextTurnNumber === 1 ? 'begin' : 'continue'} your story
                     </div>
 
                     <button
@@ -948,7 +964,10 @@ export default function StoryWritingInterface({
                 <div className="flex items-center justify-between">
                   <span className="text-gray-400">Current Turn</span>
                   <span className="text-white ">
-                    {isCompleted ? maxTurns : Math.min(nextTurnNumber, maxTurns)} / {maxTurns}
+                    {isCompleted
+                      ? maxTurns
+                      : Math.min(nextTurnNumber, maxTurns)}{' '}
+                    / {maxTurns}
                   </span>
                 </div>
 
@@ -1038,8 +1057,7 @@ export default function StoryWritingInterface({
                       className={`w-6 h-6  flex items-center justify-center text-xs  ${
                         actualCompletedTurns >= turnNum || isCompleted
                           ? 'bg-green-500 text-white'
-                          : nextTurnNumber === turnNum &&
-                              !isCompleted
+                          : nextTurnNumber === turnNum && !isCompleted
                             ? 'bg-purple-500 text-white'
                             : 'bg-gray-600 text-gray-300'
                       }`}
@@ -1080,7 +1098,9 @@ export default function StoryWritingInterface({
                 <div className="space-y-3">
                   <div className="flex items-center gap-2">
                     <div className="w-3 h-3 bg-blue-400  animate-pulse"></div>
-                    <span className="text-gray-300">Analyzing creativity...</span>
+                    <span className="text-gray-300">
+                      Analyzing creativity...
+                    </span>
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="w-3 h-3 bg-purple-400  animate-pulse"></div>
@@ -1088,7 +1108,9 @@ export default function StoryWritingInterface({
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="w-3 h-3 bg-green-400  animate-pulse"></div>
-                    <span className="text-gray-300">Evaluating structure...</span>
+                    <span className="text-gray-300">
+                      Evaluating structure...
+                    </span>
                   </div>
                 </div>
 
