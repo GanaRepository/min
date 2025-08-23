@@ -124,10 +124,20 @@ export async function POST(request: NextRequest) {
 
     const hashedPassword = await bcrypt.hash(password, 12);
 
+    // Helper function to format names properly (Title Case)
+    const formatName = (name: string) => {
+      return name
+        .trim()
+        .toLowerCase()
+        .split(' ')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ');
+    };
+
     const userData: any = {
-      firstName,
-      lastName,
-      email: email.toLowerCase(),
+      firstName: formatName(firstName),
+      lastName: formatName(lastName),
+      email: email.toLowerCase().trim(),
       password: hashedPassword,
       role,
       isActive: true,
@@ -137,7 +147,7 @@ export async function POST(request: NextRequest) {
     // Add role-specific fields
     if (role === 'child') {
       userData.age = age;
-      userData.school = school;
+      userData.school = formatName(school);
       userData.parentEmail = parentEmail;
       userData.subscriptionTier = 'FREE';
       userData.subscriptionStatus = 'active';

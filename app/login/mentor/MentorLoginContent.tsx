@@ -91,6 +91,21 @@ function MentorLoginContent() {
       console.log('Mentor sign in result:', result);
 
       if (result?.ok && !result?.error) {
+        // Check if the user has the correct role for mentor login
+        const sessionResponse = await fetch('/api/auth/session');
+        const session = await sessionResponse.json();
+        
+        if (session?.user?.role && session.user.role !== 'mentor' && session.user.role !== 'admin') {
+          // User has wrong role for mentor login
+          const roleError = `This login is for mentors only. Please use the ${session.user.role} login page instead.`;
+          setError(roleError);
+          setToastMessage(`Access Denied: ${roleError}`);
+          
+          // Sign out the user since they used wrong login page
+          await fetch('/api/auth/signout', { method: 'POST' });
+          return;
+        }
+
         setToastMessage('Welcome back, mentor! Loading your dashboard...');
         console.log('Mentor login successful, redirecting to:', callbackUrl);
 

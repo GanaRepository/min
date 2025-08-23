@@ -90,18 +90,24 @@ function AdminLogin() {
       console.log('Admin sign in result:', result);
 
       if (result?.ok && !result?.error) {
-        // Check if user has admin role
-        const session = await getSession();
-        console.log('Admin session after login:', session);
-
-        if (session?.user?.role === 'admin') {
-          console.log('Admin login successful, redirecting to:', callbackUrl);
-          setTimeout(() => {
-            window.location.href = callbackUrl;
-          }, 1000);
-        } else {
-          setError('Access denied. Admin privileges required.');
+        // Check if the user has the correct role for admin login
+        const sessionResponse = await fetch('/api/auth/session');
+        const session = await sessionResponse.json();
+        
+        if (session?.user?.role && session.user.role !== 'admin') {
+          // User has wrong role for admin login
+          const roleError = `This login is for administrators only. Please use the ${session.user.role} login page instead.`;
+          setError(roleError);
+          
+          // Sign out the user since they used wrong login page
+          await fetch('/api/auth/signout', { method: 'POST' });
+          return;
         }
+
+        console.log('Admin login successful, redirecting to:', callbackUrl);
+        setTimeout(() => {
+          window.location.href = callbackUrl;
+        }, 1000);
       } else if (result?.error) {
         // Parse the specific error from NextAuth
         let errorMessage = result.error;

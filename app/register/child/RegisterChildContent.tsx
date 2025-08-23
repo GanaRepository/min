@@ -865,9 +865,27 @@ function RegisterChildContent() {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+    
+    // Helper function to format names properly (Title Case)
+    const formatName = (name: string) => {
+      return name
+        .toLowerCase()
+        .split(' ')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ');
+    };
+    
+    let formattedValue = value;
+    
+    if (name === 'email') {
+      formattedValue = value.toLowerCase();
+    } else if (name === 'firstName' || name === 'lastName' || name === 'school') {
+      formattedValue = formatName(value);
+    }
+    
     setFormData((prev) => ({
       ...prev,
-      [name]: name === 'email' ? value.toLowerCase() : value,
+      [name]: formattedValue,
     }));
   };
 

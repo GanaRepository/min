@@ -87,13 +87,23 @@ export async function POST(request: Request) {
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 12);
 
+    // Helper function to format names properly (Title Case)
+    const formatName = (name: string) => {
+      return name
+        .trim()
+        .toLowerCase()
+        .split(' ')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ');
+    };
+
     // Create new child user
     const newUser = await User.create({
-      firstName: firstName.trim(),
-      lastName: lastName.trim(),
+      firstName: formatName(firstName),
+      lastName: formatName(lastName),
       email: email.toLowerCase().trim(),
       age: ageNumber,
-      school: school.trim(),
+      school: formatName(school),
       password: hashedPassword,
       role: 'child',
       isActive: true,

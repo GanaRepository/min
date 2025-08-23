@@ -37,6 +37,15 @@ export default function CreateMentorPage() {
 
   const [newSpecialization, setNewSpecialization] = useState('');
 
+  // Helper function to format names properly (Title Case)
+  const formatName = (name: string) => {
+    return name
+      .toLowerCase()
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  };
+
   useEffect(() => {
     if (status === 'loading') return;
     if (!session || session.user?.role !== 'admin') {
@@ -176,7 +185,7 @@ export default function CreateMentorPage() {
                     required
                     value={formData.firstName}
                     onChange={(e) =>
-                      handleInputChange('firstName', e.target.value)
+                      handleInputChange('firstName', formatName(e.target.value))
                     }
                     className={`w-full pl-10 pr-4 py-3 bg-gray-700 border  text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                       errors.firstName ? 'border-red-500' : 'border-gray-600'
@@ -205,7 +214,7 @@ export default function CreateMentorPage() {
                     required
                     value={formData.lastName}
                     onChange={(e) =>
-                      handleInputChange('lastName', e.target.value)
+                      handleInputChange('lastName', formatName(e.target.value))
                     }
                     className={`w-full pl-10 pr-4 py-3 bg-gray-700 border  text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                       errors.lastName ? 'border-red-500' : 'border-gray-600'
@@ -233,7 +242,7 @@ export default function CreateMentorPage() {
                   type="email"
                   required
                   value={formData.email}
-                  onChange={(e) => handleInputChange('email', e.target.value)}
+                  onChange={(e) => handleInputChange('email', e.target.value.toLowerCase())}
                   className={`w-full pl-10 pr-4 py-3 bg-gray-700 border  text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                     errors.email ? 'border-red-500' : 'border-gray-600'
                   }`}

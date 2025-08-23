@@ -92,6 +92,21 @@ function ChildLoginContent() {
       console.log('Sign in result:', result);
 
       if (result?.ok && !result?.error) {
+        // Check if the user has the correct role for child login
+        const sessionResponse = await fetch('/api/auth/session');
+        const session = await sessionResponse.json();
+        
+        if (session?.user?.role && session.user.role !== 'child') {
+          // User has wrong role for child login
+          const roleError = `This login is for children only. Please use the ${session.user.role} login page instead.`;
+          setError(roleError);
+          setToastMessage(`Access Denied: ${roleError}`);
+          
+          // Sign out the user since they used wrong login page
+          await fetch('/api/auth/signout', { method: 'POST' });
+          return;
+        }
+
         setToastMessage(
           'Welcome back, young storyteller! Loading your creative space...'
         );

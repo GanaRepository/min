@@ -160,11 +160,21 @@ export async function POST(request: NextRequest) {
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 12);
 
+    // Helper function to format names properly (Title Case)
+    const formatName = (name: string) => {
+      return name
+        .trim()
+        .toLowerCase()
+        .split(' ')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ');
+    };
+
     // Create mentor
     const mentor = new User({
-      firstName,
-      lastName,
-      email: email.toLowerCase(),
+      firstName: formatName(firstName),
+      lastName: formatName(lastName),
+      email: email.toLowerCase().trim(),
       password: hashedPassword,
       role: 'mentor',
       isActive: true,

@@ -308,12 +308,18 @@ export async function middleware(request: NextRequest) {
   // ===== ADMIN ROUTES =====
   if (
     path.startsWith('/admin-dashboard') ||
-    path.startsWith('/admin/') ||
+    path.startsWith('/admin') ||
     path.startsWith('/api/admin/')
   ) {
+    // Skip authentication for admin login page
+    if (path === '/admin/login') {
+      logMiddleware('info', `Public admin login access: ${path}`);
+      return NextResponse.next();
+    }
+
     if (!isAuthenticated) {
       logMiddleware('warn', `Unauthenticated admin access attempt: ${path}`);
-      return NextResponse.redirect(new URL('/login/admin', request.url));
+      return NextResponse.redirect(new URL('/admin/login', request.url));
     }
 
     if (userRole !== 'admin') {
@@ -335,7 +341,7 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL('/login/mentor', request.url));
     }
 
-    if (userRole !== 'mentor' && userRole !== 'admin') {
+    if (userRole !== 'mentor') {
       logMiddleware(
         'warn',
         `Non-mentor access attempt to mentor area by ${userRole}: ${path}`
@@ -362,7 +368,7 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL('/login/child', request.url));
     }
 
-    if (userRole !== 'child' && userRole !== 'admin') {
+    if (userRole !== 'child') {
       logMiddleware(
         'warn',
         `Non-child access attempt to child area by ${userRole}: ${path}`
