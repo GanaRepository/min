@@ -500,14 +500,14 @@
 //                     under 13 and agree to our{' '}
 //                     <Link
 //                       href="/terms-of-service"
-//                       className="text-green-400 hover:text-green-300 transition-colors underline cursor-pointer font-medium"
+//                       className="text-green-400 hover:text-green-300 transition-colors underline cursor-pointer "
 //                     >
 //                       Terms Of Service
 //                     </Link>{' '}
 //                     and{' '}
 //                     <Link
 //                       href="/privacy-policy"
-//                       className="text-green-400 hover:text-green-300 transition-colors underline cursor-pointer font-medium"
+//                       className="text-green-400 hover:text-green-300 transition-colors underline cursor-pointer "
 //                     >
 //                       Privacy Policy
 //                     </Link>
@@ -737,6 +737,7 @@
 
 // export default RegisterChildContent;
 
+
 // app/register/child/RegisterChildContent.tsx
 'use client';
 
@@ -750,6 +751,10 @@ import {
   EyeOff,
   Sparkles,
   Users,
+  User,
+  Mail,
+  Lock,
+  GraduationCap,
 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -803,6 +808,7 @@ function RegisterChildContent() {
     agreeToTerms: false,
   });
 
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -812,7 +818,7 @@ function RegisterChildContent() {
 
   useEffect(() => {
     setMounted(true);
-
+    
     // Check for error in URL params (if redirected from failed registration)
     const errorParam = searchParams.get('error');
     if (errorParam) {
@@ -863,34 +869,22 @@ function RegisterChildContent() {
     }
   }, [toastMessage]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-
-    // Helper function to format names properly (Title Case)
-    const formatName = (name: string) => {
-      return name
-        .toLowerCase()
-        .split(' ')
-        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(' ');
-    };
-
-    let formattedValue = value;
-
-    if (name === 'email') {
-      formattedValue = value.toLowerCase();
-    } else if (
-      name === 'firstName' ||
-      name === 'lastName' ||
-      name === 'school'
-    ) {
-      formattedValue = formatName(value);
-    }
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value, type } = e.target;
+    const checked = (e.target as HTMLInputElement).checked;
 
     setFormData((prev) => ({
       ...prev,
-      [name]: formattedValue,
+      [name]: type === 'checkbox' ? checked : (name === 'email' ? value.toLowerCase() : value),
     }));
+
+    // Clear error when user starts typing
+    if (errors[name]) {
+      setErrors((prev) => ({
+        ...prev,
+        [name]: '',
+      }));
+    }
   };
 
   const handleCheckboxChange = (checked: boolean) => {
@@ -898,6 +892,14 @@ function RegisterChildContent() {
       ...prev,
       agreeToTerms: checked,
     }));
+
+    // Clear checkbox error
+    if (errors.agreeToTerms) {
+      setErrors((prev) => ({
+        ...prev,
+        agreeToTerms: '',
+      }));
+    }
   };
 
   const togglePasswordVisibility = () => {
@@ -908,100 +910,119 @@ function RegisterChildContent() {
     setShowConfirmPassword(!showConfirmPassword);
   };
 
+  const validateForm = () => {
+    const newErrors: { [key: string]: string } = {};
+
+    if (!formData.firstName.trim()) {
+      newErrors.firstName = 'First name is required';
+    }
+
+    if (!formData.lastName.trim()) {
+      newErrors.lastName = 'Last name is required';
+    }
+
+    if (!formData.email.trim()) {
+      newErrors.email = 'Email is required';
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = 'Email address is invalid';
+    }
+
+    if (!formData.age.trim()) {
+      newErrors.age = 'Age is required';
+    } else if (parseInt(formData.age) < 5 || parseInt(formData.age) > 17) {
+      newErrors.age = 'Age must be between 5 and 17';
+    }
+
+    if (!formData.school.trim()) {
+      newErrors.school = 'School is required';
+    }
+
+    if (!formData.password) {
+      newErrors.password = 'Password is required';
+    } else if (formData.password.length < 8) {
+      newErrors.password = 'Password must be at least 8 characters';
+    } else if (
+      !/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/.test(
+        formData.password
+      )
+    ) {
+      newErrors.password =
+        'Password must include uppercase, lowercase, number, and special character';
+    }
+
+    if (!formData.confirmPassword) {
+      newErrors.confirmPassword = 'Please confirm your password';
+    } else if (formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = 'Passwords do not match';
+    }
+
+    if (!formData.agreeToTerms) {
+      newErrors.agreeToTerms = 'You must agree to the terms and conditions';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setToastMessage(null);
 
+    if (!validateForm()) {
+      setIsLoading(false);
+      return;
+    }
+
     try {
-      // Password validation on the client side
-      const passwordRegex =
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-      if (!passwordRegex.test(formData.password)) {
-        setToastMessage(
-          'Registration Failed: Password must be at least 8 characters and include uppercase, lowercase, number, and special character'
-        );
-        setIsLoading(false);
-        return;
-      }
-
-      if (formData.password !== formData.confirmPassword) {
-        setToastMessage('Registration Failed: Passwords do not match');
-        setIsLoading(false);
-        return;
-      }
-
-      if (!formData.agreeToTerms) {
-        setToastMessage(
-          'Registration Failed: You must agree to the terms and conditions'
-        );
-        setIsLoading(false);
-        return;
-      }
-
       console.log('Sending registration request...');
       const response = await fetch('/api/auth/register/child', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          email: formData.email,
+          age: parseInt(formData.age),
+          school: formData.school,
+          password: formData.password,
+          role: 'child',
+        }),
       });
 
       const data = await response.json();
       console.log('Registration response:', response.status, data);
 
-      if (!response.ok) {
-        const errorMsg = data.error || 'Registration failed. Please try again.';
-        console.log('Registration failed:', errorMsg);
-        setToastMessage(`Registration Failed: ${errorMsg}`);
-        setIsLoading(false);
-        return;
-      }
+      if (response.ok && data.success) {
+        setToastMessage('Registration successful! Signing you in...');
+        
+        // Auto-login after successful registration
+        const result = await signIn('credentials', {
+          email: formData.email,
+          password: formData.password,
+          redirect: false,
+        });
 
-      setToastMessage(
-        'Welcome to Mintoons! Your creative journey begins now...'
-      );
-
-      // Auto-login immediately after successful registration
-      const signInResult = await signIn('credentials', {
-        redirect: false,
-        email: formData.email,
-        password: formData.password,
-        callbackUrl,
-      });
-
-      if (signInResult?.error) {
-        console.error('Auto login failed:', signInResult.error);
-        setToastMessage(
-          `Registration successful, but auto-login failed: ${signInResult.error}. Please login manually.`
-        );
-        // If auto-login fails, redirect to login page with callbackUrl
-        setTimeout(() => {
-          router.push(
-            `/login/child?callbackUrl=${encodeURIComponent(callbackUrl)}`
-          );
-        }, 3000);
-      } else if (signInResult?.ok) {
-        // If successful, redirect to callbackUrl
-        console.log('Auto-login successful, redirecting to:', callbackUrl);
-        setTimeout(() => {
-          window.location.href = callbackUrl;
-        }, 2000);
+        if (result?.ok) {
+          router.push(callbackUrl);
+        } else {
+          setToastMessage('Registration successful! Please login to continue.');
+          setTimeout(() => {
+            router.push('/login');
+          }, 2000);
+        }
       } else {
-        console.error('Auto login failed - unknown error');
-        setToastMessage('Registration successful! Please login to continue.');
-        setTimeout(() => {
-          router.push(
-            `/login/child?callbackUrl=${encodeURIComponent(callbackUrl)}`
-          );
-        }, 3000);
+        if (data.errors) {
+          setErrors(data.errors);
+        } else {
+          setToastMessage(data.message || 'Registration failed. Please try again.');
+        }
       }
     } catch (error) {
       console.error('Registration error:', error);
-      setToastMessage(
-        'Registration Failed: An unexpected error occurred. Please try again.'
-      );
+      setToastMessage('An unexpected error occurred. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -1041,302 +1062,325 @@ function RegisterChildContent() {
           ))}
         </div>
 
-        <div className="flex flex-col lg:flex-row min-h-screen">
-          {/* Left side - Registration form */}
-          <div className="flex-1 flex items-center justify-center p-4 sm:p-8 relative z-10">
-            <motion.div
-              initial={{ opacity: 0, x: -50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="max-w-sm sm:max-w-md w-full"
-            >
-              {/* Logo */}
+        <div className="flex flex-col lg:flex-row min-h-screen relative z-10">
+          {/* Left side - Registration Form */}
+          <motion.div
+            ref={formRef}
+            initial={{ opacity: 0, x: -50 }}
+            animate={formInView ? { opacity: 1, x: 0 } : {}}
+            transition={{ duration: 0.8 }}
+            className="flex-1 flex items-center justify-center p-4 sm:p-8"
+          >
+            <div className="w-full max-w-md">
               <motion.div
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-                className="flex items-center mb-8 sm:mb-12"
+                initial={{ opacity: 0, y: 20 }}
+                animate={formInView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.8, delay: 0.2 }}
+                className="text-center mb-8"
               >
-                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gradient-to-r from-green-400 to-blue-500 mr-2 sm:mr-3 relative">
-                  <div className="absolute inset-1 rounded-full bg-gray-900" />
-                  <div className="absolute inset-2 rounded-full bg-gradient-to-r from-green-400 to-blue-500 flex items-center justify-center">
-                    <BookOpen className="w-3 h-3 text-white" />
-                  </div>
-                </div>
-                <span className="text-white text-base sm:text-lg">
-                  Mintoons
-                </span>
+                  <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl  mb-2 block bg-gradient-to-r from-green-400 via-teal-300 to-cyan-400 bg-clip-text text-transparent">
+                  Join Mintoons
+                </h1>
+
+                <p className="text-gray-300 text-sm sm:text-base">
+                  Start your creative writing journey today
+                </p>
               </motion.div>
 
-              {/* Title */}
-              <motion.h1
+              <motion.div
                 initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
+                animate={formInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.8, delay: 0.4 }}
-                className="text-2xl sm:text-4xl md:text-5xl text-white mb-4 sm:mb-8 leading-tight"
+                className="bg-white/10 backdrop-blur-md border border-white/20  p-6 sm:p-8"
               >
-                Unleash Your Creative Magic
-              </motion.h1>
-
-              {/* Registration Form - COMPLETELY FIXED */}
-              <motion.form
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.6 }}
-                onSubmit={handleSubmit}
-                className="space-y-3 sm:space-y-4"
-              >
-                {/* First Name and Last Name */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                  <div>
-                    <label
-                      htmlFor="firstName"
-                      className="block text-sm text-gray-400 mb-2"
-                    >
-                      First Name
-                    </label>
-                    <input
-                      type="text"
-                      id="firstName"
-                      name="firstName"
-                      value={formData.firstName}
-                      onChange={handleInputChange}
-                      placeholder="Your first name"
-                      className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300"
-                      required
-                      disabled={isLoading}
-                    />
-                  </div>
-
-                  <div>
-                    <label
-                      htmlFor="lastName"
-                      className="block text-sm text-gray-400 mb-2"
-                    >
-                      Last Name
-                    </label>
-                    <input
-                      type="text"
-                      id="lastName"
-                      name="lastName"
-                      value={formData.lastName}
-                      onChange={handleInputChange}
-                      placeholder="Your last name"
-                      className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300"
-                      required
-                      disabled={isLoading}
-                    />
-                  </div>
-                </div>
-
-                {/* Email */}
-                <div>
-                  <label
-                    htmlFor="email"
-                    className="block text-sm text-gray-400 mb-2"
-                  >
-                    Email
-                  </label>
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    placeholder="Your email or parent's email"
-                    className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300"
-                    required
-                    disabled={isLoading}
-                  />
-                </div>
-
-                {/* Age and School */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                  <div>
-                    <label
-                      htmlFor="age"
-                      className="block text-sm text-gray-400 mb-2"
-                    >
-                      Age
-                    </label>
-                    <input
-                      type="number"
-                      id="age"
-                      name="age"
-                      value={formData.age}
-                      onChange={handleInputChange}
-                      placeholder="Your age"
-                      min="2"
-                      max="18"
-                      className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300"
-                      required
-                      disabled={isLoading}
-                    />
-                  </div>
-
-                  <div>
-                    <label
-                      htmlFor="school"
-                      className="block text-sm text-gray-400 mb-2"
-                    >
-                      School
-                    </label>
-                    <input
-                      type="text"
-                      id="school"
-                      name="school"
-                      value={formData.school}
-                      onChange={handleInputChange}
-                      placeholder="Your school"
-                      className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300"
-                      required
-                      disabled={isLoading}
-                    />
-                  </div>
-                </div>
-
-                {/* Password - FIXED */}
-                <div>
-                  <label
-                    htmlFor="password"
-                    className="block text-sm text-gray-400 mb-2"
-                  >
-                    Password
-                  </label>
-                  <div className="relative">
-                    <input
-                      type={showPassword ? 'text' : 'password'}
-                      id="password"
-                      name="password"
-                      value={formData.password}
-                      onChange={handleInputChange}
-                      placeholder="Create a secure password"
-                      className="w-full px-4 py-3 pr-12 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300"
-                      required
-                      disabled={isLoading}
-                    />
-                    <button
-                      type="button"
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-green-400 transition-colors"
-                      onClick={togglePasswordVisibility}
-                    >
-                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                    </button>
-                  </div>
-                  <p className="text-xs text-gray-500 mt-1">
-                    Password must be at least 8 characters and include
-                    uppercase, lowercase, number, and special character.
-                  </p>
-                </div>
-
-                {/* Confirm Password - FIXED */}
-                <div>
-                  <label
-                    htmlFor="confirmPassword"
-                    className="block text-sm text-gray-400 mb-2"
-                  >
-                    Confirm Password
-                  </label>
-                  <div className="relative">
-                    <input
-                      type={showConfirmPassword ? 'text' : 'password'}
-                      id="confirmPassword"
-                      name="confirmPassword"
-                      value={formData.confirmPassword}
-                      onChange={handleInputChange}
-                      placeholder="Confirm your password"
-                      className="w-full px-4 py-3 pr-12 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300"
-                      required
-                      disabled={isLoading}
-                    />
-                    <button
-                      type="button"
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-green-400 transition-colors"
-                      onClick={toggleConfirmPasswordVisibility}
-                    >
-                      {showConfirmPassword ? (
-                        <EyeOff size={18} />
-                      ) : (
-                        <Eye size={18} />
+                <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
+                  {/* Name Fields */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                    <div>
+                      <label className="block text-sm  text-gray-300 mb-2">
+                        First Name
+                      </label>
+                      <div className="relative">
+                        <User
+                          size={18}
+                          className="absolute left-3 top-3 text-gray-400"
+                        />
+                        <input
+                          type="text"
+                          name="firstName"
+                          required
+                          value={formData.firstName}
+                          onChange={handleInputChange}
+                          className={`w-full pl-10 pr-4 py-3 bg-gray-800/50 border  text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 transition-all duration-300 ${
+                            errors.firstName ? 'border-red-500' : 'border-gray-600'
+                          }`}
+                          placeholder="First name"
+                          disabled={isLoading}
+                        />
+                      </div>
+                      {errors.firstName && (
+                        <p className="text-red-400 text-xs mt-1">{errors.firstName}</p>
                       )}
-                    </button>
-                  </div>
-                </div>
-
-                {/* Terms and Privacy Policy with Checkbox */}
-                <div className="flex items-start gap-3">
-                  <Checkbox
-                    id="agreeToTerms"
-                    checked={formData.agreeToTerms}
-                    onCheckedChange={(checked) =>
-                      handleCheckboxChange(checked as boolean)
-                    }
-                    className="mt-1 border-gray-600 data-[state=checked]:bg-green-500 data-[state=checked]:border-green-500"
-                    disabled={isLoading}
-                  />
-                  <label
-                    htmlFor="agreeToTerms"
-                    className="text-xs text-gray-400 leading-relaxed"
-                  >
-                    By signing up, you confirm that you have parental consent if
-                    under 13 and agree to our{' '}
-                    <Link
-                      href="/terms-of-service"
-                      className="text-green-400 hover:text-green-300 transition-colors underline font-medium"
-                      target="_blank"
-                    >
-                      Terms Of Service
-                    </Link>{' '}
-                    and{' '}
-                    <Link
-                      href="/privacy-policy"
-                      className="text-green-400 hover:text-green-300 transition-colors underline font-medium"
-                      target="_blank"
-                    >
-                      Privacy Policy
-                    </Link>
-                  </label>
-                </div>
-
-                {/* Submit Button - FIXED */}
-                <button
-                  type="submit"
-                  className="w-full bg-gradient-to-r from-green-500 to-green-600 text-white py-3 px-6 rounded-lg transition-all duration-300 hover:from-green-600 hover:to-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-gray-900 disabled:opacity-50 disabled:cursor-not-allowed"
-                  disabled={isLoading}
-                >
-                  {isLoading ? (
-                    <div className="flex items-center justify-center">
-                      <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin mr-2" />
-                      Starting your magical journey...
                     </div>
-                  ) : (
-                    <span className="flex items-center justify-center">
-                      Join the Magic
-                      <Sparkles className="ml-2 w-4 h-4" />
-                    </span>
-                  )}
-                </button>
-              </motion.form>
 
-              {/* Login link */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.8, delay: 1 }}
-                className="text-center mt-6 sm:mt-8"
-              >
-                <span className="text-gray-400 text-sm">
-                  Already have an account?{' '}
-                </span>
-                <Link
-                  href="/login/child"
-                  className="text-white text-sm border border-gray-600 px-4 py-2 rounded hover:border-gray-500 transition-colors inline-block ml-2"
-                >
-                  Log in
-                </Link>
+                    <div>
+                      <label className="block text-sm  text-gray-300 mb-2">
+                        Last Name
+                      </label>
+                      <div className="relative">
+                        <User
+                          size={18}
+                          className="absolute left-3 top-3 text-gray-400"
+                        />
+                        <input
+                          type="text"
+                          name="lastName"
+                          required
+                          value={formData.lastName}
+                          onChange={handleInputChange}
+                          className={`w-full pl-10 pr-4 py-3 bg-gray-800/50 border  text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 transition-all duration-300 ${
+                            errors.lastName ? 'border-red-500' : 'border-gray-600'
+                          }`}
+                          placeholder="Last name"
+                          disabled={isLoading}
+                        />
+                      </div>
+                      {errors.lastName && (
+                        <p className="text-red-400 text-xs mt-1">{errors.lastName}</p>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Email */}
+                  <div>
+                    <label className="block text-sm  text-gray-300 mb-2">
+                      Email Address
+                    </label>
+                    <div className="relative">
+                      <Mail
+                        size={18}
+                        className="absolute left-3 top-3 text-gray-400"
+                      />
+                      <input
+                        type="email"
+                        name="email"
+                        required
+                        value={formData.email}
+                        onChange={handleInputChange}
+                        className={`w-full pl-10 pr-4 py-3 bg-gray-800/50 border  text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 transition-all duration-300 ${
+                          errors.email ? 'border-red-500' : 'border-gray-600'
+                        }`}
+                        placeholder="Your email or parent's email"
+                        disabled={isLoading}
+                      />
+                    </div>
+                    {errors.email && (
+                      <p className="text-red-400 text-xs mt-1">{errors.email}</p>
+                    )}
+                  </div>
+
+                  {/* Age and School */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                    <div>
+                      <label className="block text-sm  text-gray-300 mb-2">
+                        Age
+                      </label>
+                      <div className="relative">
+                        <User
+                          size={18}
+                          className="absolute left-3 top-3 text-gray-400"
+                        />
+                        <input
+                          type="number"
+                          name="age"
+                          required
+                          min="5"
+                          max="17"
+                          value={formData.age}
+                          onChange={handleInputChange}
+                          className={`w-full pl-10 pr-4 py-3 bg-gray-800/50 border  text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 transition-all duration-300 ${
+                            errors.age ? 'border-red-500' : 'border-gray-600'
+                          }`}
+                          placeholder="Age (5-17)"
+                          disabled={isLoading}
+                        />
+                      </div>
+                      {errors.age && (
+                        <p className="text-red-400 text-xs mt-1">{errors.age}</p>
+                      )}
+                    </div>
+
+                    <div>
+                      <label className="block text-sm  text-gray-300 mb-2">
+                        School
+                      </label>
+                      <div className="relative">
+                        <GraduationCap
+                          size={18}
+                          className="absolute left-3 top-3 text-gray-400"
+                        />
+                        <input
+                          type="text"
+                          name="school"
+                          required
+                          value={formData.school}
+                          onChange={handleInputChange}
+                          className={`w-full pl-10 pr-4 py-3 bg-gray-800/50 border  text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 transition-all duration-300 ${
+                            errors.school ? 'border-red-500' : 'border-gray-600'
+                          }`}
+                          placeholder="School name"
+                          disabled={isLoading}
+                        />
+                      </div>
+                      {errors.school && (
+                        <p className="text-red-400 text-xs mt-1">{errors.school}</p>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Password */}
+                  <div>
+                    <label className="block text-sm  text-gray-300 mb-2">
+                      Password
+                    </label>
+                    <div className="relative">
+                      <Lock
+                        size={18}
+                        className="absolute left-3 top-3 text-gray-400"
+                      />
+                      <input
+                        type={showPassword ? 'text' : 'password'}
+                        name="password"
+                        required
+                        value={formData.password}
+                        onChange={handleInputChange}
+                        className={`w-full pl-10 pr-12 py-3 bg-gray-800/50 border  text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 transition-all duration-300 ${
+                          errors.password ? 'border-red-500' : 'border-gray-600'
+                        }`}
+                        placeholder="Create password"
+                        minLength={8}
+                        disabled={isLoading}
+                      />
+                      <button
+                        type="button"
+                        className="absolute right-3 top-3 text-gray-400 hover:text-white transition-colors"
+                        onClick={togglePasswordVisibility}
+                      >
+                        {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                      </button>
+                    </div>
+                    {errors.password && (
+                      <p className="text-red-400 text-xs mt-1">{errors.password}</p>
+                    )}
+                  </div>
+
+                  {/* Confirm Password */}
+                  <div>
+                    <label className="block text-sm  text-gray-300 mb-2">
+                      Confirm Password
+                    </label>
+                    <div className="relative">
+                      <Lock
+                        size={18}
+                        className="absolute left-3 top-3 text-gray-400"
+                      />
+                      <input
+                        type={showConfirmPassword ? 'text' : 'password'}
+                        name="confirmPassword"
+                        required
+                        value={formData.confirmPassword}
+                        onChange={handleInputChange}
+                        className={`w-full pl-10 pr-12 py-3 bg-gray-800/50 border  text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 transition-all duration-300 ${
+                          errors.confirmPassword ? 'border-red-500' : 'border-gray-600'
+                        }`}
+                        placeholder="Confirm password"
+                        minLength={8}
+                        disabled={isLoading}
+                      />
+                      <button
+                        type="button"
+                        className="absolute right-3 top-3 text-gray-400 hover:text-white transition-colors"
+                        onClick={toggleConfirmPasswordVisibility}
+                      >
+                        {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                      </button>
+                    </div>
+                    {errors.confirmPassword && (
+                      <p className="text-red-400 text-xs mt-1">{errors.confirmPassword}</p>
+                    )}
+                  </div>
+
+                  {/* Terms and Conditions */}
+                  <div className="flex items-start space-x-3">
+                    <input
+                      type="checkbox"
+                      id="agreeToTerms"
+                      name="agreeToTerms"
+                      checked={formData.agreeToTerms}
+                      onChange={(e) => handleCheckboxChange(e.target.checked)}
+                      className="w-4 h-4 mt-1 bg-gray-700 border-gray-600 rounded focus:ring-green-500 focus:ring-2 text-green-600"
+                      disabled={isLoading}
+                    />
+                    <label htmlFor="agreeToTerms" className="text-xs text-gray-300 leading-relaxed">
+                      I confirm that I have parental consent if under 13 and agree to
+                      the{' '}
+                      <Link
+                        href="/terms-of-service"
+                        className="text-green-400 hover:text-green-300 underline"
+                        target="_blank"
+                      >
+                        Terms of Service
+                      </Link>{' '}
+                      and{' '}
+                      <Link
+                        href="/privacy-policy"
+                        className="text-green-400 hover:text-green-300 underline"
+                        target="_blank"
+                      >
+                        Privacy Policy
+                      </Link>
+                      .
+                    </label>
+                  </div>
+                  {errors.agreeToTerms && (
+                    <p className="text-red-400 text-xs mt-1">{errors.agreeToTerms}</p>
+                  )}
+
+                  {/* Submit Button */}
+                  <button
+                    type="submit"
+                    disabled={isLoading}
+                    className="w-full bg-gradient-to-r from-green-500 to-green-600 text-white py-3 px-6 rounded-lg  transition-all duration-300 hover:from-green-600 hover:to-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-gray-900 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {isLoading ? (
+                      <div className="flex items-center justify-center">
+                        <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin mr-2" />
+                        Creating Your Account...
+                      </div>
+                    ) : (
+                      <div className="flex items-center justify-center">
+                        <span>Start Your Story Journey</span>
+                        <ArrowRight size={18} className="ml-2" />
+                      </div>
+                    )}
+                  </button>
+
+                  {/* Login Link */}
+                  <div className="text-center">
+                    <span className="text-gray-400 text-xs sm:text-sm">
+                      Already have an account?{' '}
+                      <Link
+                        href="/login"
+                        className="text-green-400 hover:text-green-300  transition-colors"
+                      >
+                        Sign in here
+                      </Link>
+                    </span>
+                  </div>
+                </form>
               </motion.div>
-            </motion.div>
-          </div>
+            </div>
+          </motion.div>
 
           {/* Right side - Animated showcase */}
           <div className="flex-1 relative overflow-hidden min-h-[400px] sm:min-h-0">
@@ -1495,24 +1539,19 @@ function RegisterChildContent() {
 
         {/* Toast notifications */}
         {toastMessage && (
-          <Toast
-            variant={
-              toastMessage.startsWith('Registration Failed')
-                ? 'destructive'
-                : 'default'
-            }
+          <Toast 
+            variant={toastMessage.startsWith('Registration Failed') ? 'destructive' : 'default'}
             className="z-50"
           >
             <ToastTitle>
               {toastMessage.startsWith('Registration Failed')
                 ? 'Registration Error'
-                : toastMessage.includes('successful') ||
-                    toastMessage.includes('Welcome')
-                  ? 'Success'
-                  : 'Info'}
+                : toastMessage.includes('successful') || toastMessage.includes('Welcome')
+                ? 'Success'
+                : 'Info'}
             </ToastTitle>
             <ToastDescription>
-              {toastMessage.startsWith('Registration Failed')
+              {toastMessage.startsWith('Registration Failed') 
                 ? toastMessage.replace('Registration Failed: ', '')
                 : toastMessage}
             </ToastDescription>
