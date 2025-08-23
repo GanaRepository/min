@@ -133,11 +133,11 @@ function CreateStoriesContent() {
       setLoading(true);
       // Force fresh data by adding timestamp to prevent caching
       const timestamp = new Date().getTime();
-      const response = await fetch(`/api/user/usage?t=${timestamp}`, { 
+      const response = await fetch(`/api/user/usage?t=${timestamp}`, {
         cache: 'no-store',
         headers: {
-          'Cache-Control': 'no-cache'
-        }
+          'Cache-Control': 'no-cache',
+        },
       });
 
       if (response.ok) {

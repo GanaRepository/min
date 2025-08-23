@@ -366,12 +366,7 @@ function ChildLoginContent() {
                 >
                   Email
                 </Label>
-                <div
-                  className="relative"
-                  onClick={() =>
-                    document.getElementById('child-email')?.focus()
-                  }
-                >
+                <div className="relative">
                   <input
                     id="child-email"
                     type="email"

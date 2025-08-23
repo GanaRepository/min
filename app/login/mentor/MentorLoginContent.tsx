@@ -340,12 +340,7 @@ const MentorLoginContent: React.FC = () => {
                 >
                   Email
                 </Label>
-                <div
-                  className="relative"
-                  onClick={() =>
-                    document.getElementById('mentor-email')?.focus()
-                  }
-                >
+                <div className="relative">
                   <input
                     id="mentor-email"
                     type="email"

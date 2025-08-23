@@ -163,7 +163,7 @@ export async function POST(request: Request) {
       storyType: savedSession.storyType || 'freestyle',
       isUploadedForAssessment: savedSession.isUploadedForAssessment || false,
       competitionEntries: savedSession.competitionEntries || [],
-      createdAt: savedSession.createdAt
+      createdAt: savedSession.createdAt,
     });
 
     // Return success response

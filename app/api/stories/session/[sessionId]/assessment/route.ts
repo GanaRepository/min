@@ -62,34 +62,42 @@ export async function GET(
           improvements: storySession.assessment.improvements || [],
           educationalInsights:
             storySession.assessment.educationalInsights || '',
-          
+
           // NEW: Additional assessment categories
-          descriptiveWritingScore: storySession.assessment.descriptiveWritingScore || 0,
+          descriptiveWritingScore:
+            storySession.assessment.descriptiveWritingScore || 0,
           sensoryDetailsScore: storySession.assessment.sensoryDetailsScore || 0,
           plotLogicScore: storySession.assessment.plotLogicScore || 0,
           causeEffectScore: storySession.assessment.causeEffectScore || 0,
           problemSolvingScore: storySession.assessment.problemSolvingScore || 0,
-          themeRecognitionScore: storySession.assessment.themeRecognitionScore || 0,
-          ageAppropriatenessScore: storySession.assessment.ageAppropriatenessScore || 0,
-          
+          themeRecognitionScore:
+            storySession.assessment.themeRecognitionScore || 0,
+          ageAppropriatenessScore:
+            storySession.assessment.ageAppropriatenessScore || 0,
+
           // NEW: Full category scores object for advanced assessment display
           categoryScores: storySession.assessment.categoryScores || {
             grammar: storySession.assessment.grammarScore || 0,
             creativity: storySession.assessment.creativityScore || 0,
             vocabulary: storySession.assessment.vocabularyScore || 0,
             structure: storySession.assessment.structureScore || 0,
-            characterDevelopment: storySession.assessment.characterDevelopmentScore || 0,
+            characterDevelopment:
+              storySession.assessment.characterDevelopmentScore || 0,
             plotDevelopment: storySession.assessment.plotDevelopmentScore || 0,
-            descriptiveWriting: storySession.assessment.descriptiveWritingScore || 0,
+            descriptiveWriting:
+              storySession.assessment.descriptiveWritingScore || 0,
             sensoryDetails: storySession.assessment.sensoryDetailsScore || 0,
             plotLogic: storySession.assessment.plotLogicScore || 0,
             causeEffect: storySession.assessment.causeEffectScore || 0,
             problemSolving: storySession.assessment.problemSolvingScore || 0,
-            themeRecognition: storySession.assessment.themeRecognitionScore || 0,
-            ageAppropriateness: storySession.assessment.ageAppropriatenessScore || 0,
-            readingLevel: storySession.assessment.readingLevel || 'Not assessed',
+            themeRecognition:
+              storySession.assessment.themeRecognitionScore || 0,
+            ageAppropriateness:
+              storySession.assessment.ageAppropriatenessScore || 0,
+            readingLevel:
+              storySession.assessment.readingLevel || 'Not assessed',
           },
-          
+
           plagiarismScore: storySession.assessment.plagiarismScore || 0,
           aiDetectionScore: storySession.assessment.aiDetectionScore || 0,
           integrityRisk: storySession.assessment.integrityRisk || 'low',

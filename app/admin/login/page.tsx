@@ -277,10 +277,7 @@ export default function AdminLogin() {
               >
                 Admin Email
               </label>
-              <div
-                className="relative"
-                onClick={() => document.getElementById('admin-email')?.focus()}
-              >
+              <div className="relative">
                 <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/40 w-5 h-5" />
                 <input
                   id="admin-email"

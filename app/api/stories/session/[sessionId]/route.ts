@@ -70,3 +70,87 @@ export async function GET(
     );
   }
 }
+
+// PUT endpoint for updating story session (especially title)
+export async function PUT(
+  request: Request,
+  { params }: { params: { sessionId: string } }
+) {
+  try {
+    const session = await getServerSession(authOptions);
+
+    if (!session || session.user.role !== 'child') {
+      return NextResponse.json(
+        { error: 'Access denied. Children only.' },
+        { status: 403 }
+      );
+    }
+
+    const { sessionId } = params;
+    const body = await request.json();
+    const { title, elements } = body;
+
+    if (!title?.trim()) {
+      return NextResponse.json(
+        { error: 'Title is required' },
+        { status: 400 }
+      );
+    }
+
+    await connectToDatabase();
+
+    // Find the story session and verify ownership
+    let storySession = null;
+    let actualSessionId = sessionId;
+
+    if (mongoose.Types.ObjectId.isValid(sessionId)) {
+      storySession = await StorySession.findOne({
+        _id: sessionId,
+        childId: session.user.id,
+      });
+    } else if (!isNaN(Number(sessionId))) {
+      storySession = await StorySession.findOne({
+        storyNumber: Number(sessionId),
+        childId: session.user.id,
+      });
+      actualSessionId = storySession?._id?.toString() || sessionId;
+    }
+
+    if (!storySession) {
+      return NextResponse.json(
+        { error: 'Story session not found' },
+        { status: 404 }
+      );
+    }
+
+    // Update the story session
+    const updateData: any = {
+      title: title.trim(),
+      updatedAt: new Date(),
+    };
+
+    if (elements) {
+      updateData.elements = { ...storySession.elements, ...elements };
+    }
+
+    const updatedSession = await StorySession.findByIdAndUpdate(
+      actualSessionId,
+      updateData,
+      { new: true, lean: true }
+    );
+
+    console.log(`✅ Story session updated: ${actualSessionId}`);
+
+    return NextResponse.json({
+      success: true,
+      message: 'Story session updated successfully',
+      session: updatedSession,
+    });
+  } catch (error) {
+    console.error('Error updating story session:', error);
+    return NextResponse.json(
+      { error: 'Failed to update story session' },
+      { status: 500 }
+    );
+  }
+}

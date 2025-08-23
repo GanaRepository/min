@@ -245,7 +245,7 @@ export default function StoryWritingInterface({
         body: JSON.stringify({
           sessionId: storySession._id,
           childInput: currentInput.trim(),
-          turnNumber: storySession.currentTurn + 1,
+          turnNumber: nextTurnNumber, // Use the correct next turn number
         }),
       });
 
@@ -388,22 +388,26 @@ export default function StoryWritingInterface({
   }
 
   const isCompleted = storySession.status === 'completed';
-  // More robust canWrite logic - check each condition separately
-  const statusIsActive = storySession.status === 'active';
-  const turnNotExceeded = storySession.currentTurn <= maxTurns;
-  const canWrite = !isCompleted && statusIsActive && turnNotExceeded;
-
-  // Fix: Always show the correct turn number and progress
-  const turnsCompleted = isCompleted
-    ? maxTurns
-    : Math.min(storySession.currentTurn, maxTurns);
-  const progressPercentage = isCompleted
-    ? 100
+  
+  // FIXED: Determine the actual current turn based on completed turns
+  // The story starts at turn 1, and we track completed turns
+  const actualTurns = turns.length;
+  const nextTurnNumber = actualTurns + 1;
+  
+  // Can write if story is active and we haven't reached max turns
+  const canWrite = storySession.status === 'active' && nextTurnNumber <= maxTurns;
+  
+  // Progress calculation based on actual completed turns
+  const turnsCompleted = Math.min(actualTurns, maxTurns);
+  const progressPercentage = isCompleted 
+    ? 100 
     : Math.round((turnsCompleted / maxTurns) * 100);
 
-  // DEBUG: Log the values to see what's happening
-  console.log('DEBUG - Story Session:', {
-    currentTurn: storySession.currentTurn,
+  // DEBUG: Log the corrected values
+  console.log('DEBUG - Story Session (FIXED):', {
+    sessionCurrentTurn: storySession.currentTurn,
+    actualCompletedTurns: actualTurns,
+    nextTurnNumber: nextTurnNumber,
     maxTurns,
     status: storySession.status,
     canWrite,
@@ -487,7 +491,7 @@ export default function StoryWritingInterface({
 
               <div className="text-right">
                 <div className="text-sm text-gray-400">
-                  Turn {turnsCompleted} of {maxTurns}
+                  Turn {isCompleted ? maxTurns : nextTurnNumber} of {maxTurns}
                 </div>
                 <div className="text-xs text-gray-500">
                   {storySession.childWords} words written
@@ -670,7 +674,7 @@ export default function StoryWritingInterface({
                 )}
 
                 {/* Start Writing Message for Turn 1 */}
-                {storySession.currentTurn === 1 && turns.length === 0 && (
+                {nextTurnNumber === 1 && turns.length === 0 && (
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -726,9 +730,9 @@ export default function StoryWritingInterface({
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-white  text-lg flex items-center gap-2">
                     <Edit3 className="w-5 h-5 text-purple-400" />
-                    {storySession.currentTurn === 1
+                    {nextTurnNumber === 1
                       ? 'Start Your Story!'
-                      : `Your Turn ${storySession.currentTurn}`}
+                      : `Your Turn ${nextTurnNumber}`}
                   </h3>
                   <div className="flex items-center gap-4">
                     <div
@@ -761,7 +765,7 @@ export default function StoryWritingInterface({
                     value={currentInput}
                     onChange={(e) => handleInputChange(e.target.value)}
                     placeholder={
-                      storySession.currentTurn === 1
+                      nextTurnNumber === 1
                         ? 'Start your amazing story here! Introduce your character, setting, or situation...'
                         : 'Continue your story here... What happens next in your adventure?'
                     }
@@ -773,7 +777,7 @@ export default function StoryWritingInterface({
                     <div className="flex items-center gap-2 text-sm text-gray-400">
                       <Lightbulb className="w-4 h-4" />
                       Write 60-100 words to{' '}
-                      {storySession.currentTurn === 1
+                      {nextTurnNumber === 1
                         ? 'begin'
                         : 'continue'}{' '}
                       your story
@@ -796,7 +800,7 @@ export default function StoryWritingInterface({
                       ) : (
                         <>
                           <Send className="w-4 h-4" />
-                          {storySession.currentTurn === 1
+                          {nextTurnNumber === 1
                             ? 'Start Story!'
                             : 'Submit Turn'}
                         </>
@@ -821,7 +825,7 @@ export default function StoryWritingInterface({
                 <div className="flex items-center justify-between">
                   <span className="text-gray-400">Current Turn</span>
                   <span className="text-white ">
-                    {storySession.currentTurn} / {maxTurns}
+                    {isCompleted ? maxTurns : nextTurnNumber} / {maxTurns}
                   </span>
                 </div>
 
@@ -900,24 +904,24 @@ export default function StoryWritingInterface({
                   <div
                     key={turnNum}
                     className={`flex items-center gap-3 p-2  transition-colors ${
-                      storySession.currentTurn === turnNum - 1 && !isCompleted
+                      nextTurnNumber === turnNum && !isCompleted
                         ? 'bg-purple-500/20 border border-purple-500/30'
-                        : storySession.currentTurn >= turnNum || isCompleted
+                        : actualTurns >= turnNum || isCompleted
                           ? 'bg-green-500/10'
                           : 'bg-gray-700/30'
                     }`}
                   >
                     <div
                       className={`w-6 h-6  flex items-center justify-center text-xs  ${
-                        storySession.currentTurn >= turnNum || isCompleted
+                        actualTurns >= turnNum || isCompleted
                           ? 'bg-green-500 text-white'
-                          : storySession.currentTurn === turnNum - 1 &&
+                          : nextTurnNumber === turnNum &&
                               !isCompleted
                             ? 'bg-purple-500 text-white'
                             : 'bg-gray-600 text-gray-300'
                       }`}
                     >
-                      {storySession.currentTurn >= turnNum || isCompleted ? (
+                      {actualTurns >= turnNum || isCompleted ? (
                         <CheckCircle className="w-3 h-3" />
                       ) : (
                         turnNum
@@ -926,9 +930,9 @@ export default function StoryWritingInterface({
 
                     <span
                       className={`${
-                        storySession.currentTurn === turnNum - 1 && !isCompleted
+                        nextTurnNumber === turnNum && !isCompleted
                           ? 'text-purple-300 '
-                          : storySession.currentTurn >= turnNum || isCompleted
+                          : actualTurns >= turnNum || isCompleted
                             ? 'text-green-300'
                             : 'text-gray-400'
                       }`}
