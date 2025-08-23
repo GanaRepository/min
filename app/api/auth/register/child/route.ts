@@ -120,6 +120,7 @@ export async function POST(request: Request) {
     // Return success response
     return NextResponse.json(
       {
+        success: true,
         message:
           'Welcome to Mintoons! Your magical storytelling journey begins now...',
         user: {

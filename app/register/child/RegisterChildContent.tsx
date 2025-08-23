@@ -929,8 +929,8 @@ function RegisterChildContent() {
 
     if (!formData.age.trim()) {
       newErrors.age = 'Age is required';
-    } else if (parseInt(formData.age) < 5 || parseInt(formData.age) > 17) {
-      newErrors.age = 'Age must be between 5 and 17';
+    } else if (parseInt(formData.age) < 2 || parseInt(formData.age) > 18) {
+      newErrors.age = 'Age must be between 2 and 18';
     }
 
     if (!formData.school.trim()) {
@@ -988,6 +988,8 @@ function RegisterChildContent() {
           age: parseInt(formData.age),
           school: formData.school,
           password: formData.password,
+          confirmPassword: formData.confirmPassword,
+          agreeToTerms: formData.agreeToTerms,
           role: 'child',
         }),
       });
@@ -995,8 +997,8 @@ function RegisterChildContent() {
       const data = await response.json();
       console.log('Registration response:', response.status, data);
 
-      if (response.ok && data.success) {
-        setToastMessage('Registration successful! Signing you in...');
+      if (response.ok && (data.success || data.message)) {
+        setToastMessage(data.message || 'Registration successful! Signing you in...');
         
         // Auto-login after successful registration
         const result = await signIn('credentials', {
@@ -1005,20 +1007,21 @@ function RegisterChildContent() {
           redirect: false,
         });
 
-        if (result?.ok) {
-          router.push(callbackUrl);
+        if (result?.ok && !result?.error) {
+          setTimeout(() => {
+            router.push(callbackUrl);
+          }, 1500);
         } else {
           setToastMessage('Registration successful! Please login to continue.');
           setTimeout(() => {
-            router.push('/login');
+            router.push(`/login/child?callbackUrl=${encodeURIComponent(callbackUrl)}`);
           }, 2000);
         }
       } else {
-        if (data.errors) {
-          setErrors(data.errors);
-        } else {
-          setToastMessage(data.message || 'Registration failed. Please try again.');
-        }
+        // Show the actual backend error message
+        const errorMessage = data.error || data.message || 'Registration failed. Please try again.';
+        setToastMessage(errorMessage);
+        console.error('Registration failed:', errorMessage);
       }
     } catch (error) {
       console.error('Registration error:', error);
@@ -1045,7 +1048,7 @@ function RegisterChildContent() {
     <ToastProvider>
       <div
         ref={containerRef}
-        className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black overflow-hidden relative pt-28 sm:pt-24 pb-8 sm:pb-12"
+        className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black overflow-hidden relative pt-20 sm:pt-24 lg:pt-28 pb-8 sm:pb-12"
       >
         {/* Animated background stars */}
         <div ref={starsRef} className="absolute inset-0 z-0">
@@ -1062,27 +1065,27 @@ function RegisterChildContent() {
           ))}
         </div>
 
-        <div className="flex flex-col lg:flex-row min-h-screen relative z-10">
+        <div className="flex flex-col xl:flex-row min-h-screen relative z-10">
           {/* Left side - Registration Form */}
           <motion.div
             ref={formRef}
             initial={{ opacity: 0, x: -50 }}
             animate={formInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.8 }}
-            className="flex-1 flex items-center justify-center p-4 sm:p-8"
+            className="flex-1 flex items-center justify-center p-4 sm:p-6 lg:p-8"
           >
-            <div className="w-full max-w-md">
+            <div className="w-full max-w-sm sm:max-w-md lg:max-w-lg xl:max-w-xl">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={formInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.8, delay: 0.2 }}
-                className="text-center mb-8"
+                className="text-center mb-6 sm:mb-8"
               >
-                  <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl  mb-2 block bg-gradient-to-r from-green-400 via-teal-300 to-cyan-400 bg-clip-text text-transparent">
+                <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl mb-2 block bg-gradient-to-r from-green-400 via-teal-300 to-cyan-400 bg-clip-text text-transparent">
                   Join Mintoons
                 </h1>
 
-                <p className="text-gray-300 text-sm sm:text-base">
+                <p className="text-gray-300 text-sm sm:text-base lg:text-lg">
                   Start your creative writing journey today
                 </p>
               </motion.div>
@@ -1091,13 +1094,13 @@ function RegisterChildContent() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={formInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.8, delay: 0.4 }}
-                className="bg-white/10 backdrop-blur-md border border-white/20  p-6 sm:p-8"
+                className="bg-gray-800 backdrop-blur-md border border-white/20 rounded-lg p-4 sm:p-6 lg:p-8"
               >
-                <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
+                <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5 lg:space-y-6">
                   {/* Name Fields */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 lg:gap-6">
                     <div>
-                      <label className="block text-sm  text-gray-300 mb-2">
+                      <label className="block text-sm font-medium text-gray-300 mb-2">
                         First Name
                       </label>
                       <div className="relative">
@@ -1111,7 +1114,7 @@ function RegisterChildContent() {
                           required
                           value={formData.firstName}
                           onChange={handleInputChange}
-                          className={`w-full pl-10 pr-4 py-3 bg-gray-800/50 border  text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 transition-all duration-300 ${
+                          className={`w-full pl-10 pr-4 py-3 sm:py-3.5 lg:py-4 bg-gray-800/50 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 transition-all duration-300 text-sm sm:text-base ${
                             errors.firstName ? 'border-red-500' : 'border-gray-600'
                           }`}
                           placeholder="First name"
@@ -1124,7 +1127,7 @@ function RegisterChildContent() {
                     </div>
 
                     <div>
-                      <label className="block text-sm  text-gray-300 mb-2">
+                      <label className="block text-sm font-medium text-gray-300 mb-2">
                         Last Name
                       </label>
                       <div className="relative">
@@ -1138,7 +1141,7 @@ function RegisterChildContent() {
                           required
                           value={formData.lastName}
                           onChange={handleInputChange}
-                          className={`w-full pl-10 pr-4 py-3 bg-gray-800/50 border  text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 transition-all duration-300 ${
+                          className={`w-full pl-10 pr-4 py-3 sm:py-3.5 lg:py-4 bg-gray-800/50 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 transition-all duration-300 text-sm sm:text-base ${
                             errors.lastName ? 'border-red-500' : 'border-gray-600'
                           }`}
                           placeholder="Last name"
@@ -1153,7 +1156,7 @@ function RegisterChildContent() {
 
                   {/* Email */}
                   <div>
-                    <label className="block text-sm  text-gray-300 mb-2">
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
                       Email Address
                     </label>
                     <div className="relative">
@@ -1167,7 +1170,7 @@ function RegisterChildContent() {
                         required
                         value={formData.email}
                         onChange={handleInputChange}
-                        className={`w-full pl-10 pr-4 py-3 bg-gray-800/50 border  text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 transition-all duration-300 ${
+                        className={`w-full pl-10 pr-4 py-3 sm:py-3.5 lg:py-4 bg-gray-800/50 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 transition-all duration-300 text-sm sm:text-base ${
                           errors.email ? 'border-red-500' : 'border-gray-600'
                         }`}
                         placeholder="Your email or parent's email"
@@ -1180,9 +1183,9 @@ function RegisterChildContent() {
                   </div>
 
                   {/* Age and School */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 lg:gap-6">
                     <div>
-                      <label className="block text-sm  text-gray-300 mb-2">
+                      <label className="block text-sm font-medium text-gray-300 mb-2">
                         Age
                       </label>
                       <div className="relative">
@@ -1194,14 +1197,14 @@ function RegisterChildContent() {
                           type="number"
                           name="age"
                           required
-                          min="5"
-                          max="17"
+                          min="2"
+                          max="18"
                           value={formData.age}
                           onChange={handleInputChange}
-                          className={`w-full pl-10 pr-4 py-3 bg-gray-800/50 border  text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 transition-all duration-300 ${
+                          className={`w-full pl-10 pr-4 py-3 sm:py-3.5 lg:py-4 bg-gray-800/50 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 transition-all duration-300 text-sm sm:text-base ${
                             errors.age ? 'border-red-500' : 'border-gray-600'
                           }`}
-                          placeholder="Age (5-17)"
+                          placeholder="Age (2-18)"
                           disabled={isLoading}
                         />
                       </div>
@@ -1211,7 +1214,7 @@ function RegisterChildContent() {
                     </div>
 
                     <div>
-                      <label className="block text-sm  text-gray-300 mb-2">
+                      <label className="block text-sm font-medium text-gray-300 mb-2">
                         School
                       </label>
                       <div className="relative">
@@ -1225,7 +1228,7 @@ function RegisterChildContent() {
                           required
                           value={formData.school}
                           onChange={handleInputChange}
-                          className={`w-full pl-10 pr-4 py-3 bg-gray-800/50 border  text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 transition-all duration-300 ${
+                          className={`w-full pl-10 pr-4 py-3 sm:py-3.5 lg:py-4 bg-gray-800/50 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 transition-all duration-300 text-sm sm:text-base ${
                             errors.school ? 'border-red-500' : 'border-gray-600'
                           }`}
                           placeholder="School name"
@@ -1240,7 +1243,7 @@ function RegisterChildContent() {
 
                   {/* Password */}
                   <div>
-                    <label className="block text-sm  text-gray-300 mb-2">
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
                       Password
                     </label>
                     <div className="relative">
@@ -1254,7 +1257,7 @@ function RegisterChildContent() {
                         required
                         value={formData.password}
                         onChange={handleInputChange}
-                        className={`w-full pl-10 pr-12 py-3 bg-gray-800/50 border  text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 transition-all duration-300 ${
+                        className={`w-full pl-10 pr-12 py-3 sm:py-3.5 lg:py-4 bg-gray-800/50 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 transition-all duration-300 text-sm sm:text-base ${
                           errors.password ? 'border-red-500' : 'border-gray-600'
                         }`}
                         placeholder="Create password"
@@ -1276,7 +1279,7 @@ function RegisterChildContent() {
 
                   {/* Confirm Password */}
                   <div>
-                    <label className="block text-sm  text-gray-300 mb-2">
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
                       Confirm Password
                     </label>
                     <div className="relative">
@@ -1290,7 +1293,7 @@ function RegisterChildContent() {
                         required
                         value={formData.confirmPassword}
                         onChange={handleInputChange}
-                        className={`w-full pl-10 pr-12 py-3 bg-gray-800/50 border  text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 transition-all duration-300 ${
+                        className={`w-full pl-10 pr-12 py-3 sm:py-3.5 lg:py-4 bg-gray-800/50 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 transition-all duration-300 text-sm sm:text-base ${
                           errors.confirmPassword ? 'border-red-500' : 'border-gray-600'
                         }`}
                         placeholder="Confirm password"
@@ -1321,7 +1324,7 @@ function RegisterChildContent() {
                       className="w-4 h-4 mt-1 bg-gray-700 border-gray-600 rounded focus:ring-green-500 focus:ring-2 text-green-600"
                       disabled={isLoading}
                     />
-                    <label htmlFor="agreeToTerms" className="text-xs text-gray-300 leading-relaxed">
+                    <label htmlFor="agreeToTerms" className="text-xs sm:text-sm text-gray-300 leading-relaxed">
                       I confirm that I have parental consent if under 13 and agree to
                       the{' '}
                       <Link
@@ -1350,7 +1353,7 @@ function RegisterChildContent() {
                   <button
                     type="submit"
                     disabled={isLoading}
-                    className="w-full bg-gradient-to-r from-green-500 to-green-600 text-white py-3 px-6 rounded-lg  transition-all duration-300 hover:from-green-600 hover:to-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-gray-900 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full bg-gradient-to-r from-green-500 to-green-600 text-white py-3 sm:py-3.5 lg:py-4 px-6 rounded-lg font-medium transition-all duration-300 hover:from-green-600 hover:to-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-gray-900 disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
                   >
                     {isLoading ? (
                       <div className="flex items-center justify-center">
@@ -1370,8 +1373,8 @@ function RegisterChildContent() {
                     <span className="text-gray-400 text-xs sm:text-sm">
                       Already have an account?{' '}
                       <Link
-                        href="/login"
-                        className="text-green-400 hover:text-green-300  transition-colors"
+                        href={`/login/child?callbackUrl=${encodeURIComponent(callbackUrl)}`}
+                        className="text-green-400 hover:text-green-300 font-medium transition-colors"
                       >
                         Sign in here
                       </Link>
@@ -1383,7 +1386,7 @@ function RegisterChildContent() {
           </motion.div>
 
           {/* Right side - Animated showcase */}
-          <div className="flex-1 relative overflow-hidden min-h-[400px] sm:min-h-0">
+          <div className="flex-1 relative overflow-hidden min-h-[300px] sm:min-h-[400px] lg:min-h-0 hidden lg:block">
             <motion.div
               ref={planetRef}
               className="absolute inset-0 flex items-center justify-center"
