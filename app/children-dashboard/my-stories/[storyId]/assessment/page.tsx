@@ -257,93 +257,76 @@ export default function StoryAssessmentPage() {
     );
   }
 
-  // Create a comprehensive assessment object from the API response with enhanced defaults
+  // Create a comprehensive assessment object from the API response
   const createComprehensiveAssessment = (
     assessment: any
   ): ComprehensiveAssessment => {
-    // Helper function to ensure we have meaningful scores instead of zeros
-    const ensureMinimumScore = (
-      score: number | undefined,
-      category: string
-    ): number => {
-      if (!score || score === 0) {
-        // Provide category-specific meaningful defaults
-        const defaults: { [key: string]: number } = {
-          grammar: 75,
-          vocabulary: 72,
-          creativity: 80,
-          structure: 73,
-          characterDevelopment: 70,
-          plotDevelopment: 72,
-          descriptiveWriting: 68,
-          sensoryDetails: 65,
-          plotLogic: 74,
-          causeEffect: 71,
-          problemSolving: 69,
-          themeRecognition: 67,
-          ageAppropriateness: 85,
-        };
-        return defaults[category] || 70;
+    // Helper function to get category scores with proper validation
+    const getCategoryScore = (category: string): number => {
+      if (assessment?.categoryScores) {
+        const score = assessment.categoryScores[
+          category as keyof typeof assessment.categoryScores
+        ] as number;
+        if (
+          typeof score === 'number' &&
+          !isNaN(score) &&
+          score >= 0 &&
+          score <= 100
+        ) {
+          return score;
+        }
       }
-      return score;
+
+      // Only fall back to legacy fields if new format doesn't exist or is invalid
+      switch (category) {
+        case 'grammar':
+          return assessment?.grammarScore || 0;
+        case 'creativity':
+          return assessment?.creativityScore || 0;
+        case 'vocabulary':
+          return assessment?.vocabularyScore || 0;
+        case 'structure':
+          return assessment?.structureScore || 0;
+        case 'characterDevelopment':
+          return assessment?.characterDevelopmentScore || 0;
+        case 'plotDevelopment':
+          return assessment?.plotDevelopmentScore || 0;
+        case 'descriptiveWriting':
+          return assessment?.descriptiveWritingScore || 0;
+        case 'sensoryDetails':
+          return assessment?.sensoryDetailsScore || 0;
+        case 'plotLogic':
+          return assessment?.plotLogicScore || 0;
+        case 'causeEffect':
+          return assessment?.causeEffectScore || 0;
+        case 'problemSolving':
+          return assessment?.problemSolvingScore || 0;
+        case 'themeRecognition':
+          return assessment?.themeRecognitionScore || 0;
+        case 'ageAppropriateness':
+          return assessment?.ageAppropriatenessScore || 0;
+        default:
+          return 0;
+      }
     };
 
     return {
-      overallScore: assessment?.overallScore || 75,
+      overallScore: assessment?.overallScore || 0,
 
       categoryScores: {
-        grammar: ensureMinimumScore(
-          assessment?.grammar || assessment?.categoryScores?.grammar,
-          'grammar'
-        ),
-        vocabulary: ensureMinimumScore(
-          assessment?.vocabulary || assessment?.categoryScores?.vocabulary,
-          'vocabulary'
-        ),
-        creativity: ensureMinimumScore(
-          assessment?.creativity || assessment?.categoryScores?.creativity,
-          'creativity'
-        ),
-        structure: ensureMinimumScore(
-          assessment?.structure || assessment?.categoryScores?.structure,
-          'structure'
-        ),
-        characterDevelopment: ensureMinimumScore(
-          assessment?.categoryScores?.characterDevelopment,
-          'characterDevelopment'
-        ),
-        plotDevelopment: ensureMinimumScore(
-          assessment?.categoryScores?.plotDevelopment,
-          'plotDevelopment'
-        ),
-        descriptiveWriting: ensureMinimumScore(
-          assessment?.categoryScores?.descriptiveWriting,
-          'descriptiveWriting'
-        ),
-        sensoryDetails: ensureMinimumScore(
-          assessment?.categoryScores?.sensoryDetails,
-          'sensoryDetails'
-        ),
-        plotLogic: ensureMinimumScore(
-          assessment?.categoryScores?.plotLogic,
-          'plotLogic'
-        ),
-        causeEffect: ensureMinimumScore(
-          assessment?.categoryScores?.causeEffect,
-          'causeEffect'
-        ),
-        problemSolving: ensureMinimumScore(
-          assessment?.categoryScores?.problemSolving,
-          'problemSolving'
-        ),
-        themeRecognition: ensureMinimumScore(
-          assessment?.categoryScores?.themeRecognition,
-          'themeRecognition'
-        ),
-        ageAppropriateness: ensureMinimumScore(
-          assessment?.categoryScores?.ageAppropriateness,
-          'ageAppropriateness'
-        ),
+        grammar: getCategoryScore('grammar'),
+        vocabulary: getCategoryScore('vocabulary'),
+        creativity: getCategoryScore('creativity'),
+        structure: getCategoryScore('structure'),
+        characterDevelopment: getCategoryScore('characterDevelopment'),
+        plotDevelopment: getCategoryScore('plotDevelopment'),
+        descriptiveWriting: getCategoryScore('descriptiveWriting'),
+        sensoryDetails: getCategoryScore('sensoryDetails'),
+        plotLogic: getCategoryScore('plotLogic'),
+        causeEffect: getCategoryScore('causeEffect'),
+        problemSolving: getCategoryScore('problemSolving'),
+        themeRecognition: getCategoryScore('themeRecognition'),
+        ageAppropriateness: getCategoryScore('ageAppropriateness'),
         readingLevel:
           assessment?.categoryScores?.readingLevel ||
           assessment?.readingLevel ||

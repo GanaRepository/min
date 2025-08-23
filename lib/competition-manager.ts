@@ -559,7 +559,7 @@ export class CompetitionManager {
           childId: story.childId._id || story.childId,
           childName: `${story.childId.firstName} ${story.childId.lastName}`,
           childEmail: story.childId.email,
-          score: story.aiScore || 70,
+          score: 0, // Failed assessment should score 0
           breakdown: { error: 'Comprehensive analysis failed' },
         });
       }
@@ -700,7 +700,7 @@ export class CompetitionManager {
           childId: story.childId._id || story.childId,
           childName: `${story.childId.firstName} ${story.childId.lastName}`,
           childEmail: story.childId.email,
-          score: 70,
+          score: 0, // Failed assessment should score 0
           breakdown: { error: 'Analysis failed' },
         });
       }
@@ -878,15 +878,11 @@ export class CompetitionManager {
         notes: 'Lightweight AI screening',
       };
     } catch (error) {
-      // Fallback to mathematical score with small boost
-      const fallbackScore = Math.min(
-        85,
-        (story.combinedScore || 70) + Math.random() * 10
+      // If assessment fails, don't provide a fake score
+      console.error('❌ Competition assessment failed:', error);
+      throw new Error(
+        `Competition assessment failed: ${error instanceof Error ? error.message : 'Unknown error'}`
       );
-      return {
-        score: Math.round(fallbackScore),
-        notes: 'Pattern-based scoring (AI unavailable)',
-      };
     }
   }
 
@@ -894,34 +890,49 @@ export class CompetitionManager {
    * Competition score calculation using assessment engine results
    */
   static calculateCompetitionScore(assessment: any, story: any) {
+    // Validate assessment exists and has valid scores
+    if (!assessment?.categoryScores) {
+      throw new Error(
+        'Cannot calculate competition score: missing assessment data'
+      );
+    }
+
     const scores = {
-      grammar:
-        assessment.integrityAnalysis?.plagiarismResult?.grammarScore || 70,
-      creativity: assessment.educationalAssessment?.creativityScore || 75,
-      structure: assessment.educationalAssessment?.structureScore || 70,
-      character: assessment.educationalAssessment?.characterScore || 70,
-      plot: assessment.educationalAssessment?.plotScore || 70,
-      vocabulary: assessment.educationalAssessment?.vocabularyScore || 70,
+      grammar: assessment.categoryScores.grammar,
+      creativity: assessment.categoryScores.creativity,
+      structure: assessment.categoryScores.structure,
+      characterDevelopment: assessment.categoryScores.characterDevelopment,
+      plotDevelopment: assessment.categoryScores.plotDevelopment,
+      vocabulary: assessment.categoryScores.vocabulary,
       wordCount: this.calculateWordCountScore(story.totalWords || 0),
-      originality: assessment.integrityAnalysis?.originalityScore || 80,
+      originality: assessment.integrityAnalysis?.originalityScore,
       aiPenalty:
-        assessment.integrityAnalysis?.aiDetectionResult?.overallScore || 100,
+        assessment.integrityAnalysis?.aiDetectionResult?.confidence || 0,
     };
+
+    // Validate all required scores exist
+    Object.entries(scores).forEach(([key, value]) => {
+      if (typeof value !== 'number' || isNaN(value)) {
+        throw new Error(
+          `Competition scoring failed: invalid ${key} score: ${value}`
+        );
+      }
+    });
 
     // Weighted competition scoring (prioritizes creativity and plot)
     const totalScore = Math.round(
       scores.grammar * 0.12 + // 12% - Grammar
         scores.creativity * 0.25 + // 25% - Creativity (highest)
         scores.structure * 0.1 + // 10% - Structure
-        scores.character * 0.12 + // 12% - Character
-        scores.plot * 0.15 + // 15% - Plot
+        scores.characterDevelopment * 0.12 + // 12% - Character Development
+        scores.plotDevelopment * 0.15 + // 15% - Plot Development
         scores.vocabulary * 0.1 + // 10% - Vocabulary
         scores.wordCount * 0.05 + // 5% - Word count
         scores.originality * 0.08 + // 8% - Originality
         (scores.aiPenalty / 100) * 0.03 // 3% - AI penalty
     );
 
-    const notes = `Competition Analysis: Creativity(${scores.creativity}%) Grammar(${scores.grammar}%) Plot(${scores.plot}%) Originality(${scores.originality}%) AI-Check(${scores.aiPenalty}%)`;
+    const notes = `Competition Analysis: Creativity(${scores.creativity}%) Grammar(${scores.grammar}%) Plot(${scores.plotDevelopment}%) Originality(${scores.originality}%) AI-Check(${scores.aiPenalty}%)`;
     return {
       totalScore: Math.min(100, Math.max(0, totalScore)),
       notes,
