@@ -154,19 +154,24 @@ export async function POST(
         // HUMAN-FIRST: Always keep as completed, add flags for mentor review
         status: 'completed',
         // Add integrity flags for mentor/admin review if concerns exist
-        ...(assessment.integrityAnalysis?.integrityRisk === 'critical' || 
-            assessment.integrityAnalysis?.integrityRisk === 'high' ||
-            assessment.integrityAnalysis?.aiDetectionResult?.likelihood === 'high' ||
-            assessment.integrityAnalysis?.aiDetectionResult?.likelihood === 'very_high') && {
+        ...((assessment.integrityAnalysis?.integrityRisk === 'critical' ||
+          assessment.integrityAnalysis?.integrityRisk === 'high' ||
+          assessment.integrityAnalysis?.aiDetectionResult?.likelihood ===
+            'high' ||
+          assessment.integrityAnalysis?.aiDetectionResult?.likelihood ===
+            'very_high') && {
           integrityFlags: {
             needsReview: true,
-            aiDetectionLevel: assessment.integrityAnalysis.aiDetectionResult?.likelihood || 'unknown',
-            plagiarismRisk: assessment.integrityAnalysis.plagiarismResult?.riskLevel || 'low',
+            aiDetectionLevel:
+              assessment.integrityAnalysis.aiDetectionResult?.likelihood ||
+              'unknown',
+            plagiarismRisk:
+              assessment.integrityAnalysis.plagiarismResult?.riskLevel || 'low',
             integrityRisk: assessment.integrityAnalysis.integrityRisk,
             flaggedAt: new Date(),
-            reviewStatus: 'pending_mentor_review'
-          }
-        }
+            reviewStatus: 'pending_mentor_review',
+          },
+        }),
       };
 
       await StorySession.findByIdAndUpdate(actualSessionId, updateData);

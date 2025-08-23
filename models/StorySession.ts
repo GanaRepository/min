@@ -782,7 +782,11 @@ export interface IStorySession extends Document {
     plagiarismRisk: string;
     integrityRisk: string;
     flaggedAt: Date;
-    reviewStatus: 'pending_mentor_review' | 'reviewed_by_mentor' | 'reviewed_by_admin' | 'cleared';
+    reviewStatus:
+      | 'pending_mentor_review'
+      | 'reviewed_by_mentor'
+      | 'reviewed_by_admin'
+      | 'cleared';
     mentorComments?: string[];
     adminNotes?: string;
   };
@@ -983,13 +987,20 @@ const StorySessionSchema = new Schema<IStorySession>(
       },
       reviewStatus: {
         type: String,
-        enum: ['pending_mentor_review', 'reviewed_by_mentor', 'reviewed_by_admin', 'cleared'],
+        enum: [
+          'pending_mentor_review',
+          'reviewed_by_mentor',
+          'reviewed_by_admin',
+          'cleared',
+        ],
         default: 'pending_mentor_review',
         index: true,
       },
-      mentorComments: [{
-        type: String,
-      }],
+      mentorComments: [
+        {
+          type: String,
+        },
+      ],
       adminNotes: {
         type: String,
       },

@@ -136,7 +136,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { firstName, lastName, email, password, bio, experience, specializations } = await request.json();
+    const {
+      firstName,
+      lastName,
+      email,
+      password,
+      bio,
+      experience,
+      specializations,
+    } = await request.json();
 
     // Validate required fields
     if (!firstName || !lastName || !email || !password) {

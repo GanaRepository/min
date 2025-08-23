@@ -622,34 +622,61 @@ export async function GET(
       publishedAt: story.publishedAt || null,
       competitionEligible: story.competitionEligible || false,
       competitionEntries: story.competitionEntries || [],
-      assessment: story.assessment ? {
-        // CRITICAL FIX: Map comprehensive assessment structure properly
-        // Legacy fields for backward compatibility (expected by frontend)
-        overallScore: story.assessment.overallScore || 0,
-        creativity: story.assessment.categoryScores?.creativity || story.assessment.creativityScore || 0,
-        grammar: story.assessment.categoryScores?.grammar || story.assessment.grammarScore || 0,
-        vocabulary: story.assessment.categoryScores?.vocabulary || story.assessment.vocabularyScore || 0,
-        structure: story.assessment.categoryScores?.structure || story.assessment.structureScore || 0,
-        
-        // Include all comprehensive assessment data for the new assessment page
-        categoryScores: story.assessment.categoryScores || {},
-        integrityAnalysis: story.assessment.integrityAnalysis || {},
-        educationalFeedback: story.assessment.educationalFeedback || {},
-        progressTracking: story.assessment.progressTracking || {},
-        recommendations: story.assessment.recommendations || {},
-        integrityStatus: story.assessment.integrityStatus || { status: 'PASS', message: 'Assessment completed' },
-        
-        // Assessment metadata
-        assessmentVersion: story.assessment.assessmentVersion || '1.0',
-        assessmentDate: story.assessment.assessmentDate || null,
-        assessmentType: story.assessment.assessmentType || 'standard',
-        
-        // Legacy fields for components that still expect them
-        feedback: story.assessment.educationalFeedback?.teacherComment || story.assessment.feedback || '',
-        strengths: story.assessment.educationalFeedback?.strengths || story.assessment.strengths || [],
-        improvements: story.assessment.educationalFeedback?.improvements || story.assessment.improvements || [],
-        integrityRisk: story.assessment.integrityAnalysis?.integrityRisk || 'low'
-      } : null,
+      assessment: story.assessment
+        ? {
+            // CRITICAL FIX: Map comprehensive assessment structure properly
+            // Legacy fields for backward compatibility (expected by frontend)
+            overallScore: story.assessment.overallScore || 0,
+            creativity:
+              story.assessment.categoryScores?.creativity ||
+              story.assessment.creativityScore ||
+              0,
+            grammar:
+              story.assessment.categoryScores?.grammar ||
+              story.assessment.grammarScore ||
+              0,
+            vocabulary:
+              story.assessment.categoryScores?.vocabulary ||
+              story.assessment.vocabularyScore ||
+              0,
+            structure:
+              story.assessment.categoryScores?.structure ||
+              story.assessment.structureScore ||
+              0,
+
+            // Include all comprehensive assessment data for the new assessment page
+            categoryScores: story.assessment.categoryScores || {},
+            integrityAnalysis: story.assessment.integrityAnalysis || {},
+            educationalFeedback: story.assessment.educationalFeedback || {},
+            progressTracking: story.assessment.progressTracking || {},
+            recommendations: story.assessment.recommendations || {},
+            integrityStatus: story.assessment.integrityStatus || {
+              status: 'PASS',
+              message: 'Assessment completed',
+            },
+
+            // Assessment metadata
+            assessmentVersion: story.assessment.assessmentVersion || '1.0',
+            assessmentDate: story.assessment.assessmentDate || null,
+            assessmentType: story.assessment.assessmentType || 'standard',
+
+            // Legacy fields for components that still expect them
+            feedback:
+              story.assessment.educationalFeedback?.teacherComment ||
+              story.assessment.feedback ||
+              '',
+            strengths:
+              story.assessment.educationalFeedback?.strengths ||
+              story.assessment.strengths ||
+              [],
+            improvements:
+              story.assessment.educationalFeedback?.improvements ||
+              story.assessment.improvements ||
+              [],
+            integrityRisk:
+              story.assessment.integrityAnalysis?.integrityRisk || 'low',
+          }
+        : null,
       assessmentAttempts: story.assessmentAttempts || 0,
       content: storyContent.trim() || story.content || '',
       aiOpening: story.aiOpening || null,

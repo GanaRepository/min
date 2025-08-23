@@ -195,7 +195,9 @@ export default function ViewMentor() {
               </div>
               <div className="min-w-0 flex-1">
                 <p className="text-sm text-gray-400">Email</p>
-                <p className="text-white font-medium break-all">{mentor.email}</p>
+                <p className="text-white font-medium break-all">
+                  {mentor.email}
+                </p>
               </div>
             </div>
 
@@ -205,7 +207,9 @@ export default function ViewMentor() {
               </div>
               <div>
                 <p className="text-sm text-gray-400">Assigned Students</p>
-                <p className="text-white font-medium">{mentor.assignedStudents}</p>
+                <p className="text-white font-medium">
+                  {mentor.assignedStudents}
+                </p>
               </div>
             </div>
 
@@ -234,7 +238,9 @@ export default function ViewMentor() {
         {/* Mentor Profile */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="bg-gray-800 rounded-xl p-6">
-            <h3 className="text-lg font-semibold text-white mb-4">Profile Information</h3>
+            <h3 className="text-lg font-semibold text-white mb-4">
+              Profile Information
+            </h3>
             <div className="space-y-4">
               <div>
                 <label className="text-sm text-gray-400">Bio</label>
@@ -269,7 +275,9 @@ export default function ViewMentor() {
           </div>
 
           <div className="bg-gray-800 rounded-xl p-6">
-            <h3 className="text-lg font-semibold text-white mb-4">Account Status</h3>
+            <h3 className="text-lg font-semibold text-white mb-4">
+              Account Status
+            </h3>
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <span className="text-gray-400">Account Status</span>
@@ -297,7 +305,9 @@ export default function ViewMentor() {
         {/* Assigned Students */}
         {mentor.assignedChildren && mentor.assignedChildren.length > 0 && (
           <div className="bg-gray-800 rounded-xl p-6">
-            <h3 className="text-lg font-semibold text-white mb-4">Assigned Students</h3>
+            <h3 className="text-lg font-semibold text-white mb-4">
+              Assigned Students
+            </h3>
             <div className="space-y-3">
               {mentor.assignedChildren.map((student) => (
                 <div
@@ -332,7 +342,9 @@ export default function ViewMentor() {
         {/* Recent Activity */}
         {mentor.recentActivity && mentor.recentActivity.length > 0 && (
           <div className="bg-gray-800 rounded-xl p-6">
-            <h3 className="text-lg font-semibold text-white mb-4">Recent Activity</h3>
+            <h3 className="text-lg font-semibold text-white mb-4">
+              Recent Activity
+            </h3>
             <div className="space-y-3">
               {mentor.recentActivity.slice(0, 10).map((activity, index) => (
                 <div

@@ -523,7 +523,10 @@ export class AIAssessmentEngine {
     let mentorNote = '';
 
     // Collect data for mentor/admin review
-    if (aiDetectionResult.likelihood === 'very_high' || aiDetectionResult.likelihood === 'high') {
+    if (
+      aiDetectionResult.likelihood === 'very_high' ||
+      aiDetectionResult.likelihood === 'high'
+    ) {
       adminFlags.push('AI_DETECTION_HIGH');
       mentorNote += `🤖 High AI detection confidence (${aiDetectionResult.likelihood}). `;
     }
@@ -541,20 +544,22 @@ export class AIAssessmentEngine {
     // Always provide encouraging message to child, but include mentor guidance
     if (adminFlags.length > 0) {
       mentorNote += `👨‍🏫 MENTOR: Please review this story and provide guidance through comments.`;
-      
+
       return {
         status: 'PASS', // Always pass for children
         message: '✅ STORY COMPLETED SUCCESSFULLY',
-        recommendation: 'Great work completing your story! Your mentor may provide additional feedback.',
+        recommendation:
+          'Great work completing your story! Your mentor may provide additional feedback.',
         mentorNote,
-        adminFlags
+        adminFlags,
       };
     }
 
     return {
       status: 'PASS',
       message: '✅ EXCELLENT CREATIVE WRITING',
-      recommendation: 'Outstanding original work! Keep up the great creativity.',
+      recommendation:
+        'Outstanding original work! Keep up the great creativity.',
     };
   }
 

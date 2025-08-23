@@ -922,7 +922,8 @@ export default function StoryDetailPage() {
                       Assessment Results Available
                     </h2>
                     <p className="text-gray-300 mb-6">
-                      Your story has been assessed! View the detailed results including scores, feedback, and recommendations.
+                      Your story has been assessed! View the detailed results
+                      including scores, feedback, and recommendations.
                     </p>
                     <Link
                       href={`/children-dashboard/my-stories/${story._id}/assessment`}

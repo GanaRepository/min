@@ -5,7 +5,17 @@ import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, Save, User, Mail, Lock, FileText, Tag, Eye, EyeOff } from 'lucide-react';
+import {
+  ArrowLeft,
+  Save,
+  User,
+  Mail,
+  Lock,
+  FileText,
+  Tag,
+  Eye,
+  EyeOff,
+} from 'lucide-react';
 import { motion } from 'framer-motion';
 import {
   ToastProvider,
@@ -332,7 +342,11 @@ export default function CreateMentorPage() {
                     onClick={toggleConfirmPasswordVisibility}
                     className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-300 transition-colors"
                   >
-                    {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                    {showConfirmPassword ? (
+                      <EyeOff size={20} />
+                    ) : (
+                      <Eye size={20} />
+                    )}
                   </button>
                 </div>
                 {errors.confirmPassword && (

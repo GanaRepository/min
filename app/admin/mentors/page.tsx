@@ -190,16 +190,20 @@ export default function MentorsPage() {
                   <h3 className="text-white font-semibold text-lg leading-tight mb-1">
                     {mentor.firstName} {mentor.lastName}
                   </h3>
-                  <p className="text-gray-400 text-sm truncate mb-2">{mentor.email}</p>
+                  <p className="text-gray-400 text-sm truncate mb-2">
+                    {mentor.email}
+                  </p>
                   <div className="flex items-center">
                     <div
                       className={`w-2 h-2  mr-2 ${
                         mentor.isActive ? 'bg-green-500' : 'bg-red-500'
                       }`}
                     ></div>
-                    <span className={`text-xs font-medium ${
-                      mentor.isActive ? 'text-green-400' : 'text-red-400'
-                    }`}>
+                    <span
+                      className={`text-xs font-medium ${
+                        mentor.isActive ? 'text-green-400' : 'text-red-400'
+                      }`}
+                    >
                       {mentor.isActive ? 'Active' : 'Inactive'}
                     </span>
                   </div>
@@ -221,14 +225,18 @@ export default function MentorsPage() {
                   <div className="w-8 h-8 bg-green-500/20  flex items-center justify-center mx-auto mb-2">
                     <BookOpen size={16} className="text-green-400" />
                   </div>
-                  <p className="text-xl font-bold text-white mb-1">{mentor.totalStories}</p>
+                  <p className="text-xl font-bold text-white mb-1">
+                    {mentor.totalStories}
+                  </p>
                   <p className="text-xs text-gray-400 font-medium">Stories</p>
                 </div>
                 <div className="text-center p-4 bg-gray-700/40  border border-gray-600/50">
                   <div className="w-8 h-8 bg-orange-500/20  flex items-center justify-center mx-auto mb-2">
                     <MessageSquare size={16} className="text-orange-400" />
                   </div>
-                  <p className="text-xl font-bold text-white mb-1">{mentor.totalComments}</p>
+                  <p className="text-xl font-bold text-white mb-1">
+                    {mentor.totalComments}
+                  </p>
                   <p className="text-xs text-gray-400 font-medium">Comments</p>
                 </div>
               </div>
@@ -241,7 +249,7 @@ export default function MentorsPage() {
                 </div>
                 <div className="flex items-center space-x-1">
                   <Link href={`/admin/mentors/${mentor._id}`}>
-                    <button 
+                    <button
                       className="p-2.5 text-gray-400 hover:text-blue-400 hover:bg-blue-400/10  transition-all duration-200"
                       title="View Details"
                     >
@@ -249,7 +257,7 @@ export default function MentorsPage() {
                     </button>
                   </Link>
                   <Link href={`/admin/mentors/${mentor._id}/edit`}>
-                    <button 
+                    <button
                       className="p-2.5 text-gray-400 hover:text-green-400 hover:bg-green-400/10  transition-all duration-200"
                       title="Edit Mentor"
                     >
@@ -280,7 +288,9 @@ export default function MentorsPage() {
             <div className="w-20 h-20 bg-gray-700  flex items-center justify-center mx-auto mb-6">
               <Users size={32} className="text-gray-500" />
             </div>
-            <h3 className="text-xl font-semibold text-gray-300 mb-3">No mentors found</h3>
+            <h3 className="text-xl font-semibold text-gray-300 mb-3">
+              No mentors found
+            </h3>
             <p className="text-gray-500 mb-8 max-w-md mx-auto">
               {searchTerm
                 ? 'Try adjusting your search criteria or clear the search to see all mentors.'
@@ -303,9 +313,9 @@ export default function MentorsPage() {
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
               {/* Page Info */}
               <div className="text-gray-400 text-sm">
-                Showing {((pagination.page - 1) * pagination.limit) + 1} to{' '}
-                {Math.min(pagination.page * pagination.limit, pagination.total)} of{' '}
-                {pagination.total} mentors
+                Showing {(pagination.page - 1) * pagination.limit + 1} to{' '}
+                {Math.min(pagination.page * pagination.limit, pagination.total)}{' '}
+                of {pagination.total} mentors
               </div>
 
               {/* Pagination Controls */}
@@ -319,23 +329,27 @@ export default function MentorsPage() {
                 </button>
 
                 <div className="flex items-center space-x-1">
-                  {Array.from({ length: Math.min(5, pagination.pages) }, (_, i) => {
-                    const pageNum =
-                      Math.max(1, Math.min(pagination.pages - 4, page - 2)) + i;
-                    return (
-                      <button
-                        key={pageNum}
-                        onClick={() => setPage(pageNum)}
-                        className={`px-3 py-2  font-medium transition-all duration-200 ${
-                          page === pageNum
-                            ? 'bg-purple-600 border border-purple-500 text-white shadow-lg'
-                            : 'bg-gray-700 border border-gray-600 text-gray-300 hover:bg-gray-600 hover:border-gray-500'
-                        }`}
-                      >
-                        {pageNum}
-                      </button>
-                    );
-                  })}
+                  {Array.from(
+                    { length: Math.min(5, pagination.pages) },
+                    (_, i) => {
+                      const pageNum =
+                        Math.max(1, Math.min(pagination.pages - 4, page - 2)) +
+                        i;
+                      return (
+                        <button
+                          key={pageNum}
+                          onClick={() => setPage(pageNum)}
+                          className={`px-3 py-2  font-medium transition-all duration-200 ${
+                            page === pageNum
+                              ? 'bg-purple-600 border border-purple-500 text-white shadow-lg'
+                              : 'bg-gray-700 border border-gray-600 text-gray-300 hover:bg-gray-600 hover:border-gray-500'
+                          }`}
+                        >
+                          {pageNum}
+                        </button>
+                      );
+                    }
+                  )}
                 </div>
 
                 <button

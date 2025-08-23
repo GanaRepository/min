@@ -207,8 +207,12 @@ export async function POST(request: NextRequest) {
         console.log(
           `🔍 Integrity Status: ${assessment.integrityStatus.status}`
         );
-        console.log(`🔍 Integrity Risk: ${assessment.integrityAnalysis.integrityRisk}`);
-        console.log(`🤖 AI Detection: ${assessment.integrityAnalysis.aiDetectionResult?.likelihood || 'unknown'}`);
+        console.log(
+          `🔍 Integrity Risk: ${assessment.integrityAnalysis.integrityRisk}`
+        );
+        console.log(
+          `🤖 AI Detection: ${assessment.integrityAnalysis.aiDetectionResult?.likelihood || 'unknown'}`
+        );
 
         // Create comprehensive assessment data structure
         const assessmentData = {
@@ -251,26 +255,38 @@ export async function POST(request: NextRequest) {
         // HUMAN-FIRST APPROACH: Never restrict, just tag for mentor/admin review
         // Always keep status as 'completed' - let humans decide what to do
         updateData.status = 'completed';
-        
+
         // Add integrity tags for mentor/admin visibility
-        if (assessment.integrityAnalysis.integrityRisk === 'critical' || 
-            assessment.integrityAnalysis.integrityRisk === 'high' ||
-            assessment.integrityAnalysis.aiDetectionResult?.likelihood === 'high' ||
-            assessment.integrityAnalysis.aiDetectionResult?.likelihood === 'very_high') {
-          
+        if (
+          assessment.integrityAnalysis.integrityRisk === 'critical' ||
+          assessment.integrityAnalysis.integrityRisk === 'high' ||
+          assessment.integrityAnalysis.aiDetectionResult?.likelihood ===
+            'high' ||
+          assessment.integrityAnalysis.aiDetectionResult?.likelihood ===
+            'very_high'
+        ) {
           // Add integrity flags for admin/mentor review (not user restriction)
           updateData.integrityFlags = {
             needsReview: true,
-            aiDetectionLevel: assessment.integrityAnalysis.aiDetectionResult?.likelihood || 'unknown',
-            plagiarismRisk: assessment.integrityAnalysis.plagiarismResult?.riskLevel || 'low',
+            aiDetectionLevel:
+              assessment.integrityAnalysis.aiDetectionResult?.likelihood ||
+              'unknown',
+            plagiarismRisk:
+              assessment.integrityAnalysis.plagiarismResult?.riskLevel || 'low',
             integrityRisk: assessment.integrityAnalysis.integrityRisk,
             flaggedAt: new Date(),
-            reviewStatus: 'pending_mentor_review'
+            reviewStatus: 'pending_mentor_review',
           };
-          
-          console.log('🏷️ Story tagged for mentor/admin review due to integrity concerns');
-          console.log(`📊 AI Detection: ${assessment.integrityAnalysis.aiDetectionResult?.likelihood}`);
-          console.log(`📊 Plagiarism Risk: ${assessment.integrityAnalysis.plagiarismResult?.riskLevel}`);
+
+          console.log(
+            '🏷️ Story tagged for mentor/admin review due to integrity concerns'
+          );
+          console.log(
+            `📊 AI Detection: ${assessment.integrityAnalysis.aiDetectionResult?.likelihood}`
+          );
+          console.log(
+            `📊 Plagiarism Risk: ${assessment.integrityAnalysis.plagiarismResult?.riskLevel}`
+          );
         } else {
           console.log('✅ Assessment completed - no integrity concerns');
         }
@@ -282,10 +298,16 @@ export async function POST(request: NextRequest) {
           assessmentError
         );
         console.error('Assessment error details:', {
-          message: assessmentError instanceof Error ? assessmentError.message : 'Unknown error',
-          stack: assessmentError instanceof Error ? assessmentError.stack : 'No stack trace',
+          message:
+            assessmentError instanceof Error
+              ? assessmentError.message
+              : 'Unknown error',
+          stack:
+            assessmentError instanceof Error
+              ? assessmentError.stack
+              : 'No stack trace',
           sessionId,
-          turnNumber
+          turnNumber,
         });
 
         // Fallback assessment data
@@ -319,7 +341,7 @@ export async function POST(request: NextRequest) {
       updateKeys: Object.keys(updateData),
       hasAssessment: !!updateData.assessment,
       status: updateData.status,
-      hasIntegrityFlags: !!updateData.integrityFlags
+      hasIntegrityFlags: !!updateData.integrityFlags,
     });
 
     await StorySession.findByIdAndUpdate(sessionId, updateData);
@@ -348,16 +370,19 @@ export async function POST(request: NextRequest) {
       },
       // Include assessment data if story is completed
       ...(turnNumber >= 7 && {
-          assessment: updateData.assessment ? {
-            overallScore: updateData.assessment.overallScore,
-            categoryScores: updateData.assessment.categoryScores,
-            integrityStatus: updateData.assessment.integrityStatus?.status || 'PASS',
-            completedAt: updateData.completedAt,
-            message: 'Story completed and assessed!',
-            // Include full assessment for frontend
-            fullAssessment: updateData.assessment,
-          } : null,
-        }),
+        assessment: updateData.assessment
+          ? {
+              overallScore: updateData.assessment.overallScore,
+              categoryScores: updateData.assessment.categoryScores,
+              integrityStatus:
+                updateData.assessment.integrityStatus?.status || 'PASS',
+              completedAt: updateData.completedAt,
+              message: 'Story completed and assessed!',
+              // Include full assessment for frontend
+              fullAssessment: updateData.assessment,
+            }
+          : null,
+      }),
     };
 
     console.log(`✅ Turn ${turnNumber} processed successfully`);

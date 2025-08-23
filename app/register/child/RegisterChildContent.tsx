@@ -737,7 +737,6 @@
 
 // export default RegisterChildContent;
 
-
 // app/register/child/RegisterChildContent.tsx
 'use client';
 
@@ -818,7 +817,7 @@ function RegisterChildContent() {
 
   useEffect(() => {
     setMounted(true);
-    
+
     // Check for error in URL params (if redirected from failed registration)
     const errorParam = searchParams.get('error');
     if (errorParam) {
@@ -869,13 +868,20 @@ function RegisterChildContent() {
     }
   }, [toastMessage]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value, type } = e.target;
     const checked = (e.target as HTMLInputElement).checked;
 
     setFormData((prev) => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : (name === 'email' ? value.toLowerCase() : value),
+      [name]:
+        type === 'checkbox'
+          ? checked
+          : name === 'email'
+            ? value.toLowerCase()
+            : value,
     }));
 
     // Clear error when user starts typing
@@ -998,8 +1004,10 @@ function RegisterChildContent() {
       console.log('Registration response:', response.status, data);
 
       if (response.ok && (data.success || data.message)) {
-        setToastMessage(data.message || 'Registration successful! Signing you in...');
-        
+        setToastMessage(
+          data.message || 'Registration successful! Signing you in...'
+        );
+
         // Auto-login after successful registration
         const result = await signIn('credentials', {
           email: formData.email,
@@ -1014,12 +1022,17 @@ function RegisterChildContent() {
         } else {
           setToastMessage('Registration successful! Please login to continue.');
           setTimeout(() => {
-            router.push(`/login/child?callbackUrl=${encodeURIComponent(callbackUrl)}`);
+            router.push(
+              `/login/child?callbackUrl=${encodeURIComponent(callbackUrl)}`
+            );
           }, 2000);
         }
       } else {
         // Show the actual backend error message
-        const errorMessage = data.error || data.message || 'Registration failed. Please try again.';
+        const errorMessage =
+          data.error ||
+          data.message ||
+          'Registration failed. Please try again.';
         setToastMessage(errorMessage);
         console.error('Registration failed:', errorMessage);
       }
@@ -1096,7 +1109,10 @@ function RegisterChildContent() {
                 transition={{ duration: 0.8, delay: 0.4 }}
                 className="bg-gray-800 backdrop-blur-md border border-white/20 rounded-lg p-4 sm:p-6 lg:p-8"
               >
-                <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5 lg:space-y-6">
+                <form
+                  onSubmit={handleSubmit}
+                  className="space-y-4 sm:space-y-5 lg:space-y-6"
+                >
                   {/* Name Fields */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 lg:gap-6">
                     <div>
@@ -1115,14 +1131,18 @@ function RegisterChildContent() {
                           value={formData.firstName}
                           onChange={handleInputChange}
                           className={`w-full pl-10 pr-4 py-3 sm:py-3.5 lg:py-4 bg-gray-800/50 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 transition-all duration-300 text-sm sm:text-base ${
-                            errors.firstName ? 'border-red-500' : 'border-gray-600'
+                            errors.firstName
+                              ? 'border-red-500'
+                              : 'border-gray-600'
                           }`}
                           placeholder="First name"
                           disabled={isLoading}
                         />
                       </div>
                       {errors.firstName && (
-                        <p className="text-red-400 text-xs mt-1">{errors.firstName}</p>
+                        <p className="text-red-400 text-xs mt-1">
+                          {errors.firstName}
+                        </p>
                       )}
                     </div>
 
@@ -1142,14 +1162,18 @@ function RegisterChildContent() {
                           value={formData.lastName}
                           onChange={handleInputChange}
                           className={`w-full pl-10 pr-4 py-3 sm:py-3.5 lg:py-4 bg-gray-800/50 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 transition-all duration-300 text-sm sm:text-base ${
-                            errors.lastName ? 'border-red-500' : 'border-gray-600'
+                            errors.lastName
+                              ? 'border-red-500'
+                              : 'border-gray-600'
                           }`}
                           placeholder="Last name"
                           disabled={isLoading}
                         />
                       </div>
                       {errors.lastName && (
-                        <p className="text-red-400 text-xs mt-1">{errors.lastName}</p>
+                        <p className="text-red-400 text-xs mt-1">
+                          {errors.lastName}
+                        </p>
                       )}
                     </div>
                   </div>
@@ -1178,7 +1202,9 @@ function RegisterChildContent() {
                       />
                     </div>
                     {errors.email && (
-                      <p className="text-red-400 text-xs mt-1">{errors.email}</p>
+                      <p className="text-red-400 text-xs mt-1">
+                        {errors.email}
+                      </p>
                     )}
                   </div>
 
@@ -1209,7 +1235,9 @@ function RegisterChildContent() {
                         />
                       </div>
                       {errors.age && (
-                        <p className="text-red-400 text-xs mt-1">{errors.age}</p>
+                        <p className="text-red-400 text-xs mt-1">
+                          {errors.age}
+                        </p>
                       )}
                     </div>
 
@@ -1236,7 +1264,9 @@ function RegisterChildContent() {
                         />
                       </div>
                       {errors.school && (
-                        <p className="text-red-400 text-xs mt-1">{errors.school}</p>
+                        <p className="text-red-400 text-xs mt-1">
+                          {errors.school}
+                        </p>
                       )}
                     </div>
                   </div>
@@ -1269,11 +1299,17 @@ function RegisterChildContent() {
                         className="absolute right-3 top-3 text-gray-400 hover:text-white transition-colors"
                         onClick={togglePasswordVisibility}
                       >
-                        {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                        {showPassword ? (
+                          <EyeOff size={18} />
+                        ) : (
+                          <Eye size={18} />
+                        )}
                       </button>
                     </div>
                     {errors.password && (
-                      <p className="text-red-400 text-xs mt-1">{errors.password}</p>
+                      <p className="text-red-400 text-xs mt-1">
+                        {errors.password}
+                      </p>
                     )}
                   </div>
 
@@ -1294,7 +1330,9 @@ function RegisterChildContent() {
                         value={formData.confirmPassword}
                         onChange={handleInputChange}
                         className={`w-full pl-10 pr-12 py-3 sm:py-3.5 lg:py-4 bg-gray-800/50 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 transition-all duration-300 text-sm sm:text-base ${
-                          errors.confirmPassword ? 'border-red-500' : 'border-gray-600'
+                          errors.confirmPassword
+                            ? 'border-red-500'
+                            : 'border-gray-600'
                         }`}
                         placeholder="Confirm password"
                         minLength={8}
@@ -1305,11 +1343,17 @@ function RegisterChildContent() {
                         className="absolute right-3 top-3 text-gray-400 hover:text-white transition-colors"
                         onClick={toggleConfirmPasswordVisibility}
                       >
-                        {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                        {showConfirmPassword ? (
+                          <EyeOff size={18} />
+                        ) : (
+                          <Eye size={18} />
+                        )}
                       </button>
                     </div>
                     {errors.confirmPassword && (
-                      <p className="text-red-400 text-xs mt-1">{errors.confirmPassword}</p>
+                      <p className="text-red-400 text-xs mt-1">
+                        {errors.confirmPassword}
+                      </p>
                     )}
                   </div>
 
@@ -1324,9 +1368,12 @@ function RegisterChildContent() {
                       className="w-4 h-4 mt-1 bg-gray-700 border-gray-600 rounded focus:ring-green-500 focus:ring-2 text-green-600"
                       disabled={isLoading}
                     />
-                    <label htmlFor="agreeToTerms" className="text-xs sm:text-sm text-gray-300 leading-relaxed">
-                      I confirm that I have parental consent if under 13 and agree to
-                      the{' '}
+                    <label
+                      htmlFor="agreeToTerms"
+                      className="text-xs sm:text-sm text-gray-300 leading-relaxed"
+                    >
+                      I confirm that I have parental consent if under 13 and
+                      agree to the{' '}
                       <Link
                         href="/terms-of-service"
                         className="text-green-400 hover:text-green-300 underline"
@@ -1346,7 +1393,9 @@ function RegisterChildContent() {
                     </label>
                   </div>
                   {errors.agreeToTerms && (
-                    <p className="text-red-400 text-xs mt-1">{errors.agreeToTerms}</p>
+                    <p className="text-red-400 text-xs mt-1">
+                      {errors.agreeToTerms}
+                    </p>
                   )}
 
                   {/* Submit Button */}
@@ -1542,19 +1591,24 @@ function RegisterChildContent() {
 
         {/* Toast notifications */}
         {toastMessage && (
-          <Toast 
-            variant={toastMessage.startsWith('Registration Failed') ? 'destructive' : 'default'}
+          <Toast
+            variant={
+              toastMessage.startsWith('Registration Failed')
+                ? 'destructive'
+                : 'default'
+            }
             className="z-50"
           >
             <ToastTitle>
               {toastMessage.startsWith('Registration Failed')
                 ? 'Registration Error'
-                : toastMessage.includes('successful') || toastMessage.includes('Welcome')
-                ? 'Success'
-                : 'Info'}
+                : toastMessage.includes('successful') ||
+                    toastMessage.includes('Welcome')
+                  ? 'Success'
+                  : 'Info'}
             </ToastTitle>
             <ToastDescription>
-              {toastMessage.startsWith('Registration Failed') 
+              {toastMessage.startsWith('Registration Failed')
                 ? toastMessage.replace('Registration Failed: ', '')
                 : toastMessage}
             </ToastDescription>

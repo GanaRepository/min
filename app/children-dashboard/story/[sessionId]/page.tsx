@@ -5,7 +5,8 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { motion, AnimatePresence } from 'framer-motion';
+import Link from 'next/link';
+import { motion } from 'framer-motion';
 import TerminalLoader from '../../../../components/TerminalLoader';
 import {
   ArrowLeft,
@@ -102,7 +103,6 @@ export default function StoryWritingInterface({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isAIGenerating, setIsAIGenerating] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [showAssessment, setShowAssessment] = useState(false);
   const [assessment, setAssessment] = useState<Assessment | null>(null);
   const [loadingAssessment, setLoadingAssessment] = useState(false);
 
@@ -155,20 +155,18 @@ export default function StoryWritingInterface({
     }
   }, [turns, sessionId, assessment, loadingAssessment]);
 
-  // Auto-show assessment modal when story is completed and assessment is available
+  // REMOVED: Auto-show assessment modal - now navigate to assessment page instead
   useEffect(() => {
     const childTurns = turns.filter(
       (turn) => turn.childInput && turn.childInput.trim()
     );
 
-    if (childTurns.length >= 7 && assessment && !showAssessment) {
-      // Small delay to allow UI to update before showing modal
-      const timer = setTimeout(() => {
-        setShowAssessment(true);
-      }, 1000);
-      return () => clearTimeout(timer);
+    if (childTurns.length >= 7 && assessment) {
+      console.log(
+        '✅ Story completed with assessment - ready for viewing on assessment page'
+      );
     }
-  }, [turns, assessment, showAssessment]);
+  }, [turns, assessment]);
 
   const fetchStoryData = useCallback(async () => {
     try {
@@ -207,9 +205,10 @@ export default function StoryWritingInterface({
       // Check if story is completed and has assessment
       if (actualSession.status === 'completed' && actualSession.assessment) {
         setAssessment(actualSession.assessment);
-        console.log('✅ Assessment found for completed story');
-        // Automatically show assessment modal for completed stories
-        setTimeout(() => setShowAssessment(true), 1000);
+        console.log(
+          '✅ Assessment found for completed story - available on assessment page'
+        );
+        // REMOVED: Automatic modal display - users can access via assessment page
       } else if (
         actualSession.status === 'completed' &&
         !actualSession.assessment
@@ -267,13 +266,12 @@ export default function StoryWritingInterface({
     }
   }, [turns, isAIGenerating]);
 
-  // Auto-show assessment modal when assessment becomes available
+  // REMOVED: Auto-show assessment modal - assessment available on dedicated page
   useEffect(() => {
-    if (assessment && !showAssessment && storySession?.status === 'completed') {
-      console.log('🎯 Assessment available - showing modal');
-      setShowAssessment(true);
+    if (assessment && storySession?.status === 'completed') {
+      console.log('🎯 Assessment available - viewable on assessment page');
     }
-  }, [assessment, showAssessment, storySession?.status]);
+  }, [assessment, storySession?.status]);
 
   const handleInputChange = (value: string) => {
     setCurrentInput(value);
@@ -386,16 +384,16 @@ export default function StoryWritingInterface({
         if (data.assessment && data.assessment.fullAssessment) {
           console.log('✅ Full assessment found in response');
           setAssessment(data.assessment.fullAssessment);
-          setShowAssessment(true); // Automatically show assessment modal
+          // REMOVED: setShowAssessment(true); - Assessment available on dedicated page
           toast({
             title: '🎉 Story Complete!',
             description:
-              'Amazing work! Your story has been assessed automatically.',
+              'Amazing work! Your story has been assessed. Go to "My Stories" to view detailed results.',
           });
         } else if (data.assessment) {
           console.log('⚠️ Partial assessment found, using fallback');
           setAssessment(data.assessment);
-          setShowAssessment(true);
+          // REMOVED: setShowAssessment(true); - Assessment available on dedicated page
           toast({
             title: '🎉 Story Complete!',
             description:
@@ -443,7 +441,7 @@ export default function StoryWritingInterface({
       console.log('🎯 Triggering assessment for completed story...');
       console.log('Story session ID:', storySession._id);
       console.log('Story status:', storySession.status);
-      
+
       const response = await fetch(
         `/api/stories/assessment/${storySession._id}`,
         {
@@ -460,7 +458,7 @@ export default function StoryWritingInterface({
       if (response.ok && data.success) {
         console.log('✅ Assessment completed successfully');
         setAssessment(data.assessment);
-        setShowAssessment(true); // Show the assessment modal
+        // REMOVED: setShowAssessment(true); - Assessment available on dedicated page
         setStorySession((prev) =>
           prev
             ? {
@@ -473,13 +471,14 @@ export default function StoryWritingInterface({
 
         toast({
           title: '🎉 Story Complete!',
-          description: 'Your story has been assessed. Check out your results!',
+          description:
+            'Your story has been assessed. Go to "My Stories" to view detailed results!',
         });
       } else {
         console.error('❌ Assessment failed:', data.error);
         console.error('Response status:', response.status);
         console.error('Full response:', data);
-        
+
         toast({
           title: 'Assessment Error',
           description:
@@ -645,13 +644,13 @@ export default function StoryWritingInterface({
 
             <div className="flex items-center gap-3">
               {isCompleted && assessment && (
-                <button
-                  onClick={() => setShowAssessment(true)}
-                  className="px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white   hover:from-green-600 hover:to-emerald-700 transition-all flex items-center gap-2"
+                <Link
+                  href={`/children-dashboard/my-stories/${storySession._id}/assessment`}
+                  className="px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-lg hover:from-green-600 hover:to-emerald-700 transition-all flex items-center gap-2"
                 >
                   <Award className="w-4 h-4" />
                   View Assessment
-                </button>
+                </Link>
               )}
 
               <div className="text-right">
@@ -877,13 +876,13 @@ export default function StoryWritingInterface({
                         of your collaborative story.
                       </p>
                       {assessment && (
-                        <button
-                          onClick={() => setShowAssessment(true)}
-                          className="px-6 py-3 bg-gradient-to-r from-yellow-500 to-orange-600 text-white   hover:from-yellow-600 hover:to-orange-700 transition-all flex items-center gap-2 mx-auto"
+                        <Link
+                          href={`/children-dashboard/my-stories/${storySession._id}/assessment`}
+                          className="px-6 py-3 bg-gradient-to-r from-yellow-500 to-orange-600 text-white rounded-lg hover:from-yellow-600 hover:to-orange-700 transition-all flex items-center gap-2 mx-auto"
                         >
                           <Award className="w-5 h-5" />
                           View Your Assessment
-                        </button>
+                        </Link>
                       )}
                     </div>
                   </motion.div>
@@ -1176,13 +1175,13 @@ export default function StoryWritingInterface({
                   </div>
                 </div>
 
-                <button
-                  onClick={() => setShowAssessment(true)}
-                  className="w-full px-4 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white   hover:from-green-600 hover:to-emerald-700 transition-all flex items-center justify-center gap-2"
+                <Link
+                  href={`/children-dashboard/my-stories/${storySession._id}/assessment`}
+                  className="w-full px-4 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-lg hover:from-green-600 hover:to-emerald-700 transition-all flex items-center justify-center gap-2"
                 >
                   <Award className="w-5 h-5" />
                   View Full Assessment
-                </button>
+                </Link>
               </div>
             )}
 
@@ -1226,204 +1225,6 @@ export default function StoryWritingInterface({
           </div>
         </div>
       </div>
-
-      {/* Assessment Modal */}
-      <AnimatePresence>
-        {showAssessment && assessment && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4"
-            onClick={() => setShowAssessment(false)}
-          >
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0, y: 20 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.9, opacity: 0, y: 20 }}
-              className="bg-gray-900 border border-gray-700 rounded-2xl p-8 max-w-4xl w-full max-h-[90vh] overflow-y-auto"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-gradient-to-r from-yellow-500 to-orange-600  flex items-center justify-center">
-                    <Trophy className="w-6 h-6 text-white" />
-                  </div>
-                  <div>
-                    <h2 className="text-white text-2xl ">Story Assessment</h2>
-                    <p className="text-gray-400">
-                      Your creative writing analysis
-                    </p>
-                  </div>
-                </div>
-
-                <button
-                  onClick={() => setShowAssessment(false)}
-                  className="p-2 hover:bg-gray-800  transition-colors"
-                >
-                  <X className="w-6 h-6 text-gray-400" />
-                </button>
-              </div>
-
-              {/* Overall Score */}
-              <div className="text-center mb-8">
-                <div className="w-32 h-32 mx-auto mb-4 relative">
-                  <svg
-                    className="w-32 h-32 transform -rotate-90"
-                    viewBox="0 0 100 100"
-                  >
-                    <circle
-                      cx="50"
-                      cy="50"
-                      r="40"
-                      stroke="currentColor"
-                      strokeWidth="8"
-                      fill="transparent"
-                      className="text-gray-700"
-                    />
-                    <circle
-                      cx="50"
-                      cy="50"
-                      r="40"
-                      stroke="currentColor"
-                      strokeWidth="8"
-                      fill="transparent"
-                      strokeDasharray={`${2 * Math.PI * 40}`}
-                      strokeDashoffset={`${2 * Math.PI * 40 * (1 - assessment.overallScore / 100)}`}
-                      className={`transition-all duration-1000 ease-out ${
-                        assessment.overallScore >= 80
-                          ? 'text-green-500'
-                          : assessment.overallScore >= 60
-                            ? 'text-yellow-500'
-                            : 'text-red-500'
-                      }`}
-                      strokeLinecap="round"
-                    />
-                  </svg>
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="text-3xl  text-white">
-                      {assessment.overallScore}%
-                    </span>
-                  </div>
-                </div>
-
-                <h3 className="text-white text-xl  mb-2">
-                  Overall Score: {assessment.overallScore}%
-                </h3>
-                <p className="text-gray-400">
-                  {assessment.overallScore >= 80
-                    ? 'Excellent work!'
-                    : assessment.overallScore >= 60
-                      ? 'Good job!'
-                      : 'Keep practicing!'}
-                </p>
-              </div>
-
-              {/* Category Scores */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-                {assessment.categoryScores &&
-                  Object.entries(assessment.categoryScores).map(
-                    ([category, score]) => (
-                      <div key={category} className="bg-gray-800/50  p-4">
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="text-gray-300 capitalize">
-                            {category.replace(/([A-Z])/g, ' $1').trim()}
-                          </span>
-                          <span className="text-white ">
-                            {score as number}%
-                          </span>
-                        </div>
-                        <div className="w-full bg-gray-700  h-2">
-                          <div
-                            className={`h-2  transition-all duration-1000 ease-out ${
-                              (score as number) >= 80
-                                ? 'bg-green-500'
-                                : (score as number) >= 60
-                                  ? 'bg-yellow-500'
-                                  : 'bg-red-500'
-                            }`}
-                            style={{ width: `${score}%` }}
-                          />
-                        </div>
-                      </div>
-                    )
-                  )}
-              </div>
-
-              {/* Integrity Status */}
-              <div className="bg-gray-800/50  p-6 mb-8">
-                <h4 className="text-white  text-lg mb-3 flex items-center gap-2">
-                  <CheckCircle className="w-5 h-5 text-green-400" />
-                  Integrity Analysis
-                </h4>
-
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-gray-300">Content Status</span>
-                    <span
-                      className={` ${
-                        assessment.integrityStatus === 'original'
-                          ? 'text-green-400'
-                          : assessment.integrityStatus === 'questionable'
-                            ? 'text-yellow-400'
-                            : 'text-red-400'
-                      }`}
-                    >
-                      {assessment.integrityStatus === 'original'
-                        ? 'Original'
-                        : assessment.integrityStatus === 'questionable'
-                          ? 'Needs Review'
-                          : 'Flagged'}
-                    </span>
-                  </div>
-
-                  {assessment.aiDetectionScore !== undefined && (
-                    <div className="flex items-center justify-between">
-                      <span className="text-gray-300">AI Detection</span>
-                      <span className="text-gray-400">
-                        {assessment.aiDetectionScore}% AI likelihood
-                      </span>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Feedback */}
-              {assessment.feedback && (
-                <div className="bg-blue-500/10 border border-blue-500/30  p-6">
-                  <h4 className="text-white  text-lg mb-3 flex items-center gap-2">
-                    <MessageCircle className="w-5 h-5 text-blue-400" />
-                    Teacher Feedback
-                  </h4>
-                  <p className="text-gray-300 leading-relaxed whitespace-pre-wrap">
-                    {assessment.feedback}
-                  </p>
-                </div>
-              )}
-
-              {/* Actions */}
-              <div className="flex gap-3 mt-8">
-                <button
-                  onClick={() => setShowAssessment(false)}
-                  className="flex-1 px-6 py-3 bg-gray-700 hover:bg-gray-600 text-white   transition-colors"
-                >
-                  Close
-                </button>
-
-                <button
-                  onClick={() => {
-                    setShowAssessment(false);
-                    router.push('/children-dashboard/my-stories');
-                  }}
-                  className="flex-1 px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white   transition-all"
-                >
-                  View All Stories
-                </button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       {/* Custom Scrollbar Styles */}
       <style jsx>{`

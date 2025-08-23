@@ -273,10 +273,12 @@ const UserSchema = new Schema<IUser>(
       type: String,
       trim: true,
     },
-    specializations: [{
-      type: String,
-      trim: true,
-    }],
+    specializations: [
+      {
+        type: String,
+        trim: true,
+      },
+    ],
 
     // Relationships
     assignedMentor: {
