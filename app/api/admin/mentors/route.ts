@@ -136,7 +136,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { firstName, lastName, email, password } = await request.json();
+    const { firstName, lastName, email, password, bio, experience, specializations } = await request.json();
 
     // Validate required fields
     if (!firstName || !lastName || !email || !password) {
@@ -178,6 +178,9 @@ export async function POST(request: NextRequest) {
       password: hashedPassword,
       role: 'mentor',
       isActive: true,
+      bio: bio?.trim() || '',
+      experience: experience?.trim() || '',
+      specializations: specializations || [],
       // isVerified: true, (removed)
       preferences: {
         theme: 'light',

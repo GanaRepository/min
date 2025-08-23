@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, Save, User, Mail, Lock, FileText, Tag } from 'lucide-react';
+import { ArrowLeft, Save, User, Mail, Lock, FileText, Tag, Eye, EyeOff } from 'lucide-react';
 import { motion } from 'framer-motion';
 import {
   ToastProvider,
@@ -23,6 +23,8 @@ export default function CreateMentorPage() {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const [formData, setFormData] = useState({
     firstName: '',
@@ -135,6 +137,14 @@ export default function CreateMentorPage() {
       ...prev,
       specializations: prev.specializations.filter((_, i) => i !== index),
     }));
+  };
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const toggleConfirmPasswordVisibility = () => {
+    setShowConfirmPassword(!showConfirmPassword);
   };
 
   return (
@@ -268,18 +278,25 @@ export default function CreateMentorPage() {
                     className="absolute left-3 top-3 text-gray-400"
                   />
                   <input
-                    type="password"
+                    type={showPassword ? 'text' : 'password'}
                     required
                     value={formData.password}
                     onChange={(e) =>
                       handleInputChange('password', e.target.value)
                     }
-                    className={`w-full pl-10 pr-4 py-3 bg-gray-700 border  text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                    className={`w-full pl-10 pr-12 py-3 bg-gray-700 border  text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                       errors.password ? 'border-red-500' : 'border-gray-600'
                     }`}
                     placeholder="Enter password"
                     minLength={6}
                   />
+                  <button
+                    type="button"
+                    onClick={togglePasswordVisibility}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-300 transition-colors"
+                  >
+                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  </button>
                 </div>
                 {errors.password && (
                   <p className="text-red-400 text-sm mt-1">{errors.password}</p>
@@ -296,13 +313,13 @@ export default function CreateMentorPage() {
                     className="absolute left-3 top-3 text-gray-400"
                   />
                   <input
-                    type="password"
+                    type={showConfirmPassword ? 'text' : 'password'}
                     required
                     value={formData.confirmPassword}
                     onChange={(e) =>
                       handleInputChange('confirmPassword', e.target.value)
                     }
-                    className={`w-full pl-10 pr-4 py-3 bg-gray-700 border  text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                    className={`w-full pl-10 pr-12 py-3 bg-gray-700 border  text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                       errors.confirmPassword
                         ? 'border-red-500'
                         : 'border-gray-600'
@@ -310,6 +327,13 @@ export default function CreateMentorPage() {
                     placeholder="Confirm password"
                     minLength={6}
                   />
+                  <button
+                    type="button"
+                    onClick={toggleConfirmPasswordVisibility}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-300 transition-colors"
+                  >
+                    {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  </button>
                 </div>
                 {errors.confirmPassword && (
                   <p className="text-red-400 text-sm mt-1">

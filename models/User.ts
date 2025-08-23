@@ -69,6 +69,11 @@ export interface IUser extends Document {
   resetPasswordToken?: string;
   resetPasswordExpires?: Date;
 
+  // Mentor-specific fields
+  bio?: string;
+  experience?: string;
+  specializations?: string[];
+
   // Relationships
   assignedMentor?: mongoose.Types.ObjectId;
   createdBy?: mongoose.Types.ObjectId;
@@ -258,6 +263,20 @@ const UserSchema = new Schema<IUser>(
     // Password reset
     resetPasswordToken: String,
     resetPasswordExpires: Date,
+
+    // Mentor-specific fields
+    bio: {
+      type: String,
+      trim: true,
+    },
+    experience: {
+      type: String,
+      trim: true,
+    },
+    specializations: [{
+      type: String,
+      trim: true,
+    }],
 
     // Relationships
     assignedMentor: {

@@ -187,45 +187,45 @@ export default function ViewMentor() {
         </div>
 
         {/* Mentor Info Card */}
-        <div className="bg-gray-800  p-6">
+        <div className="bg-gray-800 rounded-xl p-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <div className="flex items-center space-x-3">
-              <div className="bg-purple-600 p-3 ">
+              <div className="bg-purple-600 p-3 rounded-lg">
                 <Mail size={24} className="text-white" />
               </div>
-              <div>
+              <div className="min-w-0 flex-1">
                 <p className="text-sm text-gray-400">Email</p>
-                <p className="text-white ">{mentor.email}</p>
+                <p className="text-white font-medium break-all">{mentor.email}</p>
               </div>
             </div>
 
             <div className="flex items-center space-x-3">
-              <div className="bg-green-600 p-3 ">
+              <div className="bg-green-600 p-3 rounded-lg">
                 <Users size={24} className="text-white" />
               </div>
               <div>
                 <p className="text-sm text-gray-400">Assigned Students</p>
-                <p className="text-white ">{mentor.assignedStudents}</p>
+                <p className="text-white font-medium">{mentor.assignedStudents}</p>
               </div>
             </div>
 
             <div className="flex items-center space-x-3">
-              <div className="bg-blue-600 p-3 ">
+              <div className="bg-blue-600 p-3 rounded-lg">
                 <BookOpen size={24} className="text-white" />
               </div>
               <div>
                 <p className="text-sm text-gray-400">Student Stories</p>
-                <p className="text-white ">{mentor.totalStories}</p>
+                <p className="text-white font-medium">{mentor.totalStories}</p>
               </div>
             </div>
 
             <div className="flex items-center space-x-3">
-              <div className="bg-orange-600 p-3 ">
+              <div className="bg-orange-600 p-3 rounded-lg">
                 <MessageSquare size={24} className="text-white" />
               </div>
               <div>
                 <p className="text-sm text-gray-400">Comments Given</p>
-                <p className="text-white ">{mentor.totalComments}</p>
+                <p className="text-white font-medium">{mentor.totalComments}</p>
               </div>
             </div>
           </div>
@@ -233,8 +233,8 @@ export default function ViewMentor() {
 
         {/* Mentor Profile */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="bg-gray-800  p-6">
-            <h3 className="text-lg  text-white mb-4">Profile Information</h3>
+          <div className="bg-gray-800 rounded-xl p-6">
+            <h3 className="text-lg font-semibold text-white mb-4">Profile Information</h3>
             <div className="space-y-4">
               <div>
                 <label className="text-sm text-gray-400">Bio</label>
@@ -268,13 +268,13 @@ export default function ViewMentor() {
             </div>
           </div>
 
-          <div className="bg-gray-800  p-6">
-            <h3 className="text-lg  text-white mb-4">Account Status</h3>
+          <div className="bg-gray-800 rounded-xl p-6">
+            <h3 className="text-lg font-semibold text-white mb-4">Account Status</h3>
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <span className="text-gray-400">Account Status</span>
                 <span
-                  className={`px-3 py-1  text-sm ${
+                  className={`px-3 py-1 rounded-full text-sm ${
                     mentor.isActive
                       ? 'bg-green-100 text-green-800'
                       : 'bg-red-100 text-red-800'
@@ -296,17 +296,17 @@ export default function ViewMentor() {
 
         {/* Assigned Students */}
         {mentor.assignedChildren && mentor.assignedChildren.length > 0 && (
-          <div className="bg-gray-800  p-6">
-            <h3 className="text-lg  text-white mb-4">Assigned Students</h3>
+          <div className="bg-gray-800 rounded-xl p-6">
+            <h3 className="text-lg font-semibold text-white mb-4">Assigned Students</h3>
             <div className="space-y-3">
               {mentor.assignedChildren.map((student) => (
                 <div
                   key={student._id}
-                  className="flex items-center justify-between p-3 bg-gray-700/50 "
+                  className="flex items-center justify-between p-3 bg-gray-700/50 rounded-lg"
                 >
                   <div className="flex-1">
                     <Link href={`/admin/users/${student._id}`}>
-                      <h4 className="text-white  hover:text-blue-400 cursor-pointer">
+                      <h4 className="text-white font-medium hover:text-blue-400 cursor-pointer">
                         {student.firstName} {student.lastName}
                       </h4>
                     </Link>
@@ -331,15 +331,15 @@ export default function ViewMentor() {
 
         {/* Recent Activity */}
         {mentor.recentActivity && mentor.recentActivity.length > 0 && (
-          <div className="bg-gray-800  p-6">
-            <h3 className="text-lg  text-white mb-4">Recent Activity</h3>
+          <div className="bg-gray-800 rounded-xl p-6">
+            <h3 className="text-lg font-semibold text-white mb-4">Recent Activity</h3>
             <div className="space-y-3">
               {mentor.recentActivity.slice(0, 10).map((activity, index) => (
                 <div
                   key={index}
-                  className="flex items-start space-x-3 p-3 bg-gray-700/50 "
+                  className="flex items-start space-x-3 p-3 bg-gray-700/50 rounded-lg"
                 >
-                  <div className="flex-shrink-0 w-2 h-2 bg-blue-400  mt-2"></div>
+                  <div className="flex-shrink-0 w-2 h-2 bg-blue-400 rounded-full mt-2"></div>
                   <div className="flex-1">
                     <p className="text-white text-sm">{activity.description}</p>
                     <p className="text-xs text-gray-400 mt-1">

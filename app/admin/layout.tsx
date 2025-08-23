@@ -69,6 +69,18 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     if (path === '/admin') {
       return pathname === '/admin' || pathname === '/admin/';
     }
+    
+    // Special handling for mentor routes to avoid conflicts
+    if (path === '/admin/mentors') {
+      return pathname === '/admin/mentors' || 
+             pathname.startsWith('/admin/mentors/') && 
+             !pathname.startsWith('/admin/mentors/assign');
+    }
+    
+    if (path === '/admin/mentors/assign') {
+      return pathname.startsWith('/admin/mentors/assign');
+    }
+    
     return pathname.startsWith(path);
   };
 
