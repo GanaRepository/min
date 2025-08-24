@@ -519,15 +519,16 @@ export class CompetitionManager {
         const storyContent =
           story.childTurns?.join('\n\n') || story.content || '';
 
-        const assessment = await ComprehensiveAssessmentEngine.performCompleteAssessment(
-          storyContent,
-          {
-            childAge: 10,
-            expectedGenre: 'creative',
-            storyTitle: story.title,
-            isCollaborativeStory: false
-          }
-        );
+        const assessment =
+          await ComprehensiveAssessmentEngine.performCompleteAssessment(
+            storyContent,
+            {
+              childAge: 10,
+              expectedGenre: 'creative',
+              storyTitle: story.title,
+              isCollaborativeStory: false,
+            }
+          );
 
         const competitionScore = this.calculateCompetitionScore(
           assessment,
@@ -664,15 +665,16 @@ export class CompetitionManager {
         const storyContent =
           story.childTurns?.join('\n\n') || story.content || '';
 
-        const assessment = await ComprehensiveAssessmentEngine.performCompleteAssessment(
-          storyContent,
-          {
-            childAge: 10,
-            expectedGenre: 'creative',
-            storyTitle: story.title,
-            isCollaborativeStory: false
-          }
-        );
+        const assessment =
+          await ComprehensiveAssessmentEngine.performCompleteAssessment(
+            storyContent,
+            {
+              childAge: 10,
+              expectedGenre: 'creative',
+              storyTitle: story.title,
+              isCollaborativeStory: false,
+            }
+          );
 
         const competitionScore = this.calculateCompetitionScore(
           assessment,
@@ -869,15 +871,16 @@ export class CompetitionManager {
 
     try {
       // Use comprehensive assessment with minimal metadata
-      const assessment = await ComprehensiveAssessmentEngine.performCompleteAssessment(
-        lightPrompt,
-        {
-          childAge: 10,
-          expectedGenre: 'creative',
-          isCollaborativeStory: false
-        }
-      );
-      
+      const assessment =
+        await ComprehensiveAssessmentEngine.performCompleteAssessment(
+          lightPrompt,
+          {
+            childAge: 10,
+            expectedGenre: 'creative',
+            isCollaborativeStory: false,
+          }
+        );
+
       const score = assessment.overallScore;
 
       return {
@@ -928,10 +931,14 @@ export class CompetitionManager {
       plotDevelopment: getScore('plotDevelopment'),
       vocabulary: getScore('vocabulary'),
       wordCount: this.calculateWordCountScore(story.totalWords || 0),
-      originality: assessment.integrityAnalysis?.plagiarismCheck?.originalityScore || 
-                   assessment.integrityAnalysis?.originalityScore || 100,
-      aiPenalty: assessment.integrityAnalysis?.aiDetection?.confidenceLevel || 
-                 assessment.integrityAnalysis?.aiDetectionResult?.confidence || 0,
+      originality:
+        assessment.integrityAnalysis?.plagiarismCheck?.originalityScore ||
+        assessment.integrityAnalysis?.originalityScore ||
+        100,
+      aiPenalty:
+        assessment.integrityAnalysis?.aiDetection?.confidenceLevel ||
+        assessment.integrityAnalysis?.aiDetectionResult?.confidence ||
+        0,
     };
 
     // Validate all required scores exist

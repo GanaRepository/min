@@ -156,12 +156,15 @@ export async function POST(req: NextRequest) {
 
         // ✅ FIXED: Use comprehensive assessment engine
         const comprehensiveAssessment =
-          await ComprehensiveAssessmentEngine.performCompleteAssessment(storyContent, {
-            childAge: 10,
-            isCollaborativeStory: true,
-            storyTitle: updatedSession.title,
-            expectedGenre: 'creative'
-          });
+          await ComprehensiveAssessmentEngine.performCompleteAssessment(
+            storyContent,
+            {
+              childAge: 10,
+              isCollaborativeStory: true,
+              storyTitle: updatedSession.title,
+              expectedGenre: 'creative',
+            }
+          );
 
         console.log('✅ Comprehensive assessment completed');
         console.log(
@@ -178,23 +181,28 @@ export async function POST(req: NextRequest) {
           $set: {
             assessment: {
               // Legacy fields for backward compatibility
-              grammarScore: comprehensiveAssessment.coreWritingSkills.grammar.score,
+              grammarScore:
+                comprehensiveAssessment.coreWritingSkills.grammar.score,
               creativityScore:
                 comprehensiveAssessment.coreWritingSkills.creativity.score,
               overallScore: comprehensiveAssessment.overallScore,
               vocabularyScore:
                 comprehensiveAssessment.coreWritingSkills.vocabulary.score,
-              structureScore: comprehensiveAssessment.coreWritingSkills.structure.score,
+              structureScore:
+                comprehensiveAssessment.coreWritingSkills.structure.score,
               characterDevelopmentScore:
-                comprehensiveAssessment.storyDevelopment.characterDevelopment.score,
+                comprehensiveAssessment.storyDevelopment.characterDevelopment
+                  .score,
               plotDevelopmentScore:
                 comprehensiveAssessment.storyDevelopment.plotDevelopment.score,
               readingLevel: 75, // Default since not in new structure
               feedback:
                 comprehensiveAssessment.comprehensiveFeedback.teacherAssessment,
-              strengths: comprehensiveAssessment.comprehensiveFeedback.strengths,
+              strengths:
+                comprehensiveAssessment.comprehensiveFeedback.strengths,
               improvements:
-                comprehensiveAssessment.comprehensiveFeedback.areasForEnhancement,
+                comprehensiveAssessment.comprehensiveFeedback
+                  .areasForEnhancement,
               vocabularyUsed: [],
               suggestedWords: [],
               educationalInsights:
@@ -202,26 +210,29 @@ export async function POST(req: NextRequest) {
 
               // ✅ ADVANCED INTEGRITY ANALYSIS (The missing piece!)
               plagiarismScore:
-                comprehensiveAssessment.integrityAnalysis.plagiarismCheck.originalityScore,
+                comprehensiveAssessment.integrityAnalysis.plagiarismCheck
+                  .originalityScore,
               aiDetectionScore:
-                comprehensiveAssessment.integrityAnalysis.aiDetection.confidenceLevel,
+                comprehensiveAssessment.integrityAnalysis.aiDetection
+                  .confidenceLevel,
               integrityRisk:
                 comprehensiveAssessment.integrityAnalysis.aiDetection.riskLevel,
               integrityStatus: {
                 status: comprehensiveAssessment.integrityAnalysis.overallStatus,
-                message: comprehensiveAssessment.integrityAnalysis.message
+                message: comprehensiveAssessment.integrityAnalysis.message,
               },
               integrityAnalysis: comprehensiveAssessment.integrityAnalysis,
 
               // ✅ ADVANCED ANALYSIS
-              recommendations: comprehensiveAssessment.comprehensiveFeedback.nextSteps,
+              recommendations:
+                comprehensiveAssessment.comprehensiveFeedback.nextSteps,
               progressTracking: comprehensiveAssessment.advancedElements,
               assessmentVersion: '2.0',
               assessmentDate: new Date().toISOString(),
             },
             status:
-              comprehensiveAssessment.integrityAnalysis.aiDetection.riskLevel ===
-              'critical'
+              comprehensiveAssessment.integrityAnalysis.aiDetection
+                .riskLevel === 'critical'
                 ? 'flagged'
                 : 'completed',
             lastAssessedAt: new Date(),
@@ -234,16 +245,20 @@ export async function POST(req: NextRequest) {
         // Return assessment in legacy format for frontend compatibility
         assessment = {
           grammarScore: comprehensiveAssessment.coreWritingSkills.grammar.score,
-          creativityScore: comprehensiveAssessment.coreWritingSkills.creativity.score,
-          vocabularyScore: comprehensiveAssessment.coreWritingSkills.vocabulary.score,
-          structureScore: comprehensiveAssessment.coreWritingSkills.structure.score,
+          creativityScore:
+            comprehensiveAssessment.coreWritingSkills.creativity.score,
+          vocabularyScore:
+            comprehensiveAssessment.coreWritingSkills.vocabulary.score,
+          structureScore:
+            comprehensiveAssessment.coreWritingSkills.structure.score,
           characterDevelopmentScore:
             comprehensiveAssessment.storyDevelopment.characterDevelopment.score,
           plotDevelopmentScore:
             comprehensiveAssessment.storyDevelopment.plotDevelopment.score,
           overallScore: comprehensiveAssessment.overallScore,
           readingLevel: 75, // Default since not in new structure
-          feedback: comprehensiveAssessment.comprehensiveFeedback.teacherAssessment,
+          feedback:
+            comprehensiveAssessment.comprehensiveFeedback.teacherAssessment,
           strengths: comprehensiveAssessment.comprehensiveFeedback.strengths,
           improvements:
             comprehensiveAssessment.comprehensiveFeedback.areasForEnhancement,
@@ -256,7 +271,7 @@ export async function POST(req: NextRequest) {
           integrityAnalysis: comprehensiveAssessment.integrityAnalysis,
           integrityStatus: {
             status: comprehensiveAssessment.integrityAnalysis.overallStatus,
-            message: comprehensiveAssessment.integrityAnalysis.message
+            message: comprehensiveAssessment.integrityAnalysis.message,
           },
         };
       } catch (error) {

@@ -544,15 +544,16 @@ export async function POST(request: NextRequest) {
 
     let assessmentResult;
     try {
-      assessmentResult = await ComprehensiveAssessmentEngine.performCompleteAssessment(
-        storyContent,
-        {
-          childAge: 10, // default
-          isCollaborativeStory: false,
-          storyTitle: title,
-          expectedGenre: 'creative',
-        }
-      );
+      assessmentResult =
+        await ComprehensiveAssessmentEngine.performCompleteAssessment(
+          storyContent,
+          {
+            childAge: 10, // default
+            isCollaborativeStory: false,
+            storyTitle: title,
+            expectedGenre: 'creative',
+          }
+        );
 
       console.log(
         `📊 Competition Assessment - Overall: ${assessmentResult.overallScore}%`
@@ -603,21 +604,26 @@ export async function POST(request: NextRequest) {
         creativityScore: assessmentResult.coreWritingSkills.creativity.score,
         vocabularyScore: assessmentResult.coreWritingSkills.vocabulary.score,
         structureScore: assessmentResult.coreWritingSkills.structure.score,
-        characterDevelopmentScore: assessmentResult.storyDevelopment.characterDevelopment.score,
-        plotDevelopmentScore: assessmentResult.storyDevelopment.plotDevelopment.score,
+        characterDevelopmentScore:
+          assessmentResult.storyDevelopment.characterDevelopment.score,
+        plotDevelopmentScore:
+          assessmentResult.storyDevelopment.plotDevelopment.score,
         overallScore: assessmentResult.overallScore,
         readingLevel: 75, // Default since not in new structure
         feedback: assessmentResult.comprehensiveFeedback.teacherAssessment,
         strengths: assessmentResult.comprehensiveFeedback.strengths,
-        improvements: assessmentResult.comprehensiveFeedback.areasForEnhancement,
+        improvements:
+          assessmentResult.comprehensiveFeedback.areasForEnhancement,
 
         // ✅ INTEGRITY ANALYSIS (The missing piece!)
-        plagiarismScore: assessmentResult.integrityAnalysis.plagiarismCheck.originalityScore,
-        aiDetectionScore: assessmentResult.integrityAnalysis.aiDetection.confidenceLevel,
+        plagiarismScore:
+          assessmentResult.integrityAnalysis.plagiarismCheck.originalityScore,
+        aiDetectionScore:
+          assessmentResult.integrityAnalysis.aiDetection.confidenceLevel,
         integrityRisk: assessmentResult.integrityAnalysis.aiDetection.riskLevel,
         integrityStatus: {
           status: assessmentResult.integrityAnalysis.overallStatus,
-          message: assessmentResult.integrityAnalysis.message
+          message: assessmentResult.integrityAnalysis.message,
         },
         integrityAnalysis: assessmentResult.integrityAnalysis,
 
@@ -664,7 +670,7 @@ export async function POST(request: NextRequest) {
         overallScore: assessmentResult.overallScore,
         integrityStatus: {
           status: assessmentResult.integrityAnalysis.overallStatus,
-          message: assessmentResult.integrityAnalysis.message
+          message: assessmentResult.integrityAnalysis.message,
         },
         feedback: assessmentResult.comprehensiveFeedback.teacherAssessment,
       },

@@ -34,7 +34,9 @@ export async function GET(request: Request) {
     await connectToDatabase();
 
     // Build query
-    const query: any = { childId: new mongoose.Types.ObjectId(session.user.id) };
+    const query: any = {
+      childId: new mongoose.Types.ObjectId(session.user.id),
+    };
 
     if (status) {
       query.status = status;
@@ -71,13 +73,13 @@ export async function GET(request: Request) {
     console.log(`📖 Found ${stories.length} stories (${totalCount} total)`);
 
     // Get publication status for each story
-    const storyIds = stories.map(story => story._id);
+    const storyIds = stories.map((story) => story._id);
     const publishedStories = await PublishedStory.find({
-      sessionId: { $in: storyIds }
+      sessionId: { $in: storyIds },
     }).lean();
 
     const publishedStoryIds = new Set(
-      publishedStories.map(ps => ps.sessionId.toString())
+      publishedStories.map((ps) => ps.sessionId.toString())
     );
 
     // Format stories for frontend with comprehensive assessment support
@@ -86,77 +88,100 @@ export async function GET(request: Request) {
       let storyType = 'freestyle';
       if (story.isUploadedForAssessment) {
         storyType = 'uploaded';
-      } else if (story.competitionEntries && story.competitionEntries.length > 0) {
+      } else if (
+        story.competitionEntries &&
+        story.competitionEntries.length > 0
+      ) {
         storyType = 'competition';
       }
 
       // Get competition info if exists
-      const latestCompetitionEntry = story.competitionEntries && story.competitionEntries.length > 0
-        ? story.competitionEntries[story.competitionEntries.length - 1]
-        : null;
+      const latestCompetitionEntry =
+        story.competitionEntries && story.competitionEntries.length > 0
+          ? story.competitionEntries[story.competitionEntries.length - 1]
+          : null;
 
       // Check if published
       const isPublished = publishedStoryIds.has(story._id.toString());
 
       // Format assessment data with new comprehensive assessment support
-      const assessment = story.assessment ? {
-        // Check if we have the new comprehensive assessment format
-        hasComprehensiveAssessment: !!(story.assessment.comprehensiveAssessment),
-        
-        // Core scores (backwards compatible)
-        overallScore: story.assessment.overallScore || 0,
-        grammarScore: story.assessment.grammarScore || 0,
-        creativityScore: story.assessment.creativityScore || 0,
-        vocabularyScore: story.assessment.vocabularyScore || 0,
-        structureScore: story.assessment.structureScore || 0,
-        characterDevelopmentScore: story.assessment.characterDevelopmentScore || 0,
-        plotDevelopmentScore: story.assessment.plotDevelopmentScore || 0,
-        
-        // Reading and feedback
-        readingLevel: story.assessment.readingLevel || 'Elementary',
-        feedback: story.assessment.feedback || '',
-        strengths: story.assessment.strengths || [],
-        improvements: story.assessment.improvements || [],
-        
-        // NEW: Comprehensive integrity status
-        integrityAnalysis: story.assessment.integrityAnalysis ? {
-          overallStatus: story.assessment.integrityAnalysis.overallStatus || 'PASS',
-          aiDetection: story.assessment.integrityAnalysis.aiDetection || {},
-          plagiarismCheck: story.assessment.integrityAnalysis.plagiarismCheck || {},
-          message: story.assessment.integrityAnalysis.message || '',
-        } : {
-          // Legacy format fallback
-          overallStatus: story.integrityStatus || 'PASS',
-          aiDetection: {
-            humanLikeScore: story.aiDetectionScore || 100,
-            aiLikelihood: 'Very Low (10%)',
-          },
-          plagiarismCheck: {
-            originalityScore: story.plagiarismScore || 100,
-            riskLevel: 'low',
-          },
-          message: 'Story integrity verified',
-        },
+      const assessment = story.assessment
+        ? {
+            // Check if we have the new comprehensive assessment format
+            hasComprehensiveAssessment:
+              !!story.assessment.comprehensiveAssessment,
 
-        // Assessment metadata
-        assessmentVersion: story.assessment.assessmentVersion || '6.0-comprehensive',
-        assessmentDate: story.assessment.assessmentDate || story.lastAssessedAt || story.createdAt,
-        assessmentType: story.assessment.assessmentType || storyType,
-        
-        // For detailed view
-        comprehensiveAssessment: story.assessment.comprehensiveAssessment || null,
-        
-      } : null;
+            // Core scores (backwards compatible)
+            overallScore: story.assessment.overallScore || 0,
+            grammarScore: story.assessment.grammarScore || 0,
+            creativityScore: story.assessment.creativityScore || 0,
+            vocabularyScore: story.assessment.vocabularyScore || 0,
+            structureScore: story.assessment.structureScore || 0,
+            characterDevelopmentScore:
+              story.assessment.characterDevelopmentScore || 0,
+            plotDevelopmentScore: story.assessment.plotDevelopmentScore || 0,
+
+            // Reading and feedback
+            readingLevel: story.assessment.readingLevel || 'Elementary',
+            feedback: story.assessment.feedback || '',
+            strengths: story.assessment.strengths || [],
+            improvements: story.assessment.improvements || [],
+
+            // NEW: Comprehensive integrity status
+            integrityAnalysis: story.assessment.integrityAnalysis
+              ? {
+                  overallStatus:
+                    story.assessment.integrityAnalysis.overallStatus || 'PASS',
+                  aiDetection:
+                    story.assessment.integrityAnalysis.aiDetection || {},
+                  plagiarismCheck:
+                    story.assessment.integrityAnalysis.plagiarismCheck || {},
+                  message: story.assessment.integrityAnalysis.message || '',
+                }
+              : {
+                  // Legacy format fallback
+                  overallStatus: story.integrityStatus || 'PASS',
+                  aiDetection: {
+                    humanLikeScore: story.aiDetectionScore || 100,
+                    aiLikelihood: 'Very Low (10%)',
+                  },
+                  plagiarismCheck: {
+                    originalityScore: story.plagiarismScore || 100,
+                    riskLevel: 'low',
+                  },
+                  message: 'Story integrity verified',
+                },
+
+            // Assessment metadata
+            assessmentVersion:
+              story.assessment.assessmentVersion || '6.0-comprehensive',
+            assessmentDate:
+              story.assessment.assessmentDate ||
+              story.lastAssessedAt ||
+              story.createdAt,
+            assessmentType: story.assessment.assessmentType || storyType,
+
+            // For detailed view
+            comprehensiveAssessment:
+              story.assessment.comprehensiveAssessment || null,
+          }
+        : null;
 
       return {
         _id: story._id.toString(),
         title: story.title || '',
         status: story.status || 'active',
         storyType,
-        createdAt: story.createdAt ? new Date(story.createdAt).toISOString() : new Date().toISOString(),
-        updatedAt: story.updatedAt ? new Date(story.updatedAt).toISOString() : new Date().toISOString(),
-        completedAt: story.completedAt ? new Date(story.completedAt).toISOString() : null,
-        
+        createdAt: story.createdAt
+          ? new Date(story.createdAt).toISOString()
+          : new Date().toISOString(),
+        updatedAt: story.updatedAt
+          ? new Date(story.updatedAt).toISOString()
+          : new Date().toISOString(),
+        completedAt: story.completedAt
+          ? new Date(story.completedAt).toISOString()
+          : null,
+
         // Progress and metrics
         totalWords: story.totalWords || 0,
         childWords: story.childWords || 0,
@@ -166,7 +191,11 @@ export async function GET(request: Request) {
 
         // Publication status
         isPublished,
-        publishedAt: isPublished ? publishedStories.find(ps => ps.sessionId.toString() === story._id.toString())?.publishedAt : null,
+        publishedAt: isPublished
+          ? publishedStories.find(
+              (ps) => ps.sessionId.toString() === story._id.toString()
+            )?.publishedAt
+          : null,
 
         // Assessment information
         isAssessed: !!story.assessment,
@@ -176,7 +205,10 @@ export async function GET(request: Request) {
         lastAssessedAt: story.lastAssessedAt || null,
 
         // Top-level integrity status for easy filtering
-        integrityStatus: story.integrityStatus || assessment?.integrityAnalysis?.overallStatus || 'PASS',
+        integrityStatus:
+          story.integrityStatus ||
+          assessment?.integrityAnalysis?.overallStatus ||
+          'PASS',
         aiDetectionScore: story.aiDetectionScore || 100,
         plagiarismScore: story.plagiarismScore || 100,
 
@@ -189,7 +221,10 @@ export async function GET(request: Request) {
         isUploadedForAssessment: story.isUploadedForAssessment || false,
 
         // Story content preview (first 150 characters)
-        preview: story.aiOpening ? story.aiOpening.substring(0, 150) + (story.aiOpening.length > 150 ? '...' : '') : '',
+        preview: story.aiOpening
+          ? story.aiOpening.substring(0, 150) +
+            (story.aiOpening.length > 150 ? '...' : '')
+          : '',
 
         // Flags for review
         needsReview: story.integrityFlags?.needsReview || false,
@@ -200,24 +235,36 @@ export async function GET(request: Request) {
     // Calculate summary statistics
     const stats = {
       total: totalCount,
-      completed: stories.filter(story => story.status === 'completed').length,
-      inProgress: stories.filter(story => story.status === 'active').length,
-      flagged: stories.filter(story => story.status === 'flagged').length,
-      needsReview: stories.filter(story => story.status === 'review').length,
-      published: formattedStories.filter(story => story.isPublished).length,
-      
+      completed: stories.filter((story) => story.status === 'completed').length,
+      inProgress: stories.filter((story) => story.status === 'active').length,
+      flagged: stories.filter((story) => story.status === 'flagged').length,
+      needsReview: stories.filter((story) => story.status === 'review').length,
+      published: formattedStories.filter((story) => story.isPublished).length,
+
       // Assessment stats
-      assessed: stories.filter(story => story.assessment).length,
-      comprehensiveAssessments: stories.filter(story => story.assessment?.comprehensiveAssessment).length,
-      
+      assessed: stories.filter((story) => story.assessment).length,
+      comprehensiveAssessments: stories.filter(
+        (story) => story.assessment?.comprehensiveAssessment
+      ).length,
+
       // Integrity stats
-      passedIntegrity: stories.filter(story => (story.integrityStatus || 'PASS') === 'PASS').length,
-      flaggedIntegrity: stories.filter(story => (story.integrityStatus || 'PASS') === 'FAIL').length,
-      
+      passedIntegrity: stories.filter(
+        (story) => (story.integrityStatus || 'PASS') === 'PASS'
+      ).length,
+      flaggedIntegrity: stories.filter(
+        (story) => (story.integrityStatus || 'PASS') === 'FAIL'
+      ).length,
+
       // Story types
-      freestyleStories: formattedStories.filter(story => story.storyType === 'freestyle').length,
-      uploadedStories: formattedStories.filter(story => story.storyType === 'uploaded').length,
-      competitionStories: formattedStories.filter(story => story.storyType === 'competition').length,
+      freestyleStories: formattedStories.filter(
+        (story) => story.storyType === 'freestyle'
+      ).length,
+      uploadedStories: formattedStories.filter(
+        (story) => story.storyType === 'uploaded'
+      ).length,
+      competitionStories: formattedStories.filter(
+        (story) => story.storyType === 'competition'
+      ).length,
     };
 
     console.log('📊 Story stats:', stats);
@@ -236,7 +283,6 @@ export async function GET(request: Request) {
       stats,
       message: `Found ${formattedStories.length} stories`,
     });
-
   } catch (error) {
     console.error('❌ Error fetching user stories:', error);
     return NextResponse.json(

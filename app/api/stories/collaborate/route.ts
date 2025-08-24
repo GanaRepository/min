@@ -191,15 +191,16 @@ export async function POST(request: NextRequest) {
         console.log(`👤 User turns: ${userTurns.length}`);
 
         // Perform comprehensive assessment
-        const assessment = await ComprehensiveAssessmentEngine.performCompleteAssessment(
-          fullStoryContent,
-          {
-            childAge: 10, // Default age, can be updated from user profile
-            isCollaborativeStory: true,
-            storyTitle: storySession.title || 'Collaborative Story',
-            expectedGenre: 'creative',
-          }
-        );
+        const assessment =
+          await ComprehensiveAssessmentEngine.performCompleteAssessment(
+            fullStoryContent,
+            {
+              childAge: 10, // Default age, can be updated from user profile
+              isCollaborativeStory: true,
+              storyTitle: storySession.title || 'Collaborative Story',
+              expectedGenre: 'creative',
+            }
+          );
 
         console.log('✅ Assessment completed successfully');
         console.log(`📈 Overall Score: ${assessment.overallScore}%`);
@@ -221,8 +222,10 @@ export async function POST(request: NextRequest) {
           creativityScore: assessment.coreWritingSkills.creativity.score,
           vocabularyScore: assessment.coreWritingSkills.vocabulary.score,
           structureScore: assessment.coreWritingSkills.structure.score,
-          characterDevelopmentScore: assessment.storyDevelopment.characterDevelopment.score,
-          plotDevelopmentScore: assessment.storyDevelopment.plotDevelopment.score,
+          characterDevelopmentScore:
+            assessment.storyDevelopment.characterDevelopment.score,
+          plotDevelopmentScore:
+            assessment.storyDevelopment.plotDevelopment.score,
           overallScore: assessment.overallScore,
           readingLevel: 75, // Default since not in new structure
           feedback: assessment.comprehensiveFeedback.teacherAssessment,
@@ -237,7 +240,7 @@ export async function POST(request: NextRequest) {
           progressTracking: assessment.advancedElements,
           integrityStatus: {
             status: assessment.integrityAnalysis.overallStatus,
-            message: assessment.integrityAnalysis.message
+            message: assessment.integrityAnalysis.message,
           },
 
           // Assessment metadata
@@ -250,7 +253,8 @@ export async function POST(request: NextRequest) {
         updateData.assessment = assessmentData;
         updateData.overallScore = assessment.overallScore;
         updateData.grammarScore = assessment.coreWritingSkills.grammar.score;
-        updateData.creativityScore = assessment.coreWritingSkills.creativity.score;
+        updateData.creativityScore =
+          assessment.coreWritingSkills.creativity.score;
         updateData.lastAssessedAt = new Date();
         updateData.assessmentAttempts = 1;
 

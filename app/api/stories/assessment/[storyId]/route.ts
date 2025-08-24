@@ -23,8 +23,12 @@ function generateDetailedTeacherComment(assessment: any): string {
   }
 
   // Generate positive, detailed feedback for authentic work
-  const strengths = assessment.comprehensiveFeedback.strengths?.slice(0, 2).join(' ') || 'Your creativity shows through in this story.';
-  const improvements = assessment.comprehensiveFeedback.areasForEnhancement?.[0] || 'continue developing your writing skills';
+  const strengths =
+    assessment.comprehensiveFeedback.strengths?.slice(0, 2).join(' ') ||
+    'Your creativity shows through in this story.';
+  const improvements =
+    assessment.comprehensiveFeedback.areasForEnhancement?.[0] ||
+    'continue developing your writing skills';
 
   if (overallScore >= 90) {
     return `Outstanding work on your story! ${strengths} Your writing demonstrates exceptional skill across multiple areas. To make your writing even stronger, ${improvements.toLowerCase()}. This is impressive creative writing that shows real talent and dedication.`;
@@ -87,7 +91,9 @@ export async function POST(
       );
     }
 
-    console.log('📝 Story is completed, generating COMPREHENSIVE assessment...');
+    console.log(
+      '📝 Story is completed, generating COMPREHENSIVE assessment...'
+    );
 
     // Get all story content
     let storyContent = '';
@@ -115,24 +121,31 @@ export async function POST(
       );
     }
 
-    console.log(`📊 Assessing ${storyContent.length} characters with COMPREHENSIVE system`);
+    console.log(
+      `📊 Assessing ${storyContent.length} characters with COMPREHENSIVE system`
+    );
 
     try {
       // Generate comprehensive assessment with advanced AI detection
-      const assessment = await ComprehensiveAssessmentEngine.performCompleteAssessment(
-        storyContent,
-        {
-          childAge: 10, // Default age
-          isCollaborativeStory: !storySession.isUploadedForAssessment,
-          storyTitle: storySession.title || 'Untitled Story',
-          expectedGenre: 'creative',
-        }
-      );
+      const assessment =
+        await ComprehensiveAssessmentEngine.performCompleteAssessment(
+          storyContent,
+          {
+            childAge: 10, // Default age
+            isCollaborativeStory: !storySession.isUploadedForAssessment,
+            storyTitle: storySession.title || 'Untitled Story',
+            expectedGenre: 'creative',
+          }
+        );
 
       console.log('✅ COMPREHENSIVE Assessment completed successfully');
       console.log(`📈 Overall Score: ${assessment.overallScore}%`);
-      console.log(`🔒 Integrity Status: ${assessment.integrityAnalysis.overallStatus}`);
-      console.log(`🤖 AI Detection: ${assessment.integrityAnalysis.aiDetection.aiLikelihood}`);
+      console.log(
+        `🔒 Integrity Status: ${assessment.integrityAnalysis.overallStatus}`
+      );
+      console.log(
+        `🤖 AI Detection: ${assessment.integrityAnalysis.aiDetection.aiLikelihood}`
+      );
 
       // Prepare comprehensive assessment data
       const assessmentData = {
@@ -145,7 +158,8 @@ export async function POST(
         creativityScore: assessment.coreWritingSkills.creativity.score,
         vocabularyScore: assessment.coreWritingSkills.vocabulary.score,
         structureScore: assessment.coreWritingSkills.structure.score,
-        characterDevelopmentScore: assessment.storyDevelopment.characterDevelopment.score,
+        characterDevelopmentScore:
+          assessment.storyDevelopment.characterDevelopment.score,
         plotDevelopmentScore: assessment.storyDevelopment.plotDevelopment.score,
         readingLevel: assessment.ageAnalysis.readingLevel,
 
@@ -165,13 +179,17 @@ export async function POST(
         },
 
         // Legacy compatibility
-        aiDetectionScore: assessment.integrityAnalysis.aiDetection.humanLikeScore,
-        plagiarismScore: assessment.integrityAnalysis.plagiarismCheck.originalityScore,
+        aiDetectionScore:
+          assessment.integrityAnalysis.aiDetection.humanLikeScore,
+        plagiarismScore:
+          assessment.integrityAnalysis.plagiarismCheck.originalityScore,
 
         // Metadata
         assessmentVersion: '6.0-comprehensive',
         assessmentDate: new Date().toISOString(),
-        assessmentType: storySession.isUploadedForAssessment ? 'uploaded' : 'collaborative',
+        assessmentType: storySession.isUploadedForAssessment
+          ? 'uploaded'
+          : 'collaborative',
       };
 
       // Determine session status based on integrity
@@ -182,8 +200,10 @@ export async function POST(
         sessionStatus = 'flagged';
         integrityFlags = {
           needsReview: true,
-          aiDetectionLevel: assessment.integrityAnalysis.aiDetection.aiLikelihood,
-          plagiarismRisk: assessment.integrityAnalysis.plagiarismCheck.riskLevel,
+          aiDetectionLevel:
+            assessment.integrityAnalysis.aiDetection.aiLikelihood,
+          plagiarismRisk:
+            assessment.integrityAnalysis.plagiarismCheck.riskLevel,
           overallRisk: assessment.integrityAnalysis.overallStatus,
           flaggedAt: new Date(),
           reviewStatus: 'pending_mentor_review',
@@ -202,8 +222,10 @@ export async function POST(
         assessmentAttempts: (storySession.assessmentAttempts || 0) + 1,
         status: sessionStatus,
         integrityStatus: assessment.integrityAnalysis.overallStatus,
-        aiDetectionScore: assessment.integrityAnalysis.aiDetection.humanLikeScore,
-        plagiarismScore: assessment.integrityAnalysis.plagiarismCheck.originalityScore,
+        aiDetectionScore:
+          assessment.integrityAnalysis.aiDetection.humanLikeScore,
+        plagiarismScore:
+          assessment.integrityAnalysis.plagiarismCheck.originalityScore,
         ...(integrityFlags && { integrityFlags }),
       };
 
@@ -218,11 +240,15 @@ export async function POST(
         integrityCheck: {
           status: assessment.integrityAnalysis.overallStatus,
           aiDetection: assessment.integrityAnalysis.aiDetection.aiLikelihood,
-          humanLikeScore: assessment.integrityAnalysis.aiDetection.humanLikeScore
-        }
+          humanLikeScore:
+            assessment.integrityAnalysis.aiDetection.humanLikeScore,
+        },
       });
     } catch (assessmentError) {
-      console.error('❌ COMPREHENSIVE Assessment generation failed:', assessmentError);
+      console.error(
+        '❌ COMPREHENSIVE Assessment generation failed:',
+        assessmentError
+      );
 
       // Mark story as needing manual assessment
       await StorySession.findByIdAndUpdate(actualSessionId, {
@@ -239,9 +265,13 @@ export async function POST(
         {
           success: false,
           error: 'Assessment generation failed',
-          message: 'Your story has been saved but assessment could not be completed automatically. Please try again later.',
+          message:
+            'Your story has been saved but assessment could not be completed automatically. Please try again later.',
           needsManualAssessment: true,
-          details: assessmentError instanceof Error ? assessmentError.message : 'Unknown error',
+          details:
+            assessmentError instanceof Error
+              ? assessmentError.message
+              : 'Unknown error',
         },
         { status: 500 }
       );

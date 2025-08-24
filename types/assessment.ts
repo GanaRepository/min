@@ -6,7 +6,7 @@ export interface IntegrityAnalysis {
   integrityRisk: 'low' | 'medium' | 'high' | 'critical';
   plagiarismRiskLevel?: string;
   aiDetectionLikelihood?: string;
-  
+
   // NEW STRUCTURE SUPPORT
   aiDetection?: {
     humanLikeScore: number;
@@ -25,7 +25,7 @@ export interface IntegrityAnalysis {
   overallStatus?: string;
   message?: string;
   recommendation?: string;
-  
+
   // LEGACY STRUCTURE SUPPORT
   aiDetectionResult?: {
     likelihood: string;

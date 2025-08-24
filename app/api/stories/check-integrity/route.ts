@@ -43,38 +43,52 @@ export async function POST(request: NextRequest) {
     try {
       if (checkType === 'plagiarism' || checkType === 'both') {
         console.log('🔍 Running plagiarism check...');
-        const assessment = await ComprehensiveAssessmentEngine.performCompleteAssessment(
-          content,
-          {
-            childAge: childAge,
-            expectedGenre: 'creative',
-            isCollaborativeStory: false
-          }
-        );
+        const assessment =
+          await ComprehensiveAssessmentEngine.performCompleteAssessment(
+            content,
+            {
+              childAge: childAge,
+              expectedGenre: 'creative',
+              isCollaborativeStory: false,
+            }
+          );
         results.plagiarism = {
           score: assessment.integrityAnalysis.plagiarismCheck.originalityScore,
           riskLevel: assessment.integrityAnalysis.plagiarismCheck.riskLevel,
-          violations: assessment.integrityAnalysis.plagiarismCheck.violations?.slice(0, 5) || [],
-          suggestions: ['Focus on original ideas', 'Use your own voice', 'Draw from personal experiences'],
+          violations:
+            assessment.integrityAnalysis.plagiarismCheck.violations?.slice(
+              0,
+              5
+            ) || [],
+          suggestions: [
+            'Focus on original ideas',
+            'Use your own voice',
+            'Draw from personal experiences',
+          ],
         };
       }
 
       if (checkType === 'ai' || checkType === 'both') {
         console.log('🤖 Running AI detection...');
-        const assessment = await ComprehensiveAssessmentEngine.performCompleteAssessment(
-          content,
-          {
-            childAge: childAge,
-            expectedGenre: 'creative',
-            isCollaborativeStory: false
-          }
-        );
+        const assessment =
+          await ComprehensiveAssessmentEngine.performCompleteAssessment(
+            content,
+            {
+              childAge: childAge,
+              expectedGenre: 'creative',
+              isCollaborativeStory: false,
+            }
+          );
         results.ai = {
-          humanLikeScore: assessment.integrityAnalysis.aiDetection.humanLikeScore,
+          humanLikeScore:
+            assessment.integrityAnalysis.aiDetection.humanLikeScore,
           aiLikelihood: assessment.integrityAnalysis.aiDetection.aiLikelihood,
-          confidenceLevel: assessment.integrityAnalysis.aiDetection.confidenceLevel,
+          confidenceLevel:
+            assessment.integrityAnalysis.aiDetection.confidenceLevel,
           riskLevel: assessment.integrityAnalysis.aiDetection.riskLevel,
-          indicators: assessment.integrityAnalysis.aiDetection.indicators?.slice(0, 5) || [],
+          indicators:
+            assessment.integrityAnalysis.aiDetection.indicators?.slice(0, 5) ||
+            [],
         };
       }
 

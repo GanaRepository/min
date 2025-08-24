@@ -5,11 +5,7 @@ import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
-import {
-  ArrowLeft,
-  Brain,
-  BookOpen,
-} from 'lucide-react';
+import { ArrowLeft, Brain, BookOpen } from 'lucide-react';
 import { motion } from 'framer-motion';
 import TerminalLoader from '../../../../../components/TerminalLoader';
 import ComprehensiveAssessmentDisplay from '../../../../../components/ComprehensiveAssessmentDisplay';
@@ -157,7 +153,6 @@ export default function StoryAssessmentPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900">
       <div className="container mx-auto px-6 py-8">
-        
         {/* Assessment Content - Use Comprehensive Assessment Display Component */}
         <ComprehensiveAssessmentDisplay
           assessment={{ comprehensiveAssessment: story.assessment }}

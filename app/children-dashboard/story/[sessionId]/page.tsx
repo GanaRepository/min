@@ -1180,16 +1180,20 @@ export default function StoryWritingInterface({
                   <div className="flex items-center justify-between">
                     <span className="text-gray-300">Creativity</span>
                     <span className="text-green-400 ">
-                      {assessment.categoryScores?.creativity || 
-                       assessment.coreWritingSkills?.creativity?.score || 0}%
+                      {assessment.categoryScores?.creativity ||
+                        assessment.coreWritingSkills?.creativity?.score ||
+                        0}
+                      %
                     </span>
                   </div>
 
                   <div className="flex items-center justify-between">
                     <span className="text-gray-300">Grammar</span>
                     <span className="text-blue-400 ">
-                      {assessment.categoryScores?.grammar || 
-                       assessment.coreWritingSkills?.grammar?.score || 0}%
+                      {assessment.categoryScores?.grammar ||
+                        assessment.coreWritingSkills?.grammar?.score ||
+                        0}
+                      %
                     </span>
                   </div>
                 </div>

@@ -265,15 +265,16 @@ export async function POST(request: NextRequest) {
         storySession.title
       );
 
-      const assessment = await ComprehensiveAssessmentEngine.performCompleteAssessment(
-        storyContent,
-        {
-          childAge: 10, // default
-          storyTitle: storySession.title,
-          isCollaborativeStory: false,
-          expectedGenre: 'creative'
-        }
-      );
+      const assessment =
+        await ComprehensiveAssessmentEngine.performCompleteAssessment(
+          storyContent,
+          {
+            childAge: 10, // default
+            storyTitle: storySession.title,
+            isCollaborativeStory: false,
+            expectedGenre: 'creative',
+          }
+        );
 
       console.log('✅ Assessment completed successfully');
       console.log(`📈 Overall Score: ${assessment.overallScore}%`);
@@ -285,7 +286,8 @@ export async function POST(request: NextRequest) {
         creativityScore: assessment.coreWritingSkills.creativity.score,
         vocabularyScore: assessment.coreWritingSkills.vocabulary.score,
         structureScore: assessment.coreWritingSkills.structure.score,
-        characterDevelopmentScore: assessment.storyDevelopment.characterDevelopment.score,
+        characterDevelopmentScore:
+          assessment.storyDevelopment.characterDevelopment.score,
         plotDevelopmentScore: assessment.storyDevelopment.plotDevelopment.score,
         overallScore: assessment.overallScore,
         readingLevel: 75, // Default since not in new structure
