@@ -345,7 +345,12 @@ Respond ONLY with JSON:
 
     try {
       const response = await smartAIProvider.generateResponse(prompt);
-      const analysis = JSON.parse(response.replace(/```json|```/g, '').trim());
+      let cleanedResponse = response.replace(/```json|```/g, '').trim();
+      
+      // Fix common JSON parsing issues
+      cleanedResponse = this.cleanJSONResponse(cleanedResponse);
+      
+      const analysis = JSON.parse(cleanedResponse);
 
       return {
         originalityScore: analysis.originalityScore || 85,
@@ -543,7 +548,9 @@ Respond ONLY with this JSON:
     try {
       const response =
         await smartAIProvider.generateResponse(educationalPrompt);
-      return JSON.parse(response.replace(/```json|```/g, '').trim());
+      let cleanedResponse = response.replace(/```json|```/g, '').trim();
+      cleanedResponse = this.cleanJSONResponse(cleanedResponse);
+      return JSON.parse(cleanedResponse);
     } catch (error) {
       console.error('Educational assessment failed:', error);
       return this.getFallbackEducationalAssessment(content, metadata);
@@ -582,7 +589,9 @@ Respond ONLY with this JSON:
     try {
       const response =
         await smartAIProvider.generateResponse(specializedPrompt);
-      return JSON.parse(response.replace(/```json|```/g, '').trim());
+      let cleanedResponse = response.replace(/```json|```/g, '').trim();
+      cleanedResponse = this.cleanJSONResponse(cleanedResponse);
+      return JSON.parse(cleanedResponse);
     } catch (error) {
       console.error('Specialized analysis failed:', error);
       return this.getFallbackSpecializedAnalysis(content);
@@ -677,7 +686,9 @@ Respond ONLY with this JSON:
 
     try {
       const response = await smartAIProvider.generateResponse(feedbackPrompt);
-      return JSON.parse(response.replace(/```json|```/g, '').trim());
+      let cleanedResponse = response.replace(/```json|```/g, '').trim();
+      cleanedResponse = this.cleanJSONResponse(cleanedResponse);
+      return JSON.parse(cleanedResponse);
     } catch (error) {
       console.error('Feedback generation failed:', error);
       return this.getFallbackComprehensiveFeedback();
@@ -924,5 +935,37 @@ Respond ONLY with this JSON:
       teacherAssessment:
         'This creative writing shows developing storytelling abilities with evidence of imagination and understanding of narrative structure. The work demonstrates potential for continued growth in creative expression. Focus on authentic voice development and age-appropriate language use will help strengthen your unique writing style. Continue practicing and exploring different creative writing techniques to build your skills as a storyteller.',
     };
+  }
+
+  private static cleanJSONResponse(jsonString: string): string {
+    // Fix common JSON parsing issues
+    let cleaned = jsonString;
+    
+    // Remove any trailing commas before closing braces or brackets
+    cleaned = cleaned.replace(/,(\s*[}\]])/g, '$1');
+    
+    // Fix unescaped quotes within string values
+    cleaned = cleaned.replace(/"([^"]*)"(\s*:\s*)"([^"]*)"/g, (match, key, separator, value) => {
+      // Escape any unescaped quotes in the value
+      const escapedValue = value.replace(/"/g, '\\"');
+      return `"${key}"${separator}"${escapedValue}"`;
+    });
+    
+    // Fix unterminated strings by adding closing quotes if missing
+    const lines = cleaned.split('\n');
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i].trim();
+      if (line.includes(':') && line.includes('"')) {
+        const colonIndex = line.indexOf(':');
+        const afterColon = line.substring(colonIndex + 1).trim();
+        if (afterColon.startsWith('"') && !afterColon.endsWith('"') && !afterColon.endsWith('",')) {
+          // Add closing quote
+          lines[i] = line + '"';
+        }
+      }
+    }
+    cleaned = lines.join('\n');
+    
+    return cleaned;
   }
 }

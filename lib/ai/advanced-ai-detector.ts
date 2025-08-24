@@ -493,23 +493,24 @@ Respond ONLY with JSON:
     const humanLikeScore = Math.max(0, 100 - totalScore);
 
     // Determine likelihood and risk level with strict thresholds
-    let aiLikelihood: string;
+    let aiLikelihoodText: string;
     let riskLevel: string;
+    const aiLikelihoodPercent = Math.round(totalScore);
 
     if (totalScore >= 85) {
-      aiLikelihood = `Very High (${Math.round(totalScore)}%)`;
+      aiLikelihoodText = `Very High (${aiLikelihoodPercent}%)`;
       riskLevel = 'CRITICAL RISK';
     } else if (totalScore >= 70) {
-      aiLikelihood = `High (${Math.round(totalScore)}%)`;
+      aiLikelihoodText = `High (${aiLikelihoodPercent}%)`;
       riskLevel = 'HIGH RISK';
     } else if (totalScore >= 50) {
-      aiLikelihood = `Medium (${Math.round(totalScore)}%)`;
+      aiLikelihoodText = `Medium (${aiLikelihoodPercent}%)`;
       riskLevel = 'MEDIUM RISK';
     } else if (totalScore >= 25) {
-      aiLikelihood = `Low (${Math.round(totalScore)}%)`;
+      aiLikelihoodText = `Low (${aiLikelihoodPercent}%)`;
       riskLevel = 'LOW RISK';
     } else {
-      aiLikelihood = `Very Low (${Math.round(totalScore)}%)`;
+      aiLikelihoodText = `Very Low (${aiLikelihoodPercent}%)`;
       riskLevel = 'VERY LOW RISK';
     }
 
@@ -534,7 +535,8 @@ Respond ONLY with JSON:
 
     const result = {
       humanLikeScore: Math.round(humanLikeScore),
-      aiLikelihood,
+      aiLikelihood: aiLikelihoodText,
+      aiLikelihoodPercent: aiLikelihoodPercent, // Add numeric value for assessment page
       confidenceLevel: Math.round(confidence),
       analysis,
       riskLevel,
