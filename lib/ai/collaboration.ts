@@ -1,7 +1,7 @@
 // lib/ai/collaboration.ts - UPDATED WITH ADVANCED DETECTION
 import { smartAIProvider } from './smart-provider-manager';
-import { AIAssessmentEngine } from './ai-assessment-engine';
-import { AIDetector } from './ai-detector';
+import { ComprehensiveAssessmentEngine } from './comprehensive-assessment-engine';
+import { AdvancedAIDetector } from './advanced-ai-detector';
 import StorySession from '@/models/StorySession';
 import Turn from '@/models/Turn';
 import { connectToDatabase } from '@/utils/db';
@@ -64,8 +64,6 @@ Respond as a supportive teacher who celebrates their unique creativity.`;
     }
   }
 
-  // REMOVED: Old generateAssessment method - replaced with advanced assessment
-
   private getFreeformGuidanceForTurn(turnNumber: number): string {
     const guidanceMap: Record<number, string> = {
       1: 'Help them expand on their creative opening with vivid details and character development',
@@ -94,7 +92,7 @@ Respond as a supportive teacher who celebrates their unique creativity.`;
   }
 
   /**
-   * Complete collaborative story and run ADVANCED assessment with AI detection
+   * Complete collaborative story and run COMPREHENSIVE assessment with AI detection
    */
   static async completeAndAssessCollaborativeStory(
     sessionId: string,
@@ -133,7 +131,7 @@ Respond as a supportive teacher who celebrates their unique creativity.`;
       throw new Error('No user content found for assessment');
     }
 
-    // CHANGED: Use only user content for assessment (collaborative stories)
+    // Use only user content for assessment (collaborative stories)
     const userContent = userTurns.join('\n\n');
     const wordCount = userContent.split(/\s+/).filter(Boolean).length;
 
@@ -142,168 +140,99 @@ Respond as a supportive teacher who celebrates their unique creativity.`;
     }
 
     console.log(
-      `📊 Running ADVANCED assessment on collaborative story: ${wordCount} user words from ${userTurns.length} turns`
+      `📊 Running COMPREHENSIVE assessment on collaborative story: ${wordCount} user words from ${userTurns.length} turns`
     );
 
-    // CHANGED: Use our advanced assessment engine with AI detection
-    const assessmentResult = await AIAssessmentEngine.performCompleteAssessment(
+    // CHANGED: Use the NEW Comprehensive Assessment Engine
+    const assessmentResult = await ComprehensiveAssessmentEngine.performCompleteAssessment(
       userContent,
       {
         childAge: session.childAge || 10,
-        isCollaborativeStory: true, // Important: This tells the engine it's collaborative
+        isCollaborativeStory: true,
         storyTitle: session.title,
         expectedGenre: 'creative',
-        userTurns: userTurns, // Pass user turns for analysis
       }
     );
 
     // Log assessment results for debugging
-    console.log(
-      `🔍 AI Detection Score: ${assessmentResult.integrityAnalysis.aiDetectionResult.overallScore}/100`
-    );
-    console.log(
-      `🔍 AI Likelihood: ${assessmentResult.integrityAnalysis.aiDetectionResult.likelihood}`
-    );
-    console.log(
-      `📝 Plagiarism Score: ${assessmentResult.integrityAnalysis.plagiarismResult.overallScore}/100`
-    );
-    console.log(
-      `⚖️ Integrity Risk: ${assessmentResult.integrityAnalysis.integrityRisk}`
-    );
-    console.log(
-      `🎯 Integrity Status: ${assessmentResult.integrityStatus.status}`
-    );
+    console.log(`🔍 AI Detection: ${assessmentResult.integrityAnalysis.aiDetection.aiLikelihood}`);
+    console.log(`📝 Plagiarism: ${assessmentResult.integrityAnalysis.plagiarismCheck.riskLevel} risk`);
+    console.log(`⚖️ Integrity Status: ${assessmentResult.integrityAnalysis.overallStatus}`);
 
-    // HUMAN-FIRST: Always keep session completed, add integrity flags for mentor review
+    // Set session status based on integrity
     let sessionStatus = 'completed';
     let integrityFlags = null;
 
     // Add integrity flags for mentor/admin review if concerns exist
-    if (
-      assessmentResult.integrityStatus.status === 'FAIL' ||
-      assessmentResult.integrityAnalysis?.integrityRisk === 'critical' ||
-      assessmentResult.integrityAnalysis?.integrityRisk === 'high'
-    ) {
+    if (assessmentResult.integrityAnalysis.overallStatus === 'FAIL') {
       integrityFlags = {
         needsReview: true,
-        aiDetectionLevel:
-          assessmentResult.integrityAnalysis?.aiDetectionResult?.likelihood ||
-          'unknown',
-        plagiarismRisk:
-          assessmentResult.integrityAnalysis?.plagiarismResult?.riskLevel ||
-          'low',
-        integrityRisk:
-          assessmentResult.integrityAnalysis?.integrityRisk || 'low',
+        aiDetectionLevel: assessmentResult.integrityAnalysis.aiDetection.aiLikelihood,
+        plagiarismRisk: assessmentResult.integrityAnalysis.plagiarismCheck.riskLevel,
+        overallRisk: assessmentResult.integrityAnalysis.overallStatus,
         flaggedAt: new Date(),
         reviewStatus: 'pending_mentor_review',
       };
-
-      console.log(
-        '🏷️ Story tagged for mentor/admin review due to integrity concerns'
-      );
-      console.log(
-        `📊 Integrity Risk: ${assessmentResult.integrityAnalysis?.integrityRisk}`
-      );
-    } else {
-      console.log('✅ Assessment completed - no integrity concerns');
+      sessionStatus = 'flagged';
+    } else if (assessmentResult.integrityAnalysis.overallStatus === 'WARNING') {
+      sessionStatus = 'review';
     }
 
-    // Update session with ADVANCED assessment and integrity flags
+    // Update session with COMPREHENSIVE assessment
     const updateData: any = {
       status: sessionStatus,
       completedAt: new Date(),
       totalWords: fullStory.split(/\s+/).filter(Boolean).length,
       childWords: wordCount,
 
-      // CHANGED: Store complete advanced assessment
+      // Store complete comprehensive assessment
       assessment: {
-        // Core scores from advanced engine
-        grammarScore: assessmentResult.categoryScores.grammar,
-        creativityScore: assessmentResult.categoryScores.creativity,
-        vocabularyScore: assessmentResult.categoryScores.vocabulary,
-        structureScore: assessmentResult.categoryScores.structure,
-        characterDevelopmentScore:
-          assessmentResult.categoryScores.characterDevelopment,
-        plotDevelopmentScore: assessmentResult.categoryScores.plotDevelopment,
+        // NEW: Full comprehensive assessment data
+        comprehensiveAssessment: assessmentResult,
+
+        // Legacy compatibility fields
+        grammarScore: assessmentResult.coreWritingSkills.grammar.score,
+        creativityScore: assessmentResult.coreWritingSkills.creativity.score,
+        vocabularyScore: assessmentResult.coreWritingSkills.vocabulary.score,
+        structureScore: assessmentResult.coreWritingSkills.structure.score,
+        characterDevelopmentScore: assessmentResult.storyDevelopment.characterDevelopment.score,
+        plotDevelopmentScore: assessmentResult.storyDevelopment.plotDevelopment.score,
         overallScore: assessmentResult.overallScore,
-        readingLevel: assessmentResult.categoryScores.readingLevel,
 
-        // Educational feedback from advanced engine
-        feedback: assessmentResult.educationalFeedback.teacherComment,
-        strengths: assessmentResult.educationalFeedback.strengths,
-        improvements: assessmentResult.educationalFeedback.improvements,
-        encouragement: assessmentResult.educationalFeedback.encouragement,
-        nextSteps: assessmentResult.educationalFeedback.nextSteps,
+        // Educational feedback
+        feedback: assessmentResult.comprehensiveFeedback.teacherAssessment,
+        strengths: assessmentResult.comprehensiveFeedback.strengths,
+        improvements: assessmentResult.comprehensiveFeedback.areasForEnhancement,
+        nextSteps: assessmentResult.comprehensiveFeedback.nextSteps,
 
-        // ADVANCED: Integrity analysis with AI detection
-        plagiarismScore: assessmentResult.integrityAnalysis.originalityScore,
-        aiDetectionScore:
-          assessmentResult.integrityAnalysis.aiDetectionResult.overallScore,
-        integrityRisk: assessmentResult.integrityAnalysis.integrityRisk,
-        integrityStatus: assessmentResult.integrityStatus.status,
-        integrityMessage: assessmentResult.integrityStatus.message,
-        integrityRecommendation:
-          assessmentResult.integrityStatus.recommendation,
-
-        // Detailed integrity analysis
-        detailedIntegrityAnalysis: {
-          aiDetection: {
-            score:
-              assessmentResult.integrityAnalysis.aiDetectionResult.overallScore,
-            likelihood:
-              assessmentResult.integrityAnalysis.aiDetectionResult.likelihood,
-            confidence:
-              assessmentResult.integrityAnalysis.aiDetectionResult.confidence,
-            indicators:
-              assessmentResult.integrityAnalysis.aiDetectionResult.indicators,
-            patternMatching:
-              assessmentResult.integrityAnalysis.aiDetectionResult
-                .detailedAnalysis.patternMatching,
-            vocabularyAnalysis:
-              assessmentResult.integrityAnalysis.aiDetectionResult
-                .detailedAnalysis.vocabularyAnalysis,
-            stylometricAnalysis:
-              assessmentResult.integrityAnalysis.aiDetectionResult
-                .detailedAnalysis.stylometricAnalysis,
-          },
-          plagiarism: {
-            score:
-              assessmentResult.integrityAnalysis.plagiarismResult.overallScore,
-            riskLevel:
-              assessmentResult.integrityAnalysis.plagiarismResult.riskLevel,
-            violations:
-              assessmentResult.integrityAnalysis.plagiarismResult.violations,
-            detailedAnalysis:
-              assessmentResult.integrityAnalysis.plagiarismResult
-                .detailedAnalysis,
-          },
+        // Integrity analysis
+        integrityAnalysis: {
+          aiDetection: assessmentResult.integrityAnalysis.aiDetection,
+          plagiarismCheck: assessmentResult.integrityAnalysis.plagiarismCheck,
+          overallStatus: assessmentResult.integrityAnalysis.overallStatus,
+          message: assessmentResult.integrityAnalysis.message,
+          recommendation: assessmentResult.integrityAnalysis.recommendation,
         },
 
-        // Advanced recommendations
-        recommendations: assessmentResult.recommendations,
-        progressTracking: assessmentResult.progressTracking,
-
         // Assessment metadata
-        assessmentVersion: '3.0', // Updated version
+        assessmentVersion: '6.0-comprehensive',
         assessmentDate: new Date(),
         assessmentType: 'collaborative',
-        isAdvancedAssessment: true,
         childAge: session.childAge || 10,
       },
 
       // Sync top-level fields
       overallScore: assessmentResult.overallScore,
-      grammarScore: assessmentResult.categoryScores.grammar,
-      creativityScore: assessmentResult.categoryScores.creativity,
-      feedback: assessmentResult.educationalFeedback.teacherComment,
+      grammarScore: assessmentResult.coreWritingSkills.grammar.score,
+      creativityScore: assessmentResult.coreWritingSkills.creativity.score,
+      feedback: assessmentResult.comprehensiveFeedback.teacherAssessment,
       assessmentAttempts: 1,
       lastAssessedAt: new Date(),
 
-      // ADDED: Integrity tracking at top level
-      integrityStatus: assessmentResult.integrityStatus.status,
-      aiDetectionScore:
-        assessmentResult.integrityAnalysis.aiDetectionResult.overallScore,
-      plagiarismScore: assessmentResult.integrityAnalysis.originalityScore,
+      // Integrity tracking at top level
+      integrityStatus: assessmentResult.integrityAnalysis.overallStatus,
+      aiDetectionScore: assessmentResult.integrityAnalysis.aiDetection.humanLikeScore,
+      plagiarismScore: assessmentResult.integrityAnalysis.plagiarismCheck.originalityScore,
 
       // Add integrity flags if concerns exist
       ...(integrityFlags && { integrityFlags }),
@@ -312,19 +241,9 @@ Respond as a supportive teacher who celebrates their unique creativity.`;
     // Execute the update
     await StorySession.findByIdAndUpdate(sessionId, { $set: updateData });
 
-    console.log(
-      `✅ Collaborative story completed with ADVANCED assessment: ${sessionId}`
-    );
+    console.log(`✅ Collaborative story completed with COMPREHENSIVE assessment: ${sessionId}`);
     console.log(`📊 Overall Score: ${assessmentResult.overallScore}%`);
-    console.log(
-      `🔍 AI Detection: ${assessmentResult.integrityAnalysis.aiDetectionResult.overallScore}% (${assessmentResult.integrityAnalysis.aiDetectionResult.likelihood})`
-    );
-    console.log(
-      `📝 Plagiarism: ${assessmentResult.integrityAnalysis.plagiarismResult.overallScore}% (${assessmentResult.integrityAnalysis.plagiarismResult.riskLevel})`
-    );
-    console.log(
-      `⚖️ Final Status: ${sessionStatus} - ${assessmentResult.integrityStatus.message}`
-    );
+    console.log(`🔍 Integrity Status: ${assessmentResult.integrityAnalysis.overallStatus}`);
 
     return {
       sessionId,
@@ -339,7 +258,7 @@ Respond as a supportive teacher who celebrates their unique creativity.`;
         totalTurns: turns.length,
         userTurns: userTurns.length,
       },
-      integrityStatus: assessmentResult.integrityStatus,
+      integrityStatus: assessmentResult.integrityAnalysis.overallStatus,
     };
   }
 
@@ -358,32 +277,27 @@ Respond as a supportive teacher who celebrates their unique creativity.`;
   }> {
     console.log('🔍 Running quick AI detection check...');
 
-    const aiResult = await AIDetector.detectAIContent(userContent, {
+    const aiResult = await AdvancedAIDetector.detectAIContent(userContent, {
       childAge,
       isCreativeWriting: true,
     });
 
-    const isAI =
-      aiResult.likelihood === 'very_high' || aiResult.likelihood === 'high';
-    const shouldBlock =
-      aiResult.likelihood === 'very_high' ||
-      (aiResult.likelihood === 'high' && aiResult.confidence > 80);
+    const isAI = aiResult.riskLevel === 'CRITICAL RISK' || aiResult.riskLevel === 'HIGH RISK';
+    const shouldBlock = aiResult.riskLevel === 'CRITICAL RISK';
 
-    console.log(
-      `🤖 Quick AI Check: ${aiResult.overallScore}% human-like, ${aiResult.likelihood} AI likelihood`
-    );
+    console.log(`🤖 Quick AI Check: ${aiResult.humanLikeScore}% human-like, ${aiResult.aiLikelihood}`);
 
     return {
       isAI,
-      likelihood: aiResult.likelihood,
-      confidence: aiResult.confidence,
-      score: aiResult.overallScore,
+      likelihood: aiResult.aiLikelihood,
+      confidence: aiResult.confidenceLevel,
+      score: aiResult.humanLikeScore,
       shouldBlock,
     };
   }
 
   /**
-   * Get assessment for completed collaborative story with integrity details
+   * Get assessment for completed collaborative story
    */
   static async getCollaborativeStoryAssessment(
     sessionId: string,
@@ -394,7 +308,7 @@ Respond as a supportive teacher who celebrates their unique creativity.`;
     const session = await StorySession.findOne({
       _id: sessionId,
       childId: userId,
-      status: { $in: ['completed', 'flagged', 'review'] }, // Added 'review' status
+      status: { $in: ['completed', 'flagged', 'review'] },
     });
 
     if (!session) {
@@ -424,15 +338,15 @@ Respond as a supportive teacher who celebrates their unique creativity.`;
         status: session.integrityStatus || 'unknown',
         aiDetectionScore: session.aiDetectionScore || 0,
         plagiarismScore: session.plagiarismScore || 0,
-        message: session.assessment.integrityMessage || '',
-        recommendation: session.assessment.integrityRecommendation || '',
+        message: session.assessment.integrityAnalysis?.message || '',
+        recommendation: session.assessment.integrityAnalysis?.recommendation || '',
       },
-      isAdvanced: session.assessment.isAdvancedAssessment || false,
+      isComprehensive: session.assessment.assessmentVersion?.includes('comprehensive') || false,
     };
   }
 
   /**
-   * ADDED: Method to re-assess story with advanced detection
+   * Re-assess story with comprehensive system
    */
   static async reassessStory(sessionId: string, userId: string) {
     await connectToDatabase();
@@ -463,43 +377,41 @@ Respond as a supportive teacher who celebrates their unique creativity.`;
 
     const userContent = userTurns.join('\n\n');
 
-    console.log(`🔄 Running REASSESSMENT on story: ${sessionId}`);
+    console.log(`🔄 Running COMPREHENSIVE REASSESSMENT on story: ${sessionId}`);
 
-    // Run advanced assessment again
-    const assessmentResult = await AIAssessmentEngine.performCompleteAssessment(
+    // Run comprehensive assessment again
+    const assessmentResult = await ComprehensiveAssessmentEngine.performCompleteAssessment(
       userContent,
       {
         childAge: session.childAge || 10,
         isCollaborativeStory: true,
         storyTitle: session.title,
         expectedGenre: 'creative',
-        userTurns: userTurns,
       }
     );
 
     // Update with new assessment
     await StorySession.findByIdAndUpdate(sessionId, {
       $set: {
+        'assessment.comprehensiveAssessment': assessmentResult,
         'assessment.overallScore': assessmentResult.overallScore,
-        'assessment.integrityStatus': assessmentResult.integrityStatus.status,
-        'assessment.integrityMessage': assessmentResult.integrityStatus.message,
-        'assessment.aiDetectionScore':
-          assessmentResult.integrityAnalysis.aiDetectionResult.overallScore,
-        'assessment.plagiarismScore':
-          assessmentResult.integrityAnalysis.originalityScore,
-        'assessment.feedback':
-          assessmentResult.educationalFeedback.teacherComment,
-        integrityStatus: assessmentResult.integrityStatus.status,
-        aiDetectionScore:
-          assessmentResult.integrityAnalysis.aiDetectionResult.overallScore,
-        plagiarismScore: assessmentResult.integrityAnalysis.originalityScore,
+        'assessment.integrityAnalysis': {
+          aiDetection: assessmentResult.integrityAnalysis.aiDetection,
+          plagiarismCheck: assessmentResult.integrityAnalysis.plagiarismCheck,
+          overallStatus: assessmentResult.integrityAnalysis.overallStatus,
+          message: assessmentResult.integrityAnalysis.message,
+          recommendation: assessmentResult.integrityAnalysis.recommendation,
+        },
+        'assessment.feedback': assessmentResult.comprehensiveFeedback.teacherAssessment,
+        integrityStatus: assessmentResult.integrityAnalysis.overallStatus,
+        aiDetectionScore: assessmentResult.integrityAnalysis.aiDetection.humanLikeScore,
+        plagiarismScore: assessmentResult.integrityAnalysis.plagiarismCheck.originalityScore,
+        overallScore: assessmentResult.overallScore,
       },
       $inc: { assessmentAttempts: 1 },
     });
 
-    console.log(
-      `✅ Reassessment complete: ${assessmentResult.integrityStatus.status}`
-    );
+    console.log(`✅ Comprehensive reassessment complete: ${assessmentResult.integrityAnalysis.overallStatus}`);
 
     return {
       sessionId,

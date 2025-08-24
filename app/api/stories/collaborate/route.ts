@@ -164,9 +164,9 @@ export async function POST(request: NextRequest) {
           '🎯 Story completed! Auto-generating detailed assessment...'
         );
 
-        // Import the AI Assessment Engine
-        const { AIAssessmentEngine } = await import(
-          '@/lib/ai/ai-assessment-engine'
+        // Import the Comprehensive Assessment Engine
+        const { ComprehensiveAssessmentEngine } = await import(
+          '@/lib/ai/comprehensive-assessment-engine'
         );
 
         // Get the full story content for assessment
@@ -191,52 +191,54 @@ export async function POST(request: NextRequest) {
         console.log(`👤 User turns: ${userTurns.length}`);
 
         // Perform comprehensive assessment
-        const assessment = await AIAssessmentEngine.performCompleteAssessment(
+        const assessment = await ComprehensiveAssessmentEngine.performCompleteAssessment(
           fullStoryContent,
           {
             childAge: 10, // Default age, can be updated from user profile
             isCollaborativeStory: true,
             storyTitle: storySession.title || 'Collaborative Story',
-            userTurns: userTurns,
             expectedGenre: 'creative',
           }
         );
 
         console.log('✅ Assessment completed successfully');
         console.log(`📈 Overall Score: ${assessment.overallScore}%`);
+
         console.log(
-          `🔍 Integrity Status: ${assessment.integrityStatus.status}`
+          `🔍 Integrity Status: ${assessment.integrityAnalysis.overallStatus}`
         );
         console.log(
-          `🔍 Integrity Risk: ${assessment.integrityAnalysis.integrityRisk}`
+          `🔍 Integrity Risk: ${assessment.integrityAnalysis.aiDetection.riskLevel}`
         );
         console.log(
-          `🤖 AI Detection: ${assessment.integrityAnalysis.aiDetectionResult?.likelihood || 'unknown'}`
+          `🤖 AI Detection: ${assessment.integrityAnalysis.aiDetection?.aiLikelihood || 'unknown'}`
         );
 
         // Create comprehensive assessment data structure
         const assessmentData = {
           // Legacy fields for backward compatibility
-          grammarScore: assessment.categoryScores.grammar,
-          creativityScore: assessment.categoryScores.creativity,
-          vocabularyScore: assessment.categoryScores.vocabulary,
-          structureScore: assessment.categoryScores.structure,
-          characterDevelopmentScore:
-            assessment.categoryScores.characterDevelopment,
-          plotDevelopmentScore: assessment.categoryScores.plotDevelopment,
+          grammarScore: assessment.coreWritingSkills.grammar.score,
+          creativityScore: assessment.coreWritingSkills.creativity.score,
+          vocabularyScore: assessment.coreWritingSkills.vocabulary.score,
+          structureScore: assessment.coreWritingSkills.structure.score,
+          characterDevelopmentScore: assessment.storyDevelopment.characterDevelopment.score,
+          plotDevelopmentScore: assessment.storyDevelopment.plotDevelopment.score,
           overallScore: assessment.overallScore,
-          readingLevel: assessment.categoryScores.readingLevel,
-          feedback: assessment.educationalFeedback.teacherComment,
-          strengths: assessment.educationalFeedback.strengths,
-          improvements: assessment.educationalFeedback.improvements,
+          readingLevel: 75, // Default since not in new structure
+          feedback: assessment.comprehensiveFeedback.teacherAssessment,
+          strengths: assessment.comprehensiveFeedback.strengths,
+          improvements: assessment.comprehensiveFeedback.areasForEnhancement,
 
           // New comprehensive fields
-          categoryScores: assessment.categoryScores,
+          coreWritingSkills: assessment.coreWritingSkills,
           integrityAnalysis: assessment.integrityAnalysis,
-          educationalFeedback: assessment.educationalFeedback,
-          recommendations: assessment.recommendations,
-          progressTracking: assessment.progressTracking,
-          integrityStatus: assessment.integrityStatus,
+          comprehensiveFeedback: assessment.comprehensiveFeedback,
+          recommendations: assessment.comprehensiveFeedback.nextSteps,
+          progressTracking: assessment.advancedElements,
+          integrityStatus: {
+            status: assessment.integrityAnalysis.overallStatus,
+            message: assessment.integrityAnalysis.message
+          },
 
           // Assessment metadata
           assessmentVersion: '2.0',
@@ -247,8 +249,8 @@ export async function POST(request: NextRequest) {
         // Update story session with comprehensive assessment
         updateData.assessment = assessmentData;
         updateData.overallScore = assessment.overallScore;
-        updateData.grammarScore = assessment.categoryScores.grammar;
-        updateData.creativityScore = assessment.categoryScores.creativity;
+        updateData.grammarScore = assessment.coreWritingSkills.grammar.score;
+        updateData.creativityScore = assessment.coreWritingSkills.creativity.score;
         updateData.lastAssessedAt = new Date();
         updateData.assessmentAttempts = 1;
 
@@ -258,22 +260,20 @@ export async function POST(request: NextRequest) {
 
         // Add integrity tags for mentor/admin visibility
         if (
-          assessment.integrityAnalysis.integrityRisk === 'critical' ||
-          assessment.integrityAnalysis.integrityRisk === 'high' ||
-          assessment.integrityAnalysis.aiDetectionResult?.likelihood ===
-            'high' ||
-          assessment.integrityAnalysis.aiDetectionResult?.likelihood ===
-            'very_high'
+          assessment.integrityAnalysis.aiDetection.riskLevel === 'critical' ||
+          assessment.integrityAnalysis.aiDetection.riskLevel === 'high' ||
+          assessment.integrityAnalysis.aiDetection?.aiLikelihood === 'high' ||
+          assessment.integrityAnalysis.aiDetection?.aiLikelihood === 'very_high'
         ) {
           // Add integrity flags for admin/mentor review (not user restriction)
           updateData.integrityFlags = {
             needsReview: true,
             aiDetectionLevel:
-              assessment.integrityAnalysis.aiDetectionResult?.likelihood ||
+              assessment.integrityAnalysis.aiDetection?.aiLikelihood ||
               'unknown',
             plagiarismRisk:
-              assessment.integrityAnalysis.plagiarismResult?.riskLevel || 'low',
-            integrityRisk: assessment.integrityAnalysis.integrityRisk,
+              assessment.integrityAnalysis.plagiarismCheck?.riskLevel || 'low',
+            integrityRisk: assessment.integrityAnalysis.aiDetection.riskLevel,
             flaggedAt: new Date(),
             reviewStatus: 'pending_mentor_review',
           };
@@ -282,10 +282,10 @@ export async function POST(request: NextRequest) {
             '🏷️ Story tagged for mentor/admin review due to integrity concerns'
           );
           console.log(
-            `📊 AI Detection: ${assessment.integrityAnalysis.aiDetectionResult?.likelihood}`
+            `📊 AI Detection: ${assessment.integrityAnalysis.aiDetection?.aiLikelihood}`
           );
           console.log(
-            `📊 Plagiarism Risk: ${assessment.integrityAnalysis.plagiarismResult?.riskLevel}`
+            `📊 Plagiarism Risk: ${assessment.integrityAnalysis.plagiarismCheck?.riskLevel}`
           );
         } else {
           console.log('✅ Assessment completed - no integrity concerns');

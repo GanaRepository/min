@@ -3,7 +3,7 @@ import { connectToDatabase } from '@/utils/db';
 import Competition from '@/models/Competition';
 import StorySession from '@/models/StorySession';
 import User from '@/models/User';
-import { AIAssessmentEngine } from '@/lib/ai/ai-assessment-engine';
+import { ComprehensiveAssessmentEngine } from '@/lib/ai/comprehensive-assessment-engine';
 import {
   sendWinnerCongratulationsEmail,
   sendCompetitionUpdateEmail,
@@ -519,13 +519,13 @@ export class CompetitionManager {
         const storyContent =
           story.childTurns?.join('\n\n') || story.content || '';
 
-        const assessment = await AIAssessmentEngine.performCompleteAssessment(
+        const assessment = await ComprehensiveAssessmentEngine.performCompleteAssessment(
           storyContent,
           {
             childAge: 10,
-            isCompetition: true,
-            expectedWordCount: story.totalWords || 400,
+            expectedGenre: 'creative',
             storyTitle: story.title,
+            isCollaborativeStory: false
           }
         );
 
@@ -664,13 +664,13 @@ export class CompetitionManager {
         const storyContent =
           story.childTurns?.join('\n\n') || story.content || '';
 
-        const assessment = await AIAssessmentEngine.performCompleteAssessment(
+        const assessment = await ComprehensiveAssessmentEngine.performCompleteAssessment(
           storyContent,
           {
             childAge: 10,
-            isCompetition: true,
-            expectedWordCount: story.totalWords || 400,
+            expectedGenre: 'creative',
             storyTitle: story.title,
+            isCollaborativeStory: false
           }
         );
 
@@ -868,10 +868,17 @@ export class CompetitionManager {
     const lightPrompt = `Rate this children's story from 60-95 for overall quality. Consider creativity, writing skill, and storytelling. Return only a number: "${content.substring(0, 400)}..."`;
 
     try {
-      // This would use your lightweight AI assessment
-      const response =
-        await AIAssessmentEngine.performLightweightAssessment(lightPrompt);
-      const score = parseInt(response.match(/\d+/)?.[0] || '75');
+      // Use comprehensive assessment with minimal metadata
+      const assessment = await ComprehensiveAssessmentEngine.performCompleteAssessment(
+        lightPrompt,
+        {
+          childAge: 10,
+          expectedGenre: 'creative',
+          isCollaborativeStory: false
+        }
+      );
+      
+      const score = assessment.overallScore;
 
       return {
         score: Math.min(95, Math.max(60, score)),
@@ -890,24 +897,41 @@ export class CompetitionManager {
    * Competition score calculation using assessment engine results
    */
   static calculateCompetitionScore(assessment: any, story: any) {
-    // Validate assessment exists and has valid scores
-    if (!assessment?.categoryScores) {
+    // Helper function to get score from either new or old structure
+    const getScore = (category: string): number => {
+      // Try new structure first
+      if (assessment?.coreWritingSkills?.[category]?.score !== undefined) {
+        return assessment.coreWritingSkills[category].score;
+      }
+      if (assessment?.storyDevelopment?.[category]?.score !== undefined) {
+        return assessment.storyDevelopment[category].score;
+      }
+      // Fallback to legacy structure
+      if (assessment?.categoryScores?.[category] !== undefined) {
+        return assessment.categoryScores[category];
+      }
+      return 0;
+    };
+
+    // Validate assessment exists and has valid scores (either old or new structure)
+    if (!assessment?.categoryScores && !assessment?.coreWritingSkills) {
       throw new Error(
         'Cannot calculate competition score: missing assessment data'
       );
     }
 
     const scores = {
-      grammar: assessment.categoryScores.grammar,
-      creativity: assessment.categoryScores.creativity,
-      structure: assessment.categoryScores.structure,
-      characterDevelopment: assessment.categoryScores.characterDevelopment,
-      plotDevelopment: assessment.categoryScores.plotDevelopment,
-      vocabulary: assessment.categoryScores.vocabulary,
+      grammar: getScore('grammar'),
+      creativity: getScore('creativity'),
+      structure: getScore('structure'),
+      characterDevelopment: getScore('characterDevelopment'),
+      plotDevelopment: getScore('plotDevelopment'),
+      vocabulary: getScore('vocabulary'),
       wordCount: this.calculateWordCountScore(story.totalWords || 0),
-      originality: assessment.integrityAnalysis?.originalityScore,
-      aiPenalty:
-        assessment.integrityAnalysis?.aiDetectionResult?.confidence || 0,
+      originality: assessment.integrityAnalysis?.plagiarismCheck?.originalityScore || 
+                   assessment.integrityAnalysis?.originalityScore || 100,
+      aiPenalty: assessment.integrityAnalysis?.aiDetection?.confidenceLevel || 
+                 assessment.integrityAnalysis?.aiDetectionResult?.confidence || 0,
     };
 
     // Validate all required scores exist

@@ -1,3 +1,4 @@
+//app/children-dashboard/my-stories/[storyId]/assessment/page.tsx
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -7,101 +8,17 @@ import Link from 'next/link';
 import {
   ArrowLeft,
   Brain,
-  Trophy,
-  CheckCircle,
-  AlertTriangle,
-  XCircle,
-  Star,
-  TrendingUp,
   BookOpen,
-  Award,
-  Target,
-  Lightbulb,
-  MessageSquare,
-  Shield,
-  Eye,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import TerminalLoader from '../../../../../components/TerminalLoader';
 import ComprehensiveAssessmentDisplay from '../../../../../components/ComprehensiveAssessmentDisplay';
-import DetailedAssessmentDisplay from '../../../../../components/DetailedAssessmentDisplay';
-
-interface ComprehensiveAssessment {
-  // Core scores
-  overallScore: number;
-  categoryScores: {
-    grammar: number;
-    vocabulary: number;
-    creativity: number;
-    structure: number;
-    characterDevelopment: number;
-    plotDevelopment: number;
-    descriptiveWriting: number;
-    sensoryDetails: number;
-    plotLogic: number;
-    causeEffect: number;
-    problemSolving: number;
-    themeRecognition: number;
-    ageAppropriateness: number;
-    readingLevel: string;
-  };
-
-  // Academic integrity analysis
-  integrityAnalysis: {
-    plagiarismResult: {
-      overallScore: number;
-      riskLevel: string;
-    };
-    aiDetectionResult: {
-      likelihood: string;
-      confidence: number;
-    };
-    originalityScore: number;
-    integrityRisk: string;
-  };
-
-  // Educational feedback
-  educationalFeedback: {
-    strengths: string[];
-    improvements: string[];
-    nextSteps: string[];
-    teacherComment: string;
-    encouragement: string;
-  };
-
-  // Progress tracking
-  progressTracking?: {
-    improvementSince?: string;
-    scoreChange?: number;
-    strengthsGained?: string[];
-    areasImproved?: string[];
-  };
-
-  // Recommendations
-  recommendations: {
-    immediate: string[];
-    longTerm: string[];
-    practiceExercises: string[];
-  };
-
-  // Integrity status
-  integrityStatus: {
-    status: 'PASS' | 'WARNING' | 'FAIL';
-    message: string;
-    recommendation: string;
-  };
-
-  // Assessment metadata
-  assessmentVersion?: string;
-  assessmentDate?: string;
-  assessmentType?: string;
-}
 
 interface Story {
   _id: string;
   title: string;
   status: string;
-  assessment?: ComprehensiveAssessment;
+  assessment?: any; // New comprehensive assessment structure
   createdAt: string;
   completedAt?: string;
 }
@@ -161,50 +78,6 @@ export default function StoryAssessmentPage() {
     }
   }, [status, storyId, router]);
 
-  const getScoreColor = (score: number) => {
-    if (score >= 90) return 'text-green-400';
-    if (score >= 80) return 'text-blue-400';
-    if (score >= 70) return 'text-yellow-400';
-    if (score >= 60) return 'text-orange-400';
-    return 'text-red-400';
-  };
-
-  const getScoreBgColor = (score: number) => {
-    if (score >= 90) return 'bg-green-500/20 border-green-500/30';
-    if (score >= 80) return 'bg-blue-500/20 border-blue-500/30';
-    if (score >= 70) return 'bg-yellow-500/20 border-yellow-500/30';
-    if (score >= 60) return 'bg-orange-500/20 border-orange-500/30';
-    return 'bg-red-500/20 border-red-500/30';
-  };
-
-  const getIntegrityIcon = (status: string) => {
-    switch (status.toLowerCase()) {
-      case 'pass':
-        return <CheckCircle className="w-5 h-5 text-green-400" />;
-      case 'warning':
-        return <AlertTriangle className="w-5 h-5 text-yellow-400" />;
-      case 'fail':
-        return <XCircle className="w-5 h-5 text-red-400" />;
-      default:
-        return <Shield className="w-5 h-5 text-gray-400" />;
-    }
-  };
-
-  const getIntegrityRiskColor = (risk: string) => {
-    switch (risk.toLowerCase()) {
-      case 'low':
-        return 'text-green-400';
-      case 'medium':
-        return 'text-yellow-400';
-      case 'high':
-        return 'text-orange-400';
-      case 'critical':
-        return 'text-red-400';
-      default:
-        return 'text-gray-400';
-    }
-  };
-
   if (loading || status === 'loading') {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 flex items-center justify-center">
@@ -257,176 +130,6 @@ export default function StoryAssessmentPage() {
     );
   }
 
-  // Create a comprehensive assessment object from the API response
-  const createComprehensiveAssessment = (
-    assessment: any
-  ): ComprehensiveAssessment => {
-    // Helper function to get category scores with proper validation
-    const getCategoryScore = (category: string): number => {
-      if (assessment?.categoryScores) {
-        const score = assessment.categoryScores[
-          category as keyof typeof assessment.categoryScores
-        ] as number;
-        if (
-          typeof score === 'number' &&
-          !isNaN(score) &&
-          score >= 0 &&
-          score <= 100
-        ) {
-          return score;
-        }
-      }
-
-      // Only fall back to legacy fields if new format doesn't exist or is invalid
-      switch (category) {
-        case 'grammar':
-          return assessment?.grammarScore || 0;
-        case 'creativity':
-          return assessment?.creativityScore || 0;
-        case 'vocabulary':
-          return assessment?.vocabularyScore || 0;
-        case 'structure':
-          return assessment?.structureScore || 0;
-        case 'characterDevelopment':
-          return assessment?.characterDevelopmentScore || 0;
-        case 'plotDevelopment':
-          return assessment?.plotDevelopmentScore || 0;
-        case 'descriptiveWriting':
-          return assessment?.descriptiveWritingScore || 0;
-        case 'sensoryDetails':
-          return assessment?.sensoryDetailsScore || 0;
-        case 'plotLogic':
-          return assessment?.plotLogicScore || 0;
-        case 'causeEffect':
-          return assessment?.causeEffectScore || 0;
-        case 'problemSolving':
-          return assessment?.problemSolvingScore || 0;
-        case 'themeRecognition':
-          return assessment?.themeRecognitionScore || 0;
-        case 'ageAppropriateness':
-          return assessment?.ageAppropriatenessScore || 0;
-        default:
-          return 0;
-      }
-    };
-
-    return {
-      overallScore: assessment?.overallScore || 0,
-
-      categoryScores: {
-        grammar: getCategoryScore('grammar'),
-        vocabulary: getCategoryScore('vocabulary'),
-        creativity: getCategoryScore('creativity'),
-        structure: getCategoryScore('structure'),
-        characterDevelopment: getCategoryScore('characterDevelopment'),
-        plotDevelopment: getCategoryScore('plotDevelopment'),
-        descriptiveWriting: getCategoryScore('descriptiveWriting'),
-        sensoryDetails: getCategoryScore('sensoryDetails'),
-        plotLogic: getCategoryScore('plotLogic'),
-        causeEffect: getCategoryScore('causeEffect'),
-        problemSolving: getCategoryScore('problemSolving'),
-        themeRecognition: getCategoryScore('themeRecognition'),
-        ageAppropriateness: getCategoryScore('ageAppropriateness'),
-        readingLevel:
-          assessment?.categoryScores?.readingLevel ||
-          assessment?.readingLevel ||
-          'Elementary Level',
-      },
-
-      integrityAnalysis: {
-        plagiarismResult: {
-          overallScore:
-            assessment?.integrityAnalysis?.plagiarismResult?.overallScore ||
-            assessment?.plagiarismScore ||
-            100,
-          riskLevel:
-            assessment?.integrityAnalysis?.plagiarismResult?.riskLevel || 'low',
-        },
-        aiDetectionResult: {
-          likelihood:
-            assessment?.integrityAnalysis?.aiDetectionResult?.likelihood ||
-            'low',
-          confidence:
-            assessment?.integrityAnalysis?.aiDetectionResult?.confidence || 0,
-        },
-        originalityScore:
-          assessment?.integrityAnalysis?.originalityScore ||
-          assessment?.plagiarismScore ||
-          100,
-        integrityRisk:
-          assessment?.integrityAnalysis?.integrityRisk ||
-          assessment?.integrityRisk ||
-          'low',
-      },
-
-      educationalFeedback: {
-        strengths: assessment?.educationalFeedback?.strengths ||
-          assessment?.strengths || [
-            'Your story shows creativity and imagination!',
-            'You completed your writing task successfully.',
-            'Your ideas flow well throughout the story.',
-            'You demonstrate good understanding of story structure.',
-            'Your writing shows personality and voice.',
-          ],
-        improvements: assessment?.educationalFeedback?.improvements ||
-          assessment?.improvements || [
-            'Continue practicing to develop your writing skills further.',
-            'Try incorporating more descriptive details to enhance your storytelling.',
-            'Focus on developing character emotions and motivations.',
-          ],
-        nextSteps: assessment?.educationalFeedback?.nextSteps || [
-          'Read various genres to expand your storytelling toolkit.',
-          'Practice writing short stories regularly to build your skills.',
-          'Experiment with different character types and settings.',
-          'Share your stories with others for feedback and encouragement.',
-        ],
-        teacherComment:
-          assessment?.educationalFeedback?.teacherComment ||
-          assessment?.feedback ||
-          'Great work on completing your story! You show promise as a creative writer. Your imagination and effort shine through in your writing. Keep practicing and exploring different storytelling techniques to continue growing as a writer.',
-        encouragement:
-          assessment?.educationalFeedback?.encouragement ||
-          assessment?.educationalInsights ||
-          'Keep up the excellent writing! Every story you create helps you become a better writer. Your creativity and imagination are your greatest strengths. 🌟',
-      },
-
-      progressTracking: assessment?.progressTracking || {},
-
-      recommendations: {
-        immediate: assessment?.recommendations?.immediate || [
-          'Continue writing stories to practice your skills',
-          'Read books in your favorite genres for inspiration',
-          'Try describing scenes using all five senses',
-        ],
-        longTerm: assessment?.recommendations?.longTerm || [
-          'Keep a writing journal for daily practice',
-          'Join a young writers group or club',
-          'Explore different writing styles and genres',
-        ],
-        practiceExercises: assessment?.recommendations?.practiceExercises || [
-          'Write a story about your favorite memory',
-          'Create a character profile for an imaginary friend',
-          'Describe your dream vacation in vivid detail',
-          'Write a different ending for your favorite book',
-        ],
-      },
-
-      integrityStatus: {
-        status: assessment?.integrityStatus?.status || 'PASS',
-        message:
-          assessment?.integrityStatus?.message ||
-          'Story passed all integrity checks with flying colors!',
-        recommendation:
-          assessment?.integrityStatus?.recommendation ||
-          'Continue writing original, creative content from your imagination.',
-      },
-
-      assessmentVersion: assessment?.assessmentVersion || '2.0',
-      assessmentDate: assessment?.assessmentDate || new Date().toISOString(),
-      assessmentType: assessment?.assessmentType || 'comprehensive',
-    };
-  };
-
   if (!story.assessment) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 flex items-center justify-center">
@@ -451,127 +154,14 @@ export default function StoryAssessmentPage() {
     );
   }
 
-  const assessment = createComprehensiveAssessment(story.assessment);
-
-  // Convert assessment to format expected by DetailedAssessmentDisplay
-  const convertToDisplayFormat = (assessment: ComprehensiveAssessment) => {
-    return {
-      overallScore: assessment.overallScore,
-      categoryScores: assessment.categoryScores,
-
-      // Required feedback properties
-      feedback: assessment.educationalFeedback.teacherComment,
-      strengths: assessment.educationalFeedback.strengths,
-      improvements: assessment.educationalFeedback.improvements,
-      educationalInsights: assessment.educationalFeedback.encouragement,
-
-      // Required integrity properties
-      integrityStatus: assessment.integrityStatus.status,
-      aiDetectionScore:
-        100 - assessment.integrityAnalysis.aiDetectionResult.confidence,
-      plagiarismScore:
-        assessment.integrityAnalysis.plagiarismResult.overallScore,
-      integrityRisk: assessment.integrityAnalysis.integrityRisk,
-
-      // Optional metadata
-      assessmentVersion: assessment.assessmentVersion,
-      assessmentDate: assessment.assessmentDate,
-      assessmentType: assessment.assessmentType,
-    };
-  };
-
-  const displayAssessment = convertToDisplayFormat(assessment);
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900">
       <div className="container mx-auto px-6 py-8">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-8"
-        >
-          <div className="flex items-center gap-4 mb-6">
-            <Link
-              href={`/children-dashboard/my-stories/${storyId}`}
-              className="bg-gray-700 hover:bg-gray-600 text-white p-2 rounded-lg transition-colors"
-            >
-              <ArrowLeft size={20} />
-            </Link>
-            <div className="flex-1">
-              <h1 className="text-3xl font-bold text-white mb-1">
-                Assessment Results
-              </h1>
-              <p className="text-gray-300">{story.title}</p>
-            </div>
-          </div>
-
-          {/* Overall Score Banner */}
-          <div
-            className={`rounded-lg border p-6 ${getScoreBgColor(assessment.overallScore)}`}
-          >
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-2xl font-bold text-white mb-2">
-                  Overall Score
-                </h2>
-                <p className="text-gray-200">
-                  {assessment.assessmentDate && (
-                    <>
-                      Assessed on{' '}
-                      {new Date(assessment.assessmentDate).toLocaleDateString()}
-                    </>
-                  )}
-                </p>
-              </div>
-              <div className="text-right">
-                <div
-                  className={`text-5xl font-bold ${getScoreColor(assessment.overallScore)}`}
-                >
-                  {assessment.overallScore}%
-                </div>
-                <div className="flex items-center gap-2 mt-2">
-                  {getIntegrityIcon(assessment.integrityStatus.status)}
-                  <span className="text-white font-medium">
-                    {assessment.integrityStatus.status}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Assessment Content - Use Detailed Assessment Display Component */}
-        <DetailedAssessmentDisplay
-          assessment={displayAssessment}
-          storyInfo={{
-            title: story.title,
-            wordCount:
-              (story as any).content
-                ?.split(/\s+/)
-                .filter((word: string) => word.length > 0).length ||
-              (story as any).totalWords ||
-              0,
-            attemptsRemaining: Math.max(
-              0,
-              3 - ((story as any).assessmentAttempts || 0)
-            ),
-          }}
-          onReassess={async () => {
-            try {
-              const response = await fetch(
-                `/api/stories/assessment/${storyId}`,
-                {
-                  method: 'POST',
-                }
-              );
-              if (response.ok) {
-                window.location.reload();
-              }
-            } catch (error) {
-              console.error('Reassessment failed:', error);
-            }
-          }}
+        
+        {/* Assessment Content - Use Comprehensive Assessment Display Component */}
+        <ComprehensiveAssessmentDisplay
+          assessment={{ comprehensiveAssessment: story.assessment }}
+          storyTitle={story.title}
         />
 
         {/* Action Buttons */}

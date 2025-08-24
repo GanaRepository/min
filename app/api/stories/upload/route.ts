@@ -156,7 +156,7 @@ import { authOptions } from '@/utils/authOptions';
 import { connectToDatabase } from '@/utils/db';
 import StorySession from '@/models/StorySession';
 import { UsageManager } from '@/lib/usage-manager';
-import { AIAssessmentEngine } from '@/lib/ai/ai-assessment-engine';
+import { ComprehensiveAssessmentEngine } from '@/lib/ai/comprehensive-assessment-engine';
 
 export async function POST(request: NextRequest) {
   try {
@@ -265,38 +265,41 @@ export async function POST(request: NextRequest) {
         storySession.title
       );
 
-      const assessment = await AIAssessmentEngine.assessStory(
+      const assessment = await ComprehensiveAssessmentEngine.performCompleteAssessment(
         storyContent,
-        storySession._id.toString(),
-        session.user.id
+        {
+          childAge: 10, // default
+          storyTitle: storySession.title,
+          isCollaborativeStory: false,
+          expectedGenre: 'creative'
+        }
       );
 
       console.log('✅ Assessment completed successfully');
       console.log(`📈 Overall Score: ${assessment.overallScore}%`);
 
-      // EXACT SAME ASSESSMENT DATA STRUCTURE AS FREESTYLE
+      // ASSESSMENT DATA STRUCTURE FOR NEW ENGINE
       const assessmentData = {
         // Legacy fields for backward compatibility
-        grammarScore: assessment.categoryScores.grammar,
-        creativityScore: assessment.categoryScores.creativity,
-        vocabularyScore: assessment.categoryScores.vocabulary,
-        structureScore: assessment.categoryScores.structure,
-        characterDevelopmentScore:
-          assessment.categoryScores.characterDevelopment,
-        plotDevelopmentScore: assessment.categoryScores.plotDevelopment,
+        grammarScore: assessment.coreWritingSkills.grammar.score,
+        creativityScore: assessment.coreWritingSkills.creativity.score,
+        vocabularyScore: assessment.coreWritingSkills.vocabulary.score,
+        structureScore: assessment.coreWritingSkills.structure.score,
+        characterDevelopmentScore: assessment.storyDevelopment.characterDevelopment.score,
+        plotDevelopmentScore: assessment.storyDevelopment.plotDevelopment.score,
         overallScore: assessment.overallScore,
-        readingLevel: assessment.categoryScores.readingLevel,
-        feedback: assessment.educationalFeedback.teacherComment,
-        strengths: assessment.educationalFeedback.strengths,
-        improvements: assessment.educationalFeedback.improvements,
+        readingLevel: 75, // Default since not in new structure
+        feedback: assessment.comprehensiveFeedback.teacherAssessment,
+        strengths: assessment.comprehensiveFeedback.strengths,
+        improvements: assessment.comprehensiveFeedback.areasForEnhancement,
         vocabularyUsed: [],
         suggestedWords: [],
-        educationalInsights: assessment.educationalFeedback.encouragement,
+        educationalInsights: assessment.comprehensiveFeedback.teacherAssessment,
 
         // Advanced fields
         integrityAnalysis: assessment.integrityAnalysis,
-        recommendations: assessment.recommendations,
-        progressTracking: assessment.progressTracking,
+        recommendations: assessment.comprehensiveFeedback.nextSteps,
+        progressTracking: assessment.advancedElements,
         assessmentVersion: '2.0',
         assessmentDate: new Date().toISOString(),
       };
@@ -306,10 +309,10 @@ export async function POST(request: NextRequest) {
         $set: {
           assessment: assessmentData,
           overallScore: assessment.overallScore,
-          grammarScore: assessment.categoryScores.grammar,
-          creativityScore: assessment.categoryScores.creativity,
+          grammarScore: assessment.coreWritingSkills.grammar.score,
+          creativityScore: assessment.coreWritingSkills.creativity.score,
           status:
-            assessment.integrityAnalysis.integrityRisk === 'critical'
+            assessment.integrityAnalysis.overallStatus === 'FAIL'
               ? 'flagged'
               : 'completed',
           lastAssessedAt: new Date(),

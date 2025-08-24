@@ -446,7 +446,7 @@ import Competition from '@/models/Competition';
 import User from '@/models/User';
 import { UsageManager } from '@/lib/usage-manager';
 import { competitionManager } from '@/lib/competition-manager';
-import { AIAssessmentEngine } from '@/lib/ai/ai-assessment-engine';
+import { ComprehensiveAssessmentEngine } from '@/lib/ai/comprehensive-assessment-engine';
 
 export async function POST(request: NextRequest) {
   try {
@@ -544,14 +544,13 @@ export async function POST(request: NextRequest) {
 
     let assessmentResult;
     try {
-      assessmentResult = await AIAssessmentEngine.performCompleteAssessment(
+      assessmentResult = await ComprehensiveAssessmentEngine.performCompleteAssessment(
         storyContent,
         {
           childAge: 10, // default
           isCollaborativeStory: false,
           storyTitle: title,
           expectedGenre: 'creative',
-          isCompetition: true, // Special flag for competition
         }
       );
 
@@ -559,10 +558,10 @@ export async function POST(request: NextRequest) {
         `📊 Competition Assessment - Overall: ${assessmentResult.overallScore}%`
       );
       console.log(
-        `🔍 AI Detection: ${assessmentResult.integrityAnalysis.aiDetectionResult.likelihood}`
+        `🔍 AI Detection: ${assessmentResult.integrityAnalysis.aiDetection.aiLikelihood}`
       );
       console.log(
-        `⚠️ Integrity Risk: ${assessmentResult.integrityAnalysis.integrityRisk}`
+        `⚠️ Integrity Risk: ${assessmentResult.integrityAnalysis.aiDetection.riskLevel}`
       );
 
       // ✅ ASSESSMENT COMPLETE: Save with full assessment data
@@ -600,30 +599,31 @@ export async function POST(request: NextRequest) {
 
       // ✅ STORE COMPLETE ASSESSMENT DATA
       assessment: {
-        grammarScore: assessmentResult.categoryScores.grammar,
-        creativityScore: assessmentResult.categoryScores.creativity,
-        vocabularyScore: assessmentResult.categoryScores.vocabulary,
-        structureScore: assessmentResult.categoryScores.structure,
-        characterDevelopmentScore:
-          assessmentResult.categoryScores.characterDevelopment,
-        plotDevelopmentScore: assessmentResult.categoryScores.plotDevelopment,
+        grammarScore: assessmentResult.coreWritingSkills.grammar.score,
+        creativityScore: assessmentResult.coreWritingSkills.creativity.score,
+        vocabularyScore: assessmentResult.coreWritingSkills.vocabulary.score,
+        structureScore: assessmentResult.coreWritingSkills.structure.score,
+        characterDevelopmentScore: assessmentResult.storyDevelopment.characterDevelopment.score,
+        plotDevelopmentScore: assessmentResult.storyDevelopment.plotDevelopment.score,
         overallScore: assessmentResult.overallScore,
-        readingLevel: assessmentResult.categoryScores.readingLevel,
-        feedback: assessmentResult.educationalFeedback.teacherComment,
-        strengths: assessmentResult.educationalFeedback.strengths,
-        improvements: assessmentResult.educationalFeedback.improvements,
+        readingLevel: 75, // Default since not in new structure
+        feedback: assessmentResult.comprehensiveFeedback.teacherAssessment,
+        strengths: assessmentResult.comprehensiveFeedback.strengths,
+        improvements: assessmentResult.comprehensiveFeedback.areasForEnhancement,
 
         // ✅ INTEGRITY ANALYSIS (The missing piece!)
-        plagiarismScore: assessmentResult.integrityAnalysis.originalityScore,
-        aiDetectionScore:
-          assessmentResult.integrityAnalysis.aiDetectionResult.overallScore,
-        integrityRisk: assessmentResult.integrityAnalysis.integrityRisk,
-        integrityStatus: assessmentResult.integrityStatus,
+        plagiarismScore: assessmentResult.integrityAnalysis.plagiarismCheck.originalityScore,
+        aiDetectionScore: assessmentResult.integrityAnalysis.aiDetection.confidenceLevel,
+        integrityRisk: assessmentResult.integrityAnalysis.aiDetection.riskLevel,
+        integrityStatus: {
+          status: assessmentResult.integrityAnalysis.overallStatus,
+          message: assessmentResult.integrityAnalysis.message
+        },
         integrityAnalysis: assessmentResult.integrityAnalysis,
 
         // ✅ ADVANCED ANALYSIS
-        recommendations: assessmentResult.recommendations,
-        progressTracking: assessmentResult.progressTracking,
+        recommendations: assessmentResult.comprehensiveFeedback.nextSteps,
+        progressTracking: assessmentResult.advancedElements,
         assessmentVersion: '2.0',
         assessmentDate: new Date().toISOString(),
       },
@@ -653,7 +653,7 @@ export async function POST(request: NextRequest) {
         isPublished: false,
         competitionEligible: true,
         assessmentScore: assessmentResult.overallScore,
-        integrityStatus: assessmentResult.integrityStatus.status,
+        integrityStatus: assessmentResult.integrityAnalysis.overallStatus,
       },
       competition: {
         id: currentCompetition._id,
@@ -662,8 +662,11 @@ export async function POST(request: NextRequest) {
       },
       assessment: {
         overallScore: assessmentResult.overallScore,
-        integrityStatus: assessmentResult.integrityStatus,
-        feedback: assessmentResult.educationalFeedback.teacherComment,
+        integrityStatus: {
+          status: assessmentResult.integrityAnalysis.overallStatus,
+          message: assessmentResult.integrityAnalysis.message
+        },
+        feedback: assessmentResult.comprehensiveFeedback.teacherAssessment,
       },
       message: 'Story assessed and submitted to competition successfully!',
     });

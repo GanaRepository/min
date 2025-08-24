@@ -4,71 +4,38 @@ import { authOptions } from '@/utils/authOptions';
 import { connectToDatabase } from '@/utils/db';
 import StorySession from '@/models/StorySession';
 import Turn from '@/models/Turn';
-import { AIAssessmentEngine } from '@/lib/ai/ai-assessment-engine';
+import { ComprehensiveAssessmentEngine } from '@/lib/ai/comprehensive-assessment-engine';
 import mongoose from 'mongoose';
 
 // Helper function to generate detailed teacher comment
-function generateDetailedTeacherComment(
-  assessment: any,
-  sixteenStepAnalysis: any
-): string {
+function generateDetailedTeacherComment(assessment: any): string {
   const overallScore = assessment.overallScore;
-  const integrityRisk = assessment.integrityAnalysis.integrityRisk;
-  const aiLikelihood =
-    assessment.integrityAnalysis.aiDetectionResult.likelihood;
+  const integrityStatus = assessment.integrityAnalysis.overallStatus;
 
   // Handle AI detection cases first
-  if (aiLikelihood === 'very_high' || aiLikelihood === 'high') {
-    return `This content shows patterns consistent with AI generation. Academic integrity requires authentic, original work. The writing demonstrates technical proficiency but lacks the natural voice and personal perspective expected from human authors. Please rewrite using only your own ideas, experiences, and voice.`;
+  if (integrityStatus === 'FAIL') {
+    return `This submission requires attention to ensure authentic student work. Please focus on developing your own creative writing abilities through personal expression and original ideas. Remember that the goal is to develop your unique voice as a writer.`;
   }
 
-  // Handle integrity concerns
-  if (integrityRisk === 'critical' || integrityRisk === 'high') {
-    return `While this story shows creativity, there are some concerns about originality that should be addressed. Focus on writing completely from your own imagination and experiences. The technical elements are good, but authentic voice development is essential.`;
+  // Handle integrity warnings
+  if (integrityStatus === 'WARNING') {
+    return `Your story shows creativity and effort. To strengthen your writing further, focus on developing your authentic personal voice and expressing your unique ideas and experiences. Continue practicing to build your individual writing style.`;
   }
 
   // Generate positive, detailed feedback for authentic work
-  const strengths = assessment.educationalFeedback.strengths
-    .slice(0, 2)
-    .join(' ');
-  const improvements = assessment.educationalFeedback.improvements
-    .slice(0, 1)
-    .join('');
+  const strengths = assessment.comprehensiveFeedback.strengths?.slice(0, 2).join(' ') || 'Your creativity shows through in this story.';
+  const improvements = assessment.comprehensiveFeedback.areasForEnhancement?.[0] || 'continue developing your writing skills';
 
   if (overallScore >= 90) {
-    return `Outstanding work on your story! ${strengths} Your writing demonstrates exceptional skill across multiple areas. ${improvements ? `To make your writing even stronger, ${improvements.toLowerCase()}` : 'Continue developing your unique voice and storytelling style.'} This is impressive creative writing that shows real talent and dedication.`;
+    return `Outstanding work on your story! ${strengths} Your writing demonstrates exceptional skill across multiple areas. To make your writing even stronger, ${improvements.toLowerCase()}. This is impressive creative writing that shows real talent and dedication.`;
   } else if (overallScore >= 80) {
-    return `Excellent story! ${strengths} You're showing strong writing skills and creative thinking. ${improvements ? `Focus on ${improvements.toLowerCase()} to take your writing to the next level.` : 'Keep practicing to make your writing even stronger.'} Your imagination and effort really shine through in this piece.`;
+    return `Excellent story! ${strengths} You're showing strong writing skills and creative thinking. Focus on ${improvements.toLowerCase()} to take your writing to the next level. Your imagination and effort really shine through in this piece.`;
   } else if (overallScore >= 70) {
-    return `Good work on your story! I can see your creativity and effort coming through. ${strengths} ${improvements ? `Work on ${improvements.toLowerCase()} to improve your storytelling.` : 'Continue practicing to develop your skills further.'} Keep writing and exploring your imagination!`;
+    return `Good work on your story! I can see your creativity and effort coming through. ${strengths} Work on ${improvements.toLowerCase()} to improve your storytelling. Keep writing and exploring your imagination!`;
   } else if (overallScore >= 60) {
-    return `Nice effort on your story! You have some good creative ideas that show promise. ${improvements ? `Focus on ${improvements.toLowerCase()} to strengthen your writing.` : 'Practice will help you develop your storytelling skills.'} Remember, every story you write helps you become a better writer.`;
+    return `Nice effort on your story! You have some good creative ideas that show promise. Focus on ${improvements.toLowerCase()} to strengthen your writing. Remember, every story you write helps you become a better writer.`;
   } else {
-    return `Keep practicing your writing! Every story you create helps you improve your skills. ${improvements ? `Try focusing on ${improvements.toLowerCase()}.` : 'Work on developing your ideas and expressing them clearly.'} Your imagination is valuable - keep using it to create stories!`;
-  }
-}
-
-// Helper function to generate integrity assessment
-function generateIntegrityAssessment(integrityAnalysis: any): string {
-  const aiLikelihood = integrityAnalysis.aiDetectionResult.likelihood;
-  const integrityRisk = integrityAnalysis.integrityRisk;
-  const originalityScore = integrityAnalysis.originalityScore;
-
-  // Always return PASS for children but provide guidance
-  if (aiLikelihood === 'very_high' || aiLikelihood === 'high') {
-    return 'PASS - Story completed. Please focus on authentic, original writing for future assignments.';
-  }
-
-  if (integrityRisk === 'critical' || integrityRisk === 'high') {
-    return 'PASS - Story completed. Work on developing your unique writing voice and personal storytelling style.';
-  }
-
-  if (originalityScore >= 85) {
-    return 'PASS - Excellent original work! Your creativity and authentic voice shine through.';
-  } else if (originalityScore >= 70) {
-    return 'PASS - Good original content. Continue developing your unique storytelling style.';
-  } else {
-    return 'PASS - Story completed. Focus on writing from your own imagination and experiences.';
+    return `Keep practicing your writing! Every story you create helps you improve your skills. Try focusing on ${improvements.toLowerCase()}. Your imagination is valuable - keep using it to create stories!`;
   }
 }
 
@@ -89,7 +56,7 @@ export async function POST(
     const { storyId } = params;
     await connectToDatabase();
 
-    console.log('🎯 Assessment request for story:', storyId);
+    console.log('🎯 COMPREHENSIVE Assessment request for story:', storyId);
 
     // Find the story session
     let storySession = null;
@@ -120,14 +87,14 @@ export async function POST(
       );
     }
 
-    console.log('📝 Story is completed, generating assessment...');
+    console.log('📝 Story is completed, generating COMPREHENSIVE assessment...');
 
     // Get all story content
     let storyContent = '';
 
     if (storySession.isUploadedForAssessment) {
       // For uploaded stories
-      storyContent = storySession.aiOpening || '';
+      storyContent = storySession.aiOpening || storySession.content || '';
     } else {
       // For collaborative stories, get all child inputs
       const turns = await Turn.find({ sessionId: actualSessionId })
@@ -148,11 +115,11 @@ export async function POST(
       );
     }
 
-    console.log(`📊 Assessing ${storyContent.length} characters of content`);
+    console.log(`📊 Assessing ${storyContent.length} characters with COMPREHENSIVE system`);
 
     try {
-      // Generate comprehensive assessment with 16-step analysis
-      const assessment = await AIAssessmentEngine.performCompleteAssessment(
+      // Generate comprehensive assessment with advanced AI detection
+      const assessment = await ComprehensiveAssessmentEngine.performCompleteAssessment(
         storyContent,
         {
           childAge: 10, // Default age
@@ -162,118 +129,102 @@ export async function POST(
         }
       );
 
-      // Generate detailed 16-step breakdown
-      const sixteenStepAnalysis =
-        await AIAssessmentEngine.performSixteenStepAnalysis(storyContent, {
-          childAge: 10,
-          storyTitle: storySession.title || 'Untitled Story',
-          isCollaborativeStory: !storySession.isUploadedForAssessment,
-          expectedGenre: 'creative',
-        });
-
-      console.log('✅ Assessment completed successfully');
+      console.log('✅ COMPREHENSIVE Assessment completed successfully');
       console.log(`📈 Overall Score: ${assessment.overallScore}%`);
-      console.log(
-        `🔒 Integrity Risk: ${assessment.integrityAnalysis.integrityRisk}`
-      );
-      console.log(
-        `🤖 AI Detection: ${assessment.integrityAnalysis.aiDetectionResult.likelihood}`
-      );
+      console.log(`🔒 Integrity Status: ${assessment.integrityAnalysis.overallStatus}`);
+      console.log(`🤖 AI Detection: ${assessment.integrityAnalysis.aiDetection.aiLikelihood}`);
 
       // Prepare comprehensive assessment data
       const assessmentData = {
-        // Core scores
+        // NEW: Complete comprehensive assessment
+        comprehensiveAssessment: assessment,
+
+        // Core scores for compatibility
         overallScore: assessment.overallScore,
-        categoryScores: assessment.categoryScores,
-
-        // Legacy compatibility fields
-        grammarScore: assessment.categoryScores.grammar,
-        creativityScore: assessment.categoryScores.creativity,
-        vocabularyScore: assessment.categoryScores.vocabulary,
-        structureScore: assessment.categoryScores.structure,
-        characterDevelopmentScore:
-          assessment.categoryScores.characterDevelopment,
-        plotDevelopmentScore: assessment.categoryScores.plotDevelopment,
-        readingLevel: assessment.categoryScores.readingLevel,
-
-        // NEW: 16-Step Analysis Results
-        sixteenStepAnalysis,
+        grammarScore: assessment.coreWritingSkills.grammar.score,
+        creativityScore: assessment.coreWritingSkills.creativity.score,
+        vocabularyScore: assessment.coreWritingSkills.vocabulary.score,
+        structureScore: assessment.coreWritingSkills.structure.score,
+        characterDevelopmentScore: assessment.storyDevelopment.characterDevelopment.score,
+        plotDevelopmentScore: assessment.storyDevelopment.plotDevelopment.score,
+        readingLevel: assessment.ageAnalysis.readingLevel,
 
         // Educational feedback - Enhanced with detailed teacher-style comments
-        feedback: generateDetailedTeacherComment(
-          assessment,
-          sixteenStepAnalysis
-        ),
-        strengths: assessment.educationalFeedback.strengths,
-        improvements: assessment.educationalFeedback.improvements,
-        educationalInsights: assessment.educationalFeedback.encouragement,
+        feedback: generateDetailedTeacherComment(assessment),
+        strengths: assessment.comprehensiveFeedback.strengths,
+        improvements: assessment.comprehensiveFeedback.areasForEnhancement,
+        nextSteps: assessment.comprehensiveFeedback.nextSteps,
 
-        // Integrity analysis - Enhanced
-        integrityStatus: generateIntegrityAssessment(
-          assessment.integrityAnalysis
-        ),
-        aiDetectionScore:
-          assessment.integrityAnalysis.aiDetectionResult.overallScore || 0,
-        plagiarismScore: assessment.integrityAnalysis.originalityScore || 100,
-        integrityRisk: assessment.integrityAnalysis.integrityRisk || 'low',
+        // Integrity analysis - Complete
+        integrityAnalysis: {
+          aiDetection: assessment.integrityAnalysis.aiDetection,
+          plagiarismCheck: assessment.integrityAnalysis.plagiarismCheck,
+          overallStatus: assessment.integrityAnalysis.overallStatus,
+          message: assessment.integrityAnalysis.message,
+          recommendation: assessment.integrityAnalysis.recommendation,
+        },
 
-        // Advanced fields
-        integrityAnalysis: assessment.integrityAnalysis,
-        recommendations: assessment.recommendations,
-        progressTracking: assessment.progressTracking,
+        // Legacy compatibility
+        aiDetectionScore: assessment.integrityAnalysis.aiDetection.humanLikeScore,
+        plagiarismScore: assessment.integrityAnalysis.plagiarismCheck.originalityScore,
 
         // Metadata
-        assessmentVersion: '3.0',
+        assessmentVersion: '6.0-comprehensive',
         assessmentDate: new Date().toISOString(),
-        assessmentType: storySession.isUploadedForAssessment
-          ? 'uploaded'
-          : 'collaborative',
+        assessmentType: storySession.isUploadedForAssessment ? 'uploaded' : 'collaborative',
       };
+
+      // Determine session status based on integrity
+      let sessionStatus = 'completed';
+      let integrityFlags = null;
+
+      if (assessment.integrityAnalysis.overallStatus === 'FAIL') {
+        sessionStatus = 'flagged';
+        integrityFlags = {
+          needsReview: true,
+          aiDetectionLevel: assessment.integrityAnalysis.aiDetection.aiLikelihood,
+          plagiarismRisk: assessment.integrityAnalysis.plagiarismCheck.riskLevel,
+          overallRisk: assessment.integrityAnalysis.overallStatus,
+          flaggedAt: new Date(),
+          reviewStatus: 'pending_mentor_review',
+        };
+      } else if (assessment.integrityAnalysis.overallStatus === 'WARNING') {
+        sessionStatus = 'review';
+      }
 
       // Update story session with assessment
       const updateData = {
         assessment: assessmentData,
         overallScore: assessment.overallScore,
-        grammarScore: assessment.categoryScores.grammar,
-        creativityScore: assessment.categoryScores.creativity,
+        grammarScore: assessment.coreWritingSkills.grammar.score,
+        creativityScore: assessment.coreWritingSkills.creativity.score,
         lastAssessedAt: new Date(),
         assessmentAttempts: (storySession.assessmentAttempts || 0) + 1,
-        // HUMAN-FIRST: Always keep as completed, add flags for mentor review
-        status: 'completed',
-        // Add integrity flags for mentor/admin review if concerns exist
-        ...((assessment.integrityAnalysis?.integrityRisk === 'critical' ||
-          assessment.integrityAnalysis?.integrityRisk === 'high' ||
-          assessment.integrityAnalysis?.aiDetectionResult?.likelihood ===
-            'high' ||
-          assessment.integrityAnalysis?.aiDetectionResult?.likelihood ===
-            'very_high') && {
-          integrityFlags: {
-            needsReview: true,
-            aiDetectionLevel:
-              assessment.integrityAnalysis.aiDetectionResult?.likelihood ||
-              'unknown',
-            plagiarismRisk:
-              assessment.integrityAnalysis.plagiarismResult?.riskLevel || 'low',
-            integrityRisk: assessment.integrityAnalysis.integrityRisk,
-            flaggedAt: new Date(),
-            reviewStatus: 'pending_mentor_review',
-          },
-        }),
+        status: sessionStatus,
+        integrityStatus: assessment.integrityAnalysis.overallStatus,
+        aiDetectionScore: assessment.integrityAnalysis.aiDetection.humanLikeScore,
+        plagiarismScore: assessment.integrityAnalysis.plagiarismCheck.originalityScore,
+        ...(integrityFlags && { integrityFlags }),
       };
 
       await StorySession.findByIdAndUpdate(actualSessionId, updateData);
 
-      console.log('💾 Assessment saved to database');
+      console.log('💾 COMPREHENSIVE Assessment saved to database');
 
       return NextResponse.json({
         success: true,
-        message: 'Assessment completed successfully',
+        message: 'Comprehensive assessment completed successfully',
         assessment: assessmentData,
+        integrityCheck: {
+          status: assessment.integrityAnalysis.overallStatus,
+          aiDetection: assessment.integrityAnalysis.aiDetection.aiLikelihood,
+          humanLikeScore: assessment.integrityAnalysis.aiDetection.humanLikeScore
+        }
       });
     } catch (assessmentError) {
-      console.error('❌ Assessment generation failed:', assessmentError);
+      console.error('❌ COMPREHENSIVE Assessment generation failed:', assessmentError);
 
-      // Mark story as needing manual assessment instead of providing fake scores
+      // Mark story as needing manual assessment
       await StorySession.findByIdAndUpdate(actualSessionId, {
         assessmentAttempts: (storySession.assessmentAttempts || 0) + 1,
         lastAssessmentError:
@@ -281,29 +232,25 @@ export async function POST(
             ? assessmentError.message
             : 'Unknown error',
         needsManualAssessment: true,
-        status: 'completed', // Keep status as completed but flag for manual review
+        status: 'completed',
       });
 
       return NextResponse.json(
         {
           success: false,
           error: 'Assessment generation failed',
-          message:
-            'Your story has been saved but assessment could not be completed automatically. Please contact support or try again later.',
+          message: 'Your story has been saved but assessment could not be completed automatically. Please try again later.',
           needsManualAssessment: true,
-          details:
-            assessmentError instanceof Error
-              ? assessmentError.message
-              : 'Unknown error',
+          details: assessmentError instanceof Error ? assessmentError.message : 'Unknown error',
         },
         { status: 500 }
       );
     }
   } catch (error) {
-    console.error('❌ Assessment endpoint error:', error);
+    console.error('❌ COMPREHENSIVE Assessment endpoint error:', error);
     return NextResponse.json(
       {
-        error: 'Failed to generate assessment',
+        error: 'Failed to generate comprehensive assessment',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
@@ -360,7 +307,7 @@ export async function GET(
       assessment: (storySession as any).assessment,
     });
   } catch (error) {
-    console.error('❌ Get assessment error:', error);
+    console.error('❌ Get comprehensive assessment error:', error);
     return NextResponse.json(
       { error: 'Failed to retrieve assessment' },
       { status: 500 }

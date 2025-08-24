@@ -66,9 +66,10 @@ interface Turn {
   timestamp: Date;
 }
 
-interface Assessment {
+interface AssessmentData {
   overallScore: number;
-  categoryScores: {
+  // Support both old and new structures
+  categoryScores?: {
     grammar: number;
     creativity: number;
     vocabulary: number;
@@ -76,9 +77,25 @@ interface Assessment {
     characterDevelopment: number;
     plotDevelopment: number;
   };
-  feedback: string;
-  integrityStatus: string;
-  aiDetectionScore: number;
+  coreWritingSkills?: {
+    grammar: { score: number; feedback: string };
+    creativity: { score: number; feedback: string };
+    vocabulary: { score: number; feedback: string };
+    structure: { score: number; feedback: string };
+  };
+  storyDevelopment?: {
+    characterDevelopment: { score: number; feedback: string };
+    plotDevelopment: { score: number; feedback: string };
+  };
+  feedback?: string;
+  comprehensiveFeedback?: {
+    teacherAssessment: string;
+  };
+  integrityStatus?: string;
+  integrityAnalysis?: {
+    overallStatus: string;
+  };
+  aiDetectionScore?: number;
 }
 
 export default function StoryWritingInterface({
@@ -103,7 +120,7 @@ export default function StoryWritingInterface({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isAIGenerating, setIsAIGenerating] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [assessment, setAssessment] = useState<Assessment | null>(null);
+  const [assessment, setAssessment] = useState<AssessmentData | null>(null);
   const [loadingAssessment, setLoadingAssessment] = useState(false);
 
   // Title editing
@@ -1163,14 +1180,16 @@ export default function StoryWritingInterface({
                   <div className="flex items-center justify-between">
                     <span className="text-gray-300">Creativity</span>
                     <span className="text-green-400 ">
-                      {assessment.categoryScores?.creativity || 0}%
+                      {assessment.categoryScores?.creativity || 
+                       assessment.coreWritingSkills?.creativity?.score || 0}%
                     </span>
                   </div>
 
                   <div className="flex items-center justify-between">
                     <span className="text-gray-300">Grammar</span>
                     <span className="text-blue-400 ">
-                      {assessment.categoryScores?.grammar || 0}%
+                      {assessment.categoryScores?.grammar || 
+                       assessment.coreWritingSkills?.grammar?.score || 0}%
                     </span>
                   </div>
                 </div>

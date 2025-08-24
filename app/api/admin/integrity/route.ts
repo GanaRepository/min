@@ -4,7 +4,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/utils/authOptions';
 import { connectToDatabase } from '@/utils/db';
 import StorySession from '@/models/StorySession';
-import { AIAssessmentEngine } from '@/lib/ai/ai-assessment-engine';
+import { ComprehensiveAssessmentEngine } from '@/lib/ai/comprehensive-assessment-engine';
 
 export async function GET(request: NextRequest) {
   try {
@@ -83,8 +83,8 @@ async function getIntegrityOverview() {
         },
       ]),
 
-      // Assessment statistics from engine
-      AIAssessmentEngine.getAssessmentStats(),
+      // Assessment statistics - placeholder for new engine
+      { assessmentCount: 0, averageScore: 0 },
     ]);
 
   // FIXED: Process integrity stats to create riskDistribution
@@ -124,9 +124,9 @@ async function getIntegrityOverview() {
       },
       assessmentStats: {
         averageScore: Math.round(assessmentStats.averageScore || 0),
-        totalAssessments: assessmentStats.totalAssessments || 0,
-        aiDetectedCount: assessmentStats.aiDetectedCount || 0,
-        plagiarismDetectedCount: assessmentStats.plagiarismDetectedCount || 0,
+        totalAssessments: assessmentStats.assessmentCount || 0,
+        aiDetectedCount: 0, // Placeholder
+        plagiarismDetectedCount: 0, // Placeholder
       },
     },
   });

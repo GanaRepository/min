@@ -1,4 +1,4 @@
-// types/assessment.ts - NEW FILE
+// types/assessment.ts - UPDATED FOR BACKWARD COMPATIBILITY
 export interface IntegrityAnalysis {
   originalityScore: number;
   plagiarismScore: number;
@@ -6,6 +6,36 @@ export interface IntegrityAnalysis {
   integrityRisk: 'low' | 'medium' | 'high' | 'critical';
   plagiarismRiskLevel?: string;
   aiDetectionLikelihood?: string;
+  
+  // NEW STRUCTURE SUPPORT
+  aiDetection?: {
+    humanLikeScore: number;
+    aiLikelihood: string;
+    confidenceLevel: number;
+    analysis: string;
+    riskLevel: string;
+    indicators: string[];
+  };
+  plagiarismCheck?: {
+    originalityScore: number;
+    riskLevel: string;
+    violations: string[];
+    status: string;
+  };
+  overallStatus?: string;
+  message?: string;
+  recommendation?: string;
+  
+  // LEGACY STRUCTURE SUPPORT
+  aiDetectionResult?: {
+    likelihood: string;
+    confidence: number;
+    overallScore?: number;
+  };
+  plagiarismResult?: {
+    overallScore: number;
+    riskLevel: string;
+  };
 }
 
 export interface AssessmentRecommendations {

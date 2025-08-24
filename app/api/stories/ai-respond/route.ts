@@ -6,7 +6,7 @@ import Turn from '@/models/Turn';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/utils/authOptions';
 import { collaborationEngine } from '@/lib/ai/collaboration';
-import { AIAssessmentEngine } from '@/lib/ai/ai-assessment-engine';
+import { ComprehensiveAssessmentEngine } from '@/lib/ai/comprehensive-assessment-engine';
 import mongoose from 'mongoose';
 import type { NextRequest } from 'next/server';
 
@@ -156,14 +156,11 @@ export async function POST(req: NextRequest) {
 
         // ✅ FIXED: Use comprehensive assessment engine
         const comprehensiveAssessment =
-          await AIAssessmentEngine.performCompleteAssessment(storyContent, {
+          await ComprehensiveAssessmentEngine.performCompleteAssessment(storyContent, {
             childAge: 10,
             isCollaborativeStory: true,
             storyTitle: updatedSession.title,
-            expectedGenre: 'creative',
-            userTurns: allTurns
-              .filter((turn) => turn.childInput)
-              .map((turn) => turn.childInput),
+            expectedGenre: 'creative'
           });
 
         console.log('✅ Comprehensive assessment completed');
@@ -171,57 +168,59 @@ export async function POST(req: NextRequest) {
           `📊 Overall Score: ${comprehensiveAssessment.overallScore}%`
         );
         console.log(
-          `🔍 AI Detection: ${comprehensiveAssessment.integrityAnalysis.aiDetectionResult.likelihood}`
+          `🔍 AI Detection: ${comprehensiveAssessment.integrityAnalysis.aiDetection.aiLikelihood}`
         );
         console.log(
-          `⚠️ Integrity Risk: ${comprehensiveAssessment.integrityAnalysis.integrityRisk}`
+          `⚠️ Integrity Risk: ${comprehensiveAssessment.integrityAnalysis.aiDetection.riskLevel}`
         );
 
         await StorySession.findByIdAndUpdate(actualSessionId, {
           $set: {
             assessment: {
               // Legacy fields for backward compatibility
-              grammarScore: comprehensiveAssessment.categoryScores.grammar,
+              grammarScore: comprehensiveAssessment.coreWritingSkills.grammar.score,
               creativityScore:
-                comprehensiveAssessment.categoryScores.creativity,
+                comprehensiveAssessment.coreWritingSkills.creativity.score,
               overallScore: comprehensiveAssessment.overallScore,
               vocabularyScore:
-                comprehensiveAssessment.categoryScores.vocabulary,
-              structureScore: comprehensiveAssessment.categoryScores.structure,
+                comprehensiveAssessment.coreWritingSkills.vocabulary.score,
+              structureScore: comprehensiveAssessment.coreWritingSkills.structure.score,
               characterDevelopmentScore:
-                comprehensiveAssessment.categoryScores.characterDevelopment,
+                comprehensiveAssessment.storyDevelopment.characterDevelopment.score,
               plotDevelopmentScore:
-                comprehensiveAssessment.categoryScores.plotDevelopment,
-              readingLevel: comprehensiveAssessment.categoryScores.readingLevel,
+                comprehensiveAssessment.storyDevelopment.plotDevelopment.score,
+              readingLevel: 75, // Default since not in new structure
               feedback:
-                comprehensiveAssessment.educationalFeedback.teacherComment,
-              strengths: comprehensiveAssessment.educationalFeedback.strengths,
+                comprehensiveAssessment.comprehensiveFeedback.teacherAssessment,
+              strengths: comprehensiveAssessment.comprehensiveFeedback.strengths,
               improvements:
-                comprehensiveAssessment.educationalFeedback.improvements,
+                comprehensiveAssessment.comprehensiveFeedback.areasForEnhancement,
               vocabularyUsed: [],
               suggestedWords: [],
               educationalInsights:
-                comprehensiveAssessment.educationalFeedback.encouragement,
+                comprehensiveAssessment.comprehensiveFeedback.teacherAssessment,
 
               // ✅ ADVANCED INTEGRITY ANALYSIS (The missing piece!)
               plagiarismScore:
-                comprehensiveAssessment.integrityAnalysis.originalityScore,
+                comprehensiveAssessment.integrityAnalysis.plagiarismCheck.originalityScore,
               aiDetectionScore:
-                comprehensiveAssessment.integrityAnalysis.aiDetectionResult
-                  .overallScore,
+                comprehensiveAssessment.integrityAnalysis.aiDetection.confidenceLevel,
               integrityRisk:
-                comprehensiveAssessment.integrityAnalysis.integrityRisk,
-              integrityStatus: comprehensiveAssessment.integrityStatus,
+                comprehensiveAssessment.integrityAnalysis.aiDetection.riskLevel,
+              integrityStatus: {
+                status: comprehensiveAssessment.integrityAnalysis.overallStatus,
+                message: comprehensiveAssessment.integrityAnalysis.message
+              },
               integrityAnalysis: comprehensiveAssessment.integrityAnalysis,
 
               // ✅ ADVANCED ANALYSIS
-              recommendations: comprehensiveAssessment.recommendations,
-              progressTracking: comprehensiveAssessment.progressTracking,
+              recommendations: comprehensiveAssessment.comprehensiveFeedback.nextSteps,
+              progressTracking: comprehensiveAssessment.advancedElements,
               assessmentVersion: '2.0',
               assessmentDate: new Date().toISOString(),
             },
             status:
-              comprehensiveAssessment.integrityAnalysis.integrityRisk ===
+              comprehensiveAssessment.integrityAnalysis.aiDetection.riskLevel ===
               'critical'
                 ? 'flagged'
                 : 'completed',
@@ -234,28 +233,31 @@ export async function POST(req: NextRequest) {
 
         // Return assessment in legacy format for frontend compatibility
         assessment = {
-          grammarScore: comprehensiveAssessment.categoryScores.grammar,
-          creativityScore: comprehensiveAssessment.categoryScores.creativity,
-          vocabularyScore: comprehensiveAssessment.categoryScores.vocabulary,
-          structureScore: comprehensiveAssessment.categoryScores.structure,
+          grammarScore: comprehensiveAssessment.coreWritingSkills.grammar.score,
+          creativityScore: comprehensiveAssessment.coreWritingSkills.creativity.score,
+          vocabularyScore: comprehensiveAssessment.coreWritingSkills.vocabulary.score,
+          structureScore: comprehensiveAssessment.coreWritingSkills.structure.score,
           characterDevelopmentScore:
-            comprehensiveAssessment.categoryScores.characterDevelopment,
+            comprehensiveAssessment.storyDevelopment.characterDevelopment.score,
           plotDevelopmentScore:
-            comprehensiveAssessment.categoryScores.plotDevelopment,
+            comprehensiveAssessment.storyDevelopment.plotDevelopment.score,
           overallScore: comprehensiveAssessment.overallScore,
-          readingLevel: comprehensiveAssessment.categoryScores.readingLevel,
-          feedback: comprehensiveAssessment.educationalFeedback.teacherComment,
-          strengths: comprehensiveAssessment.educationalFeedback.strengths,
+          readingLevel: 75, // Default since not in new structure
+          feedback: comprehensiveAssessment.comprehensiveFeedback.teacherAssessment,
+          strengths: comprehensiveAssessment.comprehensiveFeedback.strengths,
           improvements:
-            comprehensiveAssessment.educationalFeedback.improvements,
+            comprehensiveAssessment.comprehensiveFeedback.areasForEnhancement,
           vocabularyUsed: [],
           suggestedWords: [],
           educationalInsights:
-            comprehensiveAssessment.educationalFeedback.encouragement,
+            comprehensiveAssessment.comprehensiveFeedback.teacherAssessment,
 
           // ✅ NEW: Include integrity analysis for frontend
           integrityAnalysis: comprehensiveAssessment.integrityAnalysis,
-          integrityStatus: comprehensiveAssessment.integrityStatus,
+          integrityStatus: {
+            status: comprehensiveAssessment.integrityAnalysis.overallStatus,
+            message: comprehensiveAssessment.integrityAnalysis.message
+          },
         };
       } catch (error) {
         console.error('❌ Auto-assessment failed:', error);

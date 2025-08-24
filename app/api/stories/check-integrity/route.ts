@@ -2,7 +2,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/utils/authOptions';
-import { AIAssessmentEngine } from '@/lib/ai/ai-assessment-engine';
+import { ComprehensiveAssessmentEngine } from '@/lib/ai/comprehensive-assessment-engine';
 import { connectToDatabase } from '@/utils/db';
 import User from '@/models/User';
 
@@ -43,30 +43,38 @@ export async function POST(request: NextRequest) {
     try {
       if (checkType === 'plagiarism' || checkType === 'both') {
         console.log('🔍 Running plagiarism check...');
-        const plagiarismResult = await AIAssessmentEngine.checkPlagiarismOnly(
+        const assessment = await ComprehensiveAssessmentEngine.performCompleteAssessment(
           content,
-          childAge
+          {
+            childAge: childAge,
+            expectedGenre: 'creative',
+            isCollaborativeStory: false
+          }
         );
         results.plagiarism = {
-          score: plagiarismResult.score,
-          riskLevel: plagiarismResult.riskLevel,
-          violations: plagiarismResult.violations?.slice(0, 5) || [], // Limit to top 5 violations
-          suggestions: plagiarismResult.suggestions?.slice(0, 3) || [],
+          score: assessment.integrityAnalysis.plagiarismCheck.originalityScore,
+          riskLevel: assessment.integrityAnalysis.plagiarismCheck.riskLevel,
+          violations: assessment.integrityAnalysis.plagiarismCheck.violations?.slice(0, 5) || [],
+          suggestions: ['Focus on original ideas', 'Use your own voice', 'Draw from personal experiences'],
         };
       }
 
       if (checkType === 'ai' || checkType === 'both') {
         console.log('🤖 Running AI detection...');
-        const aiResult = await AIAssessmentEngine.checkAIContentOnly(
+        const assessment = await ComprehensiveAssessmentEngine.performCompleteAssessment(
           content,
-          childAge
+          {
+            childAge: childAge,
+            expectedGenre: 'creative',
+            isCollaborativeStory: false
+          }
         );
-        results.aiDetection = {
-          score: aiResult.score,
-          likelihood: aiResult.likelihood,
-          confidence: aiResult.confidence,
-          indicators: aiResult.indicators?.slice(0, 5) || [], // Limit to top 5 indicators
-          suggestions: aiResult.suggestions?.slice(0, 3) || [],
+        results.ai = {
+          humanLikeScore: assessment.integrityAnalysis.aiDetection.humanLikeScore,
+          aiLikelihood: assessment.integrityAnalysis.aiDetection.aiLikelihood,
+          confidenceLevel: assessment.integrityAnalysis.aiDetection.confidenceLevel,
+          riskLevel: assessment.integrityAnalysis.aiDetection.riskLevel,
+          indicators: assessment.integrityAnalysis.aiDetection.indicators?.slice(0, 5) || [],
         };
       }
 
@@ -74,39 +82,39 @@ export async function POST(request: NextRequest) {
       let overallIntegrityScore = 100;
       let overallRisk = 'low';
 
-      if (results.plagiarism && results.aiDetection) {
+      if (results.plagiarism && results.ai) {
         overallIntegrityScore = Math.min(
           results.plagiarism.score,
-          results.aiDetection.score
+          results.ai.humanLikeScore
         );
 
         if (
           results.plagiarism.riskLevel === 'critical' ||
-          results.aiDetection.likelihood === 'very_high'
+          results.ai.aiLikelihood === 'very_high'
         ) {
           overallRisk = 'critical';
         } else if (
           results.plagiarism.riskLevel === 'high' ||
-          results.aiDetection.likelihood === 'high'
+          results.ai.aiLikelihood === 'high'
         ) {
           overallRisk = 'high';
         } else if (
           results.plagiarism.riskLevel === 'medium' ||
-          results.aiDetection.likelihood === 'medium'
+          results.ai.aiLikelihood === 'medium'
         ) {
           overallRisk = 'medium';
         }
       } else if (results.plagiarism) {
         overallIntegrityScore = results.plagiarism.score;
         overallRisk = results.plagiarism.riskLevel;
-      } else if (results.aiDetection) {
-        overallIntegrityScore = results.aiDetection.score;
+      } else if (results.ai) {
+        overallIntegrityScore = results.ai.humanLikeScore;
         overallRisk =
-          results.aiDetection.likelihood === 'very_high'
+          results.ai.aiLikelihood === 'very_high'
             ? 'critical'
-            : results.aiDetection.likelihood === 'high'
+            : results.ai.aiLikelihood === 'high'
               ? 'high'
-              : results.aiDetection.likelihood === 'medium'
+              : results.ai.aiLikelihood === 'medium'
                 ? 'medium'
                 : 'low';
       }
@@ -127,8 +135,8 @@ export async function POST(request: NextRequest) {
         );
       }
       if (
-        results.aiDetection?.likelihood !== 'very_low' &&
-        results.aiDetection?.likelihood !== 'low'
+        results.ai?.aiLikelihood !== 'very_low' &&
+        results.ai?.aiLikelihood !== 'low'
       ) {
         recommendations.push(
           "Make sure you're writing your own original content, not using AI tools"
