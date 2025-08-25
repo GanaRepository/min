@@ -5,7 +5,19 @@ import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, Brain, BookOpen, Trophy, Star, Target, Award, Shield, CheckCircle, AlertTriangle, XCircle } from 'lucide-react';
+import {
+  ArrowLeft,
+  Brain,
+  BookOpen,
+  Trophy,
+  Star,
+  Target,
+  Award,
+  Shield,
+  CheckCircle,
+  AlertTriangle,
+  XCircle,
+} from 'lucide-react';
 import { motion } from 'framer-motion';
 import TerminalLoader from '../../../../../components/TerminalLoader';
 
@@ -125,7 +137,8 @@ export default function StoryAssessmentPage() {
 
   const getIntegrityIcon = (status?: string) => {
     if (status === 'FAIL') return <XCircle className="w-6 h-6 text-red-500" />;
-    if (status === 'WARNING') return <AlertTriangle className="w-6 h-6 text-yellow-500" />;
+    if (status === 'WARNING')
+      return <AlertTriangle className="w-6 h-6 text-yellow-500" />;
     return <CheckCircle className="w-6 h-6 text-green-500" />;
   };
 
@@ -163,9 +176,7 @@ export default function StoryAssessmentPage() {
       <div className="min-h-screen bg-gradient-to-br from-gray-900 via-slate-900 to-green-900 flex items-center justify-center">
         <div className="text-center max-w-md mx-auto px-6">
           <Brain className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-          <h2 className="text-xl  text-white mb-2">
-            Assessment Not Available
-          </h2>
+          <h2 className="text-xl  text-white mb-2">Assessment Not Available</h2>
           <p className="text-gray-400 mb-6">
             {error || 'Assessment data is not available for this story.'}
           </p>
@@ -186,9 +197,7 @@ export default function StoryAssessmentPage() {
       <div className="min-h-screen bg-gradient-to-br from-gray-900 via-slate-900 to-green-900 flex items-center justify-center">
         <div className="text-center max-w-md mx-auto px-6">
           <Brain className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-          <h2 className="text-xl  text-white mb-2">
-            Assessment Not Available
-          </h2>
+          <h2 className="text-xl  text-white mb-2">Assessment Not Available</h2>
           <p className="text-gray-400 mb-6">
             This story hasn&apos;t been assessed yet. Complete your story to get
             detailed feedback!
@@ -237,15 +246,11 @@ export default function StoryAssessmentPage() {
           <div className="w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-600  flex items-center justify-center mx-auto mb-4">
             <Trophy className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-3xl  text-white mb-2">
-            Assessment Results
-          </h1>
+          <h1 className="text-3xl  text-white mb-2">Assessment Results</h1>
           <h2 className="text-xl text-gray-300 mb-4">
             &ldquo;{story.title}&rdquo;
           </h2>
-          <div className="text-gray-400">
-            Comprehensive Writing Analysis
-          </div>
+          <div className="text-gray-400">Comprehensive Writing Analysis</div>
         </motion.div>
 
         {/* Overall Score Banner */}
@@ -260,13 +265,13 @@ export default function StoryAssessmentPage() {
               <Trophy className="w-8 h-8 text-white" />
             </div>
             <div>
-              <div className="text-5xl  text-white mb-2">
-                {overallScore}%
-              </div>
+              <div className="text-5xl  text-white mb-2">{overallScore}%</div>
               <div className="text-lg text-gray-300">Overall Score</div>
             </div>
           </div>
-          <div className={`inline-block px-6 py-3  border ${getScoreBg(overallScore)}`}>
+          <div
+            className={`inline-block px-6 py-3  border ${getScoreBg(overallScore)}`}
+          >
             <div className={` text-lg ${getScoreColor(overallScore)}`}>
               {statusText}
             </div>
@@ -295,7 +300,9 @@ export default function StoryAssessmentPage() {
                 </div>
                 <div className="text-center">
                   <div className="text-3xl font-bold text-green-500 mb-1">
-                    {assessment.integrityAnalysis?.plagiarismResult?.overallScore || 100}%
+                    {assessment.integrityAnalysis?.plagiarismResult
+                      ?.overallScore || 100}
+                    %
                   </div>
                   <div className="text-sm text-gray-400">
                     No plagiarism detected
@@ -311,7 +318,9 @@ export default function StoryAssessmentPage() {
                 </div>
                 <div className="text-center">
                   <div className="text-3xl font-bold text-orange-500 mb-1">
-                    {assessment.integrityAnalysis?.aiDetectionResult?.confidence || 0}%
+                    {assessment.integrityAnalysis?.aiDetectionResult
+                      ?.confidence || 0}
+                    %
                   </div>
                   <div className="text-sm text-gray-400">
                     Likelihood of AI generation
@@ -321,29 +330,39 @@ export default function StoryAssessmentPage() {
             </div>
 
             {/* Overall Assessment */}
-            <div className={`mt-6 p-4 rounded-lg border ${
-              integrityStatus === 'FAIL' ? 'bg-red-500/10 border-red-500/30' :
-              integrityStatus === 'WARNING' ? 'bg-yellow-500/10 border-yellow-500/30' :
-              'bg-green-500/10 border-green-500/30'
-            }`}>
+            <div
+              className={`mt-6 p-4 rounded-lg border ${
+                integrityStatus === 'FAIL'
+                  ? 'bg-red-500/10 border-red-500/30'
+                  : integrityStatus === 'WARNING'
+                    ? 'bg-yellow-500/10 border-yellow-500/30'
+                    : 'bg-green-500/10 border-green-500/30'
+              }`}
+            >
               <div className="flex items-center gap-2 mb-2">
                 {getIntegrityIcon(integrityStatus)}
-                <span className={`font-semibold ${
-                  integrityStatus === 'FAIL' ? 'text-red-400' :
-                  integrityStatus === 'WARNING' ? 'text-yellow-400' :
-                  'text-green-400'
-                }`}>
-                  {integrityStatus === 'WARNING' ? 'Possible AI Content Detected' :
-                   integrityStatus === 'FAIL' ? 'High AI Content Detected' :
-                   'Human-Written Content'}
+                <span
+                  className={`font-semibold ${
+                    integrityStatus === 'FAIL'
+                      ? 'text-red-400'
+                      : integrityStatus === 'WARNING'
+                        ? 'text-yellow-400'
+                        : 'text-green-400'
+                  }`}
+                >
+                  {integrityStatus === 'WARNING'
+                    ? 'Possible AI Content Detected'
+                    : integrityStatus === 'FAIL'
+                      ? 'High AI Content Detected'
+                      : 'Human-Written Content'}
                 </span>
               </div>
               <p className="text-gray-300 text-sm">
-                {integrityStatus === 'WARNING' ? 
-                  `This content shows ${assessment.integrityAnalysis?.aiDetectionResult?.confidence || 0}% likelihood of AI generation.` :
-                  integrityStatus === 'FAIL' ?
-                  `This content appears to be primarily AI-generated (${assessment.integrityAnalysis?.aiDetectionResult?.confidence || 0}% confidence).` :
-                  'This content appears to be original human writing.'}
+                {integrityStatus === 'WARNING'
+                  ? `This content shows ${assessment.integrityAnalysis?.aiDetectionResult?.confidence || 0}% likelihood of AI generation.`
+                  : integrityStatus === 'FAIL'
+                    ? `This content appears to be primarily AI-generated (${assessment.integrityAnalysis?.aiDetectionResult?.confidence || 0}% confidence).`
+                    : 'This content appears to be original human writing.'}
               </p>
             </div>
           </motion.div>
@@ -367,12 +386,16 @@ export default function StoryAssessmentPage() {
               { key: 'vocabularyScore', label: 'Vocabulary', icon: Brain },
               { key: 'creativityScore', label: 'Creativity', icon: Star },
               { key: 'structureScore', label: 'Structure', icon: Target },
-              { key: 'characterDevelopmentScore', label: 'Characters', icon: Trophy },
+              {
+                key: 'characterDevelopmentScore',
+                label: 'Characters',
+                icon: Trophy,
+              },
               { key: 'plotDevelopmentScore', label: 'Plot', icon: Award },
             ].map(({ key, label, icon: Icon }) => {
               const score = assessment[key as keyof Assessment] as number;
               if (score === undefined) return null;
-              
+
               return (
                 <div
                   key={key}
@@ -397,7 +420,10 @@ export default function StoryAssessmentPage() {
               <div className="flex items-center justify-center gap-2">
                 <BookOpen className="w-5 h-5 text-blue-500" />
                 <span className="text-white ">
-                  Reading Level: <span className="text-blue-400">{assessment.readingLevel}</span>
+                  Reading Level:{' '}
+                  <span className="text-blue-400">
+                    {assessment.readingLevel}
+                  </span>
                 </span>
               </div>
             </div>
@@ -405,7 +431,9 @@ export default function StoryAssessmentPage() {
         </motion.div>
 
         {/* Feedback Section */}
-        {(assessment.feedback || assessment.strengths?.length || assessment.improvements?.length) && (
+        {(assessment.feedback ||
+          assessment.strengths?.length ||
+          assessment.improvements?.length) && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -434,7 +462,10 @@ export default function StoryAssessmentPage() {
                   </h4>
                   <ul className="space-y-2">
                     {assessment.strengths.map((strength, index) => (
-                      <li key={index} className="text-gray-300 flex items-start gap-2">
+                      <li
+                        key={index}
+                        className="text-gray-300 flex items-start gap-2"
+                      >
                         <span className="text-green-500 mt-1">•</span>
                         <span className="text-sm">{strength}</span>
                       </li>
@@ -444,22 +475,26 @@ export default function StoryAssessmentPage() {
               )}
 
               {/* Areas for Improvement */}
-              {assessment.improvements && assessment.improvements.length > 0 && (
-                <div className="bg-yellow-500/10 border border-yellow-500/30  p-4">
-                  <h4 className=" text-yellow-400 mb-3 flex items-center gap-2">
-                    <Target className="w-5 h-5" />
-                    Areas to Improve
-                  </h4>
-                  <ul className="space-y-2">
-                    {assessment.improvements.map((improvement, index) => (
-                      <li key={index} className="text-gray-300 flex items-start gap-2">
-                        <span className="text-yellow-500 mt-1">•</span>
-                        <span className="text-sm">{improvement}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
+              {assessment.improvements &&
+                assessment.improvements.length > 0 && (
+                  <div className="bg-yellow-500/10 border border-yellow-500/30  p-4">
+                    <h4 className=" text-yellow-400 mb-3 flex items-center gap-2">
+                      <Target className="w-5 h-5" />
+                      Areas to Improve
+                    </h4>
+                    <ul className="space-y-2">
+                      {assessment.improvements.map((improvement, index) => (
+                        <li
+                          key={index}
+                          className="text-gray-300 flex items-start gap-2"
+                        >
+                          <span className="text-yellow-500 mt-1">•</span>
+                          <span className="text-sm">{improvement}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
             </div>
 
             {/* Encouragement */}
@@ -506,12 +541,13 @@ export default function StoryAssessmentPage() {
           className="text-center mt-8"
         >
           <p className="text-gray-400 leading-relaxed">
-            🎉 This assessment provides detailed feedback to help you grow as a writer. 
-            Keep practicing and exploring your creativity!
+            🎉 This assessment provides detailed feedback to help you grow as a
+            writer. Keep practicing and exploring your creativity!
           </p>
           {assessment.assessmentDate && (
             <p className="text-sm text-gray-500 mt-2">
-              Assessment completed on: {new Date(assessment.assessmentDate).toLocaleDateString()}
+              Assessment completed on:{' '}
+              {new Date(assessment.assessmentDate).toLocaleDateString()}
             </p>
           )}
         </motion.div>

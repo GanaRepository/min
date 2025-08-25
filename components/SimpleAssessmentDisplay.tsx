@@ -71,9 +71,12 @@ export default function SimpleAssessmentDisplay({
       <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 flex items-center justify-center">
         <div className="text-center max-w-md mx-auto px-6">
           <div className="text-red-500 text-6xl mb-4">⚠️</div>
-          <h2 className="text-xl font-bold text-white mb-2">No Assessment Available</h2>
+          <h2 className="text-xl font-bold text-white mb-2">
+            No Assessment Available
+          </h2>
           <p className="text-gray-300 mb-6">
-            This story hasn't been assessed yet. Complete your story to get detailed feedback!
+            This story hasn&apos;t been assessed yet. Complete your story to get
+            detailed feedback!
           </p>
         </div>
       </div>
@@ -115,7 +118,8 @@ export default function SimpleAssessmentDisplay({
 
   const getIntegrityIcon = (status?: string) => {
     if (status === 'FAIL') return <XCircle className="w-8 h-8 text-red-600" />;
-    if (status === 'WARNING') return <AlertTriangle className="w-8 h-8 text-yellow-600" />;
+    if (status === 'WARNING')
+      return <AlertTriangle className="w-8 h-8 text-yellow-600" />;
     return <CheckCircle className="w-8 h-8 text-green-600" />;
   };
 
@@ -195,13 +199,17 @@ export default function SimpleAssessmentDisplay({
                   </div>
                   <div className="text-center p-6 bg-green-50 border-2 border-green-200 rounded-xl">
                     <div className="text-4xl font-bold text-green-600 mb-2">
-                      {assessment.integrityAnalysis.plagiarismResult.overallScore || 100}%
+                      {assessment.integrityAnalysis.plagiarismResult
+                        .overallScore || 100}
+                      %
                     </div>
                     <div className="text-lg font-medium text-gray-700 mb-2">
                       Originality Score
                     </div>
                     <div className="text-sm text-green-700">
-                      Risk Level: {assessment.integrityAnalysis.plagiarismResult.riskLevel || 'low'}
+                      Risk Level:{' '}
+                      {assessment.integrityAnalysis.plagiarismResult
+                        .riskLevel || 'low'}
                     </div>
                   </div>
                 </div>
@@ -218,14 +226,19 @@ export default function SimpleAssessmentDisplay({
                   </div>
                   <div className="text-center p-6 bg-blue-50 border-2 border-blue-200 rounded-xl">
                     <div className="text-lg font-bold text-blue-600 mb-2">
-                      {assessment.integrityAnalysis.aiDetectionResult.likelihood || 'Low'}
+                      {assessment.integrityAnalysis.aiDetectionResult
+                        .likelihood || 'Low'}
                     </div>
-                    <div className="text-sm text-blue-700">
-                      AI Likelihood
-                    </div>
-                    {assessment.integrityAnalysis.aiDetectionResult.confidence && (
+                    <div className="text-sm text-blue-700">AI Likelihood</div>
+                    {assessment.integrityAnalysis.aiDetectionResult
+                      .confidence && (
                       <div className="text-xs text-gray-600 mt-2">
-                        Confidence: {assessment.integrityAnalysis.aiDetectionResult.confidence}%
+                        Confidence:{' '}
+                        {
+                          assessment.integrityAnalysis.aiDetectionResult
+                            .confidence
+                        }
+                        %
                       </div>
                     )}
                   </div>
@@ -289,16 +302,30 @@ export default function SimpleAssessmentDisplay({
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* Core Writing Skills */}
             {[
-              { key: 'grammarScore', label: 'Grammar & Structure', icon: BookOpen },
+              {
+                key: 'grammarScore',
+                label: 'Grammar & Structure',
+                icon: BookOpen,
+              },
               { key: 'vocabularyScore', label: 'Vocabulary', icon: Zap },
               { key: 'creativityScore', label: 'Creativity', icon: Sparkles },
               { key: 'structureScore', label: 'Story Structure', icon: Target },
-              { key: 'characterDevelopmentScore', label: 'Character Development', icon: Users },
-              { key: 'plotDevelopmentScore', label: 'Plot Development', icon: TrendingUp },
+              {
+                key: 'characterDevelopmentScore',
+                label: 'Character Development',
+                icon: Users,
+              },
+              {
+                key: 'plotDevelopmentScore',
+                label: 'Plot Development',
+                icon: TrendingUp,
+              },
             ].map(({ key, label, icon: Icon }) => {
-              const score = assessment[key as keyof typeof assessment] as number;
+              const score = assessment[
+                key as keyof typeof assessment
+              ] as number;
               if (score === undefined) return null;
-              
+
               return (
                 <div
                   key={key}
@@ -321,36 +348,52 @@ export default function SimpleAssessmentDisplay({
 
             {/* Additional Scores */}
             {assessment.themeScore && (
-              <div className={`p-4 rounded-xl border-2 ${getScoreBg(assessment.themeScore)}`}>
+              <div
+                className={`p-4 rounded-xl border-2 ${getScoreBg(assessment.themeScore)}`}
+              >
                 <div className="flex items-center justify-center mb-2">
                   <Lightbulb className="w-5 h-5 text-gray-600 mr-2" />
                   <span className="font-medium text-sm text-center">Theme</span>
                 </div>
-                <div className={`text-2xl font-bold text-center mb-2 ${getScoreColor(assessment.themeScore)}`}>
+                <div
+                  className={`text-2xl font-bold text-center mb-2 ${getScoreColor(assessment.themeScore)}`}
+                >
                   {assessment.themeScore}/100
                 </div>
               </div>
             )}
 
             {assessment.dialogueScore && (
-              <div className={`p-4 rounded-xl border-2 ${getScoreBg(assessment.dialogueScore)}`}>
+              <div
+                className={`p-4 rounded-xl border-2 ${getScoreBg(assessment.dialogueScore)}`}
+              >
                 <div className="flex items-center justify-center mb-2">
                   <Users className="w-5 h-5 text-gray-600 mr-2" />
-                  <span className="font-medium text-sm text-center">Dialogue</span>
+                  <span className="font-medium text-sm text-center">
+                    Dialogue
+                  </span>
                 </div>
-                <div className={`text-2xl font-bold text-center mb-2 ${getScoreColor(assessment.dialogueScore)}`}>
+                <div
+                  className={`text-2xl font-bold text-center mb-2 ${getScoreColor(assessment.dialogueScore)}`}
+                >
                   {assessment.dialogueScore}/100
                 </div>
               </div>
             )}
 
             {assessment.descriptiveScore && (
-              <div className={`p-4 rounded-xl border-2 ${getScoreBg(assessment.descriptiveScore)}`}>
+              <div
+                className={`p-4 rounded-xl border-2 ${getScoreBg(assessment.descriptiveScore)}`}
+              >
                 <div className="flex items-center justify-center mb-2">
                   <Eye className="w-5 h-5 text-gray-600 mr-2" />
-                  <span className="font-medium text-sm text-center">Descriptive Writing</span>
+                  <span className="font-medium text-sm text-center">
+                    Descriptive Writing
+                  </span>
                 </div>
-                <div className={`text-2xl font-bold text-center mb-2 ${getScoreColor(assessment.descriptiveScore)}`}>
+                <div
+                  className={`text-2xl font-bold text-center mb-2 ${getScoreColor(assessment.descriptiveScore)}`}
+                >
                   {assessment.descriptiveScore}/100
                 </div>
               </div>
@@ -363,7 +406,10 @@ export default function SimpleAssessmentDisplay({
               <div className="flex items-center justify-center">
                 <BookOpen className="w-5 h-5 text-gray-600 mr-2" />
                 <span className="font-medium text-gray-800">
-                  Reading Level: <span className="text-blue-600">{assessment.readingLevel}</span>
+                  Reading Level:{' '}
+                  <span className="text-blue-600">
+                    {assessment.readingLevel}
+                  </span>
                 </span>
               </div>
             </div>
@@ -371,7 +417,9 @@ export default function SimpleAssessmentDisplay({
         </motion.div>
 
         {/* Feedback Section */}
-        {(assessment.feedback || assessment.strengths?.length || assessment.improvements?.length) && (
+        {(assessment.feedback ||
+          assessment.strengths?.length ||
+          assessment.improvements?.length) && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -387,7 +435,9 @@ export default function SimpleAssessmentDisplay({
 
             {assessment.feedback && (
               <div className="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
-                <h5 className="font-bold text-blue-800 mb-2">Overall Feedback:</h5>
+                <h5 className="font-bold text-blue-800 mb-2">
+                  Overall Feedback:
+                </h5>
                 <p className="text-blue-700">{assessment.feedback}</p>
               </div>
             )}
@@ -402,7 +452,10 @@ export default function SimpleAssessmentDisplay({
                   </h5>
                   <ul className="space-y-2">
                     {assessment.strengths.map((strength, index) => (
-                      <li key={index} className="text-green-700 flex items-start">
+                      <li
+                        key={index}
+                        className="text-green-700 flex items-start"
+                      >
                         <span className="text-green-500 mr-2">•</span>
                         <span>{strength}</span>
                       </li>
@@ -412,22 +465,26 @@ export default function SimpleAssessmentDisplay({
               )}
 
               {/* Areas for Improvement */}
-              {assessment.improvements && assessment.improvements.length > 0 && (
-                <div className="p-4 bg-yellow-50 rounded-lg border border-yellow-200">
-                  <h5 className="font-bold text-yellow-800 mb-3 flex items-center">
-                    <Target className="w-5 h-5 mr-2" />
-                    Areas to Improve:
-                  </h5>
-                  <ul className="space-y-2">
-                    {assessment.improvements.map((improvement, index) => (
-                      <li key={index} className="text-yellow-700 flex items-start">
-                        <span className="text-yellow-500 mr-2">•</span>
-                        <span>{improvement}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
+              {assessment.improvements &&
+                assessment.improvements.length > 0 && (
+                  <div className="p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+                    <h5 className="font-bold text-yellow-800 mb-3 flex items-center">
+                      <Target className="w-5 h-5 mr-2" />
+                      Areas to Improve:
+                    </h5>
+                    <ul className="space-y-2">
+                      {assessment.improvements.map((improvement, index) => (
+                        <li
+                          key={index}
+                          className="text-yellow-700 flex items-start"
+                        >
+                          <span className="text-yellow-500 mr-2">•</span>
+                          <span>{improvement}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
             </div>
 
             {/* Encouragement */}
@@ -451,12 +508,13 @@ export default function SimpleAssessmentDisplay({
           className="text-center text-white"
         >
           <p className="text-lg leading-relaxed">
-            🎉 This assessment provides detailed feedback to help you grow as a writer. 
-            Keep practicing and exploring your creativity!
+            🎉 This assessment provides detailed feedback to help you grow as a
+            writer. Keep practicing and exploring your creativity!
           </p>
           {assessment.assessmentDate && (
             <p className="text-sm text-gray-400 mt-2">
-              Assessment completed on: {new Date(assessment.assessmentDate).toLocaleDateString()}
+              Assessment completed on:{' '}
+              {new Date(assessment.assessmentDate).toLocaleDateString()}
             </p>
           )}
         </motion.div>

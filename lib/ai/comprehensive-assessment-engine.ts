@@ -346,10 +346,10 @@ Respond ONLY with JSON:
     try {
       const response = await smartAIProvider.generateResponse(prompt);
       let cleanedResponse = response.replace(/```json|```/g, '').trim();
-      
+
       // Fix common JSON parsing issues
       cleanedResponse = this.cleanJSONResponse(cleanedResponse);
-      
+
       const analysis = JSON.parse(cleanedResponse);
 
       return {
@@ -940,17 +940,20 @@ Respond ONLY with this JSON:
   private static cleanJSONResponse(jsonString: string): string {
     // Fix common JSON parsing issues
     let cleaned = jsonString;
-    
+
     // Remove any trailing commas before closing braces or brackets
     cleaned = cleaned.replace(/,(\s*[}\]])/g, '$1');
-    
+
     // Fix unescaped quotes within string values
-    cleaned = cleaned.replace(/"([^"]*)"(\s*:\s*)"([^"]*)"/g, (match, key, separator, value) => {
-      // Escape any unescaped quotes in the value
-      const escapedValue = value.replace(/"/g, '\\"');
-      return `"${key}"${separator}"${escapedValue}"`;
-    });
-    
+    cleaned = cleaned.replace(
+      /"([^"]*)"(\s*:\s*)"([^"]*)"/g,
+      (match, key, separator, value) => {
+        // Escape any unescaped quotes in the value
+        const escapedValue = value.replace(/"/g, '\\"');
+        return `"${key}"${separator}"${escapedValue}"`;
+      }
+    );
+
     // Fix unterminated strings by adding closing quotes if missing
     const lines = cleaned.split('\n');
     for (let i = 0; i < lines.length; i++) {
@@ -958,14 +961,18 @@ Respond ONLY with this JSON:
       if (line.includes(':') && line.includes('"')) {
         const colonIndex = line.indexOf(':');
         const afterColon = line.substring(colonIndex + 1).trim();
-        if (afterColon.startsWith('"') && !afterColon.endsWith('"') && !afterColon.endsWith('",')) {
+        if (
+          afterColon.startsWith('"') &&
+          !afterColon.endsWith('"') &&
+          !afterColon.endsWith('",')
+        ) {
           // Add closing quote
           lines[i] = line + '"';
         }
       }
     }
     cleaned = lines.join('\n');
-    
+
     return cleaned;
   }
 }

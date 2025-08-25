@@ -42,9 +42,12 @@ export default function ComprehensiveAssessmentDisplay({
       <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 flex items-center justify-center">
         <div className="text-center max-w-md mx-auto px-6">
           <div className="text-red-500 text-6xl mb-4">⚠️</div>
-          <h2 className="text-xl font-bold text-white mb-2">Assessment Data Missing</h2>
+          <h2 className="text-xl font-bold text-white mb-2">
+            Assessment Data Missing
+          </h2>
           <p className="text-gray-300 mb-6">
-            The assessment data is not available or incomplete. Please try refreshing the page.
+            The assessment data is not available or incomplete. Please try
+            refreshing the page.
           </p>
         </div>
       </div>

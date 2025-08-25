@@ -305,10 +305,6 @@ Respond as a supportive teacher who celebrates their unique creativity.`;
       aiResult.riskLevel === 'HIGH RISK';
     const shouldBlock = aiResult.riskLevel === 'CRITICAL RISK';
 
-    console.log(
-      `🤖 Quick AI Check: ${aiResult.humanLikeScore}% human-like, ${aiResult.aiLikelihood}`
-    );
-
     return {
       isAI,
       likelihood: aiResult.aiLikelihood,

@@ -120,10 +120,7 @@ export async function GET(
     const { storyId } = params;
 
     if (!storyId || !mongoose.Types.ObjectId.isValid(storyId)) {
-      return NextResponse.json(
-        { error: 'Invalid story ID' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Invalid story ID' }, { status: 400 });
     }
 
     console.log('📖 Fetching story details for:', storyId);
@@ -131,10 +128,10 @@ export async function GET(
     await connectToDatabase();
 
     // Get the story and verify ownership - FIXED WITH PROPER TYPING
-    const story = await StorySession.findOne({
+    const story = (await StorySession.findOne({
       _id: storyId,
-      childId: session.user.id
-    }).lean() as StoryDocument | null;
+      childId: session.user.id,
+    }).lean()) as StoryDocument | null;
 
     if (!story) {
       return NextResponse.json(
@@ -146,9 +143,9 @@ export async function GET(
     console.log('✅ Story found:', story.title);
 
     // Get all turns for this story (for content)
-    const turns = await Turn.find({ sessionId: storyId })
+    const turns = (await Turn.find({ sessionId: storyId })
       .sort({ turnNumber: 1 })
-      .lean() as unknown as TurnDocument[];
+      .lean()) as unknown as TurnDocument[];
 
     console.log(`� Found ${turns.length} turns`);
 
@@ -168,14 +165,16 @@ export async function GET(
     });
 
     // Check if story is published
-    const publishedStory = await PublishedStory.findOne({ sessionId: storyId }).lean() as PublishedStoryDocument | null;
+    const publishedStory = (await PublishedStory.findOne({
+      sessionId: storyId,
+    }).lean()) as PublishedStoryDocument | null;
     const isPublished = !!publishedStory;
 
     // Get comments (from mentors/admin)
-    const comments = await StoryComment.find({ storyId })
+    const comments = (await StoryComment.find({ storyId })
       .populate('authorId', 'firstName lastName role')
       .sort({ createdAt: -1 })
-      .lean() as unknown as CommentDocument[];
+      .lean()) as unknown as CommentDocument[];
 
     console.log(`💬 Found ${comments.length} comments`);
 
@@ -183,14 +182,18 @@ export async function GET(
     let storyType: 'freestyle' | 'uploaded' | 'competition' = 'freestyle';
     if (story.isUploadedForAssessment) {
       storyType = 'uploaded';
-    } else if (story.competitionEntries && story.competitionEntries.length > 0) {
+    } else if (
+      story.competitionEntries &&
+      story.competitionEntries.length > 0
+    ) {
       storyType = 'competition';
     }
 
     // Get competition info if exists
-    const latestCompetitionEntry = story.competitionEntries && story.competitionEntries.length > 0
-      ? story.competitionEntries[story.competitionEntries.length - 1]
-      : null;
+    const latestCompetitionEntry =
+      story.competitionEntries && story.competitionEntries.length > 0
+        ? story.competitionEntries[story.competitionEntries.length - 1]
+        : null;
 
     // FIXED: Format comprehensive story response with ALL required properties
     const formattedStory = {
@@ -198,9 +201,15 @@ export async function GET(
       title: story.title || '',
       status: story.status || 'active',
       storyType,
-      createdAt: story.createdAt ? new Date(story.createdAt).toISOString() : new Date().toISOString(),
-      updatedAt: story.updatedAt ? new Date(story.updatedAt).toISOString() : new Date().toISOString(),
-      completedAt: story.completedAt ? new Date(story.completedAt).toISOString() : undefined,
+      createdAt: story.createdAt
+        ? new Date(story.createdAt).toISOString()
+        : new Date().toISOString(),
+      updatedAt: story.updatedAt
+        ? new Date(story.updatedAt).toISOString()
+        : new Date().toISOString(),
+      completedAt: story.completedAt
+        ? new Date(story.completedAt).toISOString()
+        : undefined,
 
       // Word counts and progress
       totalWords: story.totalWords || 0,
@@ -212,76 +221,107 @@ export async function GET(
       // FIXED: All the missing properties that were causing errors
       aiOpening: story.aiOpening || '',
       storyNumber: story.storyNumber || 0,
-      pausedAt: story.pausedAt ? new Date(story.pausedAt).toISOString() : undefined,
-      resumedAt: story.resumedAt ? new Date(story.resumedAt).toISOString() : undefined,
+      pausedAt: story.pausedAt
+        ? new Date(story.pausedAt).toISOString()
+        : undefined,
+      resumedAt: story.resumedAt
+        ? new Date(story.resumedAt).toISOString()
+        : undefined,
 
       // Content
       content: fullContent.trim(),
-      turns: turns.map(turn => ({
+      turns: turns.map((turn) => ({
         turnNumber: turn.turnNumber || 1,
         childInput: turn.childInput || '',
         aiResponse: turn.aiResponse || '',
         wordCount: turn.wordCount || 0,
-        timestamp: turn.createdAt ? new Date(turn.createdAt).toISOString() : new Date().toISOString()
+        timestamp: turn.createdAt
+          ? new Date(turn.createdAt).toISOString()
+          : new Date().toISOString(),
       })),
 
       // Publication status
       isPublished,
-      publishedAt: publishedStory?.publishedAt ? new Date(publishedStory.publishedAt).toISOString() : undefined,
-      publicationDate: publishedStory?.publishedAt ? new Date(publishedStory.publishedAt).toISOString() : undefined,
+      publishedAt: publishedStory?.publishedAt
+        ? new Date(publishedStory.publishedAt).toISOString()
+        : undefined,
+      publicationDate: publishedStory?.publishedAt
+        ? new Date(publishedStory.publishedAt).toISOString()
+        : undefined,
       publicationFee: story.publicationFee || undefined,
 
       // Assessment data - FIXED with proper null checking and correct property mapping
       isUploadedForAssessment: story.isUploadedForAssessment || false,
       assessmentAttempts: story.assessmentAttempts || 0,
-      assessment: story.assessment ? {
-        // Core scores - mapped to match frontend expectations
-        overallScore: story.assessment.overallScore || 0,
-        grammarScore: story.assessment.grammarScore || 0,
-        creativityScore: story.assessment.creativityScore || 0,
-        vocabularyScore: story.assessment.vocabularyScore || 0,
-        structureScore: story.assessment.structureScore || 0,
-        characterDevelopmentScore: story.assessment.characterDevelopmentScore || 0,
-        plotDevelopmentScore: story.assessment.plotDevelopmentScore || 0,
-        themeScore: story.assessment.themeScore || 0,
-        dialogueScore: story.assessment.dialogueScore || 0,
-        descriptiveScore: story.assessment.descriptiveScore || 0,
-        pacingScore: story.assessment.pacingScore || 0,
+      assessment: story.assessment
+        ? {
+            // Core scores - mapped to match frontend expectations
+            overallScore: story.assessment.overallScore || 0,
+            grammarScore: story.assessment.grammarScore || 0,
+            creativityScore: story.assessment.creativityScore || 0,
+            vocabularyScore: story.assessment.vocabularyScore || 0,
+            structureScore: story.assessment.structureScore || 0,
+            characterDevelopmentScore:
+              story.assessment.characterDevelopmentScore || 0,
+            plotDevelopmentScore: story.assessment.plotDevelopmentScore || 0,
+            themeScore: story.assessment.themeScore || 0,
+            dialogueScore: story.assessment.dialogueScore || 0,
+            descriptiveScore: story.assessment.descriptiveScore || 0,
+            pacingScore: story.assessment.pacingScore || 0,
 
-        // Frontend expects these simplified property names
-        grammar: story.assessment.grammarScore || 0,
-        creativity: story.assessment.creativityScore || 0,
-        vocabulary: story.assessment.vocabularyScore || 0,
-        structure: story.assessment.structureScore || 0,
+            // Frontend expects these simplified property names
+            grammar: story.assessment.grammarScore || 0,
+            creativity: story.assessment.creativityScore || 0,
+            vocabulary: story.assessment.vocabularyScore || 0,
+            structure: story.assessment.structureScore || 0,
 
-        // Reading level and feedback
-        readingLevel: story.assessment.readingLevel || 'Unknown',
-        feedback: story.assessment.feedback || '',
-        strengths: story.assessment.strengths || [],
-        improvements: story.assessment.improvements || [],
+            // Reading level and feedback
+            readingLevel: story.assessment.readingLevel || 'Unknown',
+            feedback: story.assessment.feedback || '',
+            strengths: story.assessment.strengths || [],
+            improvements: story.assessment.improvements || [],
 
-        // Integrity analysis - FIXED with proper structure and frontend-expected properties
-        integrityRisk: story.assessment.integrityAnalysis?.overallStatus === 'critical' ? 'critical' :
-                       story.assessment.integrityAnalysis?.overallStatus === 'warning' ? 'high' :
-                       story.assessment.integrityAnalysis?.overallStatus === 'caution' ? 'medium' : 'low',
-        
-        integrityAnalysis: story.assessment.integrityAnalysis ? {
-          plagiarismResult: {
-            overallScore: story.assessment.integrityAnalysis.plagiarismCheck?.originalityScore || 100,
-            riskLevel: story.assessment.integrityAnalysis.plagiarismCheck?.riskLevel || 'low'
-          },
-          aiDetectionResult: {
-            likelihood: story.assessment.integrityAnalysis.aiDetection?.aiLikelihood || 'low',
-            confidence: story.assessment.integrityAnalysis.aiDetection?.confidenceLevel || 0
-          },
-          integrityRisk: story.assessment.integrityAnalysis.overallStatus || 'low'
-        } : undefined,
+            // Integrity analysis - FIXED with proper structure and frontend-expected properties
+            integrityRisk:
+              story.assessment.integrityAnalysis?.overallStatus === 'critical'
+                ? 'critical'
+                : story.assessment.integrityAnalysis?.overallStatus ===
+                    'warning'
+                  ? 'high'
+                  : story.assessment.integrityAnalysis?.overallStatus ===
+                      'caution'
+                    ? 'medium'
+                    : 'low',
 
-        integrityStatus: story.assessment.integrityStatus || {
-          status: 'PASS' as const,
-          message: 'Story passed all integrity checks'
-        }
-      } : undefined,
+            integrityAnalysis: story.assessment.integrityAnalysis
+              ? {
+                  plagiarismResult: {
+                    overallScore:
+                      story.assessment.integrityAnalysis.plagiarismCheck
+                        ?.originalityScore || 100,
+                    riskLevel:
+                      story.assessment.integrityAnalysis.plagiarismCheck
+                        ?.riskLevel || 'low',
+                  },
+                  aiDetectionResult: {
+                    likelihood:
+                      story.assessment.integrityAnalysis.aiDetection
+                        ?.aiLikelihood || 'low',
+                    confidence:
+                      story.assessment.integrityAnalysis.aiDetection
+                        ?.confidenceLevel || 0,
+                  },
+                  integrityRisk:
+                    story.assessment.integrityAnalysis.overallStatus || 'low',
+                }
+              : undefined,
+
+            integrityStatus: story.assessment.integrityStatus || {
+              status: 'PASS' as const,
+              message: 'Story passed all integrity checks',
+            },
+          }
+        : undefined,
 
       // Competition data - FIXED
       competitionEligible: story.competitionEligible || false,
@@ -296,15 +336,19 @@ export async function GET(
       comments: comments.map((comment) => ({
         _id: comment._id.toString(),
         content: comment.content || comment.comment || '', // Handle both property names
-        author: comment.authorId ? {
-          _id: comment.authorId._id ? comment.authorId._id.toString() : '',
-          name: `${comment.authorId.firstName || ''} ${comment.authorId.lastName || ''}`.trim(),
-          role: comment.authorId.role || 'mentor'
-        } : null,
-        createdAt: comment.createdAt ? new Date(comment.createdAt).toISOString() : new Date().toISOString(),
+        author: comment.authorId
+          ? {
+              _id: comment.authorId._id ? comment.authorId._id.toString() : '',
+              name: `${comment.authorId.firstName || ''} ${comment.authorId.lastName || ''}`.trim(),
+              role: comment.authorId.role || 'mentor',
+            }
+          : null,
+        createdAt: comment.createdAt
+          ? new Date(comment.createdAt).toISOString()
+          : new Date().toISOString(),
         isPublic: comment.isPublic !== undefined ? comment.isPublic : true,
-        category: comment.category || comment.commentType || 'general'
-      }))
+        category: comment.category || comment.commentType || 'general',
+      })),
     };
 
     console.log('📊 Story details compiled successfully');
@@ -312,15 +356,14 @@ export async function GET(
     return NextResponse.json({
       success: true,
       story: formattedStory,
-      message: 'Story details retrieved successfully'
+      message: 'Story details retrieved successfully',
     });
-
   } catch (error) {
     console.error('❌ Error fetching story details:', error);
     return NextResponse.json(
       {
         error: 'Failed to fetch story details',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        details: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
     );
@@ -346,10 +389,7 @@ export async function PUT(
     const body = await request.json();
 
     if (!storyId || !mongoose.Types.ObjectId.isValid(storyId)) {
-      return NextResponse.json(
-        { error: 'Invalid story ID' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Invalid story ID' }, { status: 400 });
     }
 
     await connectToDatabase();
@@ -357,7 +397,7 @@ export async function PUT(
     // Verify story ownership
     const story = await StorySession.findOne({
       _id: storyId,
-      childId: session.user.id
+      childId: session.user.id,
     });
 
     if (!story) {
@@ -393,16 +433,15 @@ export async function PUT(
         _id: story._id,
         title: story.title,
         competitionEligible: (story as any).competitionEligible,
-        elements: (story as any).elements
-      }
+        elements: (story as any).elements,
+      },
     });
-
   } catch (error) {
     console.error('❌ Error updating story:', error);
     return NextResponse.json(
       {
         error: 'Failed to update story',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        details: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
     );
@@ -427,19 +466,16 @@ export async function DELETE(
     const { storyId } = params;
 
     if (!storyId || !mongoose.Types.ObjectId.isValid(storyId)) {
-      return NextResponse.json(
-        { error: 'Invalid story ID' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Invalid story ID' }, { status: 400 });
     }
 
     await connectToDatabase();
 
     // Get the story and verify ownership
-    const story = await StorySession.findOne({
+    const story = (await StorySession.findOne({
       _id: storyId,
-      childId: session.user.id
-    }).lean() as StoryDocument | null;
+      childId: session.user.id,
+    }).lean()) as StoryDocument | null;
 
     if (!story) {
       return NextResponse.json(
@@ -450,7 +486,8 @@ export async function DELETE(
 
     // Check if story can be deleted (not published or in competition)
     const isPublished = await PublishedStory.findOne({ sessionId: storyId });
-    const hasCompetitionEntries = story.competitionEntries && story.competitionEntries.length > 0;
+    const hasCompetitionEntries =
+      story.competitionEntries && story.competitionEntries.length > 0;
 
     if (isPublished) {
       return NextResponse.json(
@@ -470,25 +507,23 @@ export async function DELETE(
     await Promise.all([
       Turn.deleteMany({ sessionId: storyId }),
       StoryComment.deleteMany({ storyId: storyId }),
-      StorySession.findByIdAndDelete(storyId)
+      StorySession.findByIdAndDelete(storyId),
     ]);
 
     console.log(`🗑️ Story ${storyId} deleted successfully`);
 
     return NextResponse.json({
       success: true,
-      message: 'Story deleted successfully'
+      message: 'Story deleted successfully',
     });
-
   } catch (error) {
     console.error('❌ Error deleting story:', error);
     return NextResponse.json(
       {
         error: 'Failed to delete story',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        details: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
     );
   }
 }
-

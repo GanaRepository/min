@@ -9,7 +9,9 @@ async function testAssessment() {
     console.log('Connected to database');
 
     // Import the comprehensive assessment engine
-    const { ComprehensiveAssessmentEngine } = require('./lib/ai/comprehensive-assessment-engine.ts');
+    const {
+      ComprehensiveAssessmentEngine,
+    } = require('./lib/ai/comprehensive-assessment-engine.ts');
 
     // Obviously AI-generated content
     const testContent = `
@@ -23,30 +25,46 @@ With her heart pounding like the thunderous drums of war, she ventured forth int
     console.log('🧪 Testing comprehensive assessment with AI content...');
     console.log('Content length:', testContent.length);
 
-    const assessment = await ComprehensiveAssessmentEngine.performCompleteAssessment(
-      testContent,
-      {
-        childAge: 10,
-        isCollaborativeStory: false,
-        storyTitle: 'Test AI Story',
-        expectedGenre: 'fantasy',
-      }
-    );
+    const assessment =
+      await ComprehensiveAssessmentEngine.performCompleteAssessment(
+        testContent,
+        {
+          childAge: 10,
+          isCollaborativeStory: false,
+          storyTitle: 'Test AI Story',
+          expectedGenre: 'fantasy',
+        }
+      );
 
     console.log('\n📊 Assessment Results:');
     console.log('Overall Score:', assessment.overallScore);
-    console.log('Integrity Status:', assessment.integrityAnalysis.overallStatus);
-    console.log('AI Detection:', JSON.stringify(assessment.integrityAnalysis.aiDetection, null, 2));
-    console.log('Plagiarism Check:', JSON.stringify(assessment.integrityAnalysis.plagiarismCheck, null, 2));
+    console.log(
+      'Integrity Status:',
+      assessment.integrityAnalysis.overallStatus
+    );
+    console.log(
+      'AI Detection:',
+      JSON.stringify(assessment.integrityAnalysis.aiDetection, null, 2)
+    );
+    console.log(
+      'Plagiarism Check:',
+      JSON.stringify(assessment.integrityAnalysis.plagiarismCheck, null, 2)
+    );
 
     // Check if AI detection is working
-    const aiLikelihood = assessment.integrityAnalysis.aiDetection.aiLikelihoodPercent || 
-                        assessment.integrityAnalysis.aiDetection.confidenceLevel || 0;
-    
+    const aiLikelihood =
+      assessment.integrityAnalysis.aiDetection.aiLikelihoodPercent ||
+      assessment.integrityAnalysis.aiDetection.confidenceLevel ||
+      0;
+
     if (aiLikelihood > 70) {
-      console.log('\n✅ AI Detection working correctly - detected high AI likelihood');
+      console.log(
+        '\n✅ AI Detection working correctly - detected high AI likelihood'
+      );
     } else {
-      console.log('\n⚠️ AI Detection may have issues - low detection on obvious AI content');
+      console.log(
+        '\n⚠️ AI Detection may have issues - low detection on obvious AI content'
+      );
     }
 
     await mongoose.disconnect();

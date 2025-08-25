@@ -28,59 +28,105 @@ I hope Max lives forever because I can't imagine life without him. He makes ever
 async function testAIDetector() {
   try {
     console.log('🤖 Testing AI Detector...');
-    
+
     // Use require instead of import for Node.js compatibility
     const path = require('path');
     const fs = require('fs');
-    
+
     // Read the AI detector file and eval it (quick test)
     console.log('Loading AI detector...');
-    
+
     // Simple pattern-based test instead of full module import
     console.log('\n📊 Testing AI-Generated Content Patterns:');
-    
+
     // Test for AI-typical words
-    const aiWords = ['ancient', 'crystalline', 'molten', 'searing', 'forgotten', 'whispered', 'echoed', 'gleamed', 'melodic', 'cadence', 'prophecy', 'sacred', 'enigmatic', 'millennia', 'crimson', 'desolate', 'eerie', 'treacherous', 'labyrinth', 'haunting', 'otherworldly', 'harbinger'];
-    
+    const aiWords = [
+      'ancient',
+      'crystalline',
+      'molten',
+      'searing',
+      'forgotten',
+      'whispered',
+      'echoed',
+      'gleamed',
+      'melodic',
+      'cadence',
+      'prophecy',
+      'sacred',
+      'enigmatic',
+      'millennia',
+      'crimson',
+      'desolate',
+      'eerie',
+      'treacherous',
+      'labyrinth',
+      'haunting',
+      'otherworldly',
+      'harbinger',
+    ];
+
     let aiWordCount = 0;
-    aiWords.forEach(word => {
+    aiWords.forEach((word) => {
       if (obviousAIContent.toLowerCase().includes(word)) {
         aiWordCount++;
       }
     });
-    
+
     console.log('AI-typical words found in obvious AI content:', aiWordCount);
-    console.log('AI words as percentage:', (aiWordCount / aiWords.length * 100).toFixed(1) + '%');
-    
+    console.log(
+      'AI words as percentage:',
+      ((aiWordCount / aiWords.length) * 100).toFixed(1) + '%'
+    );
+
     // Test human content
     let humanAiWordCount = 0;
-    aiWords.forEach(word => {
+    aiWords.forEach((word) => {
       if (humanLikeContent.toLowerCase().includes(word)) {
         humanAiWordCount++;
       }
     });
-    
+
     console.log('\nAI-typical words found in human content:', humanAiWordCount);
-    console.log('Human content AI words percentage:', (humanAiWordCount / aiWords.length * 100).toFixed(1) + '%');
-    
+    console.log(
+      'Human content AI words percentage:',
+      ((humanAiWordCount / aiWords.length) * 100).toFixed(1) + '%'
+    );
+
     // Check sentence complexity
-    const aiSentences = obviousAIContent.split(/[.!?]+/).filter(s => s.trim().length > 5);
-    const avgAiLength = aiSentences.reduce((sum, s) => sum + s.split(' ').length, 0) / aiSentences.length;
-    
-    const humanSentences = humanLikeContent.split(/[.!?]+/).filter(s => s.trim().length > 5);
-    const avgHumanLength = humanSentences.reduce((sum, s) => sum + s.split(' ').length, 0) / humanSentences.length;
-    
+    const aiSentences = obviousAIContent
+      .split(/[.!?]+/)
+      .filter((s) => s.trim().length > 5);
+    const avgAiLength =
+      aiSentences.reduce((sum, s) => sum + s.split(' ').length, 0) /
+      aiSentences.length;
+
+    const humanSentences = humanLikeContent
+      .split(/[.!?]+/)
+      .filter((s) => s.trim().length > 5);
+    const avgHumanLength =
+      humanSentences.reduce((sum, s) => sum + s.split(' ').length, 0) /
+      humanSentences.length;
+
     console.log('\nSentence Analysis:');
-    console.log('AI content avg sentence length:', avgAiLength.toFixed(1), 'words');
-    console.log('Human content avg sentence length:', avgHumanLength.toFixed(1), 'words');
-    
+    console.log(
+      'AI content avg sentence length:',
+      avgAiLength.toFixed(1),
+      'words'
+    );
+    console.log(
+      'Human content avg sentence length:',
+      avgHumanLength.toFixed(1),
+      'words'
+    );
+
     if (aiWordCount < 5) {
-      console.log('\n⚠️ WARNING: AI detector patterns may not be working properly!');
+      console.log(
+        '\n⚠️ WARNING: AI detector patterns may not be working properly!'
+      );
       console.log('Expected high AI word count in obvious AI content');
     } else {
       console.log('\n✅ AI detection patterns appear to be working');
     }
-    
   } catch (error) {
     console.error('❌ Error testing AI detector:', error.message);
   }
