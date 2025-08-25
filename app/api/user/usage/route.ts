@@ -345,14 +345,11 @@ export async function GET(request: NextRequest) {
           ],
         }),
 
-        // Count assessment requests (uploaded stories or stories with assessments)
+        // FIXED: Count assessment requests (only uploaded stories)
         StorySession.countDocuments({
           childId: session.user.id,
           createdAt: { $gte: currentMonthStart },
-          $or: [
-            { isUploadedForAssessment: true },
-            { assessment: { $exists: true } },
-          ],
+          isUploadedForAssessment: true, // Only count uploaded stories for assessments
         }),
 
         // Count competition entries (stories with competition entries)

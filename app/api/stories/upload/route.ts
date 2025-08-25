@@ -169,6 +169,21 @@ export async function POST(request: NextRequest) {
 
     await connectToDatabase();
 
+    // CHECK USAGE LIMITS BEFORE PROCESSING UPLOAD
+    const canAssess = await UsageManager.canRequestAssessment(session.user.id);
+    if (!canAssess.allowed) {
+      console.log(`❌ Assessment upload denied: ${canAssess.reason}`);
+      return NextResponse.json(
+        {
+          error: canAssess.reason,
+          upgradeRequired: canAssess.upgradeRequired,
+        },
+        { status: 403 }
+      );
+    }
+
+    console.log('✅ User can request assessment, proceeding with upload...');
+
     const formData = await request.formData();
     const title = formData.get('title') as string;
     const content = formData.get('content') as string;

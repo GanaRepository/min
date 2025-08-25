@@ -696,12 +696,9 @@ export class UsageManager {
     ).length;
 
     // Count assessment requests (uploaded stories + assessment attempts)
-    const assessmentRequests = stories.reduce((sum, story) => {
-      if (story.isUploadedForAssessment || story.assessment) {
-        return sum + (story.assessmentAttempts || 1);
-      }
-      return sum;
-    }, 0);
+    const assessmentRequests = stories.filter((story) => 
+      story.isUploadedForAssessment
+    ).length;
 
     // Count competition entries
     const competitionEntries = stories.filter(
@@ -794,27 +791,13 @@ export class UsageManager {
         999
       );
 
-      // Count assessment requests this month
-      const assessmentStats = await StorySession.aggregate([
-        {
-          $match: {
-            childId: userId,
-            createdAt: { $gte: startOfMonth, $lte: endOfMonth },
-            $or: [
-              { isUploadedForAssessment: true },
-              { assessment: { $exists: true } },
-            ],
-          },
-        },
-        {
-          $group: {
-            _id: null,
-            totalAttempts: { $sum: { $ifNull: ['$assessmentAttempts', 1] } },
-          },
-        },
-      ]);
+      // FIXED: Count assessment requests this month - count every uploaded story as 1 assessment
+      const assessmentUsed = await StorySession.countDocuments({
+        childId: userId,
+        createdAt: { $gte: startOfMonth, $lte: endOfMonth },
+        isUploadedForAssessment: true, // Only count uploaded stories for assessments
+      });
 
-      const assessmentUsed = assessmentStats[0]?.totalAttempts || 0;
       const canUse = assessmentUsed < limits.assessmentRequests;
 
       return {
@@ -920,27 +903,11 @@ export class UsageManager {
       ]);
 
       // Count assessment requests (any story upload or assessment)
-      const assessmentStats = await StorySession.aggregate([
-        {
-          $match: {
-            childId: userId,
-            createdAt: { $gte: startOfMonth, $lte: endOfMonth },
-            $or: [
-              { isUploadedForAssessment: true },
-              { assessment: { $exists: true } },
-            ],
-          },
-        },
-        {
-          $group: {
-            _id: null,
-            totalAssessments: { $sum: 1 },
-            totalAttempts: { $sum: { $ifNull: ['$assessmentAttempts', 1] } },
-          },
-        },
-      ]);
-
-      const assessmentUsed = assessmentStats[0]?.totalAttempts || 0;
+      const assessmentUsed = await StorySession.countDocuments({
+        childId: userId,
+        createdAt: { $gte: startOfMonth, $lte: endOfMonth },
+        isUploadedForAssessment: true, // Only count uploaded stories for assessments
+      });
 
       const result: UsageStats = {
         freestyleStories: {
