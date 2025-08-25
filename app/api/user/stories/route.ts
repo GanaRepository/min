@@ -132,22 +132,34 @@ export async function GET(request: Request) {
               ? {
                   overallStatus:
                     story.assessment.integrityAnalysis.overallStatus || 'PASS',
-                  aiDetection:
-                    story.assessment.integrityAnalysis.aiDetection || {},
-                  plagiarismCheck:
-                    story.assessment.integrityAnalysis.plagiarismCheck || {},
+                  // Map AI detection data to expected format
+                  aiDetectionResult: {
+                    likelihood: story.assessment.integrityAnalysis.aiDetection?.aiLikelihood || 'Very Low (10%)',
+                    confidence: story.assessment.integrityAnalysis.aiDetection?.confidenceLevel || 85,
+                    humanLikeScore: story.assessment.integrityAnalysis.aiDetection?.humanLikeScore || 90,
+                    riskLevel: story.assessment.integrityAnalysis.aiDetection?.riskLevel || 'VERY LOW RISK',
+                  },
+                  // Map plagiarism data to expected format
+                  plagiarismResult: {
+                    overallScore: story.assessment.integrityAnalysis.plagiarismCheck?.originalityScore || 95,
+                    riskLevel: story.assessment.integrityAnalysis.plagiarismCheck?.riskLevel || 'low',
+                    status: story.assessment.integrityAnalysis.plagiarismCheck?.status || 'CLEAR',
+                  },
                   message: story.assessment.integrityAnalysis.message || '',
                 }
               : {
                   // Legacy format fallback
                   overallStatus: story.integrityStatus || 'PASS',
-                  aiDetection: {
-                    humanLikeScore: story.aiDetectionScore || 100,
-                    aiLikelihood: 'Very Low (10%)',
+                  aiDetectionResult: {
+                    likelihood: 'Very Low (10%)',
+                    confidence: 85,
+                    humanLikeScore: story.aiDetectionScore || 90,
+                    riskLevel: 'VERY LOW RISK',
                   },
-                  plagiarismCheck: {
-                    originalityScore: story.plagiarismScore || 100,
+                  plagiarismResult: {
+                    overallScore: story.plagiarismScore || 95,
                     riskLevel: 'low',
+                    status: 'CLEAR',
                   },
                   message: 'Story integrity verified',
                 },

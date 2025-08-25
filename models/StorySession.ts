@@ -836,6 +836,11 @@ export interface IStorySession extends Document {
   tags?: string[];
   genre?: string;
 
+  // Legacy fields for backward compatibility
+  plagiarismScore?: number;
+  aiDetectionScore?: number;
+  integrityStatus?: string;
+
   // Timestamps
   createdAt: Date;
   updatedAt: Date;
@@ -1118,6 +1123,11 @@ const StorySessionSchema = new Schema<IStorySession>(
       default: 'Adventure',
       index: true,
     },
+
+    // Legacy fields for backward compatibility
+    plagiarismScore: { type: Number },
+    aiDetectionScore: { type: Number },
+    integrityStatus: { type: String },
 
     // Timestamps
     completedAt: { type: Date },
