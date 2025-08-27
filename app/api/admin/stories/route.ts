@@ -1,6 +1,4 @@
-//app/api/admin/stories/route.ts
-
-// app/api/admin/stories/route.ts - Admin Stories Management
+// app/api/admin/stories/route.ts 
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/utils/authOptions';

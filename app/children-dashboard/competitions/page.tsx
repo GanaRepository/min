@@ -1,4 +1,4 @@
-// app/children-dashboard/competitions/page.tsx - COMPLETE UPDATE FOR MINTOONS REQUIREMENTS
+// app/children-dashboard/competitions/page.tsx 
 'use client';
 
 import { useState, useEffect } from 'react';

@@ -1,4 +1,4 @@
-// app/create-stories/page.tsx - COMPLETE UPDATE FOR MINTOONS REQUIREMENTS
+// app/create-stories/page.tsx 
 'use client';
 
 import { useState, useEffect, Suspense } from 'react';

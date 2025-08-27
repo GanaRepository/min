@@ -1,7 +1,7 @@
-'use client';
-import TerminalLoader from '../../../components/TerminalLoader';
 // app/login/child/ChildLoginContent.tsx
+'use client';
 
+import TerminalLoader from '@/components/TerminalLoader';
 import React, { useState, useEffect, useRef } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { ArrowLeft, BookOpen, Eye, EyeOff, Sparkles } from 'lucide-react';

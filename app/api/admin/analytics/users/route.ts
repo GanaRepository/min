@@ -1,4 +1,3 @@
-//app/api/admin/analytics/users/route.ts
 // app/api/admin/analytics/users/route.ts
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';

@@ -3,7 +3,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { connectToDatabase } from '@/utils/db';
 import { downloadFile, getFileInfo } from '@/utils/gridfs';
 
-// Add this directive to mark the route as dynamic
 export const dynamic = 'force-dynamic';
 
 export async function GET(req: NextRequest) {

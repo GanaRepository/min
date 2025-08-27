@@ -1,5 +1,5 @@
-// Create this file: app/api/check-purchase/route.ts
-// To check if the webhook processed your purchase correctly
+//app/api/check-purchase/route.ts
+
 
 import { NextRequest, NextResponse } from 'next/server';
 import { connectToDatabase } from '@/utils/db';

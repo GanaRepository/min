@@ -1,4 +1,4 @@
-// app/api/admin/competitions/current/route.ts - Current Competition
+// app/api/admin/competitions/current/route.ts 
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/utils/authOptions';

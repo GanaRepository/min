@@ -1,4 +1,3 @@
-//app/api/admin/comments/bulk-moderate/route.ts
 // app/api/admin/comments/bulk-moderate/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';

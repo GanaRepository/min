@@ -1,6 +1,6 @@
 'use client';
 
-// app/children-dashboard/story/[sessionId]/page.tsx - FIXED INPUT VISIBILITY
+// app/children-dashboard/story/[sessionId]/page.tsx 
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useSession } from 'next-auth/react';

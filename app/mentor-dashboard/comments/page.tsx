@@ -1,7 +1,6 @@
 'use client';
 
-import TerminalLoader from '../../../components/TerminalLoader';
-
+import TerminalLoader from '@/components/TerminalLoader';
 import { useState, useEffect, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';

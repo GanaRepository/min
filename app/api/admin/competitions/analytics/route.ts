@@ -1,4 +1,4 @@
-// app/api/admin/competitions/analytics/route.ts - SIMPLIFIED WORKING VERSION
+// app/api/admin/competitions/analytics/route.ts 
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/utils/authOptions';

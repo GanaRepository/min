@@ -1,5 +1,3 @@
-export const dynamic = 'force-dynamic';
-
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/utils/authOptions';
@@ -8,6 +6,8 @@ import User from '@/models/User';
 import MentorAssignment from '@/models/MentorAssignment';
 import StorySession from '@/models/StorySession';
 import StoryComment from '@/models/StoryComment';
+
+export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {

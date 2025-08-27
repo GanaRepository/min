@@ -1,4 +1,3 @@
-//app/api/admin/revenue/transactions/route.ts
 
 // app/api/admin/revenue/transactions/route.ts
 import { NextRequest, NextResponse } from 'next/server';

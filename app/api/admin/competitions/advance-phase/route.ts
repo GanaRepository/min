@@ -1,4 +1,4 @@
-// app/api/admin/competitions/advance-phase/route.ts - FIXED VERSION
+// app/api/admin/competitions/advance-phase/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/utils/authOptions';

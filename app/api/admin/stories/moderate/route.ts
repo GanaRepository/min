@@ -1,4 +1,3 @@
-//app/api/admin/stories/moderate/route.ts
 // app/api/admin/stories/moderate/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';

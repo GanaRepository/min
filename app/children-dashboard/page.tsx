@@ -1,4 +1,4 @@
-// app/children-dashboard/page.tsx - REVAMPED COLOR PALETTE VERSION
+// app/children-dashboard/page.tsx 
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';

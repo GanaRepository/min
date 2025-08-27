@@ -1,4 +1,4 @@
-export const dynamic = 'force-dynamic';
+
 
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
@@ -6,6 +6,8 @@ import { authOptions } from '@/utils/authOptions';
 import { connectToDatabase } from '@/utils/db';
 import MentorAssignment from '@/models/MentorAssignment';
 import StorySession from '@/models/StorySession';
+
+export const dynamic = 'force-dynamic';
 
 export async function GET(request: Request) {
   try {

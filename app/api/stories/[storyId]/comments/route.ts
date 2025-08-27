@@ -1,4 +1,4 @@
-// app/api/stories/[storyId]/comments/route.ts - COMPLETE FIXED VERSION
+// app/api/stories/[storyId]/comments/route.ts 
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/utils/authOptions';

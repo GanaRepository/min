@@ -1,12 +1,12 @@
-'use client';
+// app/children-dashboard/upload-story/page.tsx 
 
-import TerminalLoader from '../../../components/TerminalLoader';
-// app/children-dashboard/upload-story/page.tsx - Separate Story Upload (NOT for AI Assessment)
+'use client';
 
 import { useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
+import TerminalLoader from '@/components/TerminalLoader';
 import {
   Upload,
   FileText,

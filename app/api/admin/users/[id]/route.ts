@@ -1,4 +1,4 @@
-// app/api/admin/users/[id]/route.ts - Individual User CRUD
+// app/api/admin/users/[id]/route.ts 
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/utils/authOptions';

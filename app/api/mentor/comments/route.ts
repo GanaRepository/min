@@ -1,4 +1,4 @@
-// PATCH method for updating a comment (e.g., mark as resolved)
+//app/api/mentor/comments/[id]/route.ts
 export async function PATCH(request: Request) {
   try {
     const session = await getServerSession(authOptions);
@@ -9,7 +9,7 @@ export async function PATCH(request: Request) {
       );
     }
 
-    // Extract commentId from URL (e.g., /api/mentor/comments/[id])
+
     const url = new URL(request.url);
     const paths = url.pathname.split('/');
     const commentId = paths[paths.length - 1];

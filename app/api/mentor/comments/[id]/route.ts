@@ -4,7 +4,8 @@ import { authOptions } from '@/utils/authOptions';
 import { connectToDatabase } from '@/utils/db';
 import StoryComment from '@/models/StoryComment';
 
-// PATCH /api/mentor/comments/[id] - update a comment (resolve, edit)
+export const dynamic = 'force-dynamic';
+
 export async function PATCH(
   request: Request,
   { params }: { params: { id: string } }
