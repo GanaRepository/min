@@ -5,7 +5,7 @@ import { connectToDatabase } from '@/utils/db';
 import StorySession from '@/models/StorySession';
 import Turn from '@/models/Turn';
 import User from '@/models/User';
-import { ComprehensiveAssessmentEngine } from '@/lib/ai/comprehensive-assessment-engine';
+import { SingleCallAssessmentEngine } from '@/lib/ai/SingleCallAssessmentEngine';
 
 export async function POST(
   request: NextRequest,
@@ -87,7 +87,7 @@ export async function POST(
 
     // PERFORM COMPREHENSIVE ASSESSMENT WITH ADVANCED AI DETECTION
     const comprehensiveAssessment =
-      await ComprehensiveAssessmentEngine.performCompleteAssessment(
+      await SingleCallAssessmentEngine.performCompleteAssessment(
         fullStoryContent,
         {
           childAge: userAge,

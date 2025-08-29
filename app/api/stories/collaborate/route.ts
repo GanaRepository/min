@@ -165,8 +165,8 @@ export async function POST(request: NextRequest) {
         );
 
         // Import the Comprehensive Assessment Engine
-        const { ComprehensiveAssessmentEngine } = await import(
-          '@/lib/ai/comprehensive-assessment-engine'
+        const { SingleCallAssessmentEngine } = await import(
+          '@/lib/ai/SingleCallAssessmentEngine'
         );
 
         // Get the full story content for assessment
@@ -192,7 +192,7 @@ export async function POST(request: NextRequest) {
 
         // Perform comprehensive assessment
         const assessment =
-          await ComprehensiveAssessmentEngine.performCompleteAssessment(
+          await SingleCallAssessmentEngine.performCompleteAssessment(
             fullStoryContent,
             {
               childAge: 10, // Default age, can be updated from user profile

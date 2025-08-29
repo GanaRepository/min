@@ -3,7 +3,7 @@ import { connectToDatabase } from '@/utils/db';
 import Competition from '@/models/Competition';
 import StorySession from '@/models/StorySession';
 import User from '@/models/User';
-import { ComprehensiveAssessmentEngine } from '@/lib/ai/comprehensive-assessment-engine';
+import { SingleCallAssessmentEngine } from '@/lib/ai/SingleCallAssessmentEngine';
 import {
   sendWinnerCongratulationsEmail,
   sendCompetitionUpdateEmail,
@@ -520,7 +520,7 @@ export class CompetitionManager {
           story.childTurns?.join('\n\n') || story.content || '';
 
         const assessment =
-          await ComprehensiveAssessmentEngine.performCompleteAssessment(
+          await SingleCallAssessmentEngine.performCompleteAssessment(
             storyContent,
             {
               childAge: 10,
@@ -666,7 +666,7 @@ export class CompetitionManager {
           story.childTurns?.join('\n\n') || story.content || '';
 
         const assessment =
-          await ComprehensiveAssessmentEngine.performCompleteAssessment(
+          await SingleCallAssessmentEngine.performCompleteAssessment(
             storyContent,
             {
               childAge: 10,
@@ -872,7 +872,7 @@ export class CompetitionManager {
     try {
       // Use comprehensive assessment with minimal metadata
       const assessment =
-        await ComprehensiveAssessmentEngine.performCompleteAssessment(
+  await SingleCallAssessmentEngine.performCompleteAssessment(
           lightPrompt,
           {
             childAge: 10,

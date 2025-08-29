@@ -4,7 +4,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/utils/authOptions';
 import { connectToDatabase } from '@/utils/db';
 import StorySession from '@/models/StorySession';
-import { ComprehensiveAssessmentEngine } from '@/lib/ai/comprehensive-assessment-engine';
+
 
 export async function GET(request: NextRequest) {
   try {

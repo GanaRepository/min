@@ -2,7 +2,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/utils/authOptions';
-import { ComprehensiveAssessmentEngine } from '@/lib/ai/comprehensive-assessment-engine';
+import { SingleCallAssessmentEngine } from '@/lib/ai/SingleCallAssessmentEngine';
 import { connectToDatabase } from '@/utils/db';
 import User from '@/models/User';
 
@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
       if (checkType === 'plagiarism' || checkType === 'both') {
         console.log('🔍 Running plagiarism check...');
         const assessment =
-          await ComprehensiveAssessmentEngine.performCompleteAssessment(
+          await SingleCallAssessmentEngine.performCompleteAssessment(
             content,
             {
               childAge: childAge,
@@ -71,7 +71,7 @@ export async function POST(request: NextRequest) {
       if (checkType === 'ai' || checkType === 'both') {
         console.log('🤖 Running AI detection...');
         const assessment =
-          await ComprehensiveAssessmentEngine.performCompleteAssessment(
+          await SingleCallAssessmentEngine.performCompleteAssessment(
             content,
             {
               childAge: childAge,

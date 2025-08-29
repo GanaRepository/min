@@ -8,7 +8,7 @@ import Competition from '@/models/Competition';
 import User from '@/models/User';
 import { UsageManager } from '@/lib/usage-manager';
 import { competitionManager } from '@/lib/competition-manager';
-import { ComprehensiveAssessmentEngine } from '@/lib/ai/comprehensive-assessment-engine';
+import { SingleCallAssessmentEngine } from '@/lib/ai/SingleCallAssessmentEngine';
 
 export async function POST(request: NextRequest) {
   try {
@@ -107,7 +107,7 @@ export async function POST(request: NextRequest) {
     let assessmentResult;
     try {
       assessmentResult =
-        await ComprehensiveAssessmentEngine.performCompleteAssessment(
+        await SingleCallAssessmentEngine.performCompleteAssessment(
           storyContent,
           {
             childAge: 10, // default

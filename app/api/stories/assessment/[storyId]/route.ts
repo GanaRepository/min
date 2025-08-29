@@ -4,7 +4,7 @@ import { authOptions } from '@/utils/authOptions';
 import { connectToDatabase } from '@/utils/db';
 import StorySession from '@/models/StorySession';
 import Turn from '@/models/Turn';
-import { ComprehensiveAssessmentEngine } from '@/lib/ai/comprehensive-assessment-engine';
+import { SingleCallAssessmentEngine } from '@/lib/ai/SingleCallAssessmentEngine';
 import mongoose from 'mongoose';
 
 // Helper function to generate detailed teacher comment
@@ -128,7 +128,7 @@ export async function POST(
     try {
       // Generate comprehensive assessment with advanced AI detection
       const assessment =
-        await ComprehensiveAssessmentEngine.performCompleteAssessment(
+        await SingleCallAssessmentEngine.performCompleteAssessment(
           storyContent,
           {
             childAge: 10, // Default age

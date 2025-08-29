@@ -6,7 +6,7 @@ import { authOptions } from '@/utils/authOptions';
 import { connectToDatabase } from '@/utils/db';
 import StorySession from '@/models/StorySession';
 import { UsageManager } from '@/lib/usage-manager';
-import { ComprehensiveAssessmentEngine } from '@/lib/ai/comprehensive-assessment-engine';
+import { SingleCallAssessmentEngine } from '@/lib/ai/SingleCallAssessmentEngine';
 
 export async function POST(request: NextRequest) {
   try {
@@ -131,7 +131,7 @@ export async function POST(request: NextRequest) {
       );
 
       const assessment =
-        await ComprehensiveAssessmentEngine.performCompleteAssessment(
+        await SingleCallAssessmentEngine.performCompleteAssessment(
           storyContent,
           {
             childAge: 10, // default

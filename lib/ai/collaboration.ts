@@ -1,7 +1,6 @@
 // lib/ai/collaboration.ts - UPDATED WITH ADVANCED DETECTION
 import { smartAIProvider } from './smart-provider-manager';
-import { ComprehensiveAssessmentEngine } from './comprehensive-assessment-engine';
-import { AdvancedAIDetector } from './advanced-ai-detector';
+import { SingleCallAssessmentEngine } from './SingleCallAssessmentEngine';
 import StorySession from '@/models/StorySession';
 import Turn from '@/models/Turn';
 import { connectToDatabase } from '@/utils/db';
@@ -145,7 +144,7 @@ Respond as a supportive teacher who celebrates their unique creativity.`;
 
     // CHANGED: Use the NEW Comprehensive Assessment Engine
     const assessmentResult =
-      await ComprehensiveAssessmentEngine.performCompleteAssessment(
+      await SingleCallAssessmentEngine.performCompleteAssessment(
         userContent,
         {
           childAge: session.childAge || 10,
@@ -293,25 +292,7 @@ Respond as a supportive teacher who celebrates their unique creativity.`;
     score: number;
     shouldBlock: boolean;
   }> {
-    console.log('🔍 Running quick AI detection check...');
-
-    const aiResult = await AdvancedAIDetector.detectAIContent(userContent, {
-      childAge,
-      isCreativeWriting: true,
-    });
-
-    const isAI =
-      aiResult.riskLevel === 'CRITICAL RISK' ||
-      aiResult.riskLevel === 'HIGH RISK';
-    const shouldBlock = aiResult.riskLevel === 'CRITICAL RISK';
-
-    return {
-      isAI,
-      likelihood: aiResult.aiLikelihood,
-      confidence: aiResult.confidenceLevel,
-      score: aiResult.humanLikeScore,
-      shouldBlock,
-    };
+    throw new Error('quickAICheck is deprecated. Use SingleCallAssessmentEngine.performCompleteAssessment for AI detection results.');
   }
 
   /**
@@ -402,7 +383,7 @@ Respond as a supportive teacher who celebrates their unique creativity.`;
 
     // Run comprehensive assessment again
     const assessmentResult =
-      await ComprehensiveAssessmentEngine.performCompleteAssessment(
+      await SingleCallAssessmentEngine.performCompleteAssessment(
         userContent,
         {
           childAge: session.childAge || 10,

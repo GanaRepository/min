@@ -6,7 +6,7 @@ import Turn from '@/models/Turn';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/utils/authOptions';
 import { collaborationEngine } from '@/lib/ai/collaboration';
-import { ComprehensiveAssessmentEngine } from '@/lib/ai/comprehensive-assessment-engine';
+import { SingleCallAssessmentEngine } from '@/lib/ai/SingleCallAssessmentEngine';
 import mongoose from 'mongoose';
 import type { NextRequest } from 'next/server';
 
@@ -156,7 +156,7 @@ export async function POST(req: NextRequest) {
 
         // ✅ FIXED: Use comprehensive assessment engine
         const comprehensiveAssessment =
-          await ComprehensiveAssessmentEngine.performCompleteAssessment(
+          await SingleCallAssessmentEngine.performCompleteAssessment(
             storyContent,
             {
               childAge: 10,
