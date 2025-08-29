@@ -209,47 +209,16 @@ export async function POST(request: NextRequest) {
       });
     } catch (assessmentError) {
       console.error('❌ Assessment failed:', assessmentError);
-
-      // Fallback to basic scores
-      const fallbackData = {
-        overallScore: 75,
-        grammarScore: 80,
-        creativityScore: 85,
-        vocabularyScore: 70,
-        structureScore: 75,
-        characterDevelopmentScore: 80,
-        plotDevelopmentScore: 70,
-        readingLevel: 'Grade 7',
-        feedback: 'Assessment completed! Your story shows good potential.',
-        strengths: ['Creative storytelling', 'Good use of language'],
-        improvements: ['Continue developing your writing skills'],
-        integrityStatus: { status: 'PASS', message: 'Assessment completed' },
-        assessmentDate: new Date().toISOString(),
-      };
-
-      await StorySession.findByIdAndUpdate(storySession._id, {
-        $set: {
-          assessment: fallbackData,
-          assessmentAttempts: 1,
+      return NextResponse.json(
+        {
+          error: 'AI assessment unavailable. Please try again later.',
+          details:
+            assessmentError instanceof Error
+              ? assessmentError.message
+              : 'Unknown error',
         },
-      });
-
-      await UsageManager.incrementAssessmentRequest(
-        session.user.id,
-        storySession._id.toString()
+        { status: 500 }
       );
-
-      return NextResponse.json({
-        success: true,
-        storyId: storySession._id,
-        story: {
-          id: storySession._id,
-          title: storySession.title,
-          wordCount,
-          storyNumber: storySession.storyNumber,
-        },
-        warning: 'Story saved with backup assessment.',
-      });
     }
   } catch (error) {
     console.error('❌ Upload error:', error);

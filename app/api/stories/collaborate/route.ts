@@ -92,15 +92,15 @@ export async function POST(request: NextRequest) {
           storyContext,
           turnNumber
         );
-
         console.log(
           `✅ AI response generated: ${aiResponse.split(/\s+/).filter(Boolean).length} words`
         );
       } catch (error) {
         console.error('AI response generation failed:', error);
-        // Provide a fallback response
-        aiResponse =
-          "That's an interesting development! I'm excited to see where you take the story next. What happens next in your adventure?";
+        return NextResponse.json(
+          { error: 'AI response unavailable. Please try again later.' },
+          { status: 500 }
+        );
       }
     } else {
       // Final turn - assessment message
@@ -313,30 +313,16 @@ export async function POST(request: NextRequest) {
           sessionId,
           turnNumber,
         });
-
-        // Fallback assessment data
-        updateData.assessment = {
-          overallScore: 75,
-          grammarScore: 80,
-          creativityScore: 85,
-          vocabularyScore: 70,
-          structureScore: 75,
-          characterDevelopmentScore: 80,
-          plotDevelopmentScore: 70,
-          readingLevel: 'Grade 7',
-          feedback:
-            'Great work on your collaborative story! Assessment completed.',
-          strengths: ['Creative storytelling', 'Good collaboration skills'],
-          improvements: ['Continue developing your writing skills'],
-          integrityStatus: {
-            status: 'PASS',
-            message: 'Assessment completed with backup system',
+        return NextResponse.json(
+          {
+            error: 'AI assessment unavailable. Please try again later.',
+            details:
+              assessmentError instanceof Error
+                ? assessmentError.message
+                : 'Unknown error',
           },
-          assessmentDate: new Date().toISOString(),
-          assessmentType: 'collaborative_freestyle_fallback',
-        };
-        updateData.assessmentAttempts = 1;
-        console.log('📝 Using fallback assessment due to error');
+          { status: 500 }
+        );
       }
     }
 
