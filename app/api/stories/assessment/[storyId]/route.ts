@@ -90,7 +90,7 @@ export async function GET(
         }
       );
 
-      console.log('✅ 13-factor assessment completed successfully');
+      console.log('13-factor assessment completed successfully');
 
       const teacherAssessment = {
         ...assessment,
@@ -102,6 +102,9 @@ export async function GET(
         userAge: storySession.childAge || 10,
         wordCount: storyContent.split(/\s+/).filter(Boolean).length,
       };
+
+      // Debug log: print the full teacherAssessment object before saving
+      console.log('Saving teacherAssessment to DB:', JSON.stringify(teacherAssessment, null, 2));
 
       // Update story session with new teacher assessment
       await StorySession.findByIdAndUpdate(storySession._id, {
