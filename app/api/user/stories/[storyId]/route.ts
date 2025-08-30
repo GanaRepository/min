@@ -39,12 +39,12 @@ interface StoryDocument {
     score?: number;
   }>;
   elements?: Record<string, any>;
-  
+
   // Legacy fields for backward compatibility
   plagiarismScore?: number;
   aiDetectionScore?: number;
   integrityStatus?: string;
-  
+
   assessment?: {
     overallScore: number;
     grammarScore: number;
@@ -304,14 +304,14 @@ export async function GET(
                   // Map plagiarism data to expected format
                   plagiarismResult: {
                     overallScore:
-                      (story.assessment.integrityAnalysis as any).plagiarismCheck
-                        ?.originalityScore || 95,
+                      (story.assessment.integrityAnalysis as any)
+                        .plagiarismCheck?.originalityScore || 95,
                     riskLevel:
-                      (story.assessment.integrityAnalysis as any).plagiarismCheck
-                        ?.riskLevel || 'low',
+                      (story.assessment.integrityAnalysis as any)
+                        .plagiarismCheck?.riskLevel || 'low',
                     status:
-                      (story.assessment.integrityAnalysis as any).plagiarismCheck
-                        ?.status || 'CLEAR',
+                      (story.assessment.integrityAnalysis as any)
+                        .plagiarismCheck?.status || 'CLEAR',
                   },
                   // Map AI detection data to expected format
                   aiDetectionResult: {
@@ -329,9 +329,11 @@ export async function GET(
                         ?.riskLevel || 'VERY LOW RISK',
                   },
                   overallStatus:
-                    (story.assessment.integrityAnalysis as any).overallStatus || 'PASS',
+                    (story.assessment.integrityAnalysis as any).overallStatus ||
+                    'PASS',
                   message:
-                    (story.assessment.integrityAnalysis as any).message || 'Story integrity verified',
+                    (story.assessment.integrityAnalysis as any).message ||
+                    'Story integrity verified',
                 }
               : {
                   // Legacy format fallback

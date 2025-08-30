@@ -1,4 +1,4 @@
-// app/api/admin/dashboard-stats/route.ts 
+// app/api/admin/dashboard-stats/route.ts
 export const dynamic = 'force-dynamic';
 
 import { NextResponse } from 'next/server';

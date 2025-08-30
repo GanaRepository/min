@@ -1,6 +1,5 @@
 //app/api/check-purchase/route.ts
 
-
 import { NextRequest, NextResponse } from 'next/server';
 import { connectToDatabase } from '@/utils/db';
 import StorySession from '@/models/StorySession';

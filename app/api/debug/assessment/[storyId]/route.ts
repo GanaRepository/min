@@ -15,10 +15,13 @@ export async function GET(
     return NextResponse.json({
       success: true,
       assessment: storySession.assessment,
-      rawAssessment: JSON.stringify(storySession.assessment, null, 2)
+      rawAssessment: JSON.stringify(storySession.assessment, null, 2),
     });
   } catch (error) {
     console.error('Debug assessment error:', error);
-    return NextResponse.json({ error: 'Failed to get assessment' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to get assessment' },
+      { status: 500 }
+    );
   }
 }

@@ -5,7 +5,6 @@ import { authOptions } from '@/utils/authOptions';
 import { connectToDatabase } from '@/utils/db';
 import StorySession from '@/models/StorySession';
 
-
 export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);

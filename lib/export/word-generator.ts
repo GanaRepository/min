@@ -57,7 +57,9 @@ export class StoryWordGenerator {
         alignment: AlignmentType.CENTER,
       }),
       new Paragraph({
-        children: [new TextRun({ text: `Word Count: ${story.totalWords}`, size: 20 })],
+        children: [
+          new TextRun({ text: `Word Count: ${story.totalWords}`, size: 20 }),
+        ],
         alignment: AlignmentType.CENTER,
       })
     );
@@ -65,7 +67,13 @@ export class StoryWordGenerator {
     if (story.assessment?.assessmentDate) {
       paragraphs.push(
         new Paragraph({
-          children: [new TextRun({ text: `Assessed on: ${story.assessment.assessmentDate}`, size: 18, color: '666666' })],
+          children: [
+            new TextRun({
+              text: `Assessed on: ${story.assessment.assessmentDate}`,
+              size: 18,
+              color: '666666',
+            }),
+          ],
           alignment: AlignmentType.CENTER,
         })
       );
@@ -77,23 +85,48 @@ export class StoryWordGenerator {
     if (story.assessment) {
       paragraphs.push(
         new Paragraph({
-          children: [new TextRun({ text: '13-Factor Teacher Assessment', bold: true, size: 28 })],
+          children: [
+            new TextRun({
+              text: '13-Factor Teacher Assessment',
+              bold: true,
+              size: 28,
+            }),
+          ],
           heading: HeadingLevel.HEADING_1,
         })
       );
 
       const categories = [
-        { title: 'Core Language Skills', items: story.assessment.coreLanguageSkills },
-        { title: 'Storytelling Skills', items: story.assessment.storytellingSkills },
-        { title: 'Creative & Expressive Skills', items: story.assessment.creativeExpressiveSkills },
-        { title: 'Authenticity & Growth', items: story.assessment.authenticityGrowth },
+        {
+          title: 'Core Language Skills',
+          items: story.assessment.coreLanguageSkills,
+        },
+        {
+          title: 'Storytelling Skills',
+          items: story.assessment.storytellingSkills,
+        },
+        {
+          title: 'Creative & Expressive Skills',
+          items: story.assessment.creativeExpressiveSkills,
+        },
+        {
+          title: 'Authenticity & Growth',
+          items: story.assessment.authenticityGrowth,
+        },
       ];
 
       categories.forEach((cat) => {
         if (!cat.items) return;
         paragraphs.push(
           new Paragraph({
-            children: [new TextRun({ text: cat.title, bold: true, size: 24, color: '2980B9' })],
+            children: [
+              new TextRun({
+                text: cat.title,
+                bold: true,
+                size: 24,
+                color: '2980B9',
+              }),
+            ],
             heading: HeadingLevel.HEADING_2,
           })
         );
@@ -101,8 +134,12 @@ export class StoryWordGenerator {
         Object.entries(cat.items).forEach(([label, feedback]) => {
           if (feedback) {
             paragraphs.push(
-              new Paragraph({ children: [new TextRun({ text: label, bold: true, size: 18 })] }),
-              new Paragraph({ children: [new TextRun({ text: feedback, size: 16 })] })
+              new Paragraph({
+                children: [new TextRun({ text: label, bold: true, size: 18 })],
+              }),
+              new Paragraph({
+                children: [new TextRun({ text: feedback, size: 16 })],
+              })
             );
           }
         });
@@ -114,7 +151,9 @@ export class StoryWordGenerator {
     // Story Content
     paragraphs.push(
       new Paragraph({
-        children: [new TextRun({ text: 'Story Content', bold: true, size: 28 })],
+        children: [
+          new TextRun({ text: 'Story Content', bold: true, size: 28 }),
+        ],
         heading: HeadingLevel.HEADING_1,
       })
     );

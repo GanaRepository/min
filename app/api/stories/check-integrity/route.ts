@@ -21,7 +21,10 @@ export async function POST(request: NextRequest) {
     const { content } = await request.json();
 
     if (!content?.trim()) {
-      return NextResponse.json({ error: 'Content is required' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Content is required' },
+        { status: 400 }
+      );
     }
 
     const wordCount = content.trim().split(/\s+/).filter(Boolean).length;
@@ -72,28 +75,51 @@ export async function POST(request: NextRequest) {
     );
     let overallRisk = 'low';
 
-    if (results.plagiarism.riskLevel === 'critical' || results.ai.aiLikelihood === 'very_high') {
+    if (
+      results.plagiarism.riskLevel === 'critical' ||
+      results.ai.aiLikelihood === 'very_high'
+    ) {
       overallRisk = 'critical';
-    } else if (results.plagiarism.riskLevel === 'high' || results.ai.aiLikelihood === 'high') {
+    } else if (
+      results.plagiarism.riskLevel === 'high' ||
+      results.ai.aiLikelihood === 'high'
+    ) {
       overallRisk = 'high';
-    } else if (results.plagiarism.riskLevel === 'medium' || results.ai.aiLikelihood === 'medium') {
+    } else if (
+      results.plagiarism.riskLevel === 'medium' ||
+      results.ai.aiLikelihood === 'medium'
+    ) {
       overallRisk = 'medium';
     }
 
     // 📘 Recommendations
     const recommendations: string[] = [];
     if (overallIntegrityScore < 70) {
-      recommendations.push("Review your content to ensure it's completely original");
-      recommendations.push('Write in your own words based on your experiences and imagination');
+      recommendations.push(
+        "Review your content to ensure it's completely original"
+      );
+      recommendations.push(
+        'Write in your own words based on your experiences and imagination'
+      );
     }
     if (results.plagiarism?.riskLevel !== 'low') {
-      recommendations.push('Avoid copying text from books, websites, or other sources');
+      recommendations.push(
+        'Avoid copying text from books, websites, or other sources'
+      );
     }
-    if (results.ai?.aiLikelihood && results.ai.aiLikelihood !== 'very_low' && results.ai.aiLikelihood !== 'low') {
-      recommendations.push("Make sure you're writing your own original content, not using AI tools");
+    if (
+      results.ai?.aiLikelihood &&
+      results.ai.aiLikelihood !== 'very_low' &&
+      results.ai.aiLikelihood !== 'low'
+    ) {
+      recommendations.push(
+        "Make sure you're writing your own original content, not using AI tools"
+      );
     }
 
-    console.log(`✅ Integrity check completed - Score: ${overallIntegrityScore}%, Risk: ${overallRisk}`);
+    console.log(
+      `✅ Integrity check completed - Score: ${overallIntegrityScore}%, Risk: ${overallRisk}`
+    );
 
     return NextResponse.json({
       success: true,

@@ -1,4 +1,4 @@
-// app/api/admin/mentors/route.ts 
+// app/api/admin/mentors/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/utils/authOptions';

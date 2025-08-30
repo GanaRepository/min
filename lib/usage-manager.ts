@@ -223,8 +223,8 @@ export class UsageManager {
     ).length;
 
     // Count assessment requests (uploaded stories + assessment attempts)
-    const assessmentRequests = stories.filter((story) => 
-      story.isUploadedForAssessment
+    const assessmentRequests = stories.filter(
+      (story) => story.isUploadedForAssessment
     ).length;
 
     // Count competition entries

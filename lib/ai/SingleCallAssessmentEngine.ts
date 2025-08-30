@@ -3,26 +3,26 @@ import { jsonrepair } from 'jsonrepair';
 
 const schema = {
   coreLanguageSkills: {
-    grammarSentenceClarity: "4-5 lines of feedback",
-    vocabularyWordChoice: "4-5 lines of feedback",
-    spellingPunctuation: "4-5 lines of feedback"
+    grammarSentenceClarity: '4-5 lines of feedback',
+    vocabularyWordChoice: '4-5 lines of feedback',
+    spellingPunctuation: '4-5 lines of feedback',
   },
   storytellingSkills: {
-    plotPacing: "4-5 lines of feedback",
-    characterDevelopment: "4-5 lines of feedback",
-    settingWorldBuilding: "4-5 lines of feedback",
-    dialogueExpression: "4-5 lines of feedback",
-    themeMessage: "4-5 lines of feedback"
+    plotPacing: '4-5 lines of feedback',
+    characterDevelopment: '4-5 lines of feedback',
+    settingWorldBuilding: '4-5 lines of feedback',
+    dialogueExpression: '4-5 lines of feedback',
+    themeMessage: '4-5 lines of feedback',
   },
   creativeExpressiveSkills: {
-    creativityOriginality: "4-5 lines of feedback",
-    descriptivePowerEmotionalImpact: "4-5 lines of feedback"
+    creativityOriginality: '4-5 lines of feedback',
+    descriptivePowerEmotionalImpact: '4-5 lines of feedback',
   },
   authenticityGrowth: {
-    ageAppropriatenessAuthorship: "4-5 lines of feedback",
-    strengthsAreasToImprove: "4-5 lines of feedback",
-    practiceExercises: "4-5 lines of feedback"
-  }
+    ageAppropriatenessAuthorship: '4-5 lines of feedback',
+    strengthsAreasToImprove: '4-5 lines of feedback',
+    practiceExercises: '4-5 lines of feedback',
+  },
 };
 
 export class SingleCallAssessmentEngine {
@@ -55,8 +55,8 @@ Story:
 ${storyContent}
 """
 
-Child Age: ${metadata.childAge || "Unknown"}
-Story Title: ${metadata.storyTitle || "Untitled"}
+Child Age: ${metadata.childAge || 'Unknown'}
+Story Title: ${metadata.storyTitle || 'Untitled'}
 `;
 
     try {
@@ -101,7 +101,7 @@ Story Title: ${metadata.storyTitle || "Untitled"}
 
   // ---------- Ensure All 13 Factors ----------
   private static ensureCompleteStructure(partial: any): any {
-    const defaultText = "No feedback provided.";
+    const defaultText = 'No feedback provided.';
 
     function deepFill(obj: any, template: any): any {
       const out: any = {};

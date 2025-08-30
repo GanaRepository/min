@@ -1,4 +1,4 @@
-// app/children-dashboard/competitions/page.tsx 
+// app/children-dashboard/competitions/page.tsx
 'use client';
 
 import { useState, useEffect } from 'react';

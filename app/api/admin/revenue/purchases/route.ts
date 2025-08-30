@@ -1,4 +1,3 @@
-
 // app/api/admin/revenue/purchases/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';

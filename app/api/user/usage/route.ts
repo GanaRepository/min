@@ -1,4 +1,3 @@
-
 // app/api/user/usage/route.ts - OPTIMIZED FOR SPEED (2-3 seconds instead of 10+ seconds)
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';

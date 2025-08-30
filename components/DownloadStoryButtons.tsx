@@ -7,7 +7,10 @@ export interface DownloadStoryButtonsProps {
   storyTitle: string;
 }
 
-export function DownloadStoryButtons({ storyId, storyTitle }: DownloadStoryButtonsProps) {
+export function DownloadStoryButtons({
+  storyId,
+  storyTitle,
+}: DownloadStoryButtonsProps) {
   return (
     <div className="flex gap-3">
       <a

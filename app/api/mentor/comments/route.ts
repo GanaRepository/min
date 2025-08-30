@@ -9,7 +9,6 @@ export async function PATCH(request: Request) {
       );
     }
 
-
     const url = new URL(request.url);
     const paths = url.pathname.split('/');
     const commentId = paths[paths.length - 1];

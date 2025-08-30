@@ -25,9 +25,14 @@ export async function POST(request: NextRequest) {
     await connectToDatabase();
 
     // Check competition eligibility
-    const competitionCheck = await UsageManager.canEnterCompetition(session.user.id);
+    const competitionCheck = await UsageManager.canEnterCompetition(
+      session.user.id
+    );
     if (!competitionCheck.allowed) {
-      return NextResponse.json({ error: competitionCheck.reason }, { status: 403 });
+      return NextResponse.json(
+        { error: competitionCheck.reason },
+        { status: 403 }
+      );
     }
 
     // Get current competition
@@ -45,11 +50,17 @@ export async function POST(request: NextRequest) {
     const content = formData.get('content') as string;
 
     if (!title?.trim()) {
-      return NextResponse.json({ error: 'Story title is required' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Story title is required' },
+        { status: 400 }
+      );
     }
 
     if (!content?.trim()) {
-      return NextResponse.json({ error: 'Please provide story content by pasting text' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Please provide story content by pasting text' },
+        { status: 400 }
+      );
     }
 
     const storyContent = content.trim();
@@ -76,20 +87,32 @@ export async function POST(request: NextRequest) {
     }
 
     // Get next story number
-    const userStoryCount = await StorySession.countDocuments({ childId: session.user.id });
+    const userStoryCount = await StorySession.countDocuments({
+      childId: session.user.id,
+    });
     const nextStoryNumber = userStoryCount + 1;
 
     // ✅ Run teacher-style assessment
-    console.log('🤖 Running 13-factor Teacher Assessment for competition entry...');
+    console.log(
+      '🤖 Running 13-factor Teacher Assessment for competition entry...'
+    );
     let assessmentResult;
     try {
-      assessmentResult = await SingleCallAssessmentEngine.performAssessment(storyContent, {
-        childAge: user.age || 10,
-        storyTitle: title,
-      });
-      console.log(`✅ 13-factor assessment completed for competition story: ${title}`);
+      assessmentResult = await SingleCallAssessmentEngine.performAssessment(
+        storyContent,
+        {
+          childAge: user.age || 10,
+          storyTitle: title,
+        }
+      );
+      console.log(
+        `✅ 13-factor assessment completed for competition story: ${title}`
+      );
     } catch (error) {
-      console.error('❌ Teacher assessment failed for competition entry:', error);
+      console.error(
+        '❌ Teacher assessment failed for competition entry:',
+        error
+      );
       return NextResponse.json(
         {
           error: 'Unable to assess story quality',
@@ -153,7 +176,8 @@ export async function POST(request: NextRequest) {
         version: '1.0-13-factor',
         summary: 'Teacher-style feedback saved',
       },
-      message: 'Story assessed with 13 factors and submitted to competition successfully!',
+      message:
+        'Story assessed with 13 factors and submitted to competition successfully!',
     });
   } catch (error) {
     console.error('Competition upload error:', error);

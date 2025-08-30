@@ -233,21 +233,27 @@ export default function SimpleAssessmentDisplay({
                       {assessment.integrityAnalysis.aiDetectionResult
                         .likelihood || 'Low'}
                     </div>
-                    <div className="text-sm text-blue-700 mb-3">AI Likelihood</div>
-                    
+                    <div className="text-sm text-blue-700 mb-3">
+                      AI Likelihood
+                    </div>
+
                     {/* Human-like Score */}
                     <div className="text-3xl font-bold text-green-600 mb-1">
                       {assessment.integrityAnalysis.aiDetectionResult
-                        .humanLikeScore || 90}%
+                        .humanLikeScore || 90}
+                      %
                     </div>
-                    <div className="text-sm text-green-700 mb-3">Human-like Score</div>
-                    
+                    <div className="text-sm text-green-700 mb-3">
+                      Human-like Score
+                    </div>
+
                     {/* Risk Level */}
                     <div className="text-sm text-gray-600 mb-2">
-                      Risk: {assessment.integrityAnalysis.aiDetectionResult
+                      Risk:{' '}
+                      {assessment.integrityAnalysis.aiDetectionResult
                         .riskLevel || 'VERY LOW RISK'}
                     </div>
-                    
+
                     {assessment.integrityAnalysis.aiDetectionResult
                       .confidence && (
                       <div className="text-xs text-gray-600 mt-2">

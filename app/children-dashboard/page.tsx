@@ -1,4 +1,4 @@
-// app/children-dashboard/page.tsx 
+// app/children-dashboard/page.tsx
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';

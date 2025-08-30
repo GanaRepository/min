@@ -1,4 +1,3 @@
-
 // components/writing/StoryTimeline.tsx (FIXED HEIGHT & AI OPENING)
 'use client';
 

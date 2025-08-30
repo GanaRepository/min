@@ -122,11 +122,13 @@ Instructions:
       `📊 Running 13-factor assessment on collaborative story: ${wordCount} user words from ${userTurns.length} turns`
     );
 
-    const assessmentResult =
-      await SingleCallAssessmentEngine.performAssessment(userContent, {
+    const assessmentResult = await SingleCallAssessmentEngine.performAssessment(
+      userContent,
+      {
         childAge: session.childAge || 10,
         storyTitle: session.title,
-      });
+      }
+    );
 
     const updateData: any = {
       status: 'completed',
@@ -145,7 +147,9 @@ Instructions:
 
     await StorySession.findByIdAndUpdate(sessionId, { $set: updateData });
 
-    console.log(`✅ Collaborative story completed with teacher assessment: ${sessionId}`);
+    console.log(
+      `✅ Collaborative story completed with teacher assessment: ${sessionId}`
+    );
 
     return {
       sessionId,
@@ -237,11 +241,13 @@ Instructions:
 
     console.log(`🔄 Running reassessment on story: ${sessionId}`);
 
-    const assessmentResult =
-      await SingleCallAssessmentEngine.performAssessment(userContent, {
+    const assessmentResult = await SingleCallAssessmentEngine.performAssessment(
+      userContent,
+      {
         childAge: session.childAge || 10,
         storyTitle: session.title,
-      });
+      }
+    );
 
     await StorySession.findByIdAndUpdate(sessionId, {
       $set: {

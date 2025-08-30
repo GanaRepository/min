@@ -1,4 +1,4 @@
-// app/api/user/stories/route.ts 
+// app/api/user/stories/route.ts
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/utils/authOptions';
@@ -134,16 +134,30 @@ export async function GET(request: Request) {
                     story.assessment.integrityAnalysis.overallStatus || 'PASS',
                   // Map AI detection data to expected format
                   aiDetectionResult: {
-                    likelihood: story.assessment.integrityAnalysis.aiDetection?.aiLikelihood || 'Very Low (10%)',
-                    confidence: story.assessment.integrityAnalysis.aiDetection?.confidenceLevel || 85,
-                    humanLikeScore: story.assessment.integrityAnalysis.aiDetection?.humanLikeScore || 90,
-                    riskLevel: story.assessment.integrityAnalysis.aiDetection?.riskLevel || 'VERY LOW RISK',
+                    likelihood:
+                      story.assessment.integrityAnalysis.aiDetection
+                        ?.aiLikelihood || 'Very Low (10%)',
+                    confidence:
+                      story.assessment.integrityAnalysis.aiDetection
+                        ?.confidenceLevel || 85,
+                    humanLikeScore:
+                      story.assessment.integrityAnalysis.aiDetection
+                        ?.humanLikeScore || 90,
+                    riskLevel:
+                      story.assessment.integrityAnalysis.aiDetection
+                        ?.riskLevel || 'VERY LOW RISK',
                   },
                   // Map plagiarism data to expected format
                   plagiarismResult: {
-                    overallScore: story.assessment.integrityAnalysis.plagiarismCheck?.originalityScore || 95,
-                    riskLevel: story.assessment.integrityAnalysis.plagiarismCheck?.riskLevel || 'low',
-                    status: story.assessment.integrityAnalysis.plagiarismCheck?.status || 'CLEAR',
+                    overallScore:
+                      story.assessment.integrityAnalysis.plagiarismCheck
+                        ?.originalityScore || 95,
+                    riskLevel:
+                      story.assessment.integrityAnalysis.plagiarismCheck
+                        ?.riskLevel || 'low',
+                    status:
+                      story.assessment.integrityAnalysis.plagiarismCheck
+                        ?.status || 'CLEAR',
                   },
                   message: story.assessment.integrityAnalysis.message || '',
                 }

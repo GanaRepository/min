@@ -1,4 +1,4 @@
-// app/api/user/stories/route.ts 
+// app/api/user/stories/route.ts
 import { NextResponse } from 'next/server';
 import { connectToDatabase } from '@/utils/db';
 import StorySession from '@/models/StorySession';

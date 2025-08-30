@@ -39,7 +39,10 @@ export async function POST(request: NextRequest) {
     const file = formData.get('file') as File | null;
 
     if (!title?.trim()) {
-      return NextResponse.json({ error: 'Story title is required' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Story title is required' },
+        { status: 400 }
+      );
     }
 
     let storyContent = '';
@@ -48,12 +51,18 @@ export async function POST(request: NextRequest) {
     } else if (content?.trim()) {
       storyContent = content.trim();
     } else {
-      return NextResponse.json({ error: 'Story content is required' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Story content is required' },
+        { status: 400 }
+      );
     }
 
     const wordCount = storyContent.split(/\s+/).filter(Boolean).length;
     if (wordCount < 10) {
-      return NextResponse.json({ error: 'Story must be at least 10 words long' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Story must be at least 10 words long' },
+        { status: 400 }
+      );
     }
 
     // Count user's existing stories to set storyNumber
@@ -81,13 +90,19 @@ export async function POST(request: NextRequest) {
     console.log(`✅ Story saved with ID: ${storySession._id}`);
 
     try {
-      console.log('🎯 Generating 13-factor teacher assessment for story:', storySession.title);
+      console.log(
+        '🎯 Generating 13-factor teacher assessment for story:',
+        storySession.title
+      );
 
       // ✅ Use new 13-factor assessment
-      const assessment = await SingleCallAssessmentEngine.performAssessment(storyContent, {
-        childAge: 10, // you may replace with real age if available
-        storyTitle: storySession.title,
-      });
+      const assessment = await SingleCallAssessmentEngine.performAssessment(
+        storyContent,
+        {
+          childAge: 10, // you may replace with real age if available
+          storyTitle: storySession.title,
+        }
+      );
 
       console.log('✅ 13-factor assessment completed successfully');
 
@@ -109,7 +124,10 @@ export async function POST(request: NextRequest) {
       });
 
       // Track usage
-      await UsageManager.incrementAssessmentRequest(session.user.id, storySession._id.toString());
+      await UsageManager.incrementAssessmentRequest(
+        session.user.id,
+        storySession._id.toString()
+      );
 
       return NextResponse.json({
         success: true,
@@ -129,7 +147,11 @@ export async function POST(request: NextRequest) {
     } catch (assessmentError) {
       console.error('❌ 13-factor assessment failed:', assessmentError);
       let message = 'Unknown error';
-      if (assessmentError && typeof assessmentError === 'object' && 'message' in assessmentError) {
+      if (
+        assessmentError &&
+        typeof assessmentError === 'object' &&
+        'message' in assessmentError
+      ) {
         message = (assessmentError as any).message;
       }
       throw new Error(`Assessment failed: ${message}`);

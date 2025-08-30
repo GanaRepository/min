@@ -1,4 +1,4 @@
-// app/api/admin/users/route.ts 
+// app/api/admin/users/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/utils/authOptions';

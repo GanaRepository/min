@@ -66,15 +66,24 @@ export class StoryPDFGenerator {
     this.doc.setFontSize(14).setFont('helvetica', 'normal');
     this.doc.text(`By ${story.authorName}`, 105, 55, { align: 'center' });
 
-    this.doc.text(`Word Count: ${story.totalWords}`, 105, 70, { align: 'center' });
+    this.doc.text(`Word Count: ${story.totalWords}`, 105, 70, {
+      align: 'center',
+    });
 
     if (story.assessment?.assessmentDate) {
       this.doc.setFontSize(12);
-      this.doc.text(`Assessed on: ${story.assessment.assessmentDate}`, 105, 85, { align: 'center' });
+      this.doc.text(
+        `Assessed on: ${story.assessment.assessmentDate}`,
+        105,
+        85,
+        { align: 'center' }
+      );
     }
   }
 
-  private add13FactorAssessment(assessment: StoryDataWith13Factor["assessment"]) {
+  private add13FactorAssessment(
+    assessment: StoryDataWith13Factor['assessment']
+  ) {
     this.doc.setFontSize(18).setFont('helvetica', 'bold');
     this.doc.text('13-Factor Teacher Assessment', this.margin, this.currentY);
     this.currentY += 10;
@@ -82,7 +91,10 @@ export class StoryPDFGenerator {
     const categories = [
       { title: 'Core Language Skills', items: assessment?.coreLanguageSkills },
       { title: 'Storytelling Skills', items: assessment?.storytellingSkills },
-      { title: 'Creative & Expressive Skills', items: assessment?.creativeExpressiveSkills },
+      {
+        title: 'Creative & Expressive Skills',
+        items: assessment?.creativeExpressiveSkills,
+      },
       { title: 'Authenticity & Growth', items: assessment?.authenticityGrowth },
     ];
 
@@ -90,14 +102,19 @@ export class StoryPDFGenerator {
     categories.forEach((cat) => {
       if (!cat.items) return;
       this.currentY += 8;
-      this.doc.setFont('helvetica', 'bold').text(cat.title, this.margin, this.currentY);
+      this.doc
+        .setFont('helvetica', 'bold')
+        .text(cat.title, this.margin, this.currentY);
       this.currentY += 6;
 
       Object.entries(cat.items).forEach(([label, feedback]) => {
         if (feedback) {
           this.doc.setFont('helvetica', 'normal');
-          const wrapped = this.doc.splitTextToSize(`${label}: ${feedback}`, 170);
-          wrapped.forEach((line:any) => {
+          const wrapped = this.doc.splitTextToSize(
+            `${label}: ${feedback}`,
+            170
+          );
+          wrapped.forEach((line: any) => {
             this.currentY += 5;
             this.doc.text(line, this.margin + 5, this.currentY);
           });
@@ -115,7 +132,7 @@ export class StoryPDFGenerator {
     const paragraphs = story.content.split('\n\n');
     paragraphs.forEach((p) => {
       const wrapped = this.doc.splitTextToSize(p, 170);
-      wrapped.forEach((line:any) => {
+      wrapped.forEach((line: any) => {
         this.currentY += 6;
         this.doc.text(line, this.margin, this.currentY);
       });

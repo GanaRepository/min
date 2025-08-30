@@ -1,4 +1,3 @@
-
 // components/writing/ProgressTracker.tsx (DEBUG VERSION)
 'use client';
 

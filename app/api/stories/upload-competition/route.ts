@@ -26,9 +26,14 @@ export async function POST(request: NextRequest) {
     await connectToDatabase();
 
     // ✅ Check competition eligibility
-    const competitionCheck = await UsageManager.canEnterCompetition(session.user.id);
+    const competitionCheck = await UsageManager.canEnterCompetition(
+      session.user.id
+    );
     if (!competitionCheck.allowed) {
-      return NextResponse.json({ error: competitionCheck.reason }, { status: 403 });
+      return NextResponse.json(
+        { error: competitionCheck.reason },
+        { status: 403 }
+      );
     }
 
     // ✅ Get current competition
@@ -46,10 +51,16 @@ export async function POST(request: NextRequest) {
     const content = formData.get('content') as string;
 
     if (!title?.trim()) {
-      return NextResponse.json({ error: 'Story title is required' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Story title is required' },
+        { status: 400 }
+      );
     }
     if (!content?.trim()) {
-      return NextResponse.json({ error: 'Please provide story content by pasting text' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Please provide story content by pasting text' },
+        { status: 400 }
+      );
     }
 
     const storyContent = content.trim();
@@ -80,7 +91,9 @@ export async function POST(request: NextRequest) {
     });
     const nextStoryNumber = userStoryCount + 1;
 
-    console.log('Running 13-factor teacher assessment for competition entry...');
+    console.log(
+      'Running 13-factor teacher assessment for competition entry...'
+    );
 
     try {
       // ✅ Perform 13-factor teacher assessment
@@ -139,7 +152,8 @@ export async function POST(request: NextRequest) {
 
       return NextResponse.json({
         success: true,
-        message: 'Story submitted to competition with teacher-style assessment!',
+        message:
+          'Story submitted to competition with teacher-style assessment!',
         storyId: storySession._id,
         competitionId: currentCompetition._id,
         assessment: {
@@ -148,11 +162,15 @@ export async function POST(request: NextRequest) {
         },
       });
     } catch (assessmentError) {
-      console.error('13-factor assessment failed for competition entry:', assessmentError);
+      console.error(
+        '13-factor assessment failed for competition entry:',
+        assessmentError
+      );
       return NextResponse.json(
         {
           error: 'Unable to assess story quality',
-          details: 'Please try submitting again. If the problem persists, contact support.',
+          details:
+            'Please try submitting again. If the problem persists, contact support.',
         },
         { status: 500 }
       );

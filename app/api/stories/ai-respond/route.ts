@@ -47,7 +47,9 @@ export async function POST(req: NextRequest) {
 
     if (storySession.apiCallsUsed >= storySession.maxApiCalls) {
       return NextResponse.json(
-        { error: 'Maximum story turns reached. Story is ready for assessment!' },
+        {
+          error: 'Maximum story turns reached. Story is ready for assessment!',
+        },
         { status: 403 }
       );
     }
@@ -57,7 +59,9 @@ export async function POST(req: NextRequest) {
 
     // Final turn: perform teacher-style 13-factor assessment
     if (turnNumber >= 7) {
-      console.log('Story has reached completion - triggering 13-factor teacher assessment');
+      console.log(
+        'Story has reached completion - triggering 13-factor teacher assessment'
+      );
 
       try {
         const allTurns = await Turn.find({ sessionId }).sort({ turnNumber: 1 });
@@ -74,7 +78,9 @@ export async function POST(req: NextRequest) {
 
         fullStoryContent += allChildInputs.join('\n\n');
 
-        console.log(`Starting final 13-factor assessment for ${fullStoryContent.length} characters`);
+        console.log(
+          `Starting final 13-factor assessment for ${fullStoryContent.length} characters`
+        );
 
         // Run simplified 13-factor assessment
         const assessment = await SingleCallAssessmentEngine.performAssessment(
@@ -112,7 +118,8 @@ export async function POST(req: NextRequest) {
               assessmentType: 'teacher-style',
             },
             totalWords: fullStoryContent.split(/\s+/).filter(Boolean).length,
-            childWords: allChildInputs.join(' ').split(/\s+/).filter(Boolean).length,
+            childWords: allChildInputs.join(' ').split(/\s+/).filter(Boolean)
+              .length,
           },
         });
 
@@ -126,11 +133,15 @@ export async function POST(req: NextRequest) {
             aiResponse: finalTurn.aiResponse,
           },
           assessment: {
-            message: 'Your story has been completed and assessed with our 13-factor teacher feedback system!',
+            message:
+              'Your story has been completed and assessed with our 13-factor teacher feedback system!',
           },
         });
       } catch (assessmentError) {
-        console.error('13-factor assessment failed for story:', assessmentError);
+        console.error(
+          '13-factor assessment failed for story:',
+          assessmentError
+        );
 
         const finalTurn = new Turn({
           sessionId: new mongoose.Types.ObjectId(sessionId),
@@ -151,7 +162,8 @@ export async function POST(req: NextRequest) {
             apiCallsUsed: storySession.apiCallsUsed + 1,
             assessment: {
               error: 'Assessment temporarily unavailable',
-              message: 'Story completed successfully. Assessment will be generated shortly.',
+              message:
+                'Story completed successfully. Assessment will be generated shortly.',
             },
           },
         });

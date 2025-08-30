@@ -97,7 +97,10 @@ export default function StoryAssessmentPage() {
     { key: 'themeMessage', label: 'Theme & Message' },
     { key: 'creativityOriginality', label: 'Creativity & Originality' },
     { key: 'descriptivePower', label: 'Descriptive Power & Emotional Impact' },
-    { key: 'authenticityAgeAppropriateness', label: 'Authenticity & Age Appropriateness' },
+    {
+      key: 'authenticityAgeAppropriateness',
+      label: 'Authenticity & Age Appropriateness',
+    },
     { key: 'strengthsAndAreas', label: 'Strengths & Areas to Improve' },
     { key: 'practiceExercises', label: 'Practice Exercises' },
   ];
@@ -116,7 +119,9 @@ export default function StoryAssessmentPage() {
         <div className="text-center">
           <BookOpen className="w-16 h-16 text-gray-400 mx-auto mb-4" />
           <h2 className="text-xl text-white mb-2">Login Required</h2>
-          <p className="text-gray-400 mb-6">Please log in to view your story assessment.</p>
+          <p className="text-gray-400 mb-6">
+            Please log in to view your story assessment.
+          </p>
           <Link
             href="/login/child"
             className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 inline-flex items-center gap-2"
@@ -135,7 +140,9 @@ export default function StoryAssessmentPage() {
         <div className="text-center">
           <BookOpen className="w-16 h-16 text-gray-400 mx-auto mb-4" />
           <h2 className="text-xl text-white mb-2">Assessment Not Available</h2>
-          <p className="text-gray-400">{error || 'Assessment data is not available for this story.'}</p>
+          <p className="text-gray-400">
+            {error || 'Assessment data is not available for this story.'}
+          </p>
         </div>
       </div>
     );
@@ -148,7 +155,8 @@ export default function StoryAssessmentPage() {
           <BookOpen className="w-16 h-16 text-gray-400 mx-auto mb-4" />
           <h2 className="text-xl text-white mb-2">Assessment Not Available</h2>
           <p className="text-gray-400">
-            This story hasn&apos;t been assessed yet. Complete your story to get detailed feedback!
+            This story hasn&apos;t been assessed yet. Complete your story to get
+            detailed feedback!
           </p>
         </div>
       </div>
@@ -178,7 +186,8 @@ export default function StoryAssessmentPage() {
             </button>
             {expanded === key && (
               <div className="p-4 text-gray-700 text-sm leading-relaxed">
-                {feedback[key as keyof typeof feedback] || 'No feedback provided.'}
+                {feedback[key as keyof typeof feedback] ||
+                  'No feedback provided.'}
               </div>
             )}
           </div>

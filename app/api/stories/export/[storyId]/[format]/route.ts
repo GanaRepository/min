@@ -54,7 +54,9 @@ export async function GET(
     if (storySession.isUploadedForAssessment) {
       storyContent = storySession.content || '';
     } else {
-      const turns = await Turn.find({ sessionId: actualSessionId }).sort({ turnNumber: 1 }).lean();
+      const turns = await Turn.find({ sessionId: actualSessionId })
+        .sort({ turnNumber: 1 })
+        .lean();
       const storyParts = [];
       if (storySession.aiOpening) storyParts.push(storySession.aiOpening);
       turns.forEach((turn) => {
@@ -87,7 +89,8 @@ export async function GET(
       const wordGen = new StoryWordGenerator();
       fileBlob = await wordGen.generateStoryDocument(storyData);
       filename = `${storySession.title}_assessment.docx`;
-      contentType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+      contentType =
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
     }
 
     const buffer = Buffer.from(await fileBlob.arrayBuffer());
@@ -101,6 +104,9 @@ export async function GET(
     });
   } catch (error) {
     console.error('Export error:', error);
-    return NextResponse.json({ error: 'Failed to export story' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to export story' },
+      { status: 500 }
+    );
   }
 }

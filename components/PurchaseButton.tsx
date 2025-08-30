@@ -1,4 +1,3 @@
-
 // components/PurchaseButton.tsx - Updated for Competition Stories
 'use client';
 

@@ -1,4 +1,3 @@
-
 // config/limits.ts - FINAL SIMPLIFIED ASSESSMENT SYSTEM
 export interface UsageLimits {
   freestyleStories: number; // Collaborative AI stories per month

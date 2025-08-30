@@ -23,7 +23,10 @@ export async function POST(
     const { sessionId } = params;
 
     if (!mongoose.Types.ObjectId.isValid(sessionId)) {
-      return NextResponse.json({ error: 'Invalid session ID' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Invalid session ID' },
+        { status: 400 }
+      );
     }
 
     await connectToDatabase();
@@ -34,7 +37,10 @@ export async function POST(
     });
 
     if (!storySession) {
-      return NextResponse.json({ error: 'Story session not found' }, { status: 404 });
+      return NextResponse.json(
+        { error: 'Story session not found' },
+        { status: 404 }
+      );
     }
 
     if (storySession.status !== 'completed') {
@@ -57,7 +63,9 @@ export async function POST(
     const user = await User.findById(session.user.id);
     const userAge = user?.age || 10;
 
-    console.log(`Generating new 13-factor teacher assessment for session ${sessionId}`);
+    console.log(
+      `Generating new 13-factor teacher assessment for session ${sessionId}`
+    );
 
     // Build story content
     let fullStoryContent = '';
@@ -92,7 +100,9 @@ export async function POST(
       );
     }
 
-    console.log(`Starting teacher-style 13-factor assessment for ${fullStoryContent.length} characters`);
+    console.log(
+      `Starting teacher-style 13-factor assessment for ${fullStoryContent.length} characters`
+    );
 
     try {
       // Perform teacher-style 13-factor assessment

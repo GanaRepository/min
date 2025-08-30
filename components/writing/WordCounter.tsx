@@ -1,4 +1,3 @@
-
 // components/writing/WordCounter.tsx (FIXED PROPS)
 'use client';
 

@@ -1,4 +1,3 @@
-
 // config/pricing.ts - CORRECTED FOR SIMPLIFIED SYSTEM
 export interface PricingTier {
   id: string;
