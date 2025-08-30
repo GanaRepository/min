@@ -1,4 +1,5 @@
 import { smartAIProvider } from './smart-provider-manager';
+import { jsonrepair } from 'jsonrepair';
 
 export class SingleCallAssessmentEngine {
   static async performCompleteAssessment(
@@ -291,7 +292,13 @@ Provide detailed analysis for each factor. Return ONLY valid JSON:
       }
       // Clean up common JSON issues
       jsonStr = jsonStr.replace(/,\s*([}\]])/g, '$1'); // Remove trailing commas
-      return JSON.parse(jsonStr);
+      try {
+        return JSON.parse(jsonStr);
+      } catch (e) {
+        // Try to repair malformed JSON
+        const repaired = jsonrepair(jsonStr);
+        return JSON.parse(repaired);
+      }
     } catch (error) {
       console.error('JSON parsing failed:', error);
       console.error('Raw response:', response);

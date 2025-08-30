@@ -292,11 +292,18 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Story must be at least 10 words long' }, { status: 400 });
     }
 
-    // Create story session
+    // Count user's existing stories to set storyNumber
+    const userStoryCount = await StorySession.countDocuments({
+      childId: session.user.id,
+    });
+    const nextStoryNumber = userStoryCount + 1;
+
+    // Create story session with required storyNumber
     const storySession = new StorySession({
       childId: session.user.id,
       title: title.trim(),
       content: storyContent,
+      storyNumber: nextStoryNumber,
       status: 'completed',
       totalWords: wordCount,
       childWords: wordCount,
