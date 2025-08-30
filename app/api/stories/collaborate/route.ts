@@ -581,7 +581,12 @@ export async function POST(req: NextRequest) {
         };
         updateData.assessment = comprehensiveAssessment;
         updateData.overallScore = assessment.overallScore;
-        updateData.status = assessment.status;
+        updateData.status = 'completed'; // Always mark as completed for students
+        updateData.aiStatusDetermination = assessment.status; // Store AI's determination for admin/mentor reference
+        // Add note to assessment
+        if (updateData.assessment && typeof updateData.assessment === 'object') {
+          updateData.assessment.note = 'Complete 42-factor analysis provided regardless of status - flagging for admin review only';
+        }
       } catch (assessmentError) {
         let message = 'Story completed but assessment could not be generated';
         if (assessmentError && typeof assessmentError === 'object' && 'message' in assessmentError) {
