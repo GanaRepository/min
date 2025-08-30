@@ -508,11 +508,14 @@ export async function POST(req: NextRequest) {
         // Update session with comprehensive assessment and mark as completed
         await StorySession.findByIdAndUpdate(sessionId, {
           $set: {
-            status: assessment.status === 'Flagged' ? 'flagged' : 'completed',
+            status: assessment.status, // Always use AI's determination directly
             completedAt: new Date(),
             currentTurn: turnNumber + 1,
             apiCallsUsed: storySession.apiCallsUsed + 1,
-            assessment: comprehensiveAssessment,
+            assessment: {
+              ...comprehensiveAssessment,
+              note: 'Complete 42-factor analysis provided regardless of status - flagging for admin review only',
+            },
             overallScore: assessment.overallScore,
             totalWords: fullStoryContent.split(/\s+/).filter(Boolean).length,
             childWords: allChildInputs.join(' ').split(/\s+/).filter(Boolean).length,

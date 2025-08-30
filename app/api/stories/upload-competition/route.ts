@@ -394,7 +394,7 @@ export async function POST(request: NextRequest) {
         title: title.trim(),
         content: storyContent,
         storyNumber: nextStoryNumber,
-        status: assessment.status === 'Flagged' ? 'flagged' : 'completed',
+        status: assessment.status, // Always use AI's determination directly
         totalWords: wordCount,
         childWords: wordCount,
         currentTurn: 1,
@@ -403,7 +403,10 @@ export async function POST(request: NextRequest) {
         isUploadedForAssessment: false,
         storyType: 'competition',
         competitionEligible: true,
-        assessment: comprehensiveAssessment,
+        assessment: {
+          ...comprehensiveAssessment,
+          note: 'Complete 42-factor analysis provided regardless of status - flagging for admin review only',
+        },
         overallScore: assessment.overallScore,
         competitionEntries: [
           {

@@ -567,9 +567,12 @@ export async function POST(
       // Update story session with comprehensive assessment
       await StorySession.findByIdAndUpdate(sessionId, {
         $set: {
-          assessment: comprehensiveAssessment,
+          assessment: {
+            ...comprehensiveAssessment,
+            note: 'Complete 42-factor analysis provided regardless of status - flagging for admin review only',
+          },
           overallScore: assessment.overallScore,
-          status: assessment.status === 'Flagged' ? 'flagged' : 'completed',
+          status: assessment.status, // Always use AI's determination directly
           lastAssessedAt: new Date(),
         },
       });
