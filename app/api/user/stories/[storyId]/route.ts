@@ -261,103 +261,51 @@ export async function GET(
       assessmentAttempts: story.assessmentAttempts || 0,
       assessment: story.assessment
         ? {
-            // Core scores - mapped to match frontend expectations
+            // ✅ PRESERVE THE ENTIRE 13-FACTOR STRUCTURE (use type assertion for new fields)
+            coreLanguageSkills: (story.assessment as any).coreLanguageSkills || {},
+            storytellingSkills: (story.assessment as any).storytellingSkills || {},
+            creativeExpressiveSkills: (story.assessment as any).creativeExpressiveSkills || {},
+            authenticityGrowth: (story.assessment as any).authenticityGrowth || {},
+
+            // Metadata from new assessment system
+            assessmentVersion: (story.assessment as any).assessmentVersion,
+            assessmentDate: (story.assessment as any).assessmentDate,
+            assessmentType: (story.assessment as any).assessmentType,
+            userAge: (story.assessment as any).userAge,
+            wordCount: (story.assessment as any).wordCount,
+            userContributionCount: (story.assessment as any).userContributionCount,
+
+            // Legacy compatibility fields (for other parts of the system)
             overallScore: story.assessment.overallScore || 0,
             grammarScore: story.assessment.grammarScore || 0,
             creativityScore: story.assessment.creativityScore || 0,
             vocabularyScore: story.assessment.vocabularyScore || 0,
             structureScore: story.assessment.structureScore || 0,
-            characterDevelopmentScore:
-              story.assessment.characterDevelopmentScore || 0,
+            characterDevelopmentScore: story.assessment.characterDevelopmentScore || 0,
             plotDevelopmentScore: story.assessment.plotDevelopmentScore || 0,
             themeScore: story.assessment.themeScore || 0,
             dialogueScore: story.assessment.dialogueScore || 0,
             descriptiveScore: story.assessment.descriptiveScore || 0,
             pacingScore: story.assessment.pacingScore || 0,
 
-            // Frontend expects these simplified property names
-            grammar: story.assessment.grammarScore || 0,
-            creativity: story.assessment.creativityScore || 0,
-            vocabulary: story.assessment.vocabularyScore || 0,
-            structure: story.assessment.structureScore || 0,
-
-            // Reading level and feedback
+            // Reading level and general feedback
             readingLevel: story.assessment.readingLevel || 'Unknown',
             feedback: story.assessment.feedback || '',
             strengths: story.assessment.strengths || [],
             improvements: story.assessment.improvements || [],
 
-            // Integrity analysis - FIXED with proper structure and frontend-expected properties
+            // Integrity analysis
             integrityRisk:
               story.assessment.integrityAnalysis?.overallStatus === 'critical'
                 ? 'critical'
-                : story.assessment.integrityAnalysis?.overallStatus ===
-                    'warning'
+                : story.assessment.integrityAnalysis?.overallStatus === 'warning'
                   ? 'high'
-                  : story.assessment.integrityAnalysis?.overallStatus ===
-                      'caution'
+                  : story.assessment.integrityAnalysis?.overallStatus === 'caution'
                     ? 'medium'
                     : 'low',
-
-            integrityAnalysis: story.assessment.integrityAnalysis
-              ? {
-                  // Map plagiarism data to expected format
-                  plagiarismResult: {
-                    overallScore:
-                      (story.assessment.integrityAnalysis as any)
-                        .plagiarismCheck?.originalityScore || 95,
-                    riskLevel:
-                      (story.assessment.integrityAnalysis as any)
-                        .plagiarismCheck?.riskLevel || 'low',
-                    status:
-                      (story.assessment.integrityAnalysis as any)
-                        .plagiarismCheck?.status || 'CLEAR',
-                  },
-                  // Map AI detection data to expected format
-                  aiDetectionResult: {
-                    likelihood:
-                      (story.assessment.integrityAnalysis as any).aiDetection
-                        ?.aiLikelihood || 'Very Low (10%)',
-                    confidence:
-                      (story.assessment.integrityAnalysis as any).aiDetection
-                        ?.confidenceLevel || 85,
-                    humanLikeScore:
-                      (story.assessment.integrityAnalysis as any).aiDetection
-                        ?.humanLikeScore || 90,
-                    riskLevel:
-                      (story.assessment.integrityAnalysis as any).aiDetection
-                        ?.riskLevel || 'VERY LOW RISK',
-                  },
-                  overallStatus:
-                    (story.assessment.integrityAnalysis as any).overallStatus ||
-                    'PASS',
-                  message:
-                    (story.assessment.integrityAnalysis as any).message ||
-                    'Story integrity verified',
-                }
-              : {
-                  // Legacy format fallback
-                  plagiarismResult: {
-                    overallScore: story.plagiarismScore || 95,
-                    riskLevel: 'low',
-                    status: 'CLEAR',
-                  },
-                  aiDetectionResult: {
-                    likelihood: 'Very Low (10%)',
-                    confidence: 85,
-                    humanLikeScore: story.aiDetectionScore || 90,
-                    riskLevel: 'VERY LOW RISK',
-                  },
-                  overallStatus: story.integrityStatus || 'PASS',
-                  message: 'Story integrity verified',
-                },
-
-            integrityStatus: story.assessment.integrityStatus || {
-              status: 'PASS' as const,
-              message: 'Story passed all integrity checks',
-            },
+            integrityAnalysis: story.assessment.integrityAnalysis || null,
           }
-        : undefined,
+        : null,
 
       // Competition data - FIXED
       competitionEligible: story.competitionEligible || false,
