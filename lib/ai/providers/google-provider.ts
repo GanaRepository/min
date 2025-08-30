@@ -75,8 +75,6 @@
 //   }
 // }
 
-
-
 // lib/ai/providers/google-provider.ts (FIXED)
 import { AIProviderConfig, AIResponse } from './types';
 
@@ -114,29 +112,29 @@ export class GoogleProvider implements AIProviderConfig {
               },
             ],
             generationConfig: {
-              maxOutputTokens: 4000,  // ✅ INCREASED FROM 150 TO 4000
-              temperature: 0.3,       // ✅ LOWER FOR MORE CONSISTENT OUTPUT
+              maxOutputTokens: 4000, // ✅ INCREASED FROM 150 TO 4000
+              temperature: 0.3, // ✅ LOWER FOR MORE CONSISTENT OUTPUT
               topP: 0.8,
               topK: 40,
             },
             safetySettings: [
               {
-                category: "HARM_CATEGORY_HARASSMENT",
-                threshold: "BLOCK_MEDIUM_AND_ABOVE"
+                category: 'HARM_CATEGORY_HARASSMENT',
+                threshold: 'BLOCK_MEDIUM_AND_ABOVE',
               },
               {
-                category: "HARM_CATEGORY_HATE_SPEECH", 
-                threshold: "BLOCK_MEDIUM_AND_ABOVE"
+                category: 'HARM_CATEGORY_HATE_SPEECH',
+                threshold: 'BLOCK_MEDIUM_AND_ABOVE',
               },
               {
-                category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
-                threshold: "BLOCK_MEDIUM_AND_ABOVE"
+                category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT',
+                threshold: 'BLOCK_MEDIUM_AND_ABOVE',
               },
               {
-                category: "HARM_CATEGORY_DANGEROUS_CONTENT",
-                threshold: "BLOCK_MEDIUM_AND_ABOVE"
-              }
-            ]
+                category: 'HARM_CATEGORY_DANGEROUS_CONTENT',
+                threshold: 'BLOCK_MEDIUM_AND_ABOVE',
+              },
+            ],
           }),
         }
       );
@@ -161,10 +159,10 @@ export class GoogleProvider implements AIProviderConfig {
       }
 
       const content = data.candidates[0].content.parts[0].text || '';
-      
+
       // Log response length for debugging
       console.log(`📏 Google AI response length: ${content.length} chars`);
-      
+
       return {
         content,
         provider: this.name,

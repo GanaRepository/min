@@ -174,7 +174,6 @@
 //   );
 // }
 
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -217,74 +216,74 @@ export default function AssessmentPage({ params }: AssessmentPageProps) {
     {
       key: 'grammarSentenceClarity',
       label: 'Grammar & Sentence Clarity',
-      section: 'coreLanguageSkills'
+      section: 'coreLanguageSkills',
     },
     {
       key: 'vocabularyWordChoice',
       label: 'Vocabulary & Word Choice',
-      section: 'coreLanguageSkills'
+      section: 'coreLanguageSkills',
     },
     {
       key: 'spellingPunctuation',
       label: 'Spelling & Punctuation',
-      section: 'coreLanguageSkills'
+      section: 'coreLanguageSkills',
     },
 
     // Storytelling Skills (5 factors)
     {
       key: 'plotPacing',
       label: 'Plot & Pacing',
-      section: 'storytellingSkills'
+      section: 'storytellingSkills',
     },
     {
       key: 'characterDevelopment',
       label: 'Character Development',
-      section: 'storytellingSkills'
+      section: 'storytellingSkills',
     },
     {
       key: 'settingWorldBuilding',
       label: 'Setting & World-Building',
-      section: 'storytellingSkills'
+      section: 'storytellingSkills',
     },
     {
       key: 'dialogueExpression',
       label: 'Dialogue & Expression',
-      section: 'storytellingSkills'
+      section: 'storytellingSkills',
     },
     {
       key: 'themeMessage',
       label: 'Theme & Message',
-      section: 'storytellingSkills'
+      section: 'storytellingSkills',
     },
 
     // Creative Expressive Skills (2 factors)
     {
       key: 'creativityOriginality',
       label: 'Creativity & Originality',
-      section: 'creativeExpressiveSkills'
+      section: 'creativeExpressiveSkills',
     },
     {
       key: 'descriptivePowerEmotionalImpact',
       label: 'Descriptive Power & Emotional Impact',
-      section: 'creativeExpressiveSkills'
+      section: 'creativeExpressiveSkills',
     },
 
     // Authenticity Growth (3 factors)
     {
       key: 'ageAppropriatenessAuthorship',
       label: 'Age Appropriateness & Authorship',
-      section: 'authenticityGrowth'
+      section: 'authenticityGrowth',
     },
     {
       key: 'strengthsAreasToImprove',
       label: 'Strengths & Areas to Improve',
-      section: 'authenticityGrowth'
+      section: 'authenticityGrowth',
     },
     {
       key: 'practiceExercises',
       label: 'Practice Exercises',
-      section: 'authenticityGrowth'
-    }
+      section: 'authenticityGrowth',
+    },
   ];
 
   if (loading) {
@@ -305,7 +304,8 @@ export default function AssessmentPage({ params }: AssessmentPageProps) {
           <BookOpen className="w-16 h-16 text-gray-400 mx-auto mb-4" />
           <h2 className="text-xl text-white mb-2">Story Not Found</h2>
           <p className="text-gray-400">
-            The story you're looking for doesn't exist or you don't have access to it.
+            The story you're looking for doesn't exist or you don't have access
+            to it.
           </p>
         </div>
       </div>
@@ -340,10 +340,12 @@ export default function AssessmentPage({ params }: AssessmentPageProps) {
         {assessment.assessmentDate && (
           <div className="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
             <p className="text-sm text-blue-600">
-              Assessment completed on: {new Date(assessment.assessmentDate).toLocaleDateString()}
+              Assessment completed on:{' '}
+              {new Date(assessment.assessmentDate).toLocaleDateString()}
             </p>
             <p className="text-sm text-blue-600">
-              Assessment Version: {assessment.assessmentVersion || '1.0-13-factor'}
+              Assessment Version:{' '}
+              {assessment.assessmentVersion || '1.0-13-factor'}
             </p>
           </div>
         )}
@@ -351,8 +353,9 @@ export default function AssessmentPage({ params }: AssessmentPageProps) {
         {/* 13-Factor Categories */}
         {categories.map(({ key, label, section }) => {
           // Get feedback from the correct section
-          const feedback = assessment[section]?.[key] || 'No feedback provided.';
-          
+          const feedback =
+            assessment[section]?.[key] || 'No feedback provided.';
+
           return (
             <div key={key} className="mb-4 border rounded-lg">
               <button
@@ -378,23 +381,30 @@ export default function AssessmentPage({ params }: AssessmentPageProps) {
         })}
 
         {/* Additional Assessment Info */}
-        {(assessment.wordCount || assessment.userAge || assessment.assessmentType) && (
+        {(assessment.wordCount ||
+          assessment.userAge ||
+          assessment.assessmentType) && (
           <div className="mt-8 p-4 bg-gray-50 rounded-lg">
-            <h3 className="font-semibold text-gray-800 mb-2">Assessment Details</h3>
+            <h3 className="font-semibold text-gray-800 mb-2">
+              Assessment Details
+            </h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-600">
               {assessment.wordCount && (
                 <div>
-                  <span className="font-medium">Word Count:</span> {assessment.wordCount}
+                  <span className="font-medium">Word Count:</span>{' '}
+                  {assessment.wordCount}
                 </div>
               )}
               {assessment.userAge && (
                 <div>
-                  <span className="font-medium">Writer Age:</span> {assessment.userAge}
+                  <span className="font-medium">Writer Age:</span>{' '}
+                  {assessment.userAge}
                 </div>
               )}
               {assessment.assessmentType && (
                 <div>
-                  <span className="font-medium">Assessment Type:</span> {assessment.assessmentType}
+                  <span className="font-medium">Assessment Type:</span>{' '}
+                  {assessment.assessmentType}
                 </div>
               )}
             </div>

@@ -119,7 +119,6 @@
 //   }
 // }
 
-
 import { smartAIProvider } from './smart-provider-manager';
 import { jsonrepair } from 'jsonrepair';
 
@@ -189,7 +188,10 @@ Story Title: ${metadata.storyTitle || 'Untitled'}
       console.log('📦 Parsed AI JSON:', parsed);
 
       const completed = this.ensureCompleteStructure(parsed);
-      console.log('✅ Completed 13-Factor Structure:', JSON.stringify(completed, null, 2));
+      console.log(
+        '✅ Completed 13-Factor Structure:',
+        JSON.stringify(completed, null, 2)
+      );
 
       return completed;
     } catch (error) {

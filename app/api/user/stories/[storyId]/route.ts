@@ -262,10 +262,14 @@ export async function GET(
       assessment: story.assessment
         ? {
             // ✅ PRESERVE THE ENTIRE 13-FACTOR STRUCTURE (use type assertion for new fields)
-            coreLanguageSkills: (story.assessment as any).coreLanguageSkills || {},
-            storytellingSkills: (story.assessment as any).storytellingSkills || {},
-            creativeExpressiveSkills: (story.assessment as any).creativeExpressiveSkills || {},
-            authenticityGrowth: (story.assessment as any).authenticityGrowth || {},
+            coreLanguageSkills:
+              (story.assessment as any).coreLanguageSkills || {},
+            storytellingSkills:
+              (story.assessment as any).storytellingSkills || {},
+            creativeExpressiveSkills:
+              (story.assessment as any).creativeExpressiveSkills || {},
+            authenticityGrowth:
+              (story.assessment as any).authenticityGrowth || {},
 
             // Metadata from new assessment system
             assessmentVersion: (story.assessment as any).assessmentVersion,
@@ -273,7 +277,8 @@ export async function GET(
             assessmentType: (story.assessment as any).assessmentType,
             userAge: (story.assessment as any).userAge,
             wordCount: (story.assessment as any).wordCount,
-            userContributionCount: (story.assessment as any).userContributionCount,
+            userContributionCount: (story.assessment as any)
+              .userContributionCount,
 
             // Legacy compatibility fields (for other parts of the system)
             overallScore: story.assessment.overallScore || 0,
@@ -281,7 +286,8 @@ export async function GET(
             creativityScore: story.assessment.creativityScore || 0,
             vocabularyScore: story.assessment.vocabularyScore || 0,
             structureScore: story.assessment.structureScore || 0,
-            characterDevelopmentScore: story.assessment.characterDevelopmentScore || 0,
+            characterDevelopmentScore:
+              story.assessment.characterDevelopmentScore || 0,
             plotDevelopmentScore: story.assessment.plotDevelopmentScore || 0,
             themeScore: story.assessment.themeScore || 0,
             dialogueScore: story.assessment.dialogueScore || 0,
@@ -298,9 +304,11 @@ export async function GET(
             integrityRisk:
               story.assessment.integrityAnalysis?.overallStatus === 'critical'
                 ? 'critical'
-                : story.assessment.integrityAnalysis?.overallStatus === 'warning'
+                : story.assessment.integrityAnalysis?.overallStatus ===
+                    'warning'
                   ? 'high'
-                  : story.assessment.integrityAnalysis?.overallStatus === 'caution'
+                  : story.assessment.integrityAnalysis?.overallStatus ===
+                      'caution'
                     ? 'medium'
                     : 'low',
             integrityAnalysis: story.assessment.integrityAnalysis || null,
