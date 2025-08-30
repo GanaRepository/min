@@ -1,71 +1,83 @@
-// lib/export/pdf-generator.ts - FIXED STRUCTURE AND FORMATTING
+// lib/export/pdf-generator.ts - Updated for 42-Factor Assessment
+
 import jsPDF from 'jspdf';
 
-interface StoryData {
+interface ComprehensiveStoryData {
   title: string;
   content: string;
   totalWords: number;
   authorName: string;
   publishedAt: string;
-  elements?: {
-    genre: string;
-    character: string;
-    setting: string;
-    theme: string;
-    mood: string;
-    tone: string;
-  };
-  scores?: {
-    grammar: number;
-    creativity: number;
-    overall: number;
-  };
   assessment?: {
     overallScore?: number;
-    integrityAnalysis?: {
-      overallStatus: string;
-      aiDetection?: {
-        humanLikeScore: number;
-        aiLikelihood: string;
-        riskLevel: string;
-      };
-      plagiarismCheck?: {
-        originalityScore: number;
-        riskLevel: string;
-      };
+    status?: string;
+    statusMessage?: string;
+    allFactors?: {
+      // Core Writing Mechanics (1-6)
+      grammarSyntax?: { score: number; analysis: string };
+      vocabularyRange?: { score: number; analysis: string };
+      spellingPunctuation?: { score: number; analysis: string };
+      sentenceStructure?: { score: number; analysis: string };
+      tenseConsistency?: { score: number; analysis: string };
+      voiceTone?: { score: number; analysis: string };
+      
+      // Story Elements (7-12)
+      plotDevelopmentPacing?: { score: number; analysis: string };
+      characterDevelopment?: { score: number; analysis: string };
+      settingWorldBuilding?: { score: number; analysis: string };
+      dialogueQuality?: { score: number; analysis: string };
+      themeRecognition?: { score: number; analysis: string };
+      conflictResolution?: { score: number; analysis: string };
+      
+      // Creative Skills (13-18)
+      originalityCreativity?: { score: number; analysis: string };
+      imageryDescriptiveWriting?: { score: number; analysis: string };
+      sensoryDetailsUsage?: { score: number; analysis: string };
+      metaphorFigurativeLanguage?: { score: number; analysis: string };
+      emotionalDepth?: { score: number; analysis: string };
+      showVsTellBalance?: { score: number; analysis: string };
+      
+      // Structure & Organization (19-23)
+      storyArcCompletion?: { score: number; analysis: string };
+      paragraphOrganization?: { score: number; analysis: string };
+      transitionsBetweenIdeas?: { score: number; analysis: string };
+      openingClosingEffectiveness?: { score: number; analysis: string };
+      logicalFlow?: { score: number; analysis: string };
+      
+      // Advanced Elements (24-28)
+      foreshadowing?: { score: number; analysis: string };
+      symbolismRecognition?: { score: number; analysis: string };
+      pointOfViewConsistency?: { score: number; analysis: string };
+      moodAtmosphereCreation?: { score: number; analysis: string };
+      culturalSensitivity?: { score: number; analysis: string };
+      
+      // AI Detection (29-32)
+      writingPatternAnalysis?: { score: number; analysis: string };
+      authenticityMarkers?: { score: number; analysis: string };
+      ageAppropriateLanguage?: { score: number; analysis: string };
+      personalVoiceRecognition?: { score: number; analysis: string };
+      
+      // Educational Feedback (33-42)
+      strengthsIdentification?: { analysis: string };
+      areasForImprovement?: { analysis: string };
+      gradeLevelAssessment?: { analysis: string };
+      readingLevelEvaluation?: { analysis: string };
+      teachersHolisticAssessment?: { analysis: string };
+      personalizedLearningPath?: { analysis: string };
+      practiceExerciseRecommendations?: { analysis: string };
+      genreExplorationSuggestions?: { analysis: string };
+      vocabularyBuildingExercises?: { analysis: string };
+      grammarFocusAreas?: { analysis: string };
     };
-    coreWritingSkills?: {
-      grammar?: { score: number; feedback: string };
-      vocabulary?: { score: number; feedback: string };
-      creativity?: { score: number; feedback: string };
-      structure?: { score: number; feedback: string };
-    };
-    storyDevelopment?: {
-      characterDevelopment?: { score: number; feedback: string };
-      plotDevelopment?: { score: number; feedback: string };
-      descriptiveWriting?: { score: number; feedback: string };
-    };
-    advancedElements?: {
-      sensoryDetails?: { score: number; feedback: string };
-      plotLogic?: { score: number; feedback: string };
-      themeRecognition?: { score: number; feedback: string };
-      problemSolving?: { score: number; feedback: string };
-    };
-    comprehensiveFeedback?: {
-      strengths?: string[];
-      areasForEnhancement?: string[];
-      nextSteps?: string[];
-      teacherAssessment?: string;
-    };
-    ageAnalysis?: {
-      ageAppropriateness: number;
-      readingLevel: string;
-      contentSuitability: string;
+    aiDetectionResult?: {
+      result: string;
+      confidenceLevel: number;
+      analysis: string;
     };
   };
 }
 
-export class PDFGenerator {
+export class ComprehensivePDFGenerator {
   private doc: jsPDF;
   private pageWidth: number;
   private pageHeight: number;
@@ -81,30 +93,28 @@ export class PDFGenerator {
     this.currentY = this.margin;
   }
 
-  generateStoryPDF(story: StoryData): Blob {
-    // Page 1: Cover and Story Info
+  generateStoryPDF(story: ComprehensiveStoryData): Blob {
+    // Page 1: Cover Page
     this.addCoverPage(story);
 
-    // Assessment Section (if available)
-    if (story.assessment) {
+    // Page 2-N: Comprehensive 42-Factor Assessment
+    if (story.assessment?.allFactors) {
       this.doc.addPage();
       this.currentY = this.margin;
-      this.addComprehensiveAssessment(story.assessment);
+      this.addComprehensive42FactorAssessment(story.assessment);
     }
 
-    // Story Content Section
+    // Final Page: Story Content
     this.doc.addPage();
     this.currentY = this.margin;
     this.addStoryContent(story);
 
-    // Add footers to all pages
     this.addFooters();
-
     return this.doc.output('blob');
   }
 
-  private addCoverPage(story: StoryData) {
-    // Title (Large)
+  private addCoverPage(story: ComprehensiveStoryData) {
+    // Title
     this.doc.setFontSize(28);
     this.doc.setFont('helvetica', 'bold');
     this.doc.setTextColor(0, 0, 0);
@@ -113,362 +123,212 @@ export class PDFGenerator {
     // Author
     this.doc.setFontSize(16);
     this.doc.setFont('helvetica', 'normal');
-    this.doc.text(`By ${story.authorName}`, this.pageWidth / 2, 60, {
-      align: 'center',
-    });
+    this.doc.text(`By ${story.authorName}`, this.pageWidth / 2, 60, { align: 'center' });
 
-    // Date
-    this.doc.setFontSize(12);
-    this.doc.setTextColor(100, 100, 100);
-    const publishDate = new Date(story.publishedAt).toLocaleDateString();
-    this.doc.text(`Published on ${publishDate}`, this.pageWidth / 2, 75, {
-      align: 'center',
-    });
-
-    // Decorative line
-    this.doc.setDrawColor(150, 150, 150);
-    this.doc.setLineWidth(0.5);
-    this.doc.line(this.margin, 90, this.pageWidth - this.margin, 90);
-
-    // Story Information Section
-    this.currentY = 110;
-    this.doc.setFontSize(18);
-    this.doc.setFont('helvetica', 'bold');
-    this.doc.setTextColor(0, 0, 0);
-    this.doc.text('Story Information', this.margin, this.currentY);
-    this.currentY += 20;
-
-    // Word count (prominent)
-    this.doc.setFontSize(14);
-    this.doc.setFont('helvetica', 'bold');
-    this.doc.text(
-      `Word Count: ${story.totalWords} words`,
-      this.margin,
-      this.currentY
-    );
-    this.currentY += 15;
-
-    // Story elements (if available)
-    if (story.elements) {
-      this.doc.setFontSize(12);
-      this.doc.setFont('helvetica', 'normal');
-
-      const elements = [
-        `Genre: ${story.elements.genre}`,
-        `Character: ${story.elements.character}`,
-        `Setting: ${story.elements.setting}`,
-        `Theme: ${story.elements.theme}`,
-        `Mood: ${story.elements.mood}`,
-        `Tone: ${story.elements.tone}`,
-      ];
-
-      // Two-column layout for elements
-      elements.forEach((element, index) => {
-        const x = index % 2 === 0 ? this.margin : this.margin + 90;
-        if (index % 2 === 0 && index > 0) this.currentY += 8;
-        this.doc.text(element, x, this.currentY);
-      });
-      if (elements.length % 2 !== 0) this.currentY += 8;
+    // Overall Score (if available)
+    if (story.assessment?.overallScore) {
+      this.doc.setFontSize(20);
+      this.doc.setFont('helvetica', 'bold');
+      const [r, g, b] = this.getScoreColor(story.assessment.overallScore);
+      this.doc.setTextColor(r, g, b);
+      this.doc.text(
+        `Overall Score: ${story.assessment.overallScore}%`,
+        this.pageWidth / 2,
+        85,
+        { align: 'center' }
+      );
     }
 
-    // Basic scores (if no assessment available)
-    if (story.scores && !story.assessment) {
-      this.currentY += 15;
-      this.doc.setFontSize(14);
-      this.doc.setFont('helvetica', 'bold');
-      this.doc.text('Quick Scores', this.margin, this.currentY);
-      this.currentY += 10;
+    // Word Count
+    this.doc.setFontSize(14);
+    this.doc.setFont('helvetica', 'normal');
+    this.doc.setTextColor(0, 0, 0);
+    this.doc.text(`Word Count: ${story.totalWords} words`, this.pageWidth / 2, 110, {
+      align: 'center',
+    });
 
+    // AI Detection Result (if available)
+    if (story.assessment?.aiDetectionResult) {
       this.doc.setFontSize(12);
-      this.doc.setFont('helvetica', 'normal');
+      this.doc.setFont('helvetica', 'bold');
+      const resultColor = story.assessment.aiDetectionResult.result === 'Human-written' ? [0, 100, 0] : [200, 0, 0];
+      this.doc.setTextColor(resultColor[0], resultColor[1], resultColor[2]);
       this.doc.text(
-        `Grammar: ${story.scores.grammar}%`,
-        this.margin,
-        this.currentY
-      );
-      this.doc.text(
-        `Creativity: ${story.scores.creativity}%`,
-        this.margin + 60,
-        this.currentY
-      );
-      this.currentY += 8;
-      this.doc.text(
-        `Overall: ${story.scores.overall}%`,
-        this.margin,
-        this.currentY
+        `Authenticity: ${story.assessment.aiDetectionResult.result}`,
+        this.pageWidth / 2,
+        130,
+        { align: 'center' }
       );
     }
   }
 
-  private addComprehensiveAssessment(assessment: any) {
-    // Assessment Results Header
-    this.doc.setFontSize(22);
+  private addComprehensive42FactorAssessment(assessment: any) {
+    // Assessment Header
+    this.doc.setFontSize(24);
     this.doc.setFont('helvetica', 'bold');
     this.doc.setTextColor(0, 50, 120);
-    this.doc.text('Assessment Results', this.margin, this.currentY);
+    this.doc.text('Comprehensive 42-Factor Assessment', this.margin, this.currentY);
     this.currentY += 20;
 
-    // Overall Score (prominent)
-    if (assessment.overallScore) {
-      this.doc.setFontSize(16);
-      this.doc.setFont('helvetica', 'bold');
-      this.doc.setTextColor(0, 0, 0);
-      this.doc.text(
-        `Overall Score: ${assessment.overallScore}%`,
-        this.margin,
-        this.currentY
-      );
-      this.currentY += 15;
-    }
+    // Core Writing Mechanics (Factors 1-6)
+    this.addFactorSection('Core Writing Mechanics (Factors 1-6)', [
+      { name: '1. Grammar & Syntax', data: assessment.allFactors.grammarSyntax },
+      { name: '2. Vocabulary Range', data: assessment.allFactors.vocabularyRange },
+      { name: '3. Spelling & Punctuation', data: assessment.allFactors.spellingPunctuation },
+      { name: '4. Sentence Structure', data: assessment.allFactors.sentenceStructure },
+      { name: '5. Tense Consistency', data: assessment.allFactors.tenseConsistency },
+      { name: '6. Voice & Tone', data: assessment.allFactors.voiceTone },
+    ]);
 
-    // Content Integrity
-    if (assessment.integrityAnalysis) {
-      this.addSection('Content Integrity', () => {
-        this.doc.setFontSize(11);
-        this.doc.setFont('helvetica', 'normal');
+    // Story Elements (Factors 7-12)
+    this.addFactorSection('Story Elements (Factors 7-12)', [
+      { name: '7. Plot Development & Pacing', data: assessment.allFactors.plotDevelopmentPacing },
+      { name: '8. Character Development', data: assessment.allFactors.characterDevelopment },
+      { name: '9. Setting & World-building', data: assessment.allFactors.settingWorldBuilding },
+      { name: '10. Dialogue Quality', data: assessment.allFactors.dialogueQuality },
+      { name: '11. Theme Recognition', data: assessment.allFactors.themeRecognition },
+      { name: '12. Conflict Resolution', data: assessment.allFactors.conflictResolution },
+    ]);
 
-        if (assessment.integrityAnalysis.overallStatus) {
-          this.doc.text(
-            `Status: ${assessment.integrityAnalysis.overallStatus}`,
-            this.margin + 5,
-            this.currentY
-          );
-          this.currentY += 6;
-        }
+    // Creative & Literary Skills (Factors 13-18)
+    this.addFactorSection('Creative & Literary Skills (Factors 13-18)', [
+      { name: '13. Originality & Creativity', data: assessment.allFactors.originalityCreativity },
+      { name: '14. Imagery & Descriptive Writing', data: assessment.allFactors.imageryDescriptiveWriting },
+      { name: '15. Sensory Details Usage', data: assessment.allFactors.sensoryDetailsUsage },
+      { name: '16. Metaphor & Figurative Language', data: assessment.allFactors.metaphorFigurativeLanguage },
+      { name: '17. Emotional Depth', data: assessment.allFactors.emotionalDepth },
+      { name: '18. Show vs Tell Balance', data: assessment.allFactors.showVsTellBalance },
+    ]);
 
-        if (assessment.integrityAnalysis.aiDetection) {
-          this.doc.text(
-            `AI Detection: ${assessment.integrityAnalysis.aiDetection.aiLikelihood} (${assessment.integrityAnalysis.aiDetection.humanLikeScore}% human-like)`,
-            this.margin + 5,
-            this.currentY
-          );
-          this.currentY += 6;
-        }
+    // Structure & Organization (Factors 19-23)
+    this.addFactorSection('Structure & Organization (Factors 19-23)', [
+      { name: '19. Story Arc Completion', data: assessment.allFactors.storyArcCompletion },
+      { name: '20. Paragraph Organization', data: assessment.allFactors.paragraphOrganization },
+      { name: '21. Transitions Between Ideas', data: assessment.allFactors.transitionsBetweenIdeas },
+      { name: '22. Opening & Closing Effectiveness', data: assessment.allFactors.openingClosingEffectiveness },
+      { name: '23. Logical Flow', data: assessment.allFactors.logicalFlow },
+    ]);
 
-        if (assessment.integrityAnalysis.plagiarismCheck) {
-          this.doc.text(
-            `Originality: ${assessment.integrityAnalysis.plagiarismCheck.originalityScore}% (${assessment.integrityAnalysis.plagiarismCheck.riskLevel} risk)`,
-            this.margin + 5,
-            this.currentY
-          );
-          this.currentY += 6;
-        }
-      });
-    }
+    // Advanced Elements (Factors 24-28)
+    this.addFactorSection('Advanced Elements (Factors 24-28)', [
+      { name: '24. Foreshadowing', data: assessment.allFactors.foreshadowing },
+      { name: '25. Symbolism Recognition', data: assessment.allFactors.symbolismRecognition },
+      { name: '26. Point of View Consistency', data: assessment.allFactors.pointOfViewConsistency },
+      { name: '27. Mood & Atmosphere Creation', data: assessment.allFactors.moodAtmosphereCreation },
+      { name: '28. Cultural Sensitivity', data: assessment.allFactors.culturalSensitivity },
+    ]);
 
-    // Core Writing Skills
-    if (assessment.coreWritingSkills) {
-      this.addSection('Core Writing Skills', () => {
-        const skills = [
-          { name: 'Grammar', data: assessment.coreWritingSkills.grammar },
-          { name: 'Vocabulary', data: assessment.coreWritingSkills.vocabulary },
-          { name: 'Creativity', data: assessment.coreWritingSkills.creativity },
-          { name: 'Structure', data: assessment.coreWritingSkills.structure },
-        ];
+    // AI Detection Analysis (Factors 29-32)
+    this.addFactorSection('AI Detection Analysis (Factors 29-32)', [
+      { name: '29. Writing Pattern Analysis', data: assessment.allFactors.writingPatternAnalysis },
+      { name: '30. Authenticity Markers', data: assessment.allFactors.authenticityMarkers },
+      { name: '31. Age-Appropriate Language', data: assessment.allFactors.ageAppropriateLanguage },
+      { name: '32. Personal Voice Recognition', data: assessment.allFactors.personalVoiceRecognition },
+    ]);
 
-        skills.forEach((skill) => {
-          if (skill.data) {
-            this.doc.setFont('helvetica', 'bold');
-            this.doc.setFontSize(11);
-            this.doc.text(
-              `${skill.name}: ${skill.data.score}%`,
-              this.margin + 5,
-              this.currentY
-            );
-            this.currentY += 6;
+    // Educational Feedback (Factors 33-42)
+    this.addEducationalFeedbackSection('Educational Feedback (Factors 33-42)', assessment.allFactors);
+  }
 
-            if (skill.data.feedback) {
-              this.doc.setFont('helvetica', 'normal');
-              this.doc.setFontSize(10);
-              const feedback = this.doc.splitTextToSize(
-                skill.data.feedback,
-                this.pageWidth - 2 * this.margin - 10
-              );
-              feedback.forEach((line: string) => {
-                this.checkPageBreak(6);
-                this.doc.text(line, this.margin + 10, this.currentY);
-                this.currentY += 5;
-              });
-              this.currentY += 3;
-            }
-          }
-        });
-      });
-    }
+  private addFactorSection(sectionTitle: string, factors: Array<{name: string, data: any}>) {
+    this.checkPageBreak(30);
+    
+    // Section Header
+    this.doc.setFontSize(16);
+    this.doc.setFont('helvetica', 'bold');
+    this.doc.setTextColor(0, 80, 140);
+    this.doc.text(sectionTitle, this.margin, this.currentY);
+    this.currentY += 15;
 
-    // Story Development
-    if (assessment.storyDevelopment) {
-      this.addSection('Story Development', () => {
-        const elements = [
-          {
-            name: 'Character Development',
-            data: assessment.storyDevelopment.characterDevelopment,
-          },
-          {
-            name: 'Plot Development',
-            data: assessment.storyDevelopment.plotDevelopment,
-          },
-          {
-            name: 'Descriptive Writing',
-            data: assessment.storyDevelopment.descriptiveWriting,
-          },
-        ];
+    factors.forEach((factor) => {
+      if (factor.data?.score !== undefined && factor.data?.analysis) {
+        this.checkPageBreak(25);
+        
+        // Factor name and score
+        this.doc.setFontSize(12);
+        this.doc.setFont('helvetica', 'bold');
+        this.doc.setTextColor(0, 0, 0);
+        this.doc.text(
+          `${factor.name}: ${factor.data.score}%`,
+          this.margin + 5,
+          this.currentY
+        );
+        this.currentY += 8;
 
-        elements.forEach((element) => {
-          if (element.data) {
-            this.doc.setFont('helvetica', 'bold');
-            this.doc.setFontSize(11);
-            this.doc.text(
-              `${element.name}: ${element.data.score}%`,
-              this.margin + 5,
-              this.currentY
-            );
-            this.currentY += 6;
-
-            if (element.data.feedback) {
-              this.doc.setFont('helvetica', 'normal');
-              this.doc.setFontSize(10);
-              const feedback = this.doc.splitTextToSize(
-                element.data.feedback,
-                this.pageWidth - 2 * this.margin - 10
-              );
-              feedback.forEach((line: string) => {
-                this.checkPageBreak(6);
-                this.doc.text(line, this.margin + 10, this.currentY);
-                this.currentY += 5;
-              });
-              this.currentY += 3;
-            }
-          }
-        });
-      });
-    }
-
-    // Detailed Feedback
-    if (assessment.comprehensiveFeedback) {
-      this.addSection('Detailed Feedback', () => {
-        // Strengths
-        if (assessment.comprehensiveFeedback.strengths?.length > 0) {
-          this.doc.setFont('helvetica', 'bold');
-          this.doc.setFontSize(11);
-          this.doc.text('Strengths:', this.margin + 5, this.currentY);
-          this.currentY += 6;
-
-          this.doc.setFont('helvetica', 'normal');
-          this.doc.setFontSize(10);
-          assessment.comprehensiveFeedback.strengths.forEach(
-            (strength: string) => {
-              const lines = this.doc.splitTextToSize(
-                `• ${strength}`,
-                this.pageWidth - 2 * this.margin - 10
-              );
-              lines.forEach((line: string) => {
-                this.checkPageBreak(5);
-                this.doc.text(line, this.margin + 10, this.currentY);
-                this.currentY += 5;
-              });
-            }
-          );
-          this.currentY += 5;
-        }
-
-        // Areas for Enhancement
-        if (assessment.comprehensiveFeedback.areasForEnhancement?.length > 0) {
-          this.doc.setFont('helvetica', 'bold');
-          this.doc.setFontSize(11);
-          this.doc.text('Areas to Improve:', this.margin + 5, this.currentY);
-          this.currentY += 6;
-
-          this.doc.setFont('helvetica', 'normal');
-          this.doc.setFontSize(10);
-          assessment.comprehensiveFeedback.areasForEnhancement.forEach(
-            (area: string) => {
-              const lines = this.doc.splitTextToSize(
-                `• ${area}`,
-                this.pageWidth - 2 * this.margin - 10
-              );
-              lines.forEach((line: string) => {
-                this.checkPageBreak(5);
-                this.doc.text(line, this.margin + 10, this.currentY);
-                this.currentY += 5;
-              });
-            }
-          );
-          this.currentY += 5;
-        }
-
-        // Teacher Assessment
-        if (assessment.comprehensiveFeedback.teacherAssessment) {
-          this.doc.setFont('helvetica', 'bold');
-          this.doc.setFontSize(11);
-          this.doc.text(
-            "Teacher's Assessment:",
-            this.margin + 5,
-            this.currentY
-          );
-          this.currentY += 6;
-
-          this.doc.setFont('helvetica', 'normal');
-          this.doc.setFontSize(10);
-          const lines = this.doc.splitTextToSize(
-            assessment.comprehensiveFeedback.teacherAssessment,
-            this.pageWidth - 2 * this.margin - 10
-          );
-          lines.forEach((line: string) => {
-            this.checkPageBreak(5);
-            this.doc.text(line, this.margin + 10, this.currentY);
-            this.currentY += 5;
-          });
-          this.currentY += 8;
-        }
-      });
-    }
-
-    // Age Analysis
-    if (assessment.ageAnalysis) {
-      this.addSection('Age Analysis', () => {
+        // Analysis
         this.doc.setFontSize(10);
         this.doc.setFont('helvetica', 'normal');
-
-        this.doc.text(
-          `Age Appropriateness: ${assessment.ageAnalysis.ageAppropriateness}%`,
-          this.margin + 5,
-          this.currentY
+        const analysisLines = this.doc.splitTextToSize(
+          factor.data.analysis,
+          this.pageWidth - 2 * this.margin - 15
         );
-        this.currentY += 6;
-        this.doc.text(
-          `Reading Level: ${assessment.ageAnalysis.readingLevel}`,
-          this.margin + 5,
-          this.currentY
-        );
-        this.currentY += 6;
-        this.doc.text(
-          `Content Suitability: ${assessment.ageAnalysis.contentSuitability}`,
-          this.margin + 5,
-          this.currentY
-        );
-        this.currentY += 6;
-      });
-    }
+        
+        analysisLines.forEach((line: string) => {
+          this.checkPageBreak(6);
+          this.doc.text(line, this.margin + 10, this.currentY);
+          this.currentY += 5;
+        });
+        this.currentY += 5;
+      }
+    });
+    this.currentY += 5;
   }
 
-  private addSection(title: string, contentFn: () => void) {
-    this.checkPageBreak(30);
-
-    this.doc.setFontSize(14);
+  private addEducationalFeedbackSection(sectionTitle: string, factors: any) {
+    this.checkPageBreak(40);
+    
+    // Section Header
+    this.doc.setFontSize(16);
     this.doc.setFont('helvetica', 'bold');
-    this.doc.setTextColor(0, 0, 0);
-    this.doc.text(title, this.margin, this.currentY);
-    this.currentY += 12;
+    this.doc.setTextColor(0, 80, 140);
+    this.doc.text(sectionTitle, this.margin, this.currentY);
+    this.currentY += 15;
 
-    contentFn();
+    const educationalFactors = [
+      { name: '33. Strengths Identification', data: factors.strengthsIdentification },
+      { name: '34. Areas for Improvement', data: factors.areasForImprovement },
+      { name: '35. Grade-Level Assessment', data: factors.gradeLevelAssessment },
+      { name: '36. Reading Level Evaluation', data: factors.readingLevelEvaluation },
+      { name: '37. Teacher\'s Holistic Assessment', data: factors.teachersHolisticAssessment },
+      { name: '38. Personalized Learning Path', data: factors.personalizedLearningPath },
+      { name: '39. Practice Exercise Recommendations', data: factors.practiceExerciseRecommendations },
+      { name: '40. Genre Exploration Suggestions', data: factors.genreExplorationSuggestions },
+      { name: '41. Vocabulary Building Exercises', data: factors.vocabularyBuildingExercises },
+      { name: '42. Grammar Focus Areas', data: factors.grammarFocusAreas },
+    ];
 
-    this.currentY += 8;
+    educationalFactors.forEach((factor) => {
+      if (factor.data?.analysis) {
+        this.checkPageBreak(20);
+        
+        // Factor name
+        this.doc.setFontSize(12);
+        this.doc.setFont('helvetica', 'bold');
+        this.doc.setTextColor(0, 0, 0);
+        this.doc.text(factor.name, this.margin + 5, this.currentY);
+        this.currentY += 8;
+
+        // Analysis
+        this.doc.setFontSize(10);
+        this.doc.setFont('helvetica', 'normal');
+        const analysisLines = this.doc.splitTextToSize(
+          factor.data.analysis,
+          this.pageWidth - 2 * this.margin - 15
+        );
+        
+        analysisLines.forEach((line: string) => {
+          this.checkPageBreak(6);
+          this.doc.text(line, this.margin + 10, this.currentY);
+          this.currentY += 5;
+        });
+        this.currentY += 8;
+      }
+    });
   }
 
-  private addStoryContent(story: StoryData) {
+  private addStoryContent(story: ComprehensiveStoryData) {
     // Story Content Header
-    this.doc.setFontSize(22);
+    this.doc.setFontSize(20);
     this.doc.setFont('helvetica', 'bold');
     this.doc.setTextColor(0, 50, 120);
     this.doc.text('Story Content', this.margin, this.currentY);
@@ -479,13 +339,15 @@ export class PDFGenerator {
     this.doc.setFont('helvetica', 'normal');
     this.doc.setTextColor(0, 0, 0);
 
-    const maxWidth = this.pageWidth - 2 * this.margin;
-    const lines = this.doc.splitTextToSize(story.content, maxWidth);
-
-    lines.forEach((line: string) => {
-      this.checkPageBreak(7);
-      this.doc.text(line, this.margin, this.currentY);
-      this.currentY += 6;
+    const paragraphs = story.content.split('\n\n');
+    paragraphs.forEach((paragraph) => {
+      const lines = this.doc.splitTextToSize(paragraph.trim(), this.pageWidth - 2 * this.margin);
+      lines.forEach((line: string) => {
+        this.checkPageBreak(6);
+        this.doc.text(line, this.margin, this.currentY);
+        this.currentY += 6;
+      });
+      this.currentY += 4; // Extra space between paragraphs
     });
   }
 
@@ -496,35 +358,26 @@ export class PDFGenerator {
     }
   }
 
+  private getScoreColor(score: number): [number, number, number] {
+    if (score >= 90) return [0, 150, 0]; // Green
+    if (score >= 80) return [100, 150, 0]; // Yellow-green
+    if (score >= 70) return [200, 150, 0]; // Orange
+    if (score >= 60) return [200, 100, 0]; // Red-orange
+    return [200, 0, 0]; // Red
+  }
+
   private addFooters() {
-    const totalPages = this.doc.getNumberOfPages();
-
-    for (let i = 1; i <= totalPages; i++) {
+    const pageCount = this.doc.getNumberOfPages();
+    for (let i = 1; i <= pageCount; i++) {
       this.doc.setPage(i);
-
-      const footerY = this.pageHeight - 15;
-
-      // Footer line
-      this.doc.setDrawColor(200, 200, 200);
-      this.doc.setLineWidth(0.3);
-      this.doc.line(
-        this.margin,
-        footerY - 5,
-        this.pageWidth - this.margin,
-        footerY - 5
-      );
-
-      // Footer text
-      this.doc.setFontSize(9);
-      this.doc.setTextColor(120, 120, 120);
+      this.doc.setFontSize(8);
       this.doc.setFont('helvetica', 'normal');
-
-      this.doc.text('Created with Mintoons', this.margin, footerY);
+      this.doc.setTextColor(100, 100, 100);
       this.doc.text(
-        `Page ${i} of ${totalPages}`,
-        this.pageWidth - this.margin,
-        footerY,
-        { align: 'right' }
+        `42-Factor Comprehensive Assessment - Page ${i} of ${pageCount}`,
+        this.pageWidth / 2,
+        this.pageHeight - 10,
+        { align: 'center' }
       );
     }
   }

@@ -160,40 +160,23 @@ export async function POST(request: NextRequest) {
       storyType: 'competition',
       competitionEligible: true,
 
-      // ✅ STORE COMPLETE ASSESSMENT DATA
+      // ✅ STORE COMPLETE 42-FACTOR ASSESSMENT DATA
       assessment: {
-        grammarScore: assessmentResult.coreWritingSkills.grammar.score,
-        creativityScore: assessmentResult.coreWritingSkills.creativity.score,
-        vocabularyScore: assessmentResult.coreWritingSkills.vocabulary.score,
-        structureScore: assessmentResult.coreWritingSkills.structure.score,
-        characterDevelopmentScore:
-          assessmentResult.storyDevelopment.characterDevelopment.score,
-        plotDevelopmentScore:
-          assessmentResult.storyDevelopment.plotDevelopment.score,
         overallScore: assessmentResult.overallScore,
-        readingLevel: 75, // Default since not in new structure
-        feedback: assessmentResult.comprehensiveFeedback.teacherAssessment,
-        strengths: assessmentResult.comprehensiveFeedback.strengths,
-        improvements:
-          assessmentResult.comprehensiveFeedback.areasForEnhancement,
-
-        // ✅ INTEGRITY ANALYSIS (The missing piece!)
-        plagiarismScore:
-          assessmentResult.integrityAnalysis.plagiarismCheck.originalityScore,
-        aiDetectionScore:
-          assessmentResult.integrityAnalysis.aiDetection.confidenceLevel,
-        integrityRisk: assessmentResult.integrityAnalysis.aiDetection.riskLevel,
-        integrityStatus: {
-          status: assessmentResult.integrityAnalysis.overallStatus,
-          message: assessmentResult.integrityAnalysis.message,
-        },
-        integrityAnalysis: assessmentResult.integrityAnalysis,
-
-        // ✅ ADVANCED ANALYSIS
-        recommendations: assessmentResult.comprehensiveFeedback.nextSteps,
-        progressTracking: assessmentResult.advancedElements,
-        assessmentVersion: '2.0',
+        status: assessmentResult.status,
+        statusMessage: assessmentResult.statusMessage,
+        // All 42 factors, always included
+        coreWritingMechanics: assessmentResult.coreWritingSkills,
+        storyElements: assessmentResult.storyDevelopment,
+        creativeSkills: assessmentResult.creativeSkills,
+        structureOrganization: assessmentResult.structureOrganization,
+        advancedElements: assessmentResult.advancedElements,
+        aiDetectionAnalysis: assessmentResult.integrityAnalysis?.aiDetection,
+        educationalFeedback: assessmentResult.educationalFeedback,
+        assessmentVersion: '3.0-42-factor-competition',
         assessmentDate: new Date().toISOString(),
+        assessmentType: 'competition',
+        note: 'Complete 42-factor analysis provided regardless of content status - admin/mentors handle flagged content separately',
       },
 
       competitionEntries: [

@@ -10,247 +10,398 @@ export class SingleCallAssessmentEngine {
       isCollaborativeStory?: boolean;
     }
   ): Promise<any> {
-    console.log('Starting BULLETPROOF AI assessment...');
+    console.log('Starting Pure AI Three-Part Assessment...');
 
     if (!storyContent || storyContent.trim().length < 50) {
-      throw new Error('Content too short for meaningful assessment (minimum 50 characters)');
+      throw new Error('Content too short for meaningful assessment');
     }
 
-    // Single, unbiased prompt
-    const prompt = this.buildAssessmentPrompt(storyContent, metadata);
-    let lastError = null;
-    for (let attempt = 1; attempt <= 2; attempt++) {
-      try {
-        console.log(`Assessment attempt ${attempt}/2`);
-        const response = await smartAIProvider.generateResponse(prompt);
-        console.log('Raw AI response:', response);
-        // Extract and validate JSON
-        const assessment = this.extractAndValidateJSON(response);
-        console.log('Parsed assessment JSON:', assessment);
-        // Transform to expected format
-        const transformed = this.transformAssessment(assessment);
-        console.log('Transformed assessment:', transformed);
-        // Validate transformed assessment
-        if (!transformed || !transformed.coreWritingSkills || !transformed.coreWritingSkills.grammar) {
-          throw new Error('Transformed assessment is invalid or incomplete.');
-        }
-        return transformed;
-      } catch (error) {
-        console.error(`Attempt ${attempt} failed:`, error);
-        lastError = error;
-      }
+    try {
+      const [part1, part2, part3] = await Promise.all([
+        this.assessCoreFundamentals(storyContent, metadata),
+        this.assessStoryElements(storyContent, metadata),
+        this.assessAdvancedElements(storyContent, metadata)
+      ]);
+
+      const combinedAssessment = this.combineAssessments(part1, part2, part3);
+      console.log('Pure AI assessment completed successfully');
+      return combinedAssessment;
+
+    } catch (error) {
+      console.error('Pure AI assessment failed:', error);
+      throw new Error(`Assessment failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
-    let errorMsg = '';
-    if (lastError) {
-      if (typeof lastError === 'object' && lastError !== null && 'message' in lastError) {
-        errorMsg = (lastError as any).message;
-      } else {
-        errorMsg = String(lastError);
-      }
-    }
-    throw new Error('AI assessment failed. Please try again later. ' + errorMsg);
   }
 
-  // New prompt builder: no hardcoded values, just structure and instructions
-  private static buildAssessmentPrompt(storyContent: string, metadata: any): string {
-    return `You are an expert story assessment engine. Read the following story and return a JSON object with your detailed analysis. DO NOT include any explanations, comments, or extra text. Return ONLY valid JSON. Use double quotes for all keys and string values. No trailing commas. Ensure all brackets and braces are properly closed.
+  // Part 1: Core Writing Fundamentals + AI Detection (Factors 1-6, 29-32)
+  private static async assessCoreFundamentals(storyContent: string, metadata: any): Promise<any> {
+    const prompt = `You are an expert writing teacher. Analyze this story comprehensively across ALL 42 factors.
+
+CRITICAL INSTRUCTION: Provide complete detailed analysis for ALL factors regardless of content concerns, AI detection results, or any other issues. Even if you detect AI usage, plagiarism, or inappropriate content, still analyze all writing aspects thoroughly. Students deserve complete educational feedback.
 
 STORY: """
 ${storyContent}
 """
-AGE: ${metadata.childAge || 10}
-TITLE: ${metadata.storyTitle || ''}
-GENRE: ${metadata.expectedGenre || ''}
-COLLABORATIVE: ${metadata.isCollaborativeStory ? 'true' : 'false'}
 
-The JSON object must have this structure (do NOT include any example values, just use your own analysis):
+STUDENT AGE: ${metadata.childAge || 'Unknown'}
+STORY TITLE: ${metadata.storyTitle || 'Untitled'}
+
+Analyze ALL 42 factors and return ONLY valid JSON with complete analysis for every factor:
+
 {
-  "overallScore": number,
-  "status": string,
-  "statusMessage": string,
-  "integrityAnalysis": {
-    "aiDetection": {
-      "humanLikeScore": number,
-      "aiLikelihood": string,
-      "confidenceLevel": number,
-      "analysis": string,
-      "riskLevel": string,
-      "indicators": array
-    },
-    "plagiarismCheck": {
-      "originalityScore": number,
-      "riskLevel": string,
-      "violations": array,
-      "status": string
-    },
-    "overallStatus": string,
-    "message": string,
-    "recommendation": string
+  "overallScore": [0-100],
+  "status": "[Approved/Flagged/Review]",
+  "statusMessage": "[brief message]",
+  "coreWritingMechanics": {
+    "grammarSyntax": {"score": [0-100], "analysis": "[detailed analysis]"},
+    "vocabularyRange": {"score": [0-100], "analysis": "[detailed analysis]"},
+    "spellingPunctuation": {"score": [0-100], "analysis": "[detailed analysis]"},
+    "sentenceStructure": {"score": [0-100], "analysis": "[detailed analysis]"},
+    "tenseConsistency": {"score": [0-100], "analysis": "[detailed analysis]"},
+    "voiceTone": {"score": [0-100], "analysis": "[detailed analysis]"}
   },
-  "coreWritingSkills": {
-    "grammar": {"score": number, "feedback": string},
-    "vocabulary": {"score": number, "feedback": string},
-    "creativity": {"score": number, "feedback": string},
-    "structure": {"score": number, "feedback": string}
+  "storyElements": {
+    "plotDevelopmentPacing": {"score": [0-100], "analysis": "[detailed analysis]"},
+    "characterDevelopment": {"score": [0-100], "analysis": "[detailed analysis]"},
+    "settingWorldBuilding": {"score": [0-100], "analysis": "[detailed analysis]"},
+    "dialogueQuality": {"score": [0-100], "analysis": "[detailed analysis]"},
+    "themeRecognition": {"score": [0-100], "analysis": "[detailed analysis]"},
+    "conflictResolution": {"score": [0-100], "analysis": "[detailed analysis]"}
   },
-  "storyDevelopment": {
-    "characterDevelopment": {"score": number, "feedback": string},
-    "plotDevelopment": {"score": number, "feedback": string},
-    "descriptiveWriting": {"score": number, "feedback": string}
+  "creativeSkills": {
+    "originalityCreativity": {"score": [0-100], "analysis": "[detailed analysis]"},
+    "imageryDescriptiveWriting": {"score": [0-100], "analysis": "[detailed analysis]"},
+    "sensoryDetailsUsage": {"score": [0-100], "analysis": "[detailed analysis]"},
+    "metaphorFigurativeLanguage": {"score": [0-100], "analysis": "[detailed analysis]"},
+    "emotionalDepth": {"score": [0-100], "analysis": "[detailed analysis]"},
+    "showVsTellBalance": {"score": [0-100], "analysis": "[detailed analysis]"}
+  },
+  "structureOrganization": {
+    "storyArcCompletion": {"score": [0-100], "analysis": "[detailed analysis]"},
+    "paragraphOrganization": {"score": [0-100], "analysis": "[detailed analysis]"},
+    "transitionsBetweenIdeas": {"score": [0-100], "analysis": "[detailed analysis]"},
+    "openingClosingEffectiveness": {"score": [0-100], "analysis": "[detailed analysis]"},
+    "logicalFlow": {"score": [0-100], "analysis": "[detailed analysis]"}
   },
   "advancedElements": {
-    "sensoryDetails": {"score": number, "feedback": string},
-    "plotLogic": {"score": number, "feedback": string},
-    "themeRecognition": {"score": number, "feedback": string},
-    "problemSolving": {"score": number, "feedback": string}
+    "foreshadowing": {"score": [0-100], "analysis": "[detailed analysis]"},
+    "symbolismRecognition": {"score": [0-100], "analysis": "[detailed analysis]"},
+    "pointOfViewConsistency": {"score": [0-100], "analysis": "[detailed analysis]"},
+    "moodAtmosphereCreation": {"score": [0-100], "analysis": "[detailed analysis]"},
+    "culturalSensitivity": {"score": [0-100], "analysis": "[detailed analysis]"}
   },
-  "ageAnalysis": {
-    "ageAppropriateness": number,
-    "readingLevel": string,
-    "contentSuitability": string
+  "aiDetectionAnalysis": {
+    "writingPatternAnalysis": {"score": [0-100], "analysis": "[detailed analysis]"},
+    "authenticityMarkers": {"score": [0-100], "analysis": "[detailed analysis]"},
+    "ageAppropriateLanguage": {"score": [0-100], "analysis": "[detailed analysis]"},
+    "personalVoiceRecognition": {"score": [0-100], "analysis": "[detailed analysis]"},
+    "overallResult": "[Human-written/AI-generated/Mixed/Uncertain]",
+    "confidenceLevel": [0.0-1.0]
   },
-  "comprehensiveFeedback": {
-    "strengths": array,
-    "areasForEnhancement": array,
-    "nextSteps": array,
-    "teacherAssessment": string
+  "educationalFeedback": {
+    "strengthsIdentification": {"analysis": "[detailed strengths list]"},
+    "areasForImprovement": {"analysis": "[detailed improvement areas]"},
+    "gradeLevelAssessment": {"analysis": "[detailed grade level analysis]"},
+    "readingLevelEvaluation": {"analysis": "[detailed reading level analysis]"},
+    "teachersHolisticAssessment": {"analysis": "[detailed teacher assessment]"},
+    "personalizedLearningPath": {"analysis": "[detailed learning recommendations]"},
+    "practiceExerciseRecommendations": {"analysis": "[detailed practice exercises]"},
+    "genreExplorationSuggestions": {"analysis": "[detailed genre suggestions]"},
+    "vocabularyBuildingExercises": {"analysis": "[detailed vocabulary exercises]"},
+    "grammarFocusAreas": {"analysis": "[detailed grammar focus areas]"}
   },
-  "educationalRecommendations": {
-    "immediate": array,
-    "longTerm": array,
-    "practice": array
-  },
-  "overallRating": string,
-  "recognitionLevel": string,
-  "finalSummary": string
+  "overallAssessment": "[A+ through F with justification]",
+  "finalSummary": "[comprehensive summary of all findings]"
 }
 
-Return ONLY the JSON object with your analysis for the story above.`;
+REMEMBER: Complete analysis for ALL 42 factors regardless of status determination. Educational value comes from comprehensive feedback, not from withholding analysis based on content concerns.`;
+
+    const response = await smartAIProvider.generateResponse(prompt);
+    return this.parseJSON(response);
   }
 
-  private static extractAndValidateJSON(response: string): any {
-    let jsonStr = response.trim();
+  // Part 2: Story Elements & Structure (Factors 7-12, 19-23)
+  private static async assessStoryElements(storyContent: string, metadata: any): Promise<any> {
+    const prompt = `You are an expert story analyst. Analyze this story's elements and structure.
+
+STORY: """
+${storyContent}
+"""
+
+STUDENT AGE: ${metadata.childAge || 'Unknown'}
+
+Provide detailed analysis for each factor. Return ONLY valid JSON:
+
+{
+  "plotDevelopmentPacing": {
+    "score": [your score out of 100],
+    "analysis": "[detailed analysis of plot structure, pacing, story progression]"
+  },
+  "characterDevelopment": {
+    "score": [your score out of 100],
+    "analysis": "[assessment of character creation, consistency, growth, believability]"
+  },
+  "settingWorldBuilding": {
+    "score": [your score out of 100],
+    "analysis": "[evaluation of setting description, world-building, atmosphere creation]"
+  },
+  "dialogueQuality": {
+    "score": [your score out of 100],
+    "analysis": "[analysis of dialogue naturalness, character voice, effectiveness]"
+  },
+  "themeRecognition": {
+    "score": [your score out of 100],
+    "analysis": "[identification and development of themes, deeper meanings]"
+  },
+  "conflictResolution": {
+    "score": [your score out of 100],
+    "analysis": "[assessment of conflict establishment and resolution effectiveness]"
+  },
+  "storyArcCompletion": {
+    "score": [your score out of 100],
+    "analysis": "[evaluation of beginning, middle, end structure and completeness]"
+  },
+  "paragraphOrganization": {
+    "score": [your score out of 100],
+    "analysis": "[assessment of paragraph structure, logical organization]"
+  },
+  "transitionsBetweenIdeas": {
+    "score": [your score out of 100],
+    "analysis": "[analysis of smooth transitions, flow between concepts]"
+  },
+  "openingClosingEffectiveness": {
+    "score": [your score out of 100],
+    "analysis": "[evaluation of story opening and ending impact, memorability]"
+  },
+  "logicalFlow": {
+    "score": [your score out of 100],
+    "analysis": "[assessment of story logic, sequence, coherence]"
+  }
+}`;
+
+    const response = await smartAIProvider.generateResponse(prompt);
+    return this.parseJSON(response);
+  }
+
+  // Part 3: Advanced Elements & Educational Feedback (Factors 13-18, 24-28, 33-42)
+  private static async assessAdvancedElements(storyContent: string, metadata: any): Promise<any> {
+    const prompt = `You are an expert creative writing instructor. Analyze this story's advanced elements and provide educational feedback.
+
+STORY: """
+${storyContent}
+"""
+
+STUDENT AGE: ${metadata.childAge || 'Unknown'}
+
+Provide detailed analysis for each factor. Return ONLY valid JSON:
+
+{
+  "originalityCreativity": {
+    "score": [your score out of 100],
+    "analysis": "[assessment of originality, creative thinking, unique elements]"
+  },
+  "imageryDescriptiveWriting": {
+    "score": [your score out of 100],
+    "analysis": "[evaluation of visual imagery, descriptive language, scene painting]"
+  },
+  "sensoryDetailsUsage": {
+    "score": [your score out of 100],
+    "analysis": "[analysis of five senses usage, sensory immersion]"
+  },
+  "metaphorFigurativeLanguage": {
+    "score": [your score out of 100],
+    "analysis": "[assessment of metaphors, similes, figurative language effectiveness]"
+  },
+  "emotionalDepth": {
+    "score": [your score out of 100],
+    "analysis": "[evaluation of emotional resonance, feeling conveyance, depth]"
+  },
+  "showVsTellBalance": {
+    "score": [your score out of 100],
+    "analysis": "[analysis of showing vs telling technique, scene vs summary]"
+  },
+  "foreshadowing": {
+    "score": [your score out of 100],
+    "analysis": "[assessment of foreshadowing techniques, setup and payoff]"
+  },
+  "symbolismRecognition": {
+    "score": [your score out of 100],
+    "analysis": "[identification and use of symbols, deeper meanings]"
+  },
+  "pointOfViewConsistency": {
+    "score": [your score out of 100],
+    "analysis": "[evaluation of POV maintenance, narrative perspective consistency]"
+  },
+  "moodAtmosphereCreation": {
+    "score": [your score out of 100],
+    "analysis": "[assessment of mood establishment, atmospheric writing]"
+  },
+  "culturalSensitivity": {
+    "score": [your score out of 100],
+    "analysis": "[evaluation of cultural awareness, sensitivity, inclusivity]"
+  },
+  "strengthsIdentification": {
+    "analysis": "[list of specific story strengths and what the writer does well]"
+  },
+  "areasForImprovement": {
+    "analysis": "[specific areas needing development and improvement suggestions]"
+  },
+  "gradeLevelAssessment": {
+    "analysis": "[assessment of writing level compared to grade expectations]"
+  },
+  "readingLevelEvaluation": {
+    "analysis": "[evaluation of text complexity and reading level]"
+  },
+  "teachersHolisticAssessment": {
+    "analysis": "[overall teacher assessment of the work and student potential]"
+  },
+  "personalizedLearningPath": {
+    "analysis": "[customized learning recommendations for this specific student]"
+  },
+  "practiceExerciseRecommendations": {
+    "analysis": "[specific writing exercises to help improve identified weaknesses]"
+  },
+  "genreExplorationSuggestions": {
+    "analysis": "[genre recommendations based on student's demonstrated interests/skills]"
+  },
+  "vocabularyBuildingExercises": {
+    "analysis": "[targeted vocabulary development activities]"
+  },
+  "grammarFocusAreas": {
+    "analysis": "[specific grammar areas to focus on for improvement]"
+  },
+  "overallAssessment": "[A+/A/B+/B/C+/C/D+/D/F with brief justification]",
+  "finalSummary": "[comprehensive summary of assessment and student potential]"
+}`;
+
+    const response = await smartAIProvider.generateResponse(prompt);
+    return this.parseJSON(response);
+  }
+
+  private static parseJSON(response: string): any {
     try {
-      // Log the raw response for debugging
-      console.log('Raw AI response:', jsonStr);
-
-      // Remove markdown code blocks and language tags
-      jsonStr = jsonStr.replace(/```json[\s\S]*?({[\s\S]*?})[\s\S]*?```/g, '$1');
-      jsonStr = jsonStr.replace(/```[a-z]*\s*/gi, '').replace(/```\s*$/g, '');
-
+      let jsonStr = response.trim();
+      // Remove markdown code blocks
+      jsonStr = jsonStr.replace(/```json\s*/g, '').replace(/```\s*$/g, '');
       // Find JSON boundaries
       const start = jsonStr.indexOf('{');
       const end = jsonStr.lastIndexOf('}');
       if (start !== -1 && end !== -1 && end > start) {
         jsonStr = jsonStr.substring(start, end + 1);
       }
-
-      // Remove trailing commas (common AI error)
-      jsonStr = jsonStr.replace(/,\s*([}\]])/g, '$1');
-
-      // Replace single quotes with double quotes (if any)
-      jsonStr = jsonStr.replace(/'/g, '"');
-
-      // Attempt to auto-correct missing brackets or commas
-      const bracketMismatch = (jsonStr.match(/\{/g)?.length || 0) - (jsonStr.match(/\}/g)?.length || 0);
-      if (bracketMismatch > 0) {
-        jsonStr += '}'.repeat(bracketMismatch); // Add missing closing brackets
-      }
-
-      // Validate JSON structure
-      if (!jsonStr.startsWith('{') || !jsonStr.endsWith('}')) {
-        throw new Error('Invalid JSON structure detected.');
-      }
-
-      // Try to parse - will throw if invalid
-      const parsed = JSON.parse(jsonStr);
-
-      // Log the cleaned JSON for debugging
-      console.log('Cleaned JSON:', jsonStr);
-
-      return parsed;
+      // Clean up common JSON issues
+      jsonStr = jsonStr.replace(/,\s*([}\]])/g, '$1'); // Remove trailing commas
+      return JSON.parse(jsonStr);
     } catch (error) {
-      console.error('Failed to parse JSON response:', jsonStr);
-      console.error('Parsing error:', error);
-
-      // Return a minimal error object for fallback
-      return {
-        error: 'Invalid JSON response',
-        details: (error as Error).message,
-      };
+      console.error('JSON parsing failed:', error);
+      console.error('Raw response:', response);
+      let message = 'Unknown error';
+      if (error && typeof error === 'object' && 'message' in error && typeof (error as any).message === 'string') {
+        message = (error as any).message;
+      }
+      throw new Error(`Invalid JSON response from AI: ${message}`);
     }
   }
 
-  private static transformAssessment(assessment: any): any {
-    // Return the full structure, but use only AI values, null for missing (including nested fields)
+  private static combineAssessments(part1: any, part2: any, part3: any): any {
+    // Calculate overall score from all individual scores
+    function extractScore(item: unknown): number | undefined {
+      if (typeof item === 'object' && item !== null && 'score' in item) {
+        const score = (item as any).score;
+        if (typeof score === 'number') return score;
+      }
+      return undefined;
+    }
+
+    const allScores = [
+      ...Object.values(part1).map(extractScore).filter((score): score is number => typeof score === 'number'),
+      ...Object.values(part2).map(extractScore).filter((score): score is number => typeof score === 'number'),
+      ...Object.values(part3).map(extractScore).filter((score): score is number => typeof score === 'number')
+    ];
+
+    const overallScore = allScores.length > 0 ? allScores.reduce((sum, score) => sum + score, 0) / allScores.length : 0;
+
     return {
-      overallScore: assessment.overallScore ?? null,
-      status: assessment.status ?? null,
-      statusMessage: assessment.statusMessage ?? null,
-      integrityAnalysis: assessment.integrityAnalysis ? {
-        aiDetection: assessment.integrityAnalysis.aiDetection ? {
-          humanLikeScore: assessment.integrityAnalysis.aiDetection.humanLikeScore ?? null,
-          aiLikelihood: assessment.integrityAnalysis.aiDetection.aiLikelihood ?? null,
-          confidenceLevel: assessment.integrityAnalysis.aiDetection.confidenceLevel ?? null,
-          analysis: assessment.integrityAnalysis.aiDetection.analysis ?? null,
-          riskLevel: assessment.integrityAnalysis.aiDetection.riskLevel ?? null,
-          indicators: assessment.integrityAnalysis.aiDetection.indicators ?? null
-        } : null,
-        plagiarismCheck: assessment.integrityAnalysis.plagiarismCheck ? {
-          originalityScore: assessment.integrityAnalysis.plagiarismCheck.originalityScore ?? null,
-          riskLevel: assessment.integrityAnalysis.plagiarismCheck.riskLevel ?? null,
-          violations: assessment.integrityAnalysis.plagiarismCheck.violations ?? null,
-          status: assessment.integrityAnalysis.plagiarismCheck.status ?? null
-        } : null,
-        overallStatus: assessment.integrityAnalysis.overallStatus ?? null,
-        message: assessment.integrityAnalysis.message ?? null,
-        recommendation: assessment.integrityAnalysis.recommendation ?? null
-      } : null,
-      coreWritingSkills: assessment.coreWritingSkills ? {
-        grammar: assessment.coreWritingSkills.grammar ?? null,
-        vocabulary: assessment.coreWritingSkills.vocabulary ?? null,
-        creativity: assessment.coreWritingSkills.creativity ?? null,
-        structure: assessment.coreWritingSkills.structure ?? null
-      } : null,
-      storyDevelopment: assessment.storyDevelopment ? {
-        characterDevelopment: assessment.storyDevelopment.characterDevelopment ?? null,
-        plotDevelopment: assessment.storyDevelopment.plotDevelopment ?? null,
-        descriptiveWriting: assessment.storyDevelopment.descriptiveWriting ?? null
-      } : null,
-      advancedElements: assessment.advancedElements ? {
-        sensoryDetails: assessment.advancedElements.sensoryDetails ?? null,
-        plotLogic: assessment.advancedElements.plotLogic ?? null,
-        themeRecognition: assessment.advancedElements.themeRecognition ?? null,
-        problemSolving: assessment.advancedElements.problemSolving ?? null
-      } : null,
-      ageAnalysis: assessment.ageAnalysis ? {
-        ageAppropriateness: assessment.ageAnalysis.ageAppropriateness ?? null,
-        readingLevel: assessment.ageAnalysis.readingLevel ?? null,
-        contentSuitability: assessment.ageAnalysis.contentSuitability ?? null
-      } : null,
-      comprehensiveFeedback: assessment.comprehensiveFeedback ? {
-        strengths: assessment.comprehensiveFeedback.strengths ?? null,
-        areasForEnhancement: assessment.comprehensiveFeedback.areasForEnhancement ?? null,
-        nextSteps: assessment.comprehensiveFeedback.nextSteps ?? null,
-        teacherAssessment: assessment.comprehensiveFeedback.teacherAssessment ?? null
-      } : null,
-      detailedBreakdown: assessment.detailedBreakdown ? {
-        riskFactors: assessment.detailedBreakdown.riskFactors ? {
-          aiDetectionRisk: assessment.detailedBreakdown.riskFactors.aiDetectionRisk ?? null,
-          plagiarismRisk: assessment.detailedBreakdown.riskFactors.plagiarismRisk ?? null,
-          overallRisk: assessment.detailedBreakdown.riskFactors.overallRisk ?? null
-        } : null,
-        educationalRecommendations: assessment.detailedBreakdown.educationalRecommendations ? {
-          immediate: assessment.detailedBreakdown.educationalRecommendations.immediate ?? null,
-          longTerm: assessment.detailedBreakdown.educationalRecommendations.longTerm ?? null,
-          practice: assessment.detailedBreakdown.educationalRecommendations.practice ?? null
-        } : null
-      } : null,
-      finalSummary: assessment.finalSummary ?? null,
-      overallRating: assessment.overallRating ?? null,
-      recognitionLevel: assessment.recognitionLevel ?? null
+      overallScore: Math.round(overallScore),
+      status: overallScore >= 70 ? "Approved" : "Needs Improvement",
+      statusMessage: part3.finalSummary || "Assessment completed",
+
+      // Core Writing Mechanics (1-6)
+      coreWritingSkills: {
+        grammar: part1.grammarSyntax,
+        vocabulary: part1.vocabularyRange,
+        spelling: part1.spellingPunctuation,
+        sentenceStructure: part1.sentenceStructure,
+        tenseConsistency: part1.tenseConsistency,
+        voiceTone: part1.voiceTone
+      },
+
+      // Story Elements (7-12)
+      storyDevelopment: {
+        plotDevelopment: part2.plotDevelopmentPacing,
+        characterDevelopment: part2.characterDevelopment,
+        settingWorldBuilding: part2.settingWorldBuilding,
+        dialogueQuality: part2.dialogueQuality,
+        themeRecognition: part2.themeRecognition,
+        conflictResolution: part2.conflictResolution
+      },
+
+      // Creative & Literary Skills (13-18)
+      creativeSkills: {
+        originalityCreativity: part3.originalityCreativity,
+        imageryDescriptiveWriting: part3.imageryDescriptiveWriting,
+        sensoryDetailsUsage: part3.sensoryDetailsUsage,
+        metaphorFigurativeLanguage: part3.metaphorFigurativeLanguage,
+        emotionalDepth: part3.emotionalDepth,
+        showVsTellBalance: part3.showVsTellBalance
+      },
+
+      // Structure & Organization (19-23)
+      structureOrganization: {
+        storyArcCompletion: part2.storyArcCompletion,
+        paragraphOrganization: part2.paragraphOrganization,
+        transitionsBetweenIdeas: part2.transitionsBetweenIdeas,
+        openingClosingEffectiveness: part2.openingClosingEffectiveness,
+        logicalFlow: part2.logicalFlow
+      },
+
+      // Advanced Elements (24-28)
+      advancedElements: {
+        foreshadowing: part3.foreshadowing,
+        symbolismRecognition: part3.symbolismRecognition,
+        pointOfViewConsistency: part3.pointOfViewConsistency,
+        moodAtmosphereCreation: part3.moodAtmosphereCreation,
+        culturalSensitivity: part3.culturalSensitivity
+      },
+
+      // AI Detection Analysis (29-32)
+      integrityAnalysis: {
+        aiDetection: {
+          writingPatterns: part1.writingPatterns,
+          authenticityMarkers: part1.authenticityMarkers,
+          ageAppropriateLanguage: part1.ageAppropriateLanguage,
+          personalVoiceRecognition: part1.personalVoiceRecognition,
+          result: part1.aiDetectionResult,
+          confidenceLevel: part1.confidenceLevel
+        }
+      },
+
+      // Educational Feedback (33-42)
+      educationalFeedback: {
+        strengths: part3.strengthsIdentification,
+        areasForImprovement: part3.areasForImprovement,
+        gradeLevelAssessment: part3.gradeLevelAssessment,
+        readingLevelEvaluation: part3.readingLevelEvaluation,
+        teachersHolisticAssessment: part3.teachersHolisticAssessment,
+        personalizedLearningPath: part3.personalizedLearningPath,
+        practiceExerciseRecommendations: part3.practiceExerciseRecommendations,
+        genreExplorationSuggestions: part3.genreExplorationSuggestions,
+        vocabularyBuildingExercises: part3.vocabularyBuildingExercises,
+        grammarFocusAreas: part3.grammarFocusAreas
+      },
+
+      overallAssessment: part3.overallAssessment,
+      finalSummary: part3.finalSummary
     };
   }
-
-  // Removed createMinimalAssessment. No fallback, only AI or error.
 }

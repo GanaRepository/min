@@ -1,74 +1,31 @@
 // components/DownloadStoryButtons.tsx
 import React from 'react';
-import { WordGenerator } from '@/lib/export/word-generator';
-import { PDFGenerator } from '@/lib/export/pdf-generator';
+import { Download } from 'lucide-react';
 
-interface StoryData {
-  title: string;
-  content: string;
-  totalWords: number;
-  authorName: string;
-  publishedAt: string;
-  elements: {
-    genre: string;
-    character: string;
-    setting: string;
-    theme: string;
-    mood: string;
-    tone: string;
-  };
-  scores?: {
-    grammar: number;
-    creativity: number;
-    overall: number;
-  };
+export interface DownloadStoryButtonsProps {
+  storyId: string;
+  storyTitle: string;
 }
 
-interface Props {
-  story: StoryData;
-}
-
-export const DownloadStoryButtons: React.FC<Props> = ({ story }) => {
-  const handleDownloadWord = async () => {
-    const generator = new WordGenerator();
-    const blob = await generator.generateStoryDocument(story);
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${story.title}.docx`;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(url);
-  };
-
-  const handleDownloadPDF = () => {
-    const generator = new PDFGenerator();
-    const blob = generator.generateStoryPDF(story);
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${story.title}.pdf`;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(url);
-  };
-
+export function DownloadStoryButtons({ storyId, storyTitle }: DownloadStoryButtonsProps) {
   return (
-    <div className="flex gap-4">
-      <button
-        onClick={handleDownloadWord}
-        className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-2 rounded-lg  shadow-md transition-all"
+    <div className="flex gap-3">
+      <a
+        href={`/api/stories/export/${storyId}/pdf`}
+        className="inline-flex items-center px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+        download={`${storyTitle}_assessment.pdf`}
       >
-        Word
-      </button>
-      <button
-        onClick={handleDownloadPDF}
-        className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white px-6 py-2 rounded-lg  shadow-md transition-all"
+        <Download className="h-4 w-4 mr-2" />
+        Download PDF
+      </a>
+      <a
+        href={`/api/stories/export/${storyId}/word`}
+        className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+        download={`${storyTitle}_assessment.docx`}
       >
-        PDF
-      </button>
+        <Download className="h-4 w-4 mr-2" />
+        Download Word
+      </a>
     </div>
   );
-};
+}
