@@ -1,4 +1,4 @@
-// app/api/user/stories/upload-competition/route.ts - FIXED (Text Only)
+// app/api/user/stories/upload-competition/route.ts - Updated for 13-Factor Teacher Assessment
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/utils/authOptions';
@@ -25,14 +25,9 @@ export async function POST(request: NextRequest) {
     await connectToDatabase();
 
     // Check competition eligibility
-    const competitionCheck = await UsageManager.canEnterCompetition(
-      session.user.id
-    );
+    const competitionCheck = await UsageManager.canEnterCompetition(session.user.id);
     if (!competitionCheck.allowed) {
-      return NextResponse.json(
-        { error: competitionCheck.reason },
-        { status: 403 }
-      );
+      return NextResponse.json({ error: competitionCheck.reason }, { status: 403 });
     }
 
     // Get current competition
@@ -50,38 +45,23 @@ export async function POST(request: NextRequest) {
     const content = formData.get('content') as string;
 
     if (!title?.trim()) {
-      return NextResponse.json(
-        { error: 'Story title is required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Story title is required' }, { status: 400 });
     }
 
     if (!content?.trim()) {
-      return NextResponse.json(
-        { error: 'Please provide story content by pasting text' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Please provide story content by pasting text' }, { status: 400 });
     }
 
     const storyContent = content.trim();
-
-    if (!storyContent) {
-      return NextResponse.json(
-        { error: 'Story content cannot be empty' },
-        { status: 400 }
-      );
-    }
-
-    // Word count validation for competition
     const wordCount = storyContent.split(/\s+/).filter(Boolean).length;
 
+    // Word count validation
     if (wordCount < 100) {
       return NextResponse.json(
         { error: 'Competition stories must be at least 100 words' },
         { status: 400 }
       );
     }
-
     if (wordCount > 2000) {
       return NextResponse.json(
         { error: 'Competition stories must be less than 2000 words' },
@@ -89,96 +69,57 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Get user for story number generation
+    // Get user
     const user = await User.findById(session.user.id);
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
     // Get next story number
-    const userStoryCount = await StorySession.countDocuments({
-      childId: session.user.id,
-    });
+    const userStoryCount = await StorySession.countDocuments({ childId: session.user.id });
     const nextStoryNumber = userStoryCount + 1;
 
-    // ✅ CRITICAL: Run AI Assessment BEFORE allowing competition entry
-    console.log('🤖 Running ADVANCED AI Assessment for competition entry...');
-
+    // ✅ Run teacher-style assessment
+    console.log('🤖 Running 13-factor Teacher Assessment for competition entry...');
     let assessmentResult;
     try {
-      assessmentResult =
-        await SingleCallAssessmentEngine.performCompleteAssessment(
-          storyContent,
-          {
-            childAge: 10, // default
-            isCollaborativeStory: false,
-            storyTitle: title,
-            expectedGenre: 'creative',
-          }
-        );
-
-      console.log(
-        `📊 Competition Assessment - Overall: ${assessmentResult.overallScore}%`
-      );
-      console.log(
-        `🔍 AI Detection: ${assessmentResult.integrityAnalysis.aiDetection.aiLikelihood}`
-      );
-      console.log(
-        `⚠️ Integrity Risk: ${assessmentResult.integrityAnalysis.aiDetection.riskLevel}`
-      );
-
-      // ✅ ASSESSMENT COMPLETE: Save with full assessment data
-      // No blocking - let competition-manager filter later through tier system
+      assessmentResult = await SingleCallAssessmentEngine.performAssessment(storyContent, {
+        childAge: user.age || 10,
+        storyTitle: title,
+      });
+      console.log(`✅ 13-factor assessment completed for competition story: ${title}`);
     } catch (error) {
-      console.error('❌ AI Assessment failed for competition entry:', error);
-
-      // For competition entries, we should fail safely rather than allow potentially problematic content
+      console.error('❌ Teacher assessment failed for competition entry:', error);
       return NextResponse.json(
         {
-          error: 'Unable to verify story quality and integrity',
-          details:
-            'Please try submitting again. If the problem persists, contact support.',
+          error: 'Unable to assess story quality',
+          details: 'Please try again later.',
         },
         { status: 500 }
       );
     }
 
-    // ✅ CREATE STORY SESSION WITH FULL ASSESSMENT DATA
+    // ✅ Save story with assessment
     const storySession = await StorySession.create({
       childId: session.user.id,
       storyNumber: nextStoryNumber,
       title: title.trim(),
-      currentTurn: 7, // Mark as complete
+      content: storyContent,
       totalWords: wordCount,
       childWords: wordCount,
-      apiCallsUsed: 0,
-      maxApiCalls: 0,
+      currentTurn: 7,
       status: 'completed',
-      aiOpening: storyContent,
       completedAt: new Date(),
-      isUploadedForAssessment: false,
+      isUploadedForAssessment: true,
       storyType: 'competition',
       competitionEligible: true,
-
-      // ✅ STORE COMPLETE 42-FACTOR ASSESSMENT DATA
       assessment: {
-        overallScore: assessmentResult.overallScore,
-        status: assessmentResult.status,
-        statusMessage: assessmentResult.statusMessage,
-        // All 42 factors, always included
-        coreWritingMechanics: assessmentResult.coreWritingSkills,
-        storyElements: assessmentResult.storyDevelopment,
-        creativeSkills: assessmentResult.creativeSkills,
-        structureOrganization: assessmentResult.structureOrganization,
-        advancedElements: assessmentResult.advancedElements,
-        aiDetectionAnalysis: assessmentResult.integrityAnalysis?.aiDetection,
-        educationalFeedback: assessmentResult.educationalFeedback,
-        assessmentVersion: '3.0-42-factor-competition',
-        assessmentDate: new Date().toISOString(),
-        assessmentType: 'competition',
-        note: 'Complete 42-factor analysis provided regardless of content status - admin/mentors handle flagged content separately',
+        version: '1.0-13-factor',
+        date: new Date().toISOString(),
+        type: 'competition',
+        fullFeedback: assessmentResult, // the full 13-category JSON
+        note: 'Teacher feedback stored for competition judging',
       },
-
       competitionEntries: [
         {
           competitionId: currentCompetition._id,
@@ -188,7 +129,7 @@ export async function POST(request: NextRequest) {
       ],
     });
 
-    // ✅ USE COMPETITION MANAGER for stats update
+    // Update competition stats
     await competitionManager.updateCompetitionStats(currentCompetition._id);
 
     return NextResponse.json({
@@ -197,14 +138,11 @@ export async function POST(request: NextRequest) {
       story: {
         id: storySession._id,
         title: storySession.title,
-        storyNumber: storySession.storyNumber,
         wordCount,
+        storyNumber: storySession.storyNumber,
         submittedToCompetition: true,
         competitionId: currentCompetition._id,
-        isPublished: false,
         competitionEligible: true,
-        assessmentScore: assessmentResult.overallScore,
-        integrityStatus: assessmentResult.integrityAnalysis.overallStatus,
       },
       competition: {
         id: currentCompetition._id,
@@ -212,14 +150,10 @@ export async function POST(request: NextRequest) {
         phase: currentCompetition.phase,
       },
       assessment: {
-        overallScore: assessmentResult.overallScore,
-        integrityStatus: {
-          status: assessmentResult.integrityAnalysis.overallStatus,
-          message: assessmentResult.integrityAnalysis.message,
-        },
-        feedback: assessmentResult.comprehensiveFeedback.teacherAssessment,
+        version: '1.0-13-factor',
+        summary: 'Teacher-style feedback saved',
       },
-      message: 'Story assessed and submitted to competition successfully!',
+      message: 'Story assessed with 13 factors and submitted to competition successfully!',
     });
   } catch (error) {
     console.error('Competition upload error:', error);
