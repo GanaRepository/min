@@ -474,21 +474,12 @@ export async function POST(req: NextRequest) {
     await newTurn.save();
 
     // Update session
-    const updateData = {
-  currentTurn: turnNumber + 1,
-  totalWords: storySession.totalWords + childWords.length + (aiResponse ? aiResponse.split(/\s+/).filter(Boolean).length : 0),
-  childWords: storySession.childWords + childWords.length,
-  apiCallsUsed: storySession.apiCallsUsed + 1,
-  updatedAt: new Date(),
-  status: undefined as any,
-  completedAt: undefined as any,
-  assessment: undefined as any,
-  overallScore: undefined as any,
-  grammarScore: undefined as any,
-  creativityScore: undefined as any,
-  lastAssessedAt: undefined as any,
-  assessmentAttempts: undefined as any,
-  integrityFlags: undefined as any,
+    const updateData: any = {
+      currentTurn: turnNumber + 1,
+      totalWords: storySession.totalWords + childWords.length + (aiResponse ? aiResponse.split(/\s+/).filter(Boolean).length : 0),
+      childWords: storySession.childWords + childWords.length,
+      apiCallsUsed: storySession.apiCallsUsed + 1,
+      updatedAt: new Date(),
     };
 
     // If this is the final turn, trigger comprehensive 42-factor assessment
@@ -532,54 +523,39 @@ export async function POST(req: NextRequest) {
           overallScore: assessment.overallScore,
           status: assessment.status,
           statusMessage: assessment.statusMessage,
-          
-          // Store all 42 factors
           allFactors: {
-            // Core Writing Mechanics (1-6)
             grammarSyntax: assessment.coreWritingMechanics?.grammarSyntax,
             vocabularyRange: assessment.coreWritingMechanics?.vocabularyRange,
             spellingPunctuation: assessment.coreWritingMechanics?.spellingPunctuation,
             sentenceStructure: assessment.coreWritingMechanics?.sentenceStructure,
             tenseConsistency: assessment.coreWritingMechanics?.tenseConsistency,
             voiceTone: assessment.coreWritingMechanics?.voiceTone,
-            
-            // Story Elements (7-12)
             plotDevelopmentPacing: assessment.storyElements?.plotDevelopmentPacing,
             characterDevelopment: assessment.storyElements?.characterDevelopment,
             settingWorldBuilding: assessment.storyElements?.settingWorldBuilding,
             dialogueQuality: assessment.storyElements?.dialogueQuality,
             themeRecognition: assessment.storyElements?.themeRecognition,
             conflictResolution: assessment.storyElements?.conflictResolution,
-            
-            // Creative Skills (13-18)
             originalityCreativity: assessment.creativeSkills?.originalityCreativity,
             imageryDescriptiveWriting: assessment.creativeSkills?.imageryDescriptiveWriting,
             sensoryDetailsUsage: assessment.creativeSkills?.sensoryDetailsUsage,
             metaphorFigurativeLanguage: assessment.creativeSkills?.metaphorFigurativeLanguage,
             emotionalDepth: assessment.creativeSkills?.emotionalDepth,
             showVsTellBalance: assessment.creativeSkills?.showVsTellBalance,
-            
-            // Structure & Organization (19-23)
             storyArcCompletion: assessment.structureOrganization?.storyArcCompletion,
             paragraphOrganization: assessment.structureOrganization?.paragraphOrganization,
             transitionsBetweenIdeas: assessment.structureOrganization?.transitionsBetweenIdeas,
             openingClosingEffectiveness: assessment.structureOrganization?.openingClosingEffectiveness,
             logicalFlow: assessment.structureOrganization?.logicalFlow,
-            
-            // Advanced Elements (24-28)
             foreshadowing: assessment.advancedElements?.foreshadowing,
             symbolismRecognition: assessment.advancedElements?.symbolismRecognition,
             pointOfViewConsistency: assessment.advancedElements?.pointOfViewConsistency,
             moodAtmosphereCreation: assessment.advancedElements?.moodAtmosphereCreation,
             culturalSensitivity: assessment.advancedElements?.culturalSensitivity,
-            
-            // AI Detection (29-32)
             writingPatternAnalysis: assessment.aiDetectionAnalysis?.writingPatternAnalysis,
             authenticityMarkers: assessment.aiDetectionAnalysis?.authenticityMarkers,
             ageAppropriateLanguage: assessment.aiDetectionAnalysis?.ageAppropriateLanguage,
             personalVoiceRecognition: assessment.aiDetectionAnalysis?.personalVoiceRecognition,
-            
-            // Educational Feedback (33-42)
             strengthsIdentification: assessment.educationalFeedback?.strengthsIdentification,
             areasForImprovement: assessment.educationalFeedback?.areasForImprovement,
             gradeLevelAssessment: assessment.educationalFeedback?.gradeLevelAssessment,
@@ -591,36 +567,27 @@ export async function POST(req: NextRequest) {
             vocabularyBuildingExercises: assessment.educationalFeedback?.vocabularyBuildingExercises,
             grammarFocusAreas: assessment.educationalFeedback?.grammarFocusAreas,
           },
-          
           aiDetectionResult: {
             result: assessment.aiDetectionAnalysis?.overallResult,
             confidenceLevel: assessment.aiDetectionAnalysis?.confidenceLevel,
             analysis: assessment.aiDetectionAnalysis?.authenticityMarkers?.analysis,
           },
-          
-          // Legacy compatibility
           grammarScore: assessment.coreWritingMechanics?.grammarSyntax?.score || 0,
           creativityScore: assessment.creativeSkills?.originalityCreativity?.score || 0,
           vocabularyScore: assessment.coreWritingMechanics?.vocabularyRange?.score || 0,
-          
           assessmentVersion: '3.0-42-factor',
           assessmentDate: new Date().toISOString(),
           assessmentType: 'collaborative',
         };
-
-        // Update session with comprehensive assessment
         updateData.assessment = comprehensiveAssessment;
         updateData.overallScore = assessment.overallScore;
-  // Status is for admin workflow only, does not affect assessment completeness
-  updateData.status = assessment.status; // Always store AI's status, do not filter or conditionally set
-
+        updateData.status = assessment.status;
       } catch (assessmentError) {
         let message = 'Story completed but assessment could not be generated';
         if (assessmentError && typeof assessmentError === 'object' && 'message' in assessmentError) {
           message = (assessmentError as any).message;
         }
         console.error('42-factor assessment failed for collaborative story:', assessmentError);
-        // Don't fail the story completion, just log the error
         updateData.assessment = {
           error: 'Assessment failed',
           message,
