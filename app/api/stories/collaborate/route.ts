@@ -74,23 +74,30 @@ export async function POST(req: NextRequest) {
     );
 
     // Save the turn
+
+    // Compose required fields for Turn schema
+    const wordCount = childWords.length;
     const newTurn = new Turn({
       sessionId: new mongoose.Types.ObjectId(sessionId),
       turnNumber,
+      author: 'child',
       childInput: childInput.trim(),
       aiResponse: aiResponse,
+      content: childInput.trim(),
+      wordCount,
+      isValid: true,
       timestamp: new Date(),
     });
 
     await newTurn.save();
 
+    // Calculate AI word count
+    const aiWordCount = aiResponse ? aiResponse.split(/\s+/).filter(Boolean).length : 0;
+
     // Update session
     const updateData: any = {
       currentTurn: turnNumber + 1,
-      totalWords:
-        storySession.totalWords +
-        childWords.length +
-        (aiResponse ? aiResponse.split(/\s+/).filter(Boolean).length : 0),
+      totalWords: storySession.totalWords + childWords.length + aiWordCount,
       childWords: storySession.childWords + childWords.length,
       apiCallsUsed: storySession.apiCallsUsed + 1,
       updatedAt: new Date(),
@@ -169,13 +176,18 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      turn: {
-        turnNumber,
-        childInput: childInput.trim(),
-        aiResponse: aiResponse,
+      newTurn: {
+        _id: newTurn._id,
+        turnNumber: newTurn.turnNumber,
+        childInput: newTurn.childInput,
+        aiResponse: newTurn.aiResponse,
+        childWordCount: newTurn.wordCount,
+        aiWordCount: aiWordCount,
+        timestamp: newTurn.createdAt,
       },
       storyCompleted: turnNumber >= 7,
       assessmentReady: turnNumber >= 7,
+      assessment: updateData.assessment || null,
     });
   } catch (error) {
     console.error('Collaboration error:', error);

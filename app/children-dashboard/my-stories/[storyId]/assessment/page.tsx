@@ -4,106 +4,87 @@ import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
-import { 
-  ArrowLeft, 
-  BookOpen, 
-  ChevronDown, 
-  ChevronUp,
-  Sparkles,
-  PenTool,
-  MessageSquare,
-  Target,
-  Award,
-  Brain,
-  Heart,
-  Star
-} from 'lucide-react';
+import { ArrowLeft, BookOpen, ChevronDown, ChevronUp, Calendar, User, FileText } from 'lucide-react';
+import TerminalLoader from '@/components/TerminalLoader';
+
+interface Assessment {
+  fullFeedback?: {
+    coreLanguageSkills?: {
+      grammarSentenceClarity?: string;
+      vocabularyWordChoice?: string;
+      spellingPunctuation?: string;
+    };
+    storytellingSkills?: {
+      plotPacing?: string;
+      characterDevelopment?: string;
+      settingWorldBuilding?: string;
+      dialogueExpression?: string;
+      themeMessage?: string;
+    };
+    creativeExpressiveSkills?: {
+      creativityOriginality?: string;
+      descriptivePowerEmotionalImpact?: string;
+    };
+    authenticityGrowth?: {
+      ageAppropriatenessAuthorship?: string;
+      strengthsAreasToImprove?: string;
+      practiceExercises?: string;
+    };
+  };
+  // Direct structure (legacy compatibility)
+  coreLanguageSkills?: {
+    grammarSentenceClarity?: string;
+    vocabularyWordChoice?: string;
+    spellingPunctuation?: string;
+  };
+  storytellingSkills?: {
+    plotPacing?: string;
+    characterDevelopment?: string;
+    settingWorldBuilding?: string;
+    dialogueExpression?: string;
+    themeMessage?: string;
+  };
+  creativeExpressiveSkills?: {
+    creativityOriginality?: string;
+    descriptivePowerEmotionalImpact?: string;
+  };
+  authenticityGrowth?: {
+    ageAppropriatenessAuthorship?: string;
+    strengthsAreasToImprove?: string;
+    practiceExercises?: string;
+  };
+  version?: string;
+  date?: string;
+  type?: string;
+  assessmentVersion?: string;
+  assessmentDate?: string;
+  assessmentType?: string;
+}
 
 interface Story {
   _id: string;
   title: string;
   status: string;
-  assessment?: any;
+  assessment?: Assessment;
   createdAt: string;
   completedAt?: string;
   totalWords?: number;
   content?: string;
+  storyType?: string;
 }
-
-// Category configuration with icons
-const categoryConfig = {
-  coreLanguageSkills: {
-    title: 'Core Language Skills',
-    icon: PenTool,
-    factors: [
-      { key: 'grammarSentenceClarity', label: '📝 Grammar & Sentence Clarity' },
-      { key: 'vocabularyWordChoice', label: '📚 Vocabulary & Word Choice' },
-      { key: 'spellingPunctuation', label: '✏️ Spelling & Punctuation' },
-    ]
-  },
-  storytellingSkills: {
-    title: 'Storytelling Skills',
-    icon: BookOpen,
-    factors: [
-      { key: 'plotPacing', label: '🎬 Plot & Pacing' },
-      { key: 'characterDevelopment', label: '👥 Character Development' },
-      { key: 'settingWorldBuilding', label: '🌍 Setting & World-Building' },
-      { key: 'dialogueExpression', label: '💬 Dialogue & Expression' },
-      { key: 'themeMessage', label: '💡 Theme & Message' },
-    ]
-  },
-  creativeExpressiveSkills: {
-    title: 'Creative & Expressive Skills',
-    icon: Sparkles,
-    factors: [
-      { key: 'creativityOriginality', label: '✨ Creativity & Originality' },
-      { key: 'descriptivePowerEmotionalImpact', label: '❤️ Descriptive Power & Emotional Impact' },
-    ]
-  },
-  authenticityGrowth: {
-    title: 'Authenticity & Growth',
-    icon: Target,
-    factors: [
-      { key: 'ageAppropriatenessAuthorship', label: '🎯 Age Appropriateness & Authorship' },
-      { key: 'strengthsAreasToImprove', label: '💪 Strengths & Areas to Improve' },
-      { key: 'practiceExercises', label: '📋 Practice Exercises' },
-    ]
-  }
-};
 
 export default function StoryAssessmentPage() {
   const [story, setStory] = useState<Story | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set());
-  const [showRawData, setShowRawData] = useState(false);
+  const [expanded, setExpanded] = useState<string | null>('overview');
   const { data: session, status } = useSession();
   const router = useRouter();
   const params = useParams();
   const storyId = params.storyId as string;
 
-  const toggleSection = (key: string) => {
-    const newExpanded = new Set(expandedSections);
-    if (newExpanded.has(key)) {
-      newExpanded.delete(key);
-    } else {
-      newExpanded.add(key);
-    }
-    setExpandedSections(newExpanded);
-  };
-
-  const expandAll = () => {
-    const allKeys = new Set<string>();
-    Object.values(categoryConfig).forEach(category => {
-      category.factors.forEach(factor => {
-        allKeys.add(factor.key);
-      });
-    });
-    setExpandedSections(allKeys);
-  };
-
-  const collapseAll = () => {
-    setExpandedSections(new Set());
+  const toggle = (section: string) => {
+    setExpanded(expanded === section ? null : section);
   };
 
   useEffect(() => {
@@ -113,11 +94,13 @@ export default function StoryAssessmentPage() {
         const response = await fetch(`/api/user/stories/${storyId}`);
         const data = await response.json();
 
+        console.log('📊 Raw API Response:', data);
+
         if (data.success && data.story) {
-          console.log('📚 Fetched story data:', data.story);
+          console.log('📋 Story Assessment Data:', data.story.assessment);
           setStory(data.story);
         } else {
-          setError('Assessment not available for this story.');
+          setError('Story not found or assessment not available.');
         }
       } catch (error) {
         console.error('Error fetching story assessment:', error);
@@ -137,18 +120,132 @@ export default function StoryAssessmentPage() {
     }
   }, [status, storyId, router]);
 
+  // Helper function to get assessment data from either structure
+  const getAssessmentData = (assessment: Assessment) => {
+    // Try fullFeedback structure first (new format), then direct structure (legacy)
+    return {
+      coreLanguageSkills: assessment.fullFeedback?.coreLanguageSkills || assessment.coreLanguageSkills || {},
+      storytellingSkills: assessment.fullFeedback?.storytellingSkills || assessment.storytellingSkills || {},
+      creativeExpressiveSkills: assessment.fullFeedback?.creativeExpressiveSkills || assessment.creativeExpressiveSkills || {},
+      authenticityGrowth: assessment.fullFeedback?.authenticityGrowth || assessment.authenticityGrowth || {},
+    };
+  };
+
+
+  // Helper function to safely get feedback text
+  const getFeedback = (assessmentData: any, section: string, key: string): string => {
+    const sectionData = assessmentData[section];
+    if (sectionData && typeof sectionData === 'object') {
+      return sectionData[key] || 'No feedback provided.';
+    }
+    return 'No feedback provided.';
+  };
+
+  const categories = [
+    // Core Language Skills
+    { 
+      key: 'grammarSentenceClarity', 
+      label: 'Grammar & Sentence Clarity', 
+      section: 'coreLanguageSkills',
+      icon: '📝',
+      description: 'How well you use grammar and create clear sentences'
+    },
+    { 
+      key: 'vocabularyWordChoice', 
+      label: 'Vocabulary & Word Choice', 
+      section: 'coreLanguageSkills',
+      icon: '📚',
+      description: 'The variety and appropriateness of words you use'
+    },
+    { 
+      key: 'spellingPunctuation', 
+      label: 'Spelling & Punctuation', 
+      section: 'coreLanguageSkills',
+      icon: '✏️',
+      description: 'Accuracy in spelling and punctuation marks'
+    },
+    
+    // Storytelling Skills
+    { 
+      key: 'plotPacing', 
+      label: 'Plot & Pacing', 
+      section: 'storytellingSkills',
+      icon: '⚡',
+      description: 'How your story moves from beginning to end'
+    },
+    { 
+      key: 'characterDevelopment', 
+      label: 'Character Development', 
+      section: 'storytellingSkills',
+      icon: '👥',
+      description: 'How well you create and develop your characters'
+    },
+    { 
+      key: 'settingWorldBuilding', 
+      label: 'Setting & World-Building', 
+      section: 'storytellingSkills',
+      icon: '🏛️',
+      description: 'How you create and describe the world of your story'
+    },
+    { 
+      key: 'dialogueExpression', 
+      label: 'Dialogue & Expression', 
+      section: 'storytellingSkills',
+      icon: '💬',
+      description: 'How characters speak and express themselves'
+    },
+    { 
+      key: 'themeMessage', 
+      label: 'Theme & Message', 
+      section: 'storytellingSkills',
+      icon: '🎯',
+      description: 'The deeper meaning and message in your story'
+    },
+    
+    // Creative & Expressive Skills
+    { 
+      key: 'creativityOriginality', 
+      label: 'Creativity & Originality', 
+      section: 'creativeExpressiveSkills',
+      icon: '🌟',
+      description: 'How unique and imaginative your story is'
+    },
+    { 
+      key: 'descriptivePowerEmotionalImpact', 
+      label: 'Descriptive Power & Emotional Impact', 
+      section: 'creativeExpressiveSkills',
+      icon: '🎨',
+      description: 'How well you paint pictures with words and create emotions'
+    },
+    
+    // Authenticity & Growth
+    { 
+      key: 'ageAppropriatenessAuthorship', 
+      label: 'Authenticity & Age Appropriateness', 
+      section: 'authenticityGrowth',
+      icon: '🎪',
+      description: 'How well your writing fits your age and authentic voice'
+    },
+    { 
+      key: 'strengthsAreasToImprove', 
+      label: 'Strengths & Areas to Improve', 
+      section: 'authenticityGrowth',
+      icon: '💪',
+      description: 'What you do well and where you can grow'
+    },
+    { 
+      key: 'practiceExercises', 
+      label: 'Practice Exercises', 
+      section: 'authenticityGrowth',
+      icon: '🏃',
+      description: 'Suggestions for improving your writing skills'
+    },
+  ];
+
   if (loading || status === 'loading') {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-900">
-        <div className="text-center">
-          <div className="relative">
-            <div className="animate-spin rounded-full h-32 w-32 border-t-4 border-b-4 border-purple-500"></div>
-            <div className="absolute inset-0 flex items-center justify-center">
-              <BookOpen className="w-12 h-12 text-white" />
-            </div>
-          </div>
-          <p className="text-white mt-4 text-lg">Loading your teacher's feedback...</p>
-        </div>
+        <TerminalLoader loadingText="Loading teacher feedback..." />
       </div>
     );
   }
@@ -156,16 +253,13 @@ export default function StoryAssessmentPage() {
   if (status === 'unauthenticated') {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-900">
-        <div className="text-center bg-gray-800 rounded-2xl p-8">
+        <div className="text-center">
           <BookOpen className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-white mb-2">Login Required</h2>
-          <p className="text-gray-300 mb-6">Please log in to view your story assessment.</p>
-          <Link 
-            href="/login/child" 
-            className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg inline-flex items-center gap-2 transition-all"
-          >
+          <h2 className="text-xl text-white mb-2">Login Required</h2>
+          <p className="text-gray-400 mb-6">Please log in to view your story assessment.</p>
+          <Link href="/login/child" className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg inline-flex items-center gap-2">
             <ArrowLeft size={16} />
-            Go to Login
+            Login
           </Link>
         </div>
       </div>
@@ -175,13 +269,13 @@ export default function StoryAssessmentPage() {
   if (error || !story) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-900">
-        <div className="text-center bg-gray-800 rounded-2xl p-8">
+        <div className="text-center">
           <BookOpen className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-white mb-2">Assessment Not Available</h2>
-          <p className="text-gray-300 mb-6">{error || 'Assessment data is not available for this story.'}</p>
+          <h2 className="text-xl text-white mb-2">Assessment Not Available</h2>
+          <p className="text-gray-400 mb-6">{error || 'Assessment data is not available for this story.'}</p>
           <Link 
             href="/children-dashboard/my-stories" 
-            className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg inline-flex items-center gap-2 transition-all"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg inline-flex items-center gap-2"
           >
             <ArrowLeft size={16} />
             Back to My Stories
@@ -191,199 +285,199 @@ export default function StoryAssessmentPage() {
     );
   }
 
-  const assessment = story.assessment || {};
-  const hasAssessment = assessment && (
-    assessment.coreLanguageSkills || 
-    assessment.storytellingSkills || 
-    assessment.creativeExpressiveSkills || 
-    assessment.authenticityGrowth ||
-    assessment.fullFeedback
-  );
-
-  if (!hasAssessment) {
+  if (!story.assessment) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-900">
-        <div className="text-center bg-gray-800 rounded-2xl p-8">
+        <div className="text-center">
           <BookOpen className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-white mb-2">No Assessment Yet</h2>
-          <p className="text-gray-300 mb-6">Complete your story to receive detailed teacher feedback!</p>
+          <h2 className="text-xl text-white mb-2">Assessment Not Available</h2>
+          <p className="text-gray-400 mb-6">
+            This story hasn't been assessed yet. Complete your story to get detailed feedback!
+          </p>
           <Link 
-            href={`/children-dashboard/my-stories/${storyId}`}
-            className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg inline-flex items-center gap-2 transition-all"
+            href={`/children-dashboard/my-stories/${story._id}`}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg inline-flex items-center gap-2"
           >
             <ArrowLeft size={16} />
-            Back to Story
+            View Story
           </Link>
         </div>
       </div>
     );
   }
 
-  // Check if we have the nested structure or need to use fullFeedback
-  const hasNestedStructure = assessment.coreLanguageSkills || assessment.storytellingSkills;
+  const assessmentData = getAssessmentData(story.assessment);
+  const assessment = story.assessment;
 
-  return (
-    <div className="min-h-screen bg-gray-900 py-8">
-      <div className="max-w-5xl mx-auto px-4">
+   return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-green-900 p-4">
+      <div className="max-w-4xl mx-auto">
         {/* Header */}
-        <div className="bg-gray-800 rounded-2xl shadow-xl p-6 mb-6 border border-gray-700">
-          <div className="flex items-center justify-between mb-4">
-            <Link 
-              href={`/children-dashboard/my-stories/${storyId}`}
-              className="text-purple-400 hover:text-purple-300 inline-flex items-center gap-2 transition-colors"
-            >
-              <ArrowLeft size={20} />
-              Back to Story
-            </Link>
-            <div className="flex gap-2">
-              <button
-                onClick={expandAll}
-                className="text-sm bg-purple-600/20 hover:bg-purple-600/30 text-purple-300 px-3 py-1 rounded-lg transition-colors"
-              >
-                Expand All
-              </button>
-              <button
-                onClick={collapseAll}
-                className="text-sm bg-gray-700 hover:bg-gray-600 text-gray-300 px-3 py-1 rounded-lg transition-colors"
-              >
-                Collapse All
-              </button>
-            </div>
-          </div>
+        <div className="mb-8">
+          <Link 
+            href={`/children-dashboard/my-stories/${story._id}`}
+            className="inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 mb-6 transition-colors"
+          >
+            <ArrowLeft size={20} />
+            Back to Story
+          </Link>
           
-          <div className="text-center">
-            <h1 className="text-3xl font-bold text-white mb-2">
-              Teacher's Assessment
-            </h1>
-            <h2 className="text-xl text-gray-300 mb-2">{story.title}</h2>
-            <div className="flex items-center justify-center gap-1 text-yellow-400">
-              {[...Array(5)].map((_, i) => (
-                <Star key={i} size={20} fill="currentColor" />
-              ))}
-            </div>
-          </div>
-
-          {/* Assessment metadata */}
-          {(assessment.assessmentDate || assessment.wordCount) && (
-            <div className="mt-4 flex justify-center gap-6 text-sm text-gray-400">
-              {assessment.assessmentDate && (
-                <span>📅 Assessed: {new Date(assessment.assessmentDate).toLocaleDateString()}</span>
-              )}
-              {assessment.wordCount && (
-                <span>📝 {assessment.wordCount} words</span>
-              )}
-              {assessment.assessmentType && (
-                <span>🎯 Type: {assessment.assessmentType}</span>
-              )}
-            </div>
-          )}
-        </div>
-
-        {/* Main Assessment Content */}
-        <div className="space-y-6">
-          {hasNestedStructure ? (
-            // Display nested 13-factor structure
-            Object.entries(categoryConfig).map(([categoryKey, category]) => {
-              const categoryData = assessment[categoryKey];
-              if (!categoryData) return null;
-
-              const Icon = category.icon;
-
-              return (
-                <div key={categoryKey} className="bg-gray-800 rounded-2xl shadow-lg overflow-hidden border border-gray-700">
-                  <div className="p-4 bg-gradient-to-r from-purple-600 to-purple-700">
-                    <div className="flex items-center gap-3 text-white">
-                      <Icon size={24} />
-                      <h3 className="text-xl font-bold">{category.title}</h3>
-                    </div>
+          <div className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-2xl p-8">
+            <div className="text-center">
+              <h1 className="text-4xl  text-white mb-2">Teacher's Assessment</h1>
+              <h2 className="text-2xl text-blue-300 mb-6">{story.title}</h2>
+              
+              {/* Assessment Metadata */}
+              <div className="flex flex-wrap justify-center gap-6 text-sm text-gray-400">
+                {assessment.assessmentDate && (
+                  <div className="flex items-center gap-2">
+                    <Calendar size={16} />
+                    <span>Assessed: {new Date(assessment.assessmentDate).toLocaleDateString()}</span>
                   </div>
-                  
-                  <div className="p-6 space-y-3">
-                    {category.factors.map(factor => {
-                      const feedback = categoryData[factor.key];
-                      if (!feedback || feedback === 'No feedback provided.') return null;
-                      
-                      const isExpanded = expandedSections.has(factor.key);
-                      
-                      return (
-                        <div key={factor.key} className="border border-gray-700 rounded-xl overflow-hidden hover:border-gray-600 transition-colors">
-                          <button
-                            onClick={() => toggleSection(factor.key)}
-                            className="w-full flex justify-between items-center px-5 py-4 bg-gray-700/50 hover:bg-gray-700 transition-colors"
-                          >
-                            <span className="font-medium text-gray-200 text-left">{factor.label}</span>
-                            {isExpanded ? (
-                              <ChevronUp className="h-5 w-5 text-gray-400 flex-shrink-0" />
-                            ) : (
-                              <ChevronDown className="h-5 w-5 text-gray-400 flex-shrink-0" />
-                            )}
-                          </button>
-                          
-                          {isExpanded && (
-                            <div className="px-5 py-4 bg-gray-800/50 border-t border-gray-700">
-                              <div className="text-gray-300 leading-relaxed whitespace-pre-wrap">
-                                {feedback}
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
+                )}
+                {assessment.assessmentVersion && (
+                  <div className="flex items-center gap-2">
+                    <FileText size={16} />
+                    <span>Version: {assessment.assessmentVersion}</span>
                   </div>
-                </div>
-              );
-            })
-          ) : assessment.fullFeedback ? (
-            // Fallback: Display flattened fullFeedback if available
-            <div className="bg-gray-800 rounded-2xl shadow-lg p-6 border border-gray-700">
-              <h3 className="text-xl font-bold mb-4 text-white">Assessment Feedback</h3>
-              <div className="space-y-3">
-                {Object.entries(assessment.fullFeedback).map(([key, value]) => {
-                  const isExpanded = expandedSections.has(key);
-                  return (
-                    <div key={key} className="border border-gray-700 rounded-xl overflow-hidden">
-                      <button
-                        onClick={() => toggleSection(key)}
-                        className="w-full flex justify-between items-center px-5 py-4 bg-gray-700/50 hover:bg-gray-700 transition-colors"
-                      >
-                        <span className="font-medium text-gray-200">{key.replace(/([A-Z])/g, ' $1').trim()}</span>
-                        {isExpanded ? (
-                          <ChevronUp className="h-5 w-5 text-gray-400" />
-                        ) : (
-                          <ChevronDown className="h-5 w-5 text-gray-400" />
-                        )}
-                      </button>
-                      {isExpanded && (
-                        <div className="px-5 py-4 bg-gray-800/50 border-t border-gray-700">
-                          <div className="text-gray-300 leading-relaxed whitespace-pre-wrap">
-                            {value as string}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
+                )}
+                {story.totalWords && (
+                  <div className="flex items-center gap-2">
+                    <BookOpen size={16} />
+                    <span>Words: {story.totalWords}</span>
+                  </div>
+                )}
+                {story.storyType && (
+                  <div className="flex items-center gap-2">
+                    <User size={16} />
+                    <span>Type: {story.storyType}</span>
+                  </div>
+                )}
               </div>
             </div>
-          ) : null}
+          </div>
         </div>
 
-        {/* Debug Section (only in development) */}
-        {process.env.NODE_ENV === 'development' && (
-          <div className="mt-8 bg-gray-800 rounded-xl p-4 border border-gray-700">
-            <button
-              onClick={() => setShowRawData(!showRawData)}
-              className="text-sm text-gray-400 hover:text-gray-300 underline"
-            >
-              {showRawData ? 'Hide' : 'Show'} Raw Assessment Data (Debug)
-            </button>
-            {showRawData && (
-              <pre className="mt-4 bg-gray-900 p-4 rounded-lg text-xs text-gray-400 overflow-x-auto">
-                {JSON.stringify(assessment, null, 2)}
-              </pre>
-            )}
-          </div>
-        )}
+        {/* Individual Category Sections */}
+        <div className="space-y-4">
+          <h3 className="text-2xl  text-white mb-4">📝 Core Language Skills</h3>
+          {categories.filter(cat => cat.section === 'coreLanguageSkills').map(({ key, label, section, icon, description }) => {
+            const feedback = getFeedback(assessmentData, section, key);
+            return (
+              <div key={key} className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-2xl overflow-hidden">
+                <button
+                  onClick={() => toggle(key)}
+                  className="w-full p-6 hover:bg-gray-700/50 transition-all duration-200 flex items-center justify-between text-left"
+                >
+                  <div className="flex items-center gap-4">
+                    <span className="text-3xl">{icon}</span>
+                    <div>
+                      <h4 className="text-xl  text-white">{label}</h4>
+                      <p className="text-gray-400 text-sm">{description}</p>
+                    </div>
+                  </div>
+                  {expanded === key ? <ChevronUp size={24} className="text-gray-400" /> : <ChevronDown size={24} className="text-gray-400" />}
+                </button>
+                {expanded === key && (
+                  <div className="px-6 pb-6">
+                    <div className="bg-gray-900/50 rounded-lg p-4 border-l-4 border-blue-500">
+                      <p className="text-gray-200 leading-relaxed">{feedback}</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+
+          <h3 className="text-2xl  text-white mb-4 mt-8">📖 Storytelling Skills</h3>
+          {categories.filter(cat => cat.section === 'storytellingSkills').map(({ key, label, section, icon, description }) => {
+            const feedback = getFeedback(assessmentData, section, key);
+            return (
+              <div key={key} className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-2xl overflow-hidden">
+                <button
+                  onClick={() => toggle(key)}
+                  className="w-full p-6 hover:bg-gray-700/50 transition-all duration-200 flex items-center justify-between text-left"
+                >
+                  <div className="flex items-center gap-4">
+                    <span className="text-3xl">{icon}</span>
+                    <div>
+                      <h4 className="text-xl  text-white">{label}</h4>
+                      <p className="text-gray-400 text-sm">{description}</p>
+                    </div>
+                  </div>
+                  {expanded === key ? <ChevronUp size={24} className="text-gray-400" /> : <ChevronDown size={24} className="text-gray-400" />}
+                </button>
+                {expanded === key && (
+                  <div className="px-6 pb-6">
+                    <div className="bg-gray-900/50 rounded-lg p-4 border-l-4 border-green-500">
+                      <p className="text-gray-200 leading-relaxed">{feedback}</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+
+          <h3 className="text-2xl  text-white mb-4 mt-8">🎨 Creative & Expressive Skills</h3>
+          {categories.filter(cat => cat.section === 'creativeExpressiveSkills').map(({ key, label, section, icon, description }) => {
+            const feedback = getFeedback(assessmentData, section, key);
+            return (
+              <div key={key} className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-2xl overflow-hidden">
+                <button
+                  onClick={() => toggle(key)}
+                  className="w-full p-6 hover:bg-gray-700/50 transition-all duration-200 flex items-center justify-between text-left"
+                >
+                  <div className="flex items-center gap-4">
+                    <span className="text-3xl">{icon}</span>
+                    <div>
+                      <h4 className="text-xl  text-white">{label}</h4>
+                      <p className="text-gray-400 text-sm">{description}</p>
+                    </div>
+                  </div>
+                  {expanded === key ? <ChevronUp size={24} className="text-gray-400" /> : <ChevronDown size={24} className="text-gray-400" />}
+                </button>
+                {expanded === key && (
+                  <div className="px-6 pb-6">
+                    <div className="bg-gray-900/50 rounded-lg p-4 border-l-4 border-purple-500">
+                      <p className="text-gray-200 leading-relaxed">{feedback}</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+
+          <h3 className="text-2xl  text-white mb-4 mt-8">🌱 Authenticity & Growth</h3>
+          {categories.filter(cat => cat.section === 'authenticityGrowth').map(({ key, label, section, icon, description }) => {
+            const feedback = getFeedback(assessmentData, section, key);
+            return (
+              <div key={key} className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40 rounded-2xl overflow-hidden">
+                <button
+                  onClick={() => toggle(key)}
+                  className="w-full p-6 hover:bg-gray-700/50 transition-all duration-200 flex items-center justify-between text-left"
+                >
+                  <div className="flex items-center gap-4">
+                    <span className="text-3xl">{icon}</span>
+                    <div>
+                      <h4 className="text-xl  text-white">{label}</h4>
+                      <p className="text-gray-400 text-sm">{description}</p>
+                    </div>
+                  </div>
+                  {expanded === key ? <ChevronUp size={24} className="text-gray-400" /> : <ChevronDown size={24} className="text-gray-400" />}
+                </button>
+                {expanded === key && (
+                  <div className="px-6 pb-6">
+                    <div className="bg-gray-900/50 rounded-lg p-4 border-l-4 border-yellow-500">
+                      <p className="text-gray-200 leading-relaxed">{feedback}</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+
+
       </div>
     </div>
   );

@@ -600,7 +600,7 @@ export default function StoryWritingInterface({
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-slate-900 to-green-900">
       {/* Header */}
-      <div className=" backdrop-blur-xl sticky top-0 z-50">
+  <div className="backdrop-blur-xl">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
@@ -1158,53 +1158,6 @@ export default function StoryWritingInterface({
                 <p className="text-gray-400 text-sm mt-4">
                   Please wait while we create your detailed assessment...
                 </p>
-              </div>
-            )}
-
-            {/* Assessment Preview */}
-            {assessment && (
-              <div className="bg-gradient-to-r from-green-500/20 to-emerald-600/20 border border-green-500/30  p-6">
-                <h3 className="text-white  text-lg mb-4 flex items-center gap-2">
-                  <Award className="w-5 h-5 text-yellow-400" />
-                  Assessment Ready!
-                </h3>
-
-                <div className="space-y-3 mb-4">
-                  <div className="flex items-center justify-between">
-                    <span className="text-gray-300">Overall Score</span>
-                    <span className="text-white  text-lg">
-                      {assessment.overallScore}%
-                    </span>
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <span className="text-gray-300">Creativity</span>
-                    <span className="text-green-400 ">
-                      {assessment.categoryScores?.creativity ||
-                        assessment.coreWritingSkills?.creativity?.score ||
-                        0}
-                      %
-                    </span>
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <span className="text-gray-300">Grammar</span>
-                    <span className="text-blue-400 ">
-                      {assessment.categoryScores?.grammar ||
-                        assessment.coreWritingSkills?.grammar?.score ||
-                        0}
-                      %
-                    </span>
-                  </div>
-                </div>
-
-                <Link
-                  href={`/children-dashboard/my-stories/${storySession._id}/assessment`}
-                  className="w-full px-4 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-lg hover:from-green-600 hover:to-emerald-700 transition-all flex items-center justify-center gap-2"
-                >
-                  <Award className="w-5 h-5" />
-                  View Full Assessment
-                </Link>
               </div>
             )}
 

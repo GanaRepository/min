@@ -256,64 +256,10 @@ export async function GET(
         : undefined,
       publicationFee: story.publicationFee || undefined,
 
-      // Assessment data - FIXED with proper null checking and correct property mapping
-      isUploadedForAssessment: story.isUploadedForAssessment || false,
-      assessmentAttempts: story.assessmentAttempts || 0,
-      assessment: story.assessment
-        ? {
-            // ✅ PRESERVE THE ENTIRE 13-FACTOR STRUCTURE (use type assertion for new fields)
-            coreLanguageSkills:
-              (story.assessment as any).coreLanguageSkills || {},
-            storytellingSkills:
-              (story.assessment as any).storytellingSkills || {},
-            creativeExpressiveSkills:
-              (story.assessment as any).creativeExpressiveSkills || {},
-            authenticityGrowth:
-              (story.assessment as any).authenticityGrowth || {},
-
-            // Metadata from new assessment system
-            assessmentVersion: (story.assessment as any).assessmentVersion,
-            assessmentDate: (story.assessment as any).assessmentDate,
-            assessmentType: (story.assessment as any).assessmentType,
-            userAge: (story.assessment as any).userAge,
-            wordCount: (story.assessment as any).wordCount,
-            userContributionCount: (story.assessment as any)
-              .userContributionCount,
-
-            // Legacy compatibility fields (for other parts of the system)
-            overallScore: story.assessment.overallScore || 0,
-            grammarScore: story.assessment.grammarScore || 0,
-            creativityScore: story.assessment.creativityScore || 0,
-            vocabularyScore: story.assessment.vocabularyScore || 0,
-            structureScore: story.assessment.structureScore || 0,
-            characterDevelopmentScore:
-              story.assessment.characterDevelopmentScore || 0,
-            plotDevelopmentScore: story.assessment.plotDevelopmentScore || 0,
-            themeScore: story.assessment.themeScore || 0,
-            dialogueScore: story.assessment.dialogueScore || 0,
-            descriptiveScore: story.assessment.descriptiveScore || 0,
-            pacingScore: story.assessment.pacingScore || 0,
-
-            // Reading level and general feedback
-            readingLevel: story.assessment.readingLevel || 'Unknown',
-            feedback: story.assessment.feedback || '',
-            strengths: story.assessment.strengths || [],
-            improvements: story.assessment.improvements || [],
-
-            // Integrity analysis
-            integrityRisk:
-              story.assessment.integrityAnalysis?.overallStatus === 'critical'
-                ? 'critical'
-                : story.assessment.integrityAnalysis?.overallStatus ===
-                    'warning'
-                  ? 'high'
-                  : story.assessment.integrityAnalysis?.overallStatus ===
-                      'caution'
-                    ? 'medium'
-                    : 'low',
-            integrityAnalysis: story.assessment.integrityAnalysis || null,
-          }
-        : null,
+  // Assessment data - return the full object as stored in MongoDB
+  isUploadedForAssessment: story.isUploadedForAssessment || false,
+  assessmentAttempts: story.assessmentAttempts || 0,
+  assessment: story.assessment ? { ...story.assessment } : null,
 
       // Competition data - FIXED
       competitionEligible: story.competitionEligible || false,

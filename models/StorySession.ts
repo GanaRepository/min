@@ -218,77 +218,10 @@ const StorySessionSchema = new Schema<IStorySession>(
       index: true,
     },
 
-    // ✅ FIXED: 13-Factor Assessment Schema
+    // ✅ FIXED: 13-Factor Assessment Schema - allow any structure
     assessment: {
-      // 13-Factor Structure
-      coreLanguageSkills: {
-        grammarSentenceClarity: { type: String },
-        vocabularyWordChoice: { type: String },
-        spellingPunctuation: { type: String },
-      },
-      storytellingSkills: {
-        plotPacing: { type: String },
-        characterDevelopment: { type: String },
-        settingWorldBuilding: { type: String },
-        dialogueExpression: { type: String },
-        themeMessage: { type: String },
-      },
-      creativeExpressiveSkills: {
-        creativityOriginality: { type: String },
-        descriptivePowerEmotionalImpact: { type: String },
-      },
-      authenticityGrowth: {
-        ageAppropriatenessAuthorship: { type: String },
-        strengthsAreasToImprove: { type: String },
-        practiceExercises: { type: String },
-      },
-
-      // Metadata
-      assessmentVersion: { type: String },
-      assessmentDate: { type: String },
-      assessmentType: { type: String },
-      userAge: { type: Number },
-      wordCount: { type: Number },
-      userContributionCount: { type: Number },
-
-      // Legacy fields for backwards compatibility
-      grammarScore: { type: Number, min: 0, max: 100 },
-      creativityScore: { type: Number, min: 0, max: 100 },
-      vocabularyScore: { type: Number, min: 0, max: 100 },
-      structureScore: { type: Number, min: 0, max: 100 },
-      characterDevelopmentScore: { type: Number, min: 0, max: 100 },
-      plotDevelopmentScore: { type: Number, min: 0, max: 100 },
-      themeScore: { type: Number, min: 0, max: 100 },
-      dialogueScore: { type: Number, min: 0, max: 100 },
-      descriptiveScore: { type: Number, min: 0, max: 100 },
-      pacingScore: { type: Number, min: 0, max: 100 },
-      overallScore: { type: Number, min: 0, max: 100 },
-      readingLevel: { type: String },
-      feedback: { type: String },
-      strengths: [{ type: String }],
-      improvements: [{ type: String }],
-      encouragement: { type: String },
-      integrityAnalysis: {
-        plagiarismResult: {
-          overallScore: { type: Number },
-          riskLevel: { type: String },
-          violationCount: { type: Number },
-          detailedAnalysis: { type: Schema.Types.Mixed },
-        },
-        aiDetectionResult: {
-          likelihood: { type: String },
-          confidence: { type: Number },
-          indicatorCount: { type: Number },
-          detailedAnalysis: { type: Schema.Types.Mixed },
-        },
-        integrityRisk: { type: String },
-        overallStatus: { type: String },
-        message: { type: String },
-      },
-      integrityStatus: {
-        status: { type: String, enum: ['PASS', 'WARNING', 'FAIL'] },
-        message: { type: String },
-      },
+      type: Schema.Types.Mixed,
+      default: {},
     },
 
     // Assessment tracking
