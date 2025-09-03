@@ -356,7 +356,7 @@ function RegisterChildContent() {
                 className="text-center mb-6 sm:mb-8"
               >
                 <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl mb-2 block bg-gradient-to-r from-green-400 via-teal-300 to-cyan-400 bg-clip-text text-transparent">
-                  Join Mintoons
+                  Join Digiverse Story
                 </h1>
 
                 <p className="text-gray-300 text-sm sm:text-base lg:text-lg">
@@ -738,7 +738,7 @@ function RegisterChildContent() {
                     <BookOpen className="text-white w-5 h-5 sm:w-6 sm:h-6" />
                   </div>
                   <h3 className="text-lg sm:text-2xl text-white mb-1 sm:mb-2">
-                    Mintoons
+                    Digiverse Story
                   </h3>
                   <p className="text-gray-300 text-xs sm:text-sm leading-relaxed">
                     &quot;Unleash Your Creative Magic&quot; - Empowering young

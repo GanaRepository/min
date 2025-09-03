@@ -8,12 +8,12 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://www.mintoons.com'),
-  title: 'Mintoons | Premier IT Staff Augmentation & Technology Services',
+  metadataBase: new URL('https://www.digiversestory.com'),
+  title: 'Digiverse Story | Premier IT Staff Augmentation & Technology Services',
   description:
-    'Mintoons offers professional IT staffing solutions, software development services, and technology consulting to help mentors innovate and achieve their digital transformation goals.',
+    'Digiverse Story offers professional IT staffing solutions, software development services, and technology consulting to help mentors innovate and achieve their digital transformation goals.',
   keywords: [
-    'Mintoons',
+    'Digiverse Story',
     'IT staffing solutions',
     'technology staffing',
     'staff augmentation',
@@ -30,15 +30,15 @@ export const metadata: Metadata = {
     'IT project solutions',
     'technology partner',
   ],
-  authors: [{ name: 'Mintoons', url: 'https://www.mintoons.com' }],
-  creator: 'Mintoons',
-  publisher: 'Mintoons',
+  authors: [{ name: 'Digiverse Story', url: 'https://www.digiversestory.com' }],
+  creator: 'Digiverse Story',
+  publisher: 'Digiverse Story',
   openGraph: {
-    title: 'Mintoons | Premier IT Staff Augmentation & Technology Services',
+    title: 'Digiverse Story | Premier IT Staff Augmentation & Technology Services',
     description:
-      'Mintoons offers professional IT staffing solutions, software development services, and technology consulting to help mentors innovate and achieve their digital transformation goals.',
-    url: 'https://www.mintoons.com',
-    siteName: 'Mintoons',
+      'Digiverse Story offers professional IT staffing solutions, software development services, and technology consulting to help mentors innovate and achieve their digital transformation goals.',
+    url: 'https://www.digiversestory.com',
+    siteName: 'Digiverse Story',
     type: 'website',
     locale: 'en_US',
     images: [
@@ -46,14 +46,14 @@ export const metadata: Metadata = {
         url: '/imag5.jpg',
         width: 1200,
         height: 630,
-        alt: 'Mintoons - Home',
+        alt: 'Digiverse Story - Home',
       },
     ],
   },
   alternates: {
-    canonical: 'https://www.mintoons.com',
+    canonical: 'https://www.digiversestory.com',
     languages: {
-      'en-US': 'https://www.mintoons.com',
+      'en-US': 'https://www.digiversestory.com',
     },
   },
   robots: {
@@ -71,7 +71,7 @@ export const metadata: Metadata = {
   category: 'Technology',
   appleWebApp: {
     capable: true,
-    title: 'Mintoons',
+    title: 'Digiverse Story',
     statusBarStyle: 'black-translucent',
   },
   formatDetection: {
@@ -85,7 +85,7 @@ export const metadata: Metadata = {
   },
   appLinks: {
     web: {
-      url: 'https://www.mintoons.com',
+      url: 'https://www.digiversestory.com',
       should_fallback: true,
     },
   },

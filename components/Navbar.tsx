@@ -10,7 +10,7 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { LogOut, User, Building } from 'lucide-react';
 import Image from 'next/image';
-import MintoonsLogo from './MintoonsLogo';
+
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -107,12 +107,12 @@ const Navbar = () => {
               href="/"
               className="mt-3 flex items-center space-x-3 group transition-all duration-300 hover:scale-105"
             >
-              <span className="sr-only">Mintoons</span>
+              <span className="sr-only">Digiverse Story</span>
               <Image
-                src="/min_logo3.png"
-                alt="Mintoons Logo"
-                width={150}
-                height={150}
+                src="/min_logo4.png"
+                alt="Digiverse Story Logo"
+                width={250}
+                height={250}
                 priority
               />
             </Link>

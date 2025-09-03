@@ -99,7 +99,7 @@ const NotFound = () => {
               <p className="text-white/80 text-base sm:text-lg md:text-xl mb-8 leading-relaxed">
                 Oops! It seems like you&apos;ve drifted into uncharted
                 territory. The page you&apos;re looking for doesn&apos;t exist
-                in the Mintoons universe.
+                in the Digiverse Story universe.
               </p>
             </motion.div>
 
@@ -117,7 +117,7 @@ const NotFound = () => {
                 <Link href="/">
                   <button className="w-full bg-white hover:bg-gray-100 text-black py-3 sm:py-4 px-4 sm:px-6 rounded-xl  transition-all duration-300 backdrop-blur-sm border border-white/20 flex items-center justify-center text-base sm:text-lg">
                     <Home className="h-5 w-5 mr-2" />
-                    Return to Mintoons Home
+                    Return to Digiverse Story Home
                   </button>
                 </Link>
               </motion.div>
@@ -201,7 +201,7 @@ const NotFound = () => {
               &quot;Not all who wander are lost, but this page certainly
               is!&quot;
             </p>
-            <p className="text-white/60 text-xs mt-2">- Mintoons Navigator</p>
+            <p className="text-white/60 text-xs mt-2">- Digiverse Story Navigator</p>
           </motion.div>
         </motion.div>
       </motion.div>

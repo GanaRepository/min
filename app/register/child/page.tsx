@@ -7,12 +7,12 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://www.mintoons.com'),
-  title: 'Child Registration | Mintoons - Join the Creative Community',
+  metadataBase: new URL('https://www.digiversestory.com'),
+  title: 'Child Registration | Digiverse Story - Join the Creative Community',
   description:
-    'Create your young writer profile with Mintoons to start writing amazing stories, connect with mentors, and unleash your creative potential.',
+    'Create your young writer profile with Digiverse Story to start writing amazing stories, connect with mentors, and unleash your creative potential.',
   keywords: [
-    'Mintoons',
+    'Digiverse Story',
     'child registration',
     'young writer signup',
     'creative writing for kids',
@@ -29,15 +29,15 @@ export const metadata: Metadata = {
     'kids creativity',
     'young author',
   ],
-  authors: [{ name: 'Mintoons', url: 'https://www.mintoons.com' }],
-  creator: 'Mintoons',
-  publisher: 'Mintoons',
+  authors: [{ name: 'Digiverse Story', url: 'https://www.digiversestory.com' }],
+  creator: 'Digiverse Story',
+  publisher: 'Digiverse Story',
   openGraph: {
-    title: 'Child Registration | Mintoons - Join the Creative Community',
+    title: 'Child Registration | Digiverse Story - Join the Creative Community',
     description:
-      'Create your young writer profile with Mintoons to start writing amazing stories, connect with mentors, and unleash your creative potential.',
-    url: 'https://www.mintoons.com/register/child',
-    siteName: 'Mintoons',
+      'Create your young writer profile with Digiverse Story to start writing amazing stories, connect with mentors, and unleash your creative potential.',
+    url: 'https://www.digiversestory.com/register/child',
+    siteName: 'Digiverse Story',
     type: 'website',
     locale: 'en_US',
     images: [
@@ -45,14 +45,14 @@ export const metadata: Metadata = {
         url: '/child-register-og.jpg', // Update with your actual image path
         width: 1200,
         height: 630,
-        alt: 'Mintoons - Child Registration',
+        alt: 'Digiverse Story - Child Registration',
       },
     ],
   },
   alternates: {
-    canonical: 'https://www.mintoons.com/register/child',
+    canonical: 'https://www.digiversestory.com/register/child',
     languages: {
-      'en-US': 'https://www.mintoons.com/register/child',
+      'en-US': 'https://www.digiversestory.com/register/child',
     },
   },
   robots: {
@@ -70,7 +70,7 @@ export const metadata: Metadata = {
   category: 'Technology',
   appleWebApp: {
     capable: true,
-    title: 'Mintoons',
+    title: 'Digiverse Story',
     statusBarStyle: 'black-translucent',
   },
   formatDetection: {
@@ -84,7 +84,7 @@ export const metadata: Metadata = {
   },
   appLinks: {
     web: {
-      url: 'https://www.mintoons.com',
+      url: 'https://www.digiversestory.com',
       should_fallback: true,
     },
   },

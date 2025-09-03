@@ -13,15 +13,15 @@ async function generateRssFeed(): Promise<string> {
   // TODO: Replace with actual content fetching logic
   const items: FeedItem[] = [
     {
-      title: 'Welcome to Mintoons!',
-      link: 'https://www.mintoons.com',
+      title: 'Welcome to Digiverse Story!',
+      link: 'https://www.digiversestory.com',
       description:
-        'Unleash your creativity with Mintoons – the AI-powered creative writing platform for kids, mentors, and families.',
+        'Unleash your creativity with Digiverse Story – the AI-powered creative writing platform for kids, mentors, and families.',
       pubDate: new Date().toUTCString(),
     },
     {
-      title: 'Mintoons Launches Story Creation Tools',
-      link: 'https://www.mintoons.com',
+      title: 'Digiverse Story Launches Story Creation Tools',
+      link: 'https://www.digiversestory.com',
       description:
         'Discover our new story builder, AI mentor feedback, and a safe, fun community for young writers.',
       pubDate: new Date(Date.now() - 86400000).toUTCString(), // 24 hours ago
@@ -35,16 +35,16 @@ async function generateRssFeed(): Promise<string> {
   xmlns:content="http://purl.org/rss/1.0/modules/content/"
   xmlns:dc="http://purl.org/dc/elements/1.1/">
   <channel>
-    <title>Mintoons - Creative Writing for Kids</title>
-    <link>https://www.mintoons.com</link>
-    <description>AI-powered creative writing platform for kids, mentors, and families. Write, learn, and grow with Mintoons!</description>
-    <atom:link href="https://www.mintoons.com/feed.xml" rel="self" type="application/rss+xml" />
+    <title>Digiverse Story - Creative Writing for Kids</title>
+    <link>https://www.digiversestory.com</link>
+    <description>AI-powered creative writing platform for kids, mentors, and families. Write, learn, and grow with Digiverse Story!</description>
+    <atom:link href="https://www.digiversestory.com/feed.xml" rel="self" type="application/rss+xml" />
     <language>en-us</language>
     <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
-    <generator>Mintoons RSS Generator</generator>
+    <generator>Digiverse Story RSS Generator</generator>
     <contact>
       <address>Dallas, TX, USA</address>
-      <email>support@mintoons.com</email>
+      <email>support@Digiverse Story.com</email>
     </contact>
     
     ${items

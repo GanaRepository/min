@@ -45,7 +45,7 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ['/'],
       },
     ],
-    sitemap: 'https://www.mintoons.com/sitemap.xml',
-    host: 'https://www.mintoons.com',
+    sitemap: 'https://www.digiversestory.com/sitemap.xml',
+    host: 'https://www.digiversestory.com',
   };
 }

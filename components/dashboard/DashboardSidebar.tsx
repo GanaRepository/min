@@ -85,7 +85,7 @@ export default function DashboardSidebar({
             <div className="w-8 h-8 bg-gradient-to-br from-green-400 to-blue-500  flex items-center justify-center">
               <Sparkles className="w-5 h-5 text-white" />
             </div>
-            <span className="text-xl  text-white">Mintoons</span>
+            <span className="text-xl  text-white">Digiverse Story</span>
           </div>
           <button
             onClick={() => setOpen(false)}

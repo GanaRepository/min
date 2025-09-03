@@ -605,7 +605,7 @@ export default function Home() {
                       transition={{ delay: 1.5 }}
                     >
                       <h3 className="text-lg sm:text-xl text-white mb-2">
-                        Mintoons
+                        Digiverse Story
                       </h3>
                       <p className="text-green-300 text-xs sm:text-sm ">
                         Creative Writing Education Platform
@@ -636,39 +636,12 @@ export default function Home() {
 
                   <div className="relative z-10 p-6 sm:p-8 h-full flex flex-col">
                     {/* Logo Circle with enhanced animation */}
-                    <motion.div
-                      className="w-14 sm:w-16 h-14 sm:h-16 bg-gradient-to-r from-green-500 to-teal-600 rounded-full flex items-center justify-center mb-4 sm:mb-6 mx-auto shadow-lg relative overflow-hidden"
-                      animate={{
-                        rotate: [0, 360],
-                        scale: [1, 1.1, 1],
-                      }}
-                      transition={{
-                        duration: 8,
-                        repeat: Infinity,
-                        ease: 'linear',
-                      }}
-                    >
-                      {/* Inner glow */}
-                      <motion.div
-                        className="absolute inset-0 bg-white/20 rounded-full"
-                        animate={{
-                          scale: [0.8, 1.2, 0.8],
-                          opacity: [0.5, 0, 0.5],
-                        }}
-                        transition={{
-                          duration: 2,
-                          repeat: Infinity,
-                        }}
-                      />
-                      <span className="text-white text-lg sm:text-xl relative z-10">
-                        M
-                      </span>
-                    </motion.div>
+                
 
                     {/* Card Content */}
-                    <div className="text-center space-y-2 sm:space-y-4 flex-grow">
+                    <div className="text-center space-y-2 sm:space-y-4 flex-grow mt-4">
                       <h3 className="text-lg sm:text-xl text-white mb-2">
-                        Mintoons
+                        Digiverse Story
                       </h3>
                       <p className="text-green-300 text-xs sm:text-sm ">
                         Creative Writing Education Platform
@@ -678,7 +651,7 @@ export default function Home() {
                         feedback to improve your creative writing skills.
                       </p>
                       <p className="text-gray-300 text-xs sm:text-sm leading-relaxed">
-                        3 free stories + 9 free assessments monthly. Join
+                        3 free stories + 9 free ai assessments monthly. Join
                         thousands of young writers worldwide!
                       </p>
 
@@ -689,8 +662,8 @@ export default function Home() {
                         animate={{ opacity: 1 }}
                         transition={{ delay: 1.5 }}
                       >
-                        3 free stories + 9 free assessments monthly. Join
-                        thousands of young writers worldwide!
+                        3 free monthly story uploads for monthly competitions. Join
+                        thousands of young writers and share your best stories in community!
                       </motion.p>
 
                       {/* Mini Feature Icons */}
@@ -829,7 +802,7 @@ export default function Home() {
               </span>
             </h2>
             <p className="text-lg sm:text-xl text-gray-300 max-w-3xl mx-auto">
-              See what incredible stories children are creating with MINTOONS
+              See what incredible stories children are creating with Digiverse Story
             </p>
           </motion.div>
 
@@ -1145,7 +1118,7 @@ export default function Home() {
             <h2 className="text-2xl sm:text-3xl lg:text-4xl text-white pb-6">
               Why Kids Love{' '}
               <span className="bg-gradient-to-r from-green-400 to-teal-400 bg-clip-text text-transparent">
-                Mintoons
+                Digiverse Story
               </span>
             </h2>
           </motion.div>

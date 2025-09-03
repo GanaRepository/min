@@ -122,7 +122,7 @@ export async function POST(request: Request) {
       {
         success: true,
         message:
-          'Welcome to Mintoons! Your magical storytelling journey begins now...',
+          'Welcome to Digiverse Story! Your magical storytelling journey begins now...',
         user: {
           id: newUser._id,
           firstName: newUser.firstName,

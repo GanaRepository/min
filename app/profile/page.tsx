@@ -40,7 +40,7 @@ export default function ProfilePage() {
   if (status === 'loading' || !mounted) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-900/90 via-gray-800/90 to-blue-900/90 flex items-center justify-center">
-        <div className="text-white">Loading your Mintoons profile...</div>
+        <div className="text-white">Loading your Digiverse Story profile...</div>
       </div>
     );
   }
@@ -112,7 +112,7 @@ export default function ProfilePage() {
                     {`${session.user.firstName || ''} ${session.user.lastName || ''}`}
                   </h1>
                   <p className="text-white/80 text-base sm:text-lg mb-2 sm:mb-3 capitalize">
-                    {session.user.role} • Mintoons Member
+                    {session.user.role} • Digiverse Story Member
                   </p>
                   <div className="flex items-center justify-center md:justify-start">
                     <Mail className="h-4 w-4 text-white/60 mr-2" />
@@ -299,7 +299,7 @@ export default function ProfilePage() {
                           Get Support
                         </h3>
                         <p className="text-xs sm:text-sm text-white/60">
-                          Connect with our Mintoons team
+                          Connect with our Digiverse Story team
                         </p>
                       </div>
                     </Link>

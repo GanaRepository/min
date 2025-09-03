@@ -65,7 +65,7 @@ export async function POST(request: Request) {
       );
     }
 
-    // For Mintoons, we only support freestyle now
+    // For Digiverse Story, we only support freestyle now
     if (sessionType !== 'freestyle') {
       return NextResponse.json(
         { error: 'Only freestyle story writing is currently supported.' },
@@ -122,7 +122,7 @@ export async function POST(request: Request) {
       status: 'active',
 
       // Story configuration
-      maxApiCalls: 7, // 7 turns total for Mintoons
+      maxApiCalls: 7, // 7 turns total for Digiverse Story
       apiCallsUsed: 0,
       totalWords: 0,
       childWords: 0,

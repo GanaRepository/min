@@ -278,7 +278,7 @@ function ChildLoginContent() {
                         {[
                           'WELCOME',
                           'TO',
-                          'MINTOONS',
+                          'Digiverse Story',
                           'UNLEASH',
                           'YOUR',
                           'CREATIVE',
@@ -315,7 +315,7 @@ function ChildLoginContent() {
                 className="text-white/90 mb-4"
               >
                 <p className="text-sm leading-relaxed mb-3">
-                  &quot;Mintoons helps me write the most amazing stories! The AI
+                  &quot;Digiverse Story helps me write the most amazing stories! The AI
                   is like having a magical writing friend who gives me cool
                   ideas.&quot;
                 </p>
@@ -368,7 +368,7 @@ function ChildLoginContent() {
                   Welcome back to
                 </h1>
                 <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl  text-white/80 mb-4 italic">
-                  Mintoons
+                  Digiverse Story
                 </h2>
                 <p className="text-white/60 text-xs sm:text-sm">
                   Unleash your creative magic and write amazing stories with AI

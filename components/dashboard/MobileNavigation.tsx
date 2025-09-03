@@ -28,7 +28,7 @@ export default function MobileNavigation({
             <div className="w-8 h-8 bg-gradient-to-br from-green-400 to-blue-500 rounded-lg flex items-center justify-center">
               <Sparkles className="w-5 h-5 text-white" />
             </div>
-            <span className="text-lg  text-white">Mintoons</span>
+            <span className="text-lg  text-white">Digiverse Story</span>
           </div>
 
           <div className="flex items-center space-x-2">

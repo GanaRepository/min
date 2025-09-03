@@ -7,12 +7,12 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://www.mintoons.com'),
-  title: 'Mentor Login | Mintoons - Access Your Dashboard',
+  metadataBase: new URL('https://www.digiversestory.com'),
+  title: 'Mentor Login | Digiverse Story - Access Your Dashboard',
   description:
-    'Access your Mintoons mentor dashboard to guide young writers, provide feedback, and track student progress in creative writing.',
+    'Access your Digiverse Story mentor dashboard to guide young writers, provide feedback, and track student progress in creative writing.',
   keywords: [
-    'Mintoons',
+    'Digiverse Story',
     'mentor login',
     'teacher portal',
     'mentor dashboard',
@@ -29,15 +29,15 @@ export const metadata: Metadata = {
     'writing education',
     'mentor access',
   ],
-  authors: [{ name: 'Mintoons', url: 'https://www.mintoons.com' }],
-  creator: 'Mintoons',
-  publisher: 'Mintoons',
+  authors: [{ name: 'Digiverse Story', url: 'https://www.digiversestory.com' }],
+  creator: 'Digiverse Story',
+  publisher: 'Digiverse Story',
   openGraph: {
-    title: 'Mentor Login | Mintoons - Access Your Dashboard',
+    title: 'Mentor Login | Digiverse Story - Access Your Dashboard',
     description:
-      'Access your Mintoons mentor dashboard to guide young writers, provide feedback, and track student progress in creative writing.',
-    url: 'https://www.mintoons.com/login/mentor',
-    siteName: 'Mintoons',
+      'Access your Digiverse Story mentor dashboard to guide young writers, provide feedback, and track student progress in creative writing.',
+    url: 'https://www.digiversestory.com/login/mentor',
+    siteName: 'Digiverse Story',
     type: 'website',
     locale: 'en_US',
     images: [
@@ -45,14 +45,14 @@ export const metadata: Metadata = {
         url: '/mentor-login-og.jpg', // Update with your actual image path
         width: 1200,
         height: 630,
-        alt: 'Mintoons - Mentor Login',
+        alt: 'Digiverse Story - Mentor Login',
       },
     ],
   },
   alternates: {
-    canonical: 'https://www.mintoons.com/login/mentor',
+    canonical: 'https://www.digiversestory.com/login/mentor',
     languages: {
-      'en-US': 'https://www.mintoons.com/login/mentor',
+      'en-US': 'https://www.digiversestory.com/login/mentor',
     },
   },
   robots: {
@@ -70,7 +70,7 @@ export const metadata: Metadata = {
   category: 'Technology',
   appleWebApp: {
     capable: true,
-    title: 'Mintoons',
+    title: 'Digiverse Story',
     statusBarStyle: 'black-translucent',
   },
   formatDetection: {
@@ -84,7 +84,7 @@ export const metadata: Metadata = {
   },
   appLinks: {
     web: {
-      url: 'https://www.mintoons.com',
+      url: 'https://www.digiversestory.com',
       should_fallback: true,
     },
   },

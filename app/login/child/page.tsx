@@ -7,12 +7,12 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://www.mintoons.com'),
-  title: 'Candidate Login | Mintoons - Access Your Profile',
+  metadataBase: new URL('https://www.digiversestory.com'),
+  title: 'Candidate Login | Digiverse Story - Access Your Profile',
   description:
-    'Access your Mintoons candidate profile to apply for tech jobs, track applications, and connect with top employers in the technology industry.',
+    'Access your Digiverse Story candidate profile to apply for tech jobs, track applications, and connect with top employers in the technology industry.',
   keywords: [
-    'Mintoons',
+    'Digiverse Story',
     'candidate login',
     'job seeker portal',
     'tech jobs access',
@@ -29,15 +29,15 @@ export const metadata: Metadata = {
     'tech recruitment',
     'IT staffing',
   ],
-  authors: [{ name: 'Mintoons', url: 'https://www.mintoons.com' }],
-  creator: 'Mintoons',
-  publisher: 'Mintoons',
+  authors: [{ name: 'Digiverse Story', url: 'https://www.digiversestory.com' }],
+  creator: 'Digiverse Story',
+  publisher: 'Digiverse Story',
   openGraph: {
-    title: 'Candidate Login | Mintoons - Access Your Profile',
+    title: 'Candidate Login | Digiverse Story - Access Your Profile',
     description:
-      'Access your Mintoons candidate profile to apply for tech jobs, track applications, and connect with top employers in the technology industry.',
-    url: 'https://www.mintoons.com/login/candidate',
-    siteName: 'Mintoons',
+      'Access your Digiverse Story candidate profile to apply for tech jobs, track applications, and connect with top employers in the technology industry.',
+    url: 'https://www.digiversestory.com/login/candidate',
+    siteName: 'Digiverse Story',
     type: 'website',
     locale: 'en_US',
     images: [
@@ -45,14 +45,14 @@ export const metadata: Metadata = {
         url: '/candidate-login-og.jpg', // Update with your actual image path
         width: 1200,
         height: 630,
-        alt: 'Mintoons - Candidate Login',
+        alt: 'Digiverse Story - Candidate Login',
       },
     ],
   },
   alternates: {
-    canonical: 'https://www.mintoons.com/login/candidate',
+    canonical: 'https://www.digiversestory.com/login/candidate',
     languages: {
-      'en-US': 'https://www.mintoons.com/login/candidate',
+      'en-US': 'https://www.digiversestory.com/login/candidate',
     },
   },
   robots: {
@@ -70,7 +70,7 @@ export const metadata: Metadata = {
   category: 'Technology',
   appleWebApp: {
     capable: true,
-    title: 'Mintoons',
+    title: 'Digiverse Story',
     statusBarStyle: 'black-translucent',
   },
   formatDetection: {
@@ -84,7 +84,7 @@ export const metadata: Metadata = {
   },
   appLinks: {
     web: {
-      url: 'https://www.mintoons.com',
+      url: 'https://www.digiversestory.com',
       should_fallback: true,
     },
   },

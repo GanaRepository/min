@@ -1,7 +1,7 @@
 module.exports = {
   apps: [
     {
-      name: 'Mintoons',
+      name: 'Digiverse Story',
       script: 'npm start',
       port: 3000,
     },

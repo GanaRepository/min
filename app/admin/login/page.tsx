@@ -286,7 +286,7 @@ function AdminLogin() {
               variant="outline"
               className="mb-6 bg-white/10 border-white/20 text-white hover:bg-gray-300"
             >
-              ← Back to Mintoons
+              ← Back to Digiverse Story
             </Button>
           </Link>
 
@@ -304,7 +304,7 @@ function AdminLogin() {
                 Command Center
               </h2>
               <p className="text-white/60 text-sm">
-                Access Mintoons administration panel
+                Access Digiverse Story administration panel
               </p>
             </motion.div>
           </div>
@@ -344,7 +344,7 @@ function AdminLogin() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value.toLowerCase())}
                   className="w-full pl-10 pr-4 py-3 bg-white/10 rounded-lg border border-white/20 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all cursor-text"
-                  placeholder="admin@mintoons.com"
+                  placeholder="admin@Digiverse Story.com"
                   required
                 />
               </div>
@@ -419,7 +419,7 @@ function AdminLogin() {
             className="text-center mt-8"
           >
             <p className="text-white/40 text-sm">
-              Mintoons Administration Panel
+              Digiverse Story Administration Panel
             </p>
             <div className="flex items-center justify-center space-x-2 mt-2">
               <Shield className="w-4 h-4 text-green-400" />

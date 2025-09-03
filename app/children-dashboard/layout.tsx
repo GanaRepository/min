@@ -2,7 +2,7 @@
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 
 export const metadata = {
-  title: 'Children Dashboard - Mintoons',
+  title: 'Children Dashboard - Digiverse Story',
   description: 'Creative writing dashboard for young storytellers',
 };
 

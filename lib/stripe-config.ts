@@ -1,4 +1,4 @@
-// lib/stripe-config.ts - UPDATED FOR MINTOONS REQUIREMENTS
+// lib/stripe-config.ts - UPDATED FOR Digiverse Story REQUIREMENTS
 import Stripe from 'stripe';
 
 // Validate environment variables
@@ -34,8 +34,8 @@ export function verifyWebhookSignature(
   }
 }
 
-// MINTOONS PRICING CONFIGURATION
-export const MINTOONS_PRODUCTS = {
+// Digiverse Story PRICING CONFIGURATION
+export const Digiverse Story_PRODUCTS = {
   STORY_PACK: {
     id: 'story_pack',
     name: 'Story Pack',
@@ -93,7 +93,7 @@ export async function createStoryPackCheckout(
     customer_email: undefined, // Will be filled in checkout
     line_items: [
       {
-        price: MINTOONS_PRODUCTS.STORY_PACK.stripePriceId,
+        price: Digiverse Story_PRODUCTS.STORY_PACK.stripePriceId,
         quantity: 1,
       },
     ],
@@ -101,11 +101,11 @@ export async function createStoryPackCheckout(
       userId,
       productType: 'story_pack',
       storiesAdded:
-        MINTOONS_PRODUCTS.STORY_PACK.benefits.storiesAdded.toString(),
+        Digiverse Story_PRODUCTS.STORY_PACK.benefits.storiesAdded.toString(),
       assessmentsAdded:
-        MINTOONS_PRODUCTS.STORY_PACK.benefits.assessmentsAdded.toString(),
+        Digiverse Story_PRODUCTS.STORY_PACK.benefits.assessmentsAdded.toString(),
       totalAssessmentAttemptsAdded:
-        MINTOONS_PRODUCTS.STORY_PACK.benefits.totalAssessmentAttemptsAdded.toString(),
+        Digiverse Story_PRODUCTS.STORY_PACK.benefits.totalAssessmentAttemptsAdded.toString(),
     },
     success_url: successUrl,
     cancel_url: cancelUrl,
@@ -125,7 +125,7 @@ export async function createStoryPurchaseCheckout(
     customer_email: undefined,
     line_items: [
       {
-        price: MINTOONS_PRODUCTS.STORY_PURCHASE.stripePriceId,
+        price: Digiverse Story_PRODUCTS.STORY_PURCHASE.stripePriceId,
         quantity: 1,
       },
     ],
@@ -162,15 +162,15 @@ export async function processSuccessfulPayment(
       $push: {
         purchaseHistory: {
           type: 'story_pack',
-          amount: MINTOONS_PRODUCTS.STORY_PACK.price,
+          amount: Digiverse Story_PRODUCTS.STORY_PACK.price,
           purchaseDate: new Date(),
           stripeSessionId: session.id,
           metadata: {
-            storiesAdded: MINTOONS_PRODUCTS.STORY_PACK.benefits.storiesAdded,
+            storiesAdded: Digiverse Story_PRODUCTS.STORY_PACK.benefits.storiesAdded,
             assessmentsAdded:
-              MINTOONS_PRODUCTS.STORY_PACK.benefits.assessmentsAdded,
+              Digiverse Story_PRODUCTS.STORY_PACK.benefits.assessmentsAdded,
             totalAssessmentAttemptsAdded:
-              MINTOONS_PRODUCTS.STORY_PACK.benefits
+              Digiverse Story_PRODUCTS.STORY_PACK.benefits
                 .totalAssessmentAttemptsAdded,
           },
         },
@@ -192,7 +192,7 @@ export async function processSuccessfulPayment(
         $push: {
           purchaseHistory: {
             type: 'story_purchase',
-            amount: MINTOONS_PRODUCTS.STORY_PURCHASE.price,
+            amount: Digiverse Story_PRODUCTS.STORY_PURCHASE.price,
             purchaseDate: new Date(),
             stripeSessionId: session.id,
             storyId,
@@ -216,4 +216,4 @@ export function formatPrice(price: number, currency: string = 'USD'): string {
   }).format(price);
 }
 
-console.log('✅ Stripe initialized successfully with Mintoons configuration');
+console.log('✅ Stripe initialized successfully with Digiverse Story configuration');

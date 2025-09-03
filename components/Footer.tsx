@@ -11,7 +11,6 @@ import {
   FiArrowUp,
 } from 'react-icons/fi';
 import { FaTwitter, FaLinkedin, FaInstagram } from 'react-icons/fa';
-import MintoonsLogo from './MintoonsLogo';
 
 interface FooterNavItemProps {
   href: string;
@@ -54,8 +53,8 @@ const Footer: React.FC = () => {
                 className="mt-12  flex items-center space-x-3 group transition-all duration-300 hover:scale-105"
               >
                 <Image
-                  src="/min_logo3.png"
-                  alt="Mintoons Logo"
+                  src="/min_logo4.png"
+                  alt="Digiverse Story Logo"
                   width={250}
                   height={250}
                   priority
@@ -66,7 +65,7 @@ const Footer: React.FC = () => {
               Unleashing Creative Magic Through AI-Powered Storytelling
             </p>
             <p className="text-xs sm:text-sm text-emerald-200 mb-8 sm:mb-16">
-              Mintoons is the leading creative writing platform for children,
+              Digiverse Story is the leading creative writing platform for children,
               empowering young writers to create amazing stories with AI
               assistance, expert mentorship, and unlimited imagination.
             </p>
@@ -77,21 +76,21 @@ const Footer: React.FC = () => {
               </h3>
               <div className="flex gap-3 sm:gap-4">
                 <Link
-                  href="https://twitter.com/mintoons"
+                  href="https://twitter.com/Digiverse Story"
                   className="w-10 h-10  bg-emerald-500/20 flex items-center justify-center hover:bg-emerald-500/30 transition-colors shadow-sm"
                   aria-label="Twitter"
                 >
                   <FaTwitter className="h-5 w-5 text-emerald-300" />
                 </Link>
                 <Link
-                  href="https://www.instagram.com/mintoons_official/"
+                  href="https://www.instagram.com/Digiverse Story_official/"
                   className="w-10 h-10  bg-emerald-500/20 flex items-center justify-center hover:bg-emerald-500/30 transition-colors shadow-sm"
                   aria-label="Instagram"
                 >
                   <FaInstagram className="h-5 w-5 text-emerald-300" />
                 </Link>
                 <Link
-                  href="https://linkedin.com/company/mintoons"
+                  href="https://linkedin.com/company/Digiverse Story"
                   className="w-10 h-10  bg-emerald-500/20 flex items-center justify-center hover:bg-emerald-500/30 transition-colors shadow-sm"
                   aria-label="LinkedIn"
                 >
@@ -218,10 +217,10 @@ const Footer: React.FC = () => {
                   <div className="flex items-center text-xs sm:text-sm">
                     <FiMail className="h-3 w-3 sm:h-4 sm:w-4 mr-2 text-emerald-300 flex-shrink-0" />
                     <Link
-                      href="mailto:support@mintoons.com"
+                      href="mailto:support@Digiverse Story.com"
                       className="hover:text-emerald-100 transition-colors"
                     >
-                      support@mintoons.com
+                      support@Digiverse Story.com
                     </Link>
                   </div>
                 </div>
@@ -268,10 +267,10 @@ const Footer: React.FC = () => {
                   <div className="flex items-center text-xs sm:text-sm">
                     <FiMail className="h-3 w-3 sm:h-4 sm:w-4 mr-2 text-emerald-300 flex-shrink-0" />
                     <Link
-                      href="mailto:support@mintoons.com"
+                      href="mailto:support@Digiverse Story.com"
                       className="hover:text-emerald-100 transition-colors"
                     >
-                      support@mintoons.com
+                      support@Digiverse Story.com
                     </Link>
                   </div>
                 </div>
@@ -285,7 +284,7 @@ const Footer: React.FC = () => {
 
         <div className="text-emerald-200 flex flex-col md:flex-row justify-between items-center gap-2 sm:gap-0">
           <p className="text-xs sm:text-sm text-center md:text-left">
-            © {new Date().getFullYear()} Mintoons. All rights reserved. Made
+            © {new Date().getFullYear()} Digiverse Story. All rights reserved. Made
             with ❤️ for young storytellers.
           </p>
           <div className="mt-2 sm:mt-4 md:mt-0 flex flex-wrap gap-4 sm:gap-6 justify-center md:justify-end">

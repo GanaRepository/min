@@ -318,7 +318,7 @@ function ResetPasswordContent() {
                 work stays safe!&quot;
               </p>
               <p className="text-[10px] sm:text-xs text-white/60">
-                - Mintoons Security Team
+                - Digiverse Story Security Team
               </p>
             </motion.div>
           </div>

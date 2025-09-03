@@ -29,7 +29,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth">
       <head>
-        <title>Mintoons</title>
+        <title>Digiverse Story</title>
         <link rel="icon" href="/favicon2.ico" type="image/png" />
       </head>
       <body

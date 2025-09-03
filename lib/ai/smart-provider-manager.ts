@@ -389,7 +389,7 @@ This is an automated alert from the AI System Monitor.
     const transporter = this.createEmailTransporter();
 
     const mailOptions = {
-      from: `"Mintoons AI System" <${process.env.EMAIL_USER}>`,
+      from: `"Digiverse Story AI System" <${process.env.EMAIL_USER}>`,
       to:
         process.env.ADMIN_EMAIL ||
         process.env.EMAIL_USER ||

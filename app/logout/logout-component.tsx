@@ -138,10 +138,10 @@ export default function LogoutPage() {
               </h1>
               <p className="text-white/80 text-base sm:text-lg mb-4 sm:mb-8">
                 {isLoading
-                  ? "We're safely logging you out of Mintoons..."
+                  ? "We're safely logging you out of Digiverse Story..."
                   : error
                     ? "There was an issue, but we're redirecting you safely"
-                    : 'You have been successfully logged out from Mintoons'}
+                    : 'You have been successfully logged out from Digiverse Story'}
               </p>
             </motion.div>
 
@@ -191,7 +191,7 @@ export default function LogoutPage() {
               transition={{ duration: 0.6, delay: 0.8 }}
               className="text-white/60 text-xs sm:text-sm mt-4 sm:mt-6"
             >
-              Thank you for using Mintoons. Redirecting to homepage...
+              Thank you for using Digiverse Story. Redirecting to homepage...
             </motion.p>
           </div>
         </motion.div>

@@ -1,4 +1,4 @@
-// lib/mailer.ts - PROFESSIONAL PREMIUM MINTOONS MAILER
+// lib/mailer.ts - PROFESSIONAL PREMIUM Digiverse Story MAILER
 import { UserRole } from '@/types/auth';
 import nodemailer from 'nodemailer';
 import mongoose from 'mongoose';
@@ -32,7 +32,7 @@ const getEmailHeader = () => `
               </div>
             </td>
             <td style="vertical-align: middle; text-align: left;">
-              <h1 style="margin: 0 0 5px 0; font-size: 32px; font-weight: 700; background: linear-gradient(45deg, #667eea, #764ba2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; color: #667eea; font-family: 'Segoe UI', Arial, sans-serif; letter-spacing: -0.5px;">MINTOONS</h1>
+              <h1 style="margin: 0 0 5px 0; font-size: 32px; font-weight: 700; background: linear-gradient(45deg, #667eea, #764ba2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; color: #667eea; font-family: 'Segoe UI', Arial, sans-serif; letter-spacing: -0.5px;">Digiverse Story</h1>
               <p style="margin: 0; font-size: 14px; color: #64748b; font-weight: 500; line-height: 1.2;">AI-Powered Creative Writing Platform</p>
             </td>
           </tr>
@@ -60,7 +60,7 @@ const getEmailFooter = () => `
         </table>
         <div style="border-top: 1px solid #e2e8f0; padding-top: 25px;">
           <p style="margin: 0; font-size: 12px; color: #64748b; line-height: 1.6;">
-            © ${new Date().getFullYear()} Mintoons. All rights reserved.<br/>
+            © ${new Date().getFullYear()} Digiverse Story. All rights reserved.<br/>
             Empowering young writers with AI-powered creativity tools.
           </p>
         </div>
@@ -79,9 +79,9 @@ export const sendChildRegistrationEmail = async (
 
   // USER EMAIL - Premium welcome with upgrade incentives
   const userMailOptions = {
-    from: `"Mintoons Platform" <${process.env.EMAIL_USER}>`,
+    from: `"Digiverse Story Platform" <${process.env.EMAIL_USER}>`,
     to: email,
-    subject: '🎉 Welcome to Mintoons - Your Premium Writing Journey Begins!',
+    subject: '🎉 Welcome to Digiverse Story - Your Premium Writing Journey Begins!',
     html: `
         <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; max-width: 650px; margin: 0 auto; background: #ffffff; border-radius: 20px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.1); font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;">
           <tr>
@@ -248,7 +248,7 @@ export const sendChildRegistrationEmail = async (
 
   // ADMIN EMAIL - Professional notification
   const adminMailOptions = {
-    from: `"Mintoons Platform" <${process.env.EMAIL_USER}>`,
+    from: `"Digiverse Story Platform" <${process.env.EMAIL_USER}>`,
     to: process.env.ADMIN_EMAIL || process.env.EMAIL_USER,
     subject: `👤 New User Registration - ${firstName}`,
     html: `
@@ -308,9 +308,9 @@ export const sendPasswordResetEmail = async (
   const transporter = createTransporter();
 
   const userMailOptions = {
-    from: `"Mintoons Security" <${process.env.EMAIL_USER}>`,
+    from: `"Digiverse Story Security" <${process.env.EMAIL_USER}>`,
     to: email,
-    subject: '🔐 Reset Your Mintoons Password',
+    subject: '🔐 Reset Your Digiverse Story Password',
     html: `
         <div style="font-family: 'Segoe UI', sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 20px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.1);">
           ${getEmailHeader()}
@@ -375,9 +375,9 @@ export const sendContactFormConfirmationEmail = async (
   const transporter = createTransporter();
 
   const userMailOptions = {
-    from: `"Mintoons Support" <${process.env.EMAIL_USER}>`,
+    from: `"Digiverse Story Support" <${process.env.EMAIL_USER}>`,
     to: email,
-    subject: '✅ We Received Your Message - Mintoons Support',
+    subject: '✅ We Received Your Message - Digiverse Story Support',
     html: `
         <div style="font-family: 'Segoe UI', sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 20px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.1);">
           ${getEmailHeader()}
@@ -408,7 +408,7 @@ export const sendContactFormConfirmationEmail = async (
             
             <div style="text-align: center;">
               <a href="${process.env.NEXTAUTH_URL}" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 15px 30px; text-decoration: none; font-size: 16px; font-weight: 600; border-radius: 50px; display: inline-block; box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);">
-                🏠 Back to Mintoons
+                🏠 Back to Digiverse Story
               </a>
             </div>
           </div>
@@ -451,7 +451,7 @@ export const sendMonthlyResetNotification = async (): Promise<number> => {
 
     for (const child of children) {
       const mailOptions = {
-        from: `"Mintoons Platform" <${process.env.EMAIL_USER}>`,
+        from: `"Digiverse Story Platform" <${process.env.EMAIL_USER}>`,
         to: child.email,
         subject: `🎉 ${monthName} Reset - Fresh Stories Await, ${child.firstName}!`,
         html: `
@@ -599,7 +599,7 @@ export const sendCompetitionSubmissionConfirmation = async (
     ).toLocaleDateString();
 
     const mailOptions = {
-      from: `"Mintoons Competition" <${process.env.EMAIL_USER}>`,
+      from: `"Digiverse Story Competition" <${process.env.EMAIL_USER}>`,
       to: user.email,
       subject: `🏆 Story Submitted Successfully - "${story.title}"`,
       html: `
@@ -754,7 +754,7 @@ export const sendMentorRegistrationNotification = async (
   const transporter = createTransporter();
 
   const adminMailOptions = {
-    from: `"Mintoons Platform" <${process.env.EMAIL_USER}>`,
+    from: `"Digiverse Story Platform" <${process.env.EMAIL_USER}>`,
     to: process.env.ADMIN_EMAIL || process.env.EMAIL_USER,
     subject: `👨‍🏫 New Mentor Application - ${firstName} ${lastName}`,
     html: `
@@ -819,7 +819,7 @@ export const sendStoryPackPurchaseConfirmation = async (
   const transporter = createTransporter();
 
   const userMailOptions = {
-    from: `"Mintoons Billing" <${process.env.EMAIL_USER}>`,
+    from: `"Digiverse Story Billing" <${process.env.EMAIL_USER}>`,
     to: email,
     subject: '🎉 Story Pack Activated - More Stories Unlocked!',
     html: `
@@ -954,7 +954,7 @@ export const sendStoryPackPurchaseConfirmation = async (
 
   // ADMIN EMAIL - Purchase notification
   const adminMailOptions = {
-    from: `"Mintoons Billing" <${process.env.EMAIL_USER}>`,
+    from: `"Digiverse Story Billing" <${process.env.EMAIL_USER}>`,
     to: process.env.ADMIN_EMAIL || process.env.EMAIL_USER,
     subject: `💰 Story Pack Purchase - ${firstName} ($${amount})`,
     html: `
@@ -1020,7 +1020,7 @@ export const sendAnthologyBookPurchaseConfirmation = async (
   const transporter = createTransporter();
 
   const userMailOptions = {
-    from: `"Mintoons Publishing" <${process.env.EMAIL_USER}>`,
+    from: `"Digiverse Story Publishing" <${process.env.EMAIL_USER}>`,
     to: email,
     subject:
       "📚 Anthology Reservation Confirmed - You're Going to be Published!",
@@ -1196,7 +1196,7 @@ export const sendAnthologyBookPurchaseConfirmation = async (
 
   // ADMIN EMAIL - Anthology reservation notification
   const adminMailOptions = {
-    from: `"Mintoons Publishing" <${process.env.EMAIL_USER}>`,
+    from: `"Digiverse Story Publishing" <${process.env.EMAIL_USER}>`,
     to: process.env.ADMIN_EMAIL || process.env.EMAIL_USER,
     subject: `📚 Anthology Reservation - ${firstName} "$${amount}"`,
     html: `
@@ -1272,7 +1272,7 @@ export const sendCompetitionAnnouncement = async (
   const adminEmail = process.env.ADMIN_EMAIL || process.env.EMAIL_USER || '';
 
   const mailOptions = {
-    from: `"Mintoons System" <${process.env.EMAIL_USER}>`,
+    from: `"Digiverse Story System" <${process.env.EMAIL_USER}>`,
     to: adminEmail,
     subject: `🏆 New Competition Created: ${month} ${year}`,
     html: `
@@ -1299,7 +1299,7 @@ export const sendCompetitionPhaseChange = async (
   const adminEmail = process.env.ADMIN_EMAIL || process.env.EMAIL_USER || '';
 
   const mailOptions = {
-    from: `"Mintoons System" <${process.env.EMAIL_USER}>`,
+    from: `"Digiverse Story System" <${process.env.EMAIL_USER}>`,
     to: adminEmail,
     subject: `📅 Competition Phase Changed: ${phase}`,
     html: `
@@ -1322,7 +1322,7 @@ export const sendCompetitionResults = async (
   const adminEmail = process.env.ADMIN_EMAIL || process.env.EMAIL_USER || '';
 
   const mailOptions = {
-    from: `"Mintoons System" <${process.env.EMAIL_USER}>`,
+    from: `"Digiverse Story System" <${process.env.EMAIL_USER}>`,
     to: adminEmail,
     subject: `🎉 Competition Results Announced`,
     html: `
@@ -1357,7 +1357,7 @@ export const sendWinnerCongratulationsEmail = async (
     place === '1st' ? '#FFD700' : place === '2nd' ? '#C0C0C0' : '#CD7F32';
 
   const mailOptions = {
-    from: `"Mintoons Competition" <${process.env.EMAIL_USER}>`,
+    from: `"Digiverse Story Competition" <${process.env.EMAIL_USER}>`,
     to: email,
     subject: `${medal} Congratulations ${childName}! You won ${place} place in ${month} Competition!`,
     html: `
@@ -1410,7 +1410,7 @@ export const sendWinnerCongratulationsEmail = async (
 
   Keep writing amazing stories!
 
-  - The Mintoons Team
+  - The Digiverse Story Team
     `,
   };
 
@@ -1428,7 +1428,7 @@ export const sendCompetitionUpdateEmail = async (
   const transporter = createTransporter();
 
   const mailOptions = {
-    from: `"Mintoons Competition" <${process.env.EMAIL_USER}>`,
+    from: `"Digiverse Story Competition" <${process.env.EMAIL_USER}>`,
     to: email,
     subject,
     html: `

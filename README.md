@@ -1,8 +1,8 @@
-# Mintoons
+# Digiverse Story
 
 ## Overview
 
-Mintoons is an AI-powered, child-friendly story creation platform. It empowers children to create, write, and publish their own stories with the help of AI collaboration and teacher mentorship. The platform features a step-by-step story builder, real-time feedback, and a safe, engaging environment for young writers.
+Digiverse Story is an AI-powered, child-friendly story creation platform. It empowers children to create, write, and publish their own stories with the help of AI collaboration and teacher mentorship. The platform features a step-by-step story builder, real-time feedback, and a safe, engaging environment for young writers.
 
 ## Getting Started
 
@@ -17,8 +17,8 @@ Mintoons is an AI-powered, child-friendly story creation platform. It empowers c
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/your-org/mintoons.git
-   cd mintoons
+   git clone https://github.com/your-org/Digiverse Story.git
+   cd Digiverse Story
    ```
 
 2. Install dependencies:

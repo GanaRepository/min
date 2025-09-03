@@ -19,7 +19,7 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-export default function MintoonsContactPage() {
+export default function Digiverse StoryContactPage() {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -34,7 +34,7 @@ export default function MintoonsContactPage() {
 
   const testimonials = [
     {
-      text: 'Mintoons transformed my classroom! Students who never wrote before are now creating amazing stories.',
+      text: 'Digiverse Story transformed my classroom! Students who never wrote before are now creating amazing stories.',
       author: 'Sarah Chen',
       role: '5th Grade Teacher',
       rating: 5,
@@ -143,7 +143,7 @@ export default function MintoonsContactPage() {
             <CheckCircle className="w-16 h-16 text-white" />
           </div>
           <h2 className="text-5xl  text-gray-800 mb-6">
-            🎉 Welcome to the Mintoons Family! 🎉
+            🎉 Welcome to the Digiverse Story Family! 🎉
           </h2>
           <p className="text-xl text-gray-600 mb-8 leading-relaxed">
             Your creative journey begins now! We&apos;ll reach out within 24
@@ -265,7 +265,7 @@ export default function MintoonsContactPage() {
             <div className="flex flex-wrap items-center gap-4 sm:gap-6 text-gray-400">
               <div className="flex items-center space-x-2">
                 <Mail className="w-4 h-4 text-blue-400" />
-                <span className="text-xs sm:text-sm">hello@Mintoons.com</span>
+                <span className="text-xs sm:text-sm">hello@Digiverse Story.com</span>
               </div>
               <div className="flex items-center space-x-2">
                 <Phone className="w-4 h-4 text-blue-400" />

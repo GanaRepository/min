@@ -15,25 +15,25 @@ interface QuickInfoSectionProps {}
 export const QuickInfoSection: React.FC<QuickInfoSectionProps> = () => {
   const infoCards = [
     {
-      icon: <Users size={24} className="text-mintoon-primary" />,
+      icon: <Users size={24} className="text-digiverse-primary" />,
       title: 'Expert Staff',
       description: 'Top industry professionals',
       color: 'primary',
     },
     {
-      icon: <Award size={24} className="text-mintoon-secondary" />,
+      icon: <Award size={24} className="text-digiverse-secondary" />,
       title: 'Proven Results',
       description: 'Delivering excellence since 2010',
       color: 'secondary',
     },
     {
-      icon: <Code size={24} className="text-mintoon-accent" />,
+      icon: <Code size={24} className="text-digiverse-accent" />,
       title: 'Custom Solutions',
       description: 'Tailored to your needs',
       color: 'accent',
     },
     {
-      icon: <Clock size={24} className="text-mintoon-primary" />,
+      icon: <Clock size={24} className="text-digiverse-primary" />,
       title: '24/7 Support',
       description: 'Always available assistance',
       color: 'primary',
@@ -51,19 +51,19 @@ export const QuickInfoSection: React.FC<QuickInfoSectionProps> = () => {
                 className="bg-white rounded-xl p-6 shadow-floating border border-gray-100 hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1 flex items-center gap-5 group"
               >
                 <div
-                  className={`w-14 h-14 rounded-xl bg-mintoon-${card.color}/10 flex items-center justify-center flex-shrink-0 group-hover:bg-mintoon-${card.color} transition-colors duration-300`}
+                  className={`w-14 h-14 rounded-xl bg-digiverse-${card.color}/10 flex items-center justify-center flex-shrink-0 group-hover:bg-digiverse-${card.color} transition-colors duration-300`}
                 >
                   <div
-                    className={`text-mintoon-${card.color} group-hover:text-white transition-colors duration-300`}
+                    className={`text-digiverse-${card.color} group-hover:text-white transition-colors duration-300`}
                   >
                     {card.icon}
                   </div>
                 </div>
                 <div>
-                  <h3 className="text-lg  text-mintoon-dark group-hover:text-mintoon-primary transition-colors duration-300">
+                  <h3 className="text-lg  text-digiverse-dark group-hover:text-digiverse-primary transition-colors duration-300">
                     {card.title}
                   </h3>
-                  <p className="text-mintoon-textLight text-sm mt-1">
+                  <p className="text-digiverse-textLight text-sm mt-1">
                     {card.description}
                   </p>
                 </div>
@@ -80,7 +80,7 @@ interface FeaturesBannerProps {}
 
 export const FeaturesBanner: React.FC<FeaturesBannerProps> = () => {
   return (
-    <div className="py-10 px-24 bg-gradient-to-r from-mintoon-primary via-mintoon-secondary to-mintoon-accent animate-gradient-x bg-300% text-white">
+    <div className="py-10 px-24 bg-gradient-to-r from-digiverse-primary via-digiverse-secondary to-digiverse-accent animate-gradient-x bg-300% text-white">
       <div className="container mx-auto px-4">
         <div className="flex flex-wrap justify-between items-center gap-6">
           <div className="flex items-center gap-3">

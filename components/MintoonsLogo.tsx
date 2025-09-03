@@ -3,12 +3,12 @@
 import React from 'react';
 import { BookOpen } from 'lucide-react';
 
-interface MintoonsLogoProps {
+interface Digiverse StoryLogoProps {
   variant?: 'light' | 'dark' | 'color';
   className?: string;
 }
 
-const MintoonsLogo: React.FC<MintoonsLogoProps> = ({
+const Digiverse StoryLogo: React.FC<Digiverse StoryLogoProps> = ({
   variant = 'color',
   className = '',
 }) => {
@@ -53,9 +53,9 @@ const MintoonsLogo: React.FC<MintoonsLogoProps> = ({
       </div>
 
       {/* Logo Text */}
-      <span className={`text-2xl  ${variantConfig.textColor}`}>Mintoons</span>
+      <span className={`text-2xl  ${variantConfig.textColor}`}>Digiverse Story</span>
     </div>
   );
 };
 
-export default MintoonsLogo;
+export default Digiverse StoryLogo;

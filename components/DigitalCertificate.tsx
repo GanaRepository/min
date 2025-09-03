@@ -133,7 +133,7 @@ export default function DigitalCertificate({
 
           <div className="text-center">
             <div className="w-32 h-px bg-gray-400 mb-1"></div>
-            <p className="text-sm text-gray-500">Mintoons Platform</p>
+            <p className="text-sm text-gray-500">Digiverse Story Platform</p>
             <p className="text-sm ">Writing Competition</p>
           </div>
         </div>

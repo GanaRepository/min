@@ -37,7 +37,7 @@ export default {
         },
 
         // New Professional Color Palette
-        mintoon: {
+        digiverse: {
           // Primary colors
           primary: '#2A3B8F', // Deep blue
           secondary: '#107896', // Teal blue

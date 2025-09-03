@@ -7,12 +7,12 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://www.mintoons.com'),
-  title: 'Contact Us | Mintoons - Get in Touch with Our Team',
+  metadataBase: new URL('https://www.digiversestory.com'),
+  title: 'Contact Us | Digiverse Story - Get in Touch with Our Team',
   description:
-    'Connect with Mintoons for technology solutions, staffing services, or mentor/child inquiries. Our expert team is ready to help with your technology and recruitment needs.',
+    'Connect with Digiverse Story for technology solutions, staffing services, or mentor/child inquiries. Our expert team is ready to help with your technology and recruitment needs.',
   keywords: [
-    'Mintoons',
+    'Digiverse Story',
     'contact us',
     'IT consulting contact',
     'tech staffing inquiries',
@@ -29,15 +29,15 @@ export const metadata: Metadata = {
     'tech talent solutions',
     'IT support contact',
   ],
-  authors: [{ name: 'Mintoons', url: 'https://www.mintoons.com' }],
-  creator: 'Mintoons',
-  publisher: 'Mintoons',
+  authors: [{ name: 'Digiverse Story', url: 'https://www.digiversestory.com' }],
+  creator: 'Digiverse Story',
+  publisher: 'Digiverse Story',
   openGraph: {
-    title: 'Contact Us | Mintoons - Get in Touch with Our Team',
+    title: 'Contact Us | Digiverse Story - Get in Touch with Our Team',
     description:
-      'Connect with Mintoons for technology solutions, staffing services, or mentor/child inquiries. Our expert team is ready to help with your technology and recruitment needs.',
-    url: 'https://www.mintoons.com/contact-us',
-    siteName: 'Mintoons',
+      'Connect with Digiverse Story for technology solutions, staffing services, or mentor/child inquiries. Our expert team is ready to help with your technology and recruitment needs.',
+    url: 'https://www.digiversestory.com/contact-us',
+    siteName: 'Digiverse Story',
     type: 'website',
     locale: 'en_US',
     images: [
@@ -45,14 +45,14 @@ export const metadata: Metadata = {
         url: '/contact-us-og.jpg', // Update with your actual image path
         width: 1200,
         height: 630,
-        alt: 'Mintoons - Contact Us',
+        alt: 'Digiverse Story - Contact Us',
       },
     ],
   },
   alternates: {
-    canonical: 'https://www.mintoons.com/contact-us',
+    canonical: 'https://www.digiversestory.com/contact-us',
     languages: {
-      'en-US': 'https://www.mintoons.com/contact-us',
+      'en-US': 'https://www.digiversestory.com/contact-us',
     },
   },
   robots: {
@@ -70,7 +70,7 @@ export const metadata: Metadata = {
   category: 'Technology',
   appleWebApp: {
     capable: true,
-    title: 'Mintoons',
+    title: 'Digiverse Story',
     statusBarStyle: 'black-translucent',
   },
   formatDetection: {
@@ -84,7 +84,7 @@ export const metadata: Metadata = {
   },
   appLinks: {
     web: {
-      url: 'https://www.mintoons.com',
+      url: 'https://www.digiversestory.com',
       should_fallback: true,
     },
   },

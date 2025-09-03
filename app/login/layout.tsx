@@ -2,9 +2,9 @@
 import React from 'react';
 
 export const metadata = {
-  title: 'Login - Mintoons',
+  title: 'Login - Digiverse Story',
   description:
-    'Access your Mintoons account to manage your profile and services.',
+    'Access your Digiverse Story account to manage your profile and services.',
 };
 
 export default function LoginLayout({

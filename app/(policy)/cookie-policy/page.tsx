@@ -2,15 +2,15 @@ export default function CookiePolicy() {
   return (
     <div className="container mx-auto px-2 sm:px-4 md:px-8 lg:px-12 xl:px-20 py-8 sm:py-12 md:py-16 min-h-screen mt-4 sm:mt-6">
       <h1 className="text-3xl sm:text-4xl md:text-5xl  mb-8 text-black">
-        Mintoons Cookie Policy
+        Digiverse Story Cookie Policy
       </h1>
 
       <div className="prose prose-base sm:prose-lg max-w-none text-gray-900 space-y-6">
         <p>Last updated: {new Date().toLocaleDateString()}</p>
         <p>
-          This Cookie Policy explains how Mintoons (&quot;we&quot;,
+          This Cookie Policy explains how Digiverse Story (&quot;we&quot;,
           &quot;us&quot;, or &quot;our&quot;) uses cookies and similar
-          technologies on our website (mintoons.com). By using our website, you
+          technologies on our website (Digiverse Story.com). By using our website, you
           consent to the use of cookies as described in this policy.
         </p>
 
@@ -18,9 +18,9 @@ export default function CookiePolicy() {
           <h2 className="text-2xl  text-black mt-8">1. What Are Cookies</h2>
           <p>
             Cookies are small text files that are placed on your computer or
-            mobile device when you visit mintoons.com. They are widely used to
+            mobile device when you visit Digiverse Story.com. They are widely used to
             make websites work more efficiently and provide useful information
-            to website owners, including us at Mintoons.
+            to website owners, including us at Digiverse Story.
           </p>
         </div>
 
@@ -28,7 +28,7 @@ export default function CookiePolicy() {
           <h2 className="text-2xl  text-black mt-8">
             2. Types of Cookies We Use
           </h2>
-          <p>We use the following types of cookies on mintoons.com:</p>
+          <p>We use the following types of cookies on Digiverse Story.com:</p>
           <ul className="list-disc pl-6 space-y-2">
             <li>
               <strong className="text-black">Essential Cookies:</strong>{' '}
@@ -52,12 +52,12 @@ export default function CookiePolicy() {
 
         <div className="space-y-4">
           <h2 className="text-2xl  text-black mt-8">3. How We Use Cookies</h2>
-          <p>We use cookies for various purposes on mintoons.com, including:</p>
+          <p>We use cookies for various purposes on Digiverse Story.com, including:</p>
           <ul className="list-disc pl-6 space-y-2">
             <li>To provide essential website functionality</li>
             <li>To remember your preferences</li>
             <li>To analyze and improve our website performance</li>
-            <li>To personalize your experience on Mintoons</li>
+            <li>To personalize your experience on Digiverse Story</li>
           </ul>
         </div>
 
@@ -99,7 +99,7 @@ export default function CookiePolicy() {
           <p>
             We may update this Cookie Policy from time to time. Please check
             this page regularly for any changes. Your continued use of
-            mintoons.com after changes are posted constitutes your acceptance of
+            Digiverse Story.com after changes are posted constitutes your acceptance of
             the updated policy.
           </p>
         </div>
@@ -110,8 +110,8 @@ export default function CookiePolicy() {
             If you have questions about our Cookie Policy, please contact us:
           </p>
           <ul className="list-none space-y-2">
-            <li>By email: support@mintoons.com</li>
-            <li>By mail: Mintoons, Dallas, TX, USA</li>
+            <li>By email: support@Digiverse Story.com</li>
+            <li>By mail: Digiverse Story, Dallas, TX, USA</li>
           </ul>
         </div>
       </div>

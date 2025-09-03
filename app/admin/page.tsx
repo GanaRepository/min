@@ -158,7 +158,7 @@ export default function AdminDashboard() {
           Welcome back, {session?.user?.firstName}!
         </h1>
         <p className="text-blue-100">
-          Here&apos;s what&apos;s happening with Mintoons today
+          Here&apos;s what&apos;s happening with Digiverse Story today
         </p>
         <div className="mt-4 flex items-center text-blue-100">
           <Calendar className="w-4 h-4 mr-2" />

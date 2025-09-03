@@ -125,7 +125,7 @@ export default function MentorLayout({ children }: MentorLayoutProps) {
                     Mentor Portal
                   </h1>
                   <p className="text-xs sm:text-sm text-gray-400">
-                    Mintoons Teaching Hub
+                    Digiverse Story Teaching Hub
                   </p>
                 </div>
               </div>

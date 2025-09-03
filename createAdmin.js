@@ -208,7 +208,7 @@ async function createAdmin() {
 
 // Helper function to show platform hierarchy
 function showPlatformStructure() {
-  console.log('\n🏢 MINTOONS PLATFORM HIERARCHY:');
+  console.log('\n🏢 Digiverse Story PLATFORM HIERARCHY:');
   console.log('');
   console.log('    👑 ADMIN (You)');
   console.log('    ├── 👨‍🏫 Mentor 1');
@@ -233,6 +233,6 @@ function showPlatformStructure() {
 }
 
 // Show structure first, then create admin
-console.log('🚀 MINTOONS PLATFORM ADMIN CREATOR');
+console.log('🚀 Digiverse Story PLATFORM ADMIN CREATOR');
 showPlatformStructure();
 createAdmin();

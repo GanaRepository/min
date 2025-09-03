@@ -2,9 +2,9 @@
 import React from 'react';
 
 export const metadata = {
-  title: 'Register - Mintoons',
+  title: 'Register - Digiverse Story',
   description:
-    'Create your Mintoons account to access our services and opportunities.',
+    'Create your Digiverse Story account to access our services and opportunities.',
 };
 
 export default function RegisterLayout({

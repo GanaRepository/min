@@ -283,7 +283,7 @@ const ForgotPasswordPage: React.FC = () => {
                   words. Let&apos;s help you get back to creating amazing
                   stories!&quot;
                 </p>
-                <p className="text-xs text-white/60">- The Mintoons Team</p>
+                <p className="text-xs text-white/60">- The Digiverse Story Team</p>
               </motion.div>
             </div>
             {/* Back button */}
@@ -372,7 +372,7 @@ const ForgotPasswordPage: React.FC = () => {
                   className="w-full px-4 py-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition-all"
                 />
                 <p className="text-xs text-white/50">
-                  Enter the email address you used to create your Mintoons
+                  Enter the email address you used to create your Digiverse Story
                   account
                 </p>
               </div>

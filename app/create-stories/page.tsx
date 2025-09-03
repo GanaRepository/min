@@ -666,7 +666,7 @@ function CreateStoriesContent() {
         className="bg-gray-800/60 backdrop-blur-xl border border-gray-600/40  p-8 mb-16"
       >
         <h2 className="text-3xl  text-white text-center mb-8">
-          Why Choose Mintoons? ✨
+          Why Choose Digiverse Story? ✨
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

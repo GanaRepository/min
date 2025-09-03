@@ -223,7 +223,7 @@ function MentorLoginContent() {
                   {/* Mentor portrait - you can replace with actual image */}
                   <Image
                     src="/kid16.jpg" // Replace with actual mentor image
-                    alt="Mintoons Mentor"
+                    alt="Digiverse Story Mentor"
                     fill
                     className="absolute inset-0  object-cover"
                   />
@@ -317,7 +317,7 @@ function MentorLoginContent() {
                 className="text-white/90 mb-4"
               >
                 <p className="text-sm leading-relaxed mb-3">
-                  &quot;Being a Mintoons mentor allows me to guide young minds
+                  &quot;Being a Digiverse Story mentor allows me to guide young minds
                   and watch their creativity flourish. Every story is a new
                   adventure!&quot;
                 </p>
@@ -411,7 +411,7 @@ function MentorLoginContent() {
                   <input
                     id="mentor-email"
                     type="email"
-                    placeholder="mentor@mintoons.com"
+                    placeholder="mentor@Digiverse Story.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value.toLowerCase())}
                     required
