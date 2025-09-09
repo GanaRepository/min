@@ -201,7 +201,9 @@ const NotFound = () => {
               &quot;Not all who wander are lost, but this page certainly
               is!&quot;
             </p>
-            <p className="text-white/60 text-xs mt-2">- Digiverse Story Navigator</p>
+            <p className="text-white/60 text-xs mt-2">
+              - Digiverse Story Navigator
+            </p>
           </motion.div>
         </motion.div>
       </motion.div>

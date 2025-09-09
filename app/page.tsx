@@ -9,7 +9,8 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.digiversestory.com'),
-  title: 'Digiverse Story | Premier IT Staff Augmentation & Technology Services',
+  title:
+    'Digiverse Story | Premier IT Staff Augmentation & Technology Services',
   description:
     'Digiverse Story offers professional IT staffing solutions, software development services, and technology consulting to help mentors innovate and achieve their digital transformation goals.',
   keywords: [
@@ -34,7 +35,8 @@ export const metadata: Metadata = {
   creator: 'Digiverse Story',
   publisher: 'Digiverse Story',
   openGraph: {
-    title: 'Digiverse Story | Premier IT Staff Augmentation & Technology Services',
+    title:
+      'Digiverse Story | Premier IT Staff Augmentation & Technology Services',
     description:
       'Digiverse Story offers professional IT staffing solutions, software development services, and technology consulting to help mentors innovate and achieve their digital transformation goals.',
     url: 'https://www.digiversestory.com',

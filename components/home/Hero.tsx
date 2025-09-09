@@ -636,7 +636,6 @@ export default function Home() {
 
                   <div className="relative z-10 p-6 sm:p-8 h-full flex flex-col">
                     {/* Logo Circle with enhanced animation */}
-                
 
                     {/* Card Content */}
                     <div className="text-center space-y-2 sm:space-y-4 flex-grow mt-4">
@@ -662,8 +661,9 @@ export default function Home() {
                         animate={{ opacity: 1 }}
                         transition={{ delay: 1.5 }}
                       >
-                        3 free monthly story uploads for monthly competitions. Join
-                        thousands of young writers and share your best stories in community!
+                        3 free monthly story uploads for monthly competitions.
+                        Join thousands of young writers and share your best
+                        stories in community!
                       </motion.p>
 
                       {/* Mini Feature Icons */}
@@ -802,7 +802,8 @@ export default function Home() {
               </span>
             </h2>
             <p className="text-lg sm:text-xl text-gray-300 max-w-3xl mx-auto">
-              See what incredible stories children are creating with Digiverse Story
+              See what incredible stories children are creating with Digiverse
+              Story
             </p>
           </motion.div>
 

@@ -62,6 +62,11 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     { name: 'Stories', href: '/admin/stories', icon: BookOpen },
     { name: 'Comments', href: '/admin/comments', icon: MessageSquare },
     { name: 'Competitions', href: '/admin/competitions', icon: Award },
+    {
+      name: 'Creative Contests',
+      href: '/admin/creative-contests',
+      icon: FileText,
+    },
     { name: 'Revenue', href: '/admin/revenue', icon: DollarSign },
   ];
 

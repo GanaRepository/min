@@ -1,7 +1,6 @@
 // models/StorySession.ts - FIXED WITH 13-FACTOR ASSESSMENT SCHEMA
 import mongoose, { Schema, Document } from 'mongoose';
 
-
 // ✅ CRITICAL: Clear existing model cache to force schema reload
 if (mongoose.models.StorySession) {
   delete mongoose.models.StorySession;
@@ -300,7 +299,7 @@ const StorySessionSchema = new Schema<IStorySession>(
     timestamps: true,
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
-    strict: false // ✅ THIS IS THE KEY FIX
+    strict: false, // ✅ THIS IS THE KEY FIX
   }
 );
 

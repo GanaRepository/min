@@ -256,10 +256,10 @@ export async function GET(
         : undefined,
       publicationFee: story.publicationFee || undefined,
 
-  // Assessment data - return the full object as stored in MongoDB
-  isUploadedForAssessment: story.isUploadedForAssessment || false,
-  assessmentAttempts: story.assessmentAttempts || 0,
-  assessment: story.assessment ? { ...story.assessment } : null,
+      // Assessment data - return the full object as stored in MongoDB
+      isUploadedForAssessment: story.isUploadedForAssessment || false,
+      assessmentAttempts: story.assessmentAttempts || 0,
+      assessment: story.assessment ? { ...story.assessment } : null,
 
       // Competition data - FIXED
       competitionEligible: story.competitionEligible || false,

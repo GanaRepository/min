@@ -10,17 +10,18 @@ export default function CookiePolicy() {
         <p>
           This Cookie Policy explains how Digiverse Story (&quot;we&quot;,
           &quot;us&quot;, or &quot;our&quot;) uses cookies and similar
-          technologies on our website (Digiverse Story.com). By using our website, you
-          consent to the use of cookies as described in this policy.
+          technologies on our website (Digiverse Story.com). By using our
+          website, you consent to the use of cookies as described in this
+          policy.
         </p>
 
         <div className="space-y-4">
           <h2 className="text-2xl  text-black mt-8">1. What Are Cookies</h2>
           <p>
             Cookies are small text files that are placed on your computer or
-            mobile device when you visit Digiverse Story.com. They are widely used to
-            make websites work more efficiently and provide useful information
-            to website owners, including us at Digiverse Story.
+            mobile device when you visit Digiverse Story.com. They are widely
+            used to make websites work more efficiently and provide useful
+            information to website owners, including us at Digiverse Story.
           </p>
         </div>
 
@@ -52,7 +53,10 @@ export default function CookiePolicy() {
 
         <div className="space-y-4">
           <h2 className="text-2xl  text-black mt-8">3. How We Use Cookies</h2>
-          <p>We use cookies for various purposes on Digiverse Story.com, including:</p>
+          <p>
+            We use cookies for various purposes on Digiverse Story.com,
+            including:
+          </p>
           <ul className="list-disc pl-6 space-y-2">
             <li>To provide essential website functionality</li>
             <li>To remember your preferences</li>
@@ -98,8 +102,8 @@ export default function CookiePolicy() {
           </h2>
           <p>
             We may update this Cookie Policy from time to time. Please check
-            this page regularly for any changes. Your continued use of
-            Digiverse Story.com after changes are posted constitutes your acceptance of
+            this page regularly for any changes. Your continued use of Digiverse
+            Story.com after changes are posted constitutes your acceptance of
             the updated policy.
           </p>
         </div>

@@ -35,7 +35,7 @@ export function verifyWebhookSignature(
 }
 
 // Digiverse Story PRICING CONFIGURATION
-export const Digiverse Story_PRODUCTS = {
+export const DIGIVERSE_STORY_PRODUCTS = {
   STORY_PACK: {
     id: 'story_pack',
     name: 'Story Pack',
@@ -93,7 +93,7 @@ export async function createStoryPackCheckout(
     customer_email: undefined, // Will be filled in checkout
     line_items: [
       {
-        price: Digiverse Story_PRODUCTS.STORY_PACK.stripePriceId,
+        price: DIGIVERSE_STORY_PRODUCTS.STORY_PACK.stripePriceId,
         quantity: 1,
       },
     ],
@@ -101,11 +101,11 @@ export async function createStoryPackCheckout(
       userId,
       productType: 'story_pack',
       storiesAdded:
-        Digiverse Story_PRODUCTS.STORY_PACK.benefits.storiesAdded.toString(),
+        DIGIVERSE_STORY_PRODUCTS.STORY_PACK.benefits.storiesAdded.toString(),
       assessmentsAdded:
-        Digiverse Story_PRODUCTS.STORY_PACK.benefits.assessmentsAdded.toString(),
+        DIGIVERSE_STORY_PRODUCTS.STORY_PACK.benefits.assessmentsAdded.toString(),
       totalAssessmentAttemptsAdded:
-        Digiverse Story_PRODUCTS.STORY_PACK.benefits.totalAssessmentAttemptsAdded.toString(),
+        DIGIVERSE_STORY_PRODUCTS.STORY_PACK.benefits.totalAssessmentAttemptsAdded.toString(),
     },
     success_url: successUrl,
     cancel_url: cancelUrl,
@@ -125,7 +125,7 @@ export async function createStoryPurchaseCheckout(
     customer_email: undefined,
     line_items: [
       {
-        price: Digiverse Story_PRODUCTS.STORY_PURCHASE.stripePriceId,
+        price: DIGIVERSE_STORY_PRODUCTS.STORY_PURCHASE.stripePriceId,
         quantity: 1,
       },
     ],
@@ -162,15 +162,16 @@ export async function processSuccessfulPayment(
       $push: {
         purchaseHistory: {
           type: 'story_pack',
-          amount: Digiverse Story_PRODUCTS.STORY_PACK.price,
+          amount: DIGIVERSE_STORY_PRODUCTS.STORY_PACK.price,
           purchaseDate: new Date(),
           stripeSessionId: session.id,
           metadata: {
-            storiesAdded: Digiverse Story_PRODUCTS.STORY_PACK.benefits.storiesAdded,
+            storiesAdded:
+              DIGIVERSE_STORY_PRODUCTS.STORY_PACK.benefits.storiesAdded,
             assessmentsAdded:
-              Digiverse Story_PRODUCTS.STORY_PACK.benefits.assessmentsAdded,
+              DIGIVERSE_STORY_PRODUCTS.STORY_PACK.benefits.assessmentsAdded,
             totalAssessmentAttemptsAdded:
-              Digiverse Story_PRODUCTS.STORY_PACK.benefits
+              DIGIVERSE_STORY_PRODUCTS.STORY_PACK.benefits
                 .totalAssessmentAttemptsAdded,
           },
         },
@@ -192,7 +193,7 @@ export async function processSuccessfulPayment(
         $push: {
           purchaseHistory: {
             type: 'story_purchase',
-            amount: Digiverse Story_PRODUCTS.STORY_PURCHASE.price,
+            amount: DIGIVERSE_STORY_PRODUCTS.STORY_PURCHASE.price,
             purchaseDate: new Date(),
             stripeSessionId: session.id,
             storyId,
@@ -216,4 +217,6 @@ export function formatPrice(price: number, currency: string = 'USD'): string {
   }).format(price);
 }
 
-console.log('✅ Stripe initialized successfully with Digiverse Story configuration');
+console.log(
+  '✅ Stripe initialized successfully with Digiverse Story configuration'
+);

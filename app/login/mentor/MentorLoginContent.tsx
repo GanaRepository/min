@@ -317,9 +317,9 @@ function MentorLoginContent() {
                 className="text-white/90 mb-4"
               >
                 <p className="text-sm leading-relaxed mb-3">
-                  &quot;Being a Digiverse Story mentor allows me to guide young minds
-                  and watch their creativity flourish. Every story is a new
-                  adventure!&quot;
+                  &quot;Being a Digiverse Story mentor allows me to guide young
+                  minds and watch their creativity flourish. Every story is a
+                  new adventure!&quot;
                 </p>
                 <p className="text-xs text-white/60">
                   - Michael | Creative Writing Mentor

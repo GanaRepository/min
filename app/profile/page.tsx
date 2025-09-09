@@ -40,7 +40,9 @@ export default function ProfilePage() {
   if (status === 'loading' || !mounted) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-900/90 via-gray-800/90 to-blue-900/90 flex items-center justify-center">
-        <div className="text-white">Loading your Digiverse Story profile...</div>
+        <div className="text-white">
+          Loading your Digiverse Story profile...
+        </div>
       </div>
     );
   }

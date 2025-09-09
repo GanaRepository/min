@@ -92,7 +92,9 @@ export async function POST(req: NextRequest) {
     await newTurn.save();
 
     // Calculate AI word count
-    const aiWordCount = aiResponse ? aiResponse.split(/\s+/).filter(Boolean).length : 0;
+    const aiWordCount = aiResponse
+      ? aiResponse.split(/\s+/).filter(Boolean).length
+      : 0;
 
     // Update session
     const updateData: any = {

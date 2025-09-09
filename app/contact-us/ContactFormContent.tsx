@@ -19,7 +19,7 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-export default function Digiverse StoryContactPage() {
+export default function DigiverseStoryContactPage() {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -265,7 +265,9 @@ export default function Digiverse StoryContactPage() {
             <div className="flex flex-wrap items-center gap-4 sm:gap-6 text-gray-400">
               <div className="flex items-center space-x-2">
                 <Mail className="w-4 h-4 text-blue-400" />
-                <span className="text-xs sm:text-sm">hello@Digiverse Story.com</span>
+                <span className="text-xs sm:text-sm">
+                  hello@Digiverse Story.com
+                </span>
               </div>
               <div className="flex items-center space-x-2">
                 <Phone className="w-4 h-4 text-blue-400" />

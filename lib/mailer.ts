@@ -81,7 +81,8 @@ export const sendChildRegistrationEmail = async (
   const userMailOptions = {
     from: `"Digiverse Story Platform" <${process.env.EMAIL_USER}>`,
     to: email,
-    subject: '🎉 Welcome to Digiverse Story - Your Premium Writing Journey Begins!',
+    subject:
+      '🎉 Welcome to Digiverse Story - Your Premium Writing Journey Begins!',
     html: `
         <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; max-width: 650px; margin: 0 auto; background: #ffffff; border-radius: 20px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.1); font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;">
           <tr>

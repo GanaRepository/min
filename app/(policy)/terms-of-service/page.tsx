@@ -9,18 +9,18 @@ export default function TermsOfService() {
         <p>Last updated: {new Date().toLocaleDateString()}</p>
         <p>
           These Terms of Service (&quot;Terms&quot;) govern your use of the
-          Digiverse Story website (Digiverse Story.com) and related services. By accessing or
-          using Digiverse Story, you agree to these Terms. If you do not agree, please
-          do not use our platform.
+          Digiverse Story website (Digiverse Story.com) and related services. By
+          accessing or using Digiverse Story, you agree to these Terms. If you
+          do not agree, please do not use our platform.
         </p>
 
         <div className="space-y-4">
           <h2 className="text-2xl  text-black mt-8">1. Agreement to Terms</h2>
           <p>
-            By accessing or using Digiverse Story, you agree to be bound by these Terms
-            of Service and all applicable laws and regulations. If you do not
-            agree with any of these terms, you are prohibited from using our
-            services.
+            By accessing or using Digiverse Story, you agree to be bound by
+            these Terms of Service and all applicable laws and regulations. If
+            you do not agree with any of these terms, you are prohibited from
+            using our services.
           </p>
         </div>
 
@@ -56,8 +56,8 @@ export default function TermsOfService() {
           </h2>
           <p>
             All content, features, and functionality of our services are owned
-            by Digiverse Story and are protected by international copyright, trademark,
-            and other intellectual property laws.
+            by Digiverse Story and are protected by international copyright,
+            trademark, and other intellectual property laws.
           </p>
         </div>
 
@@ -66,9 +66,9 @@ export default function TermsOfService() {
             5. Limitation of Liability
           </h2>
           <p>
-            Digiverse Story shall not be liable for any indirect, incidental, special,
-            consequential, or punitive damages resulting from your use of our
-            services.
+            Digiverse Story shall not be liable for any indirect, incidental,
+            special, consequential, or punitive damages resulting from your use
+            of our services.
           </p>
         </div>
 

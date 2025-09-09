@@ -11,7 +11,8 @@ export default function PrivacyPolicy() {
           This Privacy Policy explains how Digiverse Story (&quot;we&quot;,
           &quot;us&quot;, or &quot;our&quot;) collects, uses, and protects your
           information when you use our website (Digiverse Story.com) and related
-          services. By using Digiverse Story, you agree to the terms of this policy.
+          services. By using Digiverse Story, you agree to the terms of this
+          policy.
         </p>
 
         <div className="space-y-4">
@@ -19,9 +20,9 @@ export default function PrivacyPolicy() {
             1. Information We Collect
           </h2>
           <p>
-            At Digiverse Story, we collect different types of information for various
-            purposes to provide and improve our creative writing platform and
-            services to you:
+            At Digiverse Story, we collect different types of information for
+            various purposes to provide and improve our creative writing
+            platform and services to you:
           </p>
           <ul className="list-disc pl-6 space-y-2">
             <li>
@@ -45,7 +46,8 @@ export default function PrivacyPolicy() {
             <li>To notify you about changes to our services</li>
             <li>To provide customer support</li>
             <li>
-              To gather analysis or valuable information to improve Digiverse Story
+              To gather analysis or valuable information to improve Digiverse
+              Story
             </li>
             <li>
               To ensure a safe and positive experience for children, mentors,
