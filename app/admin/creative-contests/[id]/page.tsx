@@ -128,6 +128,8 @@ export default function AdminContestDetailPage() {
 
   const updateContestStatus = async (newStatus: string) => {
     try {
+      console.log(`Starting status update to: ${newStatus}`);
+      
       const response = await fetch(
         `/api/admin/creative-contests/${contestId}`,
         {
@@ -137,11 +139,24 @@ export default function AdminContestDetailPage() {
         }
       );
 
-      if (response.ok) {
-        fetchContestDetails();
+      console.log('Response status:', response.status);
+      console.log('Response ok:', response.ok);
+      
+      const data = await response.json();
+      console.log('Response data:', data);
+
+      if (response.ok && data.success) {
+        console.log(`Contest status successfully updated to: ${newStatus}`);
+        // Refresh the contest data to show updated status
+        await fetchContestDetails();
+        console.log('Contest details refreshed');
+      } else {
+        console.error('Failed to update contest status:', data.error || 'Unknown error');
+        alert(`Failed to update contest status: ${data.error || 'Unknown error'}`);
       }
     } catch (error) {
-      console.error('Error updating status:', error);
+      console.error('Error updating contest status:', error);
+      alert('Network error occurred while updating contest status. Please try again.');
     }
   };
 
