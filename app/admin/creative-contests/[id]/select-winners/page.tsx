@@ -236,7 +236,7 @@ export default function SelectWinnersPage() {
           <p className="text-gray-400 mb-6">{error}</p>
           <Link
             href="/admin/creative-contests"
-            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition-colors"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3  transition-colors"
           >
             Back to Contests
           </Link>
@@ -265,7 +265,7 @@ export default function SelectWinnersPage() {
           <button
             onClick={handlePublishResults}
             disabled={Boolean(saving) || selectedWinners.length === 0}
-            className="bg-green-600 hover:bg-green-700 disabled:bg-green-800 disabled:opacity-50 text-white px-6 py-3 rounded-lg flex items-center space-x-2 transition-colors"
+            className="bg-green-600 hover:bg-green-700 disabled:bg-green-800 disabled:opacity-50 text-white px-6 py-3  flex items-center space-x-2 transition-colors"
           >
             <Save size={20} />
             <span>{saving ? 'Publishing...' : 'Publish Results'}</span>
@@ -274,7 +274,7 @@ export default function SelectWinnersPage() {
 
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-gray-800 p-6 rounded-lg">
+          <div className="bg-gray-800 p-6 ">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-400 text-sm">Total Submissions</p>
@@ -286,7 +286,7 @@ export default function SelectWinnersPage() {
             </div>
           </div>
 
-          <div className="bg-gray-800 p-6 rounded-lg">
+          <div className="bg-gray-800 p-6 ">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-400 text-sm">Total Participants</p>
@@ -298,7 +298,7 @@ export default function SelectWinnersPage() {
             </div>
           </div>
 
-          <div className="bg-gray-800 p-6 rounded-lg">
+          <div className="bg-gray-800 p-6 ">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-400 text-sm">Winners Selected</p>
@@ -314,7 +314,7 @@ export default function SelectWinnersPage() {
         {/* Winner Selection Interface */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Winner Positions */}
-          <div className="bg-gray-800 rounded-lg p-6">
+          <div className="bg-gray-800  p-6">
             <h2 className="text-xl font-bold text-white mb-6 flex items-center">
               <Award className="mr-3 text-yellow-400" size={24} />
               Winner Positions
@@ -328,11 +328,11 @@ export default function SelectWinnersPage() {
                 );
 
                 return (
-                  <div key={position} className="bg-gray-700 rounded-lg p-4">
+                  <div key={position} className="bg-gray-700  p-4">
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center">
                         <div
-                          className={`w-8 h-8 rounded-full flex items-center justify-center text-white font-bold mr-3 ${
+                          className={`w-8 h-8  flex items-center justify-center text-white font-bold mr-3 ${
                             position === 1
                               ? 'bg-yellow-500'
                               : position === 2
@@ -391,7 +391,7 @@ export default function SelectWinnersPage() {
           </div>
 
           {/* All Submissions */}
-          <div className="lg:col-span-2 bg-gray-800 rounded-lg p-6">
+          <div className="lg:col-span-2 bg-gray-800  p-6">
             <h2 className="text-xl font-bold text-white mb-6">
               All Submissions ({submissions.length})
             </h2>
@@ -417,7 +417,7 @@ export default function SelectWinnersPage() {
                   return (
                     <div
                       key={submission._id}
-                      className={`border rounded-lg p-4 transition-all ${
+                      className={`border  p-4 transition-all ${
                         isSelected
                           ? 'border-yellow-500 bg-yellow-500 bg-opacity-10'
                           : 'border-gray-600 hover:border-gray-500'
@@ -541,7 +541,7 @@ export default function SelectWinnersPage() {
 
         {/* Error Display */}
         {error && (
-          <div className="mt-6 p-4 bg-red-900 border border-red-700 rounded-lg">
+          <div className="mt-6 p-4 bg-red-900 border border-red-700 ">
             <p className="text-red-300">{error}</p>
           </div>
         )}
@@ -549,7 +549,7 @@ export default function SelectWinnersPage() {
         {/* File Viewer Modal */}
         {selectedSubmission && (
           <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
-            <div className="bg-gray-800 rounded-lg p-6 max-w-4xl max-h-screen overflow-auto">
+            <div className="bg-gray-800  p-6 max-w-4xl max-h-screen overflow-auto">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-xl font-bold text-white">
                   Submission Preview
@@ -562,7 +562,7 @@ export default function SelectWinnersPage() {
                 </button>
               </div>
 
-              <div className="bg-gray-700 rounded-lg p-8 text-center">
+              <div className="bg-gray-700  p-8 text-center">
                 <p className="text-gray-400">
                   File preview functionality would be implemented here
                 </p>

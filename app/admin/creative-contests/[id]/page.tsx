@@ -133,9 +133,12 @@ export default function AdminContestDetailPage() {
       const response = await fetch(
         `/api/admin/creative-contests/${contestId}`,
         {
-          method: 'PUT',
+          method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ status: newStatus }),
+          body: JSON.stringify({ 
+            action: 'update_status',
+            status: newStatus 
+          }),
         }
       );
 
@@ -203,7 +206,7 @@ export default function AdminContestDetailPage() {
           </h2>
           <Link
             href="/admin/creative-contests"
-            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition-colors"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3  transition-colors"
           >
             Back to Contests
           </Link>
@@ -234,7 +237,7 @@ export default function AdminContestDetailPage() {
                 </h1>
                 <div className="flex items-center space-x-4 mt-2">
                   <span
-                    className={`px-3 py-1 rounded-full text-sm text-white ${statusColors[contest.status]}`}
+                    className={`px-3 py-1  text-sm text-white ${statusColors[contest.status]}`}
                   >
                     {statusLabels[contest.status]}
                   </span>
@@ -249,7 +252,7 @@ export default function AdminContestDetailPage() {
           <div className="flex space-x-3">
             <Link
               href={`/admin/creative-contests/${contestId}/edit`}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
+              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2  flex items-center space-x-2 transition-colors"
             >
               <Edit size={16} />
               <span>Edit</span>
@@ -258,7 +261,7 @@ export default function AdminContestDetailPage() {
             {contest.status === 'draft' && (
               <button
                 onClick={() => updateContestStatus('active')}
-                className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors"
+                className="bg-green-600 hover:bg-green-700 text-white px-4 py-2  transition-colors"
               >
                 Publish Contest
               </button>
@@ -267,7 +270,7 @@ export default function AdminContestDetailPage() {
             {contest.status === 'active' && (
               <button
                 onClick={() => updateContestStatus('ended')}
-                className="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-lg transition-colors"
+                className="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2  transition-colors"
               >
                 End Contest
               </button>
@@ -276,7 +279,7 @@ export default function AdminContestDetailPage() {
             {contest.status === 'ended' && (
               <Link
                 href={`/admin/creative-contests/${contestId}/select-winners`}
-                className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
+                className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2  flex items-center space-x-2 transition-colors"
               >
                 <Trophy size={16} />
                 <span>Select Winners</span>
@@ -287,7 +290,7 @@ export default function AdminContestDetailPage() {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="bg-gray-800 p-6 rounded-lg">
+          <div className="bg-gray-800 p-6 ">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-400 text-sm">Participants</p>
@@ -299,7 +302,7 @@ export default function AdminContestDetailPage() {
             </div>
           </div>
 
-          <div className="bg-gray-800 p-6 rounded-lg">
+          <div className="bg-gray-800 p-6 ">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-400 text-sm">Submissions</p>
@@ -311,7 +314,7 @@ export default function AdminContestDetailPage() {
             </div>
           </div>
 
-          <div className="bg-gray-800 p-6 rounded-lg">
+          <div className="bg-gray-800 p-6 ">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-400 text-sm">Max per User</p>
@@ -323,7 +326,7 @@ export default function AdminContestDetailPage() {
             </div>
           </div>
 
-          <div className="bg-gray-800 p-6 rounded-lg">
+          <div className="bg-gray-800 p-6 ">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-400 text-sm">
@@ -347,7 +350,7 @@ export default function AdminContestDetailPage() {
         {/* Contest Details */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
           <div className="lg:col-span-2">
-            <div className="bg-gray-800 rounded-lg p-6 mb-6">
+            <div className="bg-gray-800  p-6 mb-6">
               <h2 className="text-xl font-bold text-white mb-4">
                 Contest Information
               </h2>
@@ -420,7 +423,7 @@ export default function AdminContestDetailPage() {
           <div>
             {/* Prizes */}
             {contest.prizes && contest.prizes.length > 0 && (
-              <div className="bg-gray-800 rounded-lg p-6 mb-6">
+              <div className="bg-gray-800  p-6 mb-6">
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="text-xl font-bold text-white">Prizes</h2>
                   <span
@@ -437,7 +440,7 @@ export default function AdminContestDetailPage() {
                 </div>
                 <div className="space-y-3">
                   {contest.prizes.map((prize, index) => (
-                    <div key={index} className="bg-gray-700 rounded-lg p-3">
+                    <div key={index} className="bg-gray-700  p-3">
                       <div className="flex items-center mb-1">
                         <Trophy className="text-yellow-400 mr-2" size={16} />
                         <span className="text-white font-medium">
@@ -465,7 +468,7 @@ export default function AdminContestDetailPage() {
             )}
 
             {/* Contest Creator */}
-            <div className="bg-gray-800 rounded-lg p-6">
+            <div className="bg-gray-800  p-6">
               <h2 className="text-xl font-bold text-white mb-4">
                 Contest Details
               </h2>
@@ -497,7 +500,7 @@ export default function AdminContestDetailPage() {
         </div>
 
         {/* Recent Submissions */}
-        <div className="bg-gray-800 rounded-lg p-6">
+        <div className="bg-gray-800  p-6">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-xl font-bold text-white">
               Recent Submissions ({contest.submissions.length})
@@ -505,7 +508,7 @@ export default function AdminContestDetailPage() {
             <div className="flex space-x-3">
               <Link
                 href={`/admin/creative-contests/${contestId}/submissions`}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
+                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2  flex items-center space-x-2 transition-colors"
               >
                 <Eye size={16} />
                 <span>View All</span>
@@ -528,7 +531,7 @@ export default function AdminContestDetailPage() {
               {contest.submissions.slice(0, 6).map((submission) => (
                 <div
                   key={submission._id}
-                  className="bg-gray-700 rounded-lg p-4"
+                  className="bg-gray-700  p-4"
                 >
                   <div className="flex items-start justify-between mb-3">
                     <div>

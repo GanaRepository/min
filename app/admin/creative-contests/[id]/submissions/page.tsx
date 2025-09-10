@@ -73,7 +73,7 @@ function FilePreviewModal({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
-      <div className="bg-gray-800 rounded-lg p-6 max-w-4xl max-h-screen overflow-auto">
+      <div className="bg-gray-800  p-6 max-w-4xl max-h-screen overflow-auto">
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-xl font-bold text-white">Submission Preview</h3>
           <button
@@ -83,7 +83,7 @@ function FilePreviewModal({
             <X size={24} />
           </button>
         </div>
-        <div className="bg-gray-700 rounded-lg p-8 text-center">
+        <div className="bg-gray-700  p-8 text-center">
           {loading ? (
             <p className="text-gray-400">Loading preview...</p>
           ) : isImage && previewUrl ? (
@@ -285,25 +285,25 @@ export default function AdminSubmissionsPage() {
 
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-          <div className="bg-gray-800 p-4 rounded-lg">
+          <div className="bg-gray-800 p-4 ">
             <p className="text-gray-400 text-sm">Total Submissions</p>
             <p className="text-2xl font-bold text-blue-400">
               {contest?.stats.totalSubmissions || 0}
             </p>
           </div>
-          <div className="bg-gray-800 p-4 rounded-lg">
+          <div className="bg-gray-800 p-4 ">
             <p className="text-gray-400 text-sm">Total Participants</p>
             <p className="text-2xl font-bold text-green-400">
               {contest?.stats.totalParticipants || 0}
             </p>
           </div>
-          <div className="bg-gray-800 p-4 rounded-lg">
+          <div className="bg-gray-800 p-4 ">
             <p className="text-gray-400 text-sm">Winners Selected</p>
             <p className="text-2xl font-bold text-yellow-400">
               {submissions.filter((s) => s.isWinner).length}
             </p>
           </div>
-          <div className="bg-gray-800 p-4 rounded-lg">
+          <div className="bg-gray-800 p-4 ">
             <p className="text-gray-400 text-sm">Contest Status</p>
             <p className="text-lg font-bold text-purple-400 capitalize">
               {contest?.status}
@@ -312,7 +312,7 @@ export default function AdminSubmissionsPage() {
         </div>
 
         {/* Filters */}
-        <div className="bg-gray-800 p-4 rounded-lg mb-6">
+        <div className="bg-gray-800 p-4  mb-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="relative">
               <Search
@@ -324,7 +324,7 @@ export default function AdminSubmissionsPage() {
                 placeholder="Search submissions..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none"
+                className="w-full pl-10 pr-4 py-2 bg-gray-700 border border-gray-600  text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none"
               />
             </div>
 
@@ -336,7 +336,7 @@ export default function AdminSubmissionsPage() {
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-blue-500 focus:outline-none appearance-none"
+                className="w-full pl-10 pr-4 py-2 bg-gray-700 border border-gray-600  text-white focus:border-blue-500 focus:outline-none appearance-none"
               >
                 <option value="newest">Newest First</option>
                 <option value="oldest">Oldest First</option>
@@ -370,13 +370,13 @@ export default function AdminSubmissionsPage() {
             {filteredSubmissions.map((submission) => (
               <div
                 key={submission._id}
-                className="bg-gray-800 rounded-lg p-4 hover:bg-gray-750 transition-colors"
+                className="bg-gray-800  p-4 hover:bg-gray-750 transition-colors"
               >
                 {/* Winner Badge */}
                 {submission.isWinner && (
                   <div className="flex items-center justify-between mb-2">
                     <div
-                      className={`px-3 py-1 rounded-full text-xs text-white font-bold ${
+                      className={`px-3 py-1  text-xs text-white font-bold ${
                         submission.position === 1
                           ? 'bg-yellow-500'
                           : submission.position === 2

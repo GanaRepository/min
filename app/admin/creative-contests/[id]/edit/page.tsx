@@ -273,7 +273,7 @@ export default function EditCreativeContest() {
               return (
                 <div key={step.id} className="flex items-center">
                   <div
-                    className={`flex items-center justify-center w-10 h-10 rounded-full border-2 ${
+                    className={`flex items-center justify-center w-10 h-10  border-2 ${
                       isActive
                         ? 'border-blue-500 bg-blue-500 text-white'
                         : isCompleted
@@ -310,7 +310,7 @@ export default function EditCreativeContest() {
         </div>
 
         {/* Form Steps */}
-        <div className="bg-gray-800 rounded-lg p-6">
+        <div className="bg-gray-800  p-6">
           {/* Step 1: Basic Information */}
           {currentStep === 1 && (
             <div className="space-y-6">
@@ -319,7 +319,7 @@ export default function EditCreativeContest() {
                   Basic Information
                 </h2>
                 <span
-                  className={`px-3 py-1 rounded-full text-sm ${
+                  className={`px-3 py-1  text-sm ${
                     formData.status === 'draft'
                       ? 'bg-gray-600 text-gray-300'
                       : formData.status === 'active'
@@ -344,7 +344,7 @@ export default function EditCreativeContest() {
                   onChange={(e) =>
                     setFormData((prev) => ({ ...prev, title: e.target.value }))
                   }
-                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none"
+                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600  text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none"
                   placeholder="Enter contest title..."
                 />
                 {errors.title && (
@@ -365,7 +365,7 @@ export default function EditCreativeContest() {
                     }))
                   }
                   rows={4}
-                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none"
+                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600  text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none"
                   placeholder="Describe the contest..."
                 />
                 {errors.description && (
@@ -388,7 +388,7 @@ export default function EditCreativeContest() {
                       <div
                         key={type.id}
                         onClick={() => handleTypeChange(type.id as any)}
-                        className={`border-2 rounded-lg p-4 cursor-pointer transition-all ${
+                        className={`border-2  p-4 cursor-pointer transition-all ${
                           isSelected
                             ? 'border-blue-500 bg-blue-500 bg-opacity-10'
                             : 'border-gray-600 hover:border-gray-500'
@@ -440,7 +440,7 @@ export default function EditCreativeContest() {
                         startDate: e.target.value,
                       }))
                     }
-                    className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-blue-500 focus:outline-none"
+                    className="w-full px-3 py-2 bg-gray-700 border border-gray-600  text-white focus:border-blue-500 focus:outline-none"
                   />
                   {errors.startDate && (
                     <p className="text-red-400 text-sm mt-1">
@@ -462,7 +462,7 @@ export default function EditCreativeContest() {
                         endDate: e.target.value,
                       }))
                     }
-                    className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-blue-500 focus:outline-none"
+                    className="w-full px-3 py-2 bg-gray-700 border border-gray-600  text-white focus:border-blue-500 focus:outline-none"
                   />
                   {errors.endDate && (
                     <p className="text-red-400 text-sm mt-1">
@@ -484,7 +484,7 @@ export default function EditCreativeContest() {
                         resultsDate: e.target.value,
                       }))
                     }
-                    className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-blue-500 focus:outline-none"
+                    className="w-full px-3 py-2 bg-gray-700 border border-gray-600  text-white focus:border-blue-500 focus:outline-none"
                   />
                   {errors.resultsDate && (
                     <p className="text-red-400 text-sm mt-1">
@@ -510,7 +510,7 @@ export default function EditCreativeContest() {
                         maxFileSize: parseInt(e.target.value) || 25,
                       }))
                     }
-                    className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-blue-500 focus:outline-none"
+                    className="w-full px-3 py-2 bg-gray-700 border border-gray-600  text-white focus:border-blue-500 focus:outline-none"
                   />
                 </div>
 
@@ -529,7 +529,7 @@ export default function EditCreativeContest() {
                         maxSubmissionsPerUser: parseInt(e.target.value) || 3,
                       }))
                     }
-                    className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-blue-500 focus:outline-none"
+                    className="w-full px-3 py-2 bg-gray-700 border border-gray-600  text-white focus:border-blue-500 focus:outline-none"
                   />
                 </div>
               </div>
@@ -584,7 +584,7 @@ export default function EditCreativeContest() {
                     setFormData((prev) => ({ ...prev, rules: e.target.value }))
                   }
                   rows={6}
-                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none"
+                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600  text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none"
                   placeholder="Enter contest rules..."
                 />
                 {errors.rules && (
@@ -643,7 +643,7 @@ export default function EditCreativeContest() {
                           }));
                         }}
                         placeholder="Prize title"
-                        className="px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none"
+                        className="px-3 py-2 bg-gray-700 border border-gray-600  text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none"
                       />
                       <input
                         type="text"
@@ -660,7 +660,7 @@ export default function EditCreativeContest() {
                           }));
                         }}
                         placeholder="Description"
-                        className="px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none"
+                        className="px-3 py-2 bg-gray-700 border border-gray-600  text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none"
                       />
                       <button
                         type="button"
@@ -691,7 +691,7 @@ export default function EditCreativeContest() {
               type="button"
               onClick={handlePrevious}
               disabled={currentStep === 1}
-              className="px-6 py-2 bg-gray-600 hover:bg-gray-700 disabled:bg-gray-800 disabled:text-gray-500 text-white rounded-lg transition-colors"
+              className="px-6 py-2 bg-gray-600 hover:bg-gray-700 disabled:bg-gray-800 disabled:text-gray-500 text-white  transition-colors"
             >
               Previous
             </button>
@@ -701,7 +701,7 @@ export default function EditCreativeContest() {
                 <button
                   type="button"
                   onClick={handleNext}
-                  className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+                  className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white  transition-colors"
                 >
                   Next
                 </button>
@@ -710,7 +710,7 @@ export default function EditCreativeContest() {
                   type="button"
                   onClick={handleSubmit}
                   disabled={saving}
-                  className="px-6 py-2 bg-green-600 hover:bg-green-700 disabled:bg-green-800 text-white rounded-lg flex items-center space-x-2 transition-colors"
+                  className="px-6 py-2 bg-green-600 hover:bg-green-700 disabled:bg-green-800 text-white  flex items-center space-x-2 transition-colors"
                 >
                   <Save size={16} />
                   <span>{saving ? 'Updating...' : 'Update Contest'}</span>
@@ -721,7 +721,7 @@ export default function EditCreativeContest() {
 
           {/* Error Display */}
           {errors.submit && (
-            <div className="mt-4 p-4 bg-red-900 border border-red-700 rounded-lg">
+            <div className="mt-4 p-4 bg-red-900 border border-red-700 ">
               <p className="text-red-300">{errors.submit}</p>
             </div>
           )}
